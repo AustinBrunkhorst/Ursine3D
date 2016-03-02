@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** BossVineStateMachine.h
+** VineAIStateMachine.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -15,19 +15,19 @@
 
 #include <StateMachine.h>
 
-class BossVineAI;
+class VineAI;
 
-class BossVineStateMachine : public ursine::sm::StateMachine
+class VineAIStateMachine : public ursine::sm::StateMachine
 {
 public:
-    typedef std::shared_ptr<BossVineStateMachine> Handle;
+    typedef std::shared_ptr<VineAIStateMachine> Handle;
 
-    BossVineStateMachine(BossVineAI *ai);
+    VineAIStateMachine(VineAI *ai);
 
     void Update(void) override;
 
-    BossVineAI *GetAI(void);
+    VineAI *GetAI(void);
 
 private:
-    BossVineAI *m_ai;
+    VineAI *m_ai;
 };

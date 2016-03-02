@@ -13,21 +13,21 @@
 
 #pragma once
 
-#include "BossVineState.h"
+#include "VineAIState.h"
 
 class EntityAnimator;
-class BossVineAI;
+class VineAI;
 
-class VineUprootState : public BossVineState
+class VineUprootState : public VineAIState
 {
 public:
     VineUprootState(void);
 
     bool CanExit(void) override { return m_finished; }
 
-    void Enter(BossVineStateMachine *machine) override;
-    void Update(BossVineStateMachine *machine) override;
-    void Exit(BossVineStateMachine *machine) override;
+    void Enter(VineAIStateMachine *machine) override;
+    void Update(VineAIStateMachine *machine) override;
+    void Exit(VineAIStateMachine *machine) override;
 
 private:
     bool m_finished;
@@ -47,9 +47,9 @@ private:
 
     void playAnimation(EntityAnimator *animator, const std::string &clip);
 
-    float findYPosition(BossVineAI *ai, const ursine::SVec3 &aiPosition);
+    float findYPosition(VineAI *ai, const ursine::SVec3 &aiPosition);
 
-    bool closeToTarget(BossVineAI *ai);
+    bool closeToTarget(VineAI *ai);
 
     void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 };

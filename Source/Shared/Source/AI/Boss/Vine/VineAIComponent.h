@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** BossVineAIComponent.h
+** VineAIComponent.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,11 +13,11 @@
 
 #include <Component.h>
 
-#include "BossVineStateMachine.h"
+#include "VineAIStateMachine.h"
 
 #include "EntityAnimatorComponent.h"
 
-class BossVineAI : public ursine::ecs::Component
+class VineAI : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 
@@ -109,8 +109,8 @@ public:
     EditorMeta(Annotation("List of entities we're ignoring collision with (used for uproot)."))
     ursine::Array<std::string> ignoreList;
 
-    BossVineAI(void);
-    ~BossVineAI(void);
+    VineAI(void);
+    ~VineAI(void);
 
     bool GetFaceClosestPlayer(void) const;
     void SetFaceClosestPlayer(bool flag);
@@ -177,7 +177,7 @@ private:
 
     std::string m_digParticleEmitterName;
 
-    BossVineStateMachine m_stateMachine;
+    VineAIStateMachine m_stateMachine;
 
     EntityAnimator *m_animator;
 

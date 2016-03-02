@@ -15,8 +15,8 @@
 
 #include "VineUprootState.h"
 
-#include "BossVineStateMachine.h"
-#include "BossVineAIComponent.h"
+#include "VineAIStateMachine.h"
+#include "VineAIComponent.h"
 #include "EntityAnimatorComponent.h"
 
 #include <PhysicsSystem.h>
@@ -28,7 +28,7 @@
 using namespace ursine;
 
 VineUprootState::VineUprootState(void)
-    : BossVineState( "Uproot State" )
+    : VineAIState( "Uproot State" )
     , m_finished( false )
     , m_animating( false )
     , m_delayTimer( 0.0f )
@@ -36,14 +36,14 @@ VineUprootState::VineUprootState(void)
 {
 }
 
-void VineUprootState::Enter(BossVineStateMachine *machine)
+void VineUprootState::Enter(VineAIStateMachine *machine)
 {
     m_finished = false;
     m_animating = false;
     m_state = UprootState::Burrowing;
 }
 
-void VineUprootState::Update(BossVineStateMachine *machine)
+void VineUprootState::Update(VineAIStateMachine *machine)
 {
     if (m_animating)
         return;
@@ -130,7 +130,7 @@ void VineUprootState::Update(BossVineStateMachine *machine)
     }
 }
 
-void VineUprootState::Exit(BossVineStateMachine *machine)
+void VineUprootState::Exit(VineAIStateMachine *machine)
 {
     
 }
@@ -145,7 +145,7 @@ void VineUprootState::playAnimation(EntityAnimator *animator, const std::string 
         .On( EntityAnimatorEvent::FinishedAnimating, &VineUprootState::onAnimationFinished );
 }
 
-float VineUprootState::findYPosition(BossVineAI *ai, const SVec3 &aiPosition)
+float VineUprootState::findYPosition(VineAI *ai, const SVec3 &aiPosition)
 {
     auto aiOwner = ai->GetOwner( );
     auto world = aiOwner->GetWorld( );
@@ -202,7 +202,7 @@ float VineUprootState::findYPosition(BossVineAI *ai, const SVec3 &aiPosition)
         return aiPosition.Y( );
 }
 
-bool VineUprootState::closeToTarget(BossVineAI *ai)
+bool VineUprootState::closeToTarget(VineAI *ai)
 {
     auto targetTrans = ai->GetTarget( )->GetTransform( );
     auto aiTrans = ai->GetOwner( )->GetTransform( );

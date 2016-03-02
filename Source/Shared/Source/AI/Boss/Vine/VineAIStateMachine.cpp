@@ -13,21 +13,21 @@
 
 #include "Precompiled.h"
 
-#include "BossVineStateMachine.h"
+#include "VineAIStateMachine.h"
 
-#include "BossVineAIComponent.h"
+#include "VineAIComponent.h"
 
 #include <Application.h>
 
 using namespace ursine;
 
-BossVineStateMachine::BossVineStateMachine(BossVineAI* ai)
+VineAIStateMachine::VineAIStateMachine(VineAI* ai)
     : m_ai( ai )
 {
     AddFloat( "Cooldown", 0.0f );
 }
 
-void BossVineStateMachine::Update(void)
+void VineAIStateMachine::Update(void)
 {
     auto cooldown = GetFloat( "Cooldown" );
 
@@ -39,7 +39,7 @@ void BossVineStateMachine::Update(void)
     StateMachine::Update( );
 }
 
-BossVineAI *BossVineStateMachine::GetAI(void)
+VineAI *VineAIStateMachine::GetAI(void)
 {
     return m_ai;
 }

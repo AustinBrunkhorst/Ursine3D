@@ -11,10 +11,10 @@
 
 #include "Precompiled.h"
 
-#include "BossVineAiComponent.h"
+#include "VineAIComponent.h"
 
-#include "BossVineStateMachine.h"
-#include "BossVineState.h"
+#include "VineAIStateMachine.h"
+#include "VineAIState.h"
 #include "VineLookForInRangePlayersState.h"
 #include "VineWhipState.h"
 #include "VineUprootState.h"
@@ -25,12 +25,12 @@
 #include <DebugSystem.h>
 #include <EntityEvent.h>
 
-NATIVE_COMPONENT_DEFINITION( BossVineAI );
+NATIVE_COMPONENT_DEFINITION( VineAI );
 
 using namespace ursine;
 using namespace ecs;
 
-BossVineAI::BossVineAI(void)
+VineAI::VineAI(void)
     : BaseComponent( )
     , m_faceClosestPlayer( true )
     , m_whipTurnSpeed( 90.0f )
@@ -49,151 +49,151 @@ BossVineAI::BossVineAI(void)
 {
 }
 
-BossVineAI::~BossVineAI(void)
+VineAI::~VineAI(void)
 {
     GetOwner( )->GetWorld( )->Listener( this )
-        .Off( WORLD_UPDATE, &BossVineAI::onUpdate );
+        .Off( WORLD_UPDATE, &VineAI::onUpdate );
 }
 
-bool BossVineAI::GetFaceClosestPlayer(void) const
+bool VineAI::GetFaceClosestPlayer(void) const
 {
     return m_faceClosestPlayer;
 }
 
-void BossVineAI::SetFaceClosestPlayer(bool flag)
+void VineAI::SetFaceClosestPlayer(bool flag)
 {
     m_faceClosestPlayer = flag;
 }
 
-float BossVineAI::GetWhipTurnSpeed(void) const
+float VineAI::GetWhipTurnSpeed(void) const
 {
     return m_whipTurnSpeed;
 }
 
-void BossVineAI::SetWhipTurnSpeed(float turnSpeed)
+void VineAI::SetWhipTurnSpeed(float turnSpeed)
 {
     m_whipTurnSpeed = turnSpeed;
 }
 
-float BossVineAI::GetWhipRange(void) const
+float VineAI::GetWhipRange(void) const
 {
     return m_whipRange;
 }
 
-void BossVineAI::SetWhipRange(float range)
+void VineAI::SetWhipRange(float range)
 {
     m_whipRange = range;
 }
 
-float BossVineAI::GetWhipAngle(void) const
+float VineAI::GetWhipAngle(void) const
 {
     return m_whipAngle;
 }
 
-void BossVineAI::SetWhipAngle(float angle)
+void VineAI::SetWhipAngle(float angle)
 {
     m_whipAngle = angle;
 }
 
-float BossVineAI::GetWhipDuration(void) const
+float VineAI::GetWhipDuration(void) const
 {
     return m_whipDuration;
 }
 
-void BossVineAI::SetWhipDuration(float duration)
+void VineAI::SetWhipDuration(float duration)
 {
     m_whipDuration = duration;
 }
 
-float BossVineAI::GetWhipCooldown(void) const
+float VineAI::GetWhipCooldown(void) const
 {
     return m_whipCooldown;
 }
 
-void BossVineAI::SetWhipCooldown(float cooldown)
+void VineAI::SetWhipCooldown(float cooldown)
 {
     m_whipCooldown = cooldown;
 }
 
-float BossVineAI::GetDigSpeed(void) const
+float VineAI::GetDigSpeed(void) const
 {
     return m_digSpeed;
 }
 
-void BossVineAI::SetDigSpeed(float digSpeed)
+void VineAI::SetDigSpeed(float digSpeed)
 {
     m_digSpeed = digSpeed;
 }
 
-float BossVineAI::GetDigTurnSpeed(void) const
+float VineAI::GetDigTurnSpeed(void) const
 {
     return m_digTurnSpeed;
 }
 
-void BossVineAI::SetDigTurnSpeed(float turnSpeed)
+void VineAI::SetDigTurnSpeed(float turnSpeed)
 {
     m_digTurnSpeed = turnSpeed;
 }
 
-const std::string &BossVineAI::GetDigParticleEmitterName(void) const
+const std::string &VineAI::GetDigParticleEmitterName(void) const
 {
     return m_digParticleEmitterName;
 }
 
-void BossVineAI::SetDigParticleEmitterName(const std::string &name)
+void VineAI::SetDigParticleEmitterName(const std::string &name)
 {
     m_digParticleEmitterName = name;
 }
 
-float BossVineAI::GetUprootDistance(void) const
+float VineAI::GetUprootDistance(void) const
 {
     return m_uprootDistance;
 }
 
-void BossVineAI::SetUprootDistance(float distance)
+void VineAI::SetUprootDistance(float distance)
 {
     m_uprootDistance = distance;
 }
 
-float BossVineAI::GetUprootDelay(void) const
+float VineAI::GetUprootDelay(void) const
 {
     return m_uprootDelay;
 }
 
-void BossVineAI::SetUprootDelay(float delay)
+void VineAI::SetUprootDelay(float delay)
 {
     m_uprootDelay = delay;
 }
 
-const SVec3 &BossVineAI::GetColliderSize(void) const
+const SVec3 &VineAI::GetColliderSize(void) const
 {
     return m_colliderSize;
 }
 
-void BossVineAI::SetColliderSize(const SVec3 &colliderSize)
+void VineAI::SetColliderSize(const SVec3 &colliderSize)
 {
     m_colliderSize = colliderSize;
 }
 
-EntityAnimator *BossVineAI::GetAnimator(void)
+EntityAnimator *VineAI::GetAnimator(void)
 {
     return m_animator;
 }
 
-Entity *BossVineAI::GetTarget(void)
+Entity *VineAI::GetTarget(void)
 {
     return m_target;
 }
 
-void BossVineAI::SetTarget(Entity *target)
+void VineAI::SetTarget(Entity *target)
 {
     m_target = target;
 }
 
-void BossVineAI::OnInitialize(void)
+void VineAI::OnInitialize(void)
 {
     GetOwner( )->GetWorld( )->Listener( this )
-        .On( WORLD_UPDATE, &BossVineAI::onUpdate );
+        .On( WORLD_UPDATE, &VineAI::onUpdate );
 
     // Setup the state machine
     auto lookState = m_stateMachine.AddState<VineLookForInRangePlayersState>( );
@@ -210,26 +210,26 @@ void BossVineAI::OnInitialize(void)
     m_stateMachine.SetInitialState( lookState );
 
     GetOwner( )->Listener( this )
-        .On( ENTITY_HIERARCHY_SERIALIZED, &BossVineAI::onChildrenSerialized );
+        .On( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 }
 
-void BossVineAI::onUpdate(EVENT_HANDLER(World))
+void VineAI::onUpdate(EVENT_HANDLER(World))
 {
     // update the state machine
     m_stateMachine.Update( );
 }
 
-void BossVineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
+void VineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
 {
     m_animator = GetOwner( )->GetComponentInChildren<EntityAnimator>( );
 
     GetOwner( )->Listener( this )
-        .Off( ENTITY_HIERARCHY_SERIALIZED, &BossVineAI::onChildrenSerialized );
+        .Off( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 }
 
 #if defined(URSINE_WITH_EDITOR)
 
-void BossVineAI::drawRange(void)
+void VineAI::drawRange(void)
 {
     auto drawer = GetOwner( )->GetWorld( )->GetEntitySystem<DebugSystem>( );
 

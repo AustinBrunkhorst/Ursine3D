@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** BossAIStateMachine.h
+** BossSeedshotState.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,21 +13,18 @@
 
 #pragma once
 
-#include <StateMachine.h>
+#include "BossAIState.h"
 
-class BossAI;
-
-class BossAIStateMachine : public ursine::sm::StateMachine
+class BossSeedshotState : public BossAIState
 {
 public:
-    typedef std::shared_ptr<BossAIStateMachine> Handle;
+    BossSeedshotState(void);
 
-    BossAIStateMachine(BossAI *boss);
+    bool CanExit(void) override { return false; }
 
-    void Update(void) override;
-
-    BossAI *GetBoss(void);
+    void Update(BossAIStateMachine *machine) override;
 
 private:
-    BossAI *m_boss;
+    float m_timer;
+    bool m_on;
 };

@@ -13,20 +13,20 @@
 
 #pragma once
 
-#include "BossVineState.h"
+#include "VineAIState.h"
 
 class EntityAnimator;
 
-class VineWhipState : public BossVineState
+class VineWhipState : public VineAIState
 {
 public:
     VineWhipState(void);
 
     bool CanExit(void) override { return m_finished; }
 
-    void Enter(BossVineStateMachine *machine) override;
-    void Update(BossVineStateMachine *machine) override;
-    void Exit(BossVineStateMachine *machine) override;
+    void Enter(VineAIStateMachine *machine) override;
+    void Update(VineAIStateMachine *machine) override;
+    void Exit(VineAIStateMachine *machine) override;
 
 private:
     bool m_finished;

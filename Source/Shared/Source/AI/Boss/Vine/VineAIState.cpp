@@ -13,20 +13,20 @@
 
 #include "Precompiled.h"
 
-#include "BossAIState.h"
-#include "BossAIStateMachine.h"
+#include "VineAIState.h"
+#include "VineAIStateMachine.h"
 
-void BossAIState::OnEnter(ursine::sm::StateMachine* machine)
+void VineAIState::OnEnter(ursine::sm::StateMachine* machine)
 {
-    Enter( reinterpret_cast<BossAIStateMachine*>( machine ) );
+    Enter( reinterpret_cast<VineAIStateMachine*>( machine ) );
 }
 
-void BossAIState::OnUpdate(ursine::sm::StateMachine* machine)
+void VineAIState::OnUpdate(ursine::sm::StateMachine* machine)
 {
-    Update( reinterpret_cast<BossAIStateMachine*>( machine ) );
+    Update( reinterpret_cast<VineAIStateMachine*>( machine ) );
 }
 
-void BossAIState::OnExit(ursine::sm::StateMachine* machine)
+void VineAIState::OnExit(ursine::sm::StateMachine* machine)
 {
-    Exit( reinterpret_cast<BossAIStateMachine*>( machine ) );
+    Exit( reinterpret_cast<VineAIStateMachine*>( machine ) );
 }
