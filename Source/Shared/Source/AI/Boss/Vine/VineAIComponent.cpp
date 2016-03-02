@@ -227,6 +227,7 @@ void VineAI::OnInitialize(void)
 {
     // TO TEST:
     // - spawning animation (should come up from nothing)
+    // - When a vine dies make them go underground
     // - tell it to pursue enemy, and tell it to come back home
 
     GetOwner( )->GetWorld( )->Listener( this )

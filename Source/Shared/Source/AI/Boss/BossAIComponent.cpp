@@ -31,14 +31,6 @@ BossAI::BossAI(void)
 {
 }
 
-void BossAI::onHierachyConstructed(EVENT_HANDLER(ursine::ecs::ENTITY_HIERARCHY_SERIALIZED))
-{
-    // get seed shot so we can activate weapon
-    //   has to be done this way due to inheritance
-    game::WeaponActivationEventArgs args( GetOwner( ) );
-    GetSeedshotEntity( )->Dispatch( game::ACTIVATE_WEAPON, &args );
-}
-
 const std::string &BossAI::GetSeedshotEntityName(void) const
 {
     return m_seedshotEntity;
@@ -60,12 +52,28 @@ void BossAI::OnInitialize(void)
         .On( WORLD_UPDATE, &BossAI::onUpdate );
 
     GetOwner( )->Listener(this)
-        .On( ursine::ecs::ENTITY_HIERARCHY_SERIALIZED, &BossAI::onHierachyConstructed );
+        .On( ENTITY_HIERARCHY_SERIALIZED, &BossAI::onHierachyConstructed );
 
+    // Boss Phase I
+    // - Spawn Vines in the VineSpawnPositions
+    // - When all vines die, use seedshot, then sit there and take damage.
+    // - If not enough damage is done before a certain amount of time (after vines all die), respwan them
+
+    // TESTING
     auto seedshot = m_stateMachine.AddState<BossSeedshotState>( );
 
     m_stateMachine.SetInitialState( seedshot );
 }
+
+void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
+{
+    // get seed shot so we can activate weapon
+    // has to be done this way due to inheritance
+    game::WeaponActivationEventArgs args( GetOwner( ) );
+
+    GetSeedshotEntity( )->Dispatch( game::ACTIVATE_WEAPON, &args );
+}
+
 
 void BossAI::onUpdate(EVENT_HANDLER(World))
 {
