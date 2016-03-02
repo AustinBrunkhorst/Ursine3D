@@ -98,6 +98,12 @@ public:
     );
 
     EditorField(
+        float uprootCooldown,
+        GetUprootCooldown,
+        SetUprootCooldown
+    );
+
+    EditorField(
         ursine::SVec3 colliderSize,
         GetColliderSize,
         SetColliderSize
@@ -145,6 +151,9 @@ public:
     float GetUprootDelay(void) const;
     void SetUprootDelay(float delay);
 
+    float GetUprootCooldown(void) const;
+    void SetUprootCooldown(float cooldown);
+
     const ursine::SVec3 &GetColliderSize(void) const;
     void SetColliderSize(const ursine::SVec3 &colliderSize);
 
@@ -173,6 +182,7 @@ private:
     float m_digTurnSpeed;
     float m_uprootDistance;
     float m_uprootDelay;
+    float m_uprootCooldown;
     ursine::SVec3 m_colliderSize;
 
     std::string m_digParticleEmitterName;

@@ -14,12 +14,12 @@
 #include "VineAIComponent.h"
 
 #include "VineAIStateMachine.h"
-#include "VineAIState.h"
 #include "VineLookForInRangePlayersState.h"
 #include "VineWhipState.h"
 #include "VineUprootState.h"
 
 #include <FloatCondition.h>
+#include <BoolCondition.h>
 
 #include <SystemManager.h>
 #include <DebugSystem.h>
@@ -42,6 +42,7 @@ VineAI::VineAI(void)
     , m_digTurnSpeed( 2.0f )
     , m_uprootDistance( 2.0f )
     , m_uprootDelay( 2.0f )
+    , m_uprootCooldown( 5.0f )
     , m_colliderSize( 1.0f, 1.0f, 1.0f )
     , m_stateMachine( this )
     , m_animator( nullptr )
@@ -165,6 +166,16 @@ void VineAI::SetUprootDelay(float delay)
     m_uprootDelay = delay;
 }
 
+float VineAI::GetUprootCooldown(void) const
+{
+    return m_uprootCooldown;
+}
+
+void VineAI::SetUprootCooldown(float cooldown)
+{
+    m_uprootCooldown = cooldown;
+}
+
 const SVec3 &VineAI::GetColliderSize(void) const
 {
     return m_colliderSize;
@@ -201,9 +212,31 @@ void VineAI::OnInitialize(void)
     auto uprootState = m_stateMachine.AddState<VineUprootState>( );
 
     auto trans = lookState->AddTransition( whipState, "To Whip" );
-    trans->AddCondition<sm::FloatCondition>( "Cooldown", sm::Comparison::LessThan, 0.0f );
 
-    whipState->AddTransition( uprootState, "To Look" );
+    // The cooldown must be up
+    trans->AddCondition<sm::FloatCondition>( 
+        VineAIStateMachine::WhipCooldown, 
+        sm::Comparison::LessThan, 0.0f 
+    );
+
+    // The target must be in range
+    trans->AddCondition<sm::BoolCondition>(
+        VineAIStateMachine::InRange, true
+    );
+
+    // The target must be in view
+    trans->AddCondition<sm::BoolCondition>(
+        VineAIStateMachine::InView, true
+    );
+
+    whipState->AddTransition( lookState, "To Look" );
+
+    trans = lookState->AddTransition( uprootState, "To Uproot" );
+
+    trans->AddCondition<sm::FloatCondition>(
+        VineAIStateMachine::UprootCooldown,
+        sm::Comparison::LessThan, 0.0f
+    );
 
     uprootState->AddTransition( lookState, "To Look" );
 

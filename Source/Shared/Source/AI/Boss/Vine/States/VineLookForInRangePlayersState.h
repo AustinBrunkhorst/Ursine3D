@@ -20,8 +20,6 @@ class VineLookForInRangePlayersState : public VineAIState
 public:
     VineLookForInRangePlayersState(void);
 
-    bool CanExit(void) override { return m_inRange && m_inView; }
-
     void Enter(VineAIStateMachine *machine) override;
     void Update(VineAIStateMachine *machine) override;
 

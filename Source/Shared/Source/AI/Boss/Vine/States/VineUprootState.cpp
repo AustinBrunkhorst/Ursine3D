@@ -24,6 +24,7 @@
 #include <Entity.h>
 #include <ParticleEmitterComponent.h>
 #include <Model3DComponent.h>
+#include <BoxColliderComponent.h>
 
 using namespace ursine;
 
@@ -45,7 +46,7 @@ void VineUprootState::Enter(VineAIStateMachine *machine)
 
 void VineUprootState::Update(VineAIStateMachine *machine)
 {
-    if (m_animating)
+    if (m_animating || m_finished)
         return;
 
     auto ai = machine->GetAI( );
@@ -125,6 +126,11 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             for (auto &model : models)
                 model->SetActive( true );
 
+            auto boxCollider = aiOwner->GetComponentInChildren<ecs::BoxCollider>( );
+
+            m_originalDimensions = boxCollider->GetDimensions( );
+            boxCollider->SetDimensions( ai->GetColliderSize( ) );
+
             break;
         }
     }
@@ -132,7 +138,10 @@ void VineUprootState::Update(VineAIStateMachine *machine)
 
 void VineUprootState::Exit(VineAIStateMachine *machine)
 {
-    
+    machine->SetFloat(
+        VineAIStateMachine::UprootCooldown,
+        machine->GetAI( )->GetUprootCooldown( )
+    );
 }
 
 void VineUprootState::playAnimation(EntityAnimator *animator, const std::string &clip)
@@ -235,6 +244,10 @@ void VineUprootState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
         case UprootState::Uprooting:
         {
             m_finished = true;
+
+            auto boxCollider = sender->GetOwner( )->GetComponentInChildren<ecs::BoxCollider>( );
+
+            boxCollider->SetDimensions( m_originalDimensions );
 
             break;
         }

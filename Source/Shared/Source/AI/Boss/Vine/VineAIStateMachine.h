@@ -22,6 +22,12 @@ class VineAIStateMachine : public ursine::sm::StateMachine
 public:
     typedef std::shared_ptr<VineAIStateMachine> Handle;
 
+    static const std::string WhipCooldown;
+    static const std::string UprootCooldown;
+
+    static const std::string InRange;
+    static const std::string InView;
+
     VineAIStateMachine(VineAI *ai);
 
     void Update(void) override;
@@ -30,4 +36,6 @@ public:
 
 private:
     VineAI *m_ai;
+
+    void decrementCooldown(const std::string &name);
 };

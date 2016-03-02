@@ -21,20 +21,25 @@
 
 using namespace ursine;
 
+const std::string VineAIStateMachine::WhipCooldown = "WhipCooldown";
+const std::string VineAIStateMachine::UprootCooldown = "UprootCooldown";
+
+const std::string VineAIStateMachine::InRange = "InRange";
+const std::string VineAIStateMachine::InView = "InView";
+
 VineAIStateMachine::VineAIStateMachine(VineAI* ai)
     : m_ai( ai )
 {
-    AddFloat( "Cooldown", 0.0f );
+    AddFloat( WhipCooldown, 0.0f );
+    AddFloat( UprootCooldown, 0.0f );
+    AddBool( InRange, false );
+    AddBool( InView, false );
 }
 
 void VineAIStateMachine::Update(void)
 {
-    auto cooldown = GetFloat( "Cooldown" );
-
-    if (cooldown >= 0.0f)
-        cooldown -= Application::Instance->GetDeltaTime( );
-
-    SetFloat( "Cooldown", cooldown );
+    decrementCooldown( WhipCooldown );
+    decrementCooldown( UprootCooldown );
 
     StateMachine::Update( );
 }
@@ -42,4 +47,14 @@ void VineAIStateMachine::Update(void)
 VineAI *VineAIStateMachine::GetAI(void)
 {
     return m_ai;
+}
+
+void VineAIStateMachine::decrementCooldown(const std::string &name)
+{
+    auto cooldown = GetFloat( name );
+
+    if (cooldown >= 0.0f)
+        cooldown -= Application::Instance->GetDeltaTime( );
+
+    SetFloat( name, cooldown );
 }
