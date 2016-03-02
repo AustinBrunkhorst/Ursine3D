@@ -16,7 +16,7 @@
 #include "TrailComponent.h"
 #include "ParticleEmitterComponent.h"
 
-ENTITY_SYSTEM_DEFINITION( TrailSystem ) ;
+ENTITY_SYSTEM_DEFINITION( TrailSystem );
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -41,9 +41,9 @@ TrailSystem::TrailSystem(ursine::ecs::World* world)
 }
 
 
-void TrailSystem::Enable(ursine::ecs::Entity* entity)
+void TrailSystem::Enable(const ursine::ecs::EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
+    auto uniqueID = entity->GetID( );
 
     m_particleEmitter[ uniqueID ] = entity->GetComponent< ParticleEmitter >( );
     
@@ -52,9 +52,9 @@ void TrailSystem::Enable(ursine::ecs::Entity* entity)
     m_transforms[ uniqueID ] = entity->GetTransform( );
 }
 
-void TrailSystem::Disable(ursine::ecs::Entity* entity)
+void TrailSystem::Disable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
+    auto uniqueID = entity->GetID( );
 
     m_trails.erase( uniqueID );
     m_transforms.erase( uniqueID );
@@ -68,8 +68,7 @@ void TrailSystem::onUpdate(EVENT_HANDLER(World))
     }
 }
 
-
-void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* const trail)
+void TrailSystem::UpdateTrail(EntityID id, TrailComponent *const trail)
 {
     if ( trail->m_distToTravel <= trail->m_distTraveled )
         trail->GetOwner( )->Delete( );
@@ -102,5 +101,4 @@ void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* co
             emitter->spawnParticle( );
         }
     }
-
 }

@@ -45,37 +45,31 @@ namespace ursine
             World(void);
             ~World(void);
 
-            Entity *CreateEntity(const std::string &name = "Entity");
-            void queueEntityDeletion(Entity *entity);
+            EntityHandle CreateEntity(const std::string &name = "Entity");
 
             // Creates an entity from an archetype file
-            Entity *CreateEntityFromArchetype(
+            EntityHandle CreateEntityFromArchetype(
                 const std::string &fileName,
                 const std::string &name = "Entity"
             );
 
-            // Gets an entity based on its active id
-            Entity *GetEntity(EntityUniqueID id) const;
-
-            const std::string &GetEntityName(EntityID id) const;
+            // Gets an entity based on its id
+            EntityHandle GetEntity(EntityID id) const;
 
             // Gets an entity based its name (first entity with this name)
-            Entity *GetEntityFromName(const std::string &name) const;
-
-            // Gets an entity based on its unique id
-            Entity *GetEntityUnique(EntityUniqueID uniqueID) const;
+            EntityHandle GetEntityFromName(const std::string &name) const;
 
             // Gets entities without parents
-            EntityVector GetRootEntities(void) const;
+            EntityHandleVector GetRootEntities(void) const;
 
             // Gets all active entities in the world
-            const EntityVector &GetActiveEntities(void) const;
+            EntityHandleVector GetActiveEntities(void) const;
 
             // Gets all entities belonging to a group
-            const EntityVector &GetEntitiesFromName(const std::string &group) const;
+            EntityHandleVector GetEntitiesFromName(const std::string &group) const;
 
             // Gets all active entities matching the specified filter
-            EntityVector GetEntitiesFromFilter(const Filter &filter) const;
+            EntityHandleVector GetEntitiesFromFilter(const Filter &filter) const;
 
             // Updates the world
             void Update(void);
@@ -89,8 +83,9 @@ namespace ursine
             // Renders the world in editor mode
             void EditorRender(void);
 
-            Entity *GetSettings(void) const;
+            const EntityHandle &GetSettings(void) const;
 
+            EntityManager *GetEntityManager(void) const;
             SystemManager *GetSystemManager(void) const;
 
             Scene *GetOwner(void) const;
@@ -100,14 +95,15 @@ namespace ursine
 
         private:
             friend class Entity;
+            friend class EntityHandle;
             friend class WorldSerializer;
             friend class EntitySerializer;
             friend class Scene;
 
             std::mutex m_deletionMutex;
-            EntityVector m_deleted;
+            EntityHandleVector m_deleted;
 
-            Entity *m_settings;
+            EntityHandle m_settings;
 
             // direct pointers core world managers
             EntityManager *m_entityManager;
@@ -123,12 +119,14 @@ namespace ursine
 
             void setOwner(Scene *owner);
 
+            void queueEntityDeletion(Entity *entity);
+
             // adds an entity to the deletion queue
-            void deleteEntity(Entity *entity);
+            void deleteEntity(const EntityHandle &entity);
             
             void clearDeletionQueue(void);
 
-            Entity *loadArchetype(const Json &data);
+            EntityHandle loadArchetype(const Json &data);
         } Meta(Enable, EnablePtrType, WhiteListMethods);
     }
 }

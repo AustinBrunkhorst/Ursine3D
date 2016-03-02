@@ -104,6 +104,6 @@ class EditorMain {
         }
 
         // TODO: remove after dock calls made
-        sceneView.onViewportInvalidated( );
+        haxe.Timer.delay( sceneView.onViewportInvalidated, 100 );
     }
 }

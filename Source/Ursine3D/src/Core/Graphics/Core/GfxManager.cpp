@@ -1412,13 +1412,13 @@ namespace ursine
                 {
                 case RENDERABLE_MODEL3D:
                 case 3: // work around for overdraw, since bitfield only holds 4 values
-                    m_currentID = renderableManager->m_renderableModel3D[ index ].GetEntityUniqueID();
+                    m_currentID = renderableManager->m_renderableModel3D[ index ].GetEntityID( );
                     break;
                 case RENDERABLE_BILLBOARD2D:
-                    m_currentID = renderableManager->m_renderableBillboards[ index ].GetEntityUniqueID();
+                    m_currentID = renderableManager->m_renderableBillboards[ index ].GetEntityID( );
                     break;
                 case RENDERABLE_SPRITE_TEXT:
-                    m_currentID = renderableManager->m_renderableSpriteText[ index ].GetEntityUniqueID();
+                    m_currentID = renderableManager->m_renderableSpriteText[ index ].GetEntityID( );
                     break;
                 }
             }

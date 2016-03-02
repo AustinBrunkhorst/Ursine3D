@@ -35,10 +35,7 @@ class LevelSegmentManager
 {
     NATIVE_COMPONENT;
 
-    friend class SpawnPlayersState;
-
 public:
-
     EditorField(
         LevelSegments currentSegment,
         GetCurrentSegment,
@@ -51,6 +48,7 @@ public:
         SetEnableDebugOutput
     );
 
+    Meta(Enable)
     LevelSegmentManager(void);
     ~LevelSegmentManager(void);
 
@@ -60,19 +58,18 @@ public:
     bool GetEnableDebugOutput(void) const;
     void SetEnableDebugOutput(bool enable);
 
-    Meta(Disable)
-    ursine::ecs::Entity *GetPlayer1(void);
-    Meta(Disable)
-    ursine::ecs::Entity *GetPlayer2(void);
+    const ursine::ecs::EntityHandle &GetPlayer1(void);
+    const ursine::ecs::EntityHandle &GetPlayer2(void);
 
 private:
+    friend class SpawnPlayersState;
 
     // All the state machines for the segments of gameplay
     std::vector<SegmentLogicStateMachine::Handle> m_segmentLogic[ LevelSegments::Empty ];
 
     LevelSegments m_segment;
 
-    ursine::ecs::Entity *m_player1, *m_player2;
+    ursine::ecs::EntityHandle m_player1, m_player2;
 
     bool m_enableDebugOutput;
 
@@ -100,4 +97,4 @@ private:
 
     void onUpdate(EVENT_HANDLER(World));
 
-} Meta(Enable);
+} Meta(Enable, WhiteListMethods);

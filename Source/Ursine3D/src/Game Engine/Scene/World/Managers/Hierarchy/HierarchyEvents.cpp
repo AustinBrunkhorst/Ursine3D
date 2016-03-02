@@ -20,7 +20,7 @@ namespace ursine
 {
     namespace ecs
     {
-        ParentChangedArgs::ParentChangedArgs(Entity *newParent, Entity *oldParent)
+        ParentChangedArgs::ParentChangedArgs(const EntityHandle &newParent, const EntityHandle &oldParent)
             : newParent( newParent )
 		    , oldParent( oldParent ) { }
     }

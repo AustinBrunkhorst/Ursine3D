@@ -8,7 +8,7 @@
 #include <UIManager.h>
 
 #include <FileSystem.h>
-#include <UIFileDialogCallback.h>
+#include <FileDialog.h>
 #include <EntitySerializer.h>
 
 #include <SelectedComponent.h>
@@ -33,7 +33,7 @@ namespace editor_commands
         void doLoadArchetype(ecs::World *world, int selectedFilter, const fs::FileList &files);
 
         ecs::World *getActiveWorld(void);
-        ecs::Entity *createEntity(const std::string &name = "Empty Entity");
+        ecs::EntityHandle createEntity(const std::string &name = "Empty Entity");
     }
 
     JSFunction(GetEditorCommands)
@@ -70,94 +70,115 @@ namespace editor_commands
 
     JSFunction(CreateEntityFromArchetype)
     {
-        auto *world = GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetActiveWorld( );
+        auto *editor = GetCoreSystem( Editor );
+        auto *world = editor->GetProject( )->GetScene( ).GetActiveWorld( );
 
-        CefRefPtr<UIFileDialogCallback> callback = 
-            new UIFileDialogCallback( std::bind( &doLoadArchetype, world, _1, _2 ) );
+        fs::FileDialog openDialog;
 
-        std::vector<CefString> filters {
-            "Archetype Files|.uatype"
+        openDialog.config.mode = fs::FDM_OPEN;
+        openDialog.config.initialPath = "";
+        openDialog.config.windowTitle = "Create Entity From Archetype";
+        openDialog.config.parentWindow = editor->GetMainWindow( ).GetWindow( );
+        openDialog.config.filters = {
+            { "Archetype Files", { "*.uatype" } }
         };
 
-        auto *editor = GetCoreSystem( Editor );
+        auto result = openDialog.Open( );
 
-        editor->GetMainWindow( ).GetUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
-            FILE_DIALOG_OPEN,
-            "Create Entity From Archetype",
-            "",
-            filters,
-            0,
-            callback
-        );
+        doLoadArchetype( world, result.selectedFilterIndex, result.selectedFiles );
 
         return CefV8Value::CreateUndefined( );
     }
 
     JSFunction(CreateCamera)
     {
-        createEntity( "Camera" )
-            ->AddComponent<ecs::Camera>( )
-            ->SetViewportSize( { 1, 1 } );
+        Application::PostMainThread( [] 
+        {
+            createEntity( "Camera" )
+                ->AddComponent<ecs::Camera>( )
+                ->SetViewportSize( { 1, 1 } );
+        } );
 
         return CefV8Value::CreateUndefined( );
     }
 
     JSFunction(CreatePlane)
     {
-        createEntity( "Plane" )
-            ->AddComponent<ecs::BoxCollider>( )
-            ->SetDimensions( { 5, 1, 5 } );
+        Application::PostMainThread( [] 
+        {
+            createEntity( "Plane" )
+                ->AddComponent<ecs::BoxCollider>( )
+                ->SetDimensions( { 5, 1, 5 } );
+        } );
 
         return CefV8Value::CreateUndefined( );
     }
 
     JSFunction(CreateBox)
     {
-        createEntity( "Box" )
-            ->AddComponent<ecs::BoxCollider>( );
+        Application::PostMainThread( [] 
+        {
+            createEntity( "Box" )
+                ->AddComponent<ecs::BoxCollider>( );
+        } );
 
         return CefV8Value::CreateUndefined( );
     }
 
     JSFunction(CreateCylinder)
     {
-        createEntity( "Cylinder" )
-            ->AddComponent<ecs::CylinderCollider>( );
+        Application::PostMainThread( [] 
+        {
+            createEntity( "Cylinder" )
+                ->AddComponent<ecs::CylinderCollider>( );
+        } );
 
         return CefV8Value::CreateUndefined( );
     }
 
     JSFunction(CreateSphere)
     {
-        createEntity( "Sphere" )
-            ->AddComponent<ecs::SphereCollider>( );
+        Application::PostMainThread( [] 
+        {
+            createEntity( "Sphere" )
+                ->AddComponent<ecs::SphereCollider>( );
+        } );
 
         return CefV8Value::CreateUndefined( );
     }
 
     JSFunction(CreatePointLight)
     {
-        createEntity( "Point Light" )
-            ->AddComponent<ecs::Light>( )
-            ->SetLightType( ecs::LightType::Point );
+        Application::PostMainThread( [] 
+        {
+            createEntity( "Point Light" )
+                ->AddComponent<ecs::Light>( )
+                ->SetLightType( ecs::LightType::Point );
+        } );
 
         return CefV8Value::CreateUndefined( );
     }
 
     JSFunction(CreateSpotLight)
     {
-        createEntity( "Spot Light" )
-            ->AddComponent<ecs::Light>( )
-            ->SetLightType( ecs::LightType::Spot );
-
+        Application::PostMainThread( [] 
+        {
+            createEntity( "Spot Light" )
+                ->AddComponent<ecs::Light>( )
+                ->SetLightType( ecs::LightType::Spot );
+        } );
+        
         return CefV8Value::CreateUndefined( );
     }
 
     JSFunction(CreateDirectionalLight)
     {
-        createEntity( "Directional Light" )
-            ->AddComponent<ecs::Light>( )
-            ->SetLightType( ecs::LightType::Directional );
+        Application::PostMainThread( [] 
+        {
+            createEntity( "Directional Light" )
+                ->AddComponent<ecs::Light>( )
+                ->SetLightType( ecs::LightType::Directional );
+        } );
 
         return CefV8Value::CreateUndefined( );
     }
@@ -175,22 +196,30 @@ namespace editor_commands
 
     JSFunction(CreateParticleSystem)
     {
-        auto *entity = createEntity("Particle System");
-        entity->AddComponent<ecs::ParticleSystem>( );
-        entity->AddComponent<ecs::ParticleEmitter>( );
-        entity->AddComponent<ecs::ParticleAnimator>( );
-        entity->AddComponent<ecs::ParticleColorAnimator>( );
-        return CefV8Value::CreateUndefined();
+        Application::PostMainThread( [] 
+        {
+            auto entity = createEntity( "Particle System" );
+
+            entity->AddComponent<ecs::ParticleSystem>( );
+            entity->AddComponent<ecs::ParticleEmitter>( );
+            entity->AddComponent<ecs::ParticleAnimator>( );
+            entity->AddComponent<ecs::ParticleColorAnimator>( );
+        } );
+
+        return CefV8Value::CreateUndefined( );
     }
 
     JSFunction(CreateSpriteText)
     {
-        auto *entity = createEntity("Sprite Text");
-        entity->AddComponent<ecs::SpriteText>( );
+        Application::PostMainThread( [] 
+        {
+            auto entity = createEntity( "Sprite Text" );
 
-        return CefV8Value::CreateUndefined();
+            entity->AddComponent<ecs::SpriteText>( );
+        } );
+
+        return CefV8Value::CreateUndefined( );
     }
-
 
     namespace
     {
@@ -206,63 +235,66 @@ namespace editor_commands
             auto &file = files.front( );
             auto filename = file.stem( ).string( );
 
-            try
+            Application::PostMainThread( [=] 
             {
-                std::string jsonData;
-
-                if (!fs::LoadAllText( file.string( ), jsonData ))
+                try
                 {
-                    throw ecs::SerializationException( "Unable to load file." );
-                }
-       
-                std::string jsonError;
+                    std::string jsonData;
 
-                auto data = Json::parse( jsonData, jsonError );
-
-                if (!jsonError.empty( ))
-                {
-                    throw ecs::SerializationException( jsonError );
-                }
-
-                auto entity = ecs::EntitySerializer( ).DeserializeArchetype( 
-                    world, 
-                    data 
-                );
-
-                entity->SetName( filename + " Archetype" );
-
-                entity->AddComponent<ecs::Selected>( );
-            }
-            catch (ecs::SerializationException &e)
-            {
-                UWarning(
-                    "Unable to load archetype.\nerror: %s\nfile: %s",
-                    e.GetError( ).c_str( ),
-                    file.string( ).c_str( )
-                );
-
-                auto *editor = GetCoreSystem( Editor );
-
-                NotificationConfig error;
-
-                error.type = NOTIFY_ERROR;
-                error.header = "Load Error";
-                error.message = "Unable to load archetype.";
-
-                error.buttons =
-                {
-                    { "Open Error Log", 
-                        [](Notification &notification)
-                        {
-                            notification.Close( );
-
-                            utils::OpenPath( URSINE_ERROR_LOG_FILE );
-                        } 
+                    if (!fs::LoadAllText( file.string( ), jsonData ))
+                    {
+                        throw ecs::SerializationException( "Unable to load file." );
                     }
-                };
+       
+                    std::string jsonError;
 
-                editor->PostNotification( error );
-            }
+                    auto data = Json::parse( jsonData, jsonError );
+
+                    if (!jsonError.empty( ))
+                    {
+                        throw ecs::SerializationException( jsonError );
+                    }
+
+                    auto entity = ecs::EntitySerializer( ).DeserializeArchetype( 
+                        world, 
+                        data 
+                    );
+
+                    entity->SetName( filename + " Archetype" );
+
+                    entity->AddComponent<ecs::Selected>( );
+                }
+                catch (ecs::SerializationException &e)
+                {
+                    UWarning(
+                        "Unable to load archetype.\nerror: %s\nfile: %s",
+                        e.GetError( ).c_str( ),
+                        file.string( ).c_str( )
+                    );
+
+                    auto *editor = GetCoreSystem( Editor );
+
+                    NotificationConfig error;
+
+                    error.type = NOTIFY_ERROR;
+                    error.header = "Load Error";
+                    error.message = "Unable to load archetype.";
+
+                    error.buttons =
+                    {
+                        { "Open Error Log", 
+                            [](Notification &notification)
+                            {
+                                notification.Close( );
+
+                                utils::OpenPath( URSINE_ERROR_LOG_FILE );
+                            } 
+                        }
+                    };
+
+                    editor->PostNotification( error );
+                }
+            } );
         }
 
         ecs::World *getActiveWorld(void)
@@ -270,11 +302,11 @@ namespace editor_commands
             return GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetActiveWorld( );
         }
 
-        ecs::Entity *createEntity(const std::string &name)
+        ecs::EntityHandle createEntity(const std::string &name)
         {
             auto *world = getActiveWorld( );
 
-            auto *entity = world->CreateEntity( name );
+            auto entity = world->CreateEntity( name );
 
             auto *tools = world->GetEntitySystem<EditorToolSystem>( );
 

@@ -55,10 +55,12 @@ namespace ursine
         {
             Component::OnInitialize( );
             
-            m_base->OnInitialize(GetOwner( ));
+            auto &owner = GetOwner( );
+
+            m_base->OnInitialize( owner );
 
             // set the unique id
-            m_spriteText->SetEntityUniqueID(GetOwner()->GetUniqueID( ));
+            m_spriteText->SetEntityID( owner->GetID( ) );
 
             updateRenderer( );
         }

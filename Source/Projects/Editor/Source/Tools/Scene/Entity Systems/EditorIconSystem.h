@@ -34,7 +34,7 @@ public:
 private:
     ursine::resources::ResourceManager &m_toolResources;
 
-    void OnInitialize(void) override;
+    void OnSceneReady(ursine::Scene *scene) override;
     void OnRemove(void) override;
 
     void onIconAdd(EVENT_HANDLER(ursine::ecs::World));

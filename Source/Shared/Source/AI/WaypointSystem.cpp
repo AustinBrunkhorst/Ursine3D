@@ -163,7 +163,7 @@ namespace ursine
             {
                 // add waypoint to our map of waypoints
                 m_waypoints.emplace(
-                    args->entity->GetUniqueID(),
+                    args->entity->GetID(),
                     static_cast<Component::Handle<Waypoint>>(static_cast<Waypoint *>(args->component ) )
                 );
 
@@ -178,7 +178,7 @@ namespace ursine
 
             if (args->component->Is<Waypoint>())
             {
-                auto search = m_waypoints.find(args->entity->GetUniqueID());
+                auto search = m_waypoints.find(args->entity->GetID());
 
                 if (search != m_waypoints.end())
                     m_waypoints.erase(search);

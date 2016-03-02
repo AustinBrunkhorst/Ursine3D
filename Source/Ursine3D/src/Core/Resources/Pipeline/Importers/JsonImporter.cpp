@@ -12,15 +12,13 @@ namespace ursine
         std::string jsonError;
         std::string jsonText;
 
-        URSINE_TODO( "use exceptions instead of assertions" );
-
         auto fileName = context.resource->GetSourceFileName( );
 
         fs::LoadAllText( fileName.string( ), jsonText );
 
         auto data = std::make_shared<JsonData>( Json::parse( jsonText, jsonError ) );
 
-        UAssert( jsonError.empty( ),
+        UAssertCatchable( jsonError.empty( ),
             "Unable to parse Json.\nerror: %s\nfile: %s",
             jsonError.c_str( ),
             fileName.string( ).c_str( )

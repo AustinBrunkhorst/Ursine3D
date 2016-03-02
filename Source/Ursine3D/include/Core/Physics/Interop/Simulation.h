@@ -95,13 +95,20 @@ namespace ursine
 
 			bool contactCallbackEnabled(const BodyBase *body);
 
-			void dispatchContactEvent(const BodyBase *thisBody, const BodyBase *otherBody,
-								      ecs::Entity *thisEntity, ecs::Entity *otherEntity, PersistentManifold *manifold);
+			void dispatchContactEvent(
+                const BodyBase *thisBody, 
+                const BodyBase *otherBody,
+				const ecs::EntityHandle &thisEntity, 
+                const ecs::EntityHandle &otherEntity, 
+                PersistentManifold *manifold
+            );
 
-			ecs::Entity *getEntityPointer(const BodyBase *body);
+			const ecs::EntityHandle &getEntityHandle(const BodyBase *body);
 
 			void calculateContactRelativeVelocity(
-				const BodyBase *thisBody, const BodyBase *otherBody, Contact *contact
+			    const BodyBase *thisBody, 
+                const BodyBase *otherBody, 
+                Contact *contact
 			);
         };
     }

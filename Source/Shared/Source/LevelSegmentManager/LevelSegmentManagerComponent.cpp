@@ -37,8 +37,8 @@ using namespace ecs;
 LevelSegmentManager::LevelSegmentManager(void)
     : BaseComponent( )
     , m_segment( LevelSegments::Empty )
-    , m_player1( nullptr )
-    , m_player2( nullptr )
+    , m_player1( )
+    , m_player2( )
     , m_enableDebugOutput( false )
 {
 }
@@ -75,12 +75,12 @@ void LevelSegmentManager::SetEnableDebugOutput(bool enable)
     m_enableDebugOutput = enable;
 }
 
-Entity *LevelSegmentManager::GetPlayer1(void)
+const EntityHandle &LevelSegmentManager::GetPlayer1(void)
 {
     return m_player1;
 }
 
-Entity *LevelSegmentManager::GetPlayer2(void)
+const EntityHandle &LevelSegmentManager::GetPlayer2(void)
 {
     return m_player2;
 }

@@ -16,21 +16,18 @@
 #include "InventoryComponent.h"
 #include "InteractableComponent.h"
 
-NATIVE_COMPONENT_DEFINITION( WeaponPickup ) ;
+NATIVE_COMPONENT_DEFINITION( WeaponPickup );
 
 using namespace ursine;
 
-
-WeaponPickup::WeaponPickup(void) :
-    BaseComponent( ),
-    m_pickupTime( 0.5f ),
-    m_ammo( -1 ),
-    m_clipCount( -1 ),
-    m_weaponType( PRIMARY_WEAPON ),
-    m_weaponToPickup( "BaseWeapon.uatype" ),
-    m_texture( "" )
-{
-}
+WeaponPickup::WeaponPickup(void) 
+    : BaseComponent( )
+    , m_pickupTime( 0.5f )
+    , m_ammo( -1 )
+    , m_clipCount( -1 )
+    , m_weaponType( PRIMARY_WEAPON )
+    , m_weaponToPickup( "BaseWeapon.uatype" )
+    , m_texture( "" ) { }
 
 WeaponPickup::~WeaponPickup(void)
 {
@@ -107,7 +104,7 @@ void WeaponPickup::SetAmmoInfo(const int ammo, const int clip)
     m_clipCount = clip;
 }
 
-void WeaponPickup::StartInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
+void WeaponPickup::StartInteraction(const CommandQueue *queue, ursine::ecs::EntityID id)
 {
     // get invetory
     m_inventories[ id ] = queue->GetOwner( )->GetComponent<Inventory>( );
@@ -119,7 +116,7 @@ void WeaponPickup::StartInteraction(const CommandQueue* queue, ursine::ecs::Enti
     m_times[ id ] = ursine::Application::Instance->GetDeltaTime( );
 }
 
-void WeaponPickup::Interact(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
+void WeaponPickup::Interact(const CommandQueue *queue, ecs::EntityID id)
 {
     Inventory* inventory = &*m_inventories[ id ];
 
@@ -152,7 +149,7 @@ void WeaponPickup::Interact(const CommandQueue* queue, ursine::ecs::EntityUnique
     }
 }
 
-void WeaponPickup::StopInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
+void WeaponPickup::StopInteraction(const CommandQueue *queue, ecs::EntityID id)
 {
     m_times.erase( id );
     m_inventories.erase( id );
@@ -164,7 +161,7 @@ void WeaponPickup::InteractionComplete(void)
     GetOwner( )->Delete( );
 }
 
-void WeaponPickup::CheckForAmmo(const ursine::ecs::EntityUniqueID id)
+void WeaponPickup::CheckForAmmo(const ecs::EntityID id)
 {
     Inventory* inventory = &*m_inventories[ id ];
 

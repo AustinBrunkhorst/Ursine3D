@@ -53,12 +53,12 @@ namespace ursine
 
         void Billboard2D::OnInitialize(void) 
         {
-            auto *owner = GetOwner( );
+            auto &owner = GetOwner( );
 
             m_base->OnInitialize( owner );
 
             // set the unique id
-            m_billboard->SetEntityUniqueID( owner->GetUniqueID( ) );
+            m_billboard->SetEntityID( owner->GetID( ) );
         }
 
         void Billboard2D::OnSceneReady(Scene *scene)

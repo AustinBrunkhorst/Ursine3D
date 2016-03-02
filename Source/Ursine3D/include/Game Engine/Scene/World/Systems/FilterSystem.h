@@ -23,6 +23,8 @@
 
 #include "EntityProcessor.h"
 
+#include <unordered_set>
+
 namespace ursine
 {
     namespace ecs
@@ -49,13 +51,13 @@ namespace ursine
 
         protected:
             const Filter m_filter;
-            std::unordered_map<EntityUniqueID, Entity*> m_active;
+            std::unordered_set<EntityHandle> m_active;
 
-            void Add(Entity *entity);
-            void Remove(Entity *entity);
+            void Add(const EntityHandle &entity);
+            void Remove(const EntityHandle &entity);
 
-            virtual void Enable(Entity *entity);
-            virtual void Disable(Entity *entity);
+            virtual void Enable(const EntityHandle &entity);
+            virtual void Disable(const EntityHandle &entity);
 
             
             virtual void Initialize(void);

@@ -36,13 +36,13 @@ namespace ursine
 
 		void Rigidbody::OnInitialize(void)
 		{
-            auto owner = GetOwner( );
+            auto *owner = GetOwner( ).Get( );
 
             m_rigidbody.SetSimulation( 
                 &owner->GetWorld( )->GetEntitySystem<PhysicsSystem>( )->m_simulation 
             );
 
-            m_rigidbody.SetUserID( owner->GetUniqueID( ) );
+            m_rigidbody.SetUserID( owner->GetID( ) );
 			m_rigidbody.SetUserPointer( this );
 
 			GetOwner( )->Listener( this )

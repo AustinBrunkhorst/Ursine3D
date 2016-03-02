@@ -151,7 +151,7 @@ namespace ursine
             m_privates->gfxCore_->RenderToDynamicTexture(srcWidth, srcHeight, input, inputWidth, inputHeight, destTexture, destinationX, destinationX);
         }
 
-        ursine::ecs::EntityUniqueID GfxAPI::GetMousedOverID()
+        ecs::EntityID GfxAPI::GetMousedOverID()
         {
             return m_privates->gfxCore_->GetCurrentUniqueID();
         }

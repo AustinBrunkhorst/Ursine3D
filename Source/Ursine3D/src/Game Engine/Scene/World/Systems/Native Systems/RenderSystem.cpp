@@ -162,8 +162,8 @@ namespace ursine
             }
             else if (component->Is<ParticleSystem>( ))
                 removeRenderable( args->entity, static_cast<ParticleSystem*>( component )->m_base );
-            else if ( component->Is<SpriteText>() )
-                removeRenderable(args->entity, static_cast<SpriteText*>(component)->m_base);
+            else if (component->Is<SpriteText>( ))
+                removeRenderable( args->entity, static_cast<SpriteText*>( component )->m_base );
         }
 
         void RenderSystem::onUpdate(EVENT_HANDLER(World))
@@ -186,7 +186,7 @@ namespace ursine
             {
                 auto camera = m_cameras[ i ];
 
-				if (camera->m_dirty)
+				if (camera->dirty)
 					camera->updateRenderer( );
 
                 if (!camera->GetActive( ) || camera->IsEditorCamera( ))
@@ -243,9 +243,9 @@ namespace ursine
 
                 for (auto &rend : renderableVec)
                 {
-                    if (rend->m_dirty)
+                    if (rend->dirty)
 					{
-						rend->m_dirty = false;
+						rend->dirty = false;
 
                         rend->m_updateRenderer( );
 					}
@@ -257,7 +257,7 @@ namespace ursine
 
         void RenderSystem::renderCamera(Component::Handle<Camera> camera, RenderHookArgs &args, RenderSystemEventType hook)
         {
-            if (camera->m_dirty)
+            if (camera->dirty)
                 camera->updateRenderer( );
 
             args.camera = camera->m_handle;
@@ -267,28 +267,29 @@ namespace ursine
             m_graphics->RenderScene( 0.0f, camera->m_handle );
         }
 
-        void RenderSystem::addRenderable(Entity *entity, RenderableComponentBase *renderable)
+        void RenderSystem::addRenderable(const EntityHandle &entity, RenderableComponentBase *renderable)
         {
-            m_renderableMap[ entity->GetUniqueID( ) ].push_back( renderable );
+            m_renderableMap[ entity->GetID( ) ].push_back( renderable );
         }
 
-        void RenderSystem::removeRenderable(Entity *entity, RenderableComponentBase *renderable)
+        void RenderSystem::removeRenderable(const EntityHandle &entity, RenderableComponentBase *renderable)
         {
-            // See if we have a renderable vector for this entity
-            auto id = entity->GetUniqueID( );
-            auto vecSearch = m_renderableMap.find( id );
+            // see if we have a renderable vector for this entity
+            auto id = entity->GetID( );
 
-            if (vecSearch != m_renderableMap.end( ))
+            auto search = m_renderableMap.find( id );
+
+            if (search != m_renderableMap.end( ))
             {
-                // If so, see if we have this component's base class in the vector
+                // if so, see if we have this component's base class in the vector
                 auto &renderableVec = m_renderableMap[ id ];
                 auto renderableSearch = std::find( renderableVec.begin( ), renderableVec.end( ), renderable );
 
-                // If so remove it
+                // if so remove it
                 if (renderableSearch != renderableVec.end( ))
                     renderableVec.erase( renderableSearch );
 
-                // If vector is empty, remove it from the map
+                // if vector is empty, remove it from the map
                 if (renderableVec.size( ) == 0)
                     m_renderableMap.erase( id );
             }

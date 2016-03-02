@@ -24,23 +24,22 @@ namespace ursine
         class Hierarchy
         {
         public:
-            const std::vector<EntityID> *GetChildren(const Entity *entity) const;
+            void AddEntity(const EntityHandle &entity);
+            void RemoveEntity(const EntityHandle &entity);
+
+            const std::vector<EntityID> *GetChildren(EntityID entity) const;
       
-            EntityID GetParent(const Entity *entity) const;
+            EntityID GetParent(EntityID entity) const;
       
-            EntityID GetRoot(const Entity *entity) const;
+            EntityID GetRoot(EntityID entity) const;
 
             const RootHierarchyNode &GetRootNode(void) const;
-      
-            void AddEntity(Entity *entity);
-      
-            void RemoveEntity(Entity *entity);
 
-            uint GetSiblingIndex(const Entity *entity) const;
+            uint GetSiblingIndex(EntityID entity) const;
 
-            void SetAsFirstSibling(const Entity *entity);
+            void SetAsFirstSibling(EntityID entity);
 
-            void SetSiblingIndex(const Entity *entity, uint index);
+            void SetSiblingIndex(EntityID entity, uint index);
     
         private:
             RootHierarchyNode m_root;

@@ -63,10 +63,10 @@ namespace ursine
 
             //    int childIndex = 0;
 
-            //    for (auto &x : meshVec)
-            //    {
-            //        // Create an entity
-            //        auto *newEntity = world->CreateEntity( x->GetName( ) );
+                //for (auto &x : meshVec)
+                //{
+                //    // Create an entity
+                //    auto newEntity = world->CreateEntity( x->GetName( ) );
 
             //        // Add model3d
             //        auto *modelComp = newEntity->AddComponent<Model3D>( );

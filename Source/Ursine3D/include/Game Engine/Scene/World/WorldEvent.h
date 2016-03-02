@@ -71,19 +71,19 @@ namespace ursine
 
         struct EntityEventArgs : WorldEventArgs
         {
-            Entity *entity;
+            EntityHandle entity;
 
-            EntityEventArgs(WorldEventType type, Entity *entity)
+            EntityEventArgs(WorldEventType type, const EntityHandle &entity)
                 : WorldEventArgs( type )
                 , entity( entity ) { }
         };
 
         struct ComponentEventArgs : WorldEventArgs
         {
-            Entity *entity;
+            EntityHandle entity;
             Component *component;
 
-            ComponentEventArgs(WorldEventType type, Entity *entity, Component *component)
+            ComponentEventArgs(WorldEventType type, const EntityHandle &entity, Component *component)
                 : WorldEventArgs( type )
                 , entity( entity )
                 , component( component ) { }
@@ -93,7 +93,7 @@ namespace ursine
         {
             ComponentTypeMask oldTypeMask;
 
-            ComponentRemovedEventArgs(WorldEventType type, Entity *entity, Component *component, ComponentTypeMask oldTypeMask)
+            ComponentRemovedEventArgs(WorldEventType type, const EntityHandle &entity, Component *component, ComponentTypeMask oldTypeMask)
                 : ComponentEventArgs( type, entity, component )
                 , oldTypeMask( oldTypeMask ) { }
         };
@@ -113,7 +113,7 @@ namespace ursine
         {
             std::string newName;
 
-            EditorEntityNameChangedArgs(WorldEventType type, Entity *entity, const std::string &newName)
+            EditorEntityNameChangedArgs(WorldEventType type, const EntityHandle &entity, const std::string &newName)
                 : EntityEventArgs( type, entity )
                 , newName( newName ) { }
         };
@@ -126,7 +126,7 @@ namespace ursine
 
             EditorComponentChangedArgs(
                 WorldEventType type,
-                Entity *entity,
+                const EntityHandle &entity,
                 Component *component,
                 const std::string &field,
                 const meta::Variant &value
@@ -142,7 +142,7 @@ namespace ursine
             const ArrayModificationArgs &modification;
             std::string field;
 
-            EditorComponentArrayModfiedArgs(const ArrayModificationArgs &args, Entity *entity, Component *component, const std::string &field)
+            EditorComponentArrayModfiedArgs(const ArrayModificationArgs &args, const EntityHandle &entity, Component *component, const std::string &field)
                 : ComponentEventArgs( WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, entity, component )
                 , modification( args )
                 , field( field ) { }

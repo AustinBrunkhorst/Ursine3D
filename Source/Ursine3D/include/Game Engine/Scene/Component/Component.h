@@ -58,49 +58,49 @@ namespace ursine
             inline ComponentTypeMask GetTypeMask(void) const;
 
             // Gets the owner of this component. Use it wisely
-            inline Entity *GetOwner(void) const;
+            inline const EntityHandle &GetOwner(void) const;
 
             // Determines if this component is of the specified type
             template<class ComponentType>
             inline bool Is(void) const;
 
-               // Utility class for storing a reference to an entity's component.
-               // This is needed due to component pointers being invalidated, but entity
-               // pointers being reliable
-               template<class ComponentType>
-               class Handle
-               {
-               public:
-                    Handle(void);
-                    Handle(const Handle<ComponentType> &);
-                    Handle(const ComponentType *);
-                    ~Handle(void);
+            // Utility class for storing a reference to an entity's component.
+            // This is needed due to component pointers being invalidated, but entity
+            // pointers being reliable
+            template<class ComponentType>
+            class Handle
+            {
+            public:
+                Handle(void);
+                Handle(const Handle<ComponentType> &);
+                Handle(const ComponentType *);
+                ~Handle(void);
 
-                    ComponentType *Get(void);
-                    const ComponentType *Get(void) const;
-                    
-                    // Assignment and Equivalency
-                    const ComponentType *operator=(const ComponentType *rhs);
-                    const Handle<ComponentType> &operator=(const Handle<ComponentType> &rhs);
-                    bool operator==(const ComponentType *rhs) const;
-                    bool operator==(const Handle<ComponentType> &rhs) const;
-                    bool operator!=(const ComponentType *rhs) const;
-                    bool operator!=(const Handle<ComponentType> &rhs) const;
+                ComponentType *Get(void);
+                const ComponentType *Get(void) const;
 
-                    // Checking for null
-                    explicit operator bool(void) const;
+                // Assignment and Equivalency
+                const ComponentType *operator=(const ComponentType *rhs);
+                const Handle<ComponentType> &operator=(const Handle<ComponentType> &rhs);
+                bool operator==(const ComponentType *rhs) const;
+                bool operator==(const Handle<ComponentType> &rhs) const;
+                bool operator!=(const ComponentType *rhs) const;
+                bool operator!=(const Handle<ComponentType> &rhs) const;
 
-                    // Dereference Operators
-                    ComponentType &operator*(void);
-                    const ComponentType &operator*(void) const;
-                    ComponentType *operator->(void);
-                    const ComponentType *operator->(void) const;
+                // Checking for null
+                explicit operator bool(void) const;
 
-                Entity *GetEntity(void) const;
+                // Dereference Operators
+                ComponentType &operator*(void);
+                const ComponentType &operator*(void) const;
+                ComponentType *operator->(void);
+                const ComponentType *operator->(void) const;
 
-               private:
-                    Entity *m_entity;
-               };
+                const EntityHandle &GetEntity(void) const;
+
+            private:
+                EntityHandle m_entity;
+            };
 
         protected:
             // determines if resources are available
@@ -119,11 +119,10 @@ namespace ursine
             ComponentUniqueID m_uniqueID;
 
             // entity that this component is attached to
-            Entity *m_owner;
+            EntityHandle m_owner;
 
             void onInitialize(void);
             void onSceneReady(Scene *scene);
-            
         } Meta(WhiteListMethods);
     }
 }

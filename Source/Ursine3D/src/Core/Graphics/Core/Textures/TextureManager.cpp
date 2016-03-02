@@ -16,6 +16,7 @@
 #include "DDSTextureLoader.h"
 #include <d3d11.h>
 #include "DXErrorHandling.h"
+#include "InternalResourceByteCode.h"
 
 namespace ursine
 {
@@ -34,6 +35,14 @@ namespace ursine
             return wCharOutput;
         }
 
+        TextureManager::TextureManager()
+            : m_device( nullptr )
+            , m_deviceContext( nullptr )
+            , m_textureCount( 1 )
+            , m_textureCache( { Texture() } )
+        {
+        }
+
         void TextureManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath)
         {
             m_device = device;
@@ -44,44 +53,15 @@ namespace ursine
             /////////////////////////////////////////////////////////////////
             // CREATE DEFAULT TEXTURE
             {
-                HRESULT result;
-                D3D11_TEXTURE2D_DESC desc;
-                D3D11_SUBRESOURCE_DATA bufferData;
-                uint32_t colorBuffer[16][16];
+                InitalizeTexture(
+                    const_cast<uint8_t*>( graphics_resources::kMissingTexture ), 
+                    5608 * sizeof( uint8_t ), 
+                    32, 
+                    32, 
+                    m_textureCache[ 0 ]
+                );
 
-                // fill with pink and black
-                for(unsigned x = 0; x < 16; ++x)
-                {
-                    for(unsigned y = 0; y < 16; ++y)
-                    {
-                        if((x + y) % 2 == 0)
-                            colorBuffer[ x ][ y ] = 0xFF69B4FF;
-                        else
-                            colorBuffer[ x ][ y ] = 0xFF;
-                    }
-                }
-
-                //width/height
-                desc.Width = 16;
-                desc.Height = 16;
-                desc.MipLevels = desc.ArraySize = 1;
-                desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-                desc.SampleDesc.Count = 1;
-                desc.SampleDesc.Quality = 0;
-                desc.Usage = D3D11_USAGE_IMMUTABLE;
-                desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-                desc.CPUAccessFlags = 0;
-                desc.MiscFlags = 0;
-
-                bufferData.pSysMem = colorBuffer;
-                bufferData.SysMemPitch = 16 * sizeof(uint32_t);
-                bufferData.SysMemSlicePitch = 0;
-
-
-                m_textureCache.push_back( Texture( ) );
-                
-                result = m_device->CreateTexture2D( &desc, &bufferData, &m_textureCache[0].m_texture2d );
-                UAssert(result == S_OK, "Failed to create texture2D description! (Error '%s')", DXCore::GetDXErrorMessage(result));
+                LoadTextureToGPU( m_textureCache[ 0 ] );
             }
 
             /////////////////////////////////////////////////////////////////
@@ -504,10 +484,6 @@ namespace ursine
 
         GfxHND TextureManager::CreateTexture(uint8_t * binaryData, size_t binarySize, unsigned width, unsigned height)
         {
-            static auto calls = 0;
-
-            std::cout << "calls: " << ++calls << std::endl;
-
             // if this texture already exists and we are updating it, release the prior resource, keep old ID
             size_t internalID;
 
@@ -609,7 +585,7 @@ namespace ursine
 
         void TextureManager::MapResourceTextureByID(const unsigned ID, const unsigned int bufferIndex)
         {
-            if(ID >= m_textureCache.size( ) || m_textureCache[ ID ].m_shaderResource == nullptr)
+            if(ID >= m_textureCache.size( ) - 1 || m_textureCache[ ID ].m_shaderResource == nullptr)
             {
                 m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureCache[ 0 ].m_shaderResource);
                 return;

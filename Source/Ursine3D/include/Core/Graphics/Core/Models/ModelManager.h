@@ -28,6 +28,8 @@ namespace ursine
         class ModelManager
         {
         public:
+            ModelManager(void);
+
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
             void Uninitialize();
 

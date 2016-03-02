@@ -33,7 +33,7 @@ void EntityAnimatorSystem::Initialize(void)
         .On( WORLD_EDITOR_UPDATE, &FilterSystem::onUpdate );
 }
 
-void EntityAnimatorSystem::Process(Entity *entity)
+void EntityAnimatorSystem::Process(const EntityHandle &entity)
 {
     auto animator = entity->GetComponent<EntityAnimator>( );
 
