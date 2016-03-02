@@ -92,11 +92,16 @@ void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
 
         auto *texture = iconRef.Load<resources::TextureData>( m_toolResources );
 
-        UAssert( texture != nullptr,
+        URSINE_TODO( "Put this back" );
+        /*UAssert( texture != nullptr,
             "Unable to load editor camera icon."
-        );
+        );*/
 
-        editorIcon->SetIcon( texture->GetTextureHandle( ) );
+        if(texture != nullptr)
+            editorIcon->SetIcon( texture->GetTextureHandle( ) );
+        else
+            editorIcon->SetIcon( 0 );
+
     }
     else if (comp->Is<ecs::Light>( ))
     {
