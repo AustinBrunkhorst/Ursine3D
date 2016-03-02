@@ -14,7 +14,10 @@ namespace ursine
 
         auto fileName = context.resource->GetSourceFileName( );
 
-        fs::LoadAllText( fileName.string( ), jsonText );
+        UAssertCatchable( fs::LoadAllText( fileName.string( ), jsonText ),
+            "Unable to open file.\nfile: %s",
+            fileName.string( ).c_str( )
+        );
 
         auto data = std::make_shared<JsonData>( Json::parse( jsonText, jsonError ) );
 

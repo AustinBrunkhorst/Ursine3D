@@ -325,16 +325,6 @@ namespace ursine
             m_speedScalar = scalar;
         }
 
-        const std::string &Animator::GetAnimation(void) const
-        {
-            return m_animationName;
-        }
-
-        void Animator::SetAnimation(const std::string& name)
-        {
-            m_animationName = name;
-        }
-
         const std::string &Animator::GetRig() const
         {
             return m_Rig;
@@ -367,6 +357,48 @@ namespace ursine
             }
         }
 
+        const resources::ResourceReference &Animator::GetClip(void) const
+        {
+            return m_clipResource;
+        }
+
+        void Animator::SetClip(const resources::ResourceReference &clip)
+        {
+            m_clipResource = clip;
+
+            if (!resourcesAreAvailable())
+                return;
+
+            invalidateClip();
+
+            NOTIFY_COMPONENT_CHANGED("clip", m_clipResource);
+        }
+
+        void Animator::invalidateClip(void)
+        {
+            auto data = loadResource<resources::AnimationClipData>(m_clipResource);
+
+            std::string str;
+            if (data == nullptr)
+            {
+                NotificationConfig config;
+
+                config.type = NOTIFY_WARNING;
+                config.header = "Warning";
+                config.message = "There is no matching animation clip resource.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds(5.0f);
+
+                m_animationName = "";
+            }
+            else
+            {
+                auto handle = data->GetAnimeHandle();
+
+                m_animationName = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle)->name;
+            }
+        }
+
         const std::string& Animator::GetCurrentState(void) const
         {
             return m_curStName;
@@ -391,136 +423,6 @@ namespace ursine
         void Animator::SetStateName(const std::string &state)
         {
             m_stateName = state;
-        }
-
-#if defined(URSINE_WITH_EDITOR)
-
-        void Animator::ImportAnimation(void)
-        {
-            if (m_animationName.size() == 0)
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_INFO;
-                config.header = "Error";
-                config.message = "Please type in the name of the animation.";
-                config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds(5.0f);
-
-                EditorPostNotification(config);
-
-                return;
-            }
-
-            auto owner = GetOwner();
-            auto *children = owner->GetChildren();
-
-            if (children->size() > 0)
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_WARNING;
-                config.header = "Warning";
-                config.message = "This action will delete all of the Animation List's children. Continue?";
-                config.dismissible = false;
-                config.duration = 0;
-
-                NotificationButton yes, no;
-
-                yes.text = "Yes";
-                yes.onClick = [=](Notification &notification) {
-                    notification.Close();
-
-                    // Main thread operation
-                    Timer::Create(0).Completed([=] {
-                        clearChildren();
-                        importAnimation();
-                    });
-                };
-
-                no.text = "No";
-                no.onClick = [=](Notification &notification) {
-                    notification.Close();
-                };
-
-                config.buttons = { yes, no };
-
-                EditorPostNotification(config);
-            }
-            else
-            {
-                // Main thread operation
-                Timer::Create(0).Completed([=] {
-                    importAnimation();
-                });
-            }
-        }
-
-#endif
-
-        void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
-        {
-            for (auto &child : children)
-            {
-                recursClearChildren(child->GetChildren());
-
-                child->GetOwner()->Delete();
-            }
-        }
-
-        void Animator::clearChildren(void)
-        {
-            recursClearChildren(GetOwner()->GetTransform()->GetChildren());
-        }
-
-        // import animation to the current state
-        // if I get animation builder here, how can I put animation to the state?
-        void Animator::importAnimation(void)
-        {
-            std::string janiFileName("Assets/Animations/");
-            janiFileName += m_animationName + ".jani";
-            HANDLE hFile_ani = CreateFile(janiFileName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-            if (!hFile_ani)
-                return;
-
-            AniInfo ufmt_ani;
-            // Serialize in model and animation
-            UAssert(true == ufmt_ani.SerializeIn(hFile_ani), "Fail to serialize jani file.", janiFileName.c_str());
-
-            unsigned animationIndex = 0;
-            // Check if there is same animation already
-            const Animation* checker = AnimationBuilder::GetAnimationByName(m_animationName);
-            if (nullptr == checker)
-                animationIndex = AnimationBuilder::LoadAnimation(ufmt_ani, m_animationName);
-            CloseHandle(hFile_ani);
-
-            // Check if the animation is in animlist, push back if not
-            bool bExist = false;
-            for (auto &x : m_animlist)
-            {
-                if (m_animationName == x->GetName())
-                {
-                    bExist = true;
-                    break;
-                }
-            }
-
-            if (!bExist)
-            {
-                // add to animlist
-                m_animlist.push_back(AnimationBuilder::GetAnimationByName(m_animationName));
-
-                auto *gfx = GetCoreSystem(graphics::GfxAPI);
-                auto *world = GetOwner()->GetWorld();
-                auto animList = world->GetEntityFromName("Animation List");
-                auto alTrans = animList->GetTransform();
-                auto newEntity = world->GetEntityFromName(m_animationName.c_str());
-                if (!newEntity)
-                {
-                    newEntity = world->CreateEntity(m_animationName.c_str());
-                    alTrans->AddChild(newEntity->GetTransform());
-                }
-            }
         }
 
         void Animator::UpdateState(AnimationState* currSt, const Animation* currAni,
@@ -727,7 +629,6 @@ namespace ursine
             }
         }
 
-
         StateBlender *Animator::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
         {
             NotificationConfig config;
@@ -735,8 +636,8 @@ namespace ursine
             config.type = NOTIFY_WARNING;
             config.header = "Warning";
             config.message = "There is no matching State Blender in the list";
-            config.dismissible = false;
-            config.duration = 0;
+            config.dismissible = true;
+            config.duration = TimeSpan::FromSeconds(5.0f);
 
             if (currst == "" || futst == "")
             {
@@ -753,6 +654,146 @@ namespace ursine
             return nullptr;
         }
 
+#if defined(URSINE_WITH_EDITOR)
+
+        void Animator::ImportAnimation(void)
+        {
+            if (m_animationName.size() == 0)
+            {
+                NotificationConfig config;
+
+                config.type = NOTIFY_INFO;
+                config.header = "Error";
+                config.message = "Please type in the name of the animation.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds(5.0f);
+
+                EditorPostNotification(config);
+
+                return;
+            }
+
+            auto owner = GetOwner();
+            auto *children = owner->GetChildren();
+
+            if (children->size() > 0)
+            {
+                NotificationConfig config;
+
+                config.type = NOTIFY_WARNING;
+                config.header = "Warning";
+                config.message = "This action will delete all of the Animation List's children. Continue?";
+                config.dismissible = false;
+                config.duration = 0;
+
+                NotificationButton yes, no;
+
+                yes.text = "Yes";
+                yes.onClick = [=](Notification &notification) {
+                    notification.Close();
+
+                    // Main thread operation
+                    Timer::Create(0).Completed([=] {
+                        clearChildren();
+                        importAnimation();
+                    });
+                };
+
+                no.text = "No";
+                no.onClick = [=](Notification &notification) {
+                    notification.Close();
+                };
+
+                config.buttons = { yes, no };
+
+                EditorPostNotification(config);
+            }
+            else
+            {
+                // Main thread operation
+                Timer::Create(0).Completed([=] {
+                    importAnimation();
+                });
+            }
+        }
+
+#endif
+
+        void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
+        {
+            for (auto &child : children)
+            {
+                recursClearChildren(child->GetChildren());
+
+                child->GetOwner()->Delete();
+            }
+        }
+
+        void Animator::clearChildren(void)
+        {
+            recursClearChildren(GetOwner()->GetTransform()->GetChildren());
+        }
+
+        // import animation to the current state
+        // if I get animation builder here, how can I put animation to the state?
+        void Animator::importAnimation(void)
+        {
+            unsigned animationIndex = 0;
+            // Check if there is same animation already
+            const Animation* checker = AnimationBuilder::GetAnimationByName(m_animationName);
+            if (nullptr == checker)
+            {
+                auto data = loadResource<resources::AnimationClipData>(m_clipResource);
+                if (data == nullptr)
+                {
+                    NotificationConfig config;
+
+                    config.type = NOTIFY_WARNING;
+                    config.header = "Warning";
+                    config.message = "There is no matching animation clip resource.";
+                    config.dismissible = true;
+                    config.duration = TimeSpan::FromSeconds(5.0f);
+
+                    EditorPostNotification(config);
+                }
+                else
+                {
+                    auto handle = data->GetAnimeHandle();
+
+                    graphics::ufmt_loader::AnimInfo *animInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle);
+                    if (animInfo)
+                        animationIndex = AnimationBuilder::LoadAnimation(*animInfo, m_animationName);
+                }
+            }
+
+            // Check if the animation is in animlist, push back if not
+            bool bExist = false;
+            for (auto &x : m_animlist)
+            {
+                if (m_animationName == x->GetName())
+                {
+                    bExist = true;
+                    break;
+                }
+            }
+
+            if (!bExist)
+            {
+                // add to animlist
+                m_animlist.push_back(AnimationBuilder::GetAnimationByName(m_animationName));
+            
+                auto *gfx = GetCoreSystem(graphics::GfxAPI);
+                auto *world = GetOwner()->GetWorld();
+                auto animList = world->GetEntityFromName("Animation List");
+                auto *alTrans = animList->GetTransform();
+                auto newEntity = world->GetEntityFromName(m_animationName.c_str());
+                if (!newEntity)
+                {
+                    newEntity = world->CreateEntity(m_animationName.c_str());
+                    alTrans->AddChild(newEntity->GetTransform());
+                }
+            }
+        }
         // Question
         // I'm trying to add/remove entity by StateArray.
         // Adding is not hard(Except naming), but how can I remove entity from the blending tree?

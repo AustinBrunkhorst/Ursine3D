@@ -71,26 +71,8 @@ namespace ursine
                 */
                 void ReleaseData();
 
-                /** @brief model information serialize in function
-                *
-                *  this will read model information
-                *
-                *  @param handle of the file
-                *  @return if succeed return true, else return false
-                */
-                virtual bool SerializeIn(HANDLE hFile);
-                
-                /** @brief model information serialize out function
-                *
-                *  this will write model information
-                *
-                *  @param handle of the file
-                *  @return if succeed return true, else return false
-                */
-                virtual bool SerializeOut(HANDLE hFile);
-
-                virtual void Read(resources::ResourceReader &input);
-                virtual void Write(resources::pipeline::ResourceWriter &output);
+                void Read(resources::ResourceReader &input) override;
+                void Write(resources::pipeline::ResourceWriter &output) override;
             };
         };
     };

@@ -9,10 +9,6 @@ namespace ursine
 {
     namespace resources
     {
-        AnimationClipData::AnimationClipData(void)
-        {
-        }
-
         AnimationClipData::AnimationClipData(graphics::ufmt_loader::AnimInfo *animeInfo) 
         {
             // @@@TODO: give model info to graphics system, assign m_modelHandle

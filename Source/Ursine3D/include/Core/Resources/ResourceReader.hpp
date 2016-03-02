@@ -3,9 +3,12 @@ namespace ursine
     namespace resources
     {
         template<typename T>
-        ResourceReader &ResourceReader::operator>>(T &input) 
+        ResourceReader &ResourceReader::Read(T &input) 
         {
-            m_stream >> input;
+            m_stream->read( 
+                reinterpret_cast<char*>( std::addressof( input ) ), 
+                sizeof( T ) 
+            );
 
             return *this;
         }

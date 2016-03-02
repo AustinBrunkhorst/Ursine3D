@@ -21,6 +21,7 @@
 #include "AnimationBuilder.h"
 #include "Array.h"
 #include "Model3DComponent.h"
+#include "AnimationClipData.h"
 
 namespace ursine
 {
@@ -118,16 +119,18 @@ namespace ursine
                 "Import Animation"
                 );
 
+            // Get animation as a resource not by name
+            EditorResourceField(
+                ursine::resources::AnimationClipData,
+                clip,
+                GetClip,
+                SetClip
+                );
+
             EditorField(
                 std::string currentState,
                 GetCurrentState,
                 SetCurrentState
-                );
-
-            EditorField(
-                std::string animation,
-                GetAnimation,
-                SetAnimation
                 );
 
             EditorField(
@@ -198,14 +201,15 @@ namespace ursine
             float GetAnimationTimePosition(void) const;
             void SetAnimationTimePosition(const float position);
 
+            const resources::ResourceReference &GetClip(void) const;
+            void SetClip(const resources::ResourceReference &clip);
+            void invalidateClip(void);
+
             const std::string &GetCurrentState(void) const;
             void SetCurrentState(const std::string &state);
 
             const std::string &GetStateName(void) const;
             void SetStateName(const std::string &state);
-
-            const std::string &GetAnimation(void) const;
-            void SetAnimation(const std::string &name);
 
             // Array of animation states
             ursine::Array<ursine::AnimationState> stArray;
@@ -235,6 +239,8 @@ namespace ursine
             std::string m_animationName;
             std::string m_stateName;
             std::vector<Animation*> m_animlist;
+
+            resources::ResourceReference m_clipResource;
 
             static void recursClearChildren(const std::vector< Handle<Transform> > &children);
             void clearChildren(void);

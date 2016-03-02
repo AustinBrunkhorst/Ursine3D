@@ -39,7 +39,7 @@ namespace ursine
                 KeyIndices keyIndices;	// how many keys does each bone have?
                 KFrms keyframes;
 
-                AnimData() : clipname(""), clipCount(0), boneCount(0) {}
+                AnimData() : clipname(""), clipCount(0), boneCount(0), keyIndices(0), keyframes(0) {}
                 void ReleaseData();
             };
 
@@ -75,26 +75,8 @@ namespace ursine
                 */
                 void ReleaseData();
 
-                /** @brief animation information serialize in function
-                *
-                *  this will read animation information
-                *
-                *  @param handle of the file
-                *  @return if succeed return true, else return false
-                */
-                virtual bool SerializeIn(HANDLE hFile);
-                
-                /** @brief animation information serialize out function
-                *
-                *  this will write animation information
-                *
-                *  @param handle of the file
-                *  @return if succeed return true, else return false
-                */
-                virtual bool SerializeOut(HANDLE hFile);
-
-                virtual void Read(resources::ResourceReader &input);
-                virtual void Write(resources::pipeline::ResourceWriter &output);
+                void Read(resources::ResourceReader &input) override;
+                void Write(resources::pipeline::ResourceWriter &output) override;
             };
         };
     };

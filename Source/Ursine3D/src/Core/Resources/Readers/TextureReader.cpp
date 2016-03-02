@@ -18,7 +18,7 @@ namespace ursine
             size_t bufferSize;
             uint8 *buffer;
 
-            input >> bufferSize;
+            input.Read( bufferSize );
 
             buffer = new uint8[ bufferSize ];
 
