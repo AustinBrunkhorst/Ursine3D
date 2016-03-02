@@ -784,9 +784,9 @@ namespace ursine
             
                 auto *gfx = GetCoreSystem(graphics::GfxAPI);
                 auto *world = GetOwner()->GetWorld();
-                auto *animList = world->GetEntityFromName("Animation List");
+                auto animList = world->GetEntityFromName("Animation List");
                 auto *alTrans = animList->GetTransform();
-                auto *newEntity = world->GetEntityFromName(m_animationName.c_str());
+                auto newEntity = world->GetEntityFromName(m_animationName.c_str());
                 if (!newEntity)
                 {
                     newEntity = world->CreateEntity(m_animationName.c_str());
