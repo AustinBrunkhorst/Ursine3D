@@ -16,6 +16,7 @@
 #include "EntitySerializer.h"
 
 #include "NameManager.h"
+#include "EntityEvent.h"
 
 namespace ursine
 {
@@ -197,6 +198,8 @@ namespace ursine
                     entity->m_transform->AddChildAlreadyInLocal( child->m_transform );
                 }
             }
+
+            entity->Dispatch( ENTITY_HIERARCHY_SERIALIZED, EventArgs::Empty );
         }
 
         Component *EntitySerializer::createComponent(const std::string &typeName) const

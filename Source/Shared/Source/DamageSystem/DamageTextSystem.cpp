@@ -97,25 +97,24 @@ void DamageTextSystem::updateDamageText(ursine::ecs::Entity* damageText, DamageT
     spriteText->SetColor(color);
 }
 
-
 void DamageTextSystem::createDamageText(const game::DamageEventArgs* args)
 {
-    ursine::ecs::Entity* damageText;
+    Entity* damageText;
 
     // load valid damage text archetype
-    if ( args->crit )
+    if (args->crit)
         damageText = m_world->CreateEntityFromArchetype( m_critText );
     else
         damageText = m_world->CreateEntityFromArchetype( m_normText );
 
     // set postion
     auto transform = damageText->GetTransform( );
-    transform->SetWorldPosition(args->hitPosition);
+    transform->SetWorldPosition( args->hitPosition );
 
     // set sprite text to damage done 
     SpriteText* textComp = damageText->GetComponent< SpriteText >( );
 
-    textComp->SetText(std::to_string(static_cast<int>(args->damage)));
+    textComp->SetText( std::to_string( static_cast<int>( args->damage ) ) );
     textComp->SetOverdraw( true );
 
     // generate the damage text velocity and start alpha
@@ -124,9 +123,9 @@ void DamageTextSystem::createDamageText(const game::DamageEventArgs* args)
     damageTextComp->SetStartAlpha( textComp->GetColor( ).a );
 
     // set text comp render mask
-    ursine::ecs::Model3D* model = args->entityHit->GetComponent<ursine::ecs::Model3D>( );
+    Model3D* model = args->entityHit->GetComponent<Model3D>( );
 
-    if ( model )
+    if (model)
     {
         model->GetRenderMask( );
         /////////////////////////////////////////////////////////////////////////////
@@ -138,7 +137,6 @@ void DamageTextSystem::createDamageText(const game::DamageEventArgs* args)
     m_spriteTexts[ damageText ] = textComp;
     m_damageTexts[ damageText ] = damageTextComp;
     m_transforms[ damageText ] = transform;
-
 }
 
 void DamageTextSystem::deleteDamageText(ursine::ecs::Entity* textObject)

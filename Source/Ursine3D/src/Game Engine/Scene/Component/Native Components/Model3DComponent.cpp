@@ -118,42 +118,42 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "color", color );
         }
 
-	    const Color &Model3D::GetColor(void)
+        const Color &Model3D::GetColor(void)
         {
             return m_model->GetColor( );
         }
 
-		float Model3D::GetEmissive(void) const
-		{
-			return m_model->GetEmissive( );
-		}
+        float Model3D::GetEmissive(void) const
+        {
+            return m_model->GetEmissive( );
+        }
 
-		void Model3D::SetEmissive(float emissive)
-		{
-			m_model->SetEmissive( emissive );
-		}
+        void Model3D::SetEmissive(float emissive)
+        {
+            m_model->SetEmissive( emissive );
+        }
 
-		float Model3D::GetSpecularPower(void) const
-		{
-			return m_model->GetSpecularPower( );
-		}
+        float Model3D::GetSpecularPower(void) const
+        {
+            return m_model->GetSpecularPower( );
+        }
 
-		void Model3D::SetSpecularPower(float power)
-		{
-			m_model->SetSpecularPower( power );
-		}
+        void Model3D::SetSpecularPower(float power)
+        {
+            m_model->SetSpecularPower( power );
+        }
 
-		float Model3D::GetSpecularIntensity(void) const
-		{
-			return m_model->GetSpecularIntensity( );
-		}
+        float Model3D::GetSpecularIntensity(void) const
+        {
+            return m_model->GetSpecularIntensity( );
+        }
 
-		void Model3D::SetSpecularIntensity(float intensity)
-		{
-			m_model->SetSpecularIntensity( intensity );
-		}
+        void Model3D::SetSpecularIntensity(float intensity)
+        {
+            m_model->SetSpecularIntensity( intensity );
+        }
 
-		void Model3D::SetOverdraw(bool flag)
+        void Model3D::SetOverdraw(bool flag)
         {
             m_model->SetOverdraw( flag );
         }
@@ -171,6 +171,16 @@ namespace ursine
         bool Model3D::GetDebug(void) const
         {
             return m_model->GetDebug( );
+        }
+
+        void Model3D::SetActive(bool flag)
+        {
+            m_model->SetActive( flag );
+        }
+
+        bool Model3D::GetActive(void) const
+        {
+            return m_model->GetActive( );
         }
 
         RenderMask Model3D::GetRenderMask(void) const

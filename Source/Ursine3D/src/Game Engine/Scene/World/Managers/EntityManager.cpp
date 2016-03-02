@@ -105,6 +105,8 @@ namespace ursine
 
             dispatchCreated( entity );
 
+            entity->Dispatch( ENTITY_HIERARCHY_SERIALIZED, EventArgs::Empty );
+
             return entity;
         }
          

@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** VineWhipState.h
+** VineUprootState.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -16,11 +16,12 @@
 #include "VineAIState.h"
 
 class EntityAnimator;
+class VineAI;
 
-class VineWhipState : public VineAIState
+class VineUprootState : public VineAIState
 {
 public:
-    VineWhipState(void);
+    VineUprootState(void);
 
     bool CanExit(void) override { return m_finished; }
 
@@ -32,21 +33,23 @@ private:
     bool m_finished;
     bool m_animating;
 
-    enum class WhipState
+    enum class UprootState
     {
-        In,
-        Rotate,
-        Out
+        Burrowing,
+        Digging,
+        UprootDelay,
+        Uprooting
     };
 
-    WhipState m_state;
+    UprootState m_state;
 
-    ursine::SQuat m_middleOrientation;
-    ursine::SQuat m_beginOrientation;
-    ursine::SQuat m_endOrientation;
-    float m_swingTimer;
+    float m_delayTimer;
 
     void playAnimation(EntityAnimator *animator, const std::string &clip);
+
+    float findYPosition(VineAI *ai, const ursine::SVec3 &aiPosition);
+
+    bool closeToTarget(VineAI *ai);
 
     void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 };
