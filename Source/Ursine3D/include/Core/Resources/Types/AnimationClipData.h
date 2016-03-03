@@ -14,7 +14,7 @@ namespace ursine
             RESOURCE_DATA;
 
         public:
-            AnimationClipData( graphics::ufmt_loader::AnimInfo *animeInfo );
+            AnimationClipData( const graphics::ufmt_loader::AnimInfo &animeInfo );
             ~AnimationClipData( void );
 
             graphics::GfxHND GetAnimeHandle( void ) const;

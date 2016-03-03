@@ -69,14 +69,6 @@ namespace ursine
                 */
                 virtual ~MaterialInfo();
 
-                /** @brief material information release function
-                *
-                *  this will release memory of the material information
-                *
-                *  @return nothing
-                */
-                void ReleaseData();
-
                 /** @brief material information serialize in function
                 *
                 *  this will read material information

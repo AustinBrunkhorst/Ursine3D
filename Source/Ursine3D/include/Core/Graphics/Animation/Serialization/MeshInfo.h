@@ -95,7 +95,6 @@ namespace ursine
 
                 MeshInfo();
                 virtual ~MeshInfo();
-                void ReleaseData();
 
                 virtual bool SerializeIn(HANDLE hFile);
                 virtual bool SerializeOut(HANDLE hFile);

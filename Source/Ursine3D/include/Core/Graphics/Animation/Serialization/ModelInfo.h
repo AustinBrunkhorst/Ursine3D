@@ -62,14 +62,6 @@ namespace ursine
                 *  @return nothing
                 */
                 virtual ~ModelInfo();
-
-                /** @brief model information release function
-                *
-                *  this will release memory of the model information
-                *
-                *  @return nothing
-                */
-                void ReleaseData();
                 
                 void Read(resources::ResourceReader &input) override;
                 void Write(resources::pipeline::ResourceWriter &output) override;

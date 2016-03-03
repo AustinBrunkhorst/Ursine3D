@@ -58,14 +58,6 @@ namespace ursine
                 */
                 virtual ~BoneInfo();
 
-                /** @brief bone information release function
-                *
-                *  this will release memory of the bone information
-                *
-                *  @return nothing
-                */
-                void ReleaseData();
-
                 /** @brief bone information serialize in function
                 *
                 *  this will read bone information

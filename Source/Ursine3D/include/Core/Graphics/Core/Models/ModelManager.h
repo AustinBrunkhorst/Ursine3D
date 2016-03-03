@@ -34,7 +34,7 @@ namespace ursine
             void Uninitialize();
 
             // create/destry model
-            GfxHND CreateModel(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo);
+            GfxHND CreateModel(const ufmt_loader::ModelInfo& modelInfo);
             void DestroyModel(GfxHND &handle);
 
             // load/unload model from gpu
@@ -64,16 +64,16 @@ namespace ursine
             void Invalidate();
 
             // animation stuff
-            GfxHND CreateAnimation(ufmt_loader::AnimInfo *animeInfo);
+            GfxHND CreateAnimation(const ufmt_loader::AnimInfo& animeInfo);
             void DestroyAnimation(GfxHND &handle);
 
             // getting info
-            std::shared_ptr<graphics::ufmt_loader::ModelInfo> GetModelInfo(GfxHND handle);
-            ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
+            ufmt_loader::ModelInfo GetModelInfo(GfxHND handle);
+            ufmt_loader::AnimInfo GeAnimeInfo(GfxHND handle);
             ModelResource *GetModel(const unsigned ID);
 
         private:
-            void InitializeModel(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo, ModelResource& modelresource);
+            void InitializeModel(const ufmt_loader::ModelInfo &modelInfo, ModelResource& modelresource);
             void loadModelToGPU(ModelResource *model);
             void unloadModelFromGPU(ModelResource *model);
 
@@ -84,12 +84,12 @@ namespace ursine
             unsigned m_modelCount;
             unsigned m_currentState;
 
-            std::vector< ModelResource * > m_modelCache;
-            std::vector< std::shared_ptr<graphics::ufmt_loader::ModelInfo> > m_modelInfoCache;
+            std::vector< ModelResource* > m_modelCache;
+            std::vector< ufmt_loader::ModelInfo* > m_modelInfoCache;
 
             // anime
             unsigned m_animeCount;
-            std::vector< ufmt_loader::AnimInfo * > m_animeInfoCache;
+            std::vector< ufmt_loader::AnimInfo* > m_animeInfoCache;
         };
     }
 }

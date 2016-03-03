@@ -37,11 +37,6 @@ namespace ursine
 
             MaterialInfo::~MaterialInfo(void)
             {
-                ReleaseData( );
-            }
-
-            void MaterialInfo::ReleaseData(void)
-            {
                 name = "";
 
                 type = FBX_DATA::FbxMaterial::Type_None;
@@ -55,10 +50,10 @@ namespace ursine
                 emis_mapCount = 0;
                 spec_mapCount = 0;
 
-                ambi_texNames.clear( );
-                diff_texNames.clear( );
-                emis_texNames.clear( );
-                spec_texNames.clear( );
+                ambi_texNames.clear();
+                diff_texNames.clear();
+                emis_texNames.clear();
+                spec_texNames.clear();
 
                 shineness = 0.f;
                 TransparencyFactor = 0.f;

@@ -53,8 +53,8 @@ namespace ursine
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL PS INDEX BUFFER
             {
-                m_modelCache[ INTERNAL_POINT_INDICES ] = new ModelResource( );
                 auto *newMesh = new Mesh( );
+                m_modelCache[ INTERNAL_POINT_INDICES ] = new ModelResource();
                 m_modelCache[ INTERNAL_POINT_INDICES ]->AddMesh( newMesh );
                 m_modelCache[ INTERNAL_POINT_INDICES ]->SetIsLoaded( true );
 
@@ -120,8 +120,8 @@ namespace ursine
 
                 std::string name = "internalQuad";
 
-                m_modelCache[ INTERNAL_QUAD ] = new ModelResource( );
                 auto *newMesh = new Mesh( );
+                m_modelCache[ INTERNAL_QUAD ] = new ModelResource();
                 m_modelCache[ INTERNAL_QUAD ]->AddMesh(newMesh);
 
                 D3D11_BUFFER_DESC vertexBufferDesc;
@@ -180,47 +180,44 @@ namespace ursine
             ///////////////////////////////////////////////////////////////////////////////
             //// GENERATING INTERNAL CUBE
             {
-                m_modelCache[ INTERNAL_CUBE ] = new ModelResource( );
-
                 resources::ResourceReader reader( graphics_resources::kCubeJdl, 2676);
 
                 // load into modelInfo
-                auto modelInfo = std::make_shared<graphics::ufmt_loader::ModelInfo>( );
-                modelInfo->Read( reader );
+                ufmt_loader::ModelInfo modelInfo;
+                modelInfo.Read( reader );
 
                 // load into model
+                m_modelCache[ INTERNAL_CUBE ] = new ModelResource();
                 InitializeModel( modelInfo, *m_modelCache[ INTERNAL_CUBE ] );
                 loadModelToGPU( m_modelCache[ INTERNAL_CUBE ] );
             }
             
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL SPHERE
-            {
-                m_modelCache[ INTERNAL_SPHERE ] = new ModelResource( );
-            
+            {            
                 resources::ResourceReader reader( graphics_resources::kSphereJdl, 40646);
 
                 // load into modelInfo
-                auto modelInfo = std::make_shared<graphics::ufmt_loader::ModelInfo>( );
-                modelInfo->Read(reader);
+                ufmt_loader::ModelInfo modelInfo;
+                modelInfo.Read(reader);
 
                 // load into model
+                m_modelCache[ INTERNAL_SPHERE ] = new ModelResource();
                 InitializeModel( modelInfo, *m_modelCache[ INTERNAL_SPHERE ] );
                 loadModelToGPU( m_modelCache[ INTERNAL_SPHERE ] );
             }
             
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL CONE
-            {
-                m_modelCache[ INTERNAL_CONE ] = new ModelResource( );
-            
+            {            
                 resources::ResourceReader reader( graphics_resources::kConeJdl, 5228);
 
                 // load into modelInfo
-                auto modelInfo = std::make_shared<graphics::ufmt_loader::ModelInfo>( );
-                modelInfo->Read(reader);
+                ufmt_loader::ModelInfo modelInfo;
+                modelInfo.Read(reader);
 
                 // load into model
+                m_modelCache[ INTERNAL_CONE ] = new ModelResource();
                 InitializeModel( modelInfo, *m_modelCache[ INTERNAL_CONE ] );
                 loadModelToGPU( m_modelCache[ INTERNAL_CONE ] );
             }
@@ -230,13 +227,13 @@ namespace ursine
         {
             for (auto &x : m_modelCache)
             {
-                if(x != nullptr)
+                if (x != nullptr)
                     delete x;
             }
 
-            for(auto &x : m_animeInfoCache)
+            for (auto &x : m_animeInfoCache)
             {
-                if(x != nullptr)
+                if (x != nullptr)
                     delete x;
             }
 
@@ -244,7 +241,7 @@ namespace ursine
             m_deviceContext = nullptr;
         }
 
-        GfxHND ModelManager::CreateModel(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo)
+        GfxHND ModelManager::CreateModel(const ufmt_loader::ModelInfo& modelInfo)
         {
             // if this model already exists and we are updating it, release the prior resource, keep old ID
             size_t internalID;
@@ -254,14 +251,15 @@ namespace ursine
 
             internalID = m_modelCache.size();
             m_modelCache.push_back( new ModelResource( ) );
-            m_modelInfoCache.push_back( modelInfo );
+            m_modelInfoCache.push_back( new ufmt_loader::ModelInfo( ) );
+            *m_modelInfoCache[internalID] = modelInfo;
 
             /////////////////////////////////////////////////////////
             // GENERATING BONE DATA /////////////////////////////////
             /////////////////////////////////////////////////////////
             unsigned rigIndex = 0;
-            if (modelInfo->mboneCount > 0)
-                rigIndex = AnimationBuilder::LoadBoneData(*modelInfo, modelInfo->name);
+            if (modelInfo.mboneCount > 0)
+                rigIndex = AnimationBuilder::LoadBoneData(modelInfo, modelInfo.name);
 
             // load it up into CPU memory
             InitializeModel(
@@ -381,7 +379,7 @@ namespace ursine
         }
 
         // animation
-        GfxHND ModelManager::CreateAnimation(ufmt_loader::AnimInfo *animeInfo)
+        GfxHND ModelManager::CreateAnimation(const ufmt_loader::AnimInfo& animeInfo)
         {
             // if this model already exists and we are updating it, release the prior resource, keep old ID
             size_t internalID;
@@ -391,7 +389,7 @@ namespace ursine
 
             internalID = m_animeInfoCache.size();
             m_animeInfoCache.push_back( new ufmt_loader::AnimInfo() );
-            *(m_animeInfoCache[internalID]) = *animeInfo;
+            *m_animeInfoCache[internalID] = animeInfo;
 
             // initialize handle
             id->ID_ = SANITY_RESOURCE;
@@ -419,7 +417,7 @@ namespace ursine
         }
 
         // getting info
-        std::shared_ptr<graphics::ufmt_loader::ModelInfo> ModelManager::GetModelInfo(GfxHND handle)
+        ufmt_loader::ModelInfo ModelManager::GetModelInfo(GfxHND handle)
         {
             int id;
             _RESOURCEHND *hnd = HND_RSRCE(handle);
@@ -428,10 +426,10 @@ namespace ursine
 
             id = hnd->Index_;
 
-            return m_modelInfoCache[ id ];
+            return *m_modelInfoCache[ id ];
         }
 
-        ufmt_loader::AnimInfo *ModelManager::GeAnimeInfo(GfxHND handle)
+        ufmt_loader::AnimInfo ModelManager::GeAnimeInfo(GfxHND handle)
         {
             int id;
 
@@ -441,7 +439,7 @@ namespace ursine
 
             id = hnd->Index_;
 
-            return m_animeInfoCache[ id ];
+            return *m_animeInfoCache[ id ];
         }
 
         ModelResource *ModelManager::GetModel(const unsigned ID)
@@ -450,10 +448,10 @@ namespace ursine
         }
 
         // private methods
-        void ModelManager::InitializeModel(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo, ModelResource &modelresource)
+        void ModelManager::InitializeModel(const ufmt_loader::ModelInfo &modelInfo, ModelResource &modelresource)
         {
             // for each mesh
-            for (uint mesh_idx = 0; mesh_idx < modelInfo->mmeshCount; ++mesh_idx)
+            for (uint mesh_idx = 0; mesh_idx < modelInfo.mmeshCount; ++mesh_idx)
             {
                 // create a new mesh
                 Mesh *newMesh = new Mesh();
@@ -462,11 +460,11 @@ namespace ursine
                 /////////////////////////////////////////////////////////////////
                 // ALLOCATE MODEL ///////////////////////////////////////////////                
 
-                ufmt_loader::MeshInfo* currMesh = &modelInfo->mMeshInfoVec[ mesh_idx ];
+                ufmt_loader::MeshInfo currMesh = modelInfo.mMeshInfoVec[ mesh_idx ];
 
-                newMesh->SetName(currMesh->name);
+                newMesh->SetName(currMesh.name);
 
-                uint vertCount = currMesh->meshVtxInfoCount;
+                uint vertCount = currMesh.meshVtxInfoCount;
                 newMesh->SetVertexCount(vertCount);
                 auto &meshVertArray = newMesh->GetRawVertices();
 
@@ -478,16 +476,16 @@ namespace ursine
                 {
                     // update raw verts for physics
                     meshVertArray[ i ] = Vec3(
-                        currMesh->meshVtxInfos[ i ].pos.x,
-                        currMesh->meshVtxInfos[ i ].pos.y,
-                        currMesh->meshVtxInfos[ i ].pos.z
+                        currMesh.meshVtxInfos[ i ].pos.x,
+                        currMesh.meshVtxInfos[ i ].pos.y,
+                        currMesh.meshVtxInfos[ i ].pos.z
                         );
 
                     // transform these points from their global model space into their local space
                     SVec4 tempPosition = SVec4(
-                        currMesh->meshVtxInfos[ i ].pos.x,
-                        currMesh->meshVtxInfos[ i ].pos.y,
-                        currMesh->meshVtxInfos[ i ].pos.z,
+                        currMesh.meshVtxInfos[ i ].pos.x,
+                        currMesh.meshVtxInfos[ i ].pos.y,
+                        currMesh.meshVtxInfos[ i ].pos.z,
                         1.0f
                         );
 
@@ -499,25 +497,25 @@ namespace ursine
                         );
 
                     buffer[ i ].vNor = DirectX::XMFLOAT3(
-                        currMesh->meshVtxInfos[ i ].normal.x,
-                        currMesh->meshVtxInfos[ i ].normal.y,
-                        currMesh->meshVtxInfos[ i ].normal.z
+                        currMesh.meshVtxInfos[ i ].normal.x,
+                        currMesh.meshVtxInfos[ i ].normal.y,
+                        currMesh.meshVtxInfos[ i ].normal.z
                         );
                     buffer[ i ].vUv = DirectX::XMFLOAT2(
-                        currMesh->meshVtxInfos[ i ].uv.x,
-                        currMesh->meshVtxInfos[ i ].uv.y
+                        currMesh.meshVtxInfos[ i ].uv.x,
+                        currMesh.meshVtxInfos[ i ].uv.y
                         );
 
-                    if (modelInfo->mboneCount > 0)
+                    if (modelInfo.mboneCount > 0)
                     {
-                        buffer[ i ].vBWeight.x = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.x);
-                        buffer[ i ].vBWeight.y = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.y);
-                        buffer[ i ].vBWeight.z = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.z);
-                        buffer[ i ].vBWeight.w = static_cast<float>(currMesh->meshVtxInfos[ i ].ctrlBlendWeights.w);
-                        buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.x);
-                        buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.y);
-                        buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.z);
-                        buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(currMesh->meshVtxInfos[ i ].ctrlIndices.w);
+                        buffer[ i ].vBWeight.x = static_cast<float>(currMesh.meshVtxInfos[ i ].ctrlBlendWeights.x);
+                        buffer[ i ].vBWeight.y = static_cast<float>(currMesh.meshVtxInfos[ i ].ctrlBlendWeights.y);
+                        buffer[ i ].vBWeight.z = static_cast<float>(currMesh.meshVtxInfos[ i ].ctrlBlendWeights.z);
+                        buffer[ i ].vBWeight.w = static_cast<float>(currMesh.meshVtxInfos[ i ].ctrlBlendWeights.w);
+                        buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>(currMesh.meshVtxInfos[ i ].ctrlIndices.x);
+                        buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>(currMesh.meshVtxInfos[ i ].ctrlIndices.y);
+                        buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>(currMesh.meshVtxInfos[ i ].ctrlIndices.z);
+                        buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(currMesh.meshVtxInfos[ i ].ctrlIndices.w);
                     }
                     else
                     {
@@ -533,11 +531,11 @@ namespace ursine
 
                 /////////////////////////////////////////////////////////////////
                 // CREATE INDEX BUFFER //////////////////////////////////////////
-                newMesh->SetIndexCount(currMesh->meshVtxIdxCount);
+                newMesh->SetIndexCount(currMesh.meshVtxIdxCount);
 
                 auto &indexArray = newMesh->GetRawIndices();
                 for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
-                    indexArray[ x ] = currMesh->meshVtxIndices[ x ];
+                    indexArray[ x ] = currMesh.meshVtxIndices[ x ];
 
                 modelresource.AddMesh(newMesh);
             }

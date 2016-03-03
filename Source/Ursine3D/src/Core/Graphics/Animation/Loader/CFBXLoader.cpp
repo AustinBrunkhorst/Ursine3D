@@ -24,34 +24,23 @@ namespace ursine
     namespace graphics
     {
         CFBXLoader::CFBXLoader() :
-            mSdkManager(nullptr), mScene(nullptr), mModel(nullptr),
-            mModelInfo(nullptr), mAnimInfo(nullptr),
+            mSdkManager(nullptr), 
+            mScene(nullptr), 
+            m_Model(nullptr),
             mConverter(nullptr)
         {
         }
 
         CFBXLoader::~CFBXLoader()
         {
-            Release();
-        }
-
-        void CFBXLoader::Release()
-        {
             // after finished exporting, then release the data
             if (mConverter)
                 delete mConverter;
 
-            if (mAnimInfo)
+            if (m_Model)
             {
-                mAnimInfo->ReleaseData();
-                delete mAnimInfo;
-                mAnimInfo = nullptr;
-            }
-
-            if (mModel)
-            {
-                delete mModel;
-                mModel = nullptr;
+                delete m_Model;
+                m_Model = nullptr;
             }
 
             if (mImporter)
@@ -101,14 +90,14 @@ namespace ursine
             mConverter = new Converter(mScene);
 
             // Process Scene
-            mModel = new FBX_DATA::FbxModel;
+            m_Model = new FBX_DATA::FbxModel;
             fs::path fName(filename);
-            mModel->name = fName.filename().string();
-            mModel->name = mModel->name.substr(0, mModel->name.rfind("."));
+            m_Model->name = fName.filename().string();
+            m_Model->name = m_Model->name.substr(0, m_Model->name.rfind("."));
             // Getting Anim Pose
-            mModel->mAnimPose.resize(mScene->GetPoseCount());
-            for (unsigned i = 0; i < mModel->mAnimPose.size(); ++i)
-                mModel->mAnimPose[i] = mScene->GetPose(i);
+            m_Model->mAnimPose.resize(mScene->GetPoseCount());
+            for (unsigned i = 0; i < m_Model->mAnimPose.size(); ++i)
+                m_Model->mAnimPose[i] = mScene->GetPose(i);
 
             ProcessScene(mScene->GetRootNode());
 
@@ -178,15 +167,13 @@ namespace ursine
             // Model Info
             ///////////////////////////////////////////////////////////////
             // mesh data
-            if (nullptr == mModelInfo)
             {
-                mModelInfo = std::make_shared<ufmt_loader::ModelInfo>( );
-                mModelInfo->name = mModel->name.c_str();
-                mModelInfo->mmeshCount = static_cast<unsigned int>(mModel->mMeshData.size());
-                for (i = 0; i < mModelInfo->mmeshCount; ++i)
+                m_ModelInfo.name = m_Model->name.c_str();
+                m_ModelInfo.mmeshCount = static_cast<unsigned int>(m_Model->mMeshData.size());
+                for (i = 0; i < m_ModelInfo.mmeshCount; ++i)
                 {
                     ufmt_loader::MeshInfo newMeshInfo;
-                    FBX_DATA::MeshData* currMD = mModel->mMeshData[i];
+                    FBX_DATA::MeshData* currMD = m_Model->mMeshData[i];
                     // name & counter initialization
                     newMeshInfo.name = currMD->name.c_str();
 
@@ -203,97 +190,97 @@ namespace ursine
                         newMeshInfo.meshVtxIndices.push_back(rIVec[j]);
 
                     // push back into the vector
-                    mModelInfo->mMeshInfoVec.push_back(newMeshInfo);
+                    m_ModelInfo.mMeshInfoVec.push_back(newMeshInfo);
                 }
 
                 // material data
-                mModelInfo->mmaterialCount = static_cast<unsigned int>(mModel->mMaterials.size());
+                m_ModelInfo.mmaterialCount = static_cast<unsigned int>(m_Model->mMaterials.size());
                 ufmt_loader::MaterialInfo newMtrlInfo;
-                for (i = 0; i < mModelInfo->mmaterialCount; ++i)
+                for (i = 0; i < m_ModelInfo.mmaterialCount; ++i)
                 {
                     //ambi
                     j = 0;
 
-                    newMtrlInfo.name = mModel->mMaterials[i]->name;
+                    newMtrlInfo.name = m_Model->mMaterials[i]->name;
 
-                    newMtrlInfo.ambitype = mModel->mMaterials[i]->ambient.type;
-                    newMtrlInfo.ambi_mcolor = mModel->mMaterials[i]->ambient.color;
-                    newMtrlInfo.ambi_mapCount = mModel->mMaterials[i]->ambient.textureSetArray.size();
-                    for (auto iter1 = mModel->mMaterials[i]->ambient.textureSetArray.begin();
-                    iter1 != mModel->mMaterials[i]->ambient.textureSetArray.end(); ++iter1, ++j)
+                    newMtrlInfo.ambitype = m_Model->mMaterials[i]->ambient.type;
+                    newMtrlInfo.ambi_mcolor = m_Model->mMaterials[i]->ambient.color;
+                    newMtrlInfo.ambi_mapCount = m_Model->mMaterials[i]->ambient.textureSetArray.size();
+                    for (auto iter1 = m_Model->mMaterials[i]->ambient.textureSetArray.begin();
+                    iter1 != m_Model->mMaterials[i]->ambient.textureSetArray.end(); ++iter1, ++j)
                         newMtrlInfo.ambi_texNames.push_back(iter1->second[j]);
 
                     //diff
                     j = 0;
-                    newMtrlInfo.difftype = mModel->mMaterials[i]->diffuse.type;
-                    newMtrlInfo.diff_mcolor = mModel->mMaterials[i]->diffuse.color;
-                    newMtrlInfo.diff_mapCount = mModel->mMaterials[i]->diffuse.textureSetArray.size();
-                    for (auto iter1 = mModel->mMaterials[i]->diffuse.textureSetArray.begin();
-                    iter1 != mModel->mMaterials[i]->diffuse.textureSetArray.end(); ++iter1, ++j)
+                    newMtrlInfo.difftype = m_Model->mMaterials[i]->diffuse.type;
+                    newMtrlInfo.diff_mcolor = m_Model->mMaterials[i]->diffuse.color;
+                    newMtrlInfo.diff_mapCount = m_Model->mMaterials[i]->diffuse.textureSetArray.size();
+                    for (auto iter1 = m_Model->mMaterials[i]->diffuse.textureSetArray.begin();
+                    iter1 != m_Model->mMaterials[i]->diffuse.textureSetArray.end(); ++iter1, ++j)
                         newMtrlInfo.diff_texNames.push_back(iter1->second[j]);
 
                     //emit
                     j = 0;
-                    newMtrlInfo.emistype = mModel->mMaterials[i]->emissive.type;
-                    newMtrlInfo.emis_mcolor = mModel->mMaterials[i]->emissive.color;
-                    newMtrlInfo.emis_mapCount = mModel->mMaterials[i]->emissive.textureSetArray.size();
-                    for (auto iter1 = mModel->mMaterials[i]->emissive.textureSetArray.begin();
-                    iter1 != mModel->mMaterials[i]->emissive.textureSetArray.end(); ++iter1, ++j)
+                    newMtrlInfo.emistype = m_Model->mMaterials[i]->emissive.type;
+                    newMtrlInfo.emis_mcolor = m_Model->mMaterials[i]->emissive.color;
+                    newMtrlInfo.emis_mapCount = m_Model->mMaterials[i]->emissive.textureSetArray.size();
+                    for (auto iter1 = m_Model->mMaterials[i]->emissive.textureSetArray.begin();
+                    iter1 != m_Model->mMaterials[i]->emissive.textureSetArray.end(); ++iter1, ++j)
                         newMtrlInfo.emis_texNames.push_back(iter1->second[j]);
 
                     //spec
                     j = 0;
-                    newMtrlInfo.spectype = mModel->mMaterials[i]->specular.type;
-                    newMtrlInfo.spec_mcolor = mModel->mMaterials[i]->specular.color;
-                    newMtrlInfo.spec_mapCount = mModel->mMaterials[i]->specular.textureSetArray.size();
-                    for (auto iter1 = mModel->mMaterials[i]->specular.textureSetArray.begin();
-                    iter1 != mModel->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
+                    newMtrlInfo.spectype = m_Model->mMaterials[i]->specular.type;
+                    newMtrlInfo.spec_mcolor = m_Model->mMaterials[i]->specular.color;
+                    newMtrlInfo.spec_mapCount = m_Model->mMaterials[i]->specular.textureSetArray.size();
+                    for (auto iter1 = m_Model->mMaterials[i]->specular.textureSetArray.begin();
+                    iter1 != m_Model->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
                         newMtrlInfo.spec_texNames.push_back(iter1->second[j]);
-                    newMtrlInfo.shineness = mModel->mMaterials[i]->shineness;
-                    newMtrlInfo.TransparencyFactor = mModel->mMaterials[i]->TransparencyFactor;
+                    newMtrlInfo.shineness = m_Model->mMaterials[i]->shineness;
+                    newMtrlInfo.TransparencyFactor = m_Model->mMaterials[i]->TransparencyFactor;
 
                     // push back into the vector
-                    mModelInfo->mMtrlInfoVec.push_back(newMtrlInfo);
+                    m_ModelInfo.mMtrlInfoVec.push_back(newMtrlInfo);
                 }
 
                 // bone data
-                mModelInfo->mboneCount = static_cast<unsigned int>(mModel->mBoneData.mbonehierarchy.size());
+                m_ModelInfo.mboneCount = static_cast<unsigned int>(m_Model->mBoneData.mbonehierarchy.size());
                 ufmt_loader::BoneInfo newBoneInfo;
-                for (i = 0; i < mModelInfo->mboneCount; ++i)
+                for (i = 0; i < m_ModelInfo.mboneCount; ++i)
                 {
                     // skin info will use model's name
-                    newBoneInfo.name = mModel->mBoneData.mbonehierarchy[i].mName.c_str();
-                    newBoneInfo.mParentIndex = mModel->mBoneData.mbonehierarchy[i].mParentIndex;
-                    newBoneInfo.bindPosition = mModel->mBoneData.mbonehierarchy[i].bindPosition;
-                    newBoneInfo.bindRotation = mModel->mBoneData.mbonehierarchy[i].bindRotation;
-                    newBoneInfo.bindScaling = mModel->mBoneData.mbonehierarchy[i].bindScaling;
-                    newBoneInfo.boneSpacePosition = mModel->mBoneData.mbonehierarchy[i].boneSpacePosition;
-                    newBoneInfo.boneSpaceRotation = mModel->mBoneData.mbonehierarchy[i].boneSpaceRotation;
-                    newBoneInfo.boneSpaceScaling = mModel->mBoneData.mbonehierarchy[i].boneSpaceScaling;
+                    newBoneInfo.name = m_Model->mBoneData.mbonehierarchy[i].mName.c_str();
+                    newBoneInfo.mParentIndex = m_Model->mBoneData.mbonehierarchy[i].mParentIndex;
+                    newBoneInfo.bindPosition = m_Model->mBoneData.mbonehierarchy[i].bindPosition;
+                    newBoneInfo.bindRotation = m_Model->mBoneData.mbonehierarchy[i].bindRotation;
+                    newBoneInfo.bindScaling = m_Model->mBoneData.mbonehierarchy[i].bindScaling;
+                    newBoneInfo.boneSpacePosition = m_Model->mBoneData.mbonehierarchy[i].boneSpacePosition;
+                    newBoneInfo.boneSpaceRotation = m_Model->mBoneData.mbonehierarchy[i].boneSpaceRotation;
+                    newBoneInfo.boneSpaceScaling = m_Model->mBoneData.mbonehierarchy[i].boneSpaceScaling;
 
                     // push back into the vector
-                    mModelInfo->mBoneInfoVec.push_back(newBoneInfo);
+                    m_ModelInfo.mBoneInfoVec.push_back(newBoneInfo);
                 }
 
                 // level data
                 // mesh lvl
-                mModelInfo->mmeshlvlCount = mModelInfo->mmeshCount;
-                for (i = 0; i < mModelInfo->mmeshlvlCount; ++i)
+                m_ModelInfo.mmeshlvlCount = m_ModelInfo.mmeshCount;
+                for (i = 0; i < m_ModelInfo.mmeshlvlCount; ++i)
                 {
                     ufmt_loader::MeshInLvl newMLvl;
-                    newMLvl.meshName = mModel->mMeshData[i]->name;
-                    newMLvl.meshTM = mModel->mMeshData[i]->meshTM;
-                    newMLvl.mParentIndex = mModel->mMeshData[i]->parentIndex;
-                    mModelInfo->mMeshLvVec.push_back(newMLvl);
+                    newMLvl.meshName = m_Model->mMeshData[i]->name;
+                    newMLvl.meshTM = m_Model->mMeshData[i]->meshTM;
+                    newMLvl.mParentIndex = m_Model->mMeshData[i]->parentIndex;
+                    m_ModelInfo.mMeshLvVec.push_back(newMLvl);
                 }
                 // rig lvl
-                mModelInfo->mriglvlCount = mModelInfo->mboneCount;
-                for (i = 0; i < mModelInfo->mriglvlCount; ++i)
+                m_ModelInfo.mriglvlCount = m_ModelInfo.mboneCount;
+                for (i = 0; i < m_ModelInfo.mriglvlCount; ++i)
                 {
                     ufmt_loader::RigInLvl newRLvl;
-                    newRLvl.boneName = mModelInfo->mBoneInfoVec[i].name;
-                    newRLvl.mParentIndex = mModelInfo->mBoneInfoVec[i].mParentIndex;
-                    mModelInfo->mRigLvVec.push_back(newRLvl);
+                    newRLvl.boneName = m_ModelInfo.mBoneInfoVec[i].name;
+                    newRLvl.mParentIndex = m_ModelInfo.mBoneInfoVec[i].mParentIndex;
+                    m_ModelInfo.mRigLvVec.push_back(newRLvl);
                 }
             }
 
@@ -301,22 +288,20 @@ namespace ursine
             // Anim Info
             ///////////////////////////////////////////////////////////////
             // anim data
-            if (nullptr == mAnimInfo)
+            //if (nullptr == mAnimInfo)
             {
-                if (!mModel->mAnimationData.empty())
+                if (!m_Model->mAnimationData.empty())
                 {
-                    mAnimInfo = new ufmt_loader::AnimInfo;
-
-                    mAnimInfo->name = mModel->name;
-                    mAnimInfo->animCount = static_cast<unsigned int>(mModel->mAnimationData.size());
-                    for (unsigned int i = 0; i < mAnimInfo->animCount; ++i)
+                    m_AnimInfo.name = m_Model->name;
+                    m_AnimInfo.animCount = static_cast<unsigned int>(m_Model->mAnimationData.size());
+                    for (unsigned int i = 0; i < m_AnimInfo.animCount; ++i)
                     {
                         ufmt_loader::AnimData newAD;
                         ufmt_loader::KeyIndex newKIs;
                         ufmt_loader::KFrames newKFs;
 
                         // counts
-                        newAD.clipCount = static_cast<unsigned int>(mModel->mAnimationData[i]->animations.size());
+                        newAD.clipCount = static_cast<unsigned int>(m_Model->mAnimationData[i]->animations.size());
 
                         /////////////////////////////////////////////////////
                         // Push back dummy value should includes specific time, not default
@@ -325,7 +310,7 @@ namespace ursine
                         /////////////////////////////////////////////////////
                         URSINE_TODO("Jun! You should fix this!!!!");
                         j = 0;
-                        for (auto &iter : mModel->mAnimationData[i]->animations)
+                        for (auto &iter : m_Model->mAnimationData[i]->animations)
                         {
                             // storing animation clip's name
                             newAD.clipname = iter.first.c_str();
@@ -363,7 +348,7 @@ namespace ursine
                         newAD.keyframes.push_back(newKFs);
 
                         // push back into the vector
-                        mAnimInfo->animDataArr.push_back(newAD);
+                        m_AnimInfo.animDataArr.push_back(newAD);
                     }
                 }
             }
@@ -378,11 +363,11 @@ namespace ursine
             // FBX has 3 types - Static Mesh, Just Animation Data, Skinned Mesh
             // if there is no animation, just static mesh
             // else process animation
-            mAnimationFlag.first = mAnimationFlag.second = false;
+            m_AnimationFlag.first = m_AnimationFlag.second = false;
 
             // Skeleton 
             ProcessSkeletonHierarchy(pRoot);
-            if (mModel->mBoneData.mbonehierarchy.empty())
+            if (m_Model->mBoneData.mbonehierarchy.empty())
             {
                 // Process Static Mesh
                 ProcessStaticMesh(pRoot, 0, -1);
@@ -392,7 +377,7 @@ namespace ursine
             {
                 // Process Skinned Mesh
                 ProcessControlPoint(pRoot);
-                mAnimationFlag.first = true;
+                m_AnimationFlag.first = true;
             }
 
             // Weight blending for control points
@@ -457,17 +442,17 @@ namespace ursine
                 Swap(&currJoint.boneSpaceScaling.y, &currJoint.boneSpaceScaling.z);
 
                 // skeleton = bone hierarchy
-                mModel->mBoneData.mbonehierarchy.push_back(currJoint);
-                mModel->mBoneData.mboneNodes.push_back(pNode);
+                m_Model->mBoneData.mbonehierarchy.push_back(currJoint);
+                m_Model->mBoneData.mboneNodes.push_back(pNode);
                 SMat4 locTM = FBXAMatrixToSMat4(&localMatrix);
-                mModel->mBoneData.mboneLocalTM.push_back(locTM);
+                m_Model->mBoneData.mboneLocalTM.push_back(locTM);
                 bBone = true;
             }
 
             for (int i = 0; i < pNode->GetChildCount(); ++i)
             {
                 if (bBone)
-                    ProcessSkeletonHierarchyRecursively(pNode->GetChild(i), mModel->mBoneData.mbonehierarchy.size(), myIndex);
+                    ProcessSkeletonHierarchyRecursively(pNode->GetChild(i), m_Model->mBoneData.mbonehierarchy.size(), myIndex);
                 else
                     ProcessSkeletonHierarchyRecursively(pNode->GetChild(i), myIndex, inParentIndex);
             }
@@ -484,7 +469,7 @@ namespace ursine
                 newMesh->mLayout = FBX_DATA::STATIC;
                 newMesh->parentIndex = inParentIndex;
                 if ("" == newMesh->name)
-                    newMesh->name = mModel->name;
+                    newMesh->name = m_Model->name;
 
                 FbxAMatrix  meshTransform;
                 int nodeIdx = 0;
@@ -506,7 +491,7 @@ namespace ursine
                 ProcessTangent(mesh, newMesh);
                 ProcessTexcoord(mesh, newMesh);
                 ProcessMaterials(pNode, newMesh);
-                mModel->mMeshData.push_back(newMesh);
+                m_Model->mMeshData.push_back(newMesh);
 
                 //go through all the control points(verticies) and multiply by the transformation
                 for (unsigned int i = 0; i < newMesh->vertexCnt; ++i)
@@ -522,7 +507,7 @@ namespace ursine
             for (int i = 0; i < pNode->GetChildCount(); ++i)
             {
                 if (bMesh)
-                    ProcessStaticMesh(pNode->GetChild(i), mModel->mMeshData.size(), myindex);
+                    ProcessStaticMesh(pNode->GetChild(i), m_Model->mMeshData.size(), myindex);
                 else
                     ProcessStaticMesh(pNode->GetChild(i), myindex, inParentIndex);
             }
@@ -534,7 +519,7 @@ namespace ursine
             if (mesh)
             {
                 FBX_DATA::ControlPoints* control = new FBX_DATA::ControlPoints;
-                mModel->mCtrlPoints.push_back(control);
+                m_Model->mCtrlPoints.push_back(control);
 
                 unsigned int ctrlPointCount = mesh->GetControlPointsCount();
                 for (unsigned int i = 0; i < ctrlPointCount; ++i)
@@ -979,7 +964,7 @@ namespace ursine
                     // so that meshnode can load mtrl and texture by mModel->mMaterials' name
                     FBX_DATA::FbxMaterial* newFbxMtrl = new FBX_DATA::FbxMaterial;
                     *newFbxMtrl = destMat;
-                    mModel->mMaterials.push_back(newFbxMtrl);
+                    m_Model->mMaterials.push_back(newFbxMtrl);
                     // has a risk to store more than two exactly same materials
                 }
             }
@@ -1045,7 +1030,7 @@ namespace ursine
 
                         // control point is vertex of the cluster
                         // these control points will be influenced by bone animation
-                        FBX_DATA::ControlPoints* ctrlPts = mModel->mCtrlPoints[index];
+                        FBX_DATA::ControlPoints* ctrlPts = m_Model->mCtrlPoints[index];
 
                         for (int i = 0; i < ctrlPtIdxCnt; ++i)
                         {
@@ -1067,7 +1052,7 @@ namespace ursine
 
         void CFBXLoader::RemoveUnnecessaryWeights()
         {
-            for (auto controlIter = mModel->mCtrlPoints.begin(); controlIter != mModel->mCtrlPoints.end(); ++controlIter)
+            for (auto controlIter = m_Model->mCtrlPoints.begin(); controlIter != m_Model->mCtrlPoints.end(); ++controlIter)
             {
                 //Remove or remove BlendWeights if there are more than 4
                 for (auto iter = (*controlIter)->begin(); iter != (*controlIter)->end(); ++iter)
@@ -1101,9 +1086,9 @@ namespace ursine
 
         int CFBXLoader::GetJointIndexByName(const std::string& inJointName)
         {
-            for (unsigned int i = 0; i < mModel->mBoneData.mbonehierarchy.size(); ++i)
+            for (unsigned int i = 0; i < m_Model->mBoneData.mbonehierarchy.size(); ++i)
             {
-                if (mModel->mBoneData.mbonehierarchy[i].mName == inJointName)
+                if (m_Model->mBoneData.mbonehierarchy[i].mName == inJointName)
                     return i;
             }
             return -1;
@@ -1242,19 +1227,19 @@ namespace ursine
 
         void CFBXLoader::ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxTime end, FbxNode* pNode)
         {
-            mAnimationFlag.second = true;
+            m_AnimationFlag.second = true;
             std::set< FbxTime > keyTimes;
             int nbAnimLayers = animStack->GetMemberCount<FbxAnimLayer>();
             FbxString lOutputString;
 
             FBX_DATA::AnimationData* animationData = new FBX_DATA::AnimationData;
-            mModel->mAnimationData.push_back(animationData);
+            m_Model->mAnimationData.push_back(animationData);
 
             //create the animation clip name of the animation
             FBX_DATA::AnimationClip& animClip = animationData->animations[animStack->GetName()];
 
             //resize for each bone in the heirarchy
-            animClip.boneAnim.resize(mModel->mBoneData.mbonehierarchy.size());
+            animClip.boneAnim.resize(m_Model->mBoneData.mbonehierarchy.size());
             boneindex = 0;
             for (int i = 0; i < nbAnimLayers; ++i)
             {
@@ -1385,7 +1370,7 @@ namespace ursine
                     vtx.mData[3] = 0.0f;
                     newMesh->vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
                 }
-                mModel->mMeshData.push_back(newMesh);
+                m_Model->mMeshData.push_back(newMesh);
                 bMesh = true;
             }
             //go through all the child node and grab there geometry information
@@ -1393,7 +1378,7 @@ namespace ursine
             for (int i = 0; i < childCnt; ++i)
             {
                 if (bMesh)
-                    ProcessGeometry(pNode->GetChild(i), mModel->mMeshData.size(), myindex);
+                    ProcessGeometry(pNode->GetChild(i), m_Model->mMeshData.size(), myindex);
                 else
                     ProcessGeometry(pNode->GetChild(i), myindex, inParentIndex);
             }
@@ -1402,7 +1387,7 @@ namespace ursine
         //getting anim pose
         FbxPose* CFBXLoader::GetAnimPoseAndIdx(FbxNode* pNode, int& index)
         {
-            for (auto iter : mModel->mAnimPose)
+            for (auto iter : m_Model->mAnimPose)
             {
                 index = iter->Find(pNode);
                 if (-1 != index)
@@ -1525,19 +1510,19 @@ namespace ursine
                 }
 
                 // controls - maybe divide this part later if necessary
-                if (!mModel->mCtrlPoints.empty())
+                if (!m_Model->mCtrlPoints.empty())
                 {
-                    if (!(*mModel->mCtrlPoints[meshIdx]).empty())
+                    if (!(*m_Model->mCtrlPoints[meshIdx]).empty())
                     {
                         // currently, just for using 1st control point vec
-                        newMV.ctrlBlendWeights.x = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingWeight;
-                        newMV.ctrlBlendWeights.y = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingWeight;
-                        newMV.ctrlBlendWeights.z = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingWeight;
-                        newMV.ctrlBlendWeights.w = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingWeight;
-                        newMV.ctrlIndices.x = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingIndex;
-                        newMV.ctrlIndices.y = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingIndex;
-                        newMV.ctrlIndices.z = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingIndex;
-                        newMV.ctrlIndices.w = mModel->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingIndex;
+                        newMV.ctrlBlendWeights.x = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingWeight;
+                        newMV.ctrlBlendWeights.y = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingWeight;
+                        newMV.ctrlBlendWeights.z = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingWeight;
+                        newMV.ctrlBlendWeights.w = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingWeight;
+                        newMV.ctrlIndices.x = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingIndex;
+                        newMV.ctrlIndices.y = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingIndex;
+                        newMV.ctrlIndices.z = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingIndex;
+                        newMV.ctrlIndices.w = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingIndex;
                     }
                 }
 

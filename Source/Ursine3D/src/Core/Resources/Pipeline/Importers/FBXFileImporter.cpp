@@ -28,9 +28,9 @@ namespace ursine
         auto animInfo = importer.GetAnimInfo( );
         
         // importing model info check
-        if (animInfo)
+        if ( animInfo.IsThereAAnimation( ) )
         {
-            fs::path clipFileName = animInfo->name + ".uanim";
+            fs::path clipFileName = animInfo.name + ".uanim";
         
             auto clipPath = sourceFileDirectory / clipFileName;
         

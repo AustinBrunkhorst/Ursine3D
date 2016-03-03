@@ -395,7 +395,7 @@ namespace ursine
             {
                 auto handle = data->GetAnimeHandle();
 
-                m_animationName = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle)->name;
+                m_animationName = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle).name;
             }
         }
 
@@ -760,9 +760,9 @@ namespace ursine
                 {
                     auto handle = data->GetAnimeHandle();
 
-                    graphics::ufmt_loader::AnimInfo *animInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle);
-                    if (animInfo)
-                        animationIndex = AnimationBuilder::LoadAnimation(*animInfo, m_animationName);
+                    auto animInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle);
+                    if ( animInfo.IsThereAAnimation( ) )
+                        animationIndex = AnimationBuilder::LoadAnimation(animInfo, m_animationName);
                 }
             }
 
@@ -781,7 +781,7 @@ namespace ursine
             {
                 // add to animlist
                 m_animlist.push_back(AnimationBuilder::GetAnimationByName(m_animationName));
-            
+
                 auto *gfx = GetCoreSystem(graphics::GfxAPI);
                 auto *world = GetOwner()->GetWorld();
                 auto animList = world->GetEntityFromName("Animation List");

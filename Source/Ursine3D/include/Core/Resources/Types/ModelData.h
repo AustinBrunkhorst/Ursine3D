@@ -14,7 +14,7 @@ namespace ursine
             RESOURCE_DATA;
 
         public:
-            ModelData(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo);
+            ModelData(graphics::ufmt_loader::ModelInfo modelInfo);
             ~ModelData(void);
 
             graphics::GfxHND GetModelHandle(void) const;
