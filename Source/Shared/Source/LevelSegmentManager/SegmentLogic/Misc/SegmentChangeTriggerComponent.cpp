@@ -67,10 +67,10 @@ void SegmentChangeTrigger::Activate(EVENT_HANDLER(ursine::ecs::Entity))
 {
 	EVENT_ATTRS( ursine::ecs::Entity, ursine::physics::CollisionEventArgs );
 
-	if (m_newSegment == LevelSegments::Empty)
-		return;
+	//if (m_newSegment == LevelSegments::Empty)
+		//return;
 
-	if ( args->otherEntity->HasComponent<PlayerID>( ) )
+	if ( args->otherEntity->GetRoot( )->HasComponent<PlayerID>( ) )
 	{
 		// Change the segment
 		auto levelSegmentManagers = GetOwner( )->GetWorld( )->
@@ -85,14 +85,14 @@ void SegmentChangeTrigger::Activate(EVENT_HANDLER(ursine::ecs::Entity))
 		// get [0] element
 		auto stateMachine = levelSegmentManagers[ 0 ]->GetComponent<LevelSegmentManager>( );
 
-		if (m_newSegment != stateMachine->GetCurrentSegment( ))
+		if (m_currentSegment != stateMachine->GetCurrentSegment( ))
 			return;
 		
 		// call change state
 		stateMachine->SetCurrentSegment( m_newSegment );
 		
 		// delete myself because this is a one time use ting
-		//GetOwner()->Delete();
+		GetOwner()->Delete();
 	}
 
 }

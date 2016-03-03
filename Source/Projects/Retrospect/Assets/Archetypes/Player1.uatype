@@ -9,7 +9,6 @@
 "changeState": false, 
 "currentRig": "Player", 
 "currentState": "Player_Idle", 
-"loopAnimation": true, 
 "playAnimation": true, 
 "renderDebug": false, 
 "stArray": [], 
@@ -18,6 +17,7 @@
 }, 
 "Model3D": {
 ".uid": 29, 
+"active": true, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -60,7 +60,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 38, 
+".uid": 36, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -84,7 +84,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 39, 
+".uid": 37, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -108,12 +108,18 @@
 ], 
 "components": {
 "Audio Listener 3D": {
-".uid": 33, 
+".uid": 31, 
 "testing": []
 }, 
 "Camera": {
-".uid": 34, 
+".uid": 32, 
 "active": false, 
+"clearColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
 "farPlane": 1000, 
 "fov": 60, 
 "nearPlane": 0.10000000149011612, 
@@ -130,7 +136,7 @@
 }
 }, 
 "Transform": {
-".uid": 32, 
+".uid": 30, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -150,6 +156,48 @@
 }
 }, 
 "name": "Camera"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 39, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 40, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 38, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": -1, 
+"z": 0
+}, 
+"scale": {
+"x": 2.5, 
+"y": 2.5, 
+"z": 2.5
+}, 
+"translation": {
+"x": 0, 
+"y": 5, 
+"z": 0
+}
+}
+}, 
+"name": "Box"
 }
 ], 
 "components": {
@@ -204,12 +252,12 @@
 "Rigidbody": {
 ".uid": 25, 
 "bodyFlag": 2, 
+"disableContactResponse": false, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
 "freezeXRotation": true, 
 "freezeYRotation": true, 
 "freezeZRotation": true, 
-"ghost": false, 
 "gravity": {
 "x": 0, 
 "y": -10, 

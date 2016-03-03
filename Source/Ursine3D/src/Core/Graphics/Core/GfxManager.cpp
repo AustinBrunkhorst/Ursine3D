@@ -991,50 +991,50 @@ namespace ursine
                 }
 
                 // UPDATING SHADOW MAP
-                {
-                    Light &spotLight = renderableManager->m_renderableLights[ m_drawList[ index ].Index_ ];
-                    SMat4 ViewMatrix = currentCamera.GetViewMatrix( );
-                    SMat4 ProjectionMatrix = currentCamera.GetProjMatrix( );
-
-                    SVec3 u, v;
-                    SVec3 lightDir = spotLight.GetDirection( );
-                    lightDir.GenerateOrthogonalVectors(u, v);
-                    u.Normalize( );
-
-                    SMat4 lightView = SMat4::Identity( );
-                    SMat4 lightProjection = SMat4( );
-                    float farPlane = spotLight.GetRadius( );
-
-                    // GENERATING LIGHT VIEW
-                    SVec3 R = SVec3::Cross(lightDir, u);
-                    SVec3 U = SVec3::Cross(lightDir, R);
-                    SVec3 D = lightDir;
-
-                    lightView.SetColumn(0, SVec4(R.X(), R.Y(), R.Z(), 0));
-                    lightView.SetColumn(1, SVec4(U.X(), U.Y(), U.Z(), 0));
-                    lightView.SetColumn(2, SVec4(D.X(), D.Y(), D.Z(), 0));
-
-                    SVec3 P = lightView.TransformPoint(spotLight.GetPosition( ));
-                    lightView.SetColumn(3, SVec4(P.X(), P.Y(), P.Z(), 1.0f));
-
-                    lightProjection(0, 0) = 1.0f / (tanf(spotLight.GetSpotlightAngles().Y() / 2.0f));
-                    lightProjection(1, 1) = 1.0f / (tanf(spotLight.GetSpotlightAngles().Y() / 2.0f));
-                    lightProjection(2, 2) = farPlane / (farPlane - farPlane * 0.001f);
-                    lightProjection(3, 2) = -(farPlane / (farPlane - farPlane * 0.001f)) * (farPlane * 0.001f);
-                    lightProjection(2, 3) = 1.0f;
-                    lightProjection(3, 3) = 0.0f;
-
-                    auto eyePos = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4( spotLight.GetPosition( ).GetFloatPtr() ));
-                    auto look = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4(spotLight.GetDirection().GetFloatPtr()));
-                    auto upDir = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4(SVec4(0, 1, 0, 0).GetFloatPtr( )));
-
-                    lightView = SMat4(DirectX::XMMatrixLookToLH(eyePos, look ,upDir));
-                    lightProjection = SMat4(DirectX::XMMatrixPerspectiveFovLH(spotLight.GetSpotlightAngles().Y(), 1, farPlane * 0.001f, farPlane ));
-                    // map to GPU
-                    cb.view = SMat4::Transpose(lightView).ToD3D();
-                    cb.projection = SMat4::Transpose(lightProjection).ToD3D( );
-                    shadowmapView.Update( cb );
-                }
+                //{
+                //    Light &spotLight = renderableManager->m_renderableLights[ m_drawList[ index ].Index_ ];
+                //    SMat4 ViewMatrix = currentCamera.GetViewMatrix( );
+                //    SMat4 ProjectionMatrix = currentCamera.GetProjMatrix( );
+				//
+                //    SVec3 u, v;
+                //    SVec3 lightDir = spotLight.GetDirection( );
+                //    lightDir.GenerateOrthogonalVectors(u, v);
+                //    u.Normalize( );
+				//
+                //    SMat4 lightView = SMat4::Identity( );
+                //    SMat4 lightProjection = SMat4( );
+                //    float farPlane = spotLight.GetRadius( );
+				//
+                //    // GENERATING LIGHT VIEW
+                //    SVec3 R = SVec3::Cross(lightDir, u);
+                //    SVec3 U = SVec3::Cross(lightDir, R);
+                //    SVec3 D = lightDir;
+				//
+                //    lightView.SetColumn(0, SVec4(R.X(), R.Y(), R.Z(), 0));
+                //    lightView.SetColumn(1, SVec4(U.X(), U.Y(), U.Z(), 0));
+                //    lightView.SetColumn(2, SVec4(D.X(), D.Y(), D.Z(), 0));
+				//
+                //    SVec3 P = lightView.TransformPoint(spotLight.GetPosition( ));
+                //    lightView.SetColumn(3, SVec4(P.X(), P.Y(), P.Z(), 1.0f));
+				//
+                //    lightProjection(0, 0) = 1.0f / (tanf(spotLight.GetSpotlightAngles().Y() / 2.0f));
+                //    lightProjection(1, 1) = 1.0f / (tanf(spotLight.GetSpotlightAngles().Y() / 2.0f));
+                //    lightProjection(2, 2) = farPlane / (farPlane - farPlane * 0.001f);
+                //    lightProjection(3, 2) = -(farPlane / (farPlane - farPlane * 0.001f)) * (farPlane * 0.001f);
+                //    lightProjection(2, 3) = 1.0f;
+                //    lightProjection(3, 3) = 0.0f;
+				//
+                //    auto eyePos = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4( spotLight.GetPosition( ).GetFloatPtr() ));
+                //    auto look = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4(spotLight.GetDirection().GetFloatPtr()));
+                //    auto upDir = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4(SVec4(0, 1, 0, 0).GetFloatPtr( )));
+				//
+                //    lightView = SMat4(DirectX::XMMatrixLookToLH(eyePos, look ,upDir));
+                //    lightProjection = SMat4(DirectX::XMMatrixPerspectiveFovLH(spotLight.GetSpotlightAngles().Y(), 1, farPlane * 0.001f, farPlane ));
+                //    // map to GPU
+                //    cb.view = SMat4::Transpose(lightView).ToD3D();
+                //    cb.projection = SMat4::Transpose(lightProjection).ToD3D( );
+                //    shadowmapView.Update( cb );
+                //}
 
                 // TARGET INPUTS //////////////////
                 // input RTs
