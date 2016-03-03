@@ -11,7 +11,7 @@ namespace ursine
 
     resources::ResourceData::Handle rp::WorldProcessor::Process(resources::ResourceData::Handle input, ResourceProcessorContext &context)
     {
-        UAssert( input && input->GetType( ) == typeof( JsonData ),
+        UAssertCatchable( input && input->GetType( ) == typeof( JsonData ),
             "Invalid input to world processor."
         );
 

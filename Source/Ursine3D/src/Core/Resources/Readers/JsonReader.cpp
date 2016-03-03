@@ -19,6 +19,11 @@ namespace ursine
 
             auto json = Json::parse( jsonString, jsonError );
 
+            UAssertCatchable( jsonError.empty( ),
+                "Error reading json.\nerror: %s",
+                jsonError.c_str( )
+            );
+
             return std::make_shared<JsonData>( json );
         }
     }

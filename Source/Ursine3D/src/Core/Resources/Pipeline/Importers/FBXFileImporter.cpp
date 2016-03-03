@@ -14,12 +14,11 @@ namespace ursine
 
     resources::ResourceData::Handle rp::FBXFileImporter::Import(ResourceImportContext &context)
     {
-        // .../BossRoom.fbx
         auto fileName = context.resource->GetSourceFileName( );
 
         graphics::CFBXLoader importer;
 
-        UAssert( importer.LoadFBX( fileName.string( ) ),
+        UAssertCatchable( importer.LoadFBX( fileName.string( ) ),
             "Unable to import FBX file.\nfile: %s",
             fileName.string( ).c_str( )
         );
@@ -37,7 +36,7 @@ namespace ursine
         
             ResourceWriter clipWriter( clipPath );
             
-            UAssert( clipWriter.IsOpen( ),
+            UAssertCatchable( clipWriter.IsOpen( ),
                 "Unable to write clip.\nfile: %s",
                 clipPath.string( ).c_str( )
             );

@@ -50,7 +50,7 @@ namespace ursine
         if (!exists( tempDirectory ))
             create_directories( tempDirectory );
 
-        UAssert( runTexureProcessor( ddsArgs ),
+        UAssertCatchable( runTexureProcessor( ddsArgs ),
             "Unable to run texture processor for building DDS'."
         );
 
@@ -58,7 +58,7 @@ namespace ursine
 
         std::ifstream stream( ddsFile.string( ), std::ios::in | std::ios::binary );
 
-        UAssert( stream,
+        UAssertCatchable( stream,
             "Unable to load built DDS file.\nfile: %s",
             ddsFile.string( ).c_str( )
         );
@@ -77,7 +77,7 @@ namespace ursine
 
         auto result = GetMetadataFromDDSMemory( buffer, fileSize, dx::DDS_FLAGS_NONE, meta );
 
-        UAssert( result == S_OK,
+        UAssertCatchable( result == S_OK,
             "Unable to get meta data from built DDS file.\nfile: %s",
             ddsFile.string( ).c_str( )
         );
@@ -136,7 +136,7 @@ namespace ursine
             "\""+ sourceFile.string( ) +"\""
         };
 
-        UAssert( runTexureProcessor( previewArgs ),
+        UAssertCatchable( runTexureProcessor( previewArgs ),
             "Unable to run texture processor for building preview."
         );
 
@@ -151,7 +151,7 @@ namespace ursine
             error 
         );
 
-        UAssert( !error,
+        UAssertCatchable( !error,
             "Unable to copy built png to preview file.\nsource: %s\ntarget: %s",
             pngFile.string().c_str( ),
             previewFile.string( ).c_str( )

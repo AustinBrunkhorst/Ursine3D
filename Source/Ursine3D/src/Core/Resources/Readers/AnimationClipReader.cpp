@@ -14,8 +14,9 @@ namespace ursine
 
         ResourceData::Handle AnimationClipReader::Read(ResourceReader &input)
         {
-            m_animInfo->Read(input);
-            return std::make_shared<AnimationClipData>(m_animInfo.get());
+            m_animInfo->Read( input );
+
+            return std::make_shared<AnimationClipData>( m_animInfo.get()  );
         }
     }
 }

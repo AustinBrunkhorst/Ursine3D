@@ -24,7 +24,7 @@ namespace ursine
 
             auto bytesRead = input.ReadBytes( reinterpret_cast<char*>( buffer ), bufferSize );
 
-            UAssert( bytesRead == bufferSize,
+            UAssertCatchable( bytesRead == bufferSize,
                 "Mismatch buffer sizes. Expected %zd bytes got %zd",
                 bufferSize,
                 bytesRead
@@ -39,7 +39,7 @@ namespace ursine
                 meta 
             );
 
-            UAssert( result == S_OK,
+            UAssertCatchable( result == S_OK,
                 "Unable to load DDS from memory."
             );
 
