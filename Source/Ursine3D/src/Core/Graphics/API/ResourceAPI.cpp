@@ -30,10 +30,6 @@ namespace ursine
         // TEXTURE
         /////////////////////////////////////////////////////////
         //get texture handle
-        GfxHND ResourceAPI::GetTexHandle(const char *name)
-        {
-            return m_privates->textureMgr->GetTextureIDByName(name);
-        }
 
         GfxHND ResourceAPI::CreateDynamicTexture(const unsigned width, const unsigned height)
         {
@@ -79,7 +75,7 @@ namespace ursine
         // MODEL
         /////////////////////////////////////////////////////////
 
-        GfxHND ResourceAPI::CreateModel(graphics::ufmt_loader::ModelInfo *modelInfo)
+        GfxHND ResourceAPI::CreateModel(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo)
         {
             return m_privates->modelMgr->CreateModel(modelInfo);
         }
@@ -104,7 +100,7 @@ namespace ursine
             return m_privates->modelMgr->GetModel( static_cast<unsigned>(handle & 0xFFFF) );
         }
 
-        ufmt_loader::ModelInfo *ResourceAPI::GetModelInfo(const GfxHND &handle)
+        std::shared_ptr<graphics::ufmt_loader::ModelInfo> ResourceAPI::GetModelInfo(const GfxHND &handle)
         {
             return m_privates->modelMgr->GetModelInfo( handle );
         }

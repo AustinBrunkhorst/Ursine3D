@@ -48,13 +48,6 @@ namespace ursine
                 mAnimInfo = nullptr;
             }
 
-            if (mModelInfo)
-            {
-                mModelInfo->ReleaseData();
-                delete mModelInfo;
-                mModelInfo = nullptr;
-            }
-
             if (mModel)
             {
                 delete mModel;
@@ -190,7 +183,7 @@ namespace ursine
             // mesh data
             if (nullptr == mModelInfo)
             {
-                mModelInfo = new ufmt_loader::ModelInfo;
+                mModelInfo = std::make_shared<ufmt_loader::ModelInfo>( );
                 mModelInfo->name = mModel->name.c_str();
                 mModelInfo->mmeshCount = static_cast<unsigned int>(mModel->mMeshData.size());
                 for (i = 0; i < mModelInfo->mmeshCount; ++i)

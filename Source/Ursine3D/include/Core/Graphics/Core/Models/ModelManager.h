@@ -33,11 +33,16 @@ namespace ursine
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
             void Uninitialize();
 
-            // Some version of this needs to exist
-            void BindModel(unsigned ID, unsigned index = 0, bool indexOnly = false);
+            // create/destry model
+            GfxHND CreateModel(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo);
+            void DestroyModel(GfxHND &handle);
 
-            // KEEP
-            //manual binding
+            // load/unload model from gpu
+            void LoadModel(GfxHND handle);
+            void UnloadModel(GfxHND handle);
+
+            // bind model to the GPU
+            void BindModel(unsigned ID, unsigned index = 0, bool indexOnly = false);
             template<typename T>
             void BindMesh(ID3D11Buffer *mesh, ID3D11Buffer *indices)
             {
@@ -51,52 +56,24 @@ namespace ursine
                 m_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);
             }
 
-            // KEEP
+            // get for index data
             unsigned GetModelIndexcountByID(unsigned ID, unsigned index = 0);
-
-            // KEEP
             unsigned GetModelMeshCount(unsigned ID);
 
-            // KEEP
+            // invalidate current state
             void Invalidate();
 
-            // KEPT
-            ModelResource *GetModel(const unsigned ID);
-
-
-            ///////////////////////////////////////////////////////////////////////////////////////
-            // KEPT
-            // this takes all info from modelInfo and loads it into a modelresource
-            void InitializeModel(ufmt_loader::ModelInfo *modelInfo, ModelResource& modelresource);
-
-            // creating a model resource
-            GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
-            void DestroyModel(GfxHND &handle);
-
-            // loading/unloading model
-            void LoadModel(GfxHND handle);
-            void UnloadModel(GfxHND handle);
-            ufmt_loader::ModelInfo *GetModelInfo(GfxHND handle);
-
-            // Animation
-            // creating a anime 
+            // animation stuff
             GfxHND CreateAnimation(ufmt_loader::AnimInfo *animeInfo);
             void DestroyAnimation(GfxHND &handle);
+
+            // getting info
+            std::shared_ptr<graphics::ufmt_loader::ModelInfo> GetModelInfo(GfxHND handle);
             ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
-
-            /////////////////////////////////////////////////////////////////////////////////////////
-            // DELETED DATA
-            std::map< std::string, unsigned > m_s2uTable;
-            std::map <unsigned, ModelResource * > m_u2mTable;
-            std::map< std::string, ModelResource * > m_modelArray;
-            std::vector< std::string > m_jdllist;
-            std::map< std::string, unsigned > a_s2uTable;
-            std::map< unsigned, ufmt_loader::AnimInfo * > a_u2aTable;
-            std::map< std::string, ufmt_loader::AnimInfo * > m_animeArray;
-
-            // KEPT DATA //////////////////////////////////////////////////////
+            ModelResource *GetModel(const unsigned ID);
 
         private:
+            void InitializeModel(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo, ModelResource& modelresource);
             void loadModelToGPU(ModelResource *model);
             void unloadModelFromGPU(ModelResource *model);
 
@@ -108,7 +85,7 @@ namespace ursine
             unsigned m_currentState;
 
             std::vector< ModelResource * > m_modelCache;
-            std::vector< ufmt_loader::ModelInfo * > m_modelInfoCache;
+            std::vector< std::shared_ptr<graphics::ufmt_loader::ModelInfo> > m_modelInfoCache;
 
             // anime
             unsigned m_animeCount;

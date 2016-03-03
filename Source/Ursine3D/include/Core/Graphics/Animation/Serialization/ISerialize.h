@@ -43,23 +43,6 @@ namespace ursine
                 */
                 virtual ~ISerialize();
 
-                /** @brief serialize in function interface
-                *
-                *  this will generate basic interface for the serializer
-                *
-                *  @param handle of the file
-                *  @return if succeed return true, else return false
-                */
-                virtual bool SerializeIn(HANDLE hFile) = 0;
-                /** @brief serialize out function interface
-                *
-                *  this will generate basic interface for the serializer
-                *
-                *  @param handle of the file
-                *  @return if succeed return true, else return false
-                */
-                virtual bool SerializeOut(HANDLE hFile) = 0;
-
                 virtual void Read(resources::ResourceReader &input) = 0;
                 virtual void Write(resources::pipeline::ResourceWriter &output) = 0;
             };

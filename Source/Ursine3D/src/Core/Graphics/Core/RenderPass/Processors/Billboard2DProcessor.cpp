@@ -87,7 +87,7 @@ namespace ursine
             );
 
             // map texture //////////////////////////////////////////
-            m_manager->textureManager->MapResourceTextureByID( handle.Material_ );
+            m_manager->textureManager->MapTextureByID( handle.Material_ );
 
             // set overdraw value ///////////////////////////////////
             if (handle.Overdraw_)

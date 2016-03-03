@@ -33,8 +33,6 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // TEXTURE
             /////////////////////////////////////////////////////////
-            // get texture handle
-            GfxHND GetTexHandle(const char *name);
 
             // create a texture of a given width/height, returns handle
             GfxHND CreateDynamicTexture(const unsigned width, const unsigned height);
@@ -60,7 +58,7 @@ namespace ursine
             /////////////////////////////////////////////////////////
 
             // create a model
-            GfxHND CreateModel(ufmt_loader::ModelInfo *modelInfo);
+            GfxHND CreateModel(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo);
             void DestroyModel(GfxHND &handle);
 
             // load/unload from GPU
@@ -71,7 +69,7 @@ namespace ursine
             ModelResource *GetModelResource(GfxHND handle);
 
             // get a model info
-            ufmt_loader::ModelInfo *GetModelInfo(const GfxHND &handle);
+            std::shared_ptr<graphics::ufmt_loader::ModelInfo> GetModelInfo(const GfxHND &handle);
 
             /////////////////////////////////////////////////////////
             // Animation

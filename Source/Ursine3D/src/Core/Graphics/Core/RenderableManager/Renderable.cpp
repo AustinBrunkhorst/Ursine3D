@@ -434,7 +434,7 @@ namespace ursine
         {
             m_backIndex = 0;
             Renderable::Initialize();
-            m_textureName = "Blank";
+            m_textureHandle = 0;
             m_useAdditive = true;
             m_worldSpace = true;
         }
@@ -521,14 +521,14 @@ namespace ursine
             m_particleColor = color;
         }
 
-        const std::string & ParticleSystem::GetParticleTexture(void) const
+        GfxHND ParticleSystem::GetTextureHandle(void) const
         {
-            return m_textureName;
+            return m_textureHandle;
         }
 
-        void ParticleSystem::SetParticleTexture(const std::string & texName)
+        void ParticleSystem::SetTextureHandle(GfxHND handle)
         {
-            m_textureName = texName;
+            m_textureHandle = handle;
         }
 
         bool ParticleSystem::GetAdditive(void) const

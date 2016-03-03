@@ -264,8 +264,8 @@ namespace ursine
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
 
-            const std::string &GetParticleTexture(void) const;
-            void SetParticleTexture(const std::string &texName);
+            GfxHND GetTextureHandle(void) const;
+            void SetTextureHandle(GfxHND handle);
 
             bool GetAdditive(void) const;
             void SetAdditive(const bool useAdditive);
@@ -279,7 +279,7 @@ namespace ursine
             std::vector<Particle_CPU> m_cpuParticleData;
             SVec3 m_position;
 
-            std::string m_textureName;
+            GfxHND m_textureHandle;
 
             Color m_particleColor;
 

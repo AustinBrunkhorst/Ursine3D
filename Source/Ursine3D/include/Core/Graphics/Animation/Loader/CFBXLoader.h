@@ -399,7 +399,7 @@ namespace ursine
             *
             *  @return the model info data structure
             */
-            ufmt_loader::ModelInfo* GetModelInfo() const { return mModelInfo; }
+            std::shared_ptr<graphics::ufmt_loader::ModelInfo> GetModelInfo() const { return mModelInfo; }
 
             /** @brief fbx loader get animation info function
             *
@@ -416,7 +416,7 @@ namespace ursine
             FbxPose*				mAnimPose;
             FBX_DATA::FbxModel*		mModel;
 
-            ufmt_loader::ModelInfo*	mModelInfo;
+            std::shared_ptr<graphics::ufmt_loader::ModelInfo> mModelInfo;
             ufmt_loader::AnimInfo*	mAnimInfo;
         };
     }
