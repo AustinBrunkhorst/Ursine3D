@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -167,9 +167,9 @@ JSMethod(EntityHandler::remove)
     if (!entity)
         return CefV8Value::CreateBool( false );
 
-	Application::Instance->ExecuteOnMainThread( [=] {
-		entity->Delete( );
-	} );
+    Application::Instance->ExecuteOnMainThread( [=] {
+        entity->Delete( );
+    } );
 
     return CefV8Value::CreateBool( true );
 }

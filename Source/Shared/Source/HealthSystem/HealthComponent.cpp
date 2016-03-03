@@ -29,9 +29,9 @@ Health::Health(void)
     : BaseComponent( )
     , m_health( 100 )
     , m_objToSpawn( "" )
+    , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
 {
-    
 }
 
 Health::~Health(void)
@@ -68,6 +68,16 @@ void Health::SetArchetypeOnDeath(const std::string& objToSpawn)
         m_objToSpawn += ".uatype";
 }
 
+bool Health::GetDeleteOnZeroHealth(void) const
+{
+    return m_deleteOnZero;
+}
+
+void Health::SetDeleteOnZeroHealth(bool flag)
+{
+    m_deleteOnZero = flag;
+}
+
 bool Health::GetSpawnOnDeath(void) const
 {
     return m_spawnOnDeath;
@@ -81,11 +91,24 @@ void Health::DealDamage(const float damage)
 {
     auto owner = GetOwner( );
 
+    // early out if we've already "died"
+    if (m_health < 0)
+        return;
+
     m_health -= damage;
 
     if (m_health <= 0)
     {
-        GetOwner( )->Delete( );
+        Dispatch( HEALTH_ZERO, ursine::EventArgs::Empty );
+
+        if (m_deleteOnZero)
+            GetOwner( )->Delete( );
+    }
+    else
+    {
+        HealthEventArgs args( damage, m_health / m_maxHealth );
+
+        Dispatch( HEALTH_DAMAGE_TAKEN, &args );
     }
 
     URSINE_TODO("Fix sound hack for health");
@@ -122,7 +145,7 @@ void Health::sendDamageTextEvent(const ursine::SVec3& contact, float damage, boo
 
 void Health::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
-    if ( m_spawnOnDeath )
+    if ( m_spawnOnDeath && m_objToSpawn != ".uatype" )
     {
         ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
 

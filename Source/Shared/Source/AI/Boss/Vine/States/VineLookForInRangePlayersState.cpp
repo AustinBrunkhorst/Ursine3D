@@ -53,6 +53,9 @@ void VineLookForInRangePlayersState::Update(VineAIStateMachine *machine)
 
     Transform *closestTrans = nullptr;
 
+    // reset m_inRange
+    m_inRange = false;
+
     for (auto &playerID : players)
     {
         auto playerTrans = playerID->GetTransform( );
@@ -63,7 +66,7 @@ void VineLookForInRangePlayersState::Update(VineAIStateMachine *machine)
         {
             auto len = dir.Length( );
 
-            m_inRange = len <= range;
+            m_inRange = m_inRange || len <= range;
 
             if (len < closestDir)
             {
@@ -75,7 +78,7 @@ void VineLookForInRangePlayersState::Update(VineAIStateMachine *machine)
         {
             auto len = dir.LengthSquared( );
 
-            m_inRange = len <= range * range;
+            m_inRange = m_inRange || len <= range * range;
 
             if (len < closestDir)
             {

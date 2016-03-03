@@ -3,3 +3,17 @@
 Source/Ursine3D/dep/FBX/FBX.7z
 Source/Projects/Editor/Assets/Models/MODELS.8.0.gfx
 *.jani
+*.jani
+Source/Projects/Editor/Assets/Animations/Gun_Idle.jani
+Source/Projects/Editor/Assets/Animations/Gun_Shoot.jani
+Source/Projects/Editor/Assets/Animations/Player1_Jump.jani
+Source/Projects/Editor/Assets/Animations/Player1_Straf_R.jani
+Source/Projects/Editor/Assets/Animations/Player1_Win.jani
+Source/Projects/Editor/Assets/Animations/Player2_Idle.jani
+Source/Projects/Editor/Assets/Animations/Player2_Straf_L.jani
+Source/Projects/Editor/Assets/Animations/Player2_Win.jani
+Source/Projects/Editor/Assets/Models/Gun_Run.jdl
+Source/Projects/Editor/Assets/Models/Player1_Die.jdl
+Source/Projects/Editor/Assets/Models/Gun_Idle.jdl
+Source/Projects/Editor/Assets/Models/Gun_Shoot.jdl
+Source/Projects/Editor/Assets/Models/Player1_Die.jdl

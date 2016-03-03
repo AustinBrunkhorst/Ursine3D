@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -218,6 +218,16 @@ namespace ursine
             SetEnableDebugDraw( false );
 
         #endif
+
+            // This is a real gross thing I'm doing to try and fix
+            // an issue I'm having with bullet and collision flags
+            auto rigidbodies = m_world->GetEntitiesFromFilter( Filter( ).All<Rigidbody>( ) );
+
+            for (auto &entity : rigidbodies)
+            {
+                auto rigidbody = entity->GetComponent<Rigidbody>( );
+                rigidbody->SetBodyFlag( rigidbody->GetBodyFlag( ) );
+            }
         }
 
         void PhysicsSystem::onComponentAdded(EVENT_HANDLER(World))
@@ -644,8 +654,9 @@ namespace ursine
             else if (entity->HasComponent<Rigidbody>( ))
             {
                 auto rigidbody = entity->GetComponent<Rigidbody>( );
-				
-				// m_world->GetOwner( ) is an addition check to make sure we're not deserializing
+
+                // m_world->GetOwner( ) is required so we can make sure
+                // we aren't serializing
                 if (!emptyCollider && m_world->GetOwner( ))
                     m_simulation.RemoveRigidbody( &rigidbody->m_rigidbody );
 
@@ -659,7 +670,8 @@ namespace ursine
             {
                 auto ghost = entity->GetComponent<Ghost>( );
 
-				// m_world->GetOwner( ) is an addition check to make sure we're not deserializing
+                // m_world->GetOwner( ) is required so we can make sure
+                // we aren't serializing
                 if (!emptyCollider && m_world->GetOwner( ))
                     m_simulation.RemoveGhost( &ghost->m_ghost );
 
