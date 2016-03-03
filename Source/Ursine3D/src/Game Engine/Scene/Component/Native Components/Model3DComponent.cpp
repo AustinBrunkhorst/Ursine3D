@@ -239,6 +239,7 @@ namespace ursine
             {
                 auto handle = data->GetModelHandle();
 
+                m_graphics->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
                 m_graphics->ResourceMgr.LoadModel( handle );
 
                 m_model->SetModelHandle(handle);
@@ -258,6 +259,7 @@ namespace ursine
             {
                 auto handle = data->GetTextureHandle();
 
+                m_graphics->ResourceMgr.UnloadTexture( m_model->GetTextureHandle( ) );
                 m_graphics->ResourceMgr.LoadTexture( handle );
 
                 m_model->SetTextureHandle(handle);

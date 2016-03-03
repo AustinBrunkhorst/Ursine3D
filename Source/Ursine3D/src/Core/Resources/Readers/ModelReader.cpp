@@ -17,7 +17,7 @@ namespace ursine
         {
             m_modelInfo->Read( input );
 
-            return std::make_shared<ModelData>( m_modelInfo.get( ) );
+            return std::make_shared<ModelData>( m_modelInfo );
         }
     }
 }

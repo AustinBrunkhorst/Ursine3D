@@ -168,7 +168,7 @@ namespace ursine
             std::string textPath = "Assets/Bitmap Fonts/MainFont.fnt";
             m_font.Load(textPath);
 
-            textureManager->CreateTexture("Font", "Assets/Bitmap Fonts/"  + m_font.GetTextureFiles()[ 0 ], 512, 512);
+            //textureManager->CreateTexture("Font", "Assets/Bitmap Fonts/"  + m_font.GetTextureFiles()[ 0 ], 512, 512);
 
             // TEST SHIT
             //RenderPass forwardPass("ForwardPass");
@@ -312,9 +312,12 @@ namespace ursine
             {
                 ParticleSystem *current = &renderableManager->m_renderableParticleSystems[ render->Index_ ];
 
+                GfxHND texHandle = current->GetTextureHandle( );
+                drawCall.Material_ = texHandle & 0xFFFF;
+
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
-                drawCall.Overdraw_ = current->GetOverdraw();
+                drawCall.Overdraw_ = current->GetOverdraw( );
                 drawCall.Shader_ = SHADER_PARTICLE;
             }
             break;
@@ -973,7 +976,7 @@ namespace ursine
             fullscreenModel.Update( INTERNAL_QUAD );
             spriteModel.Update( INTERNAL_QUAD );
             particleModel.Update( INTERNAL_POINT_INDICES );
-            fontTexture.Update( textureManager->GetTextureIDByName( "Font" ) );
+            fontTexture.Update( 0 );
 
             /////////////////////////////////////////////////////////
             // RENDER
@@ -1253,7 +1256,7 @@ namespace ursine
             viewBufferGeom.Update( cb );
             spriteModel.Update( 0 );
             particleModel.Update( INTERNAL_POINT_INDICES );
-            fontTexture.Update( textureManager->GetTextureIDByName( "Font" ) );
+            fontTexture.Update( 0 );
 
             pgb.cameraPosition = SVec4( currentCamera.GetPosition( ), 1 ).ToD3D( );
             pgb.cameraUp = SVec4( currentCamera.GetUp( ), 0 ).ToD3D( );

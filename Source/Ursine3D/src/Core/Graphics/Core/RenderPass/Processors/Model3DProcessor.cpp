@@ -101,7 +101,7 @@ namespace ursine
 
             /////////////////////////////////////////////////////////
             // map texture
-            m_manager->textureManager->MapResourceTextureByID( handle.Material_ );
+            m_manager->textureManager->MapTextureByID( handle.Material_ );
         }
 
         void Model3DProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
@@ -171,7 +171,7 @@ namespace ursine
                     &mdb, 
                     SHADERTYPE_PIXEL
                 );
-                m_manager->textureManager->MapTextureByName( "Blank" );
+                m_manager->textureManager->MapTextureByID( INTERNAL_BLANK_TEX );
 
                 for (unsigned x = 0; x < count; ++x)
                 {
@@ -229,7 +229,7 @@ namespace ursine
                 mdb.specularPower = 0;
                 mdb.specularIntensity = 0;
                 m_manager->bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
-                m_manager->textureManager->MapTextureByName("Blank");
+                m_manager->textureManager->MapTextureByID( INTERNAL_BLANK_TEX );
 
                 // set model
                  m_manager->modelManager->BindModel(

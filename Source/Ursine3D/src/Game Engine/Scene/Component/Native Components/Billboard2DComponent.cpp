@@ -118,6 +118,7 @@ namespace ursine
             {
                 auto handle = data->GetTextureHandle( );
 
+                m_graphics->ResourceMgr.UnloadTexture( m_billboard->GetTextureHandle( ) );
                 m_graphics->ResourceMgr.LoadTexture( handle );
 
                 m_billboard->SetTextureHandle( handle );

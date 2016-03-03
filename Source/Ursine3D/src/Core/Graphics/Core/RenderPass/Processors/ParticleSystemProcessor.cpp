@@ -75,7 +75,7 @@ namespace ursine
             );
 
             // SET TEXTURE //////////////////////////////////////////
-            m_manager->textureManager->MapTextureByName( particleSystem.GetParticleTexture( ) );
+            m_manager->textureManager->MapTextureByID( handle.Material_ );
         }
 
         void ParticleSystemProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)

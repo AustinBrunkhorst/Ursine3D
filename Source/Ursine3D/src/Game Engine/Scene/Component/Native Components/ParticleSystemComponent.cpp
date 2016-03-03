@@ -131,14 +131,21 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED("color", color);
         }
 
-        const std::string & ParticleSystem::GetParticleTextureName(void) const
+        const resources::ResourceReference &ParticleSystem::GetTexture(void) const
         {
-            return m_particleSystem->GetParticleTexture();
+            return m_texture;
         }
 
-        void ParticleSystem::SetParticleTextureName(const std::string & texture)
+        void ParticleSystem::SetTexture(const resources::ResourceReference &texture)
         {
-            m_particleSystem->SetParticleTexture(texture);
+            m_texture = texture;
+
+            if (!resourcesAreAvailable( ))
+                return;
+
+            invalidateTexture( );
+
+            NOTIFY_COMPONENT_CHANGED( "texture", m_texture );
         }
 
         SystemSpace ParticleSystem::GetSystemSpace(void) const
@@ -178,6 +185,26 @@ namespace ursine
                 m_particleSystem->SetAdditive(true);
             else
                 m_particleSystem->SetAdditive(false);
+        }
+
+        void ParticleSystem::invalidateTexture(void)
+        {
+            auto data = loadResource<resources::TextureData>( m_texture );
+
+            if (data == nullptr)
+            {
+                // default
+                m_particleSystem->SetTextureHandle( 0 );
+            }
+            else
+            {
+                auto handle = data->GetTextureHandle( );
+
+                m_graphics->ResourceMgr.UnloadTexture( m_particleSystem->GetTextureHandle( ) );
+                m_graphics->ResourceMgr.LoadTexture( handle );
+
+                m_particleSystem->SetTextureHandle( handle );
+            }
         }
     }
 }

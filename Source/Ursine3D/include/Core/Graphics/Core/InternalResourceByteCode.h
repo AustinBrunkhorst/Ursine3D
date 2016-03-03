@@ -24,6 +24,7 @@ namespace ursine
             const extern uint8_t kSphereJdl[];
             const extern uint8_t kConeJdl[];
             const extern uint8_t kMissingTexture[];
+            const extern uint8_t kBlankTexture[];
         }
     }
 }

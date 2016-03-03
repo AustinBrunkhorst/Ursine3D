@@ -9,7 +9,7 @@ namespace ursine
 {
     namespace resources
     {
-        ModelData::ModelData(graphics::ufmt_loader::ModelInfo *modelInfo)
+        ModelData::ModelData(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo)
         {
             m_modelHandle = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.CreateModel( modelInfo );
         }
@@ -26,7 +26,7 @@ namespace ursine
 
         void ModelData::Write(pipeline::ResourceWriter &output)
         {
-            auto *modelInfo = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetModelInfo( m_modelHandle );
+            auto modelInfo = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetModelInfo( m_modelHandle );
 
             modelInfo->Write( output );
         }

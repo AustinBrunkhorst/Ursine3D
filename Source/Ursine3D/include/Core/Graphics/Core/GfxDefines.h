@@ -56,7 +56,7 @@
 #define ID_VIEWPORT   42
 #define ID_UI         87
 
-// internal IDs for objects
+// internal IDs for models
 #define INTERNAL_CUBE               0
 #define INTERNAL_SPHERE             1
 #define INTERNAL_CONE               2
@@ -64,6 +64,10 @@
 #define INTERNAL_POINT_INDICES      4
 
 #define INTERNAL_GEOMETRY_COUNT     5
+
+// internal IDs for textured
+#define INTERNAL_MISSING_TEX        0
+#define INTERNAL_BLANK_TEX          1
 
 //sanity values
 #define SANITY_RESOURCE 73
