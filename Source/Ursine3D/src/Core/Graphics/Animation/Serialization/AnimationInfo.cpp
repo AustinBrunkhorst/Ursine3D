@@ -22,7 +22,9 @@ namespace ursine
         {
             AnimInfo::AnimInfo(void)
                 : name( "" )
-                , animCount( 0 ) { }
+                , animCount( 0 )
+                , animDataArr( 0 )
+            { }
 
             AnimInfo::~AnimInfo(void)
             {

@@ -761,8 +761,7 @@ namespace ursine
                     auto handle = data->GetAnimeHandle();
 
                     auto animInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle);
-                    URSINE_TODO("NEED TO CHECK IF THERE IS ANIMATION INFO IN SOME OTHER WAY");
-                    //if (animInfo)
+                    if ( animInfo.IsThereAAnimation( ) )
                         animationIndex = AnimationBuilder::LoadAnimation(animInfo, m_animationName);
                 }
             }
