@@ -218,6 +218,16 @@ namespace ursine
             SetEnableDebugDraw( false );
 
         #endif
+
+            // This is a real gross thing I'm doing to try and fix
+            // an issue I'm having with bullet and collision flags
+            auto rigidbodies = m_world->GetEntitiesFromFilter( Filter( ).All<Rigidbody>( ) );
+
+            for (auto &entity : rigidbodies)
+            {
+                auto rigidbody = entity->GetComponent<Rigidbody>( );
+                rigidbody->SetBodyFlag( rigidbody->GetBodyFlag( ) );
+            }
         }
 
         void PhysicsSystem::onComponentAdded(EVENT_HANDLER(World))

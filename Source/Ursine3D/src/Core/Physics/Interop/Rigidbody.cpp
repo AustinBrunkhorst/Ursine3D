@@ -43,7 +43,7 @@ namespace ursine
 
         #endif
 
-            SetBodyFlag( bodyType );
+            SetBodyFlag( bodyType, false );
             SetSleepToggle( m_enableSleeping );
         }
 
@@ -117,9 +117,12 @@ namespace ursine
         #endif
         }
 
-        void Rigidbody::SetBodyFlag(BodyFlag bodyFlag)
+        void Rigidbody::SetBodyFlag(BodyFlag bodyFlag, bool remove)
         {            
         #ifdef BULLET_PHYSICS
+
+            if (remove && m_simulation)
+                m_simulation->RemoveRigidbody( this );
 
             if (m_bodyType != BF_DYNAMIC)
             {
@@ -145,6 +148,9 @@ namespace ursine
 
             if (m_simulation && (bodyFlag == BF_STATIC || bodyFlag == BF_KINEMATIC))
                 m_simulation->ClearContacts( *this );
+
+            if (remove && m_simulation)
+                m_simulation->AddRigidbody( this );
 
             SetMass( m_mass );
 

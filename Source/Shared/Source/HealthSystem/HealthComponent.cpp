@@ -122,7 +122,7 @@ void Health::sendDamageTextEvent(const ursine::SVec3& contact, float damage, boo
 
 void Health::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
-    if ( m_spawnOnDeath )
+    if ( m_spawnOnDeath && m_objToSpawn != ".uatype" )
     {
         ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
 
