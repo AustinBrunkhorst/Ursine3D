@@ -113,12 +113,6 @@ void FodderAI::OnInitialize(void)
 
     walkState->SetSeparationScale( m_separationScale );
 
-    auto ghost = GetOwner()->GetComponentInChildren<Ghost>();
-
-    UAssert( ghost, "Child of Entity With FodderAIComponent must have a ghost collider");
-
-    walkState->SetNearRadius(ghost->GetOwner()->GetTransform()->GetWorldScale().X() / 2);
-
     walkState->SetBoidbehaviorScale(m_boidBehaviorScale);
 
 

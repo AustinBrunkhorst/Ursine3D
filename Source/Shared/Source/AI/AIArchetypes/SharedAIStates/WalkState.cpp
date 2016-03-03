@@ -52,6 +52,10 @@ namespace ursine
 
             // we gon get ourselves a ghost collider
             m_ghostCollider = aiActor->GetComponentInChildren<ecs::Ghost>();
+
+            UAssert(m_ghostCollider, "Child of Entity With walkState must have a ghost collider");
+
+            SetNearRadius(m_ghostCollider->GetOwner()->GetTransform()->GetWorldScale().X() / 2);
         }
 
         void WalkState::Update(AIStateMachine *stateMachine)

@@ -992,6 +992,7 @@ namespace ursine
 
                 // UPDATING SHADOW MAP
                 {
+                    //herer
                     Light &spotLight = renderableManager->m_renderableLights[ m_drawList[ index ].Index_ ];
                     SMat4 ViewMatrix = currentCamera.GetViewMatrix( );
                     SMat4 ProjectionMatrix = currentCamera.GetProjMatrix( );
@@ -1030,6 +1031,8 @@ namespace ursine
 
                     lightView = SMat4(DirectX::XMMatrixLookToLH(eyePos, look ,upDir));
                     lightProjection = SMat4(DirectX::XMMatrixPerspectiveFovLH(spotLight.GetSpotlightAngles().Y(), 1, farPlane * 0.001f, farPlane ));
+                    // to here
+
                     // map to GPU
                     cb.view = SMat4::Transpose(lightView).ToD3D();
                     cb.projection = SMat4::Transpose(lightProjection).ToD3D( );
