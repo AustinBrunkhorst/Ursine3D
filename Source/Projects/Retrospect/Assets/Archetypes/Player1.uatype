@@ -4,12 +4,11 @@
 "children": [], 
 "components": {
 "Animator": {
-".uid": 28, 
+".uid": 476, 
 "animation": "", 
 "changeState": false, 
 "currentRig": "Player", 
 "currentState": "Player_Idle", 
-"loopAnimation": true, 
 "playAnimation": true, 
 "renderDebug": false, 
 "stArray": [], 
@@ -17,7 +16,8 @@
 "timeScalar": 1
 }, 
 "Model3D": {
-".uid": 29, 
+".uid": 477, 
+"active": true, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -34,7 +34,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 27, 
+".uid": 475, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -49,7 +49,7 @@
 "translation": {
 "x": 0, 
 "y": 0, 
-"z": 5.2394866543181706e-06
+"z": 0
 }
 }
 }, 
@@ -60,7 +60,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 38, 
+".uid": 484, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -75,7 +75,7 @@
 "translation": {
 "x": 1.2000000476837158, 
 "y": -0.80000001192092896, 
-"z": 2
+"z": -4
 }
 }
 }, 
@@ -84,7 +84,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 39, 
+".uid": 485, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -108,12 +108,18 @@
 ], 
 "components": {
 "Audio Listener 3D": {
-".uid": 33, 
+".uid": 479, 
 "testing": []
 }, 
 "Camera": {
-".uid": 34, 
-"active": false, 
+".uid": 480, 
+"active": true, 
+"clearColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
 "farPlane": 1000, 
 "fov": 60, 
 "nearPlane": 0.10000000149011612, 
@@ -122,7 +128,7 @@
 "renderMode": 1, 
 "viewportPosition": {
 "x": 0, 
-"y": 0
+"y": 0.5
 }, 
 "viewportSize": {
 "x": 1, 
@@ -130,7 +136,7 @@
 }
 }, 
 "Transform": {
-".uid": 32, 
+".uid": 478, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -145,7 +151,7 @@
 "translation": {
 "x": 0, 
 "y": 24.188358306884766, 
-"z": 0
+"z": -3
 }
 }
 }, 
@@ -154,42 +160,46 @@
 ], 
 "components": {
 "Audio Emitter": {
-".uid": 16, 
+".uid": 464, 
 "Loop": false, 
 "Mute": false, 
 "Volume": 100
 }, 
 "CharacterController": {
-".uid": 17, 
+".uid": 465, 
+"HighRotationFloor": 0.90000003576278687, 
+"LowRotationFactor": 0.5, 
+"MediumRotationFactor": 0.75, 
+"MediumRotationFloor": 0.40000000596046448, 
 "deadZone": 0.099999994039535522, 
 "deadZoneSnap": 0.14999999105930328, 
 "lockLooking": false, 
 "lockMovement": false, 
-"rotateSpeed": 11.279999732971191
+"rotateSpeed": 7.5199999809265137
 }, 
 "CommandQueue": {
-".uid": 18
+".uid": 466
 }, 
 "CylinderCollider": {
-".uid": 19, 
+".uid": 467, 
 "height": 30, 
-"radius": 5
+"radius": 6
 }, 
 "Health": {
-".uid": 20, 
+".uid": 468, 
 "ArchetypeToSpawnOnDeath": "FX/JordanFire.uatype", 
 "EntityHealth": 100, 
 "SpawnOnDeath": true
 }, 
 "InputController": {
-".uid": 21, 
+".uid": 469, 
 "UseKeyboard": false
 }, 
 "InteractionBay": {
-".uid": 22
+".uid": 470
 }, 
 "Inventory": {
-".uid": 23, 
+".uid": 471, 
 "LastStand": "P1HitScanWeapon.uatype", 
 "MeleeWeapon": "", 
 "PrimaryWeapon": "", 
@@ -198,18 +208,18 @@
 "m_currWeapon": 0
 }, 
 "PlayerID": {
-".uid": 24, 
+".uid": 472, 
 "PlayerId": 0
 }, 
 "Rigidbody": {
-".uid": 25, 
+".uid": 473, 
 "bodyFlag": 2, 
+"disableContactResponse": false, 
 "enableContactCallback": true, 
 "enableContinuousCollisionDetection": false, 
 "freezeXRotation": true, 
 "freezeYRotation": true, 
 "freezeZRotation": true, 
-"ghost": false, 
 "gravity": {
 "x": 0, 
 "y": -10, 
@@ -224,21 +234,21 @@
 "sleepToggle": true
 }, 
 "SweptController": {
-".uid": 26, 
+".uid": 474, 
 "active": true, 
-"airAcceleration": 30, 
+"airAcceleration": 40, 
 "airDeceleration": 40, 
 "forwardEvents": true, 
 "gravity": 160, 
 "groundAcceleration": 200, 
-"groundDeceleration": 600, 
+"groundDeceleration": 750, 
 "groundSnapDistance": 8, 
 "jumpCancelFactor": 0.5, 
 "jumpSpeed": 100, 
 "maxCeilingSlope": 43.5, 
 "maxFallSpeed": 180, 
 "maxGroundSlope": 42, 
-"maxMoveSpeed": 100, 
+"maxMoveSpeed": 85, 
 "worldUp": {
 "x": 0, 
 "y": 1, 
@@ -246,7 +256,7 @@
 }
 }, 
 "Transform": {
-".uid": 15, 
+".uid": 463, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -259,8 +269,8 @@
 "z": 0.40000000596046448
 }, 
 "translation": {
-"x": -33.391010284423828, 
-"y": -1.9958266019821167, 
+"x": -133.04373168945313, 
+"y": 15.286730766296387, 
 "z": 0
 }
 }

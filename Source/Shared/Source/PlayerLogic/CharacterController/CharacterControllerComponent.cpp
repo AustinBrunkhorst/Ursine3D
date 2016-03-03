@@ -69,6 +69,46 @@ void CharacterController::SetDeadZoneSnap(float snap)
     m_deadZoneSnap = snap;
 }
 
+float CharacterController::GetMediumRotationFloor(void) const
+{
+	return m_mediumRotationFloor;
+}
+
+void CharacterController::SetMediumRotationFloor(float floor)
+{
+	m_mediumRotationFloor = floor;
+}
+
+float CharacterController::GetHighRotationFloor(void) const
+{
+	return m_highRotationFloor;
+}
+
+void CharacterController::SetHighRotationFloor(float floor)
+{
+	m_highRotationFloor = floor;
+}
+
+float CharacterController::GetLowRotationFactor(void) const
+{
+	return m_lowRotationFactor;
+}
+
+void CharacterController::SetLowRotationFactor(float rotationFactor)
+{
+	m_lowRotationFactor = rotationFactor;
+}
+
+float CharacterController::GetMediumRotationFactor(void) const
+{
+	return m_mediumRotationFactor;
+}
+
+void CharacterController::SetMediumRotationFactor(float rotationFactor)
+{
+	m_mediumRotationFactor = rotationFactor;
+}
+
 const ursine::Vec2& CharacterController::GetMoveDirection(void) const
 {
     return m_moveDir;
