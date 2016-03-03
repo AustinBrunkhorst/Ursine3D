@@ -46,6 +46,8 @@ namespace ursine
             unsigned GetSampleCount();
             unsigned GetSampleQuality();
 
+            void SetSampleCountAndQuality(unsigned count, unsigned quality);
+
             void GetDimensions(unsigned &w, unsigned &h);
             void SetDimensions(unsigned w, unsigned h);
         private:

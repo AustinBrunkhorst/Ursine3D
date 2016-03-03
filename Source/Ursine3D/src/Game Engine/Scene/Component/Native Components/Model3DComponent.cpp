@@ -42,8 +42,6 @@ namespace ursine
             m_model = &m_graphics->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
 
             m_model->SetRenderMask( 0 );
-            m_model->SetModelHandle( 0 );
-            m_model->SetTextureHandle( 0 );
         }
 
         Model3D::~Model3D(void)
@@ -55,11 +53,8 @@ namespace ursine
            m_graphics->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
 
             // release resource - need to call unload model, texture.
-            if (m_model->GetModelHandle( ) != 0)
-                m_graphics->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
-
-            if (m_model->GetTextureHandle( ) != 0)
-               m_graphics->ResourceMgr.UnloadTexture( m_model->GetTextureHandle( ) );
+            m_graphics->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
+            m_graphics->ResourceMgr.UnloadTexture( m_model->GetTextureHandle( ) );
 
             delete m_base;
         }
@@ -264,7 +259,7 @@ namespace ursine
             if (data == nullptr)
             {
                 // default
-                m_model->SetTextureHandle( 0 );
+                m_model->SetTextureHandle( 1 );
             }
             else
             {

@@ -111,9 +111,10 @@ namespace ursine
         {
             Renderable::Initialize();
 
-            m_modelResourceName = "Cube";
+            m_textureHandle = INTERNAL_BLANK_TEX;
+            m_modelHandle = 0;
 
-            m_emissive = 0.45f;
+            m_emissive = 0.15f;
             m_specPow = 0;
             m_specIntensity = 0;
             SetOverdraw(false);
