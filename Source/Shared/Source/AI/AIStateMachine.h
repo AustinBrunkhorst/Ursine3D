@@ -1,3 +1,5 @@
+#pragma once
+
 #include "StateMachine.h"
 #include "Entity.h"
 
@@ -12,10 +14,14 @@ namespace ursine
         class AIStateMachine : public StateMachine
         {
         public:
-            AIStateMachine(ecs::Entity *aiActor);
+            AIStateMachine(void);
+
+            virtual void Initialize(ecs::Entity *actor);
 
             ecs::Entity *GetEntity(void) const;
-        private:
+
+        protected:
+            //TODO: replace with the things austin is using now
             ecs::Entity *m_actorEntity;
         };
     }

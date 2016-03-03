@@ -107,6 +107,9 @@ namespace ursine
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
 
+            void SetOverdraw(bool flag);
+            bool GetOverdraw(void) const;
+
         private:
             graphics::SpriteText *m_spriteText;
 

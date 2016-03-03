@@ -16,11 +16,11 @@ cbuffer MatrixStack : register(b12)
 
 struct VS_INPUT
 {
-    float3    Pos       : POSITION;
-    float3    Nor       : NORMAL;
-    float2    Tex       : TEXCOORD;
-    float4    BWeight   : BLENDWEIGHT;
-    uint4     BIdx      : BLENDINDICES;
+    float3  Pos         : POSITION;
+    float3  Nor         : NORMAL;
+    float2  Tex         : TEXCOORD;
+    float4  BWeight     : BLENDWEIGHT;
+    uint4   BIdx        : BLENDINDICES;
 };
 
 
@@ -46,7 +46,7 @@ VS_OUTPUT main(VS_INPUT input)
     indices[ 3 ] = input.BIdx.w;
 
     float3 pos = float3(0.f, 0.f, 0.f);
-    for ( int i = 0; i < 4; ++i )
+    for (int i = 0; i < 4; ++i)
     {
         pos += weights[ i ] * mul(float4(input.Pos.xyz, 1.0f), matPal[ indices[ i ] ]).xyz;
     }

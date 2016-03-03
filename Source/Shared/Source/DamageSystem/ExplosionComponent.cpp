@@ -3,6 +3,7 @@
 #include "ExplosionComponent.h"
 #include "PlayerIdComponent.h"
 #include "AI/AIHordeReasoner.h"
+#include "Vec3.h"
 #include "HealthComponent.h"
 
 

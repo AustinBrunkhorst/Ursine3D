@@ -67,6 +67,16 @@ namespace ursine
             m_growth = growth;
         }
 
+        float ParticleAnimator::GetTorque() const
+        {
+            return m_torque * 180.0f / math::PI;
+        }
+
+        void ParticleAnimator::SetTorque(float torque)
+        {
+            m_torque = torque * math::PI / 180.0f;
+        }
+
         const SVec3 & ParticleAnimator::GetForce(void) const
         {
             return m_force;
@@ -98,6 +108,8 @@ namespace ursine
 
                 // apply damping
                 cpuData[ x ].velocity *= (1.f - m_dampeningConstant * dt);
+
+                cpuData[ x ].roll += m_torque * dt;
             }
         }
     }

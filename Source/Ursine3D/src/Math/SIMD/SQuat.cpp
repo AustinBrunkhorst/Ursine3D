@@ -101,10 +101,16 @@ namespace ursine
     float SQuat::GetAngle(const SQuat &other) const
     {
         float scalar = sqrt( LengthSquared( ) * other.LengthSquared( ) );
+        float d = Dot( other );
+
+        // Be sure to take the shortest path
+        if (d < 0.0f)
+            d = Dot( -other );
 
         // TODO: UAssert(scalar != 0.0f)
 
-        return math::RadiansToDegrees( acos( Dot( other ) / scalar ) ) * 2.0f;
+
+        return math::RadiansToDegrees( acos( d / scalar ) ) * 2.0f;
     }
 
     SVec3 SQuat::GetAxis(void) const

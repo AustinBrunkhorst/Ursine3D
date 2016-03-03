@@ -24,6 +24,6 @@ public:
 
     CombatBowl1Resources(void);
 
-    ursine::Array<std::string> archetypesToLoad;
+    std::string worldToMerge;
 
 } Meta(Enable);

@@ -159,7 +159,7 @@ void Editor::initializeGraphics(void)
     m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight ); 
     //m_graphics->SetFullscreenState( true );
      
-    //m_mainWindow.window->SetFullScreen( true );
+    //m_mainWindow.window->SetFullScreen( true );  
 }    
 
 void Editor::initializeScene(void)   
@@ -169,7 +169,7 @@ void Editor::initializeScene(void)
     auto world = scene->GetWorld( ); 
     {
         auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
-         
+           
         auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
 
         handle.SetPosition( 0, 0 ); 

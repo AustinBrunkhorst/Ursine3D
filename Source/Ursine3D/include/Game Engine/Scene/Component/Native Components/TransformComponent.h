@@ -105,6 +105,16 @@ namespace ursine
             SVec3 GetWorldEuler(void) const;
 
             void LookAt(const SVec3 &worldPosition);
+            void LookAt(const SVec3 &worldPosition, float degreesPerSecond);
+            void LookAt(const SVec3 &worldPosition, float degreesPerSecond, float seconds);
+
+            // Rotate by a given amount in world space
+            void RotateWorld(const SVec3 &euler);
+            void RotateWorld(const SVec3 &normal, float degrees);
+
+            // Rotate by a given amount in local space
+            void RotateLocal(const SVec3 &euler);
+            void RotateLocal(const SVec3 &normal, float degrees);
 
             ////////////////////////////////////////////////////////////////////
             // Scale

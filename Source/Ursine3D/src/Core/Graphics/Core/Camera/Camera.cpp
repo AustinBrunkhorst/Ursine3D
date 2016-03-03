@@ -36,6 +36,8 @@ namespace ursine
             m_renderMode = VIEWPORT_RENDER_DEFERRED;
 
             m_cameraMask = 0;
+
+            m_clearColor = Color( 0.f, 0.f, 0.f, 1.f );
         }
 
         void Camera::Uninitialize(void) { }
@@ -295,6 +297,16 @@ namespace ursine
 
             m_up = SVec3::Cross( -m_look, m_right );
             m_up.Normalize( );
+        }
+
+        const Color &Camera::GetClearColor(void) const
+        {
+            return m_clearColor;
+        }
+
+        void Camera::SetClearColor(const Color &color)
+        {
+            m_clearColor = color;
         }
     }
 }

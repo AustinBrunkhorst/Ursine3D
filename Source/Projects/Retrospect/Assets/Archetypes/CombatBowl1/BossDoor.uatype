@@ -4,7 +4,8 @@
 "children": [], 
 "components": {
 "EntityAnimator": {
-".uid": 18, 
+".uid": 226, 
+"animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
 "keyFrames": [
@@ -62,7 +63,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 19, 
+".uid": 227, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -79,7 +80,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 17, 
+".uid": 225, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -103,7 +104,8 @@
 "children": [], 
 "components": {
 "EntityAnimator": {
-".uid": 21, 
+".uid": 229, 
+"animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
 "keyFrames": [
@@ -161,7 +163,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 22, 
+".uid": 230, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -178,7 +180,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 20, 
+".uid": 228, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -202,7 +204,8 @@
 "children": [], 
 "components": {
 "EntityAnimator": {
-".uid": 24, 
+".uid": 232, 
+"animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
 "keyFrames": [
@@ -260,7 +263,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 25, 
+".uid": 233, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -277,7 +280,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 23, 
+".uid": 231, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -301,7 +304,8 @@
 "children": [], 
 "components": {
 "EntityAnimator": {
-".uid": 27, 
+".uid": 235, 
+"animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
 "keyFrames": [
@@ -359,7 +363,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 28, 
+".uid": 236, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -376,7 +380,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 26, 
+".uid": 234, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -400,7 +404,8 @@
 "children": [], 
 "components": {
 "EntityAnimator": {
-".uid": 30, 
+".uid": 238, 
+"animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
 "keyFrames": [
@@ -458,7 +463,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 31, 
+".uid": 239, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -475,7 +480,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 29, 
+".uid": 237, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -499,7 +504,8 @@
 "children": [], 
 "components": {
 "EntityAnimator": {
-".uid": 33, 
+".uid": 241, 
+"animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
 "keyFrames": [
@@ -557,7 +563,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 34, 
+".uid": 242, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -574,7 +580,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 32, 
+".uid": 240, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -598,7 +604,8 @@
 "children": [], 
 "components": {
 "EntityAnimator": {
-".uid": 36, 
+".uid": 244, 
+"animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
 "keyFrames": [
@@ -656,7 +663,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 37, 
+".uid": 245, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -673,7 +680,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 35, 
+".uid": 243, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -697,18 +704,18 @@
 ], 
 "components": {
 "AnimateOnSegment": {
-".uid": 39, 
+".uid": 222, 
 "changeOnThisSegment": 70
 }, 
 "EntityAnimatorGroup": {
-".uid": 15
+".uid": 223
 }, 
 "FBXSceneRootNode": {
-".uid": 16, 
+".uid": 224, 
 "sceneName": "BossDoor"
 }, 
 "Transform": {
-".uid": 14, 
+".uid": 221, 
 "rotation": {
 "w": 0.70708763599395752, 
 "x": 0.0054895747452974319, 

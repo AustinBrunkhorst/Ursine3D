@@ -1,3 +1,5 @@
+#pragma once
+
 #include "State.h"
 
 class StateMachine;
@@ -8,7 +10,7 @@ namespace ursine
     namespace sm
     {
 
-        class AIState : public State
+        class AIState : public ursine::sm::State
         {
         public:
             AIState(std::string &name) : State(name) {}

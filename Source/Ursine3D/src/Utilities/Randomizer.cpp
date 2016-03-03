@@ -17,6 +17,8 @@
 
 namespace ursine
 {
+    std::default_random_engine Randomizer::m_engine;
+
     Randomizer::Randomizer(void)
         : m_distributor(0.0f, 0.0f)
     {

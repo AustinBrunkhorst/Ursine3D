@@ -66,7 +66,7 @@
 //       Camera Animation      //
 /////////////////////////////////
 
-#include "CameraAnimation/CameraAnimatorSystem.h"
+//#include "CameraAnimation/CameraAnimatorSystem.h"
 
 /////////////////////////////////
 //       Entity Animation      //
@@ -84,4 +84,10 @@
 //       Level Events          //
 /////////////////////////////////
 
-#include "LevelSegmentManager/SegmentLogic/Misc/StartRoomDirectorSystem.h"
+//#include "LevelSegmentManager/SegmentLogic/Misc/StartRoomDirectorSystem.h"
+
+/////////////////////////////////
+//       Damage System         //
+/////////////////////////////////
+#include "DamageSystem/DamageTextSystem.h"
+#include "DamageSystem/DamageOnCollideSystem.h"
