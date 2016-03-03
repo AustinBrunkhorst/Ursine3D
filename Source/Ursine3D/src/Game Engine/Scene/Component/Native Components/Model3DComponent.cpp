@@ -50,13 +50,14 @@ namespace ursine
 
             m_model->SetDebug(false);
 
-            GetCoreSystem(graphics::GfxAPI)->RenderableMgr.DestroyRenderable(m_base->GetHandle());
+            GetCoreSystem(graphics::GfxAPI)->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
 
             // release resource - need to call unload model, texture.
-            if (m_model->GetModelHandle() != 0)
-                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.UnloadModel(m_model->GetModelHandle());
-            if (m_model->GetTextureHandle() != 0)
-                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.UnloadTexture(m_model->GetTextureHandle());
+            if (m_model->GetModelHandle( ) != 0)
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
+
+            if (m_model->GetTextureHandle( ) != 0)
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.UnloadTexture( m_model->GetTextureHandle( ) );
 
             delete m_base;
         }
@@ -70,6 +71,12 @@ namespace ursine
             m_model->SetEntityID( GetOwner( )->GetID( ) );
 
             updateRenderer( );
+        }
+
+        void Model3D::OnSceneReady(Scene *scene)
+        {
+            invalidateModel( false );
+            invalidateTexture( false );
         }
 
         std::vector<SMat4> &Model3D::GetMatrixPalette(void)
@@ -226,7 +233,7 @@ namespace ursine
             model.SetWorldMatrix(trans->GetLocalToWorldMatrix());
         }
 
-        void Model3D::invalidateModel(void)
+        void Model3D::invalidateModel(bool unload)
         {
             auto data = loadResource<resources::ModelData>(m_modelResource);
 
@@ -239,14 +246,15 @@ namespace ursine
             {
                 auto handle = data->GetModelHandle();
 
-                m_graphics->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
+                if(unload)
+                    m_graphics->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
                 m_graphics->ResourceMgr.LoadModel( handle );
 
                 m_model->SetModelHandle(handle);
             }
         }
 
-        void Model3D::invalidateTexture(void)
+        void Model3D::invalidateTexture(bool unload)
         {
             auto data = loadResource<resources::TextureData>( m_textureResource );
 
@@ -259,7 +267,8 @@ namespace ursine
             {
                 auto handle = data->GetTextureHandle();
 
-                m_graphics->ResourceMgr.UnloadTexture( m_model->GetTextureHandle( ) );
+                if (unload)
+                    m_graphics->ResourceMgr.UnloadTexture( m_model->GetTextureHandle( ) );
                 m_graphics->ResourceMgr.LoadTexture( handle );
 
                 m_model->SetTextureHandle(handle);

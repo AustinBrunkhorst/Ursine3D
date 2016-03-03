@@ -82,6 +82,7 @@ namespace ursine
             ~ParticleSystem(void);
 
             void OnInitialize(void) override;
+            void OnSceneReady(Scene *scene) override;
 
             // count
             unsigned GetActiveParticleCount(void) const;
@@ -136,7 +137,7 @@ namespace ursine
 
             RenderMode m_renderMode;
 
-            void invalidateTexture(void);
+            void invalidateTexture(bool unload = true);
 
             // color
         } Meta(Enable, WhiteListMethods, DisplayName( "ParticleSystem" ));

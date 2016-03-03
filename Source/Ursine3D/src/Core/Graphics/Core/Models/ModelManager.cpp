@@ -308,11 +308,8 @@ namespace ursine
 
             id = hnd->Index_;
 
-            std::cout << "Load " << id << std::endl;
-
             if (m_modelCache[ id ]->HasNoReferences())
             {
-                std::cout << "  add " << id << std::endl;
                 loadModelToGPU(m_modelCache[ id ]);
             }
 
@@ -335,13 +332,10 @@ namespace ursine
             if (id < INTERNAL_GEOMETRY_COUNT)
                 return;
 
-            std::cout << "Unload " << id << std::endl;
-
             m_modelCache[ id ]->DecrementReference();
 
             if (m_modelCache[ id ]->HasNoReferences())
             {
-                std::cout << "  remove " << id << std::endl;
                 unloadModelFromGPU(m_modelCache[ id ]);
             }
         }

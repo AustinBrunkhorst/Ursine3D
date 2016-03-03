@@ -40,8 +40,8 @@ namespace ursine
         TextureManager::TextureManager()
             : m_device( nullptr )
             , m_deviceContext( nullptr )
-            , m_textureCount( 1 )
-            , m_textureCache( { Texture() } )
+            , m_textureCount( 2 )
+            , m_textureCache( { Texture(), Texture() } )
         {
         }
 
@@ -72,8 +72,8 @@ namespace ursine
                 InitalizeTexture(
                     const_cast<uint8_t*>(graphics_resources::kBlankTexture),
                     232 * sizeof(uint8_t),
-                    32,
-                    32,
+                    4,
+                    4,
                     m_textureCache[ INTERNAL_BLANK_TEX ]
                 );
 
@@ -259,7 +259,7 @@ namespace ursine
 
         void TextureManager::MapTextureByID(const unsigned ID, const unsigned int bufferIndex)
         {
-            if (ID >= m_textureCache.size() || m_textureCache[ ID ].m_shaderResource == nullptr)
+            if (ID == INTERNAL_MISSING_TEX || ID >= m_textureCache.size() || m_textureCache[ ID ].m_shaderResource == nullptr)
             {
                 m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureCache[ INTERNAL_MISSING_TEX ].m_shaderResource);
                 return;
@@ -282,7 +282,7 @@ namespace ursine
             GfxHND handle;
             _RESOURCEHND *id = HND_RSRCE(handle);
 
-            unsigned internalID = m_textureCount++;
+            size_t internalID = m_textureCache.size( );
 
             m_textureCache.push_back( Texture( ) );
 
