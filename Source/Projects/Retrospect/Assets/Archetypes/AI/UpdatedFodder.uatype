@@ -1,0 +1,160 @@
+{
+"children": [
+{
+"children": [], 
+"components": {
+"SpriteText": {
+".uid": 19, 
+"alignment": 1, 
+"size": 20, 
+"text": "Fodder", 
+"textColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0.875
+}, 
+"useFiltering": true
+}, 
+"Transform": {
+".uid": 18, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1.1638805866241455, 
+"y": 0.22485992312431335, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0.42172014713287354, 
+"z": -0.13513374328613281
+}
+}
+}, 
+"name": "SpriteText"
+}, {
+"children": [], 
+"components": {
+"Ghost": {
+".uid": 40, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SphereCollider": {
+".uid": 38, 
+"radius": 0.5
+}, 
+"Transform": {
+".uid": 36, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1.1638805866241455, 
+"y": 0.22485992312431335, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -0.55385994911193848, 
+"z": 0
+}
+}
+}, 
+"name": "GhostSphere"
+}
+], 
+"components": {
+"AIMovementController": {
+".uid": 46, 
+"Speed": 0, 
+"enabled": true
+}, 
+"BoxCollider": {
+".uid": 45, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"FodderAI": {
+".uid": 47, 
+"damageOnAttack": 1, 
+"pauseTimeAfterAttack": 1
+}, 
+"Model3D": {
+".uid": 17, 
+"active": true, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 43, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 16, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.85919463634490967, 
+"y": 4.4472131729125977, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 2.4631333351135254, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}

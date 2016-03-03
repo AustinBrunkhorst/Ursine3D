@@ -59,7 +59,6 @@ namespace ursine
 
             Handle<Rigidbody> m_rigid;
 
-
             float m_speed;
 
             bool m_enable;

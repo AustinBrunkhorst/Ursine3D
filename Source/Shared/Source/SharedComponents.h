@@ -84,6 +84,7 @@
 #include "BossAIComponent.h"
 #include "VineAIComponent.h"
 
+#include "AIHordelingTypeComponent.h"
 #include "FodderAIComponent.h"
 
 /////////////////////////////////

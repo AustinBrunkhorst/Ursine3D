@@ -1,11 +1,22 @@
-// this file is used to store any AIstates that can be shared across actors
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** 2016 DigiPen Institute of Technology, All Rights Reserved.
+**
+** WalkState.h
+**
+** Author:
+** - Joshua Shlemmer - joshua.shlemmer@digipen.edu
+**
+** -------------------------------------------------------------------------*/
+#pragma once
 
 #include "AIState.h"
+#include "AI/AIMovementControllerComponent.h"
 #include "Entity.h"
 #include "Vec3.h"
 
 #include <function.h>
-#include <AI/AIMovementControllerComponent.h>
+#include <Game Engine/Scene/Component/Native Components/Physics/GhostComponent.h>
 
 class AIStateMachine;
 
@@ -16,6 +27,7 @@ namespace ursine
         class WalkState : public AIState
         {
         public:
+
             WalkState(std::string name);
 
             virtual void Enter(AIStateMachine *stateMachine) override;
@@ -24,10 +36,12 @@ namespace ursine
 
         private:
 
-            void updateSurroundingActorsList(const ecs::Entity *actor);
+            void updateSurroundingActorsList(void);
 
             void setTargetDirectionWaypoints(const SVec3 &target);
             void setTargetDirectionMovement(const SVec3 &target);
+
+            Vec3 getTargetPlayerPosition(ecs::World *world);
 
             typedef std::function<void(const SVec3&)> setTargetDirectionFunc;
             setTargetDirectionFunc setTargetDirection;
@@ -36,7 +50,13 @@ namespace ursine
 
             ecs::AIMovementController *m_move;
 
+            ecs::Ghost *m_ghostCollider;
+
             float m_nearRadius;
+
+            float m_coheasionScale;
+
+            float m_separationScale;
         };
 
     }
