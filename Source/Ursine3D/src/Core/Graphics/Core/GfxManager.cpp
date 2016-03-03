@@ -421,6 +421,8 @@ namespace ursine
             modelManager->BindModel( INTERNAL_QUAD );
             shaderManager->BindShader(SHADER_PRIMITIVE);
             layoutManager->SetInputLayout(SHADER_PRIMITIVE);
+            textureManager->MapSamplerState( SAMPLER_STATE_WRAP_TEX );
+            textureManager->MapTextureByID( INTERNAL_BLANK_TEX );
 
             bufferManager->MapCameraBuffer(SMat4::Identity(), SMat4::Identity());
             bufferManager->MapTransformBuffer(SMat4(-2, 2, 1));
@@ -971,8 +973,8 @@ namespace ursine
             lightmapRT.Update( RENDER_TARGET_LIGHTMAP );
 
             // TEXTURES AND MODELS /////////////
-            lightConeModel.Update( 0 );
-            lightSphereModel.Update( 0 );
+            lightConeModel.Update( INTERNAL_CONE );
+            lightSphereModel.Update( INTERNAL_SPHERE );
             fullscreenModel.Update( INTERNAL_QUAD );
             spriteModel.Update( INTERNAL_QUAD );
             particleModel.Update( INTERNAL_POINT_INDICES );

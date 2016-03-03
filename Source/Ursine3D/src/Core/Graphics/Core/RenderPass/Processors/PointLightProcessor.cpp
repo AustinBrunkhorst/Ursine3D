@@ -52,7 +52,7 @@ namespace ursine
             Light pointLight = m_manager->renderableManager->GetRenderableByID<Light>(handle.Index_);
 
             // get radius
-            float radius = pointLight.GetRadius();
+            float radius = pointLight.GetRadius() * 2;
 
             //ps needs point light data buffer
             SMat4 transposedView = currentCamera.GetViewMatrix( ); //need to transpose view (dx11 gg)

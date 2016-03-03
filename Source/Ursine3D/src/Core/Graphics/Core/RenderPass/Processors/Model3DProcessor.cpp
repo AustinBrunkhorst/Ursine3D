@@ -155,9 +155,9 @@ namespace ursine
                 m_manager->dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
 
                 PrimitiveColorBuffer pcb;
-                pcb.color.x = 0.75f;
-                pcb.color.y = 0.75f;
-                pcb.color.z = 0.45f;
+                pcb.color.x = 0.53f;
+                pcb.color.y = 0.53f;
+                pcb.color.z = 0.17f;
                 m_manager->bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(
                     &pcb, 
                     SHADERTYPE_PIXEL
@@ -219,9 +219,9 @@ namespace ursine
                 m_manager->dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
 
                 PrimitiveColorBuffer pcb;
-                pcb.color.x = 0.75f;
-                pcb.color.y = 0.75f;
-                pcb.color.z = 0.45f;
+                pcb.color.x = 0.53f;
+                pcb.color.y = 0.53f;
+                pcb.color.z = 0.17f;
                 m_manager->bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
                 MaterialDataBuffer mdb;

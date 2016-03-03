@@ -85,7 +85,7 @@ namespace ursine
                 swapChainDesc.BufferDesc.Height = height;
 
                 //Set regular 32-bit surface for the back buffer.
-                swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+                swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
 
                 //Set the refresh rate of the back buffer.
                 if (true) //@Matt change this to properly do vsync
@@ -359,7 +359,7 @@ namespace ursine
 
             void DirectXCore::ClearSwapchain(void)
             {
-                float color[ 4 ] = { 0.15f, 0.15f, 0.15f, 1.0f }; 
+                float color[ 4 ] = { 0.01f, 0.01f, 0.01f, 1.0f };
                 m_deviceContext->ClearRenderTargetView(m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView, color);
             }
 
@@ -486,11 +486,10 @@ namespace ursine
                 }
             }
 
-            void DirectXCore::EndDebugEvent()
+            void DirectXCore::EndDebugEvent(void)
             {
                 if (m_userAnnotation != nullptr)
                 {
-
                     m_userAnnotation->EndEvent();
                 }
             }

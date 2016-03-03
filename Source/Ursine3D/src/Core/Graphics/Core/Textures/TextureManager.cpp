@@ -293,7 +293,7 @@ namespace ursine
             desc.Width = width;
             desc.Height = height;
             desc.MipLevels = desc.ArraySize = 1;
-            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
             desc.SampleDesc.Count = 1;
             desc.SampleDesc.Quality = 0;
             desc.Usage = D3D11_USAGE_DYNAMIC;
@@ -368,7 +368,7 @@ namespace ursine
             desc.Width = width;
             desc.Height = height;
             desc.MipLevels = desc.ArraySize = 1;
-            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
             desc.SampleDesc.Count = 1;
             desc.SampleDesc.Quality = 0;
             desc.Usage = D3D11_USAGE_DYNAMIC;
@@ -437,7 +437,7 @@ namespace ursine
             desc.Width = texture.m_width;
             desc.Height = texture.m_height;
             desc.MipLevels = desc.ArraySize = 1;
-            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
             desc.SampleDesc.Count = 2;
             desc.SampleDesc.Quality = 0;
             desc.Usage = D3D11_USAGE_IMMUTABLE;

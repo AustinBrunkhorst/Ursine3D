@@ -13,7 +13,7 @@
  
 #include "Precompiled.h"
  
-#include "Editor.h"
+#include "Editor.h" 
 #include "Project.h" 
  
 #include <Application.h>
@@ -34,7 +34,7 @@ namespace
     const auto kWindowTitle = "Ursine3D Editor";
     const auto kWindowIcon = "Resources/Icon.png";
 
-    const std::string kEntryPointDir = "file:///Assets/UI/Resources/";
+    const std::string kEntryPointDir = "file:///Assets/UI/Resources/"; 
 
     const auto kEntryPointLauncher = "Launcher.html";
     const auto kEntryPointSplash = "Splash.html";

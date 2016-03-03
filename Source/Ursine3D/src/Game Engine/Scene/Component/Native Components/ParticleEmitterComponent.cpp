@@ -359,7 +359,8 @@ namespace ursine
         {
             float dt = Application::Instance->GetDeltaTime( );
 
-            if ( (m_spawnCount < m_emitCount) || m_emitCount == 0 )
+            // if we are able to spawn or we don't care about spawn count AND we are able to emit
+            if (((m_spawnCount < m_emitCount) || (m_emitCount == 0)) && m_emitRate != 0)
             {
                 m_currentTime += dt;
 

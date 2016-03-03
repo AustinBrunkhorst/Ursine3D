@@ -154,6 +154,13 @@ namespace ursine
                     GetCoreSystem(graphics::GfxAPI)->DrawingMgr.DrawLine(start, start + m_vectorArray[x]);
                     start += m_vectorArray[x];
                 }
+
+                for(auto &point : m_pointArray)
+                {
+                    GetCoreSystem(graphics::GfxAPI)->DrawingMgr.SetColor( Color::LightGreen );
+                    GetCoreSystem(graphics::GfxAPI)->DrawingMgr.SetSize( 25 );
+                    GetCoreSystem(graphics::GfxAPI)->DrawingMgr.DrawPoint( point );
+                }
             }
         }
 
