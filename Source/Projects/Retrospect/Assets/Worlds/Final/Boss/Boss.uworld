@@ -6,12 +6,12 @@
 "children": [], 
 "components": {
 "PlayerSpawnPoint": {
-".uid": 18, 
+".uid": 7, 
 "playerArchetype": "Player1", 
 "spawnSegment": 68
 }, 
 "Transform": {
-".uid": 17, 
+".uid": 6, 
 "rotation": {
 "w": 1.0000003576278687, 
 "x": 0, 
@@ -35,12 +35,12 @@
 "children": [], 
 "components": {
 "PlayerSpawnPoint": {
-".uid": 20, 
+".uid": 9, 
 "playerArchetype": "Player2", 
 "spawnSegment": 68
 }, 
 "Transform": {
-".uid": 19, 
+".uid": 8, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -64,7 +64,7 @@
 ], 
 "components": {
 "Transform": {
-".uid": 16, 
+".uid": 5, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -88,11 +88,11 @@
 "children": [], 
 "components": {
 "AnimateOnSegment": {
-".uid": 23, 
+".uid": 11, 
 "changeOnThisSegment": 70
 }, 
 "Camera": {
-".uid": 24, 
+".uid": 12, 
 "active": true, 
 "clearColor": {
 "a": 1, 
@@ -116,7 +116,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 25, 
+".uid": 13, 
 "animationClipName": "", 
 "delta": 2, 
 "ease": 0, 
@@ -329,11 +329,11 @@
 "smoothPath": true
 }, 
 "EntityAnimatorFocusModifier": {
-".uid": 26, 
+".uid": 14, 
 "focusEntity": "BossCameraFocusPoint"
 }, 
 "Transform": {
-".uid": 22, 
+".uid": 10, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -353,6 +353,140 @@
 }
 }, 
 "name": "BossRoomOpenCamera"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 25, 
+"rotation": {
+"w": 0.13784138858318329, 
+"x": 0, 
+"y": 0.99045419692993164, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 11.496125221252441, 
+"y": 31.29704475402832, 
+"z": -18.65997314453125
+}
+}, 
+"VineSpawner": {
+".uid": 26
+}
+}, 
+"name": "VineSpawn"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 27, 
+"rotation": {
+"w": 0.86559396982192993, 
+"x": 0, 
+"y": 0.50074642896652222, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 11.496103286743164, 
+"y": 31.297000885009766, 
+"z": 17.966733932495117
+}
+}, 
+"VineSpawner": {
+".uid": 28
+}
+}, 
+"name": "VineSpawn"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 29, 
+"rotation": {
+"w": 0.86449408531188965, 
+"x": 0, 
+"y": -0.50264298915863037, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -13.947798728942871, 
+"y": 31.296947479248047, 
+"z": 17.966680526733398
+}
+}, 
+"VineSpawner": {
+".uid": 30
+}
+}, 
+"name": "VineSpawn"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 31, 
+"rotation": {
+"w": 0.47287136316299438, 
+"x": 0, 
+"y": -0.88113158941268921, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -16.91417121887207, 
+"y": 31.296895980834961, 
+"z": -18.007406234741211
+}
+}, 
+"VineSpawner": {
+".uid": 32
+}
+}, 
+"name": "VineSpawn"
+}
+], 
+"components": {
+"Transform": {
+".uid": 24, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "BossPhase1VineSpawns Archetype"
 }
 ], 
 "settings": {

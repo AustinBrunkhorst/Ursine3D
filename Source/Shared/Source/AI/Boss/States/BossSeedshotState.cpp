@@ -47,5 +47,7 @@ void BossSeedshotState::Update(BossAIStateMachine *machine)
             bossEntity->Dispatch( game::FIRE_END, EventArgs::Empty );
 
         m_timer = 0.0f;
+
+        m_on = !m_on;
     }
 }
