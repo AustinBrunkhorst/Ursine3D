@@ -44,7 +44,7 @@ namespace ursine
             static Rigidbody *DownCast(BodyBase *body);
             static const Rigidbody *DownCast(const BodyBase *body);
 
-            void SetBodyFlag(BodyFlag bodyFlag);
+            void SetBodyFlag(BodyFlag bodyFlag, bool remove = true);
             BodyFlag GetBodyFlag(void) const;
 
             void SetTransform(ecs::Transform *transform);

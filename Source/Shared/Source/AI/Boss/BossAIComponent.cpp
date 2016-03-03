@@ -16,9 +16,10 @@
 #include "BossSeedshotState.h"
 #include "BossSpawnVinesState.h"
 
-#include "EntityEvent.h"
-
+#include "HealthComponent.h"
 #include "GameEvents.h"
+
+#include "EntityEvent.h"
 
 NATIVE_COMPONENT_DEFINITION( BossAI );
 
@@ -28,6 +29,7 @@ using namespace ecs;
 BossAI::BossAI(void)
     : BaseComponent( )
     , m_segment( LevelSegments::Empty )
+    , m_vineCount( 0 )
 {
 }
 
@@ -58,7 +60,12 @@ Entity *BossAI::GetSeedshotEntity(void)
 
 void BossAI::AddSpawnedVine(Entity *vine)
 {
+    auto health = vine->GetComponent<Health>( );
 
+    health->Listener( this )
+        .On( HEALTH_ZERO, &BossAI::onVineDeath );
+
+    ++m_vineCount;
 }
 
 void BossAI::OnInitialize(void)
@@ -147,4 +154,9 @@ void BossAI::onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager))
     EVENT_ATTRS(LevelSegmentManager, LevelSegmentChangeArgs);
 
     m_segment = args->segment;
+}
+
+void BossAI::onVineDeath(EVENT_HANDLER(Health))
+{
+    --m_vineCount;
 }

@@ -25,9 +25,8 @@ namespace ursine
     Scene::Scene(void)
         : m_playState( PS_EDITOR )
         , m_viewport( 0 )
-        , m_world( std::make_shared<ecs::World>( ) )
     {
-        
+        SetWorld( new ecs::World( ) );
     }
 
     Scene::~Scene(void)
@@ -43,6 +42,9 @@ namespace ursine
     void Scene::SetWorld(ecs::World *world)
     {
         m_world = ecs::World::Handle( world );
+
+        // TODO: DON"T KEEP THIS!!!!!
+        m_world->SetOwner( reinterpret_cast<Screen*>( 0xFFFFFF ) );
     }
 
     graphics::GfxHND Scene::GetViewport(void) const

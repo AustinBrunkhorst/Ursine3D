@@ -28,6 +28,7 @@ AnimateOnSegment::AnimateOnSegment(void)
     : BaseComponent( )
     , m_segment( LevelSegments::Empty )
     , m_greaterThan( false )
+    , m_finished( false )
 {
 }
 
@@ -119,6 +120,9 @@ void AnimateOnSegment::connectToEvent(bool connect)
 
 void AnimateOnSegment::playAnimation(void)
 {
+    if (m_finished)
+        return;
+
     auto animator = GetOwner( )->GetComponent<EntityAnimator>( );
 
     if (animator)
@@ -128,4 +132,6 @@ void AnimateOnSegment::playAnimation(void)
 
     if (group)
         group->PlayGroupAnimators( );
+
+    m_finished = true;
 }

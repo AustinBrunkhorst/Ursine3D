@@ -16,6 +16,7 @@
 #include <StateMachine.h>
 
 class VineAI;
+class Health;
 
 class VineAIStateMachine : public ursine::sm::StateMachine
 {
@@ -31,7 +32,11 @@ public:
     static const std::string GoHome;
     static const std::string PursueTarget;
 
+    static const std::string Dead;
+
     VineAIStateMachine(VineAI *ai);
+
+    void Initialize(void);
 
     void Update(void) override;
 
@@ -41,4 +46,6 @@ private:
     VineAI *m_ai;
 
     void decrementCooldown(const std::string &name);
+
+    void onDeath(EVENT_HANDLER(Health));
 };

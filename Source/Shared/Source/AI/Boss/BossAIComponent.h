@@ -16,6 +16,8 @@
 #include "BossAIStateMachine.h"
 #include "LevelSegmentManagerComponent.h"
 
+class Health;
+
 class BossAI : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -55,11 +57,16 @@ private:
 
     void onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager));
 
+    void onVineDeath(EVENT_HANDLER(Health));
+
     std::string m_seedshotEntity;
 
     std::string m_vineArchetype;
 
     LevelSegments m_segment;
+
+    // The number of vines alive
+    int m_vineCount;
 
     typedef std::vector<BossAIStateMachine::Handle> StateMachines;
     StateMachines m_bossLogic[5];
