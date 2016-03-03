@@ -95,20 +95,22 @@ JSFunction(SceneSetActiveWorld)
 
     auto guid = GUIDStringGenerator( )( arguments[ 0 ]->GetStringValue( ).ToString( ) );
 
-    auto &scene = getScene( );
+    Application::PostMainThread( [=] {
+        auto &scene = getScene( );
 
-    auto reference = scene.GetResourceManager( ).CreateReference( guid );
+        auto reference = scene.GetResourceManager( ).CreateReference( guid );
 
-    scene.SetActiveWorld( reference );
+        scene.SetActiveWorld( reference );
 
-    auto *world = scene.GetActiveWorld( );
+        auto *world = scene.GetActiveWorld( );
 
-    if (world)
-    {
-        URSINE_TODO( "this is hacky and weirdly placed" );
-        world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
-    }
-
+        if (world)
+        {
+            URSINE_TODO( "this is hacky and weirdly placed" );
+            world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
+        }
+    } );
+    
     return CefV8Value::CreateBool( true );
 }
 

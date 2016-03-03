@@ -61,6 +61,20 @@ namespace ursine
             return resource.Load<ResourceType>( scene->GetResourceManager( ) );
         }
 
+        #if defined(URSINE_WITH_EDITOR)
+
+        template<typename ComponentType>
+        void Component::bindResourceModification(
+            const resources::ResourceReference &resource, 
+            ResourceModificationCallback<ComponentType> callback
+        )
+        {
+            m_resourceModificationCallbacks[ resource.GetGUID( ) ] = 
+                std::bind( callback, static_cast<ComponentType*>( this ) );
+        }
+
+        #endif
+
         template<class ComponentType>
         Component::Handle<ComponentType>::Handle(void)
             : m_entity( ) { }

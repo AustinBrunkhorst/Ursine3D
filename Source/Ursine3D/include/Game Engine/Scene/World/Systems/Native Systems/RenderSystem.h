@@ -85,8 +85,12 @@ namespace ursine
             void onUpdate(EVENT_HANDLER(World));
             void onRender(EVENT_HANDLER(World));
 
+        #if defined(URSINE_WITH_EDITOR)
+
             void onEditorUpdate(EVENT_HANDLER(World));
             void onEditorRender(EVENT_HANDLER(World));
+
+        #endif
 
             void renderObjects(void);
             void renderCamera(Component::Handle<Camera> camera, RenderHookArgs &args, RenderSystemEventType hook);

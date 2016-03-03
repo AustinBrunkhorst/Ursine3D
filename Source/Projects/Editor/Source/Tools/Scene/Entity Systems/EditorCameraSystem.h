@@ -54,8 +54,6 @@ private:
     ursine::ecs::EntityHandle m_cameraEntity;
 
     ursine::ecs::Camera *m_camera;
-    float m_camZoom;
-    ursine::SVec3 m_camPos;
 
     ursine::TweenID m_focusTransition;
 
@@ -70,5 +68,7 @@ private:
     // updating camera methods
     void updateCameraKeys(float dt);
     void updateCameraMouse(float dt);
+
+    void updateCameraTransform(void);
 
 } Meta(Enable, WhiteListMethods, AutoAddEntitySystem);

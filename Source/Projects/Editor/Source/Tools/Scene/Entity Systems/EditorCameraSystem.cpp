@@ -17,11 +17,9 @@
 #include "EditorToolSystem.h"
 
 #include <CameraComponent.h>
-#include <SelectedComponent.h>
 
 #include <MouseManager.h>
 #include <KeyboardManager.h>
-#include <SystemManager.h>
 
 using namespace ursine;
 
@@ -38,8 +36,6 @@ EditorCameraSystem::EditorCameraSystem(ecs::World *world)
     , m_hasMouseFocus( false )
     , m_cameraEntity( )
     , m_camera( nullptr )
-    , m_camZoom( 50.0f )
-    , m_camPos( SVec3( 0, 0, 0 ) )
 {
 
 }
@@ -75,6 +71,16 @@ ecs::Camera *EditorCameraSystem::GetEditorCamera(void)
 const ecs::EntityHandle &EditorCameraSystem::GetEditorCameraEntity(void)
 {
     return m_cameraEntity;
+}
+
+SVec3 EditorCameraSystem::GetEditorFocusPosition(void)
+{
+    return m_camera->focusPosition;
+}
+
+float EditorCameraSystem::GetCamZoom(void)
+{
+    return m_camera->lookZoomFactor;
 }
 
 void EditorCameraSystem::OnInitialize(void)
@@ -113,13 +119,14 @@ void EditorCameraSystem::OnSceneReady(Scene *scene)
         m_camera->SetFarPlane( 2500.0f );
         m_camera->SetFOV( 45.f );
 
-        m_camZoom = SVec3( -50, 50, 50 ).Length( );
+        m_camera->lookZoomFactor = SVec3( -50, 50, -50 ).Length( );
         m_cameraEntity->GetTransform( )->LookAt( { 0.0f, 0.0f, 0.0f } );
+        m_camera->focusPosition = m_cameraEntity->GetTransform( )->GetWorldPosition( );
     }
 
     m_camera->SetEditorCamera( true );
 
-    m_camPos = m_cameraEntity->GetTransform( )->GetWorldPosition( );
+    updateCameraTransform( );
 }
 
 void EditorCameraSystem::OnRemove(void)
@@ -153,15 +160,7 @@ void EditorCameraSystem::onUpdate(EVENT_HANDLER(ecs::World))
         updateCameraMouse( dt );
     }
 
-    // our position always needs to be relative to the center position
-    auto look = m_cameraEntity->GetTransform( )->GetForward( );
-
-    // normalize look and scale by zoom
-    look.Normalize( );
-    look = look * m_camZoom;
-
-    // negate the vector, opposite of look is going away from center
-    m_cameraEntity->GetTransform( )->SetWorldPosition( m_camPos - look );
+    updateCameraTransform( );
 }
 
 void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
@@ -172,10 +171,10 @@ void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
     if (!m_hasFocus)
         return;
 
-    m_camZoom -= args->delta.Y( ) * 15.0f;
+    m_camera->lookZoomFactor -= args->delta.Y( ) * 15.0f;
 
-    if (m_camZoom < 1)
-        m_camZoom = 1.0f;
+    if (m_camera->lookZoomFactor < 1.0f)
+        m_camera->lookZoomFactor = 1.0f;
 }
 
 void EditorCameraSystem::updateCameraKeys(float dt)
@@ -204,8 +203,8 @@ void EditorCameraSystem::updateCameraKeys(float dt)
 
             m_focusTransition.Stop( )
                 .BeginGroup( )
-                    .Property( m_camPos, target, duration, ease )
-                    .Property( m_camZoom, targetZoom, duration, ease )
+                    .Property( m_camera->focusPosition, target, duration, ease )
+                    .Property( m_camera->lookZoomFactor, targetZoom, duration, ease )
                 .EndGroup( );
         }
     }
@@ -217,7 +216,7 @@ void EditorCameraSystem::updateCameraKeys(float dt)
     // KEYBOARD MOVEMENT //////////////////////////////////////////////
     // get other camera data, now that the look was set
     auto right = m_camera->GetRight( );
-    auto pos = m_camPos;
+    auto pos = m_camera->focusPosition;
     auto up = m_camera->GetUp( );
     auto dir = SVec3( 0, 0, 0 );
 
@@ -269,7 +268,7 @@ void EditorCameraSystem::updateCameraKeys(float dt)
         pos += dir;
 
         // set new pos
-        m_camPos = pos;
+        m_camera->focusPosition = pos;
     }
 }
 
@@ -304,7 +303,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
             look = sideRotation.Rotate( look );
             look = upRotation.Rotate( look );
 
-            cam.SetLook( m_camPos + look * m_camZoom );
+            cam.SetLook( m_camera->focusPosition + look * m_camera->lookZoomFactor );
         }
     }
 
@@ -318,9 +317,9 @@ void EditorCameraSystem::updateCameraMouse(float dt)
         {
             auto size = cam.GetViewportSize( );
 
-            m_camPos += right * mouseDelta.X( ) * dt * size.X( ) * 2;
+            m_camera->focusPosition += right * mouseDelta.X( ) * dt * size.X( ) * 2;
 
-            m_camPos -= up * mouseDelta.Y( ) * dt * size.Y( ) * 2;
+            m_camera->focusPosition -= up * mouseDelta.Y( ) * dt * size.Y( ) * 2;
         }
     }
 
@@ -332,15 +331,12 @@ void EditorCameraSystem::updateCameraMouse(float dt)
 
         if (mouseDelta.Length( ) > 0)
         {
-            m_camZoom += -mouseDelta.Y( ) * 15.0f * dt;
+            m_camera->lookZoomFactor += -mouseDelta.Y( ) * 15.0f * dt;
 
-            if (m_camZoom < 1)
-            {
-                m_camZoom = 1;
-            }
+            if (m_camera->lookZoomFactor < 1.0f)
+                m_camera->lookZoomFactor = 1.0f;
         }
     }
-
 
     // if in here, draw the center mark
     float halfSize = 0.3f;
@@ -348,22 +344,24 @@ void EditorCameraSystem::updateCameraMouse(float dt)
     auto &drawingManager = GetCoreSystem( graphics::GfxAPI )->DrawingMgr;
 
     drawingManager.SetColor( 1, 0, 0, 1 );
-    drawingManager.DrawLine( m_camPos - SVec3( halfSize, 0, 0 ), m_camPos + SVec3( halfSize, 0, 0 ) );
-    drawingManager.DrawPoint( m_camPos + SVec3( halfSize, 0, 0 ) );
+    drawingManager.DrawLine( m_camera->focusPosition - SVec3( halfSize, 0, 0 ), m_camera->focusPosition + SVec3( halfSize, 0, 0 ) );
+    drawingManager.DrawPoint( m_camera->focusPosition + SVec3( halfSize, 0, 0 ) );
     drawingManager.SetColor( 0, 1, 0, 1 );
-    drawingManager.DrawLine( m_camPos - SVec3( 0, halfSize, 0 ), m_camPos + SVec3( 0, halfSize, 0 ) );
-    drawingManager.DrawPoint( m_camPos + SVec3( 0, halfSize, 0 ) );
+    drawingManager.DrawLine( m_camera->focusPosition - SVec3( 0, halfSize, 0 ), m_camera->focusPosition + SVec3( 0, halfSize, 0 ) );
+    drawingManager.DrawPoint( m_camera->focusPosition + SVec3( 0, halfSize, 0 ) );
     drawingManager.SetColor( 0, 0, 1, 1 );
-    drawingManager.DrawLine( m_camPos - SVec3( 0, 0, halfSize ), m_camPos + SVec3( 0, 0, halfSize ) );
-    drawingManager.DrawPoint( m_camPos + SVec3( 0, 0, halfSize ) );
+    drawingManager.DrawLine( m_camera->focusPosition - SVec3( 0, 0, halfSize ), m_camera->focusPosition + SVec3( 0, 0, halfSize ) );
+    drawingManager.DrawPoint( m_camera->focusPosition + SVec3( 0, 0, halfSize ) );
 }
 
-SVec3 EditorCameraSystem::GetEditorFocusPosition(void)
+void EditorCameraSystem::updateCameraTransform(void)
 {
-    return m_camPos;
-}
+    // our position always needs to be relative to the center position
+    auto look = m_cameraEntity->GetTransform( )->GetForward( );
 
-float EditorCameraSystem::GetCamZoom(void)
-{
-    return m_camZoom;
+    // normalize look and scale by zoom
+    look.Normalize( );
+    look = look * m_camera->lookZoomFactor;
+
+    m_cameraEntity->GetTransform( )->SetWorldPosition( m_camera->focusPosition - look );
 }

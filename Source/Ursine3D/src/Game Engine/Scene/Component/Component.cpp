@@ -8,6 +8,15 @@ namespace ursine
 {
     namespace ecs
     {
+        Component::~Component(void)
+        {
+        #if defined(URSINE_WITH_EDITOR)
+
+            m_owner->GetWorld( )->Disconnect( WORLD_EDITOR_RESOURCE_MODIFIED, this, &Component::onResourceModifed );
+
+        #endif
+        }
+
         bool Component::resourcesAreAvailable(void) const
         {
             return m_owner->GetWorld( )->GetOwner( ) != nullptr;
@@ -53,6 +62,8 @@ namespace ursine
                     events.Connect<EventArgs>( AMODIFY_REMOVE, onModification );
                 }
             }
+
+            m_owner->GetWorld( )->Connect( WORLD_EDITOR_RESOURCE_MODIFIED, this, &Component::onResourceModifed );
         #endif
 
             OnInitialize( );
@@ -61,6 +72,16 @@ namespace ursine
         void Component::onSceneReady(Scene *scene)
         {
             OnSceneReady( scene );
+        }
+
+        void Component::onResourceModifed(EVENT_HANDLER(World))
+        {
+            EVENT_ATTRS(World, EditorWorldResourceModifiedArgs);
+
+            auto search = m_resourceModificationCallbacks.find( args->resourceGUID );
+
+            if (search != m_resourceModificationCallbacks.end( ))
+                search->second( );
         }
 
         template<>

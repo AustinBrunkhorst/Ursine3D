@@ -59,6 +59,8 @@ namespace ursine
 
             // set the unique id
             m_billboard->SetEntityID( owner->GetID( ) );
+
+            bindResourceModification( m_texture, &Billboard2D::invalidateTexture2 );
         }
 
         void Billboard2D::OnSceneReady(Scene *scene)
@@ -124,6 +126,11 @@ namespace ursine
 
                 m_billboard->SetTextureHandle( handle );
             }
+        }
+
+        void Billboard2D::invalidateTexture2()
+        {
+            invalidateTexture( true );
         }
     }
 }

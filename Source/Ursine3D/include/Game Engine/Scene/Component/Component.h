@@ -39,8 +39,8 @@ namespace ursine
             friend class EntitySerializer;
 
             inline explicit Component(ComponentTypeID typeID);
-
             Component(const Component &rhs) = default;
+            ~Component(void);
 
             Component &operator=(const Component &rhs) = default;
 
@@ -109,6 +109,21 @@ namespace ursine
             template<typename ResourceType>
             ResourceType *loadResource(const resources::ResourceReference &resource) const;
 
+        #if defined(URSINE_WITH_EDITOR)
+
+            template<typename ComponentType>
+            using ResourceModificationCallback = void(ComponentType::*)(void);
+
+            std::unordered_map<GUID, std::function<void(void)>, GUIDHasher> m_resourceModificationCallbacks;
+
+            template<typename ComponentType>
+            void bindResourceModification(
+                const resources::ResourceReference &resource, 
+                ResourceModificationCallback<ComponentType> callback
+            );
+
+        #endif
+
         private:
             // component type id
             ComponentTypeID m_typeID;
@@ -123,6 +138,12 @@ namespace ursine
 
             void onInitialize(void);
             void onSceneReady(Scene *scene);
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            void onResourceModifed(EVENT_HANDLER(World));
+
+        #endif
         } Meta(WhiteListMethods);
     }
 }

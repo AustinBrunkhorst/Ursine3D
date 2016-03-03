@@ -56,8 +56,10 @@ namespace ursine
             m_world->Listener( this )
                 .On( WORLD_UPDATE, &RenderSystem::onUpdate )
                 .On( WORLD_RENDER, &RenderSystem::onRender )
+            #if defined(URSINE_WITH_EDITOR)
                 .On( WORLD_EDITOR_UPDATE, &RenderSystem::onEditorUpdate )
                 .On( WORLD_EDITOR_RENDER, &RenderSystem::onEditorRender )
+            #endif
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &RenderSystem::onComponentAdded )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &RenderSystem::onComponentRemoved );
         }
@@ -67,8 +69,10 @@ namespace ursine
             m_world->Listener( this )
                 .Off( WORLD_UPDATE, &RenderSystem::onUpdate )
                 .Off( WORLD_RENDER, &RenderSystem::onRender )
+            #if defined(URSINE_WITH_EDITOR)
                 .Off( WORLD_EDITOR_UPDATE, &RenderSystem::onEditorUpdate )
                 .Off( WORLD_EDITOR_RENDER, &RenderSystem::onEditorRender )
+            #endif
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &RenderSystem::onComponentAdded )
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &RenderSystem::onComponentRemoved );
         }
@@ -189,14 +193,20 @@ namespace ursine
 				if (camera->dirty)
 					camera->updateRenderer( );
 
-                if (!camera->GetActive( ) || camera->IsEditorCamera( ))
-                    continue;
+                // kinda ugly, eventually make an editor render system
+                if (!camera->GetActive( ) 
+                #if defined(URSINE_WITH_EDITOR)
+                    || camera->IsEditorCamera( )
+                #endif
+                ) continue;
 
                 renderCamera( camera, e, RENDER_HOOK );
             }
 
             m_graphics->EndScene( );
         }
+
+        #if defined(URSINE_WITH_EDITOR)
 
         void RenderSystem::onEditorUpdate(EVENT_HANDLER(World))
         {
@@ -234,6 +244,8 @@ namespace ursine
 
             m_graphics->EndScene( );
         }
+
+        #endif
 
         void RenderSystem::renderObjects(void)
         {

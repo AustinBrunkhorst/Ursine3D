@@ -150,12 +150,31 @@ namespace ursine
 			// grabs object position from the gpu
 			SVec3 GetMouseWorldPosition(void) const;
 
+            ///////////////////////////////////////////////////////////////////
+            // Editor Specific Functionality
+            ///////////////////////////////////////////////////////////////////
+        
+        #if defined(URSINE_WITH_EDITOR)
+
+            URSINE_TODO( "Cache this information in the project temp" );
+
+            Meta(Disable)
+            float lookZoomFactor;
+
+            Meta(Disable)
+            SVec3 focusPosition;
+
             bool IsEditorCamera(void) const;
             void SetEditorCamera(bool editorCamera);
 
             // Puts the viewport in the bottom right of the scene viewport
             // if selected. Used by the editor
             void SetEditorSelectionMode(bool selected);
+
+            void OnSerialize(Json::object &output) const override;
+            void OnDeserialize(const Json &input) override;
+
+        #endif
 
         private:
             bool m_active;
@@ -169,7 +188,6 @@ namespace ursine
             Vec2 m_viewportSize;
 
             graphics::GfxAPI *m_graphics;
-
         } Meta(Enable, WhiteListMethods, DisplayName( "Camera" ));
     }
 }
