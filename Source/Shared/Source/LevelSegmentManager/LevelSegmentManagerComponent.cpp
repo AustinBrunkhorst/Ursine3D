@@ -200,7 +200,7 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
 
     stateM->SetInitialState( initState );
 
-    addSegmentLogic( stateM, {
+    addSegmentLogic(stateM, {
         LevelSegments::CB1_SimulationStartCinematic,
         LevelSegments::CB1_WeaponSelection,
         LevelSegments::CB1_ActivateSystems1,
@@ -209,7 +209,9 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
         LevelSegments::CB1_Combat3,
         LevelSegments::CB1_Combat4,
         LevelSegments::CB1_OpenConduitRoom,
-        LevelSegments::CB4_OpenBossRoom
+        LevelSegments::CB4_OpenBossRoom,
+        LevelSegments::BossRoom_Introduction,
+        LevelSegments::BossRoom_Phase1
     } );
 }
 
@@ -319,7 +321,6 @@ void LevelSegmentManager::initBossRoomLogic(void)
         LevelSegments::CB4_OpenBossRoom,
         LevelSegments::BossRoom_Introduction
     } );
-
 }
 
 SegmentLogicStateMachine::Handle LevelSegmentManager::createSegmentLogic(const std::string &name, LevelSegments segment)

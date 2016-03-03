@@ -83,6 +83,7 @@
 
 #include "BossAIComponent.h"
 #include "VineAIComponent.h"
+#include "VineSpawnerComponent.h"
 
 /////////////////////////////////
 //       Level Logic           //
