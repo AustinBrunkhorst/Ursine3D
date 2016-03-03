@@ -93,7 +93,8 @@ namespace ursine
 
         void ModelResource::DecrementReference(void)
         {
-            UAssert(m_referenceCount != 0, "Attempted to unload model that was already unloaded!");
+            if(m_referenceCount == 0)
+                return;
             --m_referenceCount;
         }
 

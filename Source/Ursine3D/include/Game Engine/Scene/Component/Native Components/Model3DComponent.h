@@ -109,6 +109,7 @@ namespace ursine
             ~Model3D(void);
 
             void OnInitialize(void) override;
+            void OnSceneReady(Scene *scene) override;
 
             std::vector<SMat4> &GetMatrixPalette(void);
 
@@ -170,8 +171,8 @@ namespace ursine
 
             void updateRenderer(void);
 
-            void invalidateTexture(void);
-            void invalidateModel(void);
+            void invalidateTexture(bool unload = true);
+            void invalidateModel(bool unload = true);
 
         } Meta(Enable, WhiteListMethods, DisplayName( "Model3D" ));
     }

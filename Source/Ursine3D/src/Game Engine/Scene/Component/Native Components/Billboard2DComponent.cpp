@@ -63,7 +63,7 @@ namespace ursine
 
         void Billboard2D::OnSceneReady(Scene *scene)
         {
-            invalidateTexture( );
+            invalidateTexture( false );
         }
 
         graphics::Billboard2D *Billboard2D::GetBillboard(void)
@@ -105,7 +105,7 @@ namespace ursine
             m_billboard->SetPosition( trans->GetWorldPosition( ) );
         }
 
-        void Billboard2D::invalidateTexture(void)
+        void Billboard2D::invalidateTexture(bool unload)
         {
             auto data = loadResource<resources::TextureData>( m_texture );
 
@@ -118,7 +118,8 @@ namespace ursine
             {
                 auto handle = data->GetTextureHandle( );
 
-                m_graphics->ResourceMgr.UnloadTexture( m_billboard->GetTextureHandle( ) );
+                if(unload)
+                    m_graphics->ResourceMgr.UnloadTexture( m_billboard->GetTextureHandle( ) );
                 m_graphics->ResourceMgr.LoadTexture( handle );
 
                 m_billboard->SetTextureHandle( handle );
