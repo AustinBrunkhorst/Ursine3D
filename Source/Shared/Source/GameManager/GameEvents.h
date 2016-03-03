@@ -14,29 +14,43 @@ namespace game
         // control point events
         CONTROL_POINT_SUCCESS,
 
-        // damage events
-        DAMAGE_EVENT,
+        /////////////////////////
+        ////  damage events  ////
+        /////////////////////////
+        DAMAGE_TEXT_EVENT,
 
-        // open door
+
+        /////////////////////
+        ////  open door  ////
+        /////////////////////
         OPEN_DOOR,
 
-        // weapon events
+
+        /////////////////////////
+        ////  weapon events  ////
+        /////////////////////////
         ACTIVATE_WEAPON,
         DETACH_WEAPON,
         DEACTIVATE_WEAPON,
 
+
+        /////////////////////////////
+        ////  enemy stat events  ////
+        /////////////////////////////
         ENEMY_DEATH,
         AREA_CLEAR,
 
 
+        //////////////////////////
         ////  Command Events  ////
+        //////////////////////////
 #define ENUMERATE(eventName) eventName,
 #include "CommandEvents.inl"
 #undef ENUMERATE
 
-
         GAME_EVENTS_END
     };
+
 
 
     struct MovementEventArgs : ursine::EventArgs
@@ -48,14 +62,24 @@ namespace game
         { }
     };
 
-    struct DamageEventArgs : ursine::EventArgs
+    struct DamageEventArgs : public ursine::EventArgs
     {
-        float m_damage;
-
-        DamageEventArgs(float damage)
-            : m_damage(damage)
+        DamageEventArgs(const ursine::SVec3 &hitPosition,
+                        ursine::ecs::Entity *entityHit,
+                        float damage, bool crit)
+            : hitPosition(hitPosition)
+            , entityHit(entityHit)
+            , damage(damage)
+            , crit(crit)
         { }
+
+        const ursine::SVec3& hitPosition;
+        ursine::ecs::Entity *entityHit;
+        float damage;
+        bool crit;
+
     };
+
 
     struct WeaponDeactivationEventArgs : ursine::EventArgs
     {
@@ -65,18 +89,16 @@ namespace game
         ursine::ecs::Entity* whoToConnect;
 
         WeaponDeactivationEventArgs(ursine::ecs::Entity* who, int ammo = 1, int clip = -1)
-            : m_ammo( ammo ), m_clip( clip ), whoToConnect( who )
+            : m_ammo(ammo), m_clip(clip), whoToConnect(who)
         { }
     };
-
 
     struct WeaponActivationEventArgs : WeaponDeactivationEventArgs
     {
         ursine::ecs::Transform* m_camHandle;
-        ursine::SVec3* m_spawnOffset;
 
         WeaponActivationEventArgs(ursine::ecs::Entity* who, ursine::ecs::Transform* camHandle = nullptr, int ammo = -1, int clip = -1)
-            : WeaponDeactivationEventArgs(  who, ammo, clip ), m_camHandle( camHandle ), m_spawnOffset( nullptr )
+            : WeaponDeactivationEventArgs(who, ammo, clip), m_camHandle(camHandle)
         { }
     };
 

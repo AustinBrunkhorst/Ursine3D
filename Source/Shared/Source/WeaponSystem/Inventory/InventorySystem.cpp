@@ -14,7 +14,6 @@
 #include "InventorySystem.h"
 #include "GameEvents.h"
 #include "InventoryComponent.h"
-#include <HitscanWeaponComponent.h>
 #include "HitscanWeaponComponent.h"
 #include "AbstractWeapon.h"
 #include <AnimatorComponent.h>
@@ -115,7 +114,7 @@ void InventorySystem::ChangeCurrentWeapon(Inventory* inventory)
         if ( !inventory->m_swap && inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded )
         {
             // detatch current weapon
-            game::WeaponDeactivationEventArgs args(inventory->GetOwner( ));
+            game::WeaponDeactivationEventArgs args( inventory->GetOwner( ) );
             inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded->Dispatch(game::DETACH_WEAPON, &args);
         }
 
@@ -133,14 +132,8 @@ void InventorySystem::LoadWeapon(Inventory* inventory)
     // create weapon
     weaponSlot.m_weaponLoaded = m_world->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + weaponSlot.m_weaponToLoad, "Weapoon" );
 
-    // move weapon to arm
-    //weaponsTrans->SetWorldPosition( inventory->m_armHandle->GetWorldPosition( ) );
-
     // activate weapon and grab spawn offset
     ActivateWeapon(inventory);
-
-    // set rotation of arm
-    //weaponsTrans->SetWorldRotation( inventory->m_armHandle->GetWorldRotation(  ) );
 
     // Parent weapon to arm
     inventory->m_cameraHandle->AddChildAlreadyInLocal( weaponSlot.m_weaponLoaded->GetTransform( ) );
@@ -152,10 +145,12 @@ void InventorySystem::LoadWeapon(Inventory* inventory)
 void InventorySystem::ActivateWeapon(Inventory* inventory)
 {
     //create event args
-    game::WeaponActivationEventArgs args( inventory->GetOwner( ), inventory->m_cameraHandle);
+    game::WeaponActivationEventArgs args( inventory->GetOwner( ), inventory->m_cameraHandle );
 
+    // set position
     ursine::ecs::Transform* trans = inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->GetTransform( );
-
+    trans->SetWorldPosition(trans->GetLocalPosition( ));
+    
     // was weapon swapped in (if so give it its' previous stats)
     if ( inventory->m_swap )
     {
@@ -167,22 +162,6 @@ void InventorySystem::ActivateWeapon(Inventory* inventory)
     
     // activate current weapon
     inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->Dispatch(game::ACTIVATE_WEAPON, &args);
-
-    //HitscanWeapon* weapon = inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->GetComponent<HitscanWeapon>( );
-    //weapon->m_camHandle = inventory->m_cameraHandle;
-
-    //ursine::ecs::Entity* firePos = weapon->GetOwner( )->GetComponentInChildren<FirePos>( )->GetOwner( );
-
-    //if ( firePos )
-    //    weapon->m_firePosHandle = firePos->GetTransform( );
-
-    //weapon->m_animatorHandle = inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->GetTransform( )->GetComponentInChildren<ursine::ecs::Animator>( );
-
-    // set spawn offset
-    ursine::SVec3 spawnOffset = trans->GetLocalRotation( ) * *args.m_spawnOffset;
-    trans->SetWorldPosition( trans->GetLocalPosition(  ) + spawnOffset );
-
-    //weapon->ConnectTrigger(inventory->GetOwner( ));
 }
 
 void InventorySystem::DeactivateWeapon(Inventory* inventory, const int index)

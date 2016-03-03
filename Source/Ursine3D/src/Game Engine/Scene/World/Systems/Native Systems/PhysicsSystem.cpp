@@ -139,7 +139,7 @@ namespace ursine
                     m_debugSystem->DrawPoint( hit, 10.0f, Color::Cyan, drawDuration );
                 }
             }
-            else if(debug && alwaysDrawLine)
+            else if(debug || alwaysDrawLine)
             {
                 m_debugSystem->DrawLine( input.start, input.end, color, drawDuration );
             }

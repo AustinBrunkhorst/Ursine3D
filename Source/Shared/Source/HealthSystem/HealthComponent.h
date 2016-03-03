@@ -16,6 +16,14 @@
 #include <Component.h>
 #include <RigidbodyComponent.h>
 
+namespace ursine
+{
+    namespace physics
+    {
+        class Contact;
+    } // physics namespace
+} // ursine namespace
+
 struct HealthEventArgs : ursine::EventArgs
 {
     float health;
@@ -65,12 +73,12 @@ public:
     void SetSpawnOnDeath(const bool state);
 
     void DealDamage(const float damage);
+    void DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit);
 
 private:
     void OnInitialize(void) override;
-    void ConnectToAllCritSpots(void);
+    void sendDamageTextEvent(const ursine::SVec3& contact, float damage, bool crit);
 
-    void OnDamaged(EVENT_HANDLER(game::DAMAGE_EVENT));
     void OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
 
     float m_health;
@@ -80,4 +88,4 @@ private:
 
     bool m_spawnOnDeath;
 
-} Meta(Enable, WhiteListMethods, DisplayName( "Health" ), RequiresComponents( typeof( ursine::ecs::Rigidbody ) ));
+} Meta(Enable, WhiteListMethods, DisplayName( "Health" ));

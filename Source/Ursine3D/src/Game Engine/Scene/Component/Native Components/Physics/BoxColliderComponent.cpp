@@ -15,6 +15,7 @@
 
 #include "BoxColliderComponent.h"
 #include "RigidbodyComponent.h"
+#include "GhostComponent.h"
 #include "EntityEvent.h"
 #include "PhysicsSystem.h"
 #include "CollisionEventArgs.h"

@@ -78,6 +78,9 @@ void EntityAnimator::Play(const std::string &clipName)
         if (clip->clipName == clipName)
         {
             keyFrames = clip->keyFrames;
+            m_loop = clip->looping;
+            SetAnimationClipName( clip->clipName );
+            JumpToStart( );
             Play( );
             return;
         }
@@ -124,6 +127,8 @@ bool EntityAnimator::GetLoopAnimation(void) const
 void EntityAnimator::SetLoopAnimation(bool flag)
 {
     m_loop = flag;
+
+    NOTIFY_COMPONENT_CHANGED( "loopAnimation", m_loop );
 }
 
 bool EntityAnimator::GetSmoothPath(void) const
@@ -134,6 +139,8 @@ bool EntityAnimator::GetSmoothPath(void) const
 void EntityAnimator::SetSmoothPath(bool flag)
 {
     m_smoothPath = flag;
+
+    NOTIFY_COMPONENT_CHANGED( "smoothPath", m_smoothPath );
 }
 
 bool EntityAnimator::GetPlayOnAwake(void) const
@@ -558,6 +565,7 @@ void EntityAnimator::saveAnimationClip(void)
     auto clip = entity->AddComponent<EntityAnimatorClip>( );
 
     clip->clipName = m_clipName;
+    clip->looping = m_loop;
     clip->keyFrames = keyFrames;
 
     owner->GetTransform( )->AddChildAlreadyInLocal( entity->GetTransform( ) );
@@ -573,6 +581,7 @@ void EntityAnimator::loadAnimationClip(void)
         if (clip->clipName == m_clipName)
         {
             keyFrames = clip->keyFrames;
+            m_loop = clip->looping;
 
             NotificationConfig config;
 

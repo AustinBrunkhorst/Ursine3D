@@ -42,6 +42,7 @@
 #include "DamageSystem/ExplosionComponent.h"
 #include "DamageSystem/CritSpotComponent.h"
 #include "DamageSystem/DamageOnCollideComponent.h"
+#include "DamageSystem/DamageTextComponent.h"
 
 /////////////////////////////////
 //    Interaction System       //
@@ -79,6 +80,9 @@
 #include "AI/AIHordeReasoner.h"
 
 #include "EnemyDeathComponent.h"
+
+#include "BossAIComponent.h"
+#include "VineAIComponent.h"
 
 /////////////////////////////////
 //       Level Logic           //
@@ -128,3 +132,9 @@
 
 #include "Misc/AnimateTutorialTextComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
+
+/////////////////////////////////
+//           Physics           //
+/////////////////////////////////
+
+#include "Physics/ApplyImpulseOnHitComponent.h"

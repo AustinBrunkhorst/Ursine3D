@@ -152,6 +152,16 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED("textColor", color);
         }
 
+        void SpriteText::SetOverdraw(bool flag)
+        {
+            m_spriteText->SetOverdraw( flag );
+        }
+
+        bool SpriteText::GetOverdraw(void) const
+        {
+            return m_spriteText->GetOverdraw( );
+        }
+
         void SpriteText::updateRenderer()
         {
             auto *transform = GetOwner( )->GetTransform( );

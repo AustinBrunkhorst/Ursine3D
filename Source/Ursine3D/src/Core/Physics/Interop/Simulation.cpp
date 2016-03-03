@@ -22,6 +22,7 @@
 #include "RigidbodyComponent.h"
 
 #include "Ghost.h"
+#include "GhostComponent.h"
 
 #include "EntityEvent.h"
 
@@ -418,6 +419,9 @@ namespace ursine
             
             if (body->getInternalType( ) == BT_RIGID_BODY)
                 return static_cast<ecs::Rigidbody*>( body->getUserPointer( ) )->GetEnableContactCallback( );
+
+            if (body->getInternalType( ) == BT_GHOST)
+                return static_cast<ecs::Ghost*>( body->getUserPointer( ) )->GetEnableContactCallback( );
             
             return false;
         }
@@ -453,6 +457,10 @@ namespace ursine
 
                 greatestLifetime = math::Max( greatestLifetime, pt.getLifeTime( ) );
             }
+
+            // This is an edge case
+            if (args.contacts.size( ) == 0)
+                return;
 
             thisEntity->Dispatch( ecs::ENTITY_COLLISION_PERSISTED, &args );
 

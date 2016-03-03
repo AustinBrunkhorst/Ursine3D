@@ -359,6 +359,9 @@ namespace ursine
         {
             float dt = Application::Instance->GetDeltaTime( );
 
+            if (dt > 0.2f)
+                dt = 0.2f;
+
             if ( (m_spawnCount < m_emitCount) || m_emitCount == 0 )
             {
                 m_currentTime += dt;

@@ -22,6 +22,7 @@ struct HitscanWeapon : ursine::ecs::Component, AbstractHitscanWeapon
 public:
 
     AbstractWeaponFields( );
+
     HitscanEditorFields( );
 
     HitscanWeapon(void);
