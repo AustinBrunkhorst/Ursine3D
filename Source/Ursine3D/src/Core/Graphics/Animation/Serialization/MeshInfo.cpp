@@ -30,11 +30,6 @@ namespace ursine
 
             MeshInfo::~MeshInfo(void)
             {
-                ReleaseData( );
-            }
-
-            void MeshInfo::ReleaseData(void)
-            {
                 name = "";
 
                 meshVtxInfoCount = 0;
@@ -42,10 +37,10 @@ namespace ursine
                 mtrlCount = 0;
                 mtrlIndexCount = 0;
 
-                mtrlName.clear( );
-                meshVtxInfos.clear( );
-                meshVtxIndices.clear( );
-                materialIndices.clear( );
+                mtrlName.clear();
+                meshVtxInfos.clear();
+                meshVtxIndices.clear();
+                materialIndices.clear();
             }
 
             bool MeshInfo::SerializeIn(HANDLE hFile)

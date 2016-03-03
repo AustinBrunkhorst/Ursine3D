@@ -24,10 +24,10 @@ namespace ursine
         );
 
         // create animation info
-        auto *animInfo = new graphics::ufmt_loader::AnimInfo( );
+        graphics::ufmt_loader::AnimInfo animInfo;
 
         // and read data from Resource Reader
-        animInfo->Read( clipReader );
+        animInfo.Read( clipReader );
 
         return std::make_shared<AnimationClipData>( animInfo );
     }

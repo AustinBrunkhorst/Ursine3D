@@ -9,7 +9,7 @@ namespace ursine
 {
     namespace resources
     {
-        AnimationClipData::AnimationClipData(graphics::ufmt_loader::AnimInfo *animeInfo) 
+        AnimationClipData::AnimationClipData(const graphics::ufmt_loader::AnimInfo &animeInfo) 
         {
             m_animeHandle = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.CreateAnimation( animeInfo );
         }
@@ -31,9 +31,9 @@ namespace ursine
 
         void AnimationClipData::Write(pipeline::ResourceWriter &output)
         {
-            auto *animeInfo = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( m_animeHandle );
+            auto animeInfo = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( m_animeHandle );
 
-            animeInfo->Write( output );
+            animeInfo.Write( output );
         }
 
         meta::Type AnimationClipData::GetReaderType(void)

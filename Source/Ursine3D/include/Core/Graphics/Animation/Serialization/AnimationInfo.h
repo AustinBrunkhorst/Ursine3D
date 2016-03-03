@@ -40,7 +40,6 @@ namespace ursine
                 KFrms keyframes;
 
                 AnimData() : clipname(""), clipCount(0), boneCount(0), keyIndices(0), keyframes(0) {}
-                void ReleaseData();
             };
 
             // model's animation data
@@ -66,14 +65,6 @@ namespace ursine
                 *  @return nothing
                 */
                 virtual ~AnimInfo(void);
-
-                /** @brief animation information release function
-                *
-                *  this will release memory of the animation information
-                *
-                *  @return nothing
-                */
-                void ReleaseData(void);
 
                 void Read(resources::ResourceReader &input) override;
                 void Write(resources::pipeline::ResourceWriter &output) override;

@@ -60,14 +60,6 @@ namespace ursine
             */
             ~CFBXLoader();
 
-            /** @brief fbx loader release function
-            *
-            *  this will release the data which has been used to build custom file
-            *
-            *  @return nothing
-            */
-            void Release();
-
             /** @brief fbx loader export function
             *
             *  this will build up custom file datastructure from fbx
@@ -367,7 +359,7 @@ namespace ursine
             *  @param index the id of the mesh data
             *  @return the mesh data of the model accoring to its index
             */
-            FBX_DATA::MeshData& GetMeshData(int index) const { return (*mModel->mMeshData[index]); }
+            FBX_DATA::MeshData& GetMeshData(int index) const { return (*m_Model->mMeshData[index]); }
 
             /** @brief fbx loader get mesh data count function
             *
@@ -375,7 +367,7 @@ namespace ursine
             *
             *  @return the size of the mesh data of the model
             */
-            size_t GetMeshDataCount() const { return mModel->mMeshData.size(); }
+            size_t GetMeshDataCount() const { return m_Model->mMeshData.size(); }
 
             /** @brief fbx loader get model function
             *
@@ -383,7 +375,7 @@ namespace ursine
             *
             *  @return the model data structure
             */
-            FBX_DATA::FbxModel& GetModel() const { return *mModel; }
+            FBX_DATA::FbxModel& GetModel() const { return *m_Model; }
 
             /** @brief fbx loader is skinned function
             *
@@ -391,7 +383,7 @@ namespace ursine
             *
             *  @return if there is animation return true, else return false
             */
-            bool IsSkinned() { return (mModel->mAnimationData.empty()) ? false : true; }
+            bool IsSkinned() { return (m_Model->mAnimationData.empty()) ? false : true; }
 
             /** @brief fbx loader get model info function
             *
@@ -399,7 +391,7 @@ namespace ursine
             *
             *  @return the model info data structure
             */
-            std::shared_ptr<graphics::ufmt_loader::ModelInfo> GetModelInfo() const { return mModelInfo; }
+            const ufmt_loader::ModelInfo& GetModelInfo() const { return m_ModelInfo; }
 
             /** @brief fbx loader get animation info function
             *
@@ -407,17 +399,17 @@ namespace ursine
             *
             *  @return the animation info data structure
             */
-            ufmt_loader::AnimInfo* GetAnimInfo() const { return mAnimInfo; }
+            const ufmt_loader::AnimInfo& GetAnimInfo() const { return m_AnimInfo; }
 
         private:
-            unsigned int			boneindex;
-            std::pair<bool, bool>	mAnimationFlag;	// first flag = if there is animation
+            unsigned int            boneindex;
+            std::pair<bool, bool>   m_AnimationFlag;	// first flag = if there is animation
                                                     // second flag = if there is only animation
-            FbxPose*				mAnimPose;
-            FBX_DATA::FbxModel*		mModel;
+            FbxPose*                m_AnimPose;
+            FBX_DATA::FbxModel*     m_Model;
 
-            std::shared_ptr<graphics::ufmt_loader::ModelInfo> mModelInfo;
-            ufmt_loader::AnimInfo*	mAnimInfo;
+            ufmt_loader::ModelInfo  m_ModelInfo;
+            ufmt_loader::AnimInfo   m_AnimInfo;
         };
     }
 }	// FBX_LOADER

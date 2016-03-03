@@ -58,7 +58,7 @@ namespace ursine
             /////////////////////////////////////////////////////////
 
             // create a model
-            GfxHND CreateModel(std::shared_ptr<graphics::ufmt_loader::ModelInfo> modelInfo);
+            GfxHND CreateModel(const ufmt_loader::ModelInfo& modelInfo);
             void DestroyModel(GfxHND &handle);
 
             // load/unload from GPU
@@ -69,16 +69,16 @@ namespace ursine
             ModelResource *GetModelResource(GfxHND handle);
 
             // get a model info
-            std::shared_ptr<graphics::ufmt_loader::ModelInfo> GetModelInfo(const GfxHND &handle);
+            ufmt_loader::ModelInfo GetModelInfo(const GfxHND &handle);
 
             /////////////////////////////////////////////////////////
             // Animation
             /////////////////////////////////////////////////////////
 
-            GfxHND CreateAnimation(ufmt_loader::AnimInfo *animeInfo);
+            GfxHND CreateAnimation(const ufmt_loader::AnimInfo& animeInfo);
             void DestroyAnimation(GfxHND &handle);
 
-            ufmt_loader::AnimInfo *GetAnimInfo(const GfxHND &handle);
+            ufmt_loader::AnimInfo GetAnimInfo(const GfxHND &handle);
             
         private:
             privData *m_privates;
