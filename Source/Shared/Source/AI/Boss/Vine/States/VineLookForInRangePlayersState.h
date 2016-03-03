@@ -13,19 +13,18 @@
 
 #pragma once
 
-#include "BossVineState.h"
+#include "VineAIState.h"
 
-class VineLookForInRangePlayersState : public BossVineState
+class VineLookForInRangePlayersState : public VineAIState
 {
 public:
     VineLookForInRangePlayersState(void);
 
-    bool CanExit(void) override { return m_inRange; }
-
-    void Enter(BossVineStateMachine *machine) override;
-    void Update(BossVineStateMachine *machine) override;
+    void Enter(VineAIStateMachine *machine) override;
+    void Update(VineAIStateMachine *machine) override;
 
 private:
     bool m_inRange;
+    bool m_inView;
     ursine::SVec3 m_originalForward;
 };

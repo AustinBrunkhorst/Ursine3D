@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** BossVineStateMachine.cpp
+** BossAIStateMachine.cpp
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,21 +13,19 @@
 
 #include "Precompiled.h"
 
-#include "BossVineStateMachine.h"
-
-#include "BossVineAIComponent.h"
+#include "BossAIStateMachine.h"
 
 #include <Application.h>
 
 using namespace ursine;
 
-BossVineStateMachine::BossVineStateMachine(BossVineAI* ai)
-    : m_ai( ai )
+BossAIStateMachine::BossAIStateMachine(BossAI *boss)
+    : m_boss( boss )
 {
     AddFloat( "Cooldown", 0.0f );
 }
 
-void BossVineStateMachine::Update(void)
+void BossAIStateMachine::Update(void)
 {
     auto cooldown = GetFloat( "Cooldown" );
 
@@ -39,7 +37,7 @@ void BossVineStateMachine::Update(void)
     StateMachine::Update( );
 }
 
-BossVineAI *BossVineStateMachine::GetAI(void)
+BossAI *BossAIStateMachine::GetBoss(void)
 {
-    return m_ai;
+    return m_boss;
 }

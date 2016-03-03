@@ -89,7 +89,7 @@ namespace game
         ursine::ecs::Entity* whoToConnect;
 
         WeaponDeactivationEventArgs(ursine::ecs::Entity* who, int ammo = 1, int clip = -1)
-            : m_ammo( ammo ), m_clip( clip ), whoToConnect( who )
+            : m_ammo(ammo), m_clip(clip), whoToConnect(who)
         { }
     };
 
@@ -98,7 +98,7 @@ namespace game
         ursine::ecs::Transform* m_camHandle;
 
         WeaponActivationEventArgs(ursine::ecs::Entity* who, ursine::ecs::Transform* camHandle = nullptr, int ammo = -1, int clip = -1)
-            : WeaponDeactivationEventArgs(  who, ammo, clip ), m_camHandle( camHandle )
+            : WeaponDeactivationEventArgs(who, ammo, clip), m_camHandle(camHandle)
         { }
     };
 

@@ -91,33 +91,6 @@ namespace ursine
 
             m_handleList[ rend->Type_ ].push(rend->Index_);
 
-            switch (rend->Type_)
-            {
-            case RENDERABLE_MODEL3D:
-                UAssert(m_renderableModel3D[ rend->Index_ ].m_active == true, "Attempted to free an already free model3d!");
-				m_renderableModel3D[ rend->Index_ ].m_active = false;
-                break; 
-            case RENDERABLE_BILLBOARD2D:
-                UAssert(m_renderableBillboards[ rend->Index_ ].m_active == true, "Attempted to free an already free billboard2d!");
-                m_renderableBillboards[ rend->Index_ ].m_active = false;
-                break;
-            case RENDERABLE_LIGHT:
-                UAssert(m_renderableLights[ rend->Index_ ].m_active == true, "Attempted to free an already free light!");
-				m_renderableLights[ rend->Index_ ].m_active = false;
-                break;
-            case RENDERABLE_PS:
-                UAssert(m_renderableParticleSystems[ rend->Index_ ].m_active == true, "Attempted to free an already free light!");
-                m_renderableParticleSystems[ rend->Index_ ].m_active = false;
-                break;
-            case RENDERABLE_SPRITE_TEXT:
-                UAssert(m_renderableSpriteText[ rend->Index_ ].m_active == true, "Attempted to free an already free light!");
-                m_renderableSpriteText[ rend->Index_ ].m_active = false;
-                break;
-            default:
-                UAssert(false, "Attempted to destroy corrupted handle!");
-                break;
-            }
-
             handle = 0;
         }
 

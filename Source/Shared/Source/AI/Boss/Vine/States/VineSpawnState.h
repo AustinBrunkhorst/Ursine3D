@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** BossVineStateMachine.h
+** VineSpawnState.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,21 +13,21 @@
 
 #pragma once
 
-#include <StateMachine.h>
+#include "VineAIState.h"
 
-class BossVineAI;
+class EntityAnimator;
 
-class BossVineStateMachine : public ursine::sm::StateMachine
+class VineSpawnState : public VineAIState
 {
 public:
-    typedef std::shared_ptr<BossVineStateMachine> Handle;
+    VineSpawnState(void);
 
-    BossVineStateMachine(BossVineAI *ai);
+    bool CanExit(void) override { return m_finished; }
 
-    void Update(void) override;
-
-    BossVineAI *GetAI(void);
+    void Enter(VineAIStateMachine *machine) override;
 
 private:
-    BossVineAI *m_ai;
+    bool m_finished;
+
+    void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 };

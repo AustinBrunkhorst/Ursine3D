@@ -81,7 +81,8 @@
 
 #include "EnemyDeathComponent.h"
 
-#include "BossVineAIComponent.h"
+#include "BossAIComponent.h"
+#include "VineAIComponent.h"
 
 #include "FodderAIComponent.h"
 

@@ -14,8 +14,8 @@
 #include "Precompiled.h"
 
 #include "VineLookForInRangePlayersState.h"
-#include "BossVineStateMachine.h"
-#include "BossVineAIComponent.h"
+#include "VineAIStateMachine.h"
+#include "VineAIComponent.h"
 
 #include <PlayerIdComponent.h>
 
@@ -23,12 +23,13 @@ using namespace ursine;
 using namespace ecs;
 
 VineLookForInRangePlayersState::VineLookForInRangePlayersState(void)
-    : BossVineState( "Vine Look For In Range Players" )
+    : VineAIState( "Vine Look For In Range Players" )
     , m_inRange( false )
+    , m_inView( false )
 {
 }
 
-void VineLookForInRangePlayersState::Enter(BossVineStateMachine *machine)
+void VineLookForInRangePlayersState::Enter(VineAIStateMachine *machine)
 {
     // save the original direction of the ai
     auto ai = machine->GetAI( );
@@ -40,7 +41,7 @@ void VineLookForInRangePlayersState::Enter(BossVineStateMachine *machine)
     ai->GetAnimator( )->Play( "Idle" );
 }
 
-void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
+void VineLookForInRangePlayersState::Update(VineAIStateMachine *machine)
 {
     auto ai = machine->GetAI( );
     auto aiOwner = ai->GetOwner( );
@@ -84,6 +85,8 @@ void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
         }
     }
 
+    ai->SetTarget( closestTrans->GetOwner( ) );
+
     auto aiPos = aiTrans->GetWorldPosition( );
 
     if (ai->GetFaceClosestPlayer( ) && m_inRange)
@@ -92,10 +95,22 @@ void VineLookForInRangePlayersState::Update(BossVineStateMachine *machine)
         
         lookAtPosition.Y( ) = aiPos.Y( );
 
-        aiTrans->LookAt( lookAtPosition, ai->GetTurnSpeed( ) );
+        aiTrans->LookAt( lookAtPosition, ai->GetWhipTurnSpeed( ) );
+
+        // Check to see if we're in range of the look at position
+        auto viewAngle = ai->GetWhipAngle( ) * 0.5f;
+        auto currentAngle = math::RadiansToDegrees( acos( aiTrans->GetForward( ).Dot( 
+            SVec3::Normalize( lookAtPosition - aiPos )
+        ) ) );
+
+        m_inView = viewAngle >= abs( currentAngle );
     }
     else
     {
-        aiTrans->LookAt( aiPos + m_originalForward, ai->GetTurnSpeed( ) );
+        aiTrans->LookAt( aiPos + m_originalForward, ai->GetWhipTurnSpeed( ) );
+        m_inView = false;
     }
+
+    machine->SetBool( VineAIStateMachine::InRange, m_inRange );
+    machine->SetBool( VineAIStateMachine::InView, m_inView );
 }

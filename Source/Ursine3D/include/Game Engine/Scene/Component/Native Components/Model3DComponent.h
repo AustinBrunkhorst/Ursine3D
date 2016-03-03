@@ -46,6 +46,12 @@ namespace ursine
             );
 
             EditorField(
+                bool active,
+                GetActive,
+                SetActive
+            );
+
+            EditorField(
                 Color color,
                 GetColor,
                 SetColor
@@ -132,6 +138,9 @@ namespace ursine
             // turn debug mode on or off for this model
             void SetDebug(bool flag);
             bool GetDebug(void) const;
+
+            void SetActive(bool flag);
+            bool GetActive(void) const;
 
             ursine::ecs::RenderMask GetRenderMask(void) const;
             void SetRenderMask(ursine::ecs::RenderMask mask);

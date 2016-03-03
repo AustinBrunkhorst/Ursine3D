@@ -32,7 +32,7 @@
 
 
 ENTITY_SYSTEM_DEFINITION( BaseWeaponSystem );
-ENTITY_SYSTEM_DEFINITION(HitscanWeaponSystem);
+ENTITY_SYSTEM_DEFINITION( HitscanWeaponSystem );
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -46,22 +46,37 @@ namespace
     const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
     const ursine::Randomizer random;
     // Apply spread / accuracy to shooting
-    float GetSpreadValue(const float spread, const float accuracy)
+    void GetSpreadValues(Randomizer& spread, const float accuracy, float& xSpread, float& ySpread)
     {
-        return spread * ( 1.0f - accuracy );
+        xSpread = spread.GetValue( ) * ( 1.0f - accuracy );
+        ySpread = spread.GetValue( ) * ( 1.0f - accuracy );
+    }
+
+    void ConstructRaycast(AbstractWeapon& weapon, ursine::SVec3& start, ursine::SVec3& end)
+    {
+        float x_spread, y_spread;
+
+        GetSpreadValues(weapon.m_spread, weapon.m_accuracy, x_spread, y_spread);
+
+        // Get spray vecs
+        ursine::SVec3 spray = weapon.m_camHandle->GetUp( ) * y_spread + weapon.m_camHandle->GetRight( ) * x_spread;
+
+        start = weapon.m_firePosHandle->GetWorldPosition( );
+        end = weapon.m_camHandle->GetWorldPosition( ) + weapon.m_camHandle->GetForward( ) * ( weapon.m_maxRange + EXTRA_DIST ) + spray;
     }
 
     // Give projectiles velocity with spread
-    void ProjectileVelocity( AbstractProjWeapon& weapon, ursine::ecs::Entity& proj, ursine::ecs::Transform& trans)
+    void ProjectileVelocity( AbstractProjWeapon& weapon, ursine::ecs::Entity& proj)
     {
-        float x_spread = GetSpreadValue(weapon.m_spread.GetValue( ), weapon.m_accuracy);
-        float y_spread = GetSpreadValue(weapon.m_spread.GetValue( ), weapon.m_accuracy);
+        ursine::SVec3 start, end;  
 
-        // Get spray vecs
-        ursine::SVec3 spray = trans.GetUp( ) * y_spread + trans.GetRight( ) * x_spread;
+        ConstructRaycast( weapon, start, end );
+
+        start = end - start;
+        start.Normalize( );
 
         // give projectile velocity and position
-        proj.GetComponent<ursine::ecs::Rigidbody>( )->SetVelocity(trans.GetForward( ) * proj.GetComponent<Projectile>( )->GetSpeed( ) + spray);
+        proj.GetComponent<ursine::ecs::Rigidbody>( )->SetVelocity( start * proj.GetComponent<Projectile>( )->GetSpeed( ) );
     }
 
     void ProjectileSetUp(ursine::ecs::Entity& proj, AbstractProjWeapon& weapon)
@@ -98,6 +113,8 @@ namespace
         damageComp.SetDeleteOnCollision( weapon.GetDeleteOnCollision( ) );
 
         proj.GetTransform( )->SetWorldPosition( weapon.m_firePosHandle->GetWorldPosition( ) );
+
+        ProjectileVelocity( weapon, proj );
     }
 
     // Is weapon out of ammo
@@ -212,7 +229,7 @@ namespace
 ////  Base Weapon System  ////
 //////////////////////////////
 BaseWeaponSystem::BaseWeaponSystem( ursine::ecs::World *world ) 
-    : FilterSystem( world, Filter( ).One< BaseWeapon>( ).All< AudioEmitter >( ) )
+    : FilterSystem( world, Filter( ).One< BaseWeapon >( ).All< AudioEmitter >( ) )
 {
 }
 
@@ -221,13 +238,13 @@ void BaseWeaponSystem::Enable(ursine::ecs::Entity *entity)
     auto uniqueID = entity->GetUniqueID( );
     
     // grab all comps needed
-    if (entity->HasComponent<BaseWeapon>( ))
-        m_weapons[ uniqueID ] = entity->GetComponent<BaseWeapon>( );
+    if (entity->HasComponent< BaseWeapon >( ))
+        m_weapons[ uniqueID ] = entity->GetComponent< BaseWeapon >( );
 
     m_transforms[ uniqueID ] = entity->GetTransform( );
 
     // grab audio emitter from root
-    m_emitters[ uniqueID ] = entity->GetComponent<AudioEmitter>( );
+    m_emitters[ uniqueID ] = entity->GetComponent< AudioEmitter >( );
 }
 
 void BaseWeaponSystem::Disable(ursine::ecs::Entity *entity)
@@ -311,6 +328,10 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, ursine::
 
 void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired)
 {
+    // make sure projectile was fired
+    if ( !projectilesFired )
+        return;
+
     // Create the projectile that is desired to shoot
     ursine::ecs::Entity* proj =
         m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + weapon.GetArchetypeToShoot( ), "Bullet");
@@ -320,16 +341,15 @@ void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs
 
     // temp vars for  creating projectiles
     ursine::ecs::Entity* cloneProj = nullptr;
-    ursine::SVec3 forwardVec = trans.GetForward( );
 
     // create the number of projectiles fired
-    for ( int i = 0; i < projectilesFired; ++i )
+    for ( int i = 1; i < projectilesFired; ++i )
     {
         // create clone
         cloneProj = proj->Clone( );
 
         // give projectile a velocity
-        ProjectileVelocity(weapon, *cloneProj, trans);
+        ProjectileVelocity( weapon, *cloneProj );
     }
 }
 
@@ -443,26 +463,12 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon& weapon, ursin
 
 void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired)
 {
-    float x_spread; // x spread for proj
-    float y_spread; // y spread for proj
-    SVec3 spray;    // spread vec to add to travel vecac
-    SVec3 pos;      // position for weapon to shoot to
     physics::RaycastInput rayin;   // input for raycast check
     physics::RaycastOutput rayout; // output from raycast check
 
-    ursine::ecs::Entity* entity = nullptr; // for all objects be checked against
-
-
     for ( int i = 0; i < projectilesFired; ++i )
     {
-        x_spread = GetSpreadValue(weapon.m_spread.GetValue( ), weapon.m_accuracy);
-        y_spread = GetSpreadValue(weapon.m_spread.GetValue( ), weapon.m_accuracy);
-
-        // Get spray vecs
-        spray = weapon.m_camHandle->GetUp( ) * y_spread + weapon.m_camHandle->GetRight( ) * x_spread;
-
-        rayin.start = weapon.m_firePosHandle->GetWorldPosition( );
-        rayin.end = weapon.m_camHandle->GetWorldPosition( ) + weapon.m_camHandle->GetForward( ) * ( weapon.m_maxRange + EXTRA_DIST ) + spray;
+        ConstructRaycast( weapon, rayin.start, rayin.end );
 
         if ( m_physicsSystem->Raycast( rayin, rayout, weapon.m_raycastType, weapon.m_debug, weapon.m_drawDuration, weapon.m_alwaysDraw ) )
         {
@@ -534,6 +540,9 @@ void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursi
 
 void HitscanWeaponSystem::CreateTrail(AbstractHitscanWeapon& weapon, ursine::SVec3& trailEnd)
 {
+    if ( weapon.m_trailParticle.find(".uatype") == std::string::npos )
+        return;
+
     // create trial for raycast
     ursine::ecs::Entity* e = m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + weapon.m_trailParticle);
     e->GetTransform( )->SetWorldPosition(weapon.m_firePosHandle->GetWorldPosition( ));

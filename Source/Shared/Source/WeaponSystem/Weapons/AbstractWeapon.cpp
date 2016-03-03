@@ -394,83 +394,103 @@ void AbstractWeapon::TriggerReleased( EVENT_HANDLER( game::FIRE_END ) )
 }
 
 
-void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
+void AbstractWeapon::ActivateWeapon(ursine::ecs::Entity* owner, ursine::ecs::Entity* whoToConnect, ursine::ecs::Transform* camHandle, int ammo, int clip)
 {
-    EVENT_SENDER(ursine::ecs::Entity, sender);
-
-    game::WeaponActivationEventArgs* args = static_cast<game::WeaponActivationEventArgs*>( const_cast<ursine::EventArgs*>( _args ) );
-
     // connect to parent's fire event
-    args->whoToConnect->Listener(this)
+    whoToConnect->Listener(this)
         .On(game::FIRE_START, &AbstractWeapon::TriggerPulled)
         .On(game::FIRE_END, &AbstractWeapon::TriggerReleased);
 
     // Gun is being reloaded from inventory (swapped in) so update
     //   ammo and clip to previous values before swapped out
-    if ( args->m_ammo != -1 )
+    if ( ammo != -1 )
     {
-        SetAmmoCount( args->m_ammo );
-        SetClipCount( args->m_clip );
+        SetAmmoCount( ammo );
+        SetClipCount( clip );
     }
 
     // Grab camera handle for shooting
-    m_camHandle = args->m_camHandle;
+    if ( m_camHandle )
+        m_camHandle = camHandle;
+    else
+        m_camHandle = owner->GetTransform( );
 
     // Grab fire position child
-    ursine::ecs::Entity* firePos = sender->GetComponentInChildren<FirePos>( )->GetOwner( );
+    FirePos* firePos = owner->GetComponentInChildren<FirePos>( );
 
     // if the fire position was a child then grab transform for shooting
     if ( firePos )
-        m_firePosHandle = firePos->GetTransform( );
+        m_firePosHandle = firePos->GetOwner( )->GetTransform( );
+    else
+        m_firePosHandle = owner->GetTransform( );
 
     // Grab animator of weapon's child model
-    m_animatorHandle = sender->GetComponentInChildren<ursine::ecs::Animator>( );
+    m_animatorHandle = owner->GetComponentInChildren<ursine::ecs::Animator>( );
 }
 
-void AbstractWeapon::DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON))
+void AbstractWeapon::DetachWeapon(ursine::ecs::Entity* owner, ursine::ecs::Entity* whoToDisconnect)
 {
-    EVENT_ATTRS(ursine::ecs::Entity, game::WeaponDeactivationEventArgs);
-
     // disconnect from parent's fire event
-    args->whoToConnect->Listener(this)
+    whoToDisconnect->Listener(this)
         .Off(game::FIRE_START, &AbstractWeapon::TriggerPulled)
         .Off(game::FIRE_END, &AbstractWeapon::TriggerReleased);
 
     // unattach from parent
-    sender->GetTransform( )->DetachFromParent( );
+    owner->GetTransform( )->DetachFromParent( );
 
     // give rigidbody so fall to the ground
-    ursine::ecs::Rigidbody* body = sender->AddComponent<ursine::ecs::Rigidbody>( );
+    ursine::ecs::Rigidbody* body = owner->AddComponent<ursine::ecs::Rigidbody>( );
 
     // give body an impulse to simulate throwing
-    body->AddImpulse( sender->GetTransform( )->GetForward( ) * 3 + ursine::SVec3(0.0f, 3.0f, 0.0f) );
+    body->AddImpulse( owner->GetTransform( )->GetForward( ) * 3 + ursine::SVec3(0.0f, 3.0f, 0.0f) );
 
     // need dat collision for floor
-    sender->AddComponent<ursine::ecs::BoxCollider>( );
+    owner->AddComponent<ursine::ecs::BoxCollider>( );
 
     // need dat interactability
-    sender->AddComponent<Interactable>( );
+    owner->AddComponent<Interactable>( );
 
     // make a weapon pick up
-    WeaponPickup* pickup = sender->AddComponent<WeaponPickup>( );
+    WeaponPickup* pickup = owner->AddComponent<WeaponPickup>( );
     pickup->SetAmmoInfo( m_ammoCount, m_clipCount );
 
     // flag to remove this component
     RemoveMySelf( );
 }
 
-void AbstractWeapon::DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON))
+void AbstractWeapon::DeactivateWeapon(ursine::ecs::Entity* whoToDisconnect, int& saveAmmo, int& saveClip)
 {
-    game::WeaponDeactivationEventArgs* args = static_cast<game::WeaponDeactivationEventArgs*>( const_cast<ursine::EventArgs*>(_args) );
-
     // disconnect from parent's fire event
-    args->whoToConnect->Listener(this)
+    whoToDisconnect->Listener(this)
         .Off(game::FIRE_START, &AbstractWeapon::TriggerPulled)
         .Off(game::FIRE_END, &AbstractWeapon::TriggerReleased);
 
-    args->m_ammo = m_ammoCount;
-    args->m_clip = m_clipCount;
+    saveAmmo = m_ammoCount;
+    saveClip = m_clipCount;
 }
+
+void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
+{
+    EVENT_SENDER(ursine::ecs::Entity, sender);
+    game::WeaponActivationEventArgs* args = static_cast<game::WeaponActivationEventArgs*>( const_cast<ursine::EventArgs*>( _args ) );
+
+    ActivateWeapon(sender, args->whoToConnect, args->m_camHandle, args->m_ammo, args->m_clip);
+}
+
+void AbstractWeapon::DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON))
+{
+    EVENT_ATTRS(ursine::ecs::Entity, game::WeaponDeactivationEventArgs);
+
+    DetachWeapon(sender, args->whoToConnect);
+}
+
+void AbstractWeapon::DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON))
+{
+    game::WeaponDeactivationEventArgs* args = static_cast<game::WeaponDeactivationEventArgs*>( const_cast<ursine::EventArgs*>( _args ) );
+
+    DeactivateWeapon(args->whoToConnect, args->m_ammo, args->m_clip);
+}
+
 
 
 void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED))

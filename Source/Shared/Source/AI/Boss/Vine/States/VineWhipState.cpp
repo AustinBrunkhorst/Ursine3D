@@ -15,15 +15,15 @@
 
 #include "VineWhipState.h"
 
-#include "BossVineStateMachine.h"
-#include "BossVineAIComponent.h"
+#include "VineAIStateMachine.h"
+#include "VineAIComponent.h"
 
 #include <Application.h>
 
 using namespace ursine;
 
 VineWhipState::VineWhipState(void)
-    : BossVineState( "Whip State" )
+    : VineAIState( "Whip State" )
     , m_finished( false )
     , m_animating( false )
     , m_state( WhipState::In )
@@ -31,18 +31,18 @@ VineWhipState::VineWhipState(void)
 {
 }
 
-void VineWhipState::Enter(BossVineStateMachine *machine)
+void VineWhipState::Enter(VineAIStateMachine *machine)
 {
     m_finished = false;
     m_animating = false;
     m_state = WhipState::In;
 }
 
-void VineWhipState::Update(BossVineStateMachine *machine)
+void VineWhipState::Update(VineAIStateMachine *machine)
 {
     static const float goToDuration = 0.5f;
 
-    if (m_animating)
+    if (m_finished)
         return;
 
     auto ai = machine->GetAI( );
@@ -130,9 +130,12 @@ void VineWhipState::Update(BossVineStateMachine *machine)
     }
 }
 
-void VineWhipState::Exit(BossVineStateMachine *machine)
+void VineWhipState::Exit(VineAIStateMachine *machine)
 {
-    machine->SetFloat( "Cooldown", machine->GetAI( )->GetWhipCooldown( ) );
+    machine->SetFloat( 
+        VineAIStateMachine::WhipCooldown,
+        machine->GetAI( )->GetWhipCooldown( )
+    );
 }
 
 void VineWhipState::playAnimation(EntityAnimator *animator, const std::string &clip)
