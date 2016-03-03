@@ -87,8 +87,10 @@ namespace ursine
             light2Cam.Normalize( );
             float dotp = light2Cam.Dot( lightDirection );
 
+            std::cout << dotp << std::endl;
+
             // if camera is outside the cone, use this
-            if (dotp < cosf(slb.outerAngle))
+            if (dotp < cosf(slb.outerAngle / 2.0f))
                 m_manager->dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
             // else, use frontface culling
             else

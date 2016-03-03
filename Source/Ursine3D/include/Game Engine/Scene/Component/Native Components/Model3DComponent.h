@@ -86,12 +86,14 @@ namespace ursine
                 SetEmissive
             );
 
+            EditorMeta(InputRange(0.0f, 255.0f, 1.0f, "{{value.toPrecision( 3 )}}"))
             EditorField(
                 float specularPower,
                 GetSpecularPower,
                 SetSpecularPower
             );
 
+            EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
             EditorField(
                 float specularIntensity,
                 GetSpecularIntensity,

@@ -94,6 +94,19 @@ namespace ursine
             );
 
             EditorField(
+                float roll,
+                GetRoll,
+                SetRoll
+            );
+
+            EditorField(
+                float rollVariance,
+                GetRollRange,
+                SetRollRange
+            );
+
+
+            EditorField(
                 SVec3 velocity,
                 GetVelocity,
                 SetVelocity
@@ -105,6 +118,7 @@ namespace ursine
                 SetVelocityRange
             );
 
+            EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
             EditorField(
                 float fill,
                 GetFill,
@@ -152,11 +166,17 @@ namespace ursine
             float GetSizeRange(void) const;
             void SetSizeRange(const float range);
 
-            float GetRotation(void);
+            float GetRotation(void) const;
             void SetRotation(const float rotation);
 
             float GetRotationRange(void) const;
             void SetRotationRange(const float range);
+
+            float GetRoll(void) const;
+            void SetRoll(const float roll);
+
+            float GetRollRange(void) const;
+            void SetRollRange(const float range);
 
             const SVec3 &GetVelocity(void) const;
             void SetVelocity(const SVec3 &velocity);
@@ -200,6 +220,10 @@ namespace ursine
             // rotation
             float m_rotation;
             Randomizer m_rotationRange;
+
+            // roll
+            float m_roll;
+            Randomizer m_rollRange;
 
             // velocity
             SVec3 m_initialVelocity;

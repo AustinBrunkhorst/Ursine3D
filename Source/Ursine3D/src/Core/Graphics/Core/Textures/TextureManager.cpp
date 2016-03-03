@@ -227,7 +227,9 @@ namespace ursine
 
             // if it doesn't exist on the GPU, load it up
             if (m_textureCache[ id ].m_referenceCount == 0)
+            {
                 LoadTextureToGPU(m_textureCache[ id ]);
+            }
 
             ++(m_textureCache[ id ].m_referenceCount);
         }
@@ -248,7 +250,7 @@ namespace ursine
                 return;
 
             --(m_textureCache[ id ].m_referenceCount);
-
+            
             // if out of references, free up the GPU
             if (m_textureCache[ id ].m_referenceCount == 0)
             {

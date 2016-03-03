@@ -156,15 +156,15 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "spotlightAngles", angles );
         }
 
-		RenderMask Light::GetRenderMask(void) const
-		{
-			return static_cast<RenderMask>( m_light->GetRenderMask( ) & 0xFFFFFFFF );
-		}
+        RenderMask Light::GetRenderMask(void) const
+        {
+            return static_cast<RenderMask>( m_light->GetRenderMask() & 0xFFFFFFFF );
+        }
 
-		void Light::SetRenderMask(RenderMask mask)
-		{
-			m_light->SetRenderMask( static_cast<unsigned long long>( mask ) );
-		}
+        void Light::SetRenderMask(RenderMask mask)
+        {
+            m_light->SetRenderMask( static_cast<unsigned long long>(mask) );
+        }
 
         void Light::updateRenderer(void)
         {
