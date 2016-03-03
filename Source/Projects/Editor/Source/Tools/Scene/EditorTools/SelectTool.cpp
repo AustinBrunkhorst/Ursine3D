@@ -39,9 +39,10 @@ void SelectTool::OnMouseDown(const ursine::MouseButtonArgs &args)
     auto newID = m_graphics->GetMousedOverID( );
     
     // Unpick the previous object if the user clicked off of an entity
-    if (newID == -1 && m_currentEntity)
+    if (newID == -1)
     {
-        unpickObject( );
+        if (m_currentEntity)
+            unpickObject( );
 
         return;
     }

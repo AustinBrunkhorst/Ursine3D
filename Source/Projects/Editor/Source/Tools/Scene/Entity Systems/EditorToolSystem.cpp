@@ -136,7 +136,7 @@ void EditorToolSystem::onMouseDown(EVENT_HANDLER(ursine:MouseManager))
     // must have focus or mouse focus
     if (!(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))
         return;
-
+    
     m_currentTool->OnMouseDown( *args );
 
     // We always update the select tool
