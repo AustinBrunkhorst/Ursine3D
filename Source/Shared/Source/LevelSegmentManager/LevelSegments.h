@@ -21,6 +21,7 @@ namespace LevelSegments_enum
     {
         // Tutorial
         Tut_OpeningCinematic, // Introduce players?  What about dome
+		Tut_GateOpens,
         Tut_MovementTutorial, // Tell the player to move to a position
 		Tut_JumpTutorial, // Tell the player to jump
         Tut_WeaponPickupTutorial, // How to pickup weapons (weapon pickup + FX + button icon)

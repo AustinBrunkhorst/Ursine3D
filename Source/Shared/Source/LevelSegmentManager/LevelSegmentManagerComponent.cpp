@@ -21,6 +21,7 @@
 #include "ChangeSegmentState.h"
 #include "CombatBowl1IntroCinematicState.h"
 #include "BossRoomTopAnimationState.h"
+#include "TriggerWaitState.h"
 
 #include "TutorialResourcesComponent.h"
 #include "CombatBowl1ResourcesComponent.h"
@@ -121,34 +122,38 @@ void LevelSegmentManager::initTutorialLogic(void)
         LevelSegments::CB1_SimulationStartCinematic
     );
 
-    // Next state for spawning the players
-    auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
+	auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
+	auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
+	auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
+	auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+	auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpens );
 
+    // Next state for spawning the players
     initState->AddTransition( playerCreateState, "Go To Init Players" );
 
     // Make sure the players have their character controller's locked
-    auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
-
     playerCreateState->AddTransition( lockCCState, "Go To Locking Player Controller" );
 
     // After players are spawned tween their viewports
-    auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
+    auto introCin = lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
 
-    lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
+	introCin->AddCondition<sm::TimerCondition>(TimeSpan::FromSeconds(17.0f));
 
-    // After the viewports tween out change the level segment
-    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_MovementTutorial );
+	// Unlock players
+	tweenState->AddTransition( unlockCCState, "Go To Unlocking Player Controller" );
 
-    tweenState->AddTransition( changeSegState, "To Movement Tutorial" );
+	// Halt the state machine until the players hit the first trigger, so that we can then
+	// Spawn the movmement tutorial prompts
+	//auto waitForTrigger = stateM->AddState<TriggerWaitState>( resources->GetGateTriggerName( ) );
 
-	auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
-
-	changeSegState->AddTransition( unlockCCState, "Go To Unlocking Player Controller" );
+	// After the viewports tween out change the level segment
+	unlockCCState->AddTransition( changeSegState, "To Gate Opens" );
 	
     stateM->SetInitialState( initState );
 
     addSegmentLogic( stateM, {
         LevelSegments::Tut_OpeningCinematic,
+		LevelSegments::Tut_GateOpens,
         LevelSegments::Tut_MovementTutorial,
 		LevelSegments::Tut_JumpTutorial,
         LevelSegments::Tut_WeaponPickupTutorial,

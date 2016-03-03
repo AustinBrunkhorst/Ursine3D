@@ -16,7 +16,7 @@
 
 #include<Application.h>
 
-NATIVE_COMPONENT_DEFINITION(AnimateTutorialText);
+NATIVE_COMPONENT_DEFINITION( AnimateTutorialText );
 
 using namespace ursine;
 using namespace ecs;

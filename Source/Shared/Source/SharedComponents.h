@@ -90,6 +90,7 @@
 #include "LevelSegmentManager/SegmentResources/TutorialResourcesComponent.h"
 #include "LevelSegmentManager/SegmentResources/CombatBowl1ResourcesComponent.h"
 #include "LevelSegmentManager/SegmentResources/BossRoomResourcesComponent.h"
+#include "LevelSegmentManager/SegmentLogic/Misc/SegmentChangeTriggerComponent.h"
 
 /////////////////////////////////
 //       Entity Animation      //

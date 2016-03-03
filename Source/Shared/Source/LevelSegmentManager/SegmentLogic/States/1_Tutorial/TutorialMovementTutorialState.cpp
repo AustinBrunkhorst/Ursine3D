@@ -21,21 +21,21 @@ using namespace ursine;
 using namespace ecs;
 
 TutorialMovementTutorialState::TutorialMovementTutorialState(void)
-	: SegmentLogicState("Tutorial Movement")
-	, m_complete(false)
+	: SegmentLogicState( "Tutorial Movement" )
+	, m_complete( false )
 {
 }
 
 void TutorialMovementTutorialState::Enter(SegmentLogicStateMachine *machine)
 {
-	auto segmentManager = machine->GetSegmentManager();
-	auto world = segmentManager->GetOwner()->GetWorld();
+	auto segmentManager = machine->GetSegmentManager( );
+	auto world = segmentManager->GetOwner( )->GetWorld( );
 	
 }
 
 void TutorialMovementTutorialState::onCameraAnimFinish(EVENT_HANDLER(CameraAnimator))
 {
-	EVENT_ATTRS(EntityAnimator, EventArgs);
+	EVENT_ATTRS( EntityAnimator, EventArgs );
 
 	m_complete = true;
 
