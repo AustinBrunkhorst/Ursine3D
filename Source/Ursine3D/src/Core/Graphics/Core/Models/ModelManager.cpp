@@ -56,6 +56,7 @@ namespace ursine
                 m_modelCache[ INTERNAL_POINT_INDICES ] = new ModelResource( );
                 auto *newMesh = new Mesh( );
                 m_modelCache[ INTERNAL_POINT_INDICES ]->AddMesh( newMesh );
+                m_modelCache[ INTERNAL_POINT_INDICES ]->SetIsLoaded( true );
 
                 unsigned indices[ 1024 * 6 ];
                 unsigned indexArray[ 6 ] = { 0, 1, 2, 1, 2, 3 };
@@ -172,55 +173,133 @@ namespace ursine
                 //Create the index buffer.
                 result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer( ));
                 UAssert(result == S_OK, "Failed to make index buffer!");
+
+                m_modelCache[ INTERNAL_QUAD ]->SetIsLoaded( true );
             }
 
-            /////////////////////////////////////////////////////////////////////////////
-            // GENERATING INTERNAL CUBE
+            ///////////////////////////////////////////////////////////////////////////////
+            //// GENERATING INTERNAL CUBE
             {
                 m_modelCache[ INTERNAL_CUBE ] = new ModelResource( );
-                auto *newMesh = new Mesh( );
-                m_modelCache[ INTERNAL_CUBE ]->AddMesh( newMesh );
+            
+                // write to file
+                // write to file
+                HANDLE fileHandle = CreateFile(
+                    "TEMP_CUBE",
+                    GENERIC_READ | GENERIC_WRITE,
+                    FILE_SHARE_READ,
+                    nullptr,
+                    CREATE_ALWAYS,
+                    FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
+                    nullptr
+                );
+
+                WriteFile(
+                    fileHandle,
+                    graphics_resources::kCubeJdl,
+                    2938,
+                    nullptr,
+                    nullptr
+                );
+
+                auto returnVal = SetFilePointer(
+                    fileHandle,
+                    0,
+                    nullptr,
+                    FILE_BEGIN
+                );
 
                 // load into modelInfo
                 ufmt_loader::ModelInfo modelInfo;
+                modelInfo.SerializeIn(fileHandle);
 
                 // load into model
-              /*  InitializeModel(
-                    &modelInfo, 
-                    m_modelCache[ INTERNAL_CUBE ]
-                );*/
+                InitializeModel(&modelInfo, *m_modelCache[INTERNAL_CUBE]);
+                loadModelToGPU(m_modelCache[INTERNAL_CUBE]);
+               CloseHandle( fileHandle );
             }
-
+            
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL SPHERE
             {
                 m_modelCache[ INTERNAL_SPHERE ] = new ModelResource( );
-                auto *newMesh = new Mesh( );
-                m_modelCache[ INTERNAL_SPHERE ]->AddMesh(newMesh);
+            
+                // write to file
+                HANDLE fileHandle = CreateFile(
+                    "TEMP_SPHERE",
+                    GENERIC_READ | GENERIC_WRITE,
+                    FILE_SHARE_READ,
+                    nullptr,
+                    CREATE_ALWAYS,
+                    FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
+                    nullptr
+                );
+            
+                WriteFile(
+                    fileHandle, 
+                    graphics_resources::kSphereJdl,
+                    40906,
+                    nullptr,
+                    nullptr
+                );
+            
+                auto returnVal = SetFilePointer(
+                    fileHandle,
+                    0,
+                    nullptr,
+                    FILE_BEGIN
+                );
 
-                graphics_resources::kSphereJdl;
-
-                // somehow load into modelInfo
+                // load into modelInfo
                 ufmt_loader::ModelInfo modelInfo;
-
+                modelInfo.SerializeIn( fileHandle );
+            
                 // load into model
-               // InitializeModel(&modelInfo, m_modelCache[ INTERNAL_SPHERE ]);
+               InitializeModel(&modelInfo, *m_modelCache[ INTERNAL_SPHERE ]);
+               loadModelToGPU(m_modelCache[ INTERNAL_SPHERE ]);
+            
+               CloseHandle( fileHandle );
             }
-
+            
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL CONE
             {
                 m_modelCache[ INTERNAL_CONE ] = new ModelResource( );
-                auto *newMesh = new Mesh( );
-                m_modelCache[ INTERNAL_CONE ]->AddMesh(newMesh);
+            
+                // write to file
+                HANDLE fileHandle = CreateFile(
+                    "TEMP_CONE",
+                    GENERIC_READ | GENERIC_WRITE,
+                    FILE_SHARE_READ,
+                    nullptr,
+                    CREATE_ALWAYS,
+                    FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE,
+                    nullptr
+                );
+            
+                WriteFile(
+                    fileHandle,
+                    graphics_resources::kConeJdl,
+                    5490,
+                    nullptr,
+                    nullptr
+                );
+            
+                auto returnVal = SetFilePointer(
+                    fileHandle,
+                    0,
+                    nullptr,
+                    FILE_BEGIN
+                );
 
-                graphics_resources::kConeJdl;
-
-                // somehow load into modelInfo
+                // load into modelInfo
                 ufmt_loader::ModelInfo modelInfo;
+                modelInfo.SerializeIn(fileHandle);
 
                 // load into model
-                // InitializeModel( &modelInfo, m_modelCache[ INTERNAL_CONE ] );
+                InitializeModel( &modelInfo, *m_modelCache[ INTERNAL_CONE ] );
+                loadModelToGPU(m_modelCache[ INTERNAL_CONE ]);
+                CloseHandle( fileHandle );
             }
         }
 
@@ -228,7 +307,8 @@ namespace ursine
         {
             for (auto &x : m_modelCache)
             {
-                delete x;
+                if(x != nullptr)
+                    delete x;
             }
 
             for (auto &x : m_animeArray)
@@ -408,8 +488,13 @@ namespace ursine
 
             id = hnd->Index_;
 
+            std::cout << "Load " << id << std::endl;
+
             if (m_modelCache[ id ]->HasNoReferences())
+            {
+                std::cout << "  add " << id << std::endl;
                 loadModelToGPU(m_modelCache[ id ]);
+            }
 
             m_modelCache[ id ]->IncrementReference();
         }
@@ -417,16 +502,28 @@ namespace ursine
         void ModelManager::UnloadModel(GfxHND handle)
         {
             int id;
+
             _RESOURCEHND *hnd = HND_RSRCE(handle);
-            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
-            UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
+            if (handle != 0)
+            {
+                UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
+                UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
+            }
 
             id = hnd->Index_;
+
+            if (id < INTERNAL_GEOMETRY_COUNT)
+                return;
+
+            std::cout << "Unload " << id << std::endl;
 
             m_modelCache[ id ]->DecrementReference();
 
             if (m_modelCache[ id ]->HasNoReferences())
+            {
+                std::cout << "  remove " << id << std::endl;
                 unloadModelFromGPU(m_modelCache[ id ]);
+            }
         }
 
         ufmt_loader::ModelInfo *ModelManager::GetModelInfo(GfxHND handle)
@@ -446,7 +543,7 @@ namespace ursine
             ModelResource *model = m_modelCache[ ID ];
 
             UAssert(model != nullptr, "Failed to bind model ID:%i", ID);
-
+            UAssert(model->GetIsLoaded( ) == true, "Attempted to bind model %i, but it isn't loaded on the GPU!", ID);
             if (ID == INTERNAL_POINT_INDICES)
             {
                 m_deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
@@ -488,6 +585,7 @@ namespace ursine
 
         void ModelManager::loadModelToGPU(ModelResource *model)
         {
+            model->SetIsLoaded( true );
             auto &meshBuffer = model->GetMeshArray();
 
             for (auto &mesh : meshBuffer)
@@ -538,7 +636,7 @@ namespace ursine
         void ModelManager::unloadModelFromGPU(ModelResource *model)
         {
             auto &meshBuffer = model->GetMeshArray();
-
+            model->SetIsLoaded( false );
             for (auto &mesh : meshBuffer)
             {
                 RELEASE_RESOURCE(mesh->GetIndexBuffer());

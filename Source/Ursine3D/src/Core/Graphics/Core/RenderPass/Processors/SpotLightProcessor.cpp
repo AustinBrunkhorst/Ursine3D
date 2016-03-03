@@ -98,11 +98,9 @@ namespace ursine
         void SpotLightProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
             Light light = m_manager->renderableManager->GetRenderableByID<Light>(handle.Index_);
-            //m_manager->shaderManager->Render(
-            //    m_manager->modelManager->GetModelVertcountByID(
-            //        m_manager->modelManager->GetModelIDByName("lightCone")
-            //    )
-            //);
+            m_manager->shaderManager->Render(
+                m_manager->modelManager->GetModelIndexcountByID( INTERNAL_CONE )
+            );
         }
     }
 }

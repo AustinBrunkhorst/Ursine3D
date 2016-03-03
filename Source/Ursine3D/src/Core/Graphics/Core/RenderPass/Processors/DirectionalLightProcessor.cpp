@@ -78,9 +78,9 @@ namespace ursine
         void DirectionalLightProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
             Light light = m_manager->renderableManager->GetRenderableByID<Light>(handle.Index_);
-            //m_manager->shaderManager->Render(
-            //    m_manager->modelManager->GetModelIndexcountByID( INTERNAL_QUAD )
-            //);
+            m_manager->shaderManager->Render(
+                m_manager->modelManager->GetModelIndexcountByID( INTERNAL_QUAD )
+            );
         }
     }
 }
