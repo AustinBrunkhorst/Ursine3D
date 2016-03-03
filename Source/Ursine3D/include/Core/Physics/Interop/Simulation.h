@@ -34,6 +34,7 @@ namespace ursine
         // forward declaration
         class Body;
         class Rigidbody;
+        class Ghost;
 
         class Simulation
         {
@@ -55,6 +56,10 @@ namespace ursine
             // Add a body to the simulation (not rigid or soft)
             void AddBody(Body *body);
             void RemoveBody(Body *body);
+
+            // Add a ghost to the simulation
+            void AddGhost(Ghost *ghost);
+            void RemoveGhost(Ghost *ghost);
 
             bool Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type);
 
@@ -89,6 +94,9 @@ namespace ursine
             // the default constraint solver. For parallel processing 
             // you can use a different solver (see Extras/BulletMultiThreaded)
             btSequentialImpulseConstraintSolver m_solver;
+
+            // This is needed for supporting ghost objects in the simulation
+            btGhostPairCallback m_ghostCallback;
 
             btSoftRigidDynamicsWorld *m_dynamicsWorld;
 		#endif

@@ -132,42 +132,42 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED("color", color);
         }
 
-        const Color &Model3D::GetColor(void)
+	    const Color &Model3D::GetColor(void)
         {
             return m_model->GetColor();
         }
 
-        float Model3D::GetEmissive(void) const
-        {
+		float Model3D::GetEmissive(void) const
+		{
             return m_model->GetEmissive();
-        }
+		}
 
-        void Model3D::SetEmissive(float emissive)
-        {
+		void Model3D::SetEmissive(float emissive)
+		{
             m_model->SetEmissive(emissive);
-        }
+		}
 
-        float Model3D::GetSpecularPower(void) const
-        {
+		float Model3D::GetSpecularPower(void) const
+		{
             return m_model->GetSpecularPower();
-        }
+		}
 
-        void Model3D::SetSpecularPower(float power)
-        {
+		void Model3D::SetSpecularPower(float power)
+		{
             m_model->SetSpecularPower(power);
-        }
+		}
 
-        float Model3D::GetSpecularIntensity(void) const
-        {
+		float Model3D::GetSpecularIntensity(void) const
+		{
             return m_model->GetSpecularIntensity();
-        }
+		}
 
-        void Model3D::SetSpecularIntensity(float intensity)
-        {
+		void Model3D::SetSpecularIntensity(float intensity)
+		{
             m_model->SetSpecularIntensity(intensity);
-        }
+		}
 
-        void Model3D::SetOverdraw(bool flag)
+		void Model3D::SetOverdraw(bool flag)
         {
             m_model->SetOverdraw(flag);
         }
@@ -185,6 +185,16 @@ namespace ursine
         bool Model3D::GetDebug(void) const
         {
             return m_model->GetDebug();
+        }
+
+        void Model3D::SetActive(bool flag)
+        {
+            m_model->SetActive( flag );
+        }
+
+        bool Model3D::GetActive(void) const
+        {
+            return m_model->GetActive( );
         }
 
         RenderMask Model3D::GetRenderMask(void) const
@@ -289,7 +299,7 @@ namespace ursine
             SetMeshIndex(input["meshIndex"].int_value());
         }
 
-    #if defined(URSINE_WITH_EDITOR)
+#if defined(URSINE_WITH_EDITOR)
 
         void Model3D::GenerateConvexHull(void)
         {
@@ -328,8 +338,8 @@ namespace ursine
             config.duration = TimeSpan::FromSeconds(15.0f);
             config.header = "BVH Triangle Mesh Collider Limitations";
             config.message = "<ol><li>Performance intensive.<li/>"
-                "<li>Cannot be Dynamic.<li/>"
-                "<li>Need Dynamic concave colliders? Use <strong>Convex Decomposition<strong>.<li/><ol/>";
+                    "<li>Cannot be Dynamic.<li/>"
+                    "<li>Need Dynamic concave colliders? Use <strong>Convex Decomposition<strong>.<li/><ol/>";
 
             EditorPostNotification(config);
         }
@@ -349,6 +359,6 @@ namespace ursine
             });
         }
 
-    #endif
+#endif
     }
 }

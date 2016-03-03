@@ -248,6 +248,8 @@ namespace ursine
             // search for desired child
             for (auto childID : *children)
             {
+                auto uniqueID = GetWorld( )->GetEntity( childID )->GetUniqueID( );
+
                 // check if names are same
                 if (name == m_world->m_nameManager->GetName( childID ))
                     return m_world->m_entityManager->GetEntityByID( childID );

@@ -17,6 +17,7 @@
 #include "SMat4.h"
 #include "ViewportRenderModes.h"
 #include "EntityConfig.h"
+#include "Color.h"
 
 namespace ursine
 {
@@ -107,6 +108,9 @@ namespace ursine
             ecs::EntityID GetEntityID(void) const;
             void SetEntityID(const ecs::EntityID id);
 
+            const Color &GetClearColor(void) const;
+            void SetClearColor(const Color &color);
+
         private:
             // calcualte all vectors based upon up
             void CalculateVectors(const ursine::SVec3 &up);
@@ -147,6 +151,8 @@ namespace ursine
             float m_screenY;
             float m_screenWidth;
             float m_screenHeight;
+
+            Color m_clearColor;
         };
     }
 }

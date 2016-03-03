@@ -59,6 +59,9 @@ namespace ursine
             WORLD_EDITOR_RESOURCE_MODIFIED
 
         #endif
+
+            // Starting index for events defined out of engine
+            WORLD_EVENT_USER
         };
 
         struct WorldEventArgs : EventArgs

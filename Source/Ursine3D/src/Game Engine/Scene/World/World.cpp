@@ -24,6 +24,7 @@
 #include "SystemManager.h"
 
 #include "EntitySerializer.h"
+#include "WorldSerializer.h"
 
 #include "WorldConfigComponent.h"
 
@@ -228,11 +229,16 @@ namespace ursine
         }
 
         void World::queueEntityDeletion(Entity *entity)
-		{
+            {
 			m_deleted.emplace_back( EntityHandle( entity ) );
-		}
+        }
 
-        void World::deleteEntity(const EntityHandle &entity)
+        void World::MergeWorld(const std::string &filename)
+        {
+            WorldSerializer::MergeDeserialize( filename, this );
+        }
+
+        void World::deleteEntity(Entity *entity)
 		{
 			m_nameManager->Remove( entity->GetID( ) );
 			m_entityManager->Remove( entity.Get( ) );

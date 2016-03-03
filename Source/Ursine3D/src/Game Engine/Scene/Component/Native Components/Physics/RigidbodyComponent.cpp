@@ -165,14 +165,14 @@ namespace ursine
 			return m_rigidbody.GetGravity( );
 		}
 
-		void Rigidbody::SetGhost(bool enable)
+        void Rigidbody::SetDisableContactResponse(bool disable)
 	    {
-			m_rigidbody.SetGhost( enable );
+            m_rigidbody.SetDisableContactResponse( disable );
 	    }
 
-	    bool Rigidbody::GetGhost(void) const
+        bool Rigidbody::GetDisableContactResponse(void) const
 	    {
-			return m_rigidbody.GetGhost( );
+            return m_rigidbody.GetDisableContactResponse( );
 	    }
 
 		void Rigidbody::SetEnableContactCallback(bool enable)

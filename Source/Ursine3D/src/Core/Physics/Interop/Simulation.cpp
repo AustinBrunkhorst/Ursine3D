@@ -21,6 +21,9 @@
 #include "Rigidbody.h"
 #include "RigidbodyComponent.h"
 
+#include "Ghost.h"
+#include "GhostComponent.h"
+
 #include "EntityEvent.h"
 
 namespace ursine
@@ -45,6 +48,10 @@ namespace ursine
                 gravity.Y( ), 
                 gravity.Z( )
             } );
+
+            // Needed to enable the use of ghost objects
+            m_dynamicsWorld->getBroadphase( )->getOverlappingPairCache( )
+                ->setInternalGhostPairCallback( &m_ghostCallback );
 
         #endif
         }
@@ -117,6 +124,28 @@ namespace ursine
         #endif
         }
 
+        void Simulation::AddGhost(Ghost* ghost)
+        {
+        #ifdef BULLET_PHYSICS
+
+            m_dynamicsWorld->addCollisionObject( 
+                ghost, 
+                btBroadphaseProxy::SensorTrigger,
+                btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger
+            );
+
+        #endif
+        }
+
+        void Simulation::RemoveGhost(Ghost* ghost)
+        {
+        #ifdef BULLET_PHYSICS
+
+            m_dynamicsWorld->removeCollisionObject( ghost );
+
+        #endif
+        }
+
         void Simulation::SetGravity(const SVec3 &gravity)
         {
         #ifdef BULLET_PHYSICS
@@ -164,20 +193,20 @@ namespace ursine
                     auto &hitP = closestHit.m_hitPointWorld;
                     auto &normP = closestHit.m_hitNormalWorld;
 
-                    output.hit.emplace_back(
-                        hitP.getX( ),
-                        hitP.getY( ),
-                        hitP.getZ( )
+                    output.hit.emplace_back( 
+                        hitP.getX( ), 
+                        hitP.getY( ), 
+                        hitP.getZ( ) 
                     );
 
-                    output.normal.emplace_back(
-                        normP.getX( ),
-                        normP.getY( ),
-                        normP.getZ( )
+                    output.normal.emplace_back( 
+                        normP.getX( ), 
+                        normP.getY( ), 
+                        normP.getZ( ) 
                     );
 
-                    output.entity.push_back(
-                        closestHit.m_collisionObject->getUserIndex( )
+                    output.entity.push_back( 
+                        closestHit.m_collisionObject->getUserIndex( ) 
                     );
 
                     return true;
@@ -198,20 +227,20 @@ namespace ursine
 
                     for (int i = 0, n = hitP.size( ); i < n; ++i)
                     {
-                        output.hit.emplace_back(
-                            hitP[ i ].getX( ),
-                            hitP[ i ].getY( ),
-                            hitP[ i ].getZ( )
+                        output.hit.emplace_back( 
+                            hitP[ i ].getX( ), 
+                            hitP[ i ].getY( ), 
+                            hitP[ i ].getZ( ) 
                         );
 
-                        output.normal.emplace_back(
-                            normP[ i ].getX( ),
-                            normP[ i ].getY( ),
-                            normP[ i ].getZ( )
+                        output.normal.emplace_back( 
+                            normP[ i ].getX( ), 
+                            normP[ i ].getY( ), 
+                            normP[ i ].getZ( ) 
                         );
 
-                        output.entity.push_back(
-                            allHit.m_collisionObjects[ i ]->getUserIndex( )
+                        output.entity.push_back( 
+                            allHit.m_collisionObjects[ i ]->getUserIndex( ) 
                         );
                     }
 
@@ -247,9 +276,9 @@ namespace ursine
 
             if (type == SWEEP_CLOSEST_HIT)
             {
-                SweepClosestHitNotMeCallback callback(
-                    body, start.getOrigin( ), end.getOrigin( ),
-                    m_overlappingPairCache.getOverlappingPairCache( ), m_dispatcher
+                SweepClosestHitNotMeCallback callback( 
+                    body, start.getOrigin( ), end.getOrigin( ), 
+                    m_overlappingPairCache.getOverlappingPairCache( ), m_dispatcher 
                 );
 
                 m_dynamicsWorld->convexSweepTest( convexCollider, start, end, callback );
@@ -266,9 +295,9 @@ namespace ursine
             }
             else // Sweep test hit all
             {
-                SweepAllHitNotMeCallback callback(
-                    body, start.getOrigin( ), end.getOrigin( ),
-                    m_overlappingPairCache.getOverlappingPairCache( ), m_dispatcher
+                SweepAllHitNotMeCallback callback( 
+                    body, start.getOrigin( ), end.getOrigin( ), 
+                    m_overlappingPairCache.getOverlappingPairCache( ), m_dispatcher 
                 );
 
                 m_dynamicsWorld->convexSweepTest( convexCollider, start, end, callback );
@@ -327,7 +356,7 @@ namespace ursine
             auto proxy = rigidbody.getBroadphaseProxy( );
 
             m_dynamicsWorld->getPairCache( )
-                           ->removeOverlappingPairsContainingProxy( proxy, m_dispatcher );
+                ->removeOverlappingPairsContainingProxy( proxy, m_dispatcher );
 
         #endif
         }
@@ -351,9 +380,9 @@ namespace ursine
                 // Get each body's entity pointer
                 auto &entityA = getEntityHandle( objA ),
                      &entityB = getEntityHandle( objB );
-
-                bool sendA = contactCallbackEnabled( objA ),
-                        sendB = contactCallbackEnabled( objB );
+                
+                bool sendA = contactCallbackEnabled( objA ), 
+                     sendB = contactCallbackEnabled( objB );
 
                 // Process the event for Entity A
                 if (sendA)
@@ -389,10 +418,13 @@ namespace ursine
             // Determine whether the entities have contact callbacks enabled
             if (body->getInternalType( ) == BT_BODY)
                 return static_cast<ecs::Body*>( body->getUserPointer( ) )->GetEnableContactCallback( );
-
+            
             if (body->getInternalType( ) == BT_RIGID_BODY)
                 return static_cast<ecs::Rigidbody*>( body->getUserPointer( ) )->GetEnableContactCallback( );
-
+            
+            if (body->getInternalType( ) == BT_GHOST)
+                return static_cast<ecs::Ghost*>( body->getUserPointer( ) )->GetEnableContactCallback( );
+            
             return false;
         }
 
@@ -412,7 +444,7 @@ namespace ursine
         #ifdef BULLET_PHYSICS
 
             auto numContacts = manifold->getNumContacts( );
-
+            
             // To determine if a manifold bullet has is just starting,
             // or persisting, we look at the lifetime (frames) of each contact
             int greatestLifetime = 0;
@@ -433,6 +465,10 @@ namespace ursine
                 greatestLifetime = math::Max( greatestLifetime, pt.getLifeTime( ) );
             }
 
+            // This is an edge case
+            if (args.contacts.size( ) == 0)
+                return;
+
             thisEntity->Dispatch( ecs::ENTITY_COLLISION_PERSISTED, &args );
 
         #endif
@@ -445,7 +481,7 @@ namespace ursine
 
         void Simulation::calculateContactRelativeVelocity(
             const BodyBase *thisBody,
-            const BodyBase *otherBody,
+                                                          const BodyBase *otherBody, 
             Contact *contact
         )
         {

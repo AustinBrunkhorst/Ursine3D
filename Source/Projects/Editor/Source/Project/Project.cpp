@@ -96,9 +96,9 @@ void Project::SetPlayState(ScenePlayState state)
 
         auto *oldWorld = m_scene.GetActiveWorld( );
 
-        m_worldCache = serializer.Serialize( oldWorld );
+        m_worldCache = ecs::WorldSerializer::Serialize( oldWorld );
 
-        auto *playWorld = serializer.Deserialize( m_worldCache );
+        auto *playWorld = ecs::WorldSerializer::Deserialize( m_worldCache );
 
         playWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( false );
 
@@ -108,9 +108,7 @@ void Project::SetPlayState(ScenePlayState state)
     }
     else if((lastState == PS_PLAYING || lastState == PS_PAUSED) && state == PS_EDITOR)
     {
-        ecs::WorldSerializer serializer;
-
-        auto *cachedWorld = serializer.Deserialize( m_worldCache );
+        auto *cachedWorld = ecs::WorldSerializer::Deserialize( m_worldCache );
 
         m_scene.SetActiveWorld( ecs::World::Handle( cachedWorld ) );
 
@@ -243,7 +241,7 @@ void Project::onResourceModified(EVENT_HANDLER(rp::ResourcePipelineManager))
     auto *world = m_scene.GetActiveWorld( );
 
     if (world)
-    {
+{
         ecs::EditorWorldResourceModifiedArgs e( args->resource->GetGUID( ) );
 
         world->Dispatch( ecs::WORLD_EDITOR_RESOURCE_MODIFIED, &e );

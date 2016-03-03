@@ -98,6 +98,12 @@ namespace ursine
                 SetRenderMask
             );
 
+            EditorField(
+                Color clearColor,
+                GetClearColor,
+                SetClearColor
+            );
+
             Meta(Enable)
             Camera(void);
             ~Camera(void);
@@ -176,13 +182,15 @@ namespace ursine
 
         #endif
 
+            const Color &GetClearColor(void) const;
+            void SetClearColor(const Color &color);
         private:
             bool m_active;
             bool m_isEditorCamera;
             bool m_inEditorSelectionMode;
 
             int m_renderLayer;
-			unsigned m_renderMask;
+            unsigned m_renderMask;
 
             Vec2 m_viewportPosition;
             Vec2 m_viewportSize;

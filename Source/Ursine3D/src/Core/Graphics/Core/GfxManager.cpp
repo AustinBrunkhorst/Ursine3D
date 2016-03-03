@@ -261,7 +261,7 @@ namespace ursine
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
-                
+
                 drawCall.Material_ = current->GetTextureHandle( ) & 0xFFFF;
 
                 drawCall.Model_ = current->GetModelHandle( ) & 0xFFFF;
@@ -428,8 +428,8 @@ namespace ursine
             bufferManager->MapTransformBuffer(SMat4(-2, 2, 1));
 
             PrimitiveColorBuffer pcb;
-            //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
-            pcb.color = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+            auto color = cam.GetClearColor( );
+            pcb.color = DirectX::XMFLOAT4( color.r, color.g, color.b, color.a );
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
             shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
@@ -515,6 +515,7 @@ namespace ursine
             RenderPass          deferredPass( "DeferredPass" );
             RenderPass          spotlightPass( "SpotlightPass" );
             RenderPass          pointlightPass( "PointLightPass" );
+            RenderPass          shadowPass("ShadowPass");
             RenderPass          directionalLightPass( "DirectionalLightPass" );
             RenderPass          emissivePass( "EmissivePass" );
             LineRendererPass    lineRenderPass( false );
@@ -544,6 +545,7 @@ namespace ursine
             GlobalCBuffer<TransformBuffer, BUFFER_TRANSFORM>        fullscreenTransform( SHADERTYPE_VERTEX );
             GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invView( SHADERTYPE_VERTEX );
             GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invProjection( SHADERTYPE_PIXEL );
+            GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              shadowmapView( SHADERTYPE_VERTEX );
 
             // input RTs
             GlobalGPUResource   depthInput( SHADER_SLOT_0, RESOURCE_INPUT_DEPTH );
@@ -552,6 +554,8 @@ namespace ursine
             GlobalGPUResource   specPowRT( SHADER_SLOT_3, RESOURCE_INPUT_RT );
             GlobalGPUResource   debugInput( SHADER_SLOT_0, RESOURCE_INPUT_RT );
             GlobalGPUResource   lightmapRT( SHADER_SLOT_1, RESOURCE_INPUT_RT );
+
+            GlobalGPUResource   shadowmapInput(SHADER_SLOT_0, RESOURCE_INPUT_DEPTH, SHADERTYPE_VERTEX);
 
             // other resources
             GlobalGPUResource   spriteModel(SHADER_SLOT_0, RESOURCE_MODEL);
@@ -588,6 +592,27 @@ namespace ursine
                         Accepts( RENDERABLE_MODEL3D ).
                         Processes( &modelProcessor ).
                     InitializePass( );
+                }
+
+                /////////////////////////////////////////////////////////
+                // SHADOW PASS
+                {
+                    shadowPass.
+                        Set( { } ).
+                        Set( SHADER_SHADOW_PASS ).
+                        Set( DEPTH_STENCIL_SHADOWMAP ).
+                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
+                        Set( SAMPLER_STATE_SHADOW ).
+                        Set( RASTER_STATE_SOLID_BACKCULL ).
+                        Set( BLEND_STATE_COUNT ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &shadowmapView ).
+                        AddResource( &shadowmapInput ).
+
+                        Accepts( RENDERABLE_MODEL3D ).
+                        Processes( &modelProcessor ).
+                    InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
@@ -891,6 +916,7 @@ namespace ursine
             // CREATE PIPELINE
             DeferredPipeline.
                 AddPrePass( &deferredPass ).
+                //AddPrePass( &shadowPass ).
                 AddPrePass( &spotlightPass ).
                 AddPrePass( &pointlightPass ).
                 AddPrePass( &directionalLightPass ).
@@ -907,11 +933,13 @@ namespace ursine
 
             /////////////////////////////////////////////////////////
             // UPDATE RESOURCES
+            {
             // CONSTANT BUFFERS//////////////////
             CameraBuffer cb;
             PointGeometryBuffer pgb;
             TransformBuffer tb;
             invViewBuffer ivb;
+                //ShadowProjectionBuffer spb;
 
             // viewBuffer(SHADERTYPE_VERTEX);
             // viewBufferGeom(SHADERTYPE_GEOMETRY);
@@ -953,6 +981,72 @@ namespace ursine
             currentCamera.GetPlanes( ivb.nearPlane, ivb.farPlane );
             invProjection.Update( ivb );
 
+                // shadowmapProj( SHADERTYPE_VERTEX, SHADER_SLOT_2 );
+                // gross hack to get the light
+                unsigned index = 0;
+                while( index < m_drawList.size( ) && m_drawList[index].Type_ != RENDERABLE_LIGHT )
+                {
+                    ++index;
+                }
+
+                if (index < m_drawList.size( ))
+                {
+                    while(m_drawList[ index ].Type_ == RENDERABLE_LIGHT)
+                    {
+                        Light &light = renderableManager->m_renderableLights[ m_drawList[ index ].Index_ ];
+
+                        if (light.GetType() == Light::LIGHT_SPOTLIGHT)
+                            break;
+
+                        ++index;
+                    }
+                }
+                // UPDATING SHADOW MAP
+                //{
+                //    Light &spotLight = renderableManager->m_renderableLights[ m_drawList[ index ].Index_ ];
+                //    SMat4 ViewMatrix = currentCamera.GetViewMatrix( );
+                //    SMat4 ProjectionMatrix = currentCamera.GetProjMatrix( );
+                //
+                //    SVec3 u, v;
+                //    SVec3 lightDir = spotLight.GetDirection( );
+                //    lightDir.GenerateOrthogonalVectors(u, v);
+                //    u.Normalize( );
+                //
+                //    SMat4 lightView = SMat4::Identity( );
+                //    SMat4 lightProjection = SMat4( );
+                //    float farPlane = spotLight.GetRadius( );
+                //
+                //    // GENERATING LIGHT VIEW
+                //    SVec3 R = SVec3::Cross(lightDir, u);
+                //    SVec3 U = SVec3::Cross(lightDir, R);
+                //    SVec3 D = lightDir;
+                //
+                //    lightView.SetColumn(0, SVec4(R.X(), R.Y(), R.Z(), 0));
+                //    lightView.SetColumn(1, SVec4(U.X(), U.Y(), U.Z(), 0));
+                //    lightView.SetColumn(2, SVec4(D.X(), D.Y(), D.Z(), 0));
+                //
+                //    SVec3 P = lightView.TransformPoint(spotLight.GetPosition( ));
+                //    lightView.SetColumn(3, SVec4(P.X(), P.Y(), P.Z(), 1.0f));
+                //
+                //    lightProjection(0, 0) = 1.0f / (tanf(spotLight.GetSpotlightAngles().Y() / 2.0f));
+                //    lightProjection(1, 1) = 1.0f / (tanf(spotLight.GetSpotlightAngles().Y() / 2.0f));
+                //    lightProjection(2, 2) = farPlane / (farPlane - farPlane * 0.001f);
+                //    lightProjection(3, 2) = -(farPlane / (farPlane - farPlane * 0.001f)) * (farPlane * 0.001f);
+                //    lightProjection(2, 3) = 1.0f;
+                //    lightProjection(3, 3) = 0.0f;
+                //
+                //    auto eyePos = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4( spotLight.GetPosition( ).GetFloatPtr() ));
+                //    auto look = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4(spotLight.GetDirection().GetFloatPtr()));
+                //    auto upDir = DirectX::XMLoadFloat4(&DirectX::XMFLOAT4(SVec4(0, 1, 0, 0).GetFloatPtr( )));
+                //
+                //    lightView = SMat4(DirectX::XMMatrixLookToLH(eyePos, look ,upDir));
+                //    lightProjection = SMat4(DirectX::XMMatrixPerspectiveFovLH(spotLight.GetSpotlightAngles().Y(), 1, farPlane * 0.001f, farPlane ));
+                //    // map to GPU
+                //    cb.view = SMat4::Transpose(lightView).ToD3D();
+                //    cb.projection = SMat4::Transpose(lightProjection).ToD3D( );
+                //    shadowmapView.Update( cb );
+                //}
+
             // TARGET INPUTS //////////////////
             // input RTs
             // depthInput(SHADER_SLOT_0, RESOURCE_INPUT_DEPTH);
@@ -971,6 +1065,9 @@ namespace ursine
 
             // lightmapRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
             lightmapRT.Update( RENDER_TARGET_LIGHTMAP );
+
+                // shadow map input
+                shadowmapInput.Update( DEPTH_STENCIL_MAIN );
 
             // TEXTURES AND MODELS /////////////
             lightConeModel.Update( INTERNAL_CONE );

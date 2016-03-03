@@ -24,11 +24,13 @@ namespace ursine
         class WorldSerializer
         {
         public:
-            WorldSerializer(void);
+            static Json Serialize(World *world);
 
-            Json Serialize(World *world) const;
-            World *Deserialize(const std::string &fileName) const;
-            World *Deserialize(const Json &data) const;
+            static World *Deserialize(const std::string &filename);
+            static World *Deserialize(const Json &data);
+
+            // Merge a new world with an existing one (systems and entities)
+            static void MergeDeserialize(const std::string &filename, World *world);
         };
     }
 }

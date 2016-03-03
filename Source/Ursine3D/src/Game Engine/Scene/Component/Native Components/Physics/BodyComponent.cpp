@@ -55,14 +55,14 @@ namespace ursine
             return m_body.GetOffset( );
         }
 
-		void Body::SetGhost(bool enable)
+        void Body::SetDisableContactResponse(bool disable)
 		{
-			m_body.SetGhost( enable );
+            m_body.SetDisableContactResponse( disable );
 		}
 
-	    bool Body::GetGhost(void) const
+        bool Body::GetDisableContactResponse(void) const
 		{
-			return m_body.GetGhost( );
+            return m_body.GetDisableContactResponse( );
 		}
 
 		void Body::SetEnableContactCallback(bool enable)

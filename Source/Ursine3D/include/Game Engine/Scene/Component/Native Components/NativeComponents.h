@@ -44,6 +44,8 @@
 
 #include "RigidbodyComponent.h"
 #include "BodyComponent.h"
+#include "GhostComponent.h"
+
 #include "SphereColliderComponent.h"
 #include "BoxColliderComponent.h"
 #include "CylinderColliderComponent.h"
@@ -53,6 +55,7 @@
 #include "ConvexDecompColliderComponent.h"
 #include "BvhTriangleMeshColliderComponent.h"
 #include "EmptyColliderComponent.h"
+
 #include "PhysicsSettingsComponent.h"
 
 #include "SweptControllerComponent.h"
