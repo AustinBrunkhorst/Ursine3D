@@ -21,6 +21,9 @@ namespace ursine
             virtual void Exit(AIStateMachine *stateMachine) override;
 
         private:
+            void applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3& contact, float damage);
+
+            void onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 
             float m_damage;
         };

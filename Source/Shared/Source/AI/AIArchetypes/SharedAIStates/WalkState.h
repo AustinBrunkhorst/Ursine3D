@@ -34,6 +34,13 @@ namespace ursine
             virtual void Update(AIStateMachine *stateMachine) override;
             virtual void Exit(AIStateMachine *stateMachine) override;
 
+            void SetNearRadius(float radius);
+
+            void SetCohesionScale(float scale);
+
+            void SetSeparationScale(float scale);
+
+            void SetBoidbehaviorScale(float scale);
         private:
 
             void updateSurroundingActorsList(void);
@@ -54,9 +61,11 @@ namespace ursine
 
             float m_nearRadius;
 
-            float m_coheasionScale;
+            float m_cohesionScale;
 
             float m_separationScale;
+
+            float m_boidBehaviorScale;
         };
 
     }

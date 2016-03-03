@@ -22,6 +22,8 @@ namespace ursine
             , m_move(nullptr)
             , m_ghostCollider(nullptr)
             , m_nearRadius(1.0f)
+            , m_cohesionScale(0.5f)
+            , m_separationScale(0.5f)
         {
 
         }
@@ -127,16 +129,40 @@ namespace ursine
             centerVec /= m_nearRadius;
 
             // get the composite vector using the scalars set by the component
-            auto totalBoidVec = centerVec * m_coheasionScale + sepVec * m_separationScale;
+            auto totalBoidVec = centerVec * m_cohesionScale + sepVec * m_separationScale;
+
+            auto playerDirection = getTargetPlayerPosition(aiTrans->GetOwner()->GetWorld()) - aiActorPos;
+
+            playerDirection.Normalize();
 
             // apply to movement
-            setTargetDirection(totalBoidVec + getTargetPlayerPosition(aiTrans->GetOwner()->GetWorld()));
+            setTargetDirection( (m_boidBehaviorScale * totalBoidVec) + playerDirection);
         }
 
         void WalkState::Exit(AIStateMachine *stateMachine)
         {
             std::cout << "exited walk state" << std::endl;
 
+        }
+
+        void WalkState::SetNearRadius(float radius)
+        {
+            m_nearRadius = radius;
+        }
+
+        void WalkState::SetCohesionScale(float scale)
+        {
+            m_cohesionScale = scale;
+        }
+
+        void WalkState::SetSeparationScale(float scale)
+        {
+            m_separationScale = scale;
+        }
+
+        void WalkState::SetBoidbehaviorScale(float scale)
+        {
+            m_boidBehaviorScale = scale;
         }
 
         void WalkState::updateSurroundingActorsList(void)

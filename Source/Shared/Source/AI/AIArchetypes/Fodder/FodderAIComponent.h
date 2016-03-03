@@ -37,6 +37,24 @@ public:
         SetDamage
         );
 
+    EditorField(
+        float Cohesion,
+        GetCohesionScale,
+        SetCohesionScale
+        );
+
+    EditorField(
+        float Separation,
+        GetSeparationScale,
+        SetSeparationScale
+        );
+
+    EditorField(
+        float TotalBoidBehaviorScale,
+        GetBoidScale,
+        SetBoidScale
+        );
+
   FodderAI(void);
   ~FodderAI(void);
 
@@ -46,16 +64,32 @@ public:
   float GetDamage(void) const;
   void SetDamage(float dmg);
 
+  float GetCohesionScale(void) const;
+  void SetCohesionScale(float newScale);
+
+  float GetSeparationScale(void) const;
+  void SetSeparationScale(float newScale);
+
+  float GetBoidScale(void) const;
+   void SetBoidScale(float newScale);
+
 private:
 
     void OnInitialize(void) override;
 
     void onUpdate(EVENT_HANDLER(World));
 
+    Meta(Disable)
     ursine::sm::FodderAIStateMachine m_stateMachine;
 
     float m_pauseTime;
 
     float m_damage;
+
+    float m_cohesionScale;
+
+    float m_separationScale;
+
+    float m_boidBehaviorScale;
 
 } Meta(Enable, DisplayName("FodderAI"), RequiresComponents(typeof(ursine::ecs::AIMovementController)));

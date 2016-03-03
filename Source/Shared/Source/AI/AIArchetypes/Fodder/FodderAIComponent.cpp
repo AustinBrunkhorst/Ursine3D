@@ -35,6 +35,9 @@ FodderAI::FodderAI(void)
     , m_stateMachine( )
     , m_pauseTime(1.0f)
     , m_damage(1.0f)
+    , m_cohesionScale(0.5f)
+    , m_separationScale(0.5f)
+    , m_boidBehaviorScale(0.5f)
 {
 }
 
@@ -64,6 +67,37 @@ void FodderAI::SetDamage(float dmg)
     m_damage = dmg;
 }
 
+float FodderAI::GetCohesionScale() const
+{
+    return m_cohesionScale;
+}
+
+void FodderAI::SetCohesionScale(float newScale)
+{
+    m_cohesionScale = newScale;
+}
+
+float FodderAI::GetSeparationScale() const
+{
+    return m_separationScale;
+}
+
+void FodderAI::SetSeparationScale(float newScale)
+{
+    m_separationScale = newScale;
+}
+
+//TODO: Think of a better name for this value, Boid is not what this is really
+float FodderAI::GetBoidScale() const
+{
+    return m_boidBehaviorScale;
+}
+
+void FodderAI::SetBoidScale(float newScale)
+{
+    m_boidBehaviorScale = newScale;
+}
+
 void FodderAI::OnInitialize(void)
 {
     GetOwner()->GetWorld()->Listener( this )
@@ -74,6 +108,20 @@ void FodderAI::OnInitialize(void)
 
     // set up the state machine
     auto walkState = m_stateMachine.AddState<sm::WalkState>( "FodderWalkState" );
+
+    walkState->SetCohesionScale( m_cohesionScale );
+
+    walkState->SetSeparationScale( m_separationScale );
+
+    auto ghost = GetOwner()->GetComponentInChildren<Ghost>();
+
+    UAssert( ghost, "Child of Entity With FodderAIComponent must have a ghost collider");
+
+    walkState->SetNearRadius(ghost->GetOwner()->GetTransform()->GetWorldScale().X() / 2);
+
+    walkState->SetBoidbehaviorScale(m_boidBehaviorScale);
+
+
     auto pauseState = m_stateMachine.AddState<sm::PauseState>( "FodderPauseState", m_pauseTime );
     auto damageState = m_stateMachine.AddState<sm::DamageState>( "FodderDamageState", m_damage );
     
