@@ -1109,7 +1109,7 @@ namespace ursine
         std::string oldFileName
     )
     {
-        /*switch(action)
+        switch(action)
         {
         case efsw::Actions::Add:
             std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Added" << std::endl;
@@ -1125,7 +1125,7 @@ namespace ursine
             break;
         default:
             std::cout << "Should never happen!" << std::endl;
-        }*/
+        }
 
         fs::path directoryPath = directory;
         fs::path fileNamePath = fileName;
@@ -1191,6 +1191,11 @@ namespace ursine
         default:
             break;
         }
+    }
+
+    void rp::ResourcePipelineManager::processPendingFileActions(void)
+    {
+        
     }
 
     void rp::ResourcePipelineManager::onResourceAdded(const fs::path &fileName)

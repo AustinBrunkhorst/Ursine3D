@@ -129,12 +129,10 @@ namespace ursine
         {
             //The first thing to do is to create the FBX Manager which is the object allocator for almost all the classes in the SDK
             pManager = FbxManager::Create();
-            if (!pManager)
-            {
-                FBXSDK_printf("Error: Unable to create FBX Manager!\n");
-                exit(1);
-            }
-            else FBXSDK_printf("Autodesk FBX SDK version %s\n", pManager->GetVersion());
+
+            UAssertCatchable( pManager,
+                "FBXManager was null."
+            );
 
             //Create an IOSettings object. This object holds all import/export settings.
             FbxIOSettings* ios = FbxIOSettings::Create(pManager, IOSROOT);
@@ -146,11 +144,10 @@ namespace ursine
 
             //Create an FBX scene. This object holds most objects imported/exported from/to files.
             pScene = FbxScene::Create(pManager, "My Scene");
-            if (!pScene)
-            {
-                FBXSDK_printf("Error: Unable to create FBX scene!\n");
-                exit(1);
-            }
+
+            UAssertCatchable( pScene,
+                "Unable to create scene."
+            );
         }
 
         void CFBXLoader::TriangulateRecursive(FbxNode* pNode)
@@ -335,7 +332,7 @@ namespace ursine
                         /////////////////////////////////////////////////////
                         URSINE_TODO("Jun! You should fix this!!!!");
                         j = 0;
-                        for (auto iter : mModel->mAnimationData[i]->animations)
+                        for (auto &iter : mModel->mAnimationData[i]->animations)
                         {
                             // storing animation clip's name
                             newAD.clipname = iter.first.c_str();
@@ -647,7 +644,12 @@ namespace ursine
                     for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
-                        UAssert(lPolygonSize == 3, "This model is not triangulated");
+
+                        UAssertCatchable( lPolygonSize == 3,
+                            "Model is not triangulated.\npoly size: %i",
+                            lPolygonSize
+                        );
+
                         for (int i = 0; i < lPolygonSize; ++i)
                         {
                             int lNormalIndex = 0;
@@ -715,7 +717,11 @@ namespace ursine
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
 
-                        UAssert(lPolygonSize == 3, "This model is not triangulated");
+                        UAssertCatchable( lPolygonSize == 3,
+                            "Model is not triangulated.\npoly size: %i",
+                            lPolygonSize
+                        );
+
                         for (int i = 0; i < lPolygonSize; ++i)
                         {
                             int lTangentIndex = 0;
@@ -806,8 +812,12 @@ namespace ursine
                     for (int lPolyIndex = 0; lPolyIndex < lPolyCount; ++lPolyIndex)
                     {
                         // build the max index array that we need to pass into MakePoly
-                        const int lPolySize = pMesh->GetPolygonSize(lPolyIndex);
-                        UAssert(lPolySize == 3, "This model is not triangulated");
+                        const int lPolySize = pMesh->GetPolygonSize( lPolyIndex );
+
+                        UAssertCatchable( lPolySize == 3, 
+                            "Model is not triangulated.\npoly size: %i",
+                            lPolySize
+                        );
 
                         for (int lVertIndex = 0; lVertIndex < lPolySize; ++lVertIndex)
                         {
@@ -1461,10 +1471,9 @@ namespace ursine
 
         FbxAMatrix CFBXLoader::GetGeometryTransformation(FbxNode* pNode)
         {
-            if (!pNode)
-            {
-                throw std::exception("Null for mesh geometry");
-            }
+            UAssertCatchable( pNode, 
+                "Mesh geometry was null." 
+            );
 
             const FbxVector4 lT = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
             const FbxVector4 lR = pNode->GetGeometricRotation(FbxNode::eSourcePivot);

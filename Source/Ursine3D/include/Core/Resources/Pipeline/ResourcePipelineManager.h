@@ -46,6 +46,14 @@ namespace ursine
                 // Creates a unique file name in the configured temporary directory
                 fs::path CreateTemporaryFileName(void) const;
             private:
+                struct FileWatchAction
+                {
+                    fs::Action action;
+                    fs::path directory;
+                    fs::path fileName;
+                    fs::path oldFileName;
+                };
+
                 ResourcePipelineConfig m_config;
 
                 std::unordered_map<GUID, ResourceItem::Handle, GUIDHasher> m_database;
@@ -57,6 +65,8 @@ namespace ursine
 
                 fs::FileWatcher m_fileWatcher;
                 fs::WatchID m_resourceDirectoryWatch;
+
+                std::unordered_map<fs::path, FileWatchAction, fs::PathHasher> m_pendingFileActions;
 
                 std::mutex m_buildMutex;
 
@@ -141,6 +151,8 @@ namespace ursine
                     fs::Action action,
                     std::string oldFilename = ""
                 ) override;
+
+                void processPendingFileActions(void);
 
                 void onResourceAdded(const fs::path &fileName);
                 void onResourceModified(ResourceItem::Handle resource);
