@@ -195,6 +195,27 @@ $toolbar-height: 25px;
             display: none;
           }
         }
+
+        &[ext=".fbx"] {
+          color: $color-accent;
+          text-shadow: 0 1px 2px rgba(black, 0.75);
+
+          @include icon-regular( $icon-regular-package, 54px );
+
+          &:after {
+            display: none;
+        }
+
+        &[ext=".uanim"] {
+          color: $color-accent;
+          text-shadow: 0 1px 2px rgba(black, 0.75);
+
+          @include icon-regular( $icon-regular-film, 54px );
+
+          &:after {
+            display: none;
+          }
+        }
       }
 
       .display-name {

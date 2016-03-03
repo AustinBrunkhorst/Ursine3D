@@ -31,10 +31,10 @@ namespace ursine
             ModelManager(void);
 
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
-            void Uninitialize();
+            void Uninitialize(void);
 
             // create/destry model
-            GfxHND CreateModel(const ufmt_loader::ModelInfo& modelInfo);
+            GfxHND CreateModel(const ufmt_loader::ModelInfo &modelInfo);
             void DestroyModel(GfxHND &handle);
 
             // load/unload model from gpu
@@ -43,6 +43,7 @@ namespace ursine
 
             // bind model to the GPU
             void BindModel(unsigned ID, unsigned index = 0, bool indexOnly = false);
+
             template<typename T>
             void BindMesh(ID3D11Buffer *mesh, ID3D11Buffer *indices)
             {
@@ -52,8 +53,8 @@ namespace ursine
                 unsigned int strides = sizeof(T);
                 unsigned int offset = 0;
 
-                m_deviceContext->IASetVertexBuffers(0, 1, &mesh, &strides, &offset);
-                m_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);
+                m_deviceContext->IASetVertexBuffers( 0, 1, &mesh, &strides, &offset );
+                m_deviceContext->IASetIndexBuffer( indices, DXGI_FORMAT_R32_UINT, 0 );
             }
 
             // get for index data
@@ -64,32 +65,33 @@ namespace ursine
             void Invalidate();
 
             // animation stuff
-            GfxHND CreateAnimation(const ufmt_loader::AnimInfo& animeInfo);
+            GfxHND CreateAnimation(const ufmt_loader::AnimInfo &animeInfo);
             void DestroyAnimation(GfxHND &handle);
 
             // getting info
-            ufmt_loader::ModelInfo GetModelInfo(GfxHND handle);
-            ufmt_loader::AnimInfo GeAnimeInfo(GfxHND handle);
+            ufmt_loader::ModelInfo *GetModelInfo(GfxHND handle);
+            ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
             ModelResource *GetModel(const unsigned ID);
 
         private:
-            void InitializeModel(const ufmt_loader::ModelInfo &modelInfo, ModelResource& modelresource);
-            void loadModelToGPU(ModelResource *model);
-            void unloadModelFromGPU(ModelResource *model);
+            void InitializeModel(const ufmt_loader::ModelInfo &modelInfo, ModelResource &modelresource);
+            void loadModelToGPU(ModelResource &model);
+            void unloadModelFromGPU(ModelResource &model);
 
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_deviceContext;
 
             // model
-            unsigned m_modelCount;
+            unsigned m_nextModelID;
             unsigned m_currentState;
 
-            std::vector< ModelResource* > m_modelCache;
-            std::vector< ufmt_loader::ModelInfo* > m_modelInfoCache;
+            std::unordered_map<unsigned, ModelResource> m_modelCache;
+            std::unordered_map<unsigned, ufmt_loader::ModelInfo> m_modelInfoCache;
 
-            // anime
-            unsigned m_animeCount;
-            std::vector< ufmt_loader::AnimInfo* > m_animeInfoCache;
+            // animation
+            unsigned m_nextAnimationID;
+
+            std::unordered_map<unsigned, ufmt_loader::AnimInfo> m_animationCache;
         };
     }
 }

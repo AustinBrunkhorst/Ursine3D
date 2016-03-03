@@ -26,9 +26,9 @@ namespace ursine
 
         void ModelData::Write(pipeline::ResourceWriter &output)
         {
-            auto modelInfo = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetModelInfo( m_modelHandle );
+            auto *modelInfo = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetModelInfo( m_modelHandle );
 
-            modelInfo.Write( output );
+            modelInfo->Write( output );
         }
 
         meta::Type ModelData::GetReaderType(void)

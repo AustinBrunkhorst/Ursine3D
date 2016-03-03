@@ -14,16 +14,15 @@ namespace ursine
             RESOURCE_DATA;
 
         public:
-            AnimationClipData( const graphics::ufmt_loader::AnimInfo &animeInfo );
-            ~AnimationClipData( void );
+            AnimationClipData(const graphics::ufmt_loader::AnimInfo &animInfo);
+            ~AnimationClipData(void);
 
-            graphics::GfxHND GetAnimeHandle( void ) const;
-            void Writing( pipeline::ResourceWriter &output );
+            graphics::GfxHND GetAnimeHandle(void) const;
+
+            void Write(pipeline::ResourceWriter &output) override;
 
         private:
-            graphics::GfxHND m_animeHandle;
-
-            void Write( pipeline::ResourceWriter &output ) override;
+            graphics::GfxHND m_animHandle;
 
             meta::Type GetReaderType(void) override;
         } Meta( Register );

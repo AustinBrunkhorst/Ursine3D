@@ -69,7 +69,7 @@ namespace ursine
             ModelResource *GetModelResource(GfxHND handle);
 
             // get a model info
-            ufmt_loader::ModelInfo GetModelInfo(const GfxHND &handle);
+            ufmt_loader::ModelInfo *GetModelInfo(const GfxHND &handle);
 
             /////////////////////////////////////////////////////////
             // Animation
@@ -78,7 +78,7 @@ namespace ursine
             GfxHND CreateAnimation(const ufmt_loader::AnimInfo& animeInfo);
             void DestroyAnimation(GfxHND &handle);
 
-            ufmt_loader::AnimInfo GetAnimInfo(const GfxHND &handle);
+            ufmt_loader::AnimInfo *GetAnimInfo(const GfxHND &handle);
             
         private:
             privData *m_privates;

@@ -30,39 +30,26 @@ namespace ursine
                 std::string name;
 
                 // mesh data	 
-                unsigned int	 mmeshCount;
-                std::vector< MeshInfo > mMeshInfoVec;
+                unsigned int mmeshCount;
+                std::vector<MeshInfo> mMeshInfoVec;
 
                 // material data
-                unsigned int	mmaterialCount;
-                std::vector< MaterialInfo >	mMtrlInfoVec;
+                unsigned int mmaterialCount;
+                std::vector<MaterialInfo> mMtrlInfoVec;
 
                 // skin data
-                unsigned int	mboneCount;
-                std::vector< BoneInfo >	mBoneInfoVec;
+                unsigned int mboneCount;
+                std::vector<BoneInfo> mBoneInfoVec;
 
                 // level info - hierarchy
-                unsigned int	mmeshlvlCount;
-                unsigned int	mriglvlCount;
-                std::vector< MeshInLvl > mMeshLvVec;
-                std::vector< RigInLvl > mRigLvVec;
+                unsigned int mmeshlvlCount;
+                unsigned int mriglvlCount;
+                std::vector<MeshInLvl> mMeshLvVec;
+                std::vector<RigInLvl> mRigLvVec;
 
-                /** @brief model information constructor
-                *
-                *  this will construct model information object
-                *
-                *  @return nothing
-                */
-                ModelInfo();
+                ModelInfo(void);
+                ~ModelInfo(void);
 
-                /** @brief model information destructor
-                *
-                *  this will destroy model information object
-                *
-                *  @return nothing
-                */
-                virtual ~ModelInfo();
-                
                 void Read(resources::ResourceReader &input) override;
                 void Write(resources::pipeline::ResourceWriter &output) override;
             };

@@ -11,29 +11,24 @@ namespace ursine
     {
         AnimationClipData::AnimationClipData(const graphics::ufmt_loader::AnimInfo &animeInfo) 
         {
-            m_animeHandle = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.CreateAnimation( animeInfo );
+            m_animHandle = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.CreateAnimation( animeInfo );
         }
 
         AnimationClipData::~AnimationClipData(void) 
         {
-            GetCoreSystem( graphics::GfxAPI )->ResourceMgr.DestroyAnimation( m_animeHandle );
+            GetCoreSystem( graphics::GfxAPI )->ResourceMgr.DestroyAnimation( m_animHandle );
         }
 
         graphics::GfxHND AnimationClipData::GetAnimeHandle(void) const
         {
-            return m_animeHandle;
-        }
-
-        void AnimationClipData::Writing(pipeline::ResourceWriter &output)
-        {
-            Write(output);
+            return m_animHandle;
         }
 
         void AnimationClipData::Write(pipeline::ResourceWriter &output)
         {
-            auto animeInfo = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( m_animeHandle );
+            auto *animInfo = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( m_animHandle );
 
-            animeInfo.Write( output );
+            animInfo->Write( output );
         }
 
         meta::Type AnimationClipData::GetReaderType(void)

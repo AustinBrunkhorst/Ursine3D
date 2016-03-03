@@ -33,22 +33,22 @@ namespace ursine
 
         GfxHND ResourceAPI::CreateDynamicTexture(const unsigned width, const unsigned height)
         {
-            return m_privates->textureMgr->CreateDynamicTexture(width, height);
+            return m_privates->textureMgr->CreateDynamicTexture( width, height );
         }
 
-        void ResourceAPI::ResizeDynamicTexture(GfxHND& handle, const unsigned width, const unsigned height)
+        void ResourceAPI::ResizeDynamicTexture(GfxHND &handle, const unsigned width, const unsigned height)
         {
-            m_privates->textureMgr->ResizeDynamicTexture(handle, width, height);
+            m_privates->textureMgr->ResizeDynamicTexture( handle, width, height );
         }
 
-        void ResourceAPI::DestroyDynamicTexture(GfxHND& handle)
+        void ResourceAPI::DestroyDynamicTexture(GfxHND &handle)
         {
-            m_privates->textureMgr->DestroyDynamicTexture(handle);
+            m_privates->textureMgr->DestroyDynamicTexture( handle );
         }
-        
+
         GfxHND ResourceAPI::CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height)
         {
-            return m_privates->textureMgr->CreateTexture( binaryData, binarySize, width, height);
+            return m_privates->textureMgr->CreateTexture( binaryData, binarySize, width, height );
         }
 
         void ResourceAPI::DestroyTexture(GfxHND &handle)
@@ -75,66 +75,65 @@ namespace ursine
         // MODEL
         /////////////////////////////////////////////////////////
 
-        GfxHND ResourceAPI::CreateModel(const ufmt_loader::ModelInfo& modelInfo)
+        GfxHND ResourceAPI::CreateModel(const ufmt_loader::ModelInfo &modelInfo)
         {
-            return m_privates->modelMgr->CreateModel(modelInfo);
+            return m_privates->modelMgr->CreateModel( modelInfo );
         }
 
         void ResourceAPI::DestroyModel(GfxHND &handle)
         {
-            m_privates->modelMgr->DestroyModel(handle);
+            m_privates->modelMgr->DestroyModel( handle );
         }
 
         void ResourceAPI::LoadModel(GfxHND handle)
         {
-            m_privates->modelMgr->LoadModel(handle);
+            m_privates->modelMgr->LoadModel( handle );
         }
 
         void ResourceAPI::UnloadModel(GfxHND handle)
         {
-            m_privates->modelMgr->UnloadModel(handle);
+            m_privates->modelMgr->UnloadModel( handle );
         }
 
-        ModelResource* ResourceAPI::GetModelResource(GfxHND handle)
+        ModelResource *ResourceAPI::GetModelResource(GfxHND handle)
         {
-            return m_privates->modelMgr->GetModel( static_cast<unsigned>(handle & 0xFFFF) );
+            return m_privates->modelMgr->GetModel( static_cast<unsigned>( handle & 0xFFFF ) );
         }
 
-        ufmt_loader::ModelInfo ResourceAPI::GetModelInfo(const GfxHND &handle)
+        ufmt_loader::ModelInfo *ResourceAPI::GetModelInfo(const GfxHND &handle)
         {
             return m_privates->modelMgr->GetModelInfo( handle );
         }
 
-        GfxHND ResourceAPI::CreateAnimation(const ufmt_loader::AnimInfo& animeInfo)
+        GfxHND ResourceAPI::CreateAnimation(const ufmt_loader::AnimInfo &animeInfo)
         {
-            return m_privates->modelMgr->CreateAnimation(animeInfo);
+            return m_privates->modelMgr->CreateAnimation( animeInfo );
         }
 
         void ResourceAPI::DestroyAnimation(GfxHND &handle)
         {
-            m_privates->modelMgr->DestroyAnimation(handle);
+            m_privates->modelMgr->DestroyAnimation( handle );
         }
 
-        ufmt_loader::AnimInfo ResourceAPI::GetAnimInfo(const GfxHND &handle)
+        ufmt_loader::AnimInfo *ResourceAPI::GetAnimInfo(const GfxHND &handle)
         {
-            return m_privates->modelMgr->GeAnimeInfo(handle);
+            return m_privates->modelMgr->GeAnimeInfo( handle );
         }
 
         void ResourceAPI::SetPrivates(void *priv, void *priv2)
         {
-            m_privates->modelMgr = reinterpret_cast<ModelManager*>(priv);
-            m_privates->textureMgr = reinterpret_cast<TextureManager*>(priv2);
+            m_privates->modelMgr = reinterpret_cast<ModelManager*>( priv );
+            m_privates->textureMgr = reinterpret_cast<TextureManager*>( priv2 );
         }
 
-        void ResourceAPI::Initialize()
+        void ResourceAPI::Initialize(void)
         {
             m_privates = new privData;
         }
 
-        void ResourceAPI::Uninitialize()
+        void ResourceAPI::Uninitialize(void)
         {
             delete m_privates;
         }
     }
-
 }

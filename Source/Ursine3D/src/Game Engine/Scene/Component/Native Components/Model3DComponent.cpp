@@ -235,22 +235,23 @@ namespace ursine
 
         void Model3D::invalidateModel(bool unload)
         {
-            auto data = loadResource<resources::ModelData>(m_modelResource);
+            auto data = loadResource<resources::ModelData>( m_modelResource );
 
             if (data == nullptr)
             {
                 // default
-                m_model->SetTextureHandle(0);
+                m_model->SetModelHandle( 0 );
             }
             else
             {
-                auto handle = data->GetModelHandle();
+                auto handle = data->GetModelHandle( );
 
-                if(unload)
+                if (unload)
                     m_graphics->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
+
                 m_graphics->ResourceMgr.LoadModel( handle );
 
-                m_model->SetModelHandle(handle);
+                m_model->SetModelHandle( handle );
             }
         }
 
@@ -261,7 +262,7 @@ namespace ursine
             if (data == nullptr)
             {
                 // default
-                m_model->SetTextureHandle(0);
+                m_model->SetTextureHandle( 0 );
             }
             else
             {
@@ -269,6 +270,7 @@ namespace ursine
 
                 if (unload)
                     m_graphics->ResourceMgr.UnloadTexture( m_model->GetTextureHandle( ) );
+
                 m_graphics->ResourceMgr.LoadTexture( handle );
 
                 m_model->SetTextureHandle(handle);

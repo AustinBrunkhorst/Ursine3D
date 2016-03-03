@@ -43,7 +43,7 @@ namespace ursine
             
             auto animclipdata = std::make_shared<AnimationClipData>( animInfo );
 
-            animclipdata->Writing( clipWriter );
+            animclipdata->Write( clipWriter );
             
             context.AddGeneratedResource( clipPath );
         }

@@ -15,26 +15,26 @@
 #include "ModelManager.h"
 #include "GfxDefines.h"
 #include "VertexDefinitions.h"
-#include <d3d11.h>
 #include "AnimationBuilder.h"
-#include "CFBXLoader.h"
 #include "DXErrorHandling.h"
 
 #include "InternalResourceByteCode.h"
+
+#include <d3d11.h>
 
 namespace ursine
 {
     namespace graphics
     {
-        ModelManager::ModelManager()
+        ModelManager::ModelManager(void)
             : m_device( nullptr )
             , m_deviceContext( nullptr )
-            , m_modelCount( INTERNAL_GEOMETRY_COUNT )
+            , m_nextModelID( INTERNAL_GEOMETRY_COUNT )
             , m_currentState( -1 )
-            , m_modelCache( { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr } )
-            , m_modelInfoCache( { nullptr, nullptr, nullptr, nullptr, nullptr, nullptr } )
-            , m_animeCount( 0 )
-            , m_animeInfoCache( { } )
+            , m_modelCache( )
+            , m_modelInfoCache( )
+            , m_nextAnimationID( 0 )
+            , m_animationCache( { } )
         {
         }
 
@@ -43,33 +43,30 @@ namespace ursine
             m_device = device;
             m_deviceContext = context;
 
-            m_modelCount = 0;
             m_currentState = -1;
 
-            m_animeCount = 0;
-
-            AnimationBuilder::InitializeStaticData();
+            AnimationBuilder::InitializeStaticData( );
 
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL PS INDEX BUFFER
             {
                 auto *newMesh = new Mesh( );
-                m_modelCache[ INTERNAL_POINT_INDICES ] = new ModelResource();
-                m_modelCache[ INTERNAL_POINT_INDICES ]->AddMesh( newMesh );
-                m_modelCache[ INTERNAL_POINT_INDICES ]->SetIsLoaded( true );
+
+                auto &internalPoint = m_modelCache[ INTERNAL_POINT_INDICES ];
+
+                internalPoint.AddMesh( newMesh );
+                internalPoint.SetIsLoaded( true );
 
                 unsigned indices[ 1024 * 6 ];
                 unsigned indexArray[ 6 ] = { 0, 1, 2, 1, 2, 3 };
 
                 for (int x = 0; x < 1024 * 6; ++x)
-                {
                     indices[ x ] = x;
-                }
 
                 D3D11_BUFFER_DESC indexBufferDesc;
                 D3D11_SUBRESOURCE_DATA indexData;
 
-                //Set up the description of the static index buffer.
+                // set up the description of the static index buffer
                 indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
                 indexBufferDesc.ByteWidth = sizeof(unsigned) * 1024 * 6;
                 indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -77,58 +74,60 @@ namespace ursine
                 indexBufferDesc.MiscFlags = 0;
                 indexBufferDesc.StructureByteStride = 0;
 
-                //Give the subresource structure a pointer to the index data.
+                // give the subresource structure a pointer to the index data
                 indexData.pSysMem = indices;
                 indexData.SysMemPitch = 0;
                 indexData.SysMemSlicePitch = 0;
 
-                //Create the index buffer.
-                HRESULT result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer());
-                UAssert(result == S_OK, "Failed to make index buffer!");
+                // create the index buffer
+                auto result = m_device->CreateBuffer( &indexBufferDesc, &indexData, &newMesh->GetIndexBuffer( ) );
+
+                UAssert( result == S_OK, 
+                    "Failed to make index buffer!"
+                );
             }
 
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL QUAD FOR RENDERING
             {
                 std::vector<AnimationVertex> temp;
-                temp.resize(6);
+                temp.resize( 6 );
 
-                temp[ 0 ].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
-                temp[ 0 ].vUv = DirectX::XMFLOAT2(1, 1);
-                temp[ 0 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+                temp[ 0 ].vPos = DirectX::XMFLOAT3( -0.5, -0.5, 0.5 );
+                temp[ 0 ].vUv = DirectX::XMFLOAT2( 1, 1 );
+                temp[ 0 ].vNor = DirectX::XMFLOAT3( 0, 0, 0 );
 
-                temp[ 1 ].vPos = DirectX::XMFLOAT3(0.5, -0.5, 0.5);
-                temp[ 1 ].vUv = DirectX::XMFLOAT2(0, 1);
-                temp[ 1 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+                temp[ 1 ].vPos = DirectX::XMFLOAT3( 0.5, -0.5, 0.5 );
+                temp[ 1 ].vUv = DirectX::XMFLOAT2( 0, 1 );
+                temp[ 1 ].vNor = DirectX::XMFLOAT3( 0, 0, 0 );
 
-                temp[ 2 ].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
-                temp[ 2 ].vUv = DirectX::XMFLOAT2(0, 0);
-                temp[ 2 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+                temp[ 2 ].vPos = DirectX::XMFLOAT3( 0.5, 0.5, 0.5 );
+                temp[ 2 ].vUv = DirectX::XMFLOAT2( 0, 0 );
+                temp[ 2 ].vNor = DirectX::XMFLOAT3( 0, 0, 0 );
 
-                temp[ 3 ].vPos = DirectX::XMFLOAT3(0.5, 0.5, 0.5);
-                temp[ 3 ].vUv = DirectX::XMFLOAT2(0, 0);
-                temp[ 3 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+                temp[ 3 ].vPos = DirectX::XMFLOAT3( 0.5, 0.5, 0.5 );
+                temp[ 3 ].vUv = DirectX::XMFLOAT2( 0, 0 );
+                temp[ 3 ].vNor = DirectX::XMFLOAT3( 0, 0, 0 );
 
-                temp[ 4 ].vPos = DirectX::XMFLOAT3(-0.5, 0.5, 0.5);
-                temp[ 4 ].vUv = DirectX::XMFLOAT2(1, 0);
-                temp[ 4 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
+                temp[ 4 ].vPos = DirectX::XMFLOAT3( -0.5, 0.5, 0.5 );
+                temp[ 4 ].vUv = DirectX::XMFLOAT2( 1, 0 );
+                temp[ 4 ].vNor = DirectX::XMFLOAT3( 0, 0, 0 );
 
-                temp[ 5 ].vPos = DirectX::XMFLOAT3(-0.5, -0.5, 0.5);
-                temp[ 5 ].vUv = DirectX::XMFLOAT2(1, 1);
-                temp[ 5 ].vNor = DirectX::XMFLOAT3(0, 0, 0);
-
-
-                std::string name = "internalQuad";
+                temp[ 5 ].vPos = DirectX::XMFLOAT3( -0.5, -0.5, 0.5 );
+                temp[ 5 ].vUv = DirectX::XMFLOAT2( 1, 1 );
+                temp[ 5 ].vNor = DirectX::XMFLOAT3( 0, 0, 0 );
 
                 auto *newMesh = new Mesh( );
-                m_modelCache[ INTERNAL_QUAD ] = new ModelResource();
-                m_modelCache[ INTERNAL_QUAD ]->AddMesh(newMesh);
+
+                auto &internalQuad = m_modelCache[ INTERNAL_QUAD ];
+
+                internalQuad.AddMesh( newMesh );
 
                 D3D11_BUFFER_DESC vertexBufferDesc;
                 D3D11_SUBRESOURCE_DATA vertexData;
                 HRESULT result;
 
-                //Set up the description of the static vertex buffer.
+                // set up the description of the static vertex buffer
                 vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
                 vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * 6;
                 vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -136,19 +135,23 @@ namespace ursine
                 vertexBufferDesc.MiscFlags = 0;
                 vertexBufferDesc.StructureByteStride = 0;
 
-                //Give the subresource structure a pointer to the vertex data.
+                // give the subresource structure a pointer to the vertex data
 
                 vertexData.pSysMem = &temp[ 0 ];
 
                 vertexData.SysMemPitch = 0;
                 vertexData.SysMemSlicePitch = 0;
 
-                //Now create the vertex buffer.
-                result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer( ));
-                UAssert(result == S_OK, "Failed to make vertex buffer!");
-                newMesh->SetVertexCount(6);
+                // now create the vertex buffer
+                result = m_device->CreateBuffer( &vertexBufferDesc, &vertexData, &newMesh->GetVertexBuffer( ) );
 
-                newMesh->SetIndexCount(6);
+                UAssert( result == S_OK, 
+                    "Failed to make vertex buffer!"
+                );
+
+                newMesh->SetVertexCount( 6 );
+
+                newMesh->SetIndexCount( 6 );
                 auto &indexArray = newMesh->GetRawIndices( );
 
                 for (unsigned x = 0; x < 6; ++x)
@@ -171,307 +174,345 @@ namespace ursine
                 indexData.SysMemSlicePitch = 0;
 
                 //Create the index buffer.
-                result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &newMesh->GetIndexBuffer( ));
-                UAssert(result == S_OK, "Failed to make index buffer!");
+                result = m_device->CreateBuffer( &indexBufferDesc, &indexData, &newMesh->GetIndexBuffer( ) );
+                
+                UAssert( result == S_OK, 
+                    "Failed to make index buffer!"
+                );
 
-                m_modelCache[ INTERNAL_QUAD ]->SetIsLoaded( true );
+                internalQuad.SetIsLoaded( true );
             }
 
             ///////////////////////////////////////////////////////////////////////////////
             //// GENERATING INTERNAL CUBE
             {
-                resources::ResourceReader reader( graphics_resources::kCubeJdl, 2676);
+                resources::ResourceReader reader( graphics_resources::kCubeJdl, 2676 );
 
                 // load into modelInfo
                 ufmt_loader::ModelInfo modelInfo;
+
                 modelInfo.Read( reader );
 
-                // load into model
-                m_modelCache[ INTERNAL_CUBE ] = new ModelResource();
-                InitializeModel( modelInfo, *m_modelCache[ INTERNAL_CUBE ] );
-                loadModelToGPU( m_modelCache[ INTERNAL_CUBE ] );
+                auto &internalCube = m_modelCache[ INTERNAL_CUBE ];
+
+                InitializeModel( modelInfo, internalCube );
+
+                loadModelToGPU( internalCube );
             }
-            
+
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL SPHERE
-            {            
-                resources::ResourceReader reader( graphics_resources::kSphereJdl, 40646);
+            {
+                resources::ResourceReader reader( graphics_resources::kSphereJdl, 40646 );
 
                 // load into modelInfo
                 ufmt_loader::ModelInfo modelInfo;
-                modelInfo.Read(reader);
 
-                // load into model
-                m_modelCache[ INTERNAL_SPHERE ] = new ModelResource();
-                InitializeModel( modelInfo, *m_modelCache[ INTERNAL_SPHERE ] );
-                loadModelToGPU( m_modelCache[ INTERNAL_SPHERE ] );
+                modelInfo.Read( reader );
+
+                auto &internalSphere = m_modelCache[ INTERNAL_SPHERE ];
+
+                InitializeModel( modelInfo, internalSphere );
+
+                loadModelToGPU( internalSphere );
             }
-            
+
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL CONE
-            {            
-                resources::ResourceReader reader( graphics_resources::kConeJdl, 5228);
+            {
+                resources::ResourceReader reader( graphics_resources::kConeJdl, 5228 );
 
                 // load into modelInfo
                 ufmt_loader::ModelInfo modelInfo;
-                modelInfo.Read(reader);
 
-                // load into model
-                m_modelCache[ INTERNAL_CONE ] = new ModelResource();
-                InitializeModel( modelInfo, *m_modelCache[ INTERNAL_CONE ] );
-                loadModelToGPU( m_modelCache[ INTERNAL_CONE ] );
+                modelInfo.Read( reader );
+
+                auto &internalCone = m_modelCache[ INTERNAL_CONE ];
+
+                InitializeModel( modelInfo, internalCone );
+
+                loadModelToGPU( internalCone );
             }
         }
 
-        void ModelManager::Uninitialize()
+        void ModelManager::Uninitialize(void)
         {
-            for (auto &x : m_modelCache)
-            {
-                if (x != nullptr)
-                    delete x;
-            }
-
-            for (auto &x : m_animeInfoCache)
-            {
-                if (x != nullptr)
-                    delete x;
-            }
-
             m_device = nullptr;
             m_deviceContext = nullptr;
         }
 
-        GfxHND ModelManager::CreateModel(const ufmt_loader::ModelInfo& modelInfo)
+        GfxHND ModelManager::CreateModel(const ufmt_loader::ModelInfo &modelInfo)
         {
-            // if this model already exists and we are updating it, release the prior resource, keep old ID
-            size_t internalID;
-
             GfxHND handle;
-            _RESOURCEHND *id = HND_RSRCE(handle);
 
-            internalID = m_modelCache.size();
-            m_modelCache.push_back( new ModelResource( ) );
-            m_modelInfoCache.push_back( new ufmt_loader::ModelInfo( ) );
-            *m_modelInfoCache[internalID] = modelInfo;
+            auto *hnd = HND_RSRCE( handle );
+
+            auto internalID = m_nextModelID++;
+
+            auto &cachedModel = 
+                m_modelCache.emplace( internalID, ModelResource { } ).first->second;
+
+            m_modelInfoCache.emplace( internalID, modelInfo );
 
             /////////////////////////////////////////////////////////
             // GENERATING BONE DATA /////////////////////////////////
             /////////////////////////////////////////////////////////
+
             unsigned rigIndex = 0;
+
             if (modelInfo.mboneCount > 0)
-                rigIndex = AnimationBuilder::LoadBoneData(modelInfo, modelInfo.name);
+                rigIndex = AnimationBuilder::LoadBoneData( modelInfo, modelInfo.name );
 
             // load it up into CPU memory
-            InitializeModel(
-                modelInfo,
-                *m_modelCache[ internalID ]
-            );
+            InitializeModel( modelInfo, cachedModel );
 
             // initialize handle
-            id->ID_ = SANITY_RESOURCE;
-            id->Type_ = ID_MODEL;
-            id->Index_ = static_cast<unsigned>(internalID);
+            hnd->ID_ = SANITY_RESOURCE;
+            hnd->Type_ = ID_MODEL;
+            hnd->Index_ = internalID;
 
             return handle;
         }
 
         void ModelManager::DestroyModel(GfxHND &handle)
         {
-            int id;
+            auto *hnd = HND_RSRCE( handle );
 
-            _RESOURCEHND *hnd = HND_RSRCE(handle);
-            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
-            UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
+            UAssert( hnd->ID_ == SANITY_RESOURCE, 
+                "Attempted to get model with invalid handle!"
+            );
 
-            id = hnd->Index_;
+            UAssert( hnd->Type_ == ID_MODEL, 
+                "Attempted to get model with handle of invalid type!"
+            );
 
-            ModelResource *model = m_modelCache[ id ];
-            auto modelInfo = m_modelInfoCache[ id ];
+            auto search = m_modelCache.find( hnd->Index_ );
 
-            if (model->GetIsLoaded())
-                unloadModelFromGPU(model);
+            UAssert( search != m_modelCache.end( ),
+                "Failed to destroy model.\nID: %i",
+                hnd->Index_
+            );
 
-            model->NoReference();
-            delete model;
+            auto &model = search->second;
+
+            if (model.GetIsLoaded( ))
+                unloadModelFromGPU( model );
+
+            m_modelCache.erase( search );
 
             handle = 0;
         }
 
         void ModelManager::LoadModel(GfxHND handle)
         {
-            int id;
-            _RESOURCEHND *hnd = HND_RSRCE(handle);
-            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
-            UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
+            auto *hnd = HND_RSRCE( handle );
 
-            id = hnd->Index_;
+            UAssert( hnd->ID_ == SANITY_RESOURCE, 
+                "Attempted to get model with invalid handle!"
+            );
 
-            if (m_modelCache[ id ]->HasNoReferences())
-            {
-                loadModelToGPU(m_modelCache[ id ]);
-            }
+            UAssert( hnd->Type_ == ID_MODEL, 
+                "Attempted to get model with handle of invalid type!"
+            );
 
-            m_modelCache[ id ]->IncrementReference();
+            auto search = m_modelCache.find( hnd->Index_ );
+
+            UAssert( search != m_modelCache.end( ),
+                "Failed to load model.\nID: %i",
+                hnd->Index_
+            );
+
+            auto &model = search->second;
+
+            if (model.HasNoReferences( ))
+                loadModelToGPU( model );
+
+            model.IncrementReference( );
         }
 
         void ModelManager::UnloadModel(GfxHND handle)
         {
-            int id;
+            auto *hnd = HND_RSRCE( handle );
 
-            _RESOURCEHND *hnd = HND_RSRCE(handle);
             if (handle != 0)
             {
-                UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
-                UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
+                UAssert( hnd->ID_ == SANITY_RESOURCE, 
+                    "Attempted to get model with invalid handle!" 
+                );
+
+                UAssert( hnd->Type_ == ID_MODEL,
+                    "Attempted to get model with handle of invalid type!" 
+                );
             }
 
-            id = hnd->Index_;
-
-            if (id < INTERNAL_GEOMETRY_COUNT)
+            if (hnd->Index_ < INTERNAL_GEOMETRY_COUNT)
                 return;
 
-            m_modelCache[ id ]->DecrementReference();
+            auto search = m_modelCache.find( hnd->Index_ );
 
-            if (m_modelCache[ id ]->HasNoReferences())
-            {
-                unloadModelFromGPU(m_modelCache[ id ]);
-            }
+            UAssert( search != m_modelCache.end( ),
+                "Failed to unload model.\nID: %i",
+                hnd->Index_
+            );
+
+            auto &model = search->second;
+
+            model.DecrementReference( );
+
+            if (model.HasNoReferences( ))
+                unloadModelFromGPU( model );
         }
-        
+
         void ModelManager::BindModel(unsigned ID, unsigned index, bool indexOnly)
         {
-            ModelResource *model = m_modelCache[ ID ];
+            auto search = m_modelCache.find( ID );
 
-            UAssert(model != nullptr, "Failed to bind model ID:%i", ID);
-            UAssert(model->GetIsLoaded() == true, "Attempted to bind model %i, but it isn't loaded on the GPU!", ID);
+            UAssert( search != m_modelCache.end( ),
+                "Failed to bind model.\nID: %i",
+                ID
+            );
+
+            auto &model = search->second;
+
+            UAssert( model.GetIsLoaded( ) == true, 
+                "Attempted to bind model %i, but it isn't loaded on the GPU!", 
+                ID
+            );
+
             if (ID == INTERNAL_POINT_INDICES)
             {
-                m_deviceContext->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-                m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+                m_deviceContext->IASetVertexBuffers( 0, 0, nullptr, nullptr, nullptr );
+                m_deviceContext->IASetIndexBuffer( model.GetMesh( index )->GetIndexBuffer( ), DXGI_FORMAT_R32_UINT, 0 );
 
                 m_currentState = ID;
                 return;
             }
 
-            //map mesh
-            unsigned int strides = sizeof(AnimationVertex);
+            // map mesh
+            static const unsigned strides = sizeof( AnimationVertex );
             unsigned int offset = 0;
 
-            m_deviceContext->IASetVertexBuffers(0, 1, &model->GetMesh(index)->GetVertexBuffer(), &strides, &offset);
-            m_deviceContext->IASetIndexBuffer(model->GetMesh(index)->GetIndexBuffer(), DXGI_FORMAT_R32_UINT, 0);
+            m_deviceContext->IASetVertexBuffers( 0, 1, &model.GetMesh( index )->GetVertexBuffer( ), &strides, &offset );
+            m_deviceContext->IASetIndexBuffer( model.GetMesh( index )->GetIndexBuffer( ), DXGI_FORMAT_R32_UINT, 0 );
 
             m_currentState = ID;
         }
 
         unsigned ModelManager::GetModelIndexcountByID(unsigned ID, unsigned index)
         {
-            return m_modelCache[ ID ]->GetMesh( index )->GetIndexCount( );
+            return m_modelCache[ ID ].GetMesh( index )->GetIndexCount( );
         }
 
         unsigned ModelManager::GetModelMeshCount(unsigned ID)
         {
-            return m_modelCache[ ID ]->GetMeshCount();
+            return m_modelCache[ ID ].GetMeshCount( );
         }
 
-        void ModelManager::Invalidate()
+        void ModelManager::Invalidate(void)
         {
             m_currentState = -1;
         }
 
         // animation
-        GfxHND ModelManager::CreateAnimation(const ufmt_loader::AnimInfo& animeInfo)
+        GfxHND ModelManager::CreateAnimation(const ufmt_loader::AnimInfo &animeInfo)
         {
-            // if this model already exists and we are updating it, release the prior resource, keep old ID
-            size_t internalID;
-
             GfxHND handle;
-            _RESOURCEHND *id = HND_RSRCE(handle);
 
-            internalID = m_animeInfoCache.size();
-            m_animeInfoCache.push_back( new ufmt_loader::AnimInfo() );
-            *m_animeInfoCache[internalID] = animeInfo;
+            auto *hnd = HND_RSRCE( handle );
+
+            auto internalID = m_nextAnimationID++;
+
+            m_animationCache.emplace( internalID, animeInfo );
 
             // initialize handle
-            id->ID_ = SANITY_RESOURCE;
-            id->Type_ = ID_ANIMATION;
-            id->Index_ = static_cast<unsigned>(internalID);
+            hnd->ID_ = SANITY_RESOURCE;
+            hnd->Type_ = ID_ANIMATION;
+            hnd->Index_ = internalID;
 
             return handle;
         }
 
         void ModelManager::DestroyAnimation(GfxHND &handle)
         {
-            int id;
+            auto *hnd = HND_RSRCE( handle );
 
-            _RESOURCEHND *hnd = HND_RSRCE(handle);
-            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get animation with invalid handle!");
-            UAssert(hnd->Type_ == ID_ANIMATION, "Attempted to get animation with handle of invalid type!");
+            UAssert( hnd->ID_ == SANITY_RESOURCE, 
+                "Attempted to get animation with invalid handle!"
+            );
 
-            id = hnd->Index_;
+            UAssert( hnd->Type_ == ID_ANIMATION, 
+                "Attempted to get animation with handle of invalid type!"
+            );
 
-            ufmt_loader::AnimInfo *animeInfo = m_animeInfoCache[ id ];
-            
-            delete animeInfo;
+            m_animationCache.erase( hnd->Index_ );
 
             handle = 0;
         }
 
-        // getting info
-        ufmt_loader::ModelInfo ModelManager::GetModelInfo(GfxHND handle)
+        ufmt_loader::ModelInfo *ModelManager::GetModelInfo(GfxHND handle)
         {
-            int id;
-            _RESOURCEHND *hnd = HND_RSRCE(handle);
-            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get model with invalid handle!");
-            UAssert(hnd->Type_ == ID_MODEL, "Attempted to get model with handle of invalid type!");
+            auto *hnd = HND_RSRCE( handle );
 
-            id = hnd->Index_;
+            UAssert( hnd->ID_ == SANITY_RESOURCE, 
+                "Attempted to get model with invalid handle!"
+            );
 
-            return *m_modelInfoCache[ id ];
+            UAssert( hnd->Type_ == ID_MODEL, 
+                "Attempted to get model with handle of invalid type!"
+            );
+
+            auto search = m_modelInfoCache.find( hnd->Index_ );
+
+            return search == m_modelInfoCache.end( ) ? nullptr : &search->second;
         }
 
-        ufmt_loader::AnimInfo ModelManager::GeAnimeInfo(GfxHND handle)
+        ufmt_loader::AnimInfo *ModelManager::GeAnimeInfo(GfxHND handle)
         {
-            int id;
+            auto *hnd = HND_RSRCE( handle );
 
-            _RESOURCEHND *hnd = HND_RSRCE(handle);
-            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get animation with invalid handle!");
-            UAssert(hnd->Type_ == ID_ANIMATION, "Attempted to get animation with handle of invalid type!");
+            UAssert( hnd->ID_ == SANITY_RESOURCE, 
+                "Attempted to get animation with invalid handle!"
+            );
 
-            id = hnd->Index_;
+            UAssert( hnd->Type_ == ID_ANIMATION, 
+                "Attempted to get animation with handle of invalid type!"
+            );
 
-            return *m_animeInfoCache[ id ];
+            auto search = m_animationCache.find( hnd->Index_ );
+
+            return search == m_animationCache.end( ) ? nullptr : &search->second;
         }
 
         ModelResource *ModelManager::GetModel(const unsigned ID)
         {
-            return m_modelCache[ ID ];
+            return &m_modelCache[ ID ];
         }
 
         // private methods
-        void ModelManager::InitializeModel(const ufmt_loader::ModelInfo &modelInfo, ModelResource &modelresource)
+        void ModelManager::InitializeModel(const ufmt_loader::ModelInfo &modelInfo, ModelResource &modelResource)
         {
             // for each mesh
             for (uint mesh_idx = 0; mesh_idx < modelInfo.mmeshCount; ++mesh_idx)
             {
                 // create a new mesh
-                Mesh *newMesh = new Mesh();
-                newMesh->SetID(mesh_idx);
+                Mesh *newMesh = new Mesh( );
+                newMesh->SetID( mesh_idx );
 
                 /////////////////////////////////////////////////////////////////
                 // ALLOCATE MODEL ///////////////////////////////////////////////                
 
                 ufmt_loader::MeshInfo currMesh = modelInfo.mMeshInfoVec[ mesh_idx ];
 
-                newMesh->SetName(currMesh.name);
+                newMesh->SetName( currMesh.name );
 
                 uint vertCount = currMesh.meshVtxInfoCount;
-                newMesh->SetVertexCount(vertCount);
-                auto &meshVertArray = newMesh->GetRawVertices();
+                newMesh->SetVertexCount( vertCount );
+                auto &meshVertArray = newMesh->GetRawVertices( );
 
                 //Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
                 //can do this with skincount
-                std::vector<AnimationVertex> &buffer = newMesh->GetRawModelData();
-                buffer.resize(vertCount);
+                std::vector<AnimationVertex> &buffer = newMesh->GetRawModelData( );
+                buffer.resize( vertCount );
                 for (size_t i = 0; i < vertCount; ++i)
                 {
                     // update raw verts for physics
@@ -479,7 +520,7 @@ namespace ursine
                         currMesh.meshVtxInfos[ i ].pos.x,
                         currMesh.meshVtxInfos[ i ].pos.y,
                         currMesh.meshVtxInfos[ i ].pos.z
-                        );
+                    );
 
                     // transform these points from their global model space into their local space
                     SVec4 tempPosition = SVec4(
@@ -487,57 +528,57 @@ namespace ursine
                         currMesh.meshVtxInfos[ i ].pos.y,
                         currMesh.meshVtxInfos[ i ].pos.z,
                         1.0f
-                        );
+                    );
 
                     // Set data
                     buffer[ i ].vPos = DirectX::XMFLOAT3(
-                        tempPosition.ToD3D().x,
-                        tempPosition.ToD3D().y,
-                        tempPosition.ToD3D().z
-                        );
+                        tempPosition.ToD3D( ).x,
+                        tempPosition.ToD3D( ).y,
+                        tempPosition.ToD3D( ).z
+                    );
 
                     buffer[ i ].vNor = DirectX::XMFLOAT3(
                         currMesh.meshVtxInfos[ i ].normal.x,
                         currMesh.meshVtxInfos[ i ].normal.y,
                         currMesh.meshVtxInfos[ i ].normal.z
-                        );
+                    );
                     buffer[ i ].vUv = DirectX::XMFLOAT2(
                         currMesh.meshVtxInfos[ i ].uv.x,
                         currMesh.meshVtxInfos[ i ].uv.y
-                        );
+                    );
 
                     if (modelInfo.mboneCount > 0)
                     {
-                        buffer[ i ].vBWeight.x = static_cast<float>(currMesh.meshVtxInfos[ i ].ctrlBlendWeights.x);
-                        buffer[ i ].vBWeight.y = static_cast<float>(currMesh.meshVtxInfos[ i ].ctrlBlendWeights.y);
-                        buffer[ i ].vBWeight.z = static_cast<float>(currMesh.meshVtxInfos[ i ].ctrlBlendWeights.z);
-                        buffer[ i ].vBWeight.w = static_cast<float>(currMesh.meshVtxInfos[ i ].ctrlBlendWeights.w);
-                        buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>(currMesh.meshVtxInfos[ i ].ctrlIndices.x);
-                        buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>(currMesh.meshVtxInfos[ i ].ctrlIndices.y);
-                        buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>(currMesh.meshVtxInfos[ i ].ctrlIndices.z);
-                        buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(currMesh.meshVtxInfos[ i ].ctrlIndices.w);
+                        buffer[ i ].vBWeight.x = static_cast<float>( currMesh.meshVtxInfos[ i ].ctrlBlendWeights.x );
+                        buffer[ i ].vBWeight.y = static_cast<float>( currMesh.meshVtxInfos[ i ].ctrlBlendWeights.y );
+                        buffer[ i ].vBWeight.z = static_cast<float>( currMesh.meshVtxInfos[ i ].ctrlBlendWeights.z );
+                        buffer[ i ].vBWeight.w = static_cast<float>( currMesh.meshVtxInfos[ i ].ctrlBlendWeights.w );
+                        buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>( currMesh.meshVtxInfos[ i ].ctrlIndices.x );
+                        buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>( currMesh.meshVtxInfos[ i ].ctrlIndices.y );
+                        buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>( currMesh.meshVtxInfos[ i ].ctrlIndices.z );
+                        buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>( currMesh.meshVtxInfos[ i ].ctrlIndices.w );
                     }
                     else
                     {
-                        buffer[ i ].vBWeight = DirectX::XMFLOAT4(0, 0, 0, 1);
-                        buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>(0);
-                        buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>(0);
-                        buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>(0);
-                        buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>(0);
+                        buffer[ i ].vBWeight = DirectX::XMFLOAT4( 0, 0, 0, 1 );
+                        buffer[ i ].vBIdx[ 0 ] = static_cast<BYTE>( 0 );
+                        buffer[ i ].vBIdx[ 1 ] = static_cast<BYTE>( 0 );
+                        buffer[ i ].vBIdx[ 2 ] = static_cast<BYTE>( 0 );
+                        buffer[ i ].vBIdx[ 3 ] = static_cast<BYTE>( 0 );
                     }
                 }
 
-                newMesh->SetVertexCount(vertCount);
+                newMesh->SetVertexCount( vertCount );
 
                 /////////////////////////////////////////////////////////////////
                 // CREATE INDEX BUFFER //////////////////////////////////////////
-                newMesh->SetIndexCount(currMesh.meshVtxIdxCount);
+                newMesh->SetIndexCount( currMesh.meshVtxIdxCount );
 
-                auto &indexArray = newMesh->GetRawIndices();
-                for (unsigned x = 0; x < newMesh->GetIndexCount(); ++x)
+                auto &indexArray = newMesh->GetRawIndices( );
+                for (unsigned x = 0; x < newMesh->GetIndexCount( ); ++x)
                     indexArray[ x ] = currMesh.meshVtxIndices[ x ];
 
-                modelresource.AddMesh(newMesh);
+                modelResource.AddMesh( newMesh );
             }
 
             //for (auto &x : modelInfo->mMeshLvVec)
@@ -547,10 +588,11 @@ namespace ursine
             //    modelresource.AddRig2Tree(x);
         }
 
-        void ModelManager::loadModelToGPU(ModelResource *model)
+        void ModelManager::loadModelToGPU(ModelResource &model)
         {
-            model->SetIsLoaded(true);
-            auto &meshBuffer = model->GetMeshArray();
+            model.SetIsLoaded( true );
+
+            auto &meshBuffer = model.GetMeshArray( );
 
             for (auto &mesh : meshBuffer)
             {
@@ -560,19 +602,19 @@ namespace ursine
 
                 //Set up the description of the static vertex buffer.
                 vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * mesh->GetVertexCount();
+                vertexBufferDesc.ByteWidth = sizeof(AnimationVertex) * mesh->GetVertexCount( );
                 vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
                 vertexBufferDesc.CPUAccessFlags = 0;
                 vertexBufferDesc.MiscFlags = 0;
                 vertexBufferDesc.StructureByteStride = 0;
 
                 //Give the subresource structure a pointer to the vertex data.
-                vertexData.pSysMem = mesh->GetRawModelData().data();
+                vertexData.pSysMem = mesh->GetRawModelData( ).data( );
                 vertexData.SysMemPitch = 0;
                 vertexData.SysMemSlicePitch = 0;
 
                 //Now create the vertex buffer.
-                result = m_device->CreateBuffer(&vertexBufferDesc, &vertexData, &mesh->GetVertexBuffer());
+                result = m_device->CreateBuffer( &vertexBufferDesc, &vertexData, &mesh->GetVertexBuffer( ) );
                 UAssert(result == S_OK, "Failed to make vertex buffer! (%s)", DXCore::GetDXErrorMessage(result));
 
                 D3D11_BUFFER_DESC indexBufferDesc;
@@ -580,33 +622,34 @@ namespace ursine
 
                 //Set up the description of the static index buffer.
                 indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                indexBufferDesc.ByteWidth = sizeof(unsigned) * mesh->GetIndexCount();
+                indexBufferDesc.ByteWidth = sizeof(unsigned) * mesh->GetIndexCount( );
                 indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
                 indexBufferDesc.CPUAccessFlags = 0;
                 indexBufferDesc.MiscFlags = 0;
                 indexBufferDesc.StructureByteStride = 0;
 
                 //Give the subresource structure a pointer to the index data.
-                indexData.pSysMem = mesh->GetRawIndices().data();
+                indexData.pSysMem = mesh->GetRawIndices( ).data( );
                 indexData.SysMemPitch = 0;
                 indexData.SysMemSlicePitch = 0;
 
                 //Create the index buffer.
-                result = m_device->CreateBuffer(&indexBufferDesc, &indexData, &mesh->GetIndexBuffer());
+                result = m_device->CreateBuffer( &indexBufferDesc, &indexData, &mesh->GetIndexBuffer( ) );
                 UAssert(result == S_OK, "Failed to make index buffer! (%s)", DXCore::GetDXErrorMessage(result));
             }
         }
 
-        void ModelManager::unloadModelFromGPU(ModelResource *model)
+        void ModelManager::unloadModelFromGPU(ModelResource &model)
         {
-            auto &meshBuffer = model->GetMeshArray();
-            model->SetIsLoaded(false);
+            auto &meshBuffer = model.GetMeshArray( );
+
+            model.SetIsLoaded( false );
+
             for (auto &mesh : meshBuffer)
             {
-                RELEASE_RESOURCE(mesh->GetIndexBuffer());
-                RELEASE_RESOURCE(mesh->GetVertexBuffer());
+                RELEASE_RESOURCE( mesh->GetIndexBuffer( ) );
+                RELEASE_RESOURCE( mesh->GetVertexBuffer( ) );
             }
         }
-
     }
 }

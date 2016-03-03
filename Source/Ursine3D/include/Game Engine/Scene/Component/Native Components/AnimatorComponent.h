@@ -113,7 +113,6 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
-
             EditorButton(
                 ImportAnimation,
                 "Import Animation"
@@ -125,52 +124,51 @@ namespace ursine
                 clip,
                 GetClip,
                 SetClip
-                );
+            );
 
             EditorField(
                 std::string currentState,
                 GetCurrentState,
                 SetCurrentState
-                );
+            );
 
             EditorField(
                 std::string currentRig,
                 GetRig,
                 SetRig
-                );
+            );
 
             EditorField(
                 bool loopAnimation,
                 IsLooping,
                 SetLooping
-                );
+            );
 
             EditorField(
                 bool playAnimation,
                 IsPlaying,
                 SetPlaying
-                );
+            );
 
             EditorField(
                 bool changeState,
                 IsStateChanging,
                 SetStateChanging
-                );
+            );
 
             EditorField(
                 bool renderDebug,
                 IsDebug,
                 SetDebug
-                );
+            );
 
             EditorField(
                 float timeScalar,
                 GetTimeScalar,
                 SetTimeScalar
-                );
+            );
 
             Meta(Enable)
-
             Animator(void);
             ~Animator(void);
 
@@ -242,16 +240,16 @@ namespace ursine
 
             resources::ResourceReference m_clipResource;
 
-            static void recursClearChildren(const std::vector< Handle<Transform> > &children);
+            static void recursClearChildren(const std::vector<Handle<Transform>> &children);
             void clearChildren(void);
             void importAnimation(void);
 
         } Meta(
             Enable,
             WhiteListMethods,
-            DisplayName("Animator")
-            ) EditorMeta(
-                RequiresComponents(typeof(ursine::ecs::Model3D))
-                );
+            DisplayName( "Animator" )
+        ) EditorMeta(
+            RequiresComponents( typeof( ursine::ecs::Model3D ) )
+        );
     }
 }

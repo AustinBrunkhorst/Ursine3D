@@ -16,8 +16,8 @@
 
 #include "AnimatorComponent.h"
 #include "Notification.h"
-#include "../Serialization/AnimationInfo.h"
-#include <Game Engine/Scene/Component/Native Components/Model3DComponent.h>
+#include "AnimationInfo.h"
+#include "Model3DComponent.h"
 
 typedef ursine::graphics::ufmt_loader::AnimInfo AniInfo;
 
@@ -26,12 +26,12 @@ namespace ursine
     namespace ecs
     {
         StateBlender::StateBlender(void)
-            : m_currState("")
-            , m_futState("")
-            , m_ctrnsRate(1.f)
-            , m_ftrnsRate(0.f)
-            , m_ctrnsFrm(0)
-            , m_ftrnsFrm(0)
+            : m_currState( "" )
+            , m_futState( "" )
+            , m_ctrnsRate( 1.f )
+            , m_ftrnsRate( 0.f )
+            , m_ctrnsFrm( 0 )
+            , m_ftrnsFrm( 0 )
         {
         }
 
@@ -40,7 +40,7 @@ namespace ursine
             return m_currState;
         }
 
-        void StateBlender::SetcurrState(const std::string& cstate)
+        void StateBlender::SetcurrState(const std::string &cstate)
         {
             m_currState = cstate;
         }
@@ -50,7 +50,7 @@ namespace ursine
             return m_futState;
         }
 
-        void StateBlender::SetfutState(const std::string& fstate)
+        void StateBlender::SetfutState(const std::string &fstate)
         {
             m_futState = fstate;
         }
@@ -60,7 +60,7 @@ namespace ursine
             return m_ctrnsRate;
         }
 
-        void StateBlender::SetcurrTransPosRatio(const float& tPos)
+        void StateBlender::SetcurrTransPosRatio(const float &tPos)
         {
             m_ctrnsRate = tPos;
         }
@@ -70,7 +70,7 @@ namespace ursine
             return m_ftrnsRate;
         }
 
-        void StateBlender::SetfutTransPosRatio(const float& tPos)
+        void StateBlender::SetfutTransPosRatio(const float &tPos)
         {
             m_ftrnsRate = tPos;
         }
@@ -80,7 +80,7 @@ namespace ursine
             return m_ctrnsFrm;
         }
 
-        void StateBlender::SetcurrTransFrm(const unsigned int& tFrm)
+        void StateBlender::SetcurrTransFrm(const unsigned int &tFrm)
         {
             m_ctrnsFrm = tFrm;
         }
@@ -90,61 +90,61 @@ namespace ursine
             return m_ftrnsFrm;
         }
 
-        void StateBlender::SetfutTransFrm(const unsigned int& tFrm)
+        void StateBlender::SetfutTransFrm(const unsigned int &tFrm)
         {
             m_ftrnsFrm = tFrm;
         }
 
-        const StateBlender *StateBlender::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
+        const StateBlender *StateBlender::GetStateBlenderByNames(const std::string &currst, const std::string &futst)
         {
             if (currst == m_currState && futst == m_futState)
                 return this;
+
             return nullptr;
         }
 
+        NATIVE_COMPONENT_DEFINITION( Animator );
 
-        NATIVE_COMPONENT_DEFINITION(Animator);
-
-        Animator::Animator()
-            : BaseComponent()
-            , m_playing(true)
-            , m_looping(true)
-            , m_debug(false)
-            , m_changeState(false)
-            , m_speedScalar(1.0f)
-            , m_Rig("")
-            , m_curStName("")
-            , m_futStName("")
-            , m_animationName("")
-            , m_stateName("")
-            , m_animlist(0)
-        {
+        Animator::Animator(void)
+            : BaseComponent( )
+            , m_playing( true )
+            , m_looping( true )
+            , m_debug( false )
+            , m_changeState( false )
+            , m_speedScalar( 1.0f )
+            , m_Rig( "" )
+            , m_curStName( "" )
+            , m_futStName( "" )
+            , m_animationName( "" )
+            , m_stateName( "" )
+            , m_animlist( 0 )
+{
         }
 
-        Animator::~Animator()
+        Animator::~Animator(void)
         {
-            m_animlist.clear();
+            m_animlist.clear( );
         }
 
         void Animator::OnInitialize(void)
         {
             // clean up our model's matrices
-            auto &matrixPalette = GetOwner()->GetComponent<Model3D>()->GetMatrixPalette();
+            auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
             for (auto &x : matrixPalette)
             {
-                x = SMat4::Identity();
+                x = SMat4::Identity( );
             }
 
             auto *gfx = GetCoreSystem(graphics::GfxAPI);
-            auto *world = GetOwner()->GetWorld();
+            auto *world = GetOwner( )->GetWorld( );
 
-            auto animListEntity = world->GetEntityFromName("Animation List");
+            auto animListEntity = world->GetEntityFromName( "Animation List" );
             if (!animListEntity)
-                animListEntity = world->CreateEntity("Animation List");
+                animListEntity = world->CreateEntity( "Animation List" );
 
-            auto blendTreeEntity = world->GetEntityFromName("Blending Tree");
+            auto blendTreeEntity = world->GetEntityFromName( "Blending Tree" );
             if (!blendTreeEntity)
-                blendTreeEntity = world->CreateEntity("Blending Tree");
+                blendTreeEntity = world->CreateEntity( "Blending Tree" );
         }
 
         void Animator::UpdateAnimation(const float dt)
@@ -155,42 +155,42 @@ namespace ursine
 
             for (auto &x : stArray)
             {
-                if (x.GetName() == "")
+                if (x.GetName( ) == "")
                     continue;
-                if (x.GetName() == m_curStName)
+                if (x.GetName( ) == m_curStName)
                     currentState = &x;
-                if (x.GetName() == m_futStName)
+                if (x.GetName( ) == m_futStName)
                     futureState = &x;
             }
 
             if (!currentState)
                 return;
 
-            const Animation *currentAnimation = (nullptr == currentState) ? nullptr : currentState->GetAnimation();
-            const Animation *futureAnimation = (nullptr == futureState) ? nullptr : futureState->GetAnimation();
-            auto *rig = AnimationBuilder::GetAnimationRigByName(m_Rig);
+            const Animation *currentAnimation = (nullptr == currentState) ? nullptr : currentState->GetAnimation( );
+            const Animation *futureAnimation = (nullptr == futureState) ? nullptr : futureState->GetAnimation( );
+            auto *rig = AnimationBuilder::GetAnimationRigByName( m_Rig );
 
             if (nullptr == currentAnimation || nullptr == rig)
                 return;
 
-            if (currentAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
+            if (currentAnimation->GetDesiredBoneCount( ) != rig->GetBoneCount( ))
                 return;
 
             // default transition time takes 1 sec this will be used as interpolation factor
             static float transFactor = 0.0;
             if (nullptr != futureAnimation)
             {
-                if (futureAnimation->GetDesiredBoneCount() != rig->GetBoneCount())
+                if (futureAnimation->GetDesiredBoneCount( ) != rig->GetBoneCount( ))
                     return;
             }
             else
                 transFactor = 0.0;
 
-            auto &matrixPalette = GetOwner()->GetComponent<Model3D>()->GetMatrixPalette();
-            std::vector<SMat4> tempVec(100);
+            auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
+            std::vector<SMat4> tempVec( 100 );
 
             // blending / playing animation should take place in here
-            UpdateState(currentState, currentAnimation, futureState, futureAnimation, dt, transFactor);
+            UpdateState( currentState, currentAnimation, futureState, futureAnimation, dt, transFactor );
 
             // generate the matrices
             AnimationBuilder::GenerateAnimationData(
@@ -199,8 +199,8 @@ namespace ursine
                 rig,
                 matrixPalette,
                 tempVec,
-                (float)transFactor
-                );
+                ( float )transFactor
+            );
 
             //////////////////////////////////////////////////////////////////
             //// TEMPORARY DEBUG STUFF
@@ -305,7 +305,7 @@ namespace ursine
             m_changeState = stateChange;
         }
 
-        bool Animator::IsDebug() const
+        bool Animator::IsDebug(void) const
         {
             return m_debug;
         }
@@ -315,7 +315,7 @@ namespace ursine
             m_debug = useDebug;
         }
 
-        float Animator::GetTimeScalar() const
+        float Animator::GetTimeScalar(void) const
         {
             return m_speedScalar;
         }
@@ -325,7 +325,7 @@ namespace ursine
             m_speedScalar = scalar;
         }
 
-        const std::string &Animator::GetRig() const
+        const std::string &Animator::GetRig(void) const
         {
             return m_Rig;
         }
@@ -335,12 +335,12 @@ namespace ursine
             m_Rig = rig;
         }
 
-        float Animator::GetAnimationTimePosition() const
+        float Animator::GetAnimationTimePosition(void) const
         {
             for (auto &x : stArray)
             {
-                if (x.GetName() == m_curStName)
-                    return x.GetTimePosition();
+                if (x.GetName( ) == m_curStName)
+                    return x.GetTimePosition( );
             }
             return 0.0f;
         }
@@ -349,9 +349,9 @@ namespace ursine
         {
             for (auto &x : stArray)
             {
-                if (x.GetName() == m_curStName)
+                if (x.GetName( ) == m_curStName)
                 {
-                    x.SetTimePosition(position);
+                    x.SetTimePosition( position );
                     return;
                 }
             }
@@ -366,19 +366,20 @@ namespace ursine
         {
             m_clipResource = clip;
 
-            if (!resourcesAreAvailable())
+            if (!resourcesAreAvailable( ))
                 return;
 
-            invalidateClip();
+            invalidateClip( );
 
-            NOTIFY_COMPONENT_CHANGED("clip", m_clipResource);
+            NOTIFY_COMPONENT_CHANGED( "clip", m_clipResource );
         }
 
         void Animator::invalidateClip(void)
         {
-            auto data = loadResource<resources::AnimationClipData>(m_clipResource);
+            auto data = loadResource<resources::AnimationClipData>( m_clipResource );
 
             std::string str;
+
             if (data == nullptr)
             {
                 NotificationConfig config;
@@ -387,19 +388,19 @@ namespace ursine
                 config.header = "Warning";
                 config.message = "There is no matching animation clip resource.";
                 config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds(5.0f);
+                config.duration = TimeSpan::FromSeconds( 5.0f );
 
                 m_animationName = "";
             }
             else
             {
-                auto handle = data->GetAnimeHandle();
+                auto handle = data->GetAnimeHandle( );
 
-                m_animationName = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle).name;
+                m_animationName = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( handle )->name;
             }
         }
 
-        const std::string& Animator::GetCurrentState(void) const
+        const std::string &Animator::GetCurrentState(void) const
         {
             return m_curStName;
         }
@@ -409,13 +410,14 @@ namespace ursine
             if ("" == m_curStName)
             {
                 m_curStName = state;
-                NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
+
+                NOTIFY_COMPONENT_CHANGED( "currentState", m_curStName );
             }
             else
                 m_futStName = state;
         }
 
-        const std::string& Animator::GetStateName(void) const
+        const std::string &Animator::GetStateName(void) const
         {
             return m_stateName;
         }
@@ -425,20 +427,26 @@ namespace ursine
             m_stateName = state;
         }
 
-        void Animator::UpdateState(AnimationState* currSt, const Animation* currAni,
-            AnimationState* futSt, const Animation* futAni, const float& dt, float& transFactor)
+        void Animator::UpdateState(
+            AnimationState *currSt, 
+            const Animation *currAni,
+            AnimationState *futSt, 
+            const Animation *futAni, 
+            const float &dt, 
+            float &transFactor
+        )
         {
             if (m_playing)
             {
-                currSt->IncrementTimePosition(dt * m_speedScalar);
+                currSt->IncrementTimePosition( dt * m_speedScalar );
 
                 /////////////////////////////////////////////////////
                 // this will be applied to all animations that state has
                 // const Animation *m_animation; will be changed as std::vector<Animation*>
                 /////////////////////////////////////////////////////
-                unsigned keyframeCount1 = currAni->GetRigKeyFrameCount();
-                auto &curr_firstFrame = currAni->GetKeyframe(0, 0);
-                auto &curr_lastFrame = currAni->GetKeyframe(keyframeCount1 - 1, 0);
+                unsigned keyframeCount1 = currAni->GetRigKeyFrameCount( );
+                auto &curr_firstFrame = currAni->GetKeyframe( 0, 0 );
+                auto &curr_lastFrame = currAni->GetKeyframe( keyframeCount1 - 1, 0 );
 
                 bool bFut = false;
                 if (futSt)
@@ -451,35 +459,35 @@ namespace ursine
                 // if there is future state and animation
                 if (!bFut)
                 {
-                    if (currSt->GetTimePosition() > curr_lastFrame.length)
+                    if (currSt->GetTimePosition( ) > curr_lastFrame.length)
                     {
                         if (m_looping)
-                            currSt->SetTimePosition(curr_firstFrame.length);
+                            currSt->SetTimePosition( curr_firstFrame.length );
                         else
-                            currSt->SetTimePosition(curr_lastFrame.length);
+                            currSt->SetTimePosition( curr_lastFrame.length );
                     }
                 }
                 else
                 {
                     // need to check state blender
-                    StateBlender* stb = GetStateBlenderByNames(currSt->GetName(), futSt->GetName());
+                    StateBlender *stb = GetStateBlenderByNames( currSt->GetName( ), futSt->GetName( ) );
                     if (nullptr == stb)
                     {
-                        unsigned keyframeCount2 = futAni->GetRigKeyFrameCount();
-                        auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
-                        auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
-                        futSt->IncrementTimePosition(dt * m_speedScalar);
+                        unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
+                        auto &fut_firstFrame = futAni->GetKeyframe( 0, 0 );
+                        auto &fut_lastFrame = futAni->GetKeyframe( keyframeCount2 - 1, 0 );
+                        futSt->IncrementTimePosition( dt * m_speedScalar );
                         transFactor += dt * m_speedScalar;
                         if (transFactor > 1.0f)
                             transFactor = 1.0f;
 
-                        if (futSt->GetTimePosition() > fut_lastFrame.length)
+                        if (futSt->GetTimePosition( ) > fut_lastFrame.length)
                         {
                             if (m_changeState)
                             {
                                 m_curStName = m_futStName;
                                 m_futStName = "";
-                                NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
+                                NOTIFY_COMPONENT_CHANGED( "currentState", m_curStName );
                                 currSt = futSt;
                                 futSt = nullptr;
                             }
@@ -487,14 +495,14 @@ namespace ursine
                             {
                                 if (m_looping)
                                 {
-                                    currSt->SetTimePosition(curr_firstFrame.length);
-                                    futSt->SetTimePosition(fut_firstFrame.length);
+                                    currSt->SetTimePosition( curr_firstFrame.length );
+                                    futSt->SetTimePosition( fut_firstFrame.length );
                                     transFactor = 0.0f;
                                 }
                                 else
                                 {
-                                    currSt->SetTimePosition(curr_lastFrame.length);
-                                    futSt->SetTimePosition(fut_lastFrame.length);
+                                    currSt->SetTimePosition( curr_lastFrame.length );
+                                    futSt->SetTimePosition( fut_lastFrame.length );
                                     transFactor = 0.0f;
                                 }
                             }
@@ -503,16 +511,16 @@ namespace ursine
                     else
                     {
                         bool bCurrEnd = false;
-                        if (currSt->GetTimePosition() > curr_lastFrame.length)
+                        if (currSt->GetTimePosition( ) > curr_lastFrame.length)
                         {
-                            currSt->SetTimePosition(curr_lastFrame.length);
+                            currSt->SetTimePosition( curr_lastFrame.length );
                             bCurrEnd = true;
                         }
 
                         // To check if current state is reached at the same frame as state blender's
                         unsigned int curFrameIndex = 0;
-                        GetTransFrmByRatio(*currSt, curFrameIndex, stb->GetcurrTransPosRatio());
-                        stb->SetcurrTransFrm(curFrameIndex);
+                        GetTransFrmByRatio( *currSt, curFrameIndex, stb->GetcurrTransPosRatio( ) );
+                        stb->SetcurrTransFrm( curFrameIndex );
 
                         // Can't check actual frame's length since that keyframe could be dummy value.
                         // so we just check it by index.
@@ -523,23 +531,23 @@ namespace ursine
                             for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
                             {
                                 // get the two current keyframes
-                                const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes(x);
-                                const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes(x + 1);
+                                const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes( x );
+                                const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes( x + 1 );
 
                                 // check if the current keyframe set holds the time value between them
-                                if (f1[0].length <= currSt->GetTimePosition() && currSt->GetTimePosition() < f2[0].length)
+                                if (f1[ 0 ].length <= currSt->GetTimePosition( ) && currSt->GetTimePosition( ) < f2[ 0 ].length)
                                     break;
                                 ++index1;
                             }
-                            index2 = stb->GetcurrTransFrm();
+                            index2 = stb->GetcurrTransFrm( );
                             if (index1 == index2)
                             {
                                 // Set Trans Frame by Transition Position - fut
                                 unsigned int futFrameIndex = 0;
-                                GetTransFrmByRatio(*futSt, futFrameIndex, stb->GetfutTransPosRatio());
-                                stb->SetfutTransFrm(futFrameIndex);
+                                GetTransFrmByRatio( *futSt, futFrameIndex, stb->GetfutTransPosRatio( ) );
+                                stb->SetfutTransFrm( futFrameIndex );
                                 // Set future state's timeposition to chosen frame
-                                futSt->SetTimePosition(futAni->GetKeyframe(stb->GetfutTransFrm(), 0).length);
+                                futSt->SetTimePosition( futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length );
                                 // confirm start blending
                                 bBlending = true;
                             }
@@ -549,7 +557,7 @@ namespace ursine
                         if (bBlending)
                         {
                             // if blending is true, start transitioning from this state to that state
-                            futSt->IncrementTimePosition(dt * m_speedScalar);
+                            futSt->IncrementTimePosition( dt * m_speedScalar );
                             transFactor += dt * m_speedScalar;
                             if (transFactor > 1.0f)
                                 transFactor = 1.0f;
@@ -558,11 +566,11 @@ namespace ursine
                             // this will be applied to all animations that state has
                             // const Animation *m_animation; will be changed as std::vector<Animation*>
                             /////////////////////////////////////////////////////
-                            unsigned keyframeCount2 = futAni->GetRigKeyFrameCount();
-                            auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
-                            auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
+                            unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
+                            auto &fut_firstFrame = futAni->GetKeyframe( 0, 0 );
+                            auto &fut_lastFrame = futAni->GetKeyframe( keyframeCount2 - 1, 0 );
 
-                            if (futSt->GetTimePosition() > fut_lastFrame.length)
+                            if (futSt->GetTimePosition( ) > fut_lastFrame.length)
                             {
                                 bBlending = false;
                                 transFactor = 0.0f;
@@ -570,7 +578,7 @@ namespace ursine
                                 {
                                     m_curStName = m_futStName;
                                     m_futStName = "";
-                                    NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
+                                    NOTIFY_COMPONENT_CHANGED( "currentState", m_curStName );
                                     currSt = futSt;
                                     futSt = nullptr;
                                 }
@@ -578,13 +586,13 @@ namespace ursine
                                 {
                                     if (m_looping)
                                     {
-                                        currSt->SetTimePosition(curr_firstFrame.length);
-                                        futSt->SetTimePosition(futAni->GetKeyframe(stb->GetfutTransFrm(), 0).length);
+                                        currSt->SetTimePosition( curr_firstFrame.length );
+                                        futSt->SetTimePosition( futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length );
                                     }
                                     else
                                     {
-                                        currSt->SetTimePosition(curr_lastFrame.length);
-                                        futSt->SetTimePosition(fut_lastFrame.length);
+                                        currSt->SetTimePosition( curr_lastFrame.length );
+                                        futSt->SetTimePosition( fut_lastFrame.length );
                                     }
                                 }
                             }
@@ -596,9 +604,9 @@ namespace ursine
                             if (bCurrEnd)
                             {
                                 if (m_looping)
-                                    currSt->SetTimePosition(curr_firstFrame.length);
+                                    currSt->SetTimePosition( curr_firstFrame.length );
                                 else
-                                    currSt->SetTimePosition(curr_lastFrame.length);
+                                    currSt->SetTimePosition( curr_lastFrame.length );
                             }
                         }
                     }
@@ -607,11 +615,11 @@ namespace ursine
         }
 
         // find the closest animation keyframe of the state, and set a transition position
-        void Animator::GetTransFrmByRatio(AnimationState& state, unsigned int& frameIndex, const float& ratio)
+        void Animator::GetTransFrmByRatio(AnimationState &state, unsigned int &frameIndex, const float &ratio)
         {
-            unsigned keyframeCount = state.GetAnimation()->GetRigKeyFrameCount();
-            auto &firstFrame = state.GetAnimation()->GetKeyframe(0, 0);
-            auto &lastFrame = state.GetAnimation()->GetKeyframe(keyframeCount - 1, 0);
+            unsigned keyframeCount = state.GetAnimation( )->GetRigKeyFrameCount( );
+            auto &firstFrame = state.GetAnimation( )->GetKeyframe( 0, 0 );
+            auto &lastFrame = state.GetAnimation( )->GetKeyframe( keyframeCount - 1, 0 );
             auto totallength = lastFrame.length - firstFrame.length;
 
             auto delta = 1.0f / totallength;
@@ -619,17 +627,17 @@ namespace ursine
 
             // find the closest frame
             float diff = totallength;
-            for (unsigned int i = 0; i < state.GetAnimation()->GetRigKeyFrameCount(); ++i)
+            for (unsigned int i = 0; i < state.GetAnimation( )->GetRigKeyFrameCount( ); ++i)
             {
-                if (fabs(sec - state.GetAnimation()->GetKeyframe(i, 0).length) < diff)
+                if (fabs( sec - state.GetAnimation( )->GetKeyframe( i, 0 ).length ) < diff)
                 {
-                    diff = fabs(sec - state.GetAnimation()->GetKeyframe(i, 0).length);
+                    diff = fabs( sec - state.GetAnimation( )->GetKeyframe( i, 0 ).length );
                     frameIndex = i;
                 }
             }
         }
 
-        StateBlender *Animator::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
+        StateBlender *Animator::GetStateBlenderByNames(const std::string &currst, const std::string &futst)
         {
             NotificationConfig config;
 
@@ -637,7 +645,7 @@ namespace ursine
             config.header = "Warning";
             config.message = "There is no matching State Blender in the list";
             config.dismissible = true;
-            config.duration = TimeSpan::FromSeconds(5.0f);
+            config.duration = TimeSpan::FromSeconds( 5.0f );
 
             if (currst == "" || futst == "")
             {
@@ -646,7 +654,7 @@ namespace ursine
 
             for (auto &x : stBlender)
             {
-                if (nullptr != x.GetStateBlenderByNames(currst, futst))
+                if (nullptr != x.GetStateBlenderByNames( currst, futst ))
                     return &(x);
             }
 
@@ -654,11 +662,11 @@ namespace ursine
             return nullptr;
         }
 
-#if defined(URSINE_WITH_EDITOR)
+        #if defined(URSINE_WITH_EDITOR)
 
         void Animator::ImportAnimation(void)
         {
-            if (m_animationName.size() == 0)
+            if (m_animationName.size( ) == 0)
             {
                 NotificationConfig config;
 
@@ -666,17 +674,17 @@ namespace ursine
                 config.header = "Error";
                 config.message = "Please type in the name of the animation.";
                 config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds(5.0f);
+                config.duration = TimeSpan::FromSeconds( 5.0f );
 
-                EditorPostNotification(config);
+                EditorPostNotification( config );
 
                 return;
             }
 
-            auto owner = GetOwner();
-            auto *children = owner->GetChildren();
+            auto owner = GetOwner( );
+            auto *children = owner->GetChildren( );
 
-            if (children->size() > 0)
+            if (children->size( ) > 0)
             {
                 NotificationConfig config;
 
@@ -689,49 +697,53 @@ namespace ursine
                 NotificationButton yes, no;
 
                 yes.text = "Yes";
-                yes.onClick = [=](Notification &notification) {
-                    notification.Close();
+                yes.onClick = [=](Notification &notification)
+                {
+                    notification.Close( );
 
-                    // Main thread operation
-                    Timer::Create(0).Completed([=] {
-                        clearChildren();
-                        importAnimation();
-                    });
+                    // main thread operation
+                    Application::PostMainThread( [=]
+                    {
+                        clearChildren( );
+                        importAnimation( );
+                    } );
                 };
 
                 no.text = "No";
-                no.onClick = [=](Notification &notification) {
-                    notification.Close();
+                no.onClick = [=](Notification &notification)
+                {
+                    notification.Close( );
                 };
 
                 config.buttons = { yes, no };
 
-                EditorPostNotification(config);
+                EditorPostNotification( config );
             }
             else
             {
-                // Main thread operation
-                Timer::Create(0).Completed([=] {
-                    importAnimation();
-                });
+                // main thread operation
+                Application::PostMainThread( [=]
+                {
+                    importAnimation( );
+                } );
             }
         }
 
-#endif
+        #endif
 
-        void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
+        void Animator::recursClearChildren(const std::vector<Handle<Transform>> &children)
         {
             for (auto &child : children)
             {
-                recursClearChildren(child->GetChildren());
+                recursClearChildren( child->GetChildren( ) );
 
-                child->GetOwner()->Delete();
+                child->GetOwner( )->Delete( );
             }
         }
 
         void Animator::clearChildren(void)
         {
-            recursClearChildren(GetOwner()->GetTransform()->GetChildren());
+            recursClearChildren( GetOwner( )->GetTransform( )->GetChildren( ) );
         }
 
         // import animation to the current state
@@ -740,10 +752,10 @@ namespace ursine
         {
             unsigned animationIndex = 0;
             // Check if there is same animation already
-            const Animation* checker = AnimationBuilder::GetAnimationByName(m_animationName);
+            const Animation *checker = AnimationBuilder::GetAnimationByName( m_animationName );
             if (nullptr == checker)
             {
-                auto data = loadResource<resources::AnimationClipData>(m_clipResource);
+                auto data = loadResource<resources::AnimationClipData>( m_clipResource );
                 if (data == nullptr)
                 {
                     NotificationConfig config;
@@ -752,17 +764,18 @@ namespace ursine
                     config.header = "Warning";
                     config.message = "There is no matching animation clip resource.";
                     config.dismissible = true;
-                    config.duration = TimeSpan::FromSeconds(5.0f);
+                    config.duration = TimeSpan::FromSeconds( 5.0f );
 
-                    EditorPostNotification(config);
+                    EditorPostNotification( config );
                 }
                 else
                 {
-                    auto handle = data->GetAnimeHandle();
+                    auto handle = data->GetAnimeHandle( );
 
-                    auto animInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle);
-                    if ( animInfo.IsThereAAnimation( ) )
-                        animationIndex = AnimationBuilder::LoadAnimation(animInfo, m_animationName);
+                    auto *animInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo( handle );
+
+                    if (animInfo->IsThereAAnimation( ))
+                        animationIndex = AnimationBuilder::LoadAnimation( *animInfo, m_animationName );
                 }
             }
 
@@ -770,7 +783,7 @@ namespace ursine
             bool bExist = false;
             for (auto &x : m_animlist)
             {
-                if (m_animationName == x->GetName())
+                if (m_animationName == x->GetName( ))
                 {
                     bExist = true;
                     break;
@@ -780,20 +793,21 @@ namespace ursine
             if (!bExist)
             {
                 // add to animlist
-                m_animlist.push_back(AnimationBuilder::GetAnimationByName(m_animationName));
+                m_animlist.push_back( AnimationBuilder::GetAnimationByName( m_animationName ) );
 
                 auto *gfx = GetCoreSystem(graphics::GfxAPI);
-                auto *world = GetOwner()->GetWorld();
-                auto animList = world->GetEntityFromName("Animation List");
-                auto *alTrans = animList->GetTransform();
-                auto newEntity = world->GetEntityFromName(m_animationName.c_str());
+                auto *world = GetOwner( )->GetWorld( );
+                auto animList = world->GetEntityFromName( "Animation List" );
+                auto *alTrans = animList->GetTransform( );
+                auto newEntity = world->GetEntityFromName( m_animationName.c_str( ) );
                 if (!newEntity)
                 {
-                    newEntity = world->CreateEntity(m_animationName.c_str());
-                    alTrans->AddChild(newEntity->GetTransform());
+                    newEntity = world->CreateEntity( m_animationName.c_str( ) );
+                    alTrans->AddChild( newEntity->GetTransform( ) );
                 }
             }
         }
+
         // Question
         // I'm trying to add/remove entity by StateArray.
         // Adding is not hard(Except naming), but how can I remove entity from the blending tree?

@@ -12,7 +12,8 @@
 ** -------------------------------------------------------------------------*/
 
 #pragma once
-#include <cstdint>
+
+#include "UrsineTypes.h"
 
 namespace ursine
 {
@@ -20,11 +21,11 @@ namespace ursine
     {
         namespace graphics_resources
         {
-            const extern uint8_t kCubeJdl[];
-            const extern uint8_t kSphereJdl[];
-            const extern uint8_t kConeJdl[];
-            const extern uint8_t kMissingTexture[];
-            const extern uint8_t kBlankTexture[];
+            const extern uint8 kCubeJdl[];
+            const extern uint8 kSphereJdl[];
+            const extern uint8 kConeJdl[];
+            const extern uint8 kMissingTexture[];
+            const extern uint8 kBlankTexture[];
         }
     }
 }

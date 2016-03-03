@@ -850,7 +850,12 @@ JSMethod(EntityHandler::getParent)
     if (!handle)
         return CefV8Value::CreateBool( false );
 
-    auto parent = handle->GetTransform( )->GetParent( );
+    auto transform = handle->GetTransform( );
+
+    if (!transform)
+        JSThrow( "Invalid transform", nullptr );
+
+    auto parent = transform->GetParent( );
 
     if (!parent)
         return CefV8Value::CreateNull( );
