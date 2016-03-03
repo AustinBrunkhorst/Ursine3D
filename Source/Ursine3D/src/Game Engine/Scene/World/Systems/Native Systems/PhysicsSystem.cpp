@@ -218,6 +218,16 @@ namespace ursine
             SetEnableDebugDraw( false );
 
         #endif
+
+            // This is a real gross thing I'm doing to try and fix
+            // an issue I'm having with bullet and collision flags
+            auto rigidbodies = m_world->GetEntitiesFromFilter( Filter( ).All<Rigidbody>( ) );
+
+            for (auto &entity : rigidbodies)
+            {
+                auto rigidbody = entity->GetComponent<Rigidbody>( );
+                rigidbody->SetBodyFlag( rigidbody->GetBodyFlag( ) );
+            }
         }
 
         void PhysicsSystem::onComponentAdded(EVENT_HANDLER(World))
@@ -645,20 +655,24 @@ namespace ursine
             {
                 auto rigidbody = entity->GetComponent<Rigidbody>( );
 
-                if (!emptyCollider)
+                // m_world->GetOwner( ) is required so we can make sure
+                // we aren't serializing
+                if (!emptyCollider && m_world->GetOwner( ))
                     m_simulation.RemoveRigidbody( &rigidbody->m_rigidbody );
 
                 // Assign the collider
                 rigidbody->m_rigidbody.SetCollider( collider, emptyCollider );
 
-                if (!emptyCollider)
+                if (!emptyCollider && m_world->GetOwner( ))
                     m_simulation.AddRigidbody( &rigidbody->m_rigidbody );
             }
             else if (entity->HasComponent<Ghost>( ))
             {
                 auto ghost = entity->GetComponent<Ghost>( );
 
-                if (!emptyCollider)
+                // m_world->GetOwner( ) is required so we can make sure
+                // we aren't serializing
+                if (!emptyCollider && m_world->GetOwner( ))
                     m_simulation.RemoveGhost( &ghost->m_ghost );
 
                 // Assign the collider
@@ -666,7 +680,7 @@ namespace ursine
 
                 ghost->m_ghost.SetTransform( entity->GetTransform( ) );
 
-                if (!emptyCollider)
+                if (!emptyCollider && m_world->GetOwner( ))
                     m_simulation.AddGhost( &ghost->m_ghost );
             }
 

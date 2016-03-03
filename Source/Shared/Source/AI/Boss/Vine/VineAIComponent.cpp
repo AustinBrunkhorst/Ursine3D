@@ -19,6 +19,7 @@
 #include "VineWhipState.h"
 #include "VineUprootState.h"
 #include "VineGoHomeState.h"
+#include "VineDeathState.h"
 
 #include <FloatCondition.h>
 #include <BoolCondition.h>
@@ -226,18 +227,39 @@ void VineAI::PursueTarget(void)
 void VineAI::OnInitialize(void)
 {
     // TO TEST:
-    // - spawning animation (should come up from nothing)
     // - tell it to pursue enemy, and tell it to come back home
 
     GetOwner( )->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &VineAI::onUpdate );
 
+    GetOwner( )->Listener( this )
+        .On( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
+}
+
+void VineAI::onUpdate(EVENT_HANDLER(World))
+{
+    // update the state machine
+    m_stateMachine.Update( );
+}
+
+void VineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
+{
+    GetOwner( )->Listener( this )
+        .Off( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
+
+    m_animator = GetOwner( )->GetComponentInChildren<EntityAnimator>( );
+
+    m_homeLocation = GetOwner( )->GetTransform( )->GetWorldPosition( );
+
     // Setup the state machine
+    m_stateMachine.Initialize( );
+
     auto spawnState = m_stateMachine.AddState<VineSpawnState>( );
     auto lookState = m_stateMachine.AddState<VineLookForInRangePlayersState>( );
     auto whipState = m_stateMachine.AddState<VineWhipState>( );
     auto uprootState = m_stateMachine.AddState<VineUprootState>( );
     auto goHomeState = m_stateMachine.AddState<VineGoHomeState>( );
+    auto deathState = m_stateMachine.AddState<VineDeathState>( );
 
     spawnState->AddTransition( lookState, "To Look" );
 
@@ -290,26 +312,15 @@ void VineAI::OnInitialize(void)
 
     goHomeState->AddTransition( lookState, "To Look" );
 
+    // Tell the looking state to go to the death state when it happens
+    trans = lookState->AddTransition( deathState, "To Death" );
+
+    trans->AddCondition<sm::BoolCondition>(
+        VineAIStateMachine::Dead,
+        true
+    );
+
     m_stateMachine.SetInitialState( spawnState );
-
-    GetOwner( )->Listener( this )
-        .On( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
-
-    m_homeLocation = GetOwner( )->GetTransform( )->GetWorldPosition( );
-}
-
-void VineAI::onUpdate(EVENT_HANDLER(World))
-{
-    // update the state machine
-    m_stateMachine.Update( );
-}
-
-void VineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
-{
-    m_animator = GetOwner( )->GetComponentInChildren<EntityAnimator>( );
-
-    GetOwner( )->Listener( this )
-        .Off( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 }
 
 #if defined(URSINE_WITH_EDITOR)

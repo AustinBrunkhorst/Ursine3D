@@ -6,7 +6,7 @@
 "children": [], 
 "components": {
 "ApplyImpulseOnHit": {
-".uid": 507, 
+".uid": 494, 
 "effectSweptController": true, 
 "impulse": 10, 
 "localDirectionInfluence": {
@@ -21,7 +21,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 508, 
+".uid": 495, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -29,7 +29,7 @@
 }
 }, 
 "DamageOnCollide": {
-".uid": 509, 
+".uid": 496, 
 "ArchetypeOnDeath": ".uatype", 
 "ArchetypeOnHit": "FX/FX_VineHit.uatype", 
 "CritModifier": 2, 
@@ -40,7 +40,7 @@
 "SpawnOnHit": true
 }, 
 "Ghost": {
-".uid": 510, 
+".uid": 497, 
 "disableContactResponse": true, 
 "enableContactCallback": true, 
 "offset": {
@@ -50,7 +50,8 @@
 }
 }, 
 "Model3D": {
-".uid": 511, 
+".uid": 498, 
+"active": true, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -67,7 +68,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 506, 
+".uid": 493, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -91,7 +92,7 @@
 "children": [], 
 "components": {
 "EntityAnimatorClip": {
-".uid": 513, 
+".uid": 500, 
 "clipName": "Idle", 
 "keyFrames": [
 {
@@ -187,7 +188,7 @@
 "looping": true
 }, 
 "Transform": {
-".uid": 512, 
+".uid": 499, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -211,7 +212,7 @@
 "children": [], 
 "components": {
 "EntityAnimatorClip": {
-".uid": 515, 
+".uid": 502, 
 "clipName": "WhipIn", 
 "keyFrames": [
 {
@@ -263,7 +264,7 @@
 "looping": false
 }, 
 "Transform": {
-".uid": 514, 
+".uid": 501, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -287,7 +288,7 @@
 "children": [], 
 "components": {
 "EntityAnimatorClip": {
-".uid": 517, 
+".uid": 504, 
 "clipName": "WhipOut", 
 "keyFrames": [
 {
@@ -339,7 +340,7 @@
 "looping": false
 }, 
 "Transform": {
-".uid": 516, 
+".uid": 503, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -359,14 +360,54 @@
 }
 }, 
 "name": "Animation Clip: WhipOut"
-}
-], 
+}, {
+"children": [], 
 "components": {
-"EntityAnimator": {
+"Model3D": {
+".uid": 506, 
+"active": true, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Sphere", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
 ".uid": 505, 
-"animationClipName": "WhipIn", 
-"delta": 1, 
-"ease": 0, 
+"rotation": {
+"w": -0.79337626695632935, 
+"x": 0, 
+"y": 0.60873264074325562, 
+"z": 0
+}, 
+"scale": {
+"x": 5, 
+"y": 5, 
+"z": 5
+}, 
+"translation": {
+"x": 0.51786613464355469, 
+"y": 66.182655334472656, 
+"z": -0.13880538940429688
+}
+}
+}, 
+"name": "Sphere"
+}, {
+"children": [], 
+"components": {
+"EntityAnimatorClip": {
+".uid": 508, 
+"clipName": "Burrow", 
 "keyFrames": [
 {
 "delta": 1, 
@@ -391,7 +432,205 @@
 }, 
 "scaleKey": true
 }, {
-"delta": 0.5, 
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": -7, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 0.10000000149011612, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"looping": false
+}, 
+"Transform": {
+".uid": 507, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation Clip: Burrow"
+}, {
+"children": [], 
+"components": {
+"EntityAnimatorClip": {
+".uid": 510, 
+"clipName": "Uproot", 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": -7, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 0.10000000149011612, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0.60000002384185791, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"looping": false
+}, 
+"Transform": {
+".uid": 509, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation Clip: Uproot"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 492, 
+"animationClipName": "Idle", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 9, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 3, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.98408788442611694, 
+"x": 0.10996787250041962, 
+"y": 0.12197519838809967, 
+"z": -0.06782618910074234
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 9, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.98650902509689331, 
+"x": -0.098407164216041565, 
+"y": -0.083452552556991577, 
+"z": -0.10075604170560837
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
 "ease": 15, 
 "position": {
 "x": 0, 
@@ -400,10 +639,10 @@
 }, 
 "positionKey": true, 
 "rotation": {
-"w": 0.69999998807907104, 
-"x": 0.69999998807907104, 
-"y": 2.9802322387695313e-08, 
-"z": 2.9802322387695313e-08
+"w": 0.98261916637420654, 
+"x": -0.10600381344556808, 
+"y": 0.044490661472082138, 
+"z": 0.14575120806694031
 }, 
 "rotationKey": true, 
 "scale": {
@@ -417,17 +656,17 @@
 "keyPosition": true, 
 "keyRotation": true, 
 "keyScale": true, 
-"loopAnimation": false, 
+"loopAnimation": true, 
 "playOnAwake": true, 
 "smoothPath": true
 }, 
 "Transform": {
-".uid": 504, 
+".uid": 491, 
 "rotation": {
-"w": 0.69999998807907104, 
-"x": 0.69999998807907104, 
-"y": 2.9802322387695313e-08, 
-"z": 2.9802322387695313e-08
+"w": 0.99172550439834595, 
+"x": -0.10047236829996109, 
+"y": -0.059203535318374634, 
+"z": -0.053672414273023605
 }, 
 "scale": {
 "x": 1, 
@@ -442,31 +681,91 @@
 }
 }, 
 "name": "VineAnimator"
-}
-], 
+}, {
+"children": [], 
 "components": {
-"BossVineAI": {
-".uid": 502, 
-"faceClosestPlayer": true, 
-"turnSpeed": 75, 
-"whipAngle": 176.5, 
-"whipCooldown": 10, 
-"whipDamage": 10, 
-"whipDuration": 0.5, 
-"whipRange": 60
+"ParticleColorAnimator": {
+".uid": 512, 
+"color0": {
+"a": 0.5, 
+"b": 0, 
+"g": 0, 
+"r": 0
 }, 
-"Health": {
-".uid": 503, 
-"ArchetypeToSpawnOnDeath": ".uatype", 
-"EntityHealth": 100, 
-"SpawnOnDeath": false
+"color1": {
+"a": 1, 
+"b": 0, 
+"g": 0.3515625, 
+"r": 1
+}, 
+"color2": {
+"a": 1, 
+"b": 0, 
+"g": 0.4921875, 
+"r": 1
+}, 
+"color3": {
+"a": 0.75, 
+"b": 0, 
+"g": 0.43487548828125, 
+"r": 0.9765625
+}, 
+"color4": {
+"a": 0, 
+"b": 0, 
+"g": 0.16937255859375, 
+"r": 0.1953125
+}
+}, 
+"ParticleEmitter": {
+".uid": 513, 
+"emitCount": 0, 
+"emitRate": 0, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"fill": 0, 
+"lifetime": 1, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 180, 
+"size": 10, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 10, 
+"y": 20, 
+"z": 10
+}
+}, 
+"ParticleSystem": {
+".uid": 514, 
+"color": {
+"a": 1, 
+"b": 0.57014834880828857, 
+"g": 0.58203125, 
+"r": 0.0750274658203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke0"
 }, 
 "Transform": {
-".uid": 501, 
+".uid": 511, 
 "rotation": {
-"w": -0.79337626695632935, 
+"w": -0.0046432018280029297, 
 "x": 0, 
-"y": -0.60873264074325562, 
+"y": 0.99999034404754639, 
 "z": 0
 }, 
 "scale": {
@@ -475,10 +774,66 @@
 "z": 1
 }, 
 "translation": {
-"x": 18.012805938720703, 
-"y": 26.425653457641602, 
-"z": 0.34223735332489014
+"x": 0, 
+"y": 0, 
+"z": 0
 }
+}
+}, 
+"name": "DiggingParticleEmitter"
+}
+], 
+"components": {
+"Health": {
+".uid": 489, 
+"ArchetypeToSpawnOnDeath": ".uatype", 
+"EntityHealth": 100, 
+"SpawnOnDeath": false
+}, 
+"Transform": {
+".uid": 488, 
+"rotation": {
+"w": -0.0046432018280029297, 
+"x": 0, 
+"y": -0.99999034404754639, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -1.7517192363739014, 
+"y": 29.883821487426758, 
+"z": -19.422286987304688
+}
+}, 
+"VineAI": {
+".uid": 490, 
+"colliderSize": {
+"x": 5, 
+"y": 1, 
+"z": 5
+}, 
+"collisionList": [
+"CombatBowl1Level"
+], 
+"digParticleEmitterName": "DiggingParticleEmitter", 
+"digSpeed": 100, 
+"digTurnSpeed": 175.5, 
+"faceClosestPlayer": true, 
+"ignoreList": [
+"Boss", "BossRotatingTop"
+], 
+"uprootCooldown": 10, 
+"uprootDelay": 2, 
+"uprootDistance": 2, 
+"whipAngle": 176.5, 
+"whipCooldown": 5, 
+"whipDuration": 0.5, 
+"whipRange": 100, 
+"whipTurnSpeed": 129.5
 }
 }, 
 "v": "0.2submission"

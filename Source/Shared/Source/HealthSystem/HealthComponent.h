@@ -24,6 +24,12 @@ namespace ursine
     } // physics namespace
 } // ursine namespace
 
+enum HealthEvents
+{
+    HEALTH_DAMAGE_TAKEN,
+    HEALTH_ZERO
+};
+
 struct HealthEventArgs : ursine::EventArgs
 {
     float health;
@@ -34,7 +40,9 @@ struct HealthEventArgs : ursine::EventArgs
         , percentage( percentage ) { }
 };
 
-class Health : public ursine::ecs::Component
+class Health 
+    : public ursine::ecs::Component
+    , public ursine::EventDispatcher<HealthEvents>
 {
     NATIVE_COMPONENT;
 
@@ -49,14 +57,19 @@ public:
         std::string ArchetypeToSpawnOnDeath,
         GetArchetypeOnDeath,
         SetArchetypeOnDeath
-        );
+    );
+
+    EditorField(
+        bool deleteOnZeroHealth,
+        GetDeleteOnZeroHealth,
+        SetDeleteOnZeroHealth
+    );
 
     EditorField(
         bool SpawnOnDeath,
         GetSpawnOnDeath,
         SetSpawnOnDeath
-        );
-
+    );
 
     Meta(Enable)
     Health(void);
@@ -68,6 +81,9 @@ public:
 
     const std::string& GetArchetypeOnDeath(void) const;
     void SetArchetypeOnDeath(const std::string& objToSpawn);
+
+    bool GetDeleteOnZeroHealth(void) const;
+    void SetDeleteOnZeroHealth(bool flag);
 
     bool GetSpawnOnDeath(void) const;
     void SetSpawnOnDeath(const bool state);
@@ -86,6 +102,7 @@ private:
 
     std::string m_objToSpawn;
 
+    bool m_deleteOnZero;
     bool m_spawnOnDeath;
 
 } Meta(Enable, WhiteListMethods, DisplayName( "Health" ));

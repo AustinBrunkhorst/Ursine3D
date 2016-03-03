@@ -14,6 +14,9 @@
 #include <Component.h>
 
 #include "BossAIStateMachine.h"
+#include "LevelSegmentManagerComponent.h"
+
+class Health;
 
 class BossAI : public ursine::ecs::Component
 {
@@ -27,21 +30,45 @@ public:
         SetSeedshotEntityName
     );
 
+    EditorField(
+        std::string vineArchetype,
+        GetVineArchetype,
+        SetVineArchetype
+    );
+
     BossAI(void);
 
     const std::string &GetSeedshotEntityName(void) const;
     void SetSeedshotEntityName(const std::string &entityName);
 
+    const std::string &GetVineArchetype(void) const;
+    void SetVineArchetype(const std::string &vineArchetype);
+
     ursine::ecs::Entity *GetSeedshotEntity(void);
+
+    void AddSpawnedVine(ursine::ecs::Entity *vine);
 
 private:
 
     void OnInitialize(void) override;
-    void onHierachyConstructed(EVENT_HANDLER(ENTITY_HIERARCHY_SERIALIZED));
+    void onHierachyConstructed(EVENT_HANDLER(ursine::ecs::Entity));
+
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
+
+    void onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager));
+
+    void onVineDeath(EVENT_HANDLER(Health));
 
     std::string m_seedshotEntity;
 
-    BossAIStateMachine m_stateMachine;
+    std::string m_vineArchetype;
+
+    LevelSegments m_segment;
+
+    // The number of vines alive
+    int m_vineCount;
+
+    typedef std::vector<BossAIStateMachine::Handle> StateMachines;
+    StateMachines m_bossLogic[5];
 
 } Meta(Enable);

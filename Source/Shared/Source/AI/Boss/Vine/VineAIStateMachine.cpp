@@ -16,6 +16,7 @@
 #include "VineAIStateMachine.h"
 
 #include "VineAIComponent.h"
+#include "HealthComponent.h"
 
 #include <Application.h>
 
@@ -30,6 +31,8 @@ const std::string VineAIStateMachine::InView = "InView";
 const std::string VineAIStateMachine::GoHome = "GoHome";
 const std::string VineAIStateMachine::PursueTarget = "PursueTarget";
 
+const std::string VineAIStateMachine::Dead = "Dead";
+
 VineAIStateMachine::VineAIStateMachine(VineAI* ai)
     : m_ai( ai )
 {
@@ -39,6 +42,16 @@ VineAIStateMachine::VineAIStateMachine(VineAI* ai)
     AddBool( InView, false );
     AddBool( GoHome, false );
     AddBool( PursueTarget, false );
+    AddBool( Dead, false );
+}
+
+void VineAIStateMachine::Initialize(void)
+{
+    // subscribe to the health's OnDeath event
+    auto health = m_ai->GetOwner( )->GetComponent<Health>( );
+
+    health->Listener( this )
+        .On( HEALTH_ZERO, &VineAIStateMachine::onDeath );
 }
 
 void VineAIStateMachine::Update(void)
@@ -62,4 +75,9 @@ void VineAIStateMachine::decrementCooldown(const std::string &name)
         cooldown -= Application::Instance->GetDeltaTime( );
 
     SetFloat( name, cooldown );
+}
+
+void VineAIStateMachine::onDeath(EVENT_HANDLER(Health))
+{
+    SetBool( Dead, true );
 }
