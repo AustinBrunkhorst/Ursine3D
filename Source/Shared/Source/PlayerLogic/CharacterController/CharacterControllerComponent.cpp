@@ -25,6 +25,10 @@ CharacterController::CharacterController(void)
     , m_jump( false )
     , m_deadZone( 0.0f )
     , m_deadZoneSnap( 0.0f )
+    , m_mediumRotationFloor( 0.0f )
+    , m_highRotationFloor( 1.0f )
+    , m_lowRotationFactor( 0.0f )
+    , m_mediumRotationFactor( 1.0f )
     , m_lockMovement( false )
     , m_lockLooking( false ) { }
 

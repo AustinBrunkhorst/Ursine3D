@@ -54,33 +54,33 @@ public:
         SetDeadZoneSnap
     );
 
-	Meta(InputRange(0.0f, 1.0f, 0.05f))
-	EditorField(
-		float MediumRotationFloor,
-		GetMediumRotationFloor,
-		SetMediumRotationFloor
-		);
+    Meta(InputRange(0.0f, 1.0f, 0.05f))
+    EditorField(
+        float MediumRotationFloor,
+        GetMediumRotationFloor,
+        SetMediumRotationFloor
+        );
 
-	Meta(InputRange(0.0f, 1.0f, 0.05f))
-	EditorField(
-		float HighRotationFloor,
-		GetHighRotationFloor,
-		SetHighRotationFloor
-		);
+    Meta(InputRange(0.0f, 1.0f, 0.05f))
+    EditorField(
+        float HighRotationFloor,
+        GetHighRotationFloor,
+        SetHighRotationFloor
+        );
 
-	Meta(InputRange(0.0f, 1.0f, 0.05f))
-	EditorField(
-		float LowRotationFactor,
-		GetLowRotationFactor,
-		SetLowRotationFactor
-		);
+    Meta(InputRange(0.0f, 1.0f, 0.05f))
+    EditorField(
+        float LowRotationFactor,
+        GetLowRotationFactor,
+        SetLowRotationFactor
+        );
 
-	Meta(InputRange(0.0f, 1.0f, 0.05f))
-	EditorField(
-		float MediumRotationFactor,
-		GetMediumRotationFactor,
-		SetMediumRotationFactor
-		);
+    Meta(InputRange(0.0f, 1.0f, 0.05f))
+    EditorField(
+        float MediumRotationFactor,
+        GetMediumRotationFactor,
+        SetMediumRotationFactor
+        );
 
     EditorField(
         bool lockMovement,
@@ -103,17 +103,17 @@ public:
     float GetDeadZoneSnap(void) const;
     void SetDeadZoneSnap(float snap);
 
-	float GetMediumRotationFloor(void) const;
-	void SetMediumRotationFloor(float floor);
+    float GetMediumRotationFloor(void) const;
+    void SetMediumRotationFloor(float floor);
 
-	float GetHighRotationFloor(void) const;
-	void SetHighRotationFloor(float floor);
+    float GetHighRotationFloor(void) const;
+    void SetHighRotationFloor(float floor);
 
-	float GetLowRotationFactor(void) const;
-	void SetLowRotationFactor(float rotationFactor);
+    float GetLowRotationFactor(void) const;
+    void SetLowRotationFactor(float rotationFactor);
 
-	float GetMediumRotationFactor(void) const;
-	void SetMediumRotationFactor(float rotationFactor);
+    float GetMediumRotationFactor(void) const;
+    void SetMediumRotationFactor(float rotationFactor);
 
     const ursine::Vec2 &GetMoveDirection(void) const;
     void SetMoveDirection(const ursine::Vec2 &moveDir);
@@ -141,10 +141,10 @@ private:
 
     float m_deadZoneSnap;
 
-	float m_mediumRotationFloor;
-	float m_highRotationFloor;
-	float m_lowRotationFactor;
-	float m_mediumRotationFactor;
+    float m_mediumRotationFloor;
+    float m_highRotationFloor;
+    float m_lowRotationFactor;
+    float m_mediumRotationFactor;
 
     bool m_jump;
 

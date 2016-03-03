@@ -21,6 +21,7 @@
 #include "ChangeSegmentState.h"
 #include "CombatBowl1IntroCinematicState.h"
 #include "BossRoomTopAnimationState.h"
+#include "CurrentSegmentCondition.h"
 
 #include "TutorialResourcesComponent.h"
 #include "CombatBowl1ResourcesComponent.h"
@@ -176,12 +177,21 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
     // Next state for spawning the players (reposition them if they are present)
     auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
 
-    initState->AddTransition( playerCreateState, "Go To Init Players" );
+    auto toAddPlayers = initState->AddTransition( playerCreateState, "Go To Init Players" );
+
+    toAddPlayers->AddCondition<sm::CurrentSegmentCondition>( 
+        this, LevelSegments::CB1_SimulationStartCinematic, LevelSegments::CB1_OpenConduitRoom
+    );
+
+    // Lock the players
+    auto lockPlayers = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
+
+    playerCreateState->AddTransition( lockPlayers, "To Lock Players" );
 
     // Then start the cinematic
     auto cinematicState = stateM->AddState<CombatBowl1IntroCinematicState>( );
 
-    playerCreateState->AddTransition( cinematicState, "Go To Start Cinematic" );
+    lockPlayers->AddTransition( cinematicState, "Go To Start Cinematic" );
 
     // After the cinematic is finshed (it's a blocking state), tween the viewports and unlock the players
     auto viewportTween = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );

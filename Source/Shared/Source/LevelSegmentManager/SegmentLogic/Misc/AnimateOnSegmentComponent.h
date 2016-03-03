@@ -53,6 +53,9 @@ private:
     LevelSegments m_segment;
     bool m_greaterThan;
 
+    // Whether we've played already
+    bool m_finished;
+
     void onHierarchySerialize(EVENT_HANDLER(ursine::ecs::Entity));
 
     void onSegmentChange(EVENT_HANDLER(LevelSegmentManager));
