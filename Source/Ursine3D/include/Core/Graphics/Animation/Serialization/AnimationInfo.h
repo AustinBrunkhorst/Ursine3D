@@ -57,7 +57,7 @@ namespace ursine
                 *
                 *  @return nothing
                 */
-                AnimInfo();
+                AnimInfo(void);
 
                 /** @brief animation information destructor
                 *
@@ -65,7 +65,7 @@ namespace ursine
                 *
                 *  @return nothing
                 */
-                virtual ~AnimInfo();
+                virtual ~AnimInfo(void);
 
                 /** @brief animation information release function
                 *
@@ -73,7 +73,7 @@ namespace ursine
                 *
                 *  @return nothing
                 */
-                void ReleaseData();
+                void ReleaseData(void);
 
                 void Read(resources::ResourceReader &input) override;
                 void Write(resources::pipeline::ResourceWriter &output) override;

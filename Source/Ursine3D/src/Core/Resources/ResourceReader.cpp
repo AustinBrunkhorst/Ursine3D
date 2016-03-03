@@ -13,7 +13,7 @@ namespace ursine
         }
 
         ResourceReader::ResourceReader(const fs::path &file)
-            : m_stream( std::make_shared<std::ifstream>( file.string( ), std::ios::binary ) )
+            : m_stream( std::make_shared<std::ifstream>( file.string( ).c_str( ), std::ios::in | std::ios::binary ) )
         {
             
         }
@@ -68,7 +68,12 @@ namespace ursine
 
         bool ResourceReader::IsOpen(void) const
         {
-            return m_stream && (m_stream->rdstate( ) & std::ifstream::failbit) != 0;
+            return m_stream && !m_stream->fail( );
+        }
+
+        bool ResourceReader::IsEOF(void) const
+        {
+            return !m_stream || m_stream->eof( );
         }
     }
 }

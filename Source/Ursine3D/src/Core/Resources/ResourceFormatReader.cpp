@@ -12,24 +12,14 @@ namespace ursine
 
         ResourceData::Handle ResourceFormatReader::Read(const fs::path &resourceFile)
         {
-            auto fileName = resourceFile.string( );
+            ResourceReader reader( resourceFile );
 
-            auto stream = std::make_shared<std::ifstream>( );
-
-            stream->open( fileName, std::ios::binary );
-
-            UAssertCatchable( stream->is_open( ),
-                "Unble to open resource build file.\nfile: %s",
-                fileName.c_str( )
+            UAssert( reader.IsOpen( ),
+                "Unable to open resource for reading.\nfile: %s",
+                resourceFile.string( ).c_str( )
             );
 
-            ResourceReader reader;
-
-            reader.m_stream = stream;
-
             auto resource = read( reader );
-
-            stream->close( );
 
             return resource;
         }

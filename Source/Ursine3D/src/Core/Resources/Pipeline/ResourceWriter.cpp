@@ -14,7 +14,7 @@ namespace ursine
             }
 
             ResourceWriter::ResourceWriter(const fs::path &output)
-                : m_stream( output.string( ) )
+                : m_stream( output.string( ).c_str( ), std::ios::out | std::ios::binary )
             {
 
             }

@@ -30,6 +30,7 @@ namespace ursine
             ResourceReader &Seek(size_t offset);
 
             bool IsOpen(void) const;
+            bool IsEOF(void) const;
 
         private:
             friend class ResourceFormatReader;

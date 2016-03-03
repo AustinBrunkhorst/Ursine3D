@@ -56,7 +56,7 @@ namespace ursine
 
         auto ddsFile = change_extension( tempDirectory / displayName, "dds" );
 
-        std::ifstream stream( ddsFile.string( ), std::ios::binary );
+        std::ifstream stream( ddsFile.string( ), std::ios::in | std::ios::binary );
 
         UAssert( stream,
             "Unable to load built DDS file.\nfile: %s",

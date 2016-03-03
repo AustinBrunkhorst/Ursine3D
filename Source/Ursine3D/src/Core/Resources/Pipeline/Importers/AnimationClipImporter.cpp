@@ -14,15 +14,17 @@ namespace ursine
 
     resources::ResourceData::Handle rp::AnimationClipImporter::Import(ResourceImportContext &context)
     {
-        // how can I import .uanim file?        
-        fs::path fName(context.resource->GetSourceFileName());
+        auto fileName = context.resource->GetSourceFileName( );
 
-        auto clipFileName = fName.filename().string();
-                
-        ResourceReader clipReader(fName);// clipFileName);
+        ResourceReader clipReader( fileName );
+
+        UAssertCatchable( clipReader.IsOpen( ),
+            "Unable to open animation clip.\nfile: %s",
+            fileName.string( ).c_str( )
+        );
 
         // create animation info
-        graphics::ufmt_loader::AnimInfo *animInfo = new graphics::ufmt_loader::AnimInfo();
+        auto *animInfo = new graphics::ufmt_loader::AnimInfo( );
 
         // and read data from Resource Reader
         animInfo->Read( clipReader );

@@ -20,30 +20,29 @@ namespace ursine
     {
         namespace ufmt_loader
         {
-            void AnimData::ReleaseData()
+            void AnimData::ReleaseData(void)
             {
-                keyIndices.clear();
-                keyframes.clear();
+                keyIndices.clear( );
+                keyframes.clear( );
             }
 
-            AnimInfo::AnimInfo()
-                : name("")
-                , animCount(0)
-            {}
+            AnimInfo::AnimInfo(void)
+                : name( "" )
+                , animCount( 0 ) { }
 
-            AnimInfo::~AnimInfo()
+            AnimInfo::~AnimInfo(void)
             {
-                ReleaseData();
+                ReleaseData( );
             }
 
-            void AnimInfo::ReleaseData()
+            void AnimInfo::ReleaseData(void)
             {
                 name = "";
 
                 animCount = 0;
 
-                for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
-                    (*iter).ReleaseData();
+                for (auto iter = animDataArr.begin( ); iter != animDataArr.end( ); ++iter)
+                    (*iter).ReleaseData( );
             }
 
             void AnimInfo::Read(resources::ResourceReader &input)
