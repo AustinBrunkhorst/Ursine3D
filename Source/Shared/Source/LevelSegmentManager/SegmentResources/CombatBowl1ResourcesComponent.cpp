@@ -30,4 +30,9 @@ const ursine::resources::ResourceReference &CombatBowl1Resources::GetWorldData(v
 void CombatBowl1Resources::SetWorldData(const ursine::resources::ResourceReference &world)
 {
     m_worldToMerge = world;
+
+    if (!resourcesAreAvailable( ))
+        return;
+
+    NOTIFY_COMPONENT_CHANGED( "world", m_worldToMerge );
 }

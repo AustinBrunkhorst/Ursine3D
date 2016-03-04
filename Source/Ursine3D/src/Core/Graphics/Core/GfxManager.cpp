@@ -1409,7 +1409,7 @@ namespace ursine
             int type = (tempID >> 12) & 0x3;
             int overdraw = (tempID >> 15) & 0x1;
 
-            if (index >= 512)
+            if (index > MAX_RENDERABLES)
                 return;
 
             unsigned w, h;

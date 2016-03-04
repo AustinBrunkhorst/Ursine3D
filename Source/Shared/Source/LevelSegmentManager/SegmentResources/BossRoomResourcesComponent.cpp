@@ -30,4 +30,9 @@ const ursine::resources::ResourceReference &BossRoomResources::GetWorldData(void
 void BossRoomResources::SetWorldData(const ursine::resources::ResourceReference &world)
 {
     m_worldToMerge = world;
+
+    if (!resourcesAreAvailable( ))
+        return;
+
+    NOTIFY_COMPONENT_CHANGED( "world", m_worldToMerge );
 }
