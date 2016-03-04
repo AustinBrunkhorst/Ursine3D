@@ -98,7 +98,6 @@ namespace ursine
                 m_state = SlamState::Up;
 
                 //TODO: Spawn particles!!!!!!!!!
-
                 break;
             }
             case SlamState::Up:
