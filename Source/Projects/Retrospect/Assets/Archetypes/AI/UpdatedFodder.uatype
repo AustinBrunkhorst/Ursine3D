@@ -4,7 +4,7 @@
 "children": [], 
 "components": {
 "SpriteText": {
-".uid": 44, 
+".uid": 45, 
 "alignment": 1, 
 "size": 20, 
 "text": "Fodder", 
@@ -17,7 +17,7 @@
 "useFiltering": true
 }, 
 "Transform": {
-".uid": 43, 
+".uid": 44, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -41,7 +41,7 @@
 "children": [], 
 "components": {
 "Ghost": {
-".uid": 46, 
+".uid": 47, 
 "disableContactResponse": true, 
 "enableContactCallback": false, 
 "offset": {
@@ -51,11 +51,11 @@
 }
 }, 
 "SphereCollider": {
-".uid": 47, 
+".uid": 48, 
 "radius": 6
 }, 
 "Transform": {
-".uid": 45, 
+".uid": 46, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -83,8 +83,11 @@
 "Speed": 5, 
 "enabled": true
 }, 
+"AIType": {
+".uid": 39
+}, 
 "BoxCollider": {
-".uid": 39, 
+".uid": 40, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -92,16 +95,16 @@
 }
 }, 
 "FodderAI": {
-".uid": 40, 
+".uid": 41, 
 "AttackDelay": 1, 
-"AttackRange": 6, 
-"Cohesion": 0.5, 
-"Separation": 0.5, 
-"TotalBoidBehaviorScale": 0.5, 
+"AttackRange": 5, 
+"Cohesion": 0, 
+"Separation": 1, 
+"TotalBoidBehaviorScale": 1, 
 "damageOnAttack": 1
 }, 
 "Model3D": {
-".uid": 41, 
+".uid": 42, 
 "active": true, 
 "castsShadows": true, 
 "color": {
@@ -119,7 +122,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 42, 
+".uid": 43, 
 "bodyFlag": 0, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 

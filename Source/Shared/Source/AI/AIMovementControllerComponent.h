@@ -48,6 +48,8 @@ namespace ursine
 
             void Update(void);
 
+            void AddDirectionModifier(SVec3 mod);
+
             bool GetEnable(void) const;
             void SetEnable(bool enable);
 
@@ -56,6 +58,8 @@ namespace ursine
 
         private:
             SVec3 m_targetDir;
+
+            //SVec3 m_directionModifier;
 
             Handle<Rigidbody> m_rigid;
 

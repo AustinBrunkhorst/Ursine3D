@@ -151,14 +151,14 @@ namespace ursine
             centerVec /= m_nearRadius;
 
             // get the composite vector using the scalars set by the component
-            auto totalBoidVec = centerVec * m_cohesionScale + sepVec * m_separationScale;
+            auto totalBoidVec = centerVec * m_cohesionScale + -sepVec * m_separationScale;
 
             //auto playerDirection = playerPos - aiActorPos;
 
             playerDirection.Normalize();
 
             // apply to movement
-            setTargetDirection( (m_boidBehaviorScale * totalBoidVec) + playerDirection);
+            setTargetDirection(  playerDirection);
         }
 
         void WalkState::Exit(AIStateMachine *stateMachine)
