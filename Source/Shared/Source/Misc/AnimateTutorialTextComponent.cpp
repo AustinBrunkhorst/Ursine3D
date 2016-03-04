@@ -52,6 +52,7 @@ void AnimateTutorialText::onUpdate(EVENT_HANDLER(World))
 	if (m_index >= textLines.Size( ))
 	{
 		GetOwner( )->Delete( );
+		return;
 	}
 
 	float dt = Application::Instance->GetDeltaTime( );

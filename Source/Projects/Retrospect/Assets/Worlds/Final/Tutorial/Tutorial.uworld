@@ -3,10 +3,146 @@
 {
 "children": [], 
 "components": {
-"PlayerSpawnPoint": {
+"AnimateOnSegment": {
 ".uid": 6, 
-"playerArchetype": "Player1", 
-"spawnSegment": 76
+"changeOnThisSegment": 8, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 7, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 8, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 2.4000000953674316, 
+"ease": 0, 
+"position": {
+"x": 100.20024108886719, 
+"y": 48.436347961425781, 
+"z": -67.378303527832031
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 3.2999999523162842, 
+"ease": 0, 
+"position": {
+"x": 100.19995880126953, 
+"y": 48.436206817626953, 
+"z": 70.662254333496094
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2.4000000953674316, 
+"ease": 0, 
+"position": {
+"x": 100.20035552978516, 
+"y": 48.436408996582031, 
+"z": -3
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Health": {
+".uid": 9, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 20, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 10, 
+"active": false, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 11, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
 }, 
 "Transform": {
 ".uid": 5, 
@@ -17,2146 +153,28 @@
 "z": 0
 }, 
 "scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
+"x": 6, 
+"y": 12, 
+"z": 6
 }, 
 "translation": {
-"x": 0, 
-"y": 0, 
-"z": -5.6254787445068359
+"x": 100.20024108886719, 
+"y": 48.436347961425781, 
+"z": -67.378303527832031
 }
 }
 }, 
-"name": "TutorialPlayer1Spawn Archetype"
+"name": "DummyTargetRunny2"
 }, {
 "children": [], 
 "components": {
-"PlayerSpawnPoint": {
-".uid": 8, 
-"playerArchetype": "Player2", 
-"spawnSegment": 76
-}, 
-"Transform": {
-".uid": 7, 
-"rotation": {
-"w": -4.3711388286737929e-08, 
-"x": 0, 
-"y": 1, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 5.6254801750183105
-}
-}
-}, 
-"name": "TutorialPlayer2Spawn Archetype"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"Body": {
-".uid": 11, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 12, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"Model3D": {
+"AnimateOnSegment": {
 ".uid": 13, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
+"changeOnThisSegment": 8, 
+"whenGreaterThan": false
 }, 
-"emissive": 1.5, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 1, 
-"specularPower": 165
-}, 
-"Transform": {
-".uid": 10, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1000, 
-"y": 1, 
-"z": 1000
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Floor"
-}, {
-"children": [], 
-"components": {
-"Model3D": {
-".uid": 15, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 3, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "HiRezSphere", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
+"BoxCollider": {
 ".uid": 14, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": -500, 
-"y": -500, 
-"z": -500
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Sphere"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 17, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"intensity": 1, 
-"radius": 1, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 16, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
-}
-}
-}, 
-"name": "Directional Light"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 22, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"intensity": 1, 
-"radius": 1, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 21, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
-}
-}
-}, 
-"name": "Directional Light (1)"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 27, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"intensity": 1, 
-"radius": 1, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 26, 
-"rotation": {
-"w": -4.3711388286737929e-08, 
-"x": 0, 
-"y": 1, 
-"z": 0
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
-}
-}
-}, 
-"name": "Directional Light  (2)"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 32, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"intensity": 1, 
-"radius": 1, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 31, 
-"rotation": {
-"w": -0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": -6.1817239327410789e-08
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
-}
-}
-}, 
-"name": "Directional Light   (3)"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 37, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"intensity": 1, 
-"radius": 150.26731872558594, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 50
-}, 
-"type": 1
-}, 
-"Transform": {
-".uid": 36, 
-"rotation": {
-"w": 0.65427792072296143, 
-"x": 0.75625395774841309, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 154.15058898925781, 
-"y": 154.15058898925781, 
-"z": 150.26731872558594
-}, 
-"translation": {
-"x": 0, 
-"y": 43.425643920898438, 
-"z": 9.0050439834594727
-}
-}
-}, 
-"name": "Spot Light"
-}
-], 
-"components": {
-"Transform": {
-".uid": 9, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 4.3852996896021068e-06, 
-"z": 0
-}
-}
-}, 
-"name": "TutorialRoom Archetype"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 41, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 42, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 43, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 44, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 45, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 46, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 47, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 48, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 49, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 50, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 51, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 52, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 53, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 54, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 55, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 56, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"BoxCollider": {
-".uid": 58, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"Ghost": {
-".uid": 59, 
-"disableContactResponse": true, 
-"enableContactCallback": true, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"Model3D": {
-".uid": 60, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"SegmentChangeTrigger": {
-".uid": 61, 
-"changeNewSegment": 2, 
-"changeOnThisSegment": 1
-}, 
-"Transform": {
-".uid": 57, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 34.423664093017578, 
-"y": 15.988882064819336, 
-"z": 1.5564365386962891
-}
-}
-}, 
-"name": "GateZone"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"Body": {
-".uid": 66, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 67, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 68, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": -10.358232498168945, 
-"y": -20, 
-"z": -50.034858703613281
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": -10.358232498168945, 
-"y": 15.988901138305664, 
-"z": -50.034858703613281
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 69, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 65, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": -10.358232498168945, 
-"y": -20, 
-"z": -50.034858703613281
-}
-}
-}, 
-"name": "Right Wall"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 71, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 72, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 73, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": -49.574928283691406, 
-"y": -20, 
-"z": 30
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": -49.574928283691406, 
-"y": 15.988901138305664, 
-"z": 30
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 74, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 70, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": -49.574928283691406, 
-"y": -20, 
-"z": 30
-}
-}
-}, 
-"name": "Back Wall 1"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 76, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 77, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 78, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": -10.501477241516113, 
-"y": -20, 
-"z": 54.090084075927734
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": -10.501477241516113, 
-"y": 15.988901138305664, 
-"z": 54.090084075927734
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 79, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 75, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": -10.501477241516113, 
-"y": -20, 
-"z": 54.090084075927734
-}
-}
-}, 
-"name": "Left Wall"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 81, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 82, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 83, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": -49.574928283691406, 
-"y": -20, 
-"z": -26.149738311767578
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": -49.574928283691406, 
-"y": 15.988901138305664, 
-"z": -26.149738311767578
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 84, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 80, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": -49.574928283691406, 
-"y": -20, 
-"z": -26.149738311767578
-}
-}
-}, 
-"name": "Back Wall 2"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 86, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 87, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 88, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 27.8671875, 
-"y": -20, 
-"z": -27.423912048339844
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 27.8671875, 
-"y": 15.988901138305664, 
-"z": -27.423912048339844
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 3, 
-"ease": 0, 
-"position": {
-"x": 27.867189407348633, 
-"y": 15.988901138305664, 
-"z": -57.423908233642578
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 89, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 85, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 27.8671875, 
-"y": -20, 
-"z": -27.423912048339844
-}
-}
-}, 
-"name": "Right Door"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 91, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 92, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 93, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 27.740447998046875, 
-"y": -20, 
-"z": 32.044895172119141
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 27.740447998046875, 
-"y": 16, 
-"z": 32.044895172119141
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 3, 
-"ease": 0, 
-"position": {
-"x": 27.740447998046875, 
-"y": 15.988901138305664, 
-"z": 59
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 94, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 90, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 27.740447998046875, 
-"y": -20, 
-"z": 32.044895172119141
-}
-}
-}, 
-"name": "Left Door"
-}
-], 
-"components": {
-"AnimateOnSegment": {
-".uid": 63, 
-"changeOnThisSegment": 1
-}, 
-"EntityAnimatorGroup": {
-".uid": 64
-}, 
-"Transform": {
-".uid": 62, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Cage"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"Body": {
-".uid": 99, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 100, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 101, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 66.5, 
-"y": -20, 
-"z": 37.5
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 66.5, 
-"y": 16, 
-"z": 37.5
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 102, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 98, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 66.5, 
-"y": -20, 
-"z": 37.5
-}
-}
-}, 
-"name": "Wall2"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 104, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 105, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 106, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 126, 
-"y": -20, 
-"z": -36
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 126, 
-"y": 16, 
-"z": -36
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 107, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 103, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 126, 
-"y": -20, 
-"z": -36
-}
-}
-}, 
-"name": "Wall3"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 109, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 110, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 111, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 66, 
-"y": -20, 
-"z": -36
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 66, 
-"y": 16, 
-"z": -36
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 112, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 108, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 66, 
-"y": -20, 
-"z": -36
-}
-}
-}, 
-"name": "Wall1"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 114, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 115, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 116, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 126, 
-"y": -20, 
-"z": 37.5
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 126, 
-"y": 16, 
-"z": 37.5
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 117, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 113, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 126, 
-"y": -20, 
-"z": 37.5
-}
-}
-}, 
-"name": "Wall 4"
-}
-], 
-"components": {
-"AnimateOnSegment": {
-".uid": 96, 
-"changeOnThisSegment": 3
-}, 
-"EntityAnimatorGroup": {
-".uid": 97
-}, 
-"Transform": {
-".uid": 95, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Hallway"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"Body": {
-".uid": 122, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 123, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2164,3486 +182,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 124, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 126, 
-"y": -20, 
-"z": 2.5
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 126, 
-"y": -1.5175325870513916, 
-"z": 2.5
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 125, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 121, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 126, 
-"y": -20, 
-"z": 2.5
-}
-}
-}, 
-"name": "Stair 1"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 127, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 128, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 129, 
-"animationClipName": "", 
-"delta": 2.5, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 244.56011962890625, 
-"y": -20, 
-"z": 0.75308448076248169
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 100, 
-"y": 34.305904388427734, 
-"z": 180
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 244.56011962890625, 
-"y": 24.600309371948242, 
-"z": 0.75308448076248169
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 100, 
-"y": 34.305904388427734, 
-"z": 180
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 130, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 126, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"scale": {
-"x": 100, 
-"y": 34.305904388427734, 
-"z": 180
-}, 
-"translation": {
-"x": 244.56011962890625, 
-"y": -20, 
-"z": 0.75308448076248169
-}
-}
-}, 
-"name": "Platform"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 132, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 133, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 134, 
-"animationClipName": "", 
-"delta": 1.5, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 142.17974853515625, 
-"y": -20, 
-"z": 2.5
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 142.17974853515625, 
-"y": 14.076117515563965, 
-"z": 2.5
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 135, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 131, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 142.17974853515625, 
-"y": -20, 
-"z": 2.5
-}
-}
-}, 
-"name": "Stair2"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 137, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 138, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 139, 
-"animationClipName": "", 
-"delta": 2, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 159.12113952636719, 
-"y": -20, 
-"z": 0.75308448076248169
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 159.12113952636719, 
-"y": 24.600309371948242, 
-"z": 0.75308448076248169
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 140, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 136, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 159.12113952636719, 
-"y": -20, 
-"z": 0.75308448076248169
-}
-}
-}, 
-"name": "Stair 3"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 142, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 143, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 144, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 255.90582275390625, 
-"y": -50.600208282470703, 
-"z": 44.918514251708984
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 200, 
-"z": 200
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 255.90582275390625, 
-"y": 24.600210189819336, 
-"z": 44.918514251708984
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 200, 
-"z": 200
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 145, 
-"active": true, 
-"castsShadows": true, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 141, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 200, 
-"z": 200
-}, 
-"translation": {
-"x": 255.90582275390625, 
-"y": -50.600208282470703, 
-"z": 44.918514251708984
-}
-}
-}, 
-"name": "Invis wall"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 147, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 148, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 149, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 253.96965026855469, 
-"y": -50.600208282470703, 
-"z": -43.253261566162109
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 200, 
-"z": 200
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 253.96965026855469, 
-"y": 24.600210189819336, 
-"z": -43.253261566162109
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 200, 
-"z": 200
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 150, 
-"active": true, 
-"castsShadows": true, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 146, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 200, 
-"z": 200
-}, 
-"translation": {
-"x": 253.96965026855469, 
-"y": -50.600208282470703, 
-"z": -43.253261566162109
-}
-}
-}, 
-"name": "Invis wall  (2)"
-}
-], 
-"components": {
-"AnimateOnSegment": {
-".uid": 119, 
-"changeOnThisSegment": 2
-}, 
-"EntityAnimatorGroup": {
-".uid": 120
-}, 
-"Transform": {
-".uid": 118, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Stairs"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"Body": {
-".uid": 155, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 156, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 157, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 142.01020812988281, 
-"y": 200, 
-"z": 2.8542771339416504
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 180.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 142.01020812988281, 
-"y": 77.565193176269531, 
-"z": 2.8542771339416504
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 180.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 158, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 154, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 180.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 142.01020812988281, 
-"y": 200, 
-"z": 2.8542771339416504
-}
-}
-}, 
-"name": "Top Box"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 160, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 161, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 162, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 142.01020812988281, 
-"y": -30, 
-"z": -71.704429626464844
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 142.01020812988281, 
-"y": 48.401729583740234, 
-"z": -71.704429626464844
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 163, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 159, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 142.01020812988281, 
-"y": -30, 
-"z": -71.704429626464844
-}
-}
-}, 
-"name": "BottomBox"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 165, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 166, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 167, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 142.01020812988281, 
-"y": -30, 
-"z": 77.145858764648438
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 142.01020812988281, 
-"y": 48.401729583740234, 
-"z": 77.145858764648438
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 168, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 164, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 142.01020812988281, 
-"y": -30, 
-"z": 77.145858764648438
-}
-}
-}, 
-"name": "BottomBox (1)"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 170, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 171, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 172, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 142.01020812988281, 
-"y": -30, 
-"z": 2.8542771339416504
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 142.01020812988281, 
-"y": 28.401729583740234, 
-"z": 2.8542771339416504
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 180.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 173, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 169, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 142.01020812988281, 
-"y": -30, 
-"z": 2.8542771339416504
-}
-}
-}, 
-"name": "BottomBox  (2)"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 175, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 176, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 177, 
-"animationClipName": "", 
-"delta": 2.5, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 2.5, 
-"ease": 0, 
-"position": {
-"x": -7.5144777297973633, 
-"y": -20, 
-"z": 0.75308448076248169
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1000, 
-"y": 34.305904388427734, 
-"z": 1000
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": -7.5144801139831543, 
-"y": 24.600309371948242, 
-"z": 0.75308448076248169
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1000, 
-"y": 34.305904388427734, 
-"z": 1000
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Model3D": {
-".uid": 178, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 174, 
-"rotation": {
-"w": 0.70928430557250977, 
-"x": 0, 
-"y": -0.70492243766784668, 
-"z": 0
-}, 
-"scale": {
-"x": 1000, 
-"y": 34.305904388427734, 
-"z": 1000
-}, 
-"translation": {
-"x": -7.5144777297973633, 
-"y": -20, 
-"z": 0.75308448076248169
-}
-}
-}, 
-"name": "Ground"
-}
-], 
-"components": {
-"AnimateOnSegment": {
-".uid": 152, 
-"changeOnThisSegment": 3
-}, 
-"EntityAnimatorGroup": {
-".uid": 153
-}, 
-"Transform": {
-".uid": 151, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "ShootingRangeAnimation"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"BoxCollider": {
-".uid": 183, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 184, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 100.20036315917969, 
-"y": -20, 
-"z": 1.9420790672302246
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 100.20036315917969, 
-"y": 48.436412811279297, 
-"z": 1.9420790672302246
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Health": {
-".uid": 185, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 3, 
-"SpawnOnDeath": true
-}, 
-"Model3D": {
-".uid": 186, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cylinder", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Rigidbody": {
-".uid": 187, 
-"bodyFlag": 1, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"enableContinuousCollisionDetection": false, 
-"freezeXRotation": false, 
-"freezeYRotation": false, 
-"freezeZRotation": false, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
-}, 
-"mass": 0, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"sleepToggle": true
-}, 
-"Transform": {
-".uid": 182, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"translation": {
-"x": 100.20036315917969, 
-"y": -20, 
-"z": 1.9420790672302246
-}
-}
-}, 
-"name": "DummyTarget1"
-}, {
-"children": [], 
-"components": {
-"BoxCollider": {
-".uid": 189, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 190, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 80.029510498046875, 
-"y": -20, 
-"z": -23.971530914306641
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 80.029510498046875, 
-"y": 48.436412811279297, 
-"z": -23.971530914306641
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Health": {
-".uid": 191, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 3, 
-"SpawnOnDeath": true
-}, 
-"Model3D": {
-".uid": 192, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cylinder", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Rigidbody": {
-".uid": 193, 
-"bodyFlag": 1, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"enableContinuousCollisionDetection": false, 
-"freezeXRotation": false, 
-"freezeYRotation": false, 
-"freezeZRotation": false, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
-}, 
-"mass": 0, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"sleepToggle": true
-}, 
-"Transform": {
-".uid": 188, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"translation": {
-"x": 80.029510498046875, 
-"y": -20, 
-"z": -23.971530914306641
-}
-}
-}, 
-"name": "DummyTarget2"
-}, {
-"children": [], 
-"components": {
-"BoxCollider": {
-".uid": 195, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 196, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 80.804466247558594, 
-"y": -20, 
-"z": 26.263629913330078
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 80.804466247558594, 
-"y": 48.436412811279297, 
-"z": 26.263629913330078
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Health": {
-".uid": 197, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 3, 
-"SpawnOnDeath": true
-}, 
-"Model3D": {
-".uid": 198, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cylinder", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Rigidbody": {
-".uid": 199, 
-"bodyFlag": 1, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"enableContinuousCollisionDetection": false, 
-"freezeXRotation": false, 
-"freezeYRotation": false, 
-"freezeZRotation": false, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
-}, 
-"mass": 0, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"sleepToggle": true
-}, 
-"Transform": {
-".uid": 194, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"translation": {
-"x": 80.804466247558594, 
-"y": -20, 
-"z": 26.263629913330078
-}
-}
-}, 
-"name": "DummyTarget3"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 203, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 204, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 202, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 41.105213165283203, 
-"z": 0
-}
-}
-}, 
-"name": "Down"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 206, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": 40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 207, 
-"color": {
-"a": 1, 
-"b": 0.88671875, 
-"g": 0.0588836669921875, 
-"r": 0.62962710857391357
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 205, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": -36.5587158203125, 
-"z": 0
-}
-}
-}, 
-"name": "Up"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 209, 
-"emitCount": 1000, 
-"emitRate": 200000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 210, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 208, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 41.105209350585938, 
-"z": 0
-}
-}
-}, 
-"name": "DownRing"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 212, 
-"emitCount": 1000, 
-"emitRate": 200000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": 40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 213, 
-"color": {
-"a": 1, 
-"b": 0.890625, 
-"g": 0.2574462890625, 
-"r": 0.69275665283203125
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 211, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": -9.9058456420898438, 
-"z": 0
-}
-}
-}, 
-"name": "UpRing"
-}
-], 
-"components": {
-"EntityAnimator": {
-".uid": 201, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 80.094436645507813, 
-"y": -47.244171142578125, 
-"z": -23.693214416503906
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 0, 
-"ease": 0, 
-"position": {
-"x": 80.094436645507813, 
-"y": 27.244169235229492, 
-"z": -23.693214416503906
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 80.094436645507813, 
-"y": -20, 
-"z": -23.693214416503906
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Transform": {
-".uid": 200, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 80.094436645507813, 
-"y": -47.244171142578125, 
-"z": -23.693214416503906
-}
-}
-}, 
-"name": "FX_SimulationStart Archetype"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 217, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 218, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 216, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 41.105213165283203, 
-"z": 0
-}
-}
-}, 
-"name": "Down"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 220, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": 40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 221, 
-"color": {
-"a": 1, 
-"b": 0.8828125, 
-"g": 0.0413818359375, 
-"r": 0.62149864435195923
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 219, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": -36.5587158203125, 
-"z": 0
-}
-}
-}, 
-"name": "Up"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 223, 
-"emitCount": 1000, 
-"emitRate": 200000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 224, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 222, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 41.105209350585938, 
-"z": 0
-}
-}
-}, 
-"name": "DownRing"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 226, 
-"emitCount": 1000, 
-"emitRate": 200000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": 40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 227, 
-"color": {
-"a": 1, 
-"b": 0.890625, 
-"g": 0.2574462890625, 
-"r": 0.69275665283203125
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 225, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": -9.9058456420898438, 
-"z": 0
-}
-}
-}, 
-"name": "UpRing"
-}
-], 
-"components": {
-"EntityAnimator": {
-".uid": 215, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 80.094436645507813, 
-"y": -47.244171142578125, 
-"z": 26.947725296020508
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 0, 
-"ease": 0, 
-"position": {
-"x": 80.094436645507813, 
-"y": 27.244169235229492, 
-"z": 26.947725296020508
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 80.094436645507813, 
-"y": -20, 
-"z": 26.947725296020508
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Transform": {
-".uid": 214, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 80.094436645507813, 
-"y": -47.244171142578125, 
-"z": 26.947725296020508
-}
-}
-}, 
-"name": "FX_SimulationStart Archetype (1)"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 231, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 232, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 230, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 41.105213165283203, 
-"z": 0
-}
-}
-}, 
-"name": "Down"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 234, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": 40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 235, 
-"color": {
-"a": 1, 
-"b": 0.89453125, 
-"g": 0.034942626953125, 
-"r": 0.6275782585144043
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 233, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": -36.5587158203125, 
-"z": 0
-}
-}
-}, 
-"name": "Up"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 237, 
-"emitCount": 1000, 
-"emitRate": 200000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 238, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 236, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 41.105209350585938, 
-"z": 0
-}
-}
-}, 
-"name": "DownRing"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 240, 
-"emitCount": 1000, 
-"emitRate": 200000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": 40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 241, 
-"color": {
-"a": 1, 
-"b": 0.890625, 
-"g": 0.2574462890625, 
-"r": 0.69275665283203125
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 239, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": -9.9058456420898438, 
-"z": 0
-}
-}
-}, 
-"name": "UpRing"
-}
-], 
-"components": {
-"EntityAnimator": {
-".uid": 229, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 100.69409942626953, 
-"y": -47.244171142578125, 
-"z": 2.8739039897918701
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 0, 
-"ease": 0, 
-"position": {
-"x": 100.69409942626953, 
-"y": 27.244169235229492, 
-"z": 2.8739039897918701
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 100.69409942626953, 
-"y": -20, 
-"z": 2.8739039897918701
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Transform": {
-".uid": 228, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 100.69409942626953, 
-"y": -47.244171142578125, 
-"z": 2.8739039897918701
-}
-}
-}, 
-"name": "FX_SimulationStart Archetype  (2)"
-}
-], 
-"components": {
-"AnimateOnSegment": {
-".uid": 180, 
-"changeOnThisSegment": 4
-}, 
-"EntityAnimatorGroup": {
-".uid": 181
-}, 
-"Transform": {
-".uid": 179, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Wave1Animations"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"BoxCollider": {
-".uid": 246, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 247, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 8.6071996688842773, 
-"y": -20, 
-"z": 1.9420790672302246
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 10, 
-"y": 15, 
-"z": 10
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 8.6071996688842773, 
-"y": 48.436412811279297, 
-"z": 1.9420790672302246
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 10, 
-"y": 15, 
-"z": 10
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Health": {
-".uid": 248, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 5, 
-"SpawnOnDeath": true
-}, 
-"Model3D": {
-".uid": 249, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cylinder", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Rigidbody": {
-".uid": 250, 
-"bodyFlag": 1, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"enableContinuousCollisionDetection": false, 
-"freezeXRotation": false, 
-"freezeYRotation": false, 
-"freezeZRotation": false, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
-}, 
-"mass": 0, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"sleepToggle": true
-}, 
-"Transform": {
-".uid": 245, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 10, 
-"y": 15, 
-"z": 10
-}, 
-"translation": {
-"x": 8.6071996688842773, 
-"y": -20, 
-"z": 1.9420790672302246
-}
-}
-}, 
-"name": "LongDistanceDummy"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 254, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 255, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 253, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 41.105213165283203, 
-"z": 0
-}
-}
-}, 
-"name": "Down"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 257, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 10, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": 40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 258, 
-"color": {
-"a": 1, 
-"b": 0.54296875, 
-"g": 0.0190887451171875, 
-"r": 0.33341675996780396
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 256, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": -36.5587158203125, 
-"z": 0
-}
-}
-}, 
-"name": "Up"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 260, 
-"emitCount": 1000, 
-"emitRate": 200000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 261, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 259, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 41.105209350585938, 
-"z": 0
-}
-}
-}, 
-"name": "DownRing"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 263, 
-"emitCount": 1000, 
-"emitRate": 200000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": 40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 264, 
-"color": {
-"a": 1, 
-"b": 0.890625, 
-"g": 0.2574462890625, 
-"r": 0.69275665283203125
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 262, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": -9.9058456420898438, 
-"z": 0
-}
-}
-}, 
-"name": "UpRing"
-}
-], 
-"components": {
-"EntityAnimator": {
-".uid": 252, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 8.6071996688842773, 
-"y": -47.244171142578125, 
-"z": 2.8739039897918701
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 0, 
-"ease": 0, 
-"position": {
-"x": 8.6071996688842773, 
-"y": 27.244169235229492, 
-"z": 2.8739039897918701
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 8.6071996688842773, 
-"y": -20, 
-"z": 2.8739039897918701
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Transform": {
-".uid": 251, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 8.6071996688842773, 
-"y": -47.244171142578125, 
-"z": 2.8739039897918701
-}
-}
-}, 
-"name": "FX_SimulationStart Archetype   (3)"
-}
-], 
-"components": {
-"AnimateOnSegment": {
-".uid": 243, 
-"changeOnThisSegment": 5
-}, 
-"EntityAnimatorGroup": {
-".uid": 244
-}, 
-"Transform": {
-".uid": 242, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Wave2Animations"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"BoxCollider": {
-".uid": 269, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 270, 
+".uid": 15, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -5746,14 +285,15 @@
 "smoothPath": true
 }, 
 "Health": {
-".uid": 271, 
+".uid": 16, 
 "ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 3, 
-"SpawnOnDeath": true
+"EntityHealth": 20, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
 }, 
 "Model3D": {
-".uid": 272, 
-"active": true, 
+".uid": 17, 
+"active": false, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -5770,7 +310,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 273, 
+".uid": 18, 
 "bodyFlag": 1, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
@@ -5792,7 +332,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 268, 
+".uid": 12, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -5811,12 +351,2624 @@
 }
 }
 }, 
-"name": "DummyTarget1 (1)"
+"name": "DummyTargetRunny"
+}, {
+"children": [], 
+"components": {
+"PlayerSpawnPoint": {
+".uid": 20, 
+"playerArchetype": "Player1", 
+"spawnSegment": 76
+}, 
+"Transform": {
+".uid": 19, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -111.96633911132813, 
+"y": 1, 
+"z": -17
+}
+}
+}, 
+"name": "TutorialPlayer1Spawn Archetype"
+}, {
+"children": [], 
+"components": {
+"PlayerSpawnPoint": {
+".uid": 22, 
+"playerArchetype": "Player2", 
+"spawnSegment": 76
+}, 
+"Transform": {
+".uid": 21, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -111.96633911132813, 
+"y": 1, 
+"z": 20
+}
+}
+}, 
+"name": "TutorialPlayer2Spawn Archetype"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 25, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 26, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Model3D": {
+".uid": 27, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 1.5, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 1, 
+"specularPower": 165
+}, 
+"Transform": {
+".uid": 24, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1000, 
+"y": 1, 
+"z": 1000
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Floor"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 29, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 3, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "HiRezSphere", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 28, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": -500, 
+"y": -500, 
+"z": -500
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Sphere"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 31, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 1, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 30, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 35.355335235595703, 
+"z": 0
+}
+}
+}, 
+"name": "Directional Light"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 36, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 1, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 35, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 35.355335235595703, 
+"z": 0
+}
+}
+}, 
+"name": "Directional Light (1)"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 41, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 1, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 40, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 35.355335235595703, 
+"z": 0
+}
+}
+}, 
+"name": "Directional Light  (2)"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 46, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 1, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 0
+}, 
+"Transform": {
+".uid": 45, 
+"rotation": {
+"w": -0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": -6.1817239327410789e-08
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 35.355335235595703, 
+"z": 0
+}
+}
+}, 
+"name": "Directional Light   (3)"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 51, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 150.26731872558594, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 50
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 50, 
+"rotation": {
+"w": 0.65427792072296143, 
+"x": 0.75625395774841309, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 154.15058898925781, 
+"y": 154.15058898925781, 
+"z": 150.26731872558594
+}, 
+"translation": {
+"x": 0, 
+"y": 43.425643920898438, 
+"z": 9.0050439834594727
+}
+}
+}, 
+"name": "Spot Light"
+}
+], 
+"components": {
+"Transform": {
+".uid": 23, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 4.3852996896021068e-06, 
+"z": 0
+}
+}
+}, 
+"name": "TutorialRoom Archetype"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 55, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 56, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 57, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 58, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 59, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 60, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 61, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 62, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 63, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 64, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 65, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 66, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 67, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 68, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 69, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 70, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
 }, {
 "children": [], 
 "components": {
 "BoxCollider": {
-".uid": 275, 
+".uid": 72, 
+"dimensions": {
+"x": 1, 
+"y": 5, 
+"z": 1
+}
+}, 
+"Ghost": {
+".uid": 73, 
+"disableContactResponse": true, 
+"enableContactCallback": true, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SegmentChangeTrigger": {
+".uid": 74, 
+"changeNewSegment": 2, 
+"changeOnThisSegment": 1
+}, 
+"Transform": {
+".uid": 71, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -67.561264038085938, 
+"y": 15.988882064819336, 
+"z": 0
+}
+}
+}, 
+"name": "GateZone"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 79, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 80, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 81, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -111.51685333251953, 
+"y": -20, 
+"z": -50.034858703613281
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -111.51685333251953, 
+"y": 15.988901138305664, 
+"z": -50.034858703613281
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 82, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 78, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -111.51685333251953, 
+"y": -20, 
+"z": -50.034858703613281
+}
+}
+}, 
+"name": "Right Wall"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 84, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 85, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 86, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -150.36338806152344, 
+"y": -20, 
+"z": 30
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -150.36338806152344, 
+"y": 15.988901138305664, 
+"z": 30
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 87, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 83, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -150.36338806152344, 
+"y": -20, 
+"z": 30
+}
+}
+}, 
+"name": "Back Wall 1"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 89, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 90, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 91, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -111.51685333251953, 
+"y": -20, 
+"z": 54.090084075927734
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -111.51685333251953, 
+"y": 15.988901138305664, 
+"z": 54.090084075927734
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 92, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 88, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -111.51685333251953, 
+"y": -20, 
+"z": 54.090084075927734
+}
+}
+}, 
+"name": "Left Wall"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 94, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 95, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 96, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -150.36338806152344, 
+"y": -20, 
+"z": -26.149738311767578
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -150.36338806152344, 
+"y": 15.988901138305664, 
+"z": -26.149738311767578
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 97, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 93, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -150.36338806152344, 
+"y": -20, 
+"z": -26.149738311767578
+}
+}
+}, 
+"name": "Back Wall 2"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 99, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 100, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 101, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": -20, 
+"z": -27.423912048339844
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": 15.988901138305664, 
+"z": -27.423912048339844
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": 15.988901138305664, 
+"z": -57.423908233642578
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 102, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 98, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -73.007888793945313, 
+"y": -20, 
+"z": -27.423912048339844
+}
+}
+}, 
+"name": "Right Door"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 104, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 105, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 106, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": -20, 
+"z": 32.044895172119141
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": 16, 
+"z": 32.044895172119141
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": 15.988901138305664, 
+"z": 59
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 107, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 103, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -73.007888793945313, 
+"y": -20, 
+"z": 32.044895172119141
+}
+}
+}, 
+"name": "Left Door"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 76, 
+"changeOnThisSegment": 1, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 77
+}, 
+"Transform": {
+".uid": 75, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Cage"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 112, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 113, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 114, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 66.5, 
+"y": -20, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.89999997615814209, 
+"ease": 0, 
+"position": {
+"x": 66.5, 
+"y": 16, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 115, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 111, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 66.5, 
+"y": -20, 
+"z": 61
+}
+}
+}, 
+"name": "Wall2"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 117, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 118, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 119, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 120.07420349121094, 
+"y": -20, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.80000001192092896, 
+"ease": 0, 
+"position": {
+"x": 120.07420349121094, 
+"y": 16, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 120, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 116, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 120.07420349121094, 
+"y": -20, 
+"z": -60
+}
+}
+}, 
+"name": "Wall3"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 122, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 123, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 124, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 66, 
+"y": -20, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 66, 
+"y": 16, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 125, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 121, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 66, 
+"y": -20, 
+"z": -60
+}
+}
+}, 
+"name": "Wall1"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 127, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 128, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 129, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 120.07420349121094, 
+"y": -20, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.60000002384185791, 
+"ease": 0, 
+"position": {
+"x": 120.07420349121094, 
+"y": 16, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 130, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 126, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 120.07420349121094, 
+"y": -20, 
+"z": 61
+}
+}
+}, 
+"name": "Wall 4"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 132, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 133, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 134, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 7.8266401290893555, 
+"y": -20, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.69999998807907104, 
+"ease": 0, 
+"position": {
+"x": 7.8266401290893555, 
+"y": 16, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 135, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 131, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 7.8266401290893555, 
+"y": -20, 
+"z": 61
+}
+}
+}, 
+"name": "Wall5"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 137, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 138, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 139, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -34.847270965576172, 
+"y": -20, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.5, 
+"ease": 0, 
+"position": {
+"x": -34.847270965576172, 
+"y": 16, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 140, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 136, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -34.847270965576172, 
+"y": -20, 
+"z": 61
+}
+}
+}, 
+"name": "Wall7"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 142, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 143, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 144, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 7.8266401290893555, 
+"y": -20, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.60000002384185791, 
+"ease": 0, 
+"position": {
+"x": 7.8266401290893555, 
+"y": 16, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 145, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 141, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 7.8266401290893555, 
+"y": -20, 
+"z": -60
+}
+}
+}, 
+"name": "Wall6"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 147, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 148, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 149, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -34.847270965576172, 
+"y": -20, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.20000000298023224, 
+"ease": 0, 
+"position": {
+"x": -34.847270965576172, 
+"y": 16, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 150, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 146, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -34.847270965576172, 
+"y": -20, 
+"z": -60
+}
+}
+}, 
+"name": "Wall8"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 109, 
+"changeOnThisSegment": 2, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 110
+}, 
+"Transform": {
+".uid": 108, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Hallway"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 155, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 156, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -5824,18 +2976,1388 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 276, 
+".uid": 157, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
 "keyFrames": [
 {
-"delta": 2.4000000953674316, 
+"delta": 1, 
 "ease": 0, 
 "position": {
-"x": 100.20024108886719, 
-"y": 48.436347961425781, 
-"z": -67.378303527832031
+"x": 126, 
+"y": -20, 
+"z": 2.5
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 110.91108703613281, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 126, 
+"y": -1.5175325870513916, 
+"z": 2.5
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 110.91108703613281, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 158, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 154, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 110.91108703613281, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 126, 
+"y": -20, 
+"z": 2.5
+}
+}
+}, 
+"name": "Stair 1"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 160, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 161, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 162, 
+"animationClipName": "", 
+"delta": 2.5, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 244.56011962890625, 
+"y": -20, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 100, 
+"y": 34.305904388427734, 
+"z": 180
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 244.56011962890625, 
+"y": 24.600309371948242, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 100, 
+"y": 34.305904388427734, 
+"z": 180
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 163, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 159, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 100, 
+"y": 34.305904388427734, 
+"z": 180
+}, 
+"translation": {
+"x": 244.56011962890625, 
+"y": -20, 
+"z": 0.75308448076248169
+}
+}
+}, 
+"name": "Platform"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 165, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 166, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 167, 
+"animationClipName": "", 
+"delta": 1.5, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.17974853515625, 
+"y": -20, 
+"z": 2.5
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 110.35331726074219, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.17974853515625, 
+"y": 14.076117515563965, 
+"z": 2.5
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 110.35331726074219, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 168, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 164, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 110.35331726074219, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 142.17974853515625, 
+"y": -20, 
+"z": 2.5
+}
+}
+}, 
+"name": "Stair2"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 170, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 171, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 172, 
+"animationClipName": "", 
+"delta": 2, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 159.12113952636719, 
+"y": -20, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 99.741287231445313, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 159.12113952636719, 
+"y": 24.600309371948242, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 99.741287231445313, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 173, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 169, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 99.741287231445313, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 159.12113952636719, 
+"y": -20, 
+"z": 0.75308448076248169
+}
+}
+}, 
+"name": "Stair 3"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 175, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 176, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 177, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 246.99998474121094, 
+"y": -116.49999237060547, 
+"z": 50.531318664550781
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 246.99998474121094, 
+"y": 24.600200653076172, 
+"z": 50.531318664550781
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 178, 
+"active": true, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 174, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"translation": {
+"x": 246.99998474121094, 
+"y": -116.49999237060547, 
+"z": 50.531318664550781
+}
+}
+}, 
+"name": "Invis wall"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 180, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 181, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 182, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 246.99998474121094, 
+"y": -116.49999237060547, 
+"z": -48.903610229492188
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 246.99998474121094, 
+"y": 24.600210189819336, 
+"z": -48.903610229492188
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 183, 
+"active": true, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 179, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"translation": {
+"x": 246.99998474121094, 
+"y": -116.49999237060547, 
+"z": -48.903610229492188
+}
+}
+}, 
+"name": "Invis wall  (2)"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 152, 
+"changeOnThisSegment": 3, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 153
+}, 
+"Transform": {
+".uid": 151, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Stairs"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 188, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 189, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 190, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": 598.99993896484375, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 180.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": 77.565193176269531, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 180.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 191, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 187, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 180.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 142.01020812988281, 
+"y": 598.99993896484375, 
+"z": 0
+}
+}
+}, 
+"name": "Top Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 193, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 194, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 195, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": -71.704429626464844
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": 48.401729583740234, 
+"z": -71.704429626464844
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 196, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 192, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": -71.704429626464844
+}
+}
+}, 
+"name": "BottomBox"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 198, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 199, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 200, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": 72
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": 48.401729583740234, 
+"z": 72
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.700000762939453
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 201, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 197, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": 72
+}
+}
+}, 
+"name": "BottomBox (1)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 203, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 204, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 205, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": 2.8542771339416504
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": 28.401729583740234, 
+"z": 2.8542771339416504
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 180.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 206, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 202, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": 2.8542771339416504
+}
+}
+}, 
+"name": "BottomBox  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 208, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 209, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 210, 
+"animationClipName": "", 
+"delta": 2.5, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 2.5, 
+"ease": 0, 
+"position": {
+"x": -7.5144777297973633, 
+"y": -20, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1000, 
+"y": 34.305904388427734, 
+"z": 1000
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -7.5144801139831543, 
+"y": 24.600309371948242, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1000, 
+"y": 34.305904388427734, 
+"z": 1000
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 211, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 207, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 1000, 
+"y": 34.305904388427734, 
+"z": 1000
+}, 
+"translation": {
+"x": -7.5144777297973633, 
+"y": -20, 
+"z": 0.75308448076248169
+}
+}
+}, 
+"name": "Ground"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 185, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 186
+}, 
+"Transform": {
+".uid": 184, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "ShootingRangeAnimation"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 213, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 214, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 215, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 100.20036315917969, 
+"y": -20, 
+"z": 1.9420790672302246
 }, 
 "positionKey": true, 
 "rotation": {
@@ -5852,34 +4374,12 @@
 }, 
 "scaleKey": true
 }, {
-"delta": 3.2999999523162842, 
+"delta": 2, 
 "ease": 0, 
 "position": {
-"x": 100.19995880126953, 
-"y": 48.436206817626953, 
-"z": 70.662254333496094
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}, {
-"delta": 2.4000000953674316, 
-"ease": 0, 
-"position": {
-"x": 100.20035552978516, 
-"y": 48.436408996582031, 
-"z": -3
+"x": 100.20036315917969, 
+"y": 48.436412811279297, 
+"z": 1.9420790672302246
 }, 
 "positionKey": true, 
 "rotation": {
@@ -5900,18 +4400,19 @@
 "keyPosition": true, 
 "keyRotation": true, 
 "keyScale": true, 
-"loopAnimation": true, 
+"loopAnimation": false, 
 "playOnAwake": false, 
-"smoothPath": true
+"smoothPath": false
 }, 
 "Health": {
-".uid": 277, 
+".uid": 216, 
 "ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 3, 
-"SpawnOnDeath": true
+"EntityHealth": 30, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
 }, 
 "Model3D": {
-".uid": 278, 
+".uid": 217, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -5929,7 +4430,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 279, 
+".uid": 218, 
 "bodyFlag": 1, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
@@ -5951,7 +4452,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 274, 
+".uid": 212, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -5964,263 +4465,351 @@
 "z": 6
 }, 
 "translation": {
-"x": 100.20024108886719, 
-"y": 48.436347961425781, 
-"z": -67.378303527832031
+"x": 100.20036315917969, 
+"y": -20, 
+"z": 1.9420790672302246
 }
 }
 }, 
-"name": "DummyTarget1 (1)"
+"name": "DummyTarget1"
 }, {
 "children": [], 
-"components": {
-"Body": {
-".uid": 281, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 282, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 283, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 102.314697265625, 
-"y": 39.859828948974609, 
-"z": -69.718841552734375
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 102.314697265625, 
-"y": -47.336326599121094, 
-"z": -69.718841552734375
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 284, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 280, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 102.314697265625, 
-"y": 39.859828948974609, 
-"z": -69.718841552734375
-}
-}
-}, 
-"name": "Wall 4 (1)"
-}, {
-"children": [], 
-"components": {
-"Body": {
-".uid": 286, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 287, 
-"dimensions": {
-"x": 1, 
-"y": 50, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 288, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 103.49446105957031, 
-"y": 39.859825134277344, 
-"z": 72.511367797851563
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 103.49446105957031, 
-"y": -20.859830856323242, 
-"z": 72.511367797851563
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 289, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 285, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 59.89154052734375, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 103.49446105957031, 
-"y": 39.859825134277344, 
-"z": 72.511367797851563
-}
-}
-}, 
-"name": "Wall 4  (2)"
-}
-], 
 "components": {
 "AnimateOnSegment": {
-".uid": 266, 
-"changeOnThisSegment": 7
+".uid": 220, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
 }, 
-"EntityAnimatorGroup": {
-".uid": 267
+"BoxCollider": {
+".uid": 221, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 222, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 80.029510498046875, 
+"y": -20, 
+"z": -23.971530914306641
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.029510498046875, 
+"y": 48.436412811279297, 
+"z": -23.971530914306641
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Health": {
+".uid": 223, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 30, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 224, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 225, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
 }, 
 "Transform": {
-".uid": 265, 
+".uid": 219, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 80.029510498046875, 
+"y": -20, 
+"z": -23.971530914306641
+}
+}
+}, 
+"name": "DummyTarget2"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 227, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 228, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 229, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 80.804466247558594, 
+"y": -20, 
+"z": 26.263629913330078
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.804466247558594, 
+"y": 48.436412811279297, 
+"z": 26.263629913330078
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Health": {
+".uid": 230, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 30, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 231, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 232, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 226, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 80.804466247558594, 
+"y": -20, 
+"z": 26.263629913330078
+}
+}
+}, 
+"name": "DummyTarget3"
+}, {
+"children": [
+{
+"children": [
+{
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 239, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 240, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 238, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -6234,37 +4823,593 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 0, 
+"y": 41.105213165283203, 
 "z": 0
 }
 }
 }, 
-"name": "Wave3Animations"
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 242, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 243, 
+"color": {
+"a": 1, 
+"b": 0.88671875, 
+"g": 0.0588836669921875, 
+"r": 0.62962710857391357
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 241, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 245, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 246, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 244, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 248, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 249, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 247, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -9.9058456420898438, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 237, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": -23.693214416503906
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": 27.244169235229492, 
+"z": -23.693214416503906
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": -20, 
+"z": -23.693214416503906
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 236, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": -23.693214416503906
+}
+}
+}, 
+"name": "FX_SimulationStart Archetype"
 }, {
 "children": [
 {
 "children": [], 
 "components": {
-"Body": {
-".uid": 294, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
+"ParticleEmitter": {
+".uid": 253, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
 "y": 0, 
-"z": 0
-}
+"z": 10
 }, 
-"BoxCollider": {
-".uid": 295, 
-"dimensions": {
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
 "x": 1, 
-"y": 1, 
+"y": 0, 
 "z": 1
 }
 }, 
+"ParticleSystem": {
+".uid": 254, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 252, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 256, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 257, 
+"color": {
+"a": 1, 
+"b": 0.8828125, 
+"g": 0.0413818359375, 
+"r": 0.62149864435195923
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 255, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 259, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 260, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 258, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 262, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 263, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 261, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -9.9058456420898438, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
 "EntityAnimator": {
-".uid": 296, 
+".uid": 251, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -6273,9 +5418,9 @@
 "delta": 1, 
 "ease": 0, 
 "position": {
-"x": 241.64523315429688, 
-"y": 24.600210189819336, 
-"z": 2.4162521362304688
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": 26.947725296020508
 }, 
 "positionKey": true, 
 "rotation": {
@@ -6287,17 +5432,17 @@
 "rotationKey": true, 
 "scale": {
 "x": 1, 
-"y": 200, 
-"z": 100
+"y": 1, 
+"z": 1
 }, 
 "scaleKey": true
 }, {
-"delta": 1, 
+"delta": 0, 
 "ease": 0, 
 "position": {
-"x": 241.64523315429688, 
-"y": -50.600208282470703, 
-"z": 2.4162521362304688
+"x": 80.094436645507813, 
+"y": 27.244169235229492, 
+"z": 26.947725296020508
 }, 
 "positionKey": true, 
 "rotation": {
@@ -6309,8 +5454,30 @@
 "rotationKey": true, 
 "scale": {
 "x": 1, 
-"y": 200, 
-"z": 100
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": -20, 
+"z": 26.947725296020508
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
 }, 
 "scaleKey": true
 }
@@ -6322,10 +5489,520 @@
 "playOnAwake": false, 
 "smoothPath": false
 }, 
+"Transform": {
+".uid": 250, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": 26.947725296020508
+}
+}
+}, 
+"name": "FX_SimulationStart Archetype (1)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 267, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 268, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 266, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 270, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 271, 
+"color": {
+"a": 1, 
+"b": 0.89453125, 
+"g": 0.034942626953125, 
+"r": 0.6275782585144043
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 269, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 273, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 274, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 272, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 276, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 277, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 275, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -9.9058456420898438, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 265, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 100.69409942626953, 
+"y": -47.244171142578125, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0, 
+"ease": 0, 
+"position": {
+"x": 100.69409942626953, 
+"y": 27.244169235229492, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 100.69409942626953, 
+"y": -20, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 264, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 100.69409942626953, 
+"y": -47.244171142578125, 
+"z": 2.8739039897918701
+}
+}
+}, 
+"name": "FX_SimulationStart Archetype  (2)"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 234, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 235
+}, 
+"Transform": {
+".uid": 233, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Wave1Animations"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 279, 
+"changeOnThisSegment": 6, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 280, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 281, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 8.6071996688842773, 
+"y": -20, 
+"z": 1.9420790672302246
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 10, 
+"y": 15, 
+"z": 10
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 8.6071996688842773, 
+"y": 48.436412811279297, 
+"z": 1.9420790672302246
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 10, 
+"y": 15, 
+"z": 10
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Health": {
+".uid": 282, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 50, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
 "Model3D": {
-".uid": 297, 
+".uid": 283, 
 "active": true, 
-"castsShadows": true, 
+"castsShadows": false, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -6335,10 +6012,170 @@
 "emissive": 0.44999998807907104, 
 "materialName": "Blank", 
 "meshIndex": -1, 
-"modelName": "Cube", 
+"modelName": "Cylinder", 
 "renderMask": 0, 
 "specularIntensity": 0, 
 "specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 284, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 278, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 10, 
+"y": 15, 
+"z": 10
+}, 
+"translation": {
+"x": 8.6071996688842773, 
+"y": -20, 
+"z": 1.9420790672302246
+}
+}
+}, 
+"name": "LongDistanceDummy"
+}, {
+"children": [
+{
+"children": [
+{
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 291, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 292, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 290, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 294, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 10, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 295, 
+"color": {
+"a": 1, 
+"b": 0.54296875, 
+"g": 0.0190887451171875, 
+"r": 0.33341675996780396
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
 }, 
 "Transform": {
 ".uid": 293, 
@@ -6350,29 +6187,301 @@
 }, 
 "scale": {
 "x": 1, 
-"y": 200, 
-"z": 100
+"y": 1, 
+"z": 1
 }, 
 "translation": {
-"x": 241.64523315429688, 
-"y": 24.600210189819336, 
-"z": 2.4162521362304688
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
 }
 }
 }, 
-"name": "Revive Wall"
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 297, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 298, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 296, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 300, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 301, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 299, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -9.9058456420898438, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 289, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 8.6071996688842773, 
+"y": -47.244171142578125, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0, 
+"ease": 0, 
+"position": {
+"x": 8.6071996688842773, 
+"y": 27.244169235229492, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 8.6071996688842773, 
+"y": -20, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 288, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 8.6071996688842773, 
+"y": -47.244171142578125, 
+"z": 2.8739039897918701
+}
+}
+}, 
+"name": "FX_SimulationStart Archetype   (3)"
 }
 ], 
 "components": {
 "AnimateOnSegment": {
-".uid": 291, 
-"changeOnThisSegment": 9
+".uid": 286, 
+"changeOnThisSegment": 5, 
+"whenGreaterThan": false
 }, 
 "EntityAnimatorGroup": {
-".uid": 292
+".uid": 287
 }, 
 "Transform": {
-".uid": 290, 
+".uid": 285, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Wave2Animations"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 303, 
+"changeOnThisSegment": 9, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 304
+}, 
+"Transform": {
+".uid": 302, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -6393,138 +6502,18 @@
 }, 
 "name": "ReviveAnimation"
 }, {
-"children": [
-{
 "children": [], 
 "components": {
-"Body": {
-".uid": 302, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"BoxCollider": {
-".uid": 303, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 304, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 324.7174072265625, 
-"y": 24.600210189819336, 
-"z": 2.4162521362304688
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 200, 
-"z": 100
-}, 
-"scaleKey": true
-}, {
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 324.7174072265625, 
-"y": -50.600208282470703, 
-"z": 2.4162521362304688
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 200, 
-"z": 100
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Model3D": {
-".uid": 305, 
-"active": true, 
-"castsShadows": true, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cube", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Transform": {
-".uid": 301, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 200, 
-"z": 100
-}, 
-"translation": {
-"x": 324.7174072265625, 
-"y": 24.600210189819336, 
-"z": 2.4162521362304688
-}
-}
-}, 
-"name": "Dual Wall"
-}
-], 
-"components": {
 "AnimateOnSegment": {
-".uid": 299, 
-"changeOnThisSegment": 10
+".uid": 306, 
+"changeOnThisSegment": 10, 
+"whenGreaterThan": false
 }, 
 "EntityAnimatorGroup": {
-".uid": 300
+".uid": 307
 }, 
 "Transform": {
-".uid": 298, 
+".uid": 305, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -6550,7 +6539,7 @@
 "children": [], 
 "components": {
 "AnimateTutorialText": {
-".uid": 313, 
+".uid": 315, 
 "characterDeleteCooldown": 0.05000000074505806, 
 "characterWriteCooldown": 0.079999998211860657, 
 "lineEndCooldown": 0.5, 
@@ -6559,7 +6548,7 @@
 ]
 }, 
 "SpriteText": {
-".uid": 314, 
+".uid": 316, 
 "alignment": 0, 
 "size": 18, 
 "text": "", 
@@ -6572,7 +6561,7 @@
 "useFiltering": true
 }, 
 "Transform": {
-".uid": 312, 
+".uid": 314, 
 "rotation": {
 "w": -0.064331099390983582, 
 "x": -0.24389669299125671, 
@@ -6596,7 +6585,7 @@
 ], 
 "components": {
 "Camera": {
-".uid": 307, 
+".uid": 309, 
 "active": true, 
 "clearColor": {
 "a": 1, 
@@ -6620,7 +6609,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 308, 
+".uid": 310, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 23, 
@@ -6630,15 +6619,15 @@
 "ease": 23, 
 "position": {
 "x": 210.92774963378906, 
-"y": 358.95999145507813, 
+"y": 481, 
 "z": 0
 }, 
 "positionKey": true, 
 "rotation": {
-"w": 0.68398392200469971, 
-"x": 0.17829139530658722, 
-"y": -0.69530147314071655, 
-"z": 0.13012763857841492
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
 }, 
 "rotationKey": true, 
 "scale": {
@@ -6652,15 +6641,15 @@
 "ease": 23, 
 "position": {
 "x": 210.92774963378906, 
-"y": 358.95999145507813, 
+"y": 481, 
 "z": 0
 }, 
 "positionKey": true, 
 "rotation": {
-"w": 0.68398392200469971, 
-"x": 0.17829139530658722, 
-"y": -0.69530147314071655, 
-"z": 0.13012763857841492
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
 }, 
 "rotationKey": true, 
 "scale": {
@@ -6679,10 +6668,10 @@
 }, 
 "positionKey": true, 
 "rotation": {
-"w": 0.68398392200469971, 
-"x": 0.17829139530658722, 
-"y": -0.69530147314071655, 
-"z": 0.13012763857841492
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
 }, 
 "rotationKey": true, 
 "scale": {
@@ -6695,16 +6684,16 @@
 "delta": 3, 
 "ease": 0, 
 "position": {
-"x": 54.980682373046875, 
+"x": -32.103950500488281, 
 "y": 45.334251403808594, 
 "z": 2.7650752067565918
 }, 
 "positionKey": true, 
 "rotation": {
-"w": 0.68398392200469971, 
-"x": 0.17829139530658722, 
-"y": -0.69530147314071655, 
-"z": 0.13012763857841492
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
 }, 
 "rotationKey": true, 
 "scale": {
@@ -6723,12 +6712,12 @@
 "smoothPath": false
 }, 
 "Transform": {
-".uid": 306, 
+".uid": 308, 
 "rotation": {
-"w": 0.68398392200469971, 
-"x": 0.17829139530658722, 
-"y": -0.69530147314071655, 
-"z": 0.13012763857841492
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
 }, 
 "scale": {
 "x": 1, 
@@ -6736,7 +6725,7 @@
 "z": 1
 }, 
 "translation": {
-"x": 54.980682373046875, 
+"x": -32.103950500488281, 
 "y": 45.334251403808594, 
 "z": 2.7650752067565918
 }
@@ -6747,15 +6736,15 @@
 "children": [], 
 "components": {
 "BoxCollider": {
-".uid": 316, 
+".uid": 318, 
 "dimensions": {
 "x": 1, 
-"y": 50, 
+"y": 5, 
 "z": 1
 }
 }, 
 "Ghost": {
-".uid": 317, 
+".uid": 319, 
 "disableContactResponse": true, 
 "enableContactCallback": true, 
 "offset": {
@@ -6765,12 +6754,12 @@
 }
 }, 
 "SegmentChangeTrigger": {
-".uid": 318, 
+".uid": 320, 
 "changeNewSegment": 3, 
 "changeOnThisSegment": 2
 }, 
 "Transform": {
-".uid": 315, 
+".uid": 317, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -6778,18 +6767,65 @@
 "z": 0
 }, 
 "scale": {
-"x": 59.89154052734375, 
+"x": 111.18831634521484, 
 "y": 34.305904388427734, 
 "z": 16.658269882202148
 }, 
 "translation": {
-"x": 128.70582580566406, 
+"x": 53.010089874267578, 
 "y": 15.988882064819336, 
-"z": 1.5564365386962891
+"z": 0
 }
 }
 }, 
 "name": "StairZone"
+}, {
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 322, 
+"dimensions": {
+"x": 1, 
+"y": 5, 
+"z": 1
+}
+}, 
+"Ghost": {
+".uid": 323, 
+"disableContactResponse": true, 
+"enableContactCallback": true, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SegmentChangeTrigger": {
+".uid": 324, 
+"changeNewSegment": 4, 
+"changeOnThisSegment": 3
+}, 
+"Transform": {
+".uid": 321, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 101.06306457519531, 
+"y": 18.810878753662109, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 208.6556396484375, 
+"y": 60.778266906738281, 
+"z": 0
+}
+}
+}, 
+"name": "ShootingZone"
 }
 ], 
 "settings": {
@@ -6839,6 +6875,12 @@
 "type": "ProjectileSystem"
 }, {
 "type": "TrailSystem"
+}, {
+"type": "TimeDeathSystem"
+}, {
+"type": "DamageTextSystem"
+}, {
+"type": "DamageOnCollideSystem"
 }
 ]
 }
