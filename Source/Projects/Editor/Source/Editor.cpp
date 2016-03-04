@@ -428,7 +428,7 @@ void Editor::initializeProject(const std::string &fileName)
     // add it as a recent project if it doesn't already exist
     if (recentProjects.Find( projectFileName.string( ) ) == recentProjects.end( ))
         recentProjects.Insert( recentProjects.begin( ), projectFileName.string( ) );
-         
+
     auto &resourcePipeline = m_project->GetResourcePipeline( );
 
     resourcePipeline.Listener( this )
