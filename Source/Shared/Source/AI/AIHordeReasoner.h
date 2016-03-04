@@ -40,7 +40,7 @@ namespace ursine
 
             void OnInitialize(void) override;
 
-            void SetTarget(const Vec3 &pos);
+            void SetTarget(const SVec3 &pos);
 
             EnemyType GetEnemyType(void) const;
             void SetEnemyType(EnemyType newType);

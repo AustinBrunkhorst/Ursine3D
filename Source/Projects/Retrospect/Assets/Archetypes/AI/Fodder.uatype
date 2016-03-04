@@ -4,9 +4,8 @@
 "children": [], 
 "components": {
 "SpriteText": {
-".uid": 143, 
+".uid": 22, 
 "alignment": 1, 
-"pixelsPerUnit": 64, 
 "size": 20, 
 "text": "Fodder", 
 "textColor": {
@@ -18,7 +17,7 @@
 "useFiltering": true
 }, 
 "Transform": {
-".uid": 139, 
+".uid": 21, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -38,11 +37,51 @@
 }
 }, 
 "name": "Empty Entity"
+}, {
+"children": [], 
+"components": {
+"Ghost": {
+".uid": 33, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SphereCollider": {
+".uid": 26, 
+"radius": 6
+}, 
+"Transform": {
+".uid": 24, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1.1638805866241455, 
+"y": 0.22485992312431335, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -0.55385994911193848, 
+"z": 0
+}
+}
+}, 
+"name": "GhostSphere"
 }
 ], 
 "components": {
 "Model3D": {
-".uid": 16, 
+".uid": 20, 
+"active": true, 
+"castsShadows": true, 
 "color": {
 "a": 1, 
 "b": 1, 
@@ -58,7 +97,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 14, 
+".uid": 19, 
 "rotation": {
 "w": 1, 
 "x": 0, 

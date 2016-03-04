@@ -13,9 +13,9 @@
 #pragma once
 
 #include "Component.h"
-#include "Vec3.h"
+#include "SVec3.h"
+#include "Vec2.h"
 #include "RigidbodyComponent.h"
-
 
 namespace ursine
 {
@@ -28,9 +28,9 @@ namespace ursine
         public:
             AIMovementController(void);
 
-            void SetTargetDirection(const Vec3 &dir);
+            void SetTargetDirection(const SVec3 &dir);
                                    
-            void SettargetDirection(const Vec2 &dir);
+            void SetTargetDirection(const Vec2 &dir);
 
             EditorField(
                 float Speed,
@@ -48,6 +48,8 @@ namespace ursine
 
             void Update(void);
 
+            void AddDirectionModifier(SVec3 mod);
+
             bool GetEnable(void) const;
             void SetEnable(bool enable);
 
@@ -55,7 +57,9 @@ namespace ursine
             void SetSpeed(float newSpeed);
 
         private:
-            Vec3 m_targetDir;
+            SVec3 m_targetDir;
+
+            //SVec3 m_directionModifier;
 
             Handle<Rigidbody> m_rigid;
 

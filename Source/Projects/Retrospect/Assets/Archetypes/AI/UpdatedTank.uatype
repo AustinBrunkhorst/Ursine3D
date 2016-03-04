@@ -1,0 +1,535 @@
+{
+"children": [
+{
+"children": [], 
+"components": {
+"SpriteText": {
+".uid": 71, 
+"alignment": 1, 
+"size": 20, 
+"text": "Tank", 
+"textColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0.875
+}, 
+"useFiltering": true
+}, 
+"Transform": {
+".uid": 70, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.75, 
+"y": 0.75, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 2, 
+"z": -0.13513374328613281
+}
+}
+}, 
+"name": "Text"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"ApplyImpulseOnHit": {
+".uid": 75, 
+"effectSweptController": true, 
+"impulse": 5, 
+"localDirectionInfluence": {
+"x": 1, 
+"y": 0, 
+"z": 0
+}, 
+"worldDirectionInfluence": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 76, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Ghost": {
+".uid": 77, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"Model3D": {
+".uid": 78, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 74, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 3, 
+"y": 4, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Model"
+}, {
+"children": [], 
+"components": {
+"EntityAnimatorClip": {
+".uid": 80, 
+"clipName": "TankDown", 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}, {
+"delta": 1, 
+"ease": 7, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 1
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.92387950420379639, 
+"x": 0.38268345594406128, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}, {
+"delta": 0.20000000298023224, 
+"ease": 1, 
+"position": {
+"x": 0, 
+"y": -1.5, 
+"z": 2
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0.70710676908493042, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}
+], 
+"looping": false
+}, 
+"Transform": {
+".uid": 79, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation Clip: TankDown"
+}, {
+"children": [], 
+"components": {
+"EntityAnimatorClip": {
+".uid": 82, 
+"clipName": "TankUp", 
+"keyFrames": [
+{
+"delta": 0.20000000298023224, 
+"ease": 1, 
+"position": {
+"x": 0, 
+"y": -1.5, 
+"z": 2
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0.70710676908493042, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}, {
+"delta": 1, 
+"ease": 1, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 1
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.9205048680305481, 
+"x": 0.39073103666305542, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}, {
+"delta": 1, 
+"ease": 13, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}
+], 
+"looping": false
+}, 
+"Transform": {
+".uid": 81, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation Clip: TankUp"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 73, 
+"animationClipName": "TankUp", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 0.20000000298023224, 
+"ease": 1, 
+"position": {
+"x": 0, 
+"y": -1.5, 
+"z": 2
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0.70710676908493042, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}, {
+"delta": 1, 
+"ease": 1, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 1
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.9205048680305481, 
+"x": 0.39073103666305542, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}, {
+"delta": 1, 
+"ease": 13, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": false, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Transform": {
+".uid": 72, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animator"
+}, {
+"children": [], 
+"components": {
+"Ghost": {
+".uid": 84, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SphereCollider": {
+".uid": 85, 
+"radius": 6
+}, 
+"Transform": {
+".uid": 83, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "GhostSphere"
+}
+], 
+"components": {
+"AIMovementController": {
+".uid": 64, 
+"Speed": 1, 
+"enabled": true
+}, 
+"BoxCollider": {
+".uid": 65, 
+"dimensions": {
+"x": 3, 
+"y": 4, 
+"z": 1
+}
+}, 
+"EnemyDeathComp": {
+".uid": 66
+}, 
+"Health": {
+".uid": 67, 
+"ArchetypeToSpawnOnDeath": ".uatype", 
+"EntityHealth": 100, 
+"SpawnOnDeath": false, 
+"deleteOnZeroHealth": true
+}, 
+"Rigidbody": {
+".uid": 68, 
+"bodyFlag": 0, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 1, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": false
+}, 
+"TankAI": {
+".uid": 69, 
+"AttackRadius": 6, 
+"AttackRange": 6, 
+"Cohesion": 0.5, 
+"Separation": 0.5, 
+"SlamDelay": 2, 
+"TotalBoidBehaviorScale": 0.5, 
+"damageOnAttack": 1
+}, 
+"Transform": {
+".uid": 63, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 10, 
+"y": 3, 
+"z": 0
+}
+}
+}, 
+"v": "0.2submission"
+}
