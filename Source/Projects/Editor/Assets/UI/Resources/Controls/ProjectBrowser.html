@@ -83,6 +83,9 @@
             },
 
             browseDirectory: function(directoryPath) {
+                // normalize path
+                directoryPath.replace( /\//g, '\\' );
+
                 var entry = this._pathToResourceEntry[ directoryPath ];
 
                 if (!entry)
@@ -172,7 +175,7 @@
             _onFolderDblClick: function(e) {
                 var folder = e.model.folder;
 
-                this._selectDirectoryItem( this._pathToDirectoryItem[ folder.path ] );
+                this._selectDirectoryItem( this._pathToDirectoryItem[ folder.path.replace( /\//g, '\\' ) ] );
                 this._browseDirectory( folder );
             },
             _onFolderContextMenu: function(e) {
@@ -384,8 +387,10 @@
                 item.textElement.addEventListener( 'dblclick', this._onTreeItemDblClick.bind( this, item ) );
                 item.textElement.addEventListener( 'contextmenu', this._onTreeItemContextMenu.bind( this, item ) );
 
-                this._pathToResourceEntry[ directoryNode.path ] = directoryNode;
-                this._pathToDirectoryItem[ directoryNode.path ] = item;
+                var normalizedPath = directoryNode.path.replace( /\//g, '\\' );
+
+                this._pathToResourceEntry[ normalizedPath ] = directoryNode;
+                this._pathToDirectoryItem[ normalizedPath ] = item;
 
                 return item;
             },
