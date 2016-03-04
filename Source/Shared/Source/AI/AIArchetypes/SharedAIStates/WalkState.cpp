@@ -35,7 +35,7 @@ namespace ursine
             using namespace std::placeholders;
 
             // first get the entity
-            Entity *aiActor = stateMachine->GetEntity();
+            EntityHandle aiActor = stateMachine->GetEntity();
 
             //then check if we have a waypoint controller or not and set target function accordingly
             if (aiActor->HasComponent<WaypointAgent>())
@@ -231,7 +231,7 @@ namespace ursine
             // try to grab the player as the target
             auto players = world->GetEntitiesFromFilter(Filter().All< PlayerID >());
 
-            Entity *target = nullptr;
+            EntityHandle target = nullptr;
 
             // if we can't find a player, just go to the closest waypoint
             if (players.size() < 1)

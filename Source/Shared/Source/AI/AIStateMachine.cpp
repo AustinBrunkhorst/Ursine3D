@@ -10,12 +10,12 @@ namespace ursine
         {
         }
 
-        void AIStateMachine::Initialize(ecs::Entity* actor)
+        void AIStateMachine::Initialize(ecs::EntityHandle actor)
         {
             m_actorEntity = actor;
         }
 
-        ecs::Entity* AIStateMachine::GetEntity() const
+        ecs::EntityHandle AIStateMachine::GetEntity() const
         {
             return m_actorEntity;
         }

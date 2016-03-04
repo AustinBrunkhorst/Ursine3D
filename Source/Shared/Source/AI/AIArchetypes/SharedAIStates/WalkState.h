@@ -55,7 +55,7 @@ namespace ursine
             typedef std::function<void(const SVec3&)> setTargetDirectionFunc;
             setTargetDirectionFunc setTargetDirection;
 
-            std::vector<ecs::Entity *> m_surrounding;
+            std::vector<ecs::EntityHandle> m_surrounding;
 
             ecs::AIMovementController *m_move;
 

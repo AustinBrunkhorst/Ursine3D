@@ -17,7 +17,7 @@ namespace ursine
             AddFloat("PauseTimer", 0.0f);
         }
 
-        void FodderAIStateMachine::Initialize(ecs::Entity* actor)
+        void FodderAIStateMachine::Initialize(ecs::EntityHandle actor)
         {
             m_actorEntity = actor;
 

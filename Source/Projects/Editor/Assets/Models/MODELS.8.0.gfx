@@ -2,10 +2,14 @@
 #First is file name, second is model name
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 Entrenched_Test1.fbx Entrenched
 =======
 #Entrenched_Test1.fbx Entrenched
 >>>>>>> refs/remotes/origin/ai-statemachines
+=======
+#Entrenched_Test1.fbx Entrenched
+>>>>>>> ai-statemachines
 BossArenaFBX.fbx BossRoom
 EntryRoomFBX(Revised).fbx EntryRoom
 PlantMonster.fbx PlantMonster
@@ -13,14 +17,18 @@ Pipe_Bent.fbx PipeBent
 Pipe_Straight.fbx PipeStraight
 BaseModel.fbx Base
 HiRezSphere.fbx HiRezSphere
-#BossDoor.fbx BossDoor
+BossDoor.fbx BossDoor
 #BossArenaScaled2.fbx BossRoom2
 #CombatBowlPass3.fbx CombatBowl
+<<<<<<< HEAD
 <<<<<<< HEAD
 #BossRoomAlphaTesting.fbx. BossRoom3
 =======
 BossRoomAlphaTesting.fbx. BossRoom3
 >>>>>>> refs/remotes/origin/ai-statemachines
+=======
+BossRoomAlphaTesting.fbx. BossRoom3
+>>>>>>> ai-statemachines
 
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
@@ -46,6 +54,7 @@ bomber.8.0.mdl Bomber
 # Player Animations
 Player1_Idle.fbx Player
 <<<<<<< HEAD
+<<<<<<< HEAD
 #Player1_Die.fbx Player_Die
 #Player1_Jump.fbx Player_Jump
 #Player1_Run.fbx Player_Run
@@ -67,6 +76,8 @@ Gun_Idle.fbx Gun_Idle
 #Gun_Run.fbx Gun_Run
 #Gun_Shoot.fbx Gun_Shoot
 =======
+=======
+>>>>>>> ai-statemachines
 Player1_Die.fbx Player_Die
 Player1_Jump.fbx Player_Jump
 Player1_Run.fbx Player_Run
@@ -87,6 +98,9 @@ Gun_Idle.fbx Gun_Idle
 Gun_Jump.fbx Gun_Jump
 Gun_Run.fbx Gun_Run
 Gun_Shoot.fbx Gun_Shoot
+<<<<<<< HEAD
 >>>>>>> refs/remotes/origin/ai-statemachines
+=======
+>>>>>>> ai-statemachines
 
 #Monkey.fbx Monkey
