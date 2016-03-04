@@ -27,6 +27,7 @@
 #include "DrawingManager.h"
 #include "GfxProfiler.h"
 #include "BitmapFont.h"
+#include "FontManager.h"
 
 #include <atomic>
 
@@ -98,6 +99,7 @@ namespace ursine
             ViewportManager *viewportManager;
             GfxUIManager *uiManager;
             DrawingManager *drawingManager;
+            FontManager *fontManager;
             GfxProfiler *gfxProfiler;
 
             GfxInfo *gfxInfo;

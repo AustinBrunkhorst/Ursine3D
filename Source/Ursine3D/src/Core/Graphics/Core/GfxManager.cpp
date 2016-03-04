@@ -67,6 +67,7 @@ namespace ursine
             viewportManager = new ViewportManager;
             uiManager = new GfxUIManager;
             drawingManager = new DrawingManager;
+            fontManager = new FontManager;
             gfxProfiler = new GfxProfiler;
 
             /////////////////////////////////////////////////////////////////
@@ -214,6 +215,7 @@ namespace ursine
             viewportManager->Uninitialize();
             uiManager->Uninitialize();
             drawingManager->Uninitialize();
+            fontManager->Uninitialize();
             gfxProfiler->Uninitialize();
 
             //last
@@ -231,6 +233,7 @@ namespace ursine
             delete viewportManager;
             delete uiManager;
             delete drawingManager;
+            delete fontManager;
             delete gfxProfiler;
         }
 
@@ -329,6 +332,7 @@ namespace ursine
                 drawCall.Type_ = render->Type_;
                 drawCall.Overdraw_ = current->GetOverdraw();
                 drawCall.Shader_ = SHADER_SPRITE_TEXT;
+                drawCall.Material_ = current->GetFontHandle( ) & 0xFFFF;
             }
                 break;
             default:

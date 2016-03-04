@@ -64,7 +64,7 @@ namespace ursine
             ~GfxAPI(void);
 
             void OnInitialize(void) override;
-             void OnRemove(void) override;
+            void OnRemove(void) override;
 
             // initialize graphics manager
             void StartGraphics(GfxConfig config);

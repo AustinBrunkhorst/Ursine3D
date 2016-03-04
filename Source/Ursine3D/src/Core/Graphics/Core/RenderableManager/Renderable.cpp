@@ -570,6 +570,7 @@ namespace ursine
             m_alignment = ALIGN_LEFT;
             m_filter = true;
             m_color = Color::White;
+            m_fontHandle = 0;
         }
 
         float SpriteText::GetSize(void) const
@@ -658,6 +659,15 @@ namespace ursine
         void SpriteText::SetColor(const Color &color)
         {
             m_color = color;
+        }
+
+        GfxHND SpriteText::GetFontHandle(void) const
+        {
+            return m_fontHandle;
+        }
+        void SpriteText::SetFontHandle(GfxHND handle)
+        {
+            m_fontHandle = handle;
         }
     }
 }

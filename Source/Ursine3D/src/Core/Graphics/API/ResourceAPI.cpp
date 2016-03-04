@@ -15,6 +15,7 @@
 #include "ResourceAPI.h"
 #include "ModelManager.h"
 #include "TextureManager.h"
+#include "FontManager.h"
 
 namespace ursine
 {
@@ -24,6 +25,7 @@ namespace ursine
         {
             ModelManager *modelMgr;
             TextureManager *textureMgr;
+            FontManager *fontMgr;
         };
 
         /////////////////////////////////////////////////////////
@@ -130,10 +132,26 @@ namespace ursine
             return m_privates->modelMgr->GeAnimeInfo( handle );
         }
 
-        void ResourceAPI::SetPrivates(void *priv, void *priv2)
+        GfxHND ResourceAPI::CreateBitmapFont(uint8_t *binaryData, size_t binarySize)
+        {
+            return m_privates->fontMgr->CreateBitmapFont( binaryData, binarySize );
+        }
+
+        void ResourceAPI::DestroyBitmapFont(GfxHND &fontHandle)
+        {
+            m_privates->fontMgr->DestroyBitmapFont( fontHandle );
+        }
+
+        void ResourceAPI::RegisterTexture(GfxHND fontHandle, const std::string &fontName, GfxHND textureHandle)
+        {
+            m_privates->fontMgr->RegisterTexture( fontHandle, fontName, textureHandle );
+        }
+
+        void ResourceAPI::SetPrivates(void *priv, void *priv2, void *priv3)
         {
             m_privates->modelMgr = reinterpret_cast<ModelManager*>( priv );
             m_privates->textureMgr = reinterpret_cast<TextureManager*>( priv2 );
+            m_privates->fontMgr = reinterpret_cast<FontManager*>(priv3);
         }
 
         void ResourceAPI::Initialize(void)

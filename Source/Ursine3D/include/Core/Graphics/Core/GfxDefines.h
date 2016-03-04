@@ -48,13 +48,14 @@
 #define MAX_BONE_COUNT          60
 
 //handle IDs
-#define ID_RENDERABLE 170
-#define ID_TEXTURE    113
-#define ID_MODEL      146
-#define ID_ANIMATION  213
-#define ID_CAMERA     123
-#define ID_VIEWPORT   42
-#define ID_UI         87
+#define ID_RENDERABLE   170
+#define ID_TEXTURE      113
+#define ID_MODEL        146
+#define ID_ANIMATION    213
+#define ID_CAMERA       123
+#define ID_VIEWPORT     42
+#define ID_UI           87
+#define ID_FONT         243
 
 // internal IDs for models
 #define INTERNAL_CUBE               0
