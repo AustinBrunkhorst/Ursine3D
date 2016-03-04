@@ -32,7 +32,7 @@ CharacterControllerSystem::CharacterControllerSystem(ursine::ecs::World *world)
     
 }
 
-void CharacterControllerSystem::Process(Entity *entity)
+void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
 {
     auto *controller = entity->GetComponent<CharacterController>( );
     auto *swept = entity->GetComponent<SweptController>( );

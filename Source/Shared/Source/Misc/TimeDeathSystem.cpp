@@ -14,14 +14,14 @@
 #include "TimeDeathComponent.h"
 #include "SystemIncludes.h"
 
-ENTITY_SYSTEM_DEFINITION( TimeDeathSystem );
+ENTITY_SYSTEM_DEFINITION(TimeDeathSystem);
 
-TimeDeathSystem::TimeDeathSystem( ursine::ecs::World * world ) :
-    FilterSystem( world, ursine::ecs::Filter( ).All<TimeDeath>( ) )
+TimeDeathSystem::TimeDeathSystem(ursine::ecs::World *world) 
+    : FilterSystem( world, ursine::ecs::Filter( ).All<TimeDeath>( ) )
 {
 }
 
-void TimeDeathSystem::Process( ursine::ecs::Entity * entity )
+void TimeDeathSystem::Process(const ursine::ecs::EntityHandle &entity)
 {
     entity->GetComponent<TimeDeath>( )->DecrementTimer( ursine::Application::Instance->GetDeltaTime( ) );
 }
