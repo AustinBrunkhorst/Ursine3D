@@ -17,6 +17,21 @@ namespace
     void runMultiOpenFileDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output);
 
     void runSaveFileDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output);
+
+    class WorkingDirectorySaver
+    {
+    public:
+        WorkingDirectorySaver(void)
+            : m_initialDirectory( fs::current_path( ) ) { }
+
+        ~WorkingDirectorySaver(void)
+        {
+            fs::current_path( m_initialDirectory );
+        }
+
+    private:
+        fs::path m_initialDirectory;
+    };
 }
 
 namespace ursine
@@ -31,9 +46,9 @@ namespace ursine
             {
             case FDM_OPEN:
                 if (config.allowMultipleFiles)
-                    runOpenFileDialog( config, result );
-                else
                     runMultiOpenFileDialog( config, result );
+                else
+                    runOpenFileDialog( config, result );
                 break;
             case FDM_SAVE:
                 runSaveFileDialog( config, result );
@@ -124,7 +139,13 @@ namespace
             ofn.nFilterIndex = config.selectedFilter + 1;
         }
 
-        auto success = !!GetOpenFileName( &ofn );
+        bool success;
+
+        {
+            WorkingDirectorySaver saver;
+
+            success = !!GetOpenFileName( &ofn );
+        }
 
         if (success) 
         {
@@ -174,7 +195,13 @@ namespace
             ofn.nFilterIndex = config.selectedFilter + 1;
         }
 
-        auto success = !!GetOpenFileName( &ofn );
+        bool success;
+
+        {
+            WorkingDirectorySaver saver;
+
+            success = !!GetOpenFileName( &ofn );
+        }
 
         if (success) 
         {
@@ -261,7 +288,13 @@ namespace
             ofn.lpstrDefExt = "";
         }
 
-        auto success = !!GetSaveFileName( &ofn );
+        bool success;
+
+        {
+            WorkingDirectorySaver saver;
+
+            success = !!GetOpenFileName( &ofn );
+        }
 
         if (success) 
         {

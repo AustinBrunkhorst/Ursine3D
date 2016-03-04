@@ -14,6 +14,7 @@ namespace ursine
             ///////////////////////////////////////////////////////////////////
 
             extern const char * const kResourceTypeWorldExtension;
+            extern const char * const kResourceTypeArchetypeExtension;
 
             ///////////////////////////////////////////////////////////////////
             // Utility Functions

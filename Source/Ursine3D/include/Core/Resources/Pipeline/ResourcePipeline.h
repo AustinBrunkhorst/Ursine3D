@@ -17,6 +17,7 @@
 #include "PassThroughProcessor.h"
 #include "TextureProcessor.h"
 #include "WorldProcessor.h"
+#include "ArchetypeProcessor.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Resource Types
@@ -39,3 +40,6 @@
 
 #include "WorldReader.h"
 #include "WorldData.h"
+
+#include "ArchetypeReader.h"
+#include "ArchetypeData.h"
