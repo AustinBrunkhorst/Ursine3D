@@ -138,50 +138,48 @@ void LevelSegmentManager::initTutorialLogic(void)
     // After players are spawned tween their viewports
     auto introCin = lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
 
-	introCin->AddCondition<sm::TimerCondition>(TimeSpan::FromSeconds(10.0f));
+    introCin->AddCondition<sm::TimerCondition>(TimeSpan::FromSeconds(10.0f));
 
-	// Unlock players
-	tweenState->AddTransition( unlockCCState, "Go To Unlocking Player Controller" );
+    // Unlock players
+    tweenState->AddTransition( unlockCCState, "Go To Unlocking Player Controller" );
 
-	// Halt the state machine until the players hit the first trigger, so that we can then
-	// Spawn the movmement tutorial prompts
-	//auto waitForTrigger = stateM->AddState<TriggerWaitState>( resources->GetGateTriggerName( ) );
+    // Halt the state machine until the players hit the first trigger, so that we can then
+    // Spawn the movmement tutorial prompts
+    //auto waitForTrigger = stateM->AddState<TriggerWaitState>( resources->GetGateTriggerName( ) );
 
-	// After the viewports tween out change the level segment
-	unlockCCState->AddTransition( changeSegState, "To Gate Opens" );
-	
+    // After the viewports tween out change the level segment
+    unlockCCState->AddTransition( changeSegState, "To Gate Opens" );
+    
     stateM->SetInitialState( initState );
 
     addSegmentLogic( stateM, {
         LevelSegments::Tut_OpeningCinematic,
-		LevelSegments::Tut_GateOpens,
+        LevelSegments::Tut_GateOpens,
         LevelSegments::Tut_MovementTutorial,
-		LevelSegments::Tut_JumpTutorial,
+        LevelSegments::Tut_JumpTutorial,
         LevelSegments::Tut_WeaponPickupTutorial,
         LevelSegments::Tut_HipFireTutorial,
         LevelSegments::Tut_AimFireTutorial,
         LevelSegments::Tut_AmmoPickupTutorial,
         LevelSegments::Tut_ShootMovingTargetsTutorial,
-		LevelSegments::Tut_SoloTriggerTutorial,
+        LevelSegments::Tut_SoloTriggerTutorial,
         LevelSegments::Tut_ReviveTutorial,
-        LevelSegments::Tut_SimultaneousTriggerTutorial,
-        LevelSegments::Tut_SimulationCreationCinematic
     } );
 
-	auto endingState = std::make_shared<SegmentLogicStateMachine>( "To Combat Bowl", this );
+    auto endingState = std::make_shared<SegmentLogicStateMachine>( "To Combat Bowl", this );
 
-	auto lock = endingState->AddState<LockPlayerCharacterControllerState>( true, false, true, false );
-	auto changeSeg = endingState->AddState<ChangeSegmentState>( LevelSegments::CB1_SimulationStartCinematic );
-	
-	auto trans = lock->AddTransition(
-		changeSeg, "Change To Change"
-	);
+    auto lock = endingState->AddState<LockPlayerCharacterControllerState>( true, false, true, false );
+    auto changeSeg = endingState->AddState<ChangeSegmentState>( LevelSegments::CB1_SimulationStartCinematic );
+    
+    auto trans = lock->AddTransition(
+        changeSeg, "Change To Change"
+    );
 
-	trans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 6.0f ) );
+    trans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 6.0f ) );
 
-	endingState->SetInitialState( lock );
+    endingState->SetInitialState( lock );
 
-	addSegmentLogic( endingState, {
+    addSegmentLogic( endingState, {
         LevelSegments::Tut_SimultaneousTriggerTutorial
     } );
 }

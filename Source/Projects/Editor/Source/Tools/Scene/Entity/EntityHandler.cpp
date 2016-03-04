@@ -971,7 +971,7 @@ JSMethod(EntityHandler::setParent)
     Application::PostMainThread( [=] {
         auto &newHandle = getHandle( );
 
-        if (newHandle)
+        if (!newHandle)
             return;
 
         auto *transform = newHandle->GetTransform( );
@@ -988,7 +988,7 @@ JSMethod(EntityHandler::setParent)
         {
             auto targetEntity = newHandle->GetWorld( )->GetEntity( targetParentID );
 
-            if (!targetEntity)
+            if (targetEntity)
                 targetEntity->GetTransform( )->AddChild( transform );
         }
     } );

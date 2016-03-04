@@ -16,6 +16,8 @@
 #include <SVec3.h>
 #include "AbstractWeapon.h"
 
+#include <ArchetypeData.h>
+
 namespace ursine
 {
     namespace ecs
@@ -64,11 +66,18 @@ public:
         GetStartWeapon,
         SetStartWeapon
     );
-   
+
     EditorField(
         std::string LastStand,
         GetLastStandWeapon,
         SetLastStandWeapon
+    );
+
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        lastStand,
+        GetLastStandData,
+        SetLastStandData
     );
    
     EditorField(

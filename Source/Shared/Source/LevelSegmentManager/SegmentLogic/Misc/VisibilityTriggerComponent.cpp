@@ -25,73 +25,95 @@ using namespace ursine;
 using namespace ecs;
 
 VisibilityTrigger::VisibilityTrigger(void)
-	: BaseComponent()
-	, m_segment(LevelSegments::Empty)
+    : BaseComponent()
+    , m_segment(LevelSegments::Empty)
+    , m_unsubscribed( true )
 {
 }
 
 VisibilityTrigger::~VisibilityTrigger(void)
 {
+    if (!m_unsubscribed)
+    {
+        auto world = GetOwner( )->GetWorld( );
+
+        if (!world)
+            return;
+
+        auto segmentManagers = world->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
+
+        if (segmentManagers.size( ) == 0)
+            return;
+
+        auto segmentManager = segmentManagers[ 0 ];
+
+        segmentManager->GetComponent<LevelSegmentManager>( )->Listener( this )
+            .Off( LevelSegmentManagerEvents::SegmentChanged, &VisibilityTrigger::onSegmentChange );
+    }
+
 }
 
 void VisibilityTrigger::OnInitialize(void)
 {
-	auto world = GetOwner( )->GetWorld( );
+    auto world = GetOwner( )->GetWorld( );
 
-	if (!world)
-		return;
+    if (!world)
+        return;
 
-	auto segmentManagers = world->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
+    auto segmentManagers = world->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
 
-	if (segmentManagers.size( ) == 0)
-		return;
+    if (segmentManagers.size( ) == 0)
+        return;
 
-	auto segmentManager = segmentManagers[ 0 ];
+    auto segmentManager = segmentManagers[ 0 ];
 
-	segmentManager->GetComponent<LevelSegmentManager>( )->Listener( this )
-		.On( LevelSegmentManagerEvents::SegmentChanged, &VisibilityTrigger::onSegmentChange );
+    segmentManager->GetComponent<LevelSegmentManager>( )->Listener( this )
+        .On( LevelSegmentManagerEvents::SegmentChanged, &VisibilityTrigger::onSegmentChange );
 
+    m_unsubscribed = false;
 }
 
 LevelSegments VisibilityTrigger::GetLevelSegment(void) const
 {
-	return m_segment;
+    return m_segment;
 }
 
 void VisibilityTrigger::SetLevelSegment(LevelSegments levelSegment)
 {
-	m_segment = levelSegment;
+    m_segment = levelSegment;
 }
 
 void VisibilityTrigger::onSegmentChange(EVENT_HANDLER(LevelSegmentManager))
 {
-	EVENT_ATTRS(LevelSegmentManager, LevelSegmentChangeArgs);
+    EVENT_ATTRS(LevelSegmentManager, LevelSegmentChangeArgs);
 
-	if (m_segment == LevelSegments::Empty)
-		return;
+    if (m_segment == LevelSegments::Empty)
+        return;
 
-	if (args->segment == m_segment)
-	{
-		if (GetOwner( )->HasComponent<Model3D>( ))
-		{
-			auto model = GetOwner( )->GetComponent<Model3D>( );
-			auto flag = model->GetActive( );
-			model->SetActive( !flag );
+    if (args->segment == m_segment)
+    {
+        if (GetOwner( )->HasComponent<Model3D>( ))
+        {
+            auto model = GetOwner( )->GetComponent<Model3D>( );
+            auto flag = model->GetActive( );
+            model->SetActive( !flag );
 
-			auto world = GetOwner( )->GetWorld( );
+            auto world = GetOwner( )->GetWorld( );
 
-			if (!world)
-				return;
+            if (!world)
+                return;
 
-			auto segmentManagers = world->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
+            auto segmentManagers = world->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
 
-			if (segmentManagers.size( ) == 0)
-				return;
+            if (segmentManagers.size( ) == 0)
+                return;
 
-			auto segmentManager = segmentManagers[ 0 ];
+            auto segmentManager = segmentManagers[ 0 ];
 
-			segmentManager->GetComponent<LevelSegmentManager>( )->Listener( this )
-				.Off( LevelSegmentManagerEvents::SegmentChanged, &VisibilityTrigger::onSegmentChange );
-		}
-	}
+            segmentManager->GetComponent<LevelSegmentManager>( )->Listener( this )
+                .Off( LevelSegmentManagerEvents::SegmentChanged, &VisibilityTrigger::onSegmentChange );
+
+            m_unsubscribed = true;
+        }
+    }
 }
