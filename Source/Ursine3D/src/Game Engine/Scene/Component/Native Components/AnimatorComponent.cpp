@@ -19,7 +19,7 @@
 #include "AnimationInfo.h"
 #include "Model3DComponent.h"
 
-typedef ursine::graphics::ufmt_loader::AnimInfo AniInfo;
+#include "Notification.h"
 
 // 
 namespace ursine

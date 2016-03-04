@@ -18,6 +18,7 @@
 #include "Notification.h"
 
 #include "AnimationClipData.h"
+#include "Component.h"
 
 namespace ursine
 {
@@ -109,51 +110,6 @@ namespace ursine
             return;
         }
         m_animation = targetAnimation;
-    }
-
-    const resources::ResourceReference &AnimationState::GetClip(void) const
-    {
-        return m_clipResource;
-    }
-
-    void AnimationState::SetClip(const resources::ResourceReference &clip)
-    {
-        m_clipResource = clip;
-
-        auto data = loadResource<resources::AnimationClipData>(m_clipResource);
-
-        //if (!resourcesAreAvailable())
-        //    return;
-        //
-        //invalidateClip();
-        //
-        //NOTIFY_COMPONENT_CHANGED("clip", m_clipResource);
-    }
-
-    void AnimationState::invalidateClip(void)
-    {
-        //auto data = loadResource<resources::AnimationClipData>(m_clipResource);
-        //
-        //std::string str;
-        //
-        //if (data == nullptr)
-        //{
-        //    NotificationConfig config;
-        //
-        //    config.type = NOTIFY_WARNING;
-        //    config.header = "Warning";
-        //    config.message = "There is no matching animation clip resource.";
-        //    config.dismissible = true;
-        //    config.duration = TimeSpan::FromSeconds(5.0f);
-        //
-        //    m_animationName = "";
-        //}
-        //else
-        //{
-        //    auto handle = data->GetAnimeHandle();
-        //
-        //    m_animationName = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo(handle)->name;
-        //}
     }
 
     const float &AnimationState::GetTransPosition(void) const

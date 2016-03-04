@@ -32,26 +32,11 @@ namespace ursine
         auto animInfo = importer.GetAnimInfo( );
         
         // importing model info check
+        // if there is animation, just animation
         if ( animInfo.IsThereAAnimation( ) )
-        {
-            fs::path clipFileName = animInfo.name + ".uanim";
-        
-            auto clipPath = sourceFileDirectory / clipFileName;
-        
-            ResourceWriter clipWriter( clipPath );
-            
-            UAssertCatchable( clipWriter.IsOpen( ),
-                "Unable to write clip.\nfile: %s",
-                clipPath.string( ).c_str( )
-            );
-            
-            auto animclipdata = std::make_shared<AnimationClipData>( animInfo );
-
-            animclipdata->Write( clipWriter );
-            
-            context.AddGeneratedResource( clipPath );
-        }
-
-        return std::make_shared<ModelData>( importer.GetModelInfo( ) );
+            return std::make_shared<AnimationClipData>( animInfo );
+        // else export just model
+        else
+            return std::make_shared<ModelData>( importer.GetModelInfo( ) );
     }
 }

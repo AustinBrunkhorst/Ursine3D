@@ -27,21 +27,13 @@ namespace ursine
             SetName
             );
 
-        //// how can I add multiple animations in animation state?
-        //// how can I use combo box for this?
-        //// Array<Animation> => no, in this case, we should edit
-        //EditorField(
-        //    std::string animName,
-        //    GetAnimationName,
-        //    SetAnimationName
-        //    );
-
-        // Get animation as a resource not by name
-        EditorResourceField(
-            ursine::resources::AnimationClipData,
-            clip,
-            GetClip,
-            SetClip
+        // how can I add multiple animations in animation state?
+        // how can I use combo box for this?
+        // Array<Animation> => no, in this case, we should edit
+        EditorField(
+            std::string animName,
+            GetAnimationName,
+            SetAnimationName
             );
 
         /** @brief constructor
@@ -97,10 +89,6 @@ namespace ursine
         const Animation *GetAnimationByName(void) const;
         void SetAnimationByName(const std::string& name);
 
-        const resources::ResourceReference &GetClip(void) const;
-        void SetClip(const resources::ResourceReference &clip);
-        void invalidateClip(void);
-
         const float &GetTransPosition(void) const;
         void SetTransPosition(const float& tPos);
 
@@ -111,7 +99,6 @@ namespace ursine
         std::string m_animname;
         //current animation
         const Animation *m_animation;
-        resources::ResourceReference m_clipResource;
         //time to start transitioning
         float m_transPos;
     } Meta(Enable, EnableArrayType, DisplayName("AnimationState"));
