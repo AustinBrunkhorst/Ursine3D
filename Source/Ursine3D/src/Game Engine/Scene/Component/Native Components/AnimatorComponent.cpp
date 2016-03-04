@@ -19,7 +19,7 @@
 #include "AnimationInfo.h"
 #include <Model3DComponent.h>
 
-typedef ursine::graphics::ufmt_loader::AnimInfo AniInfo;
+#include "Notification.h"
 
 namespace
 {
@@ -138,6 +138,16 @@ namespace ursine
             {
                 x = SMat4::Identity( );
             }
+<<<<<<< HEAD
+=======
+
+            auto *gfx = GetCoreSystem(graphics::GfxAPI);
+            auto *world = GetOwner( )->GetWorld( );
+
+            auto animListEntity = world->GetEntityFromName( "Animation List" );
+            if (!animListEntity)
+                animListEntity = world->CreateEntity( "Animation List" );
+>>>>>>> refs/remotes/origin/resource-management
         }
 
         void Animator::UpdateAnimation(const float dt)
@@ -913,12 +923,5 @@ namespace ursine
                 }
             }
         }
-
-        // Question
-        // I'm trying to add/remove entity by StateArray.
-        // Adding is not hard(Except naming), but how can I remove entity from the blending tree?
-        // how can I add/remove entity when I add/remove Array?
-        // And how will you control BlendTree for all model?
-        // how can I save blendtree? -> by new file format
     }
 }

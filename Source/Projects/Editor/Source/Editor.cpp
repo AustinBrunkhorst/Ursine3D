@@ -28,7 +28,7 @@ using namespace ursine;
 namespace rp = resources::pipeline;
 
 namespace
-{ 
+{
     const auto kWindowTitle = "Ursine3D Editor";
     const auto kWindowIcon = "Resources/Icon.png";
 

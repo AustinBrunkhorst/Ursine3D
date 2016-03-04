@@ -18,6 +18,7 @@
 #include "ModelInfo.h"
 #include "AnimationInfo.h"
 #include "GUID.h"
+#include "FontData.h"
 
 namespace ursine
 {
@@ -58,7 +59,8 @@ namespace ursine
             /////////////////////////////////////////////////////////
 
             // create a model
-            GfxHND CreateModel(const ufmt_loader::ModelInfo& modelInfo);
+            bool CheckModelExistence(const std::string &modelName);
+            GfxHND CreateModel(const ufmt_loader::ModelInfo &modelInfo);
             void DestroyModel(GfxHND &handle);
 
             // load/unload from GPU
@@ -74,17 +76,24 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // Animation
             /////////////////////////////////////////////////////////
-
-            GfxHND CreateAnimation(const ufmt_loader::AnimInfo& animeInfo);
+            bool CheckAnimExistence(const std::string &animeName);
+            GfxHND CreateAnimation(const ufmt_loader::AnimInfo &animeInfo);
             void DestroyAnimation(GfxHND &handle);
 
             ufmt_loader::AnimInfo *GetAnimInfo(const GfxHND &handle);
-            
+
+            /////////////////////////////////////////////////////////
+            // FONT
+            /////////////////////////////////////////////////////////
+            GfxHND CreateBitmapFont(uint8_t *binaryData, size_t binarySize);
+            void DestroyBitmapFont(GfxHND &fontHandle);
+            void RegisterTexture(GfxHND fontHandle, const std::string &fontName, GfxHND textureHandle);
+
         private:
             privData *m_privates;
 
         private:
-            void SetPrivates(void *priv, void *priv2);
+            void SetPrivates(void *priv, void *priv2, void *priv3);
             void Initialize();
             void Uninitialize();
         };

@@ -17,6 +17,9 @@
 #include "AnimationBuilder.h"
 #include "Notification.h"
 
+#include "AnimationClipData.h"
+#include "Component.h"
+
 namespace ursine
 {
     AnimationState::AnimationState()

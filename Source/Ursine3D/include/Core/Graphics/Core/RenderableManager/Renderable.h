@@ -332,6 +332,9 @@ namespace ursine
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
 
+            GfxHND GetFontHandle(void) const;
+            void SetFontHandle(GfxHND handle);
+
         private:
             float m_size;
 
@@ -349,6 +352,8 @@ namespace ursine
             float m_ppu;
 
             Alignment m_alignment;
+
+            GfxHND m_fontHandle;
         };
     }
 }

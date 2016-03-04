@@ -39,7 +39,10 @@ namespace ursine
             if (currentCamera.CheckMask( spriteText.GetRenderMask( ) ))
                 return true;
 
-            if ( spriteText.GetText( ).length( ) <= 0 )
+            if (spriteText.GetText( ).length( ) <= 0)
+                return true;
+
+            if(spriteText.GetFontHandle( ) == 0)
                 return true;
 
             // return false as in DO NOT CULL ME
@@ -109,9 +112,15 @@ namespace ursine
 
             GlyphBuffer gb;
             auto &text = spriteText.GetText( );
-            auto &characterData = m_manager->m_font.GetCharacterData( );
-            auto &commonData = m_manager->m_font.GetCommonData( );
+            auto &font = m_manager->fontManager->GetBitmapFont( handle.Material_ );
+            auto &characterData = font.GetCharacterData( );
+            auto &commonData = font.GetCommonData( );
+            auto &infoData = font.GetInfoData( );
 
+            // map the texture
+            auto texHandle = m_manager->fontManager->GetTextureHandle( spriteText.GetFontHandle( ), font.GetPageData( )[0] );
+            m_manager->textureManager->MapTextureByID( texHandle & 0xFFFF );
+            
             // offset data for calculating stuff
             float distance = 0;
             unsigned lineStartIndex = 0;
@@ -225,7 +234,6 @@ namespace ursine
             {
                 gb.glyphData[ y ].screenPosition.x -= lineOffset;
             }
-
 
             // DONE, map the data
             m_manager->bufferManager->MapBuffer<BUFFER_TEXTDATA>(

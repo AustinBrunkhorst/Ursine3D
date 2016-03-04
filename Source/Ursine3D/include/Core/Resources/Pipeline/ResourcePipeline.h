@@ -6,7 +6,6 @@
 
 #include "TextureImporter.h"
 #include "FBXFileImporter.h"
-#include "AnimationClipImporter.h"
 #include "AudioImporter.h"
 #include "JsonImporter.h"
 
@@ -17,6 +16,7 @@
 #include "PassThroughProcessor.h"
 #include "TextureProcessor.h"
 #include "WorldProcessor.h"
+#include "ArchetypeProcessor.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Resource Types
@@ -39,3 +39,6 @@
 
 #include "WorldReader.h"
 #include "WorldData.h"
+
+#include "ArchetypeReader.h"
+#include "ArchetypeData.h"

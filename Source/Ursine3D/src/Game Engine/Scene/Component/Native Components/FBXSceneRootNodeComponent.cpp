@@ -10,6 +10,8 @@
 
 #include "Notification.h"
 
+#include "ModelResource.h"
+
 namespace ursine
 {
     namespace ecs
@@ -18,7 +20,7 @@ namespace ursine
 
         FBXSceneRootNode::FBXSceneRootNode(void)
             : BaseComponent( )
-            , m_sceneName( "" )
+            , m_modelHandle( 0 )
         #if defined(URSINE_WITH_EDITOR)
             , m_notificationPresent( false )
         #endif
@@ -35,52 +37,61 @@ namespace ursine
         {
         }
 
-        const std::string &FBXSceneRootNode::GetSceneName(void) const
+        const resources::ResourceReference& FBXSceneRootNode::GetModel(void) const
         {
-            return m_sceneName;
+            return m_modelResource;
         }
 
-        void FBXSceneRootNode::SetSceneName(const std::string &map)
+        void FBXSceneRootNode::SetModel(const ursine::resources::ResourceReference &model)
         {
-            m_sceneName = map;
+            m_modelResource = model;
+
+            if (!resourcesAreAvailable())
+                return;
+
+            NOTIFY_COMPONENT_CHANGED("sceneModel", m_modelResource);
         }
 
     #if defined(URSINE_WITH_EDITOR)
 
         void FBXSceneRootNode::importScene(void)
         {
-            //auto *gfx = GetCoreSystem( graphics::GfxAPI );
+            invalidateModel();
 
-            //auto *model = gfx->ResourceMgr.GetModelResource( m_sceneName );
+            auto data = loadResource<ursine::resources::ModelData>( m_modelResource );
 
-            //auto *world = GetOwner( )->GetWorld( );
+            auto *gfx = GetCoreSystem( graphics::GfxAPI );
 
-            //auto *transform = GetOwner( )->GetTransform( );
+            auto *model = gfx->ResourceMgr.GetModelResource(data->GetModelHandle( ));
 
-            //if (model != nullptr)
-            //{
-            //    auto &meshVec = model->GetMeshArray( );
+            auto *world = GetOwner( )->GetWorld( );
 
-            //    int childIndex = 0;
+            auto *transform = GetOwner( )->GetTransform( );
 
-                //for (auto &x : meshVec)
-                //{
-                //    // Create an entity
-                //    auto newEntity = world->CreateEntity( x->GetName( ) );
+            if (model != nullptr)
+            {
+                auto &meshVec = model->GetMeshArray( );
 
-            //        // Add model3d
-            //        auto *modelComp = newEntity->AddComponent<Model3D>( );
+                int childIndex = 0;
 
-            //        // Set the mesh to this mesh
-            //        modelComp->SetModelResourceName( m_sceneName );
+                for (auto &x : meshVec)
+                {
+                    // Create an entity
+                    auto newEntity = world->CreateEntity( x->GetName( ) );
 
-            //        // Set its mesh index
-            //        modelComp->SetMeshIndex( childIndex++ );
+                    // Add model3d
+                    auto *modelComp = newEntity->AddComponent<Model3D>( );
 
-            //        // We need to grab the data from this... Well shit
-            //        transform->AddChild( newEntity->GetTransform( ) );
-            //    }
-            //}
+                    // Set the mesh to this mesh
+                    modelComp->SetModel( m_modelResource );
+
+                    // Set its mesh index
+                    modelComp->SetMeshIndex( childIndex++ );
+
+                    // We need to grab the data from this... Well shit
+                    transform->AddChild( newEntity->GetTransform( ) );
+                }
+            }
         }
 
         void FBXSceneRootNode::recursClearChildren(const std::vector< Handle<Transform> > &children)
@@ -184,5 +195,22 @@ namespace ursine
         }
 
     #endif
+
+
+        void FBXSceneRootNode::invalidateModel(bool unload)
+        {
+            auto data = loadResource<resources::ModelData>(m_modelResource);
+
+            if (data != nullptr)
+            {
+                auto handle = data->GetModelHandle();
+
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.UnloadModel( m_modelHandle );
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.LoadModel( handle );
+
+                m_modelHandle = handle;
+            }
+        }
+
     }
 }

@@ -34,7 +34,7 @@ namespace ursine
             , m_modelCache( )
             , m_modelInfoCache( )
             , m_nextAnimationID( 0 )
-            , m_animationCache( { } )
+            , m_animeInfoCache( { } )
         {
         }
 
@@ -241,6 +241,16 @@ namespace ursine
             m_deviceContext = nullptr;
         }
 
+        bool ModelManager::CheckModelExistence(const std::string &modelName)
+        {
+            for (auto &iter : m_modelInfoCache)
+            {
+                if (iter.second.name == modelName)
+                    return true;
+            }
+            return false;
+        }
+
         GfxHND ModelManager::CreateModel(const ufmt_loader::ModelInfo &modelInfo)
         {
             GfxHND handle;
@@ -414,6 +424,16 @@ namespace ursine
         }
 
         // animation
+        bool ModelManager::CheckAnimExistence(const std::string &animeName)
+        {
+            for (auto &iter : m_animeInfoCache)
+            {
+                if (iter.second.name == animeName)
+                    return true;
+            }
+            return false;
+        }
+
         GfxHND ModelManager::CreateAnimation(const ufmt_loader::AnimInfo &animeInfo)
         {
             GfxHND handle;
@@ -422,7 +442,7 @@ namespace ursine
 
             auto internalID = m_nextAnimationID++;
 
-            m_animationCache.emplace( internalID, animeInfo );
+            m_animeInfoCache.emplace( internalID, animeInfo );
 
             // initialize handle
             hnd->ID_ = SANITY_RESOURCE;
@@ -444,7 +464,7 @@ namespace ursine
                 "Attempted to get animation with handle of invalid type!"
             );
 
-            m_animationCache.erase( hnd->Index_ );
+            m_animeInfoCache.erase( hnd->Index_ );
 
             handle = 0;
         }
@@ -478,9 +498,9 @@ namespace ursine
                 "Attempted to get animation with handle of invalid type!"
             );
 
-            auto search = m_animationCache.find( hnd->Index_ );
+            auto search = m_animeInfoCache.find( hnd->Index_ );
 
-            return search == m_animationCache.end( ) ? nullptr : &search->second;
+            return search == m_animeInfoCache.end( ) ? nullptr : &search->second;
         }
 
         ModelResource *ModelManager::GetModel(const unsigned ID)

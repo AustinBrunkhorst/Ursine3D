@@ -249,6 +249,8 @@ namespace ursine
 
             void enableDeletionOnEntities(const ursine::ecs::EntityHandle &entity);
 
+            // try make state can get animation by EditorResourceField
+
         } Meta(
             Enable, 
             WhiteListMethods, 

@@ -76,21 +76,21 @@ namespace ursine
             // MAP TRANSFORM DATA ///////////////////////////////////
             m_manager->bufferManager->MapTransformBuffer(
                 spotLight.GetSpotlightTransform() * SMat4(
-                    SVec3(0, 0, 0.5f), 
+                    SVec3(0, 0, 0), 
                     SQuat(-90.0f, 0.0f, 0.0f), 
-                    SVec3::One()
+                    SVec3(2.0f, 2.0f, 2.0f)
                 )
             );
 
             // DETERMINE CULLING MODE ///////////////////////////////
-            SVec3 light2Cam = currentCamera.GetPosition( ) - lightPosition;
+            SVec3 light2Cam = currentCamera.GetPosition( ) - spotLight.GetPosition( );
             light2Cam.Normalize( );
-            float dotp = light2Cam.Dot( lightDirection );
-
-            std::cout << dotp << std::endl;
+            float dotp = light2Cam.Dot( spotLight.GetDirection( ) );
 
             // if camera is outside the cone, use this
-            if (dotp < cosf(slb.outerAngle / 2.0f))
+            if((slb.outerAngle - dotp) <= 0.1f && (slb.outerAngle - dotp) > 0.0f)
+                m_manager->dxCore->SetRasterState( RASTER_STATE_SOLID_FRONTCULL );
+            else if (dotp <= slb.outerAngle)
                 m_manager->dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
             // else, use frontface culling
             else
