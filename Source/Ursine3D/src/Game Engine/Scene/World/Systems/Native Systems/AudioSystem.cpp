@@ -14,6 +14,7 @@
 #include "UrsinePrecompiled.h"
 
 #include "AudioSystem.h"
+#include "AudioConfigComponent.h"
 #include "ListenerComponent.h"
 
 namespace ursine
@@ -46,6 +47,14 @@ namespace ursine
                 .On(WORLD_UPDATE, &AudioSystem::onUpdate)
                 .On(WORLD_ENTITY_COMPONENT_ADDED, &AudioSystem::onComponentAdded)
                 .On(WORLD_ENTITY_COMPONENT_REMOVED, &AudioSystem::onComponentRemoved);
+        }
+
+        void AudioSystem::OnSceneReady(Scene *scene)
+        {
+            auto settings = m_world->GetSettings( );
+
+            if (!settings->HasComponent<AudioConfig>( ))
+                settings->AddComponent<AudioConfig>( );
         }
 
         void AudioSystem::OnRemove(void)

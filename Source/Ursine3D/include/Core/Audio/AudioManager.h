@@ -22,6 +22,8 @@
 #include "WwiseForward.h"
 #include "WWiseUtils/AkFilePackageLowLevelIOBlocking.h"
 
+#include "AudioData.h"
+
 // TODO: remove this when the shared project is removed
 #if defined(URSINE_WITH_EDITOR)
 
@@ -84,6 +86,7 @@ namespace ursine
 	public:
 		Meta(Enable)
 		AudioManager(void) { }
+        ~AudioManager(void);
 
 		void OnInitialize(void) override;
 		void OnRemove(void) override;
@@ -103,8 +106,10 @@ namespace ursine
 		static void ResumeAudio();
 
 		void LoadBank(const std::string &bankName, AkBankID &bankID);
+		void LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank);
 
 		void UnloadBank(const std::string &bankName);
+		void UnloadBank(const resources::AudioData &data);
 
 		void RegisterObject(AkGameObjectID obj, int listener);
 
@@ -138,7 +143,7 @@ namespace ursine
 		void Init(AkInitSettings* in_pSettings, 
 			AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
 
-	} Meta(Disable, WhiteListMethods);
+	} Meta(Enable, WhiteListMethods);
 }
 
 // Global JavaScript methods

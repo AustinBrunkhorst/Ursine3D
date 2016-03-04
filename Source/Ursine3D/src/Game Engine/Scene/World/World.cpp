@@ -257,6 +257,10 @@ namespace ursine
         {
             auto data = worldResource.Load<resources::WorldData>( resourceManager );
 
+            UAssert( data != nullptr,
+                "Unable to load reference of world to merge."
+            );
+
             WorldSerializer::MergeDeserialize( data->GetData( ), this );
         }
 
