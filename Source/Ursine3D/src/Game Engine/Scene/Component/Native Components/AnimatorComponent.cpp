@@ -140,6 +140,11 @@ namespace ursine
             }
         }
 
+        void Animator::OnSceneReady(Scene *scene)
+        {
+            importAnimation( );
+        }
+
         void Animator::UpdateAnimation(const float dt)
         {
             // grab what we need
@@ -196,6 +201,9 @@ namespace ursine
                 tempVec,
                 ( float )transFactor
             );
+
+            if (!m_rigRoot)
+                return;
 
             // Update the rig transforms
             updateRigTransforms( m_rigRoot->GetTransform( )->GetChild( 0 ), rig->GetBone( 0 ) );
@@ -379,6 +387,8 @@ namespace ursine
 
             if (data == nullptr)
             {
+            #if defined(URSINE_WITH_EDITOR)
+
                 NotificationConfig config;
 
                 config.type = NOTIFY_WARNING;
@@ -388,12 +398,21 @@ namespace ursine
                 config.duration = TimeSpan::FromSeconds( 5.0f );
 
                 m_animationName = "";
+
+            #else
+
+                return;
+
+            #endif
             }
             else
             {
                 auto handle = data->GetAnimeHandle( );
 
                 m_animationName = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( handle )->name;
+
+                for (auto &state : stArray)
+                    state.OnSceneReady( );
             }
         }
 
@@ -848,11 +867,12 @@ namespace ursine
         void Animator::importAnimation(void)
         {
             unsigned animationIndex = 0;
+            auto data = loadResource<resources::AnimationClipData>( m_clipResource );
+
             // Check if there is same animation already
             const Animation *checker = AnimationBuilder::GetAnimationByName( m_animationName );
             if (nullptr == checker)
             {
-                auto data = loadResource<resources::AnimationClipData>( m_clipResource );
                 if (data == nullptr)
                 {
                     NotificationConfig config;
@@ -876,10 +896,16 @@ namespace ursine
                 }
             }
 
+            for (auto &state : stArray)
+                state.OnSceneReady( );
+
             // Check if the animation is in animlist, push back if not
             bool bExist = false;
             for (auto &x : m_animlist)
             {
+                if (!x)
+                    continue;
+
                 if (m_animationName == x->GetName( ))
                 {
                     bExist = true;

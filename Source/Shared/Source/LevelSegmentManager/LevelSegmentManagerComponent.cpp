@@ -123,11 +123,11 @@ void LevelSegmentManager::initTutorialLogic(void)
         LevelSegments::CB1_SimulationStartCinematic
     );
 
-	auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
-	auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
-	auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
-	auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
-	auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpens );
+    auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
+    auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
+    auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
+    auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpens );
 
     // Next state for spawning the players
     initState->AddTransition( playerCreateState, "Go To Init Players" );
@@ -138,7 +138,7 @@ void LevelSegmentManager::initTutorialLogic(void)
     // After players are spawned tween their viewports
     auto introCin = lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
 
-	introCin->AddCondition<sm::TimerCondition>(TimeSpan::FromSeconds(17.0f));
+	introCin->AddCondition<sm::TimerCondition>(TimeSpan::FromSeconds(10.0f));
 
 	// Unlock players
 	tweenState->AddTransition( unlockCCState, "Go To Unlocking Player Controller" );
