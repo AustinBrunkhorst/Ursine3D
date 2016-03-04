@@ -1151,7 +1151,9 @@
 "SegmentChangeTrigger": {
 ".uid": 74, 
 "changeNewSegment": 2, 
-"changeOnThisSegment": 1
+"changeOnThisSegment": 1, 
+"triggerPlayer1": false, 
+"triggerPlayer2": false
 }, 
 "Transform": {
 ".uid": 71, 
@@ -6756,7 +6758,9 @@
 "SegmentChangeTrigger": {
 ".uid": 320, 
 "changeNewSegment": 3, 
-"changeOnThisSegment": 2
+"changeOnThisSegment": 2, 
+"triggerPlayer1": false, 
+"triggerPlayer2": false
 }, 
 "Transform": {
 ".uid": 317, 
@@ -6803,7 +6807,9 @@
 "SegmentChangeTrigger": {
 ".uid": 324, 
 "changeNewSegment": 4, 
-"changeOnThisSegment": 3
+"changeOnThisSegment": 3, 
+"triggerPlayer1": true, 
+"triggerPlayer2": true
 }, 
 "Transform": {
 ".uid": 321, 
@@ -6816,7 +6822,7 @@
 "scale": {
 "x": 101.06306457519531, 
 "y": 18.810878753662109, 
-"z": 16.658269882202148
+"z": 79.452133178710938
 }, 
 "translation": {
 "x": 208.6556396484375, 

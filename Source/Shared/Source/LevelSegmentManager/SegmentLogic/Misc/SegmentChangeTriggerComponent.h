@@ -45,14 +45,16 @@ public:
 	void SetNewLevelSegment(LevelSegments levelSegment);
 
 	// Is trigger active
-	Meta(Disable)
-	bool m_active;
+	bool triggerPlayer1;
+	bool triggerPlayer2;
 
-	void Activate(EVENT_HANDLER(ursine::ecs::Entity));
+	void onCollision(EVENT_HANDLER(ursine::ecs::Entity));
 
 private:
 	LevelSegments m_currentSegment;
 	LevelSegments m_newSegment;
+	bool m_collisionPlayer1;
+	bool m_collisionPlayer2;
 
 
 } Meta(Enable, DisplayName("SegmentChangeTrigger"));
