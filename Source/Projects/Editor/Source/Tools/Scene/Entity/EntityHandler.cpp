@@ -461,16 +461,16 @@ JSMethod(EntityHandler::componentFieldUpdate)
 
     auto fieldType = field.GetType( );
 
-    auto &fieldMeta = field.GetMeta( );
-
-    auto *editorSetter = fieldMeta.GetProperty<EditorSetter>( );
-
-    auto valueToSet = fieldType.DeserializeJson( value );
-
     Application::PostMainThread( [=](void) mutable
     {
         if (!handle)
             return;
+
+        auto &fieldMeta = field.GetMeta( );
+
+        auto *editorSetter = fieldMeta.GetProperty<EditorSetter>( );
+
+        auto valueToSet = fieldType.DeserializeJson( value );
 
         if (editorSetter)
         {
@@ -988,7 +988,7 @@ const ecs::EntityHandle &EntityHandler::getHandle(void) const
     auto *activeWorld = m_scene->GetActiveWorld( );
 
     // make sure the world is still valid and the entity is still available
-    if (activeWorld != m_world || !m_handle->IsAvailable( ))
+    if (activeWorld != m_world || (m_handle && !m_handle->IsAvailable( )))
         return ecs::EntityHandle::Invalid( );
 
     return m_handle;
