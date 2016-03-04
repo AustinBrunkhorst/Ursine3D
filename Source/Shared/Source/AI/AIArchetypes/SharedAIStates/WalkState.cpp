@@ -10,6 +10,7 @@
 #include "WalkState.h"
 #include <AI/AIHordelingTypeComponent.h>
 #include <PlayerLogic/PlayerIDComponent.h>
+#include <Game Engine/Scene/Component/Native Components/Physics/SphereColliderComponent.h>
 
 
 using namespace ursine::ecs;
@@ -22,6 +23,7 @@ namespace ursine
             , m_move(nullptr)
             , m_ghostCollider(nullptr)
             , m_nearRadius(1.0f)
+            , m_attackRange(3.0f)
             , m_cohesionScale(0.5f)
             , m_separationScale(0.5f)
         {
@@ -47,23 +49,39 @@ namespace ursine
             {
                 setTargetDirection = std::bind(&WalkState::setTargetDirectionMovement, this, _1);
 
-                m_move = aiActor->GetComponent<AIMovementController>();
             }
+
+            m_move = aiActor->GetComponent<AIMovementController>();
 
             // we gon get ourselves a ghost collider
             m_ghostCollider = aiActor->GetComponentInChildren<ecs::Ghost>();
 
             UAssert(m_ghostCollider, "Child of Entity With walkState must have a ghost collider");
 
-            SetNearRadius(m_ghostCollider->GetOwner()->GetTransform()->GetWorldScale().X() / 2);
+            SetNearRadius(m_ghostCollider->GetOwner()->GetComponent<SphereCollider>()->GetRadius());
+
+            m_move->SetEnable(true);
         }
 
         void WalkState::Update(AIStateMachine *stateMachine)
         {
             std::cout << "updated walk state" << std::endl;
 
+            updateSurroundingActorsList(stateMachine);
+
             auto aiTrans = stateMachine->GetEntity()->GetTransform();
             Vec3 aiActorPos = aiTrans->GetWorldPosition();
+
+            // if we are in range to attack the player, we need to switch to the attack state
+            auto playerPos = getTargetPlayerPosition(aiTrans->GetOwner()->GetWorld());
+
+            auto playerDirection = playerPos - aiActorPos;
+
+            if (playerDirection.Length() <= m_attackRange)
+            {
+                stateMachine->SetBool("HitPlayer", true);
+                return;
+            }
 
             //auto *aiActorRigid = stateMachine->GetEntity()->GetComponent<Rigidbody>();
             // Separation:
@@ -135,7 +153,7 @@ namespace ursine
             // get the composite vector using the scalars set by the component
             auto totalBoidVec = centerVec * m_cohesionScale + sepVec * m_separationScale;
 
-            auto playerDirection = getTargetPlayerPosition(aiTrans->GetOwner()->GetWorld()) - aiActorPos;
+            //auto playerDirection = playerPos - aiActorPos;
 
             playerDirection.Normalize();
 
@@ -147,6 +165,7 @@ namespace ursine
         {
             std::cout << "exited walk state" << std::endl;
 
+            m_move->SetEnable(false);
         }
 
         void WalkState::SetNearRadius(float radius)
@@ -169,7 +188,12 @@ namespace ursine
             m_boidBehaviorScale = scale;
         }
 
-        void WalkState::updateSurroundingActorsList(void)
+        void WalkState::SetAttackRange(float range)
+        {
+            m_attackRange = range;
+        }
+
+        void WalkState::updateSurroundingActorsList(AIStateMachine *stateMachine)
         {
             m_surrounding.clear();
 

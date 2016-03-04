@@ -19,12 +19,9 @@ namespace ursine
             virtual void Update(AIStateMachine *stateMachine) override;
             virtual void Exit(AIStateMachine *stateMachine) override;
 
-            virtual bool CanExit(void) override;
-
         private:
 
             float m_delay;
-            float m_timer;
         };
     }
 }

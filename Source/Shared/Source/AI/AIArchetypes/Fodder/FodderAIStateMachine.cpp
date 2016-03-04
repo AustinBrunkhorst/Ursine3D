@@ -14,6 +14,7 @@ namespace ursine
             :AIStateMachine()
         {
             AddBool("HitPlayer", false);
+            AddFloat("PauseTimer", 0.0f);
         }
 
         void FodderAIStateMachine::Initialize(ecs::Entity* actor)

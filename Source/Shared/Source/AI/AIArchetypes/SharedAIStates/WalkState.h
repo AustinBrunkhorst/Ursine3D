@@ -41,9 +41,11 @@ namespace ursine
             void SetSeparationScale(float scale);
 
             void SetBoidbehaviorScale(float scale);
+
+            void SetAttackRange(float range);
         private:
 
-            void updateSurroundingActorsList(void);
+            void updateSurroundingActorsList(AIStateMachine *stateMachine);
 
             void setTargetDirectionWaypoints(const SVec3 &target);
             void setTargetDirectionMovement(const SVec3 &target);
@@ -60,6 +62,8 @@ namespace ursine
             ecs::Ghost *m_ghostCollider;
 
             float m_nearRadius;
+
+            float m_attackRange;
 
             float m_cohesionScale;
 

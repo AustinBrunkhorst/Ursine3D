@@ -39,7 +39,10 @@ namespace ursine
         void AIMovementController::Update(void)
         {
             if (!m_enable)
+            {
+                m_rigid->SetVelocity(SVec3::Zero());
                 return;
+            }
             
             m_rigid = static_cast< Handle<Rigidbody> >( GetOwner( )->GetComponent<Rigidbody>( ) );
 
@@ -50,11 +53,11 @@ namespace ursine
 
             m_rigid->SetVelocity( gravity + m_targetDir * m_speed );
 
-            auto lookangle = transform->GetForward( ).Dot( m_targetDir );
+            //auto lookangle = transform->GetForward( ).Dot( m_targetDir );
 
-            auto oldV = m_rigid->GetAngularVelocity( );
+            //auto oldV = m_rigid->GetAngularVelocity( );
 
-            m_rigid->SetAngularVelocity( Vec3( oldV.X( ), lookangle, oldV.Z( ) ) );
+            //m_rigid->SetAngularVelocity( Vec3( oldV.X( ), lookangle, oldV.Z( ) ) );
         }
 
         bool AIMovementController::GetEnable(void) const

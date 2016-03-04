@@ -26,7 +26,7 @@ public:
 
     EditorMeta(InputRange(0.0f, std::numeric_limits<float>::infinity()))
     EditorField(
-        float pauseTimeAfterAttack,
+        float AttackDelay,
         GetPauseTime,
         SetPauseTime
         );
@@ -35,6 +35,12 @@ public:
         float damageOnAttack,
         GetDamage,
         SetDamage
+        );
+
+    EditorField(
+        float AttackRange,
+        GetAttackRange,
+        SetAttackRange
         );
 
     EditorField(
@@ -64,6 +70,9 @@ public:
   float GetDamage(void) const;
   void SetDamage(float dmg);
 
+  float GetAttackRange(void) const;
+  void SetAttackRange(float newRange);
+
   float GetCohesionScale(void) const;
   void SetCohesionScale(float newScale);
 
@@ -79,12 +88,16 @@ private:
 
     void onUpdate(EVENT_HANDLER(World));
 
+    void onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
+
     Meta(Disable)
     ursine::sm::FodderAIStateMachine m_stateMachine;
 
     float m_pauseTime;
 
     float m_damage;
+
+    float m_range;
 
     float m_cohesionScale;
 

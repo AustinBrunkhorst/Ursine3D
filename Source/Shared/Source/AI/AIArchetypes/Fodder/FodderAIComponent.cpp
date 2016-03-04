@@ -21,6 +21,11 @@
 #include <SystemManager.h>
 #include <Utilities/StateMachine/Conditions/BoolCondition.h>
 #include "States/DamageState.h"
+#include <HealthSystem/HealthComponent.h>
+#include "CollisionEventArgs.h"
+#include "EntityEvent.h"
+#include <PlayerLogic/PlayerIDComponent.h>
+#include <Utilities/StateMachine/Conditions/FloatCondition.h>
 
 // use this for anything you want to draw in the editor
 //#include <DebugSystem.h>
@@ -35,6 +40,7 @@ FodderAI::FodderAI(void)
     , m_stateMachine( )
     , m_pauseTime(1.0f)
     , m_damage(1.0f)
+    , m_range(3.0f)
     , m_cohesionScale(0.5f)
     , m_separationScale(0.5f)
     , m_boidBehaviorScale(0.5f)
@@ -43,8 +49,11 @@ FodderAI::FodderAI(void)
 
 FodderAI::~FodderAI(void)
 {
-    GetOwner()->GetWorld()->Listener( this )
-        .Off( WORLD_UPDATE, &FodderAI::onUpdate );
+    GetOwner()->GetWorld()->Listener(this)
+        .Off(WORLD_UPDATE, &FodderAI::onUpdate);
+
+    GetOwner()->GetWorld()->Listener(this)
+        .Off(ursine::ecs::ENTITY_COLLISION_PERSISTED, &FodderAI::onCollide);
 }
 
 float FodderAI::GetPauseTime() const
@@ -65,6 +74,16 @@ float FodderAI::GetDamage() const
 void FodderAI::SetDamage(float dmg)
 {
     m_damage = dmg;
+}
+
+float FodderAI::GetAttackRange() const
+{
+    return m_range;
+}
+
+void FodderAI::SetAttackRange(float newRange)
+{
+    m_range = newRange;
 }
 
 float FodderAI::GetCohesionScale() const
@@ -100,10 +119,14 @@ void FodderAI::SetBoidScale(float newScale)
 
 void FodderAI::OnInitialize(void)
 {
-    GetOwner()->GetWorld()->Listener( this )
-        .On( WORLD_UPDATE, &FodderAI::onUpdate );
 
-    // initialize the stae machine
+    GetOwner()->GetWorld()->Listener(this)
+        .On(WORLD_UPDATE, &FodderAI::onUpdate);
+
+    GetOwner()->Listener(this)
+        .On(ursine::ecs::ENTITY_COLLISION_PERSISTED, &FodderAI::onCollide);
+
+    // initialize the state machine
     m_stateMachine.Initialize( GetOwner() );
 
     // set up the state machine
@@ -115,24 +138,44 @@ void FodderAI::OnInitialize(void)
 
     walkState->SetBoidbehaviorScale(m_boidBehaviorScale);
 
+    walkState->SetAttackRange(m_range);
+
 
     auto pauseState = m_stateMachine.AddState<sm::PauseState>( "FodderPauseState", m_pauseTime );
     auto damageState = m_stateMachine.AddState<sm::DamageState>( "FodderDamageState", m_damage );
-    
-    // since we don't specify a condition, it will try to transition automatically
-    pauseState->AddTransition( walkState, "PauseStateToWalkState" );
 
     // next connection is to move from walk state to damage state on collision
-    auto trans = walkState->AddTransition( damageState, "WalkStateToPauseState" );
+    auto trans = walkState->AddTransition( damageState, "WalkStateToDamageState" );
     trans->AddCondition<sm::BoolCondition>( "HitPlayer", true );
 
-    damageState->AddTransition( pauseState, "damageStateToPauseState" );
+    damageState->AddTransition( pauseState, "damageStateToWalkState" );
+
+    trans = pauseState->AddTransition(walkState, "PauseStateToWalkState");
+    trans->AddCondition<sm::FloatCondition>(
+            "PauseTimer",
+            sm::Comparison::LessThan, 0.0f
+            );
 
     m_stateMachine.SetInitialState(walkState);
+
+
 }
 
 void FodderAI::onUpdate(EVENT_HANDLER(World))
 {
     // update our state machine
     m_stateMachine.Update();
+}
+
+void FodderAI::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED))
+{
+    EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
+
+    auto root = args->otherEntity->GetRoot();
+
+    if (!root->HasComponent<PlayerID>())
+        return;
+
+    m_stateMachine.SetBool("HitPlayer", true);
+
 }

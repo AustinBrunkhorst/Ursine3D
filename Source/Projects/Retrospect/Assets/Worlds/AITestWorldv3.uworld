@@ -4,14 +4,14 @@
 "children": [], 
 "components": {
 "Light": {
-".uid": 3, 
+".uid": 6, 
 "color": {
 "a": 1, 
-"b": 0.5, 
-"g": 0.5, 
-"r": 0.5
+"b": 0.89453125, 
+"g": 0.89453125, 
+"r": 0.89453125
 }, 
-"intensity": 1, 
+"intensity": 10, 
 "radius": 40, 
 "renderMask": 0, 
 "spotlightAngles": {
@@ -21,10 +21,10 @@
 "type": 0
 }, 
 "Transform": {
-".uid": 2, 
+".uid": 5, 
 "rotation": {
-"w": 1, 
-"x": 0, 
+"w": 0.77380579710006714, 
+"x": 0.63342177867889404, 
 "y": 0, 
 "z": 0
 }, 
@@ -45,7 +45,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 17, 
+".uid": 11, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -55,7 +55,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 16, 
+".uid": 12, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -63,7 +63,7 @@
 }
 }, 
 "Model3D": {
-".uid": 18, 
+".uid": 13, 
 "active": true, 
 "castsShadows": true, 
 "color": {
@@ -81,7 +81,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 14, 
+".uid": 10, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -106,8 +106,287 @@
 {
 "children": [], 
 "components": {
-"SpriteText": {
+"Animator": {
+".uid": 27, 
+"animation": "", 
+"changeState": false, 
+"currentRig": "Player", 
+"currentState": "Player_Idle", 
+"playAnimation": true, 
+"renderDebug": false, 
+"stArray": [], 
+"stBlender": [], 
+"timeScalar": 1
+}, 
+"Model3D": {
+".uid": 28, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.20000000298023224, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Player", 
+"renderMask": 2, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 26, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 5.2394866543181706e-06
+}
+}
+}, 
+"name": "Model"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 35, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "RightArm"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 36, 
+"rotation": {
+"w": 0.49999997019767761, 
+"x": 0.49999997019767761, 
+"y": 0.49999997019767761, 
+"z": -0.49999997019767761
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -1.2000000476837158, 
+"y": -0.80000001192092896, 
+"z": 2
+}
+}
+}, 
+"name": "LeftArm"
+}
+], 
+"components": {
+"Audio Listener 3D": {
+".uid": 30, 
+"testing": []
+}, 
+"Camera": {
+".uid": 31, 
+"active": true, 
+"clearColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
+"farPlane": 1000, 
+"fov": 60, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 1, 
+"renderMask": 1042, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 0.5
+}
+}, 
+"Transform": {
+".uid": 29, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -0.34980010986328125, 
+"y": 7.4895663261413574, 
+"z": -3.0580849852412939e-08
+}
+}
+}, 
+"name": "Camera"
+}
+], 
+"components": {
+"Audio Emitter": {
+".uid": 15, 
+"Loop": false, 
+"Mute": false, 
+"Volume": 100
+}, 
+"CharacterController": {
+".uid": 16, 
+"HighRotationFloor": 1, 
+"LowRotationFactor": 0, 
+"MediumRotationFactor": 1, 
+"MediumRotationFloor": 0, 
+"deadZone": 0.099999994039535522, 
+"deadZoneSnap": 0.14999999105930328, 
+"lockLooking": false, 
+"lockMovement": false, 
+"rotateSpeed": 11.279999732971191
+}, 
+"CommandQueue": {
+".uid": 17
+}, 
+"CylinderCollider": {
+".uid": 18, 
+"height": 30, 
+"radius": 5
+}, 
+"Health": {
+".uid": 19, 
+"ArchetypeToSpawnOnDeath": ".uatype", 
+"EntityHealth": 100, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": false
+}, 
+"InputController": {
+".uid": 20, 
+"UseKeyboard": true
+}, 
+"InteractionBay": {
+".uid": 21
+}, 
+"Inventory": {
 ".uid": 22, 
+"LastStand": "P1HitScanWeapon.uatype", 
+"MeleeWeapon": "", 
+"PrimaryWeapon": "", 
+"SecondaryWeapon": "", 
+"StartWeapon": 0, 
+"m_currWeapon": 0
+}, 
+"PlayerID": {
+".uid": 23, 
+"PlayerId": 0
+}, 
+"Rigidbody": {
+".uid": 24, 
+"bodyFlag": 2, 
+"disableContactResponse": false, 
+"enableContactCallback": true, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 6.1500000953674316, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"SweptController": {
+".uid": 25, 
+"active": true, 
+"airAcceleration": 30, 
+"airDeceleration": 40, 
+"forwardEvents": true, 
+"gravity": 160, 
+"groundAcceleration": 200, 
+"groundDeceleration": 600, 
+"groundSnapDistance": 8, 
+"jumpCancelFactor": 0.5, 
+"jumpSpeed": 100, 
+"maxCeilingSlope": 43.5, 
+"maxFallSpeed": 180, 
+"maxGroundSlope": 42, 
+"maxMoveSpeed": 100, 
+"worldUp": {
+"x": 0, 
+"y": 1, 
+"z": 0
+}
+}, 
+"Transform": {
+".uid": 14, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": 1, 
+"z": 0
+}, 
+"scale": {
+"x": 0.40000000596046448, 
+"y": 0.40000000596046448, 
+"z": 0.40000000596046448
+}, 
+"translation": {
+"x": -23.639921188354492, 
+"y": 5.7853794097900391, 
+"z": 0
+}
+}
+}, 
+"name": "Player1 Archetype"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"SpriteText": {
+".uid": 44, 
 "alignment": 1, 
 "size": 20, 
 "text": "Fodder", 
@@ -120,7 +399,7 @@
 "useFiltering": true
 }, 
 "Transform": {
-".uid": 21, 
+".uid": 43, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -144,7 +423,7 @@
 "children": [], 
 "components": {
 "Ghost": {
-".uid": 33, 
+".uid": 46, 
 "disableContactResponse": true, 
 "enableContactCallback": false, 
 "offset": {
@@ -154,11 +433,11 @@
 }
 }, 
 "SphereCollider": {
-".uid": 26, 
+".uid": 47, 
 "radius": 6
 }, 
 "Transform": {
-".uid": 24, 
+".uid": 45, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -182,20 +461,29 @@
 ], 
 "components": {
 "AIMovementController": {
-".uid": 35, 
-"Speed": 0, 
+".uid": 38, 
+"Speed": 5, 
 "enabled": true
 }, 
+"BoxCollider": {
+".uid": 39, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
 "FodderAI": {
-".uid": 36, 
+".uid": 40, 
+"AttackDelay": 1, 
+"AttackRange": 5, 
 "Cohesion": 0.5, 
 "Separation": 0.5, 
 "TotalBoidBehaviorScale": 0.5, 
-"damageOnAttack": 1, 
-"pauseTimeAfterAttack": 1
+"damageOnAttack": 1
 }, 
 "Model3D": {
-".uid": 20, 
+".uid": 41, 
 "active": true, 
 "castsShadows": true, 
 "color": {
@@ -212,8 +500,30 @@
 "specularIntensity": 0, 
 "specularPower": 0
 }, 
+"Rigidbody": {
+".uid": 42, 
+"bodyFlag": 0, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0.5, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": false
+}, 
 "Transform": {
-".uid": 19, 
+".uid": 37, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -232,14 +542,340 @@
 }
 }
 }, 
-"name": "Fodder Archetype"
+"name": "UpdatedFodder Archetype"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"SpriteText": {
+".uid": 55, 
+"alignment": 1, 
+"size": 20, 
+"text": "Fodder", 
+"textColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0.875
+}, 
+"useFiltering": true
+}, 
+"Transform": {
+".uid": 54, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1.1638805866241455, 
+"y": 0.22485992312431335, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0.42172014713287354, 
+"z": -0.13513374328613281
+}
+}
+}, 
+"name": "Empty Entity"
+}, {
+"children": [], 
+"components": {
+"Ghost": {
+".uid": 57, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SphereCollider": {
+".uid": 58, 
+"radius": 6
+}, 
+"Transform": {
+".uid": 56, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1.1638805866241455, 
+"y": 0.22485992312431335, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -0.55385994911193848, 
+"z": 0
+}
+}
+}, 
+"name": "GhostSphere"
+}
+], 
+"components": {
+"AIMovementController": {
+".uid": 49, 
+"Speed": 5, 
+"enabled": true
+}, 
+"BoxCollider": {
+".uid": 50, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"FodderAI": {
+".uid": 51, 
+"AttackDelay": 1, 
+"AttackRange": 5, 
+"Cohesion": 0.5, 
+"Separation": 0.5, 
+"TotalBoidBehaviorScale": 0.5, 
+"damageOnAttack": 1
+}, 
+"Model3D": {
+".uid": 52, 
+"active": true, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 53, 
+"bodyFlag": 0, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0.5, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": false
+}, 
+"Transform": {
+".uid": 48, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.85919463634490967, 
+"y": 4.4472131729125977, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 2.4631333351135254, 
+"z": 8.5321197509765625
+}
+}
+}, 
+"name": "UpdatedFodder Archetype (1)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"SpriteText": {
+".uid": 66, 
+"alignment": 1, 
+"size": 20, 
+"text": "Fodder", 
+"textColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0.875
+}, 
+"useFiltering": true
+}, 
+"Transform": {
+".uid": 65, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1.1638805866241455, 
+"y": 0.22485992312431335, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0.42172014713287354, 
+"z": -0.13513374328613281
+}
+}
+}, 
+"name": "Empty Entity"
+}, {
+"children": [], 
+"components": {
+"Ghost": {
+".uid": 68, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SphereCollider": {
+".uid": 69, 
+"radius": 6
+}, 
+"Transform": {
+".uid": 67, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1.1638805866241455, 
+"y": 0.22485992312431335, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -0.55385994911193848, 
+"z": 0
+}
+}
+}, 
+"name": "GhostSphere"
+}
+], 
+"components": {
+"AIMovementController": {
+".uid": 60, 
+"Speed": 5, 
+"enabled": true
+}, 
+"BoxCollider": {
+".uid": 61, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"FodderAI": {
+".uid": 62, 
+"AttackDelay": 1, 
+"AttackRange": 5, 
+"Cohesion": 0.5, 
+"Separation": 0.5, 
+"TotalBoidBehaviorScale": 0.5, 
+"damageOnAttack": 1
+}, 
+"Model3D": {
+".uid": 63, 
+"active": true, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 64, 
+"bodyFlag": 0, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0.5, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": false
+}, 
+"Transform": {
+".uid": 59, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.85919463634490967, 
+"y": 4.4472131729125977, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 2.4631333351135254, 
+"z": -7.5813837051391602
+}
+}
+}, 
+"name": "UpdatedFodder Archetype  (2)"
 }
 ], 
 "settings": {
 "children": [], 
 "components": {
 "PhysicsSettings": {
-".uid": 8, 
+".uid": 3, 
 "enableDebugDraw": true, 
 "gravity": {
 "x": 0, 
@@ -249,7 +885,7 @@
 "playmodeDebugDraw": false
 }, 
 "Transform": {
-".uid": 0, 
+".uid": 2, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -268,8 +904,18 @@
 }
 }, 
 "WorldConfig": {
-".uid": 7, 
-"systems": []
+".uid": 4, 
+"systems": [
+{
+"type": "CharacterControllerSystem"
+}, {
+"type": "InputControllerSystem"
+}, {
+"type": "CommandQueueSystem"
+}, {
+"type": "DamageOnCollideSystem"
+}
+]
 }
 }, 
 "name": "World Settings"
