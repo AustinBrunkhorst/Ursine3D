@@ -7,10 +7,6 @@
 
 #include <UIManager.h>
 
-#include <FileSystem.h>
-#include <FileDialog.h>
-#include <EntitySerializer.h>
-
 #include <SelectedComponent.h>
 #include <CameraComponent.h>
 #include <BoxColliderComponent.h>
@@ -30,8 +26,6 @@ namespace editor_commands
 {
     namespace
     {
-        void doLoadArchetype(ecs::World *world, int selectedFilter, const fs::FileList &files);
-
         ecs::World *getActiveWorld(void);
         ecs::EntityHandle createEntity(const std::string &name = "Empty Entity");
     }
@@ -64,28 +58,6 @@ namespace editor_commands
     JSFunction(CreateEmptyEntity)
     {
         createEntity( );
-
-        return CefV8Value::CreateUndefined( );
-    }
-
-    JSFunction(CreateEntityFromArchetype)
-    {
-        auto *editor = GetCoreSystem( Editor );
-        auto *world = editor->GetProject( )->GetScene( ).GetActiveWorld( );
-
-        fs::FileDialog openDialog;
-
-        openDialog.config.mode = fs::FDM_OPEN;
-        openDialog.config.initialPath = "";
-        openDialog.config.windowTitle = "Create Entity From Archetype";
-        openDialog.config.parentWindow = editor->GetMainWindow( ).GetWindow( );
-        openDialog.config.filters = {
-            { "Archetype Files", { "*.uatype" } }
-        };
-
-        auto result = openDialog.Open( );
-
-        doLoadArchetype( world, result.selectedFilterIndex, result.selectedFiles );
 
         return CefV8Value::CreateUndefined( );
     }
@@ -223,80 +195,6 @@ namespace editor_commands
 
     namespace
     {
-        void doLoadArchetype(
-            ecs::World *world,
-            int selectedFilter,
-            const fs::FileList &files
-        )
-        {
-            if (files.empty( ))
-                return;
-
-            auto &file = files.front( );
-            auto filename = file.stem( ).string( );
-
-            Application::PostMainThread( [=] 
-            {
-                try
-                {
-                    std::string jsonData;
-
-                    if (!fs::LoadAllText( file.string( ), jsonData ))
-                    {
-                        throw ecs::SerializationException( "Unable to load file." );
-                    }
-       
-                    std::string jsonError;
-
-                    auto data = Json::parse( jsonData, jsonError );
-
-                    if (!jsonError.empty( ))
-                    {
-                        throw ecs::SerializationException( jsonError );
-                    }
-
-                    auto entity = ecs::EntitySerializer( ).DeserializeArchetype( 
-                        world, 
-                        data 
-                    );
-
-                    entity->SetName( filename + " Archetype" );
-
-                    entity->AddComponent<ecs::Selected>( );
-                }
-                catch (ecs::SerializationException &e)
-                {
-                    UWarning(
-                        "Unable to load archetype.\nerror: %s\nfile: %s",
-                        e.GetError( ).c_str( ),
-                        file.string( ).c_str( )
-                    );
-
-                    auto *editor = GetCoreSystem( Editor );
-
-                    NotificationConfig error;
-
-                    error.type = NOTIFY_ERROR;
-                    error.header = "Load Error";
-                    error.message = "Unable to load archetype.";
-
-                    error.buttons =
-                    {
-                        { "Open Error Log", 
-                            [](Notification &notification)
-                            {
-                                notification.Close( );
-
-                                utils::OpenPath( URSINE_ERROR_LOG_FILE );
-                            } 
-                        }
-                    };
-
-                    editor->PostNotification( error );
-                }
-            } );
-        }
-
         ecs::World *getActiveWorld(void)
         {
             return GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetActiveWorld( );
@@ -312,6 +210,12 @@ namespace editor_commands
 
             if (tools)
                 tools->ClearSelectedEntities( );
+
+            auto *cameraSystem = world->GetEntitySystem<EditorCameraSystem>( );
+
+            // move it to focus
+            if (cameraSystem)
+                entity->GetTransform( )->SetWorldPosition( cameraSystem->GetEditorFocusPosition( ) );
 
             entity->AddComponent<ecs::Selected>( );
 

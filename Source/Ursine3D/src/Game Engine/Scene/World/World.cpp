@@ -29,6 +29,8 @@
 
 #include "EntityHandle.h"
 
+#include "ArchetypeData.h"
+
 namespace
 {
     const auto kWorldSettingsEntityName = "World Settings";
@@ -135,6 +137,20 @@ namespace ursine
                 entity->SetName( name );
 
             return entity;
+        }
+
+        EntityHandle World::CreateEntityFromArchetype(const resources::ResourceReference &resource)
+        {
+            UAssert( m_owner != nullptr,
+                "Cannot create archetype without scene."    
+            );
+
+            auto *archetype = resource.Load<resources::ArchetypeData>( 
+                m_owner->GetResourceManager( ) 
+            );
+
+            // if we couldn't load the archetype, return an invalid entity handle
+            return archetype ? archetype->Instantiate( this ) : EntityHandle::Invalid( );
         }
 
         EntityHandle World::GetEntity(EntityID id) const

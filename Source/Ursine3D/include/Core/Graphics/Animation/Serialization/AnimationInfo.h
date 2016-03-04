@@ -68,7 +68,10 @@ namespace ursine
 
                 void Read(resources::ResourceReader &input) override;
                 void Write(resources::pipeline::ResourceWriter &output) override;
-                bool IsThereAAnimation() { return !animDataArr.empty();  }
+
+                // Determines if this animation data is valid an actually contains
+                // information
+                bool IsValid(void) const;
             };
         };
     };

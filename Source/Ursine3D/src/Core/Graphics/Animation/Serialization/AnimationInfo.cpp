@@ -23,8 +23,7 @@ namespace ursine
             AnimInfo::AnimInfo(void)
                 : name( "" )
                 , animCount( 0 )
-                , animDataArr( 0 )
-            { }
+                , animDataArr( 0 ) { }
 
             AnimInfo::~AnimInfo(void)
             {
@@ -111,6 +110,11 @@ namespace ursine
                         }
                     }
                 }
+            }
+
+            bool AnimInfo::IsValid(void) const
+            {
+                return !animDataArr.empty( );
             }
         };
     };

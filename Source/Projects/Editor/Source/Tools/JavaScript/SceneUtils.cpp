@@ -18,6 +18,8 @@
 #include "Editor.h"
 #include "Project.h"
 
+#include "EditorCameraSystem.h"
+
 #include <FileDialog.h>
 
 #include <WorldConfigComponent.h>
@@ -98,7 +100,7 @@ JSFunction(SceneSetActiveWorld)
     Application::PostMainThread( [=] {
         auto &scene = getScene( );
 
-        auto reference = scene.GetResourceManager( ).CreateReference( guid );
+        resources::ResourceReference reference = guid;
 
         scene.SetActiveWorld( reference );
 
@@ -109,6 +111,42 @@ JSFunction(SceneSetActiveWorld)
             URSINE_TODO( "this is hacky and weirdly placed" );
             world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
         }
+    } );
+    
+    return CefV8Value::CreateBool( true );
+}
+
+JSFunction(SceneInstantiateArchetype)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto guid = GUIDStringGenerator( )( arguments[ 0 ]->GetStringValue( ).ToString( ) );
+
+    Application::PostMainThread( [=] {
+        auto *project = getProject( );
+        auto &scene = project->GetScene( );
+        auto *world = scene.GetActiveWorld( );
+
+        if (!world)
+            return;
+
+        resources::ResourceReference reference = guid;
+
+        auto entity = world->CreateEntityFromArchetype( reference );
+
+        auto *cameraSystem = world->GetEntitySystem<EditorCameraSystem>( );
+
+        // move to focus location
+        if (cameraSystem)
+            entity->GetTransform( )->SetWorldPosition( cameraSystem->GetEditorFocusPosition( ) );
+
+        auto resource = project->GetResourcePipeline( ).GetItem( guid );
+
+        if (resource)
+            entity->SetName( resource->GetDisplayName( ) +" Archetype" );
+        else
+            entity->SetName( "Untitled Archetype" );
     } );
     
     return CefV8Value::CreateBool( true );

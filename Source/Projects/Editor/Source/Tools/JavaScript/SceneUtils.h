@@ -25,6 +25,9 @@ Meta(Enable, ExposeJavaScript)
 JSFunction(SceneSetActiveWorld);
 
 Meta(Enable, ExposeJavaScript)
+JSFunction(SceneInstantiateArchetype);
+
+Meta(Enable, ExposeJavaScript)
 JSFunction(SceneGetRootEntities);
 
 Meta(Enable, ExposeJavaScript)

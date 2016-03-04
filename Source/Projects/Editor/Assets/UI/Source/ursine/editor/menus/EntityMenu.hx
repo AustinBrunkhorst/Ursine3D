@@ -7,11 +7,6 @@ class EntityMenu extends MenuItemHandler {
         untyped __js__( "editor_commands_CreateEmptyEntity()" );
     }
 
-    @mainMenuItem( "Entity/Create/From Archetype" )
-    static function doCreateFromArchetype() {
-        untyped __js__( "editor_commands_CreateEntityFromArchetype()" );
-    }
-
     @mainMenuItem( "Entity/Create/Plane", true )
     static function doCreatePlane() {
         untyped __js__( "editor_commands_CreatePlane()" );

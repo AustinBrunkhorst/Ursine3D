@@ -53,6 +53,11 @@ namespace ursine
                 const std::string &name = "Entity"
             );
 
+            // Creates an entity from an archetype resource
+            EntityHandle CreateEntityFromArchetype(
+                const resources::ResourceReference &resource
+            );
+
             // Gets an entity based on its id
             EntityHandle GetEntity(EntityID id) const;
 

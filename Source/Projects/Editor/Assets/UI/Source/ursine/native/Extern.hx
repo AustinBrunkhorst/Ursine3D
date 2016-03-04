@@ -45,6 +45,10 @@ class Extern {
         return untyped __js__( "SceneSetActiveWorld(guid)" );
     }
 
+    public static function SceneInstantiateArchetype(guid : String) {
+        return untyped __js__( "SceneInstantiateArchetype(guid)" );
+    }
+
     public static function SceneGetRootEntities() {
         return untyped __js__( "SceneGetRootEntities()" );
     }

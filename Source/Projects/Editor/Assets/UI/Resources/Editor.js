@@ -737,9 +737,6 @@ ursine_editor_menus_EntityMenu.__name__ = ["ursine","editor","menus","EntityMenu
 ursine_editor_menus_EntityMenu.doCreateEmpty = function() {
 	editor_commands_CreateEmptyEntity();
 };
-ursine_editor_menus_EntityMenu.doCreateFromArchetype = function() {
-	editor_commands_CreateEntityFromArchetype();
-};
 ursine_editor_menus_EntityMenu.doCreatePlane = function() {
 	editor_commands_CreatePlane();
 };
@@ -1582,6 +1579,7 @@ var ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector =
 	var _this = window.document;
 	this.m_displayText = _this.createElement("div");
 	this.m_displayText.classList.add("resource-reference");
+	this.m_displayText.setAttribute("accepts-resource-drop","true");
 	this.m_displayText.addEventListener("click",function(e) {
 		var resources = ursine_native_Extern.ProjectGetResourcesByType(_g.m_resourceType);
 		var selector = new ResourceReferenceSelectionPopupControl(resources);
@@ -1589,6 +1587,8 @@ var ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector =
 		window.document.body.appendChild(selector);
 		selector.show(e.clientX,e.clientY);
 	});
+	this.m_displayText.addEventListener("resource-drag",$bind(this,this.onResourceDrag));
+	this.m_displayText.addEventListener("resource-drop",$bind(this,this.onResourceDrop));
 	this.inspector.container.appendChild(this.m_displayText);
 	this.updateValue(instance);
 };
@@ -1604,7 +1604,16 @@ ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.proto
 		this.m_instance = value;
 	}
 	,onResourceSelected: function(e) {
-		this.notifyChanged(this.m_field,{ guid : e.detail.resource.guid});
+		var resource = e.detail.resource;
+		this.notifyChanged(this.m_field,{ guid : resource.guid});
+	}
+	,onResourceDrag: function(e) {
+		var resource = e.detail.resource;
+		e.detail.acceptDrop = resource.type == this.m_resourceType;
+	}
+	,onResourceDrop: function(e) {
+		var resource = e.detail.resource;
+		this.notifyChanged(this.m_field,{ guid : resource.guid});
 	}
 	,__class__: ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector
 });
@@ -2354,6 +2363,9 @@ var ursine_editor_windows_SceneView = function() {
 	this.m_selector = null;
 	ursine_editor_NativeCanvasWindowHandler.call(this,"SceneView");
 	this.window.heading = "Scene";
+	this.window.container.setAttribute("accepts-resource-drop","true");
+	this.window.container.addEventListener("resource-drag",$bind(this,this.onResourceDrag));
+	this.window.container.addEventListener("resource-drop",$bind(this,this.onResourceDrop));
 	this.onViewportInvalidated();
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
 };
@@ -2404,6 +2416,16 @@ ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWi
 		this.m_selector = null;
 		haxe_Timer.delay(($_=this.window,$bind($_,$_.focus)),1);
 	}
+	,onResourceDrag: function(e) {
+		var resource = e.detail.resource;
+		e.detail.acceptDrop = ursine_editor_windows_SceneView.m_acceptedResourceDrops.indexOf(resource.type) != -1;
+	}
+	,onResourceDrop: function(e) {
+		var resource = e.detail.resource;
+		var _g = resource.type;
+		var m_resourceTypeArchetype = _g;
+		ursine_native_Extern.SceneInstantiateArchetype(resource.guid);
+	}
 	,__class__: ursine_editor_windows_SceneView
 });
 var ursine_native_Extern = function() { };
@@ -2442,6 +2464,9 @@ ursine_native_Extern.SceneSaveWorldAs = function() {
 };
 ursine_native_Extern.SceneSetActiveWorld = function(guid) {
 	return SceneSetActiveWorld(guid);
+};
+ursine_native_Extern.SceneInstantiateArchetype = function(guid) {
+	return SceneInstantiateArchetype(guid);
 };
 ursine_native_Extern.SceneGetRootEntities = function() {
 	return SceneGetRootEntities();
@@ -2557,7 +2582,7 @@ js_Boot.__toStr = {}.toString;
 ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mouseover","mouseout"];
 ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
-ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreateFromArchetype : { mainMenuItem : ["Entity/Create/From Archetype"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
+ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNewWorld : { mainMenuItem : ["File/New World",false,true]}, doSaveWorld : { mainMenuItem : ["File/Save World",false,false]}, doSaveWorldAs : { mainMenuItem : ["File/Save World As",false,false]}, doSaveProject : { mainMenuItem : ["File/Save Project",true,false]}}};
 ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
 ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
@@ -2589,6 +2614,8 @@ ursine_editor_scene_entity_EntityEvent.ComponentArrayInserted = "ComponentArrayI
 ursine_editor_scene_entity_EntityEvent.ComponentArraySet = "ComponentArraySet";
 ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove = "ComponentArrayRemove";
 ursine_editor_windows_EntityInspector.m_smallWindowWidth = 245;
+ursine_editor_windows_SceneView.m_resourceTypeArchetype = "ursine::resources::ArchetypeData";
+ursine_editor_windows_SceneView.m_acceptedResourceDrops = [ursine_editor_windows_SceneView.m_resourceTypeArchetype];
 ursine_native_Property.DisableComponentRemoval = "DisableComponentRemoval";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
 ursine_native_Property.HiddenInSelector = "HiddenInSelector";

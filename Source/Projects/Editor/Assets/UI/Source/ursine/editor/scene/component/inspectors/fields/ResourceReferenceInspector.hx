@@ -6,6 +6,7 @@ import ursine.native.Property;
 import ursine.controls.Notification;
 import ursine.controls.ResourceReferenceSelectionPopup;
 
+import ursine.editor.resources.ResourceItem;
 import ursine.editor.scene.component.ComponentDatabase;
 
 extern class ResourceReference {
@@ -36,6 +37,7 @@ class ResourceReferenceInspector extends FieldInspectionHandler {
 
         m_displayText = js.Browser.document.createDivElement( );
         m_displayText.classList.add( 'resource-reference' );
+        m_displayText.setAttribute( 'accepts-resource-drop', 'true' );
 
         m_displayText.addEventListener( 'click', function(e) {
             var resources : Array<Dynamic> = Extern.ProjectGetResourcesByType( m_resourceType );
@@ -48,6 +50,9 @@ class ResourceReferenceInspector extends FieldInspectionHandler {
 
             selector.show( e.clientX, e.clientY );
         } );
+
+        m_displayText.addEventListener( 'resource-drag', onResourceDrag );
+        m_displayText.addEventListener( 'resource-drop', onResourceDrop );
 
         inspector.container.appendChild( m_displayText );
 
@@ -65,9 +70,25 @@ class ResourceReferenceInspector extends FieldInspectionHandler {
         m_instance = value;
     }
 
-    private function onResourceSelected(e) {
+    private function onResourceSelected(e : js.html.CustomEvent) {
+        var resource : ResourceItem = e.detail.resource;
+
         notifyChanged( m_field, {
-            guid: e.detail.resource.guid
+            guid: resource.guid
+        } );
+    }
+
+    private function onResourceDrag(e : js.html.CustomEvent) {
+        var resource : ResourceItem = e.detail.resource;
+
+        e.detail.acceptDrop = resource.type == m_resourceType;
+    }
+
+    private function onResourceDrop(e : js.html.CustomEvent) {
+        var resource : ResourceItem = e.detail.resource;
+
+        notifyChanged( m_field, {
+            guid: resource.guid
         } );
     }
 }
