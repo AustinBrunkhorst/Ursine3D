@@ -36,6 +36,8 @@ namespace ursine
             m_renderMode = VIEWPORT_RENDER_DEFERRED;
 
             m_cameraMask = 0;
+
+            m_clearColor = Color( 0.f, 0.f, 0.f, 1.f );
         }
 
         void Camera::Uninitialize(void) { }
@@ -258,7 +260,7 @@ namespace ursine
 
             // check to see if the whitelist bit is set
             if (renderMask & (0x1u << 63u))
-                return (renderMask - (0x1u << 63u)) == m_entityID;
+                return (renderMask - (0x1u << 63u)) == m_entity->GetID( );
 
             // else, return the regular mask comparison
             return (renderMask & m_cameraMask) != 0;
@@ -276,14 +278,14 @@ namespace ursine
             m_cameraMask = renderMask;
         }
 
-        ecs::EntityID Camera::GetEntityID(void) const
+        const ecs::EntityHandle &Camera::GetEntity(void) const
         {
-            return m_entityID;
+            return m_entity;
         }
 
-        void Camera::SetEntityID(const ecs::EntityID id)
+        void Camera::SetEntity(const ecs::EntityHandle id)
         {
-            m_entityID = id;
+            m_entity = id;
         }
 
         void Camera::CalculateVectors(const SVec3 &up)
@@ -295,6 +297,16 @@ namespace ursine
 
             m_up = SVec3::Cross( -m_look, m_right );
             m_up.Normalize( );
+        }
+
+        const Color &Camera::GetClearColor(void) const
+        {
+            return m_clearColor;
+        }
+
+        void Camera::SetClearColor(const Color &color)
+        {
+            m_clearColor = color;
         }
     }
 }

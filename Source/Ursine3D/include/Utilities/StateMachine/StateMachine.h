@@ -48,7 +48,7 @@ namespace ursine
             bool GetTrigger(const std::string &triggerName);
             void SetTrigger(const std::string &triggerName);
 
-            void AddFloat(const std::string &floatName, float initValue);
+            void AddFloat(const std::string &floatName, float floatValue);
             float GetFloat(const std::string &floatName);
             void SetFloat(const std::string &floatName, float value);
 

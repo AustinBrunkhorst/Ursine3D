@@ -24,6 +24,9 @@ namespace ursine
             // Lifetime
             ///////////////////////////////////////////////////////////////////
 
+            // When this entities hierarchy has finished serializing
+            ENTITY_HIERARCHY_SERIALIZED,
+
             // Before an entity is removed from the world
             ENTITY_REMOVED,
 

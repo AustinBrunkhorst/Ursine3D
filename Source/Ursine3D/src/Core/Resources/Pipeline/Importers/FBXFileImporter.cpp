@@ -29,11 +29,11 @@ namespace ursine
         //// like we separate jdl and jani. we don't need to import same model/rig several times.
         //if( std::string::npos == sourceFileDirectory.string().find("Models") )
 
-        auto animInfo = importer.GetAnimInfo( );
+        auto &animInfo = importer.GetAnimInfo( );
         
         // importing model info check
         // if there is animation, just animation
-        if ( animInfo.IsThereAAnimation( ) )
+        if (animInfo.IsValid( ))
             return std::make_shared<AnimationClipData>( animInfo );
         // else export just model
         else

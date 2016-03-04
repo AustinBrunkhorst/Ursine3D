@@ -30,7 +30,6 @@ namespace ursine
         , m_viewport( 0 )
         , m_activeWorld( nullptr )
     {
-        
     }
 
     Scene::~Scene(void)

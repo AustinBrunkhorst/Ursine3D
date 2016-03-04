@@ -24,10 +24,14 @@
 #include "SystemManager.h"
 
 #include "EntitySerializer.h"
+#include "WorldSerializer.h"
 
 #include "WorldConfigComponent.h"
+#include "WorldData.h"
 
 #include "EntityHandle.h"
+
+#include "ArchetypeData.h"
 
 namespace
 {
@@ -137,6 +141,20 @@ namespace ursine
             return entity;
         }
 
+        EntityHandle World::CreateEntityFromArchetype(const resources::ResourceReference &resource)
+        {
+            UAssert( m_owner != nullptr,
+                "Cannot create archetype without scene."    
+            );
+
+            auto *archetype = resource.Load<resources::ArchetypeData>( 
+                m_owner->GetResourceManager( ) 
+            );
+
+            // if we couldn't load the archetype, return an invalid entity handle
+            return archetype ? archetype->Instantiate( this ) : EntityHandle::Invalid( );
+        }
+
         EntityHandle World::GetEntity(EntityID id) const
         {
             return m_entityManager->GetEntityByID( id );
@@ -228,22 +246,32 @@ namespace ursine
         }
 
         void World::queueEntityDeletion(Entity *entity)
-		{
-			m_deleted.emplace_back( EntityHandle( entity ) );
-		}
+        {
+            m_deleted.emplace_back( EntityHandle( entity ) );
+        }
+
+        void World::MergeWorld(
+            resources::ResourceManager &resourceManager,
+            resources::ResourceReference &worldResource
+        )
+        {
+            auto data = worldResource.Load<resources::WorldData>( resourceManager );
+
+            WorldSerializer::MergeDeserialize( data->GetData( ), this );
+        }
 
         void World::deleteEntity(const EntityHandle &entity)
-		{
-			m_nameManager->Remove( entity->GetID( ) );
-			m_entityManager->Remove( entity.Get( ) );
-		}
-				
+        {
+            m_nameManager->Remove( entity->GetID( ) );
+            m_entityManager->Remove( entity );
+        }
+                
         void World::clearDeletionQueue(void)
         {
-			std::lock_guard<std::mutex> lock( m_deletionMutex );
+            std::lock_guard<std::mutex> lock( m_deletionMutex );
 
-			for (auto &entity : m_deleted)
-				m_entityManager->BeforeRemove( entity.Get( ) );
+            for (auto &entity : m_deleted)
+                m_entityManager->BeforeRemove( entity.Get( ) );
 
             while (m_deleted.size( ))
             {

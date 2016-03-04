@@ -18,6 +18,8 @@
 #include "Editor.h"
 #include "Project.h"
 
+#include "EditorCameraSystem.h"
+
 #include <FileDialog.h>
 
 #include <WorldConfigComponent.h>
@@ -59,7 +61,7 @@ JSFunction(SceneSaveWorld)
             saveWorld( world, saveFileName );
 
             editor->SetProjectStatus( saveFileName.stem( ).string( ) );
-        }
+    }
     }
     else
     {
@@ -98,7 +100,7 @@ JSFunction(SceneSetActiveWorld)
     Application::PostMainThread( [=] {
         auto &scene = getScene( );
 
-        auto reference = scene.GetResourceManager( ).CreateReference( guid );
+        resources::ResourceReference reference = guid;
 
         scene.SetActiveWorld( reference );
 
@@ -109,6 +111,42 @@ JSFunction(SceneSetActiveWorld)
             URSINE_TODO( "this is hacky and weirdly placed" );
             world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
         }
+    } );
+    
+    return CefV8Value::CreateBool( true );
+}
+
+JSFunction(SceneInstantiateArchetype)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto guid = GUIDStringGenerator( )( arguments[ 0 ]->GetStringValue( ).ToString( ) );
+
+    Application::PostMainThread( [=] {
+        auto *project = getProject( );
+        auto &scene = project->GetScene( );
+        auto *world = scene.GetActiveWorld( );
+
+        if (!world)
+            return;
+
+        resources::ResourceReference reference = guid;
+
+        auto entity = world->CreateEntityFromArchetype( reference );
+
+        auto *cameraSystem = world->GetEntitySystem<EditorCameraSystem>( );
+
+        // move to focus location
+        if (cameraSystem)
+            entity->GetTransform( )->SetWorldPosition( cameraSystem->GetEditorFocusPosition( ) );
+
+        auto resource = project->GetResourcePipeline( ).GetItem( guid );
+
+        if (resource)
+            entity->SetName( resource->GetDisplayName( ) +" Archetype" );
+        else
+            entity->SetName( "Untitled Archetype" );
     } );
     
     return CefV8Value::CreateBool( true );
@@ -130,7 +168,7 @@ JSFunction(SceneGetRootEntities)
         ids->SetValue( 
             static_cast<int>( i ), 
             CefV8Value::CreateUInt( root[ i ]->GetID( ) )
-        );
+    );
     }
 
     return ids;
@@ -139,7 +177,7 @@ JSFunction(SceneGetRootEntities)
 JSFunction(SceneGetActiveEntities)
 {
     auto *world = getActiveWorld( );
-    
+
     if (!world)
         return CefV8Value::CreateArray( 0 );
 
@@ -152,7 +190,7 @@ JSFunction(SceneGetActiveEntities)
         ids->SetValue( 
             static_cast<int>( i ), 
             CefV8Value::CreateUInt( active[ i ]->GetID( ) )
-        );
+    );
     }
 
     return ids;
@@ -231,12 +269,12 @@ namespace
     }
 
     Scene &getScene(void)
-    {
+        {
         return getProject( )->GetScene( );
-    }
-
+        }
+            
     ecs::World *getActiveWorld(void)
-    {
+            {
         return getScene( ).GetActiveWorld( );
     }
 
@@ -261,12 +299,12 @@ namespace
     }
 
     void saveWorld(ecs::World *world, const fs::path &path)
-    {
-        auto data = ecs::WorldSerializer( ).Serialize( world );
+        {
+        auto data = ecs::WorldSerializer::Serialize( world );
 
         UAssert( fs::WriteAllText( path.string( ), data.dump( true ) ),
             "Unable to save world.\nfile: %s",
-            path.string( ).c_str( )
-        );
+                path.string( ).c_str( )
+            );
     }
 }

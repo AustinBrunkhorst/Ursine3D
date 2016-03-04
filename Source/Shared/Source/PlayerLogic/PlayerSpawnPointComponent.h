@@ -12,6 +12,8 @@
 
 #include <Component.h>
 
+#include "LevelSegments.h"
+
 class PlayerSpawnPoint : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -26,10 +28,21 @@ public:
         SetPlayerArchetype
     );
 
+    EditorField(
+        LevelSegments spawnSegment,
+        GetSpawnSegment,
+        SetSpawnSegment
+    );
+
     const std::string &GetPlayerArchetype(void) const;
     void SetPlayerArchetype(const std::string &archetype);
 
+    LevelSegments GetSpawnSegment(void);
+    void SetSpawnSegment(LevelSegments segment);
+
 private:
     std::string m_archetype;
+
+    LevelSegments m_segment;
 
 } Meta(Enable);

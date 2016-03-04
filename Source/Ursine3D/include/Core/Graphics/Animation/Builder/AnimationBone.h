@@ -79,6 +79,8 @@ namespace ursine
         const AnimationBone *GetChild(const unsigned childID) const;
         unsigned GetChildCount(void) const;
 
+        const std::vector<const AnimationBone *> &GetChildren(void) const;
+
     private:
         std::string m_name;
 

@@ -11,11 +11,9 @@ namespace ursine
     {
         WorldData::WorldData(const Json &worldJson)
         {
-            ecs::WorldSerializer serializer;
-
             try
             {
-                m_data = ecs::World::Handle( serializer.Deserialize( worldJson ) );
+                m_data = ecs::World::Handle( ecs::WorldSerializer::Deserialize( worldJson ) );
             }
             catch (ecs::SerializationException &e)
             {
@@ -32,9 +30,7 @@ namespace ursine
 
         void WorldData::Write(pipeline::ResourceWriter &output)
         {
-            ecs::WorldSerializer serializer;
-
-            auto json = serializer.Serialize( m_data.get( ) );
+            auto json = ecs::WorldSerializer::Serialize( m_data.get( ) );
 
             auto jsonString = json.dump( false );
 

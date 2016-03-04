@@ -282,6 +282,16 @@ namespace ursine
             SetRenderMask( static_cast<RenderMask>( m_renderMask ) );
         }
 
+        const Color & Camera::GetClearColor() const
+        {
+            return m_graphics->CameraMgr.GetCamera(m_handle).GetClearColor( );
+        }
+
+        void Camera::SetClearColor(const Color &color)
+        {
+            m_graphics->CameraMgr.GetCamera(m_handle).SetClearColor( color );
+        }
+
         void Camera::SetEditorSelectionMode(bool selected)
         {
             // don't modify the editor camera

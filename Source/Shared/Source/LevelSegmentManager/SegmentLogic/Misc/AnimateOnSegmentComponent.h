@@ -31,6 +31,12 @@ public:
         SetLevelSegment
     );
 
+    EditorField(
+        bool whenGreaterThan,
+        GetWhenGreaterThan,
+        SetWhenGreaterThan
+    );
+
     AnimateOnSegment(void);
     ~AnimateOnSegment(void);
 
@@ -39,12 +45,23 @@ public:
     LevelSegments GetLevelSegment(void) const;
     void SetLevelSegment(LevelSegments levelSegment);
 
+    bool GetWhenGreaterThan(void) const;
+    void SetWhenGreaterThan(bool flag);
+
 private:
 
     LevelSegments m_segment;
+    bool m_greaterThan;
+
+    // Whether we've played already
+    bool m_finished;
+
+    void onHierarchySerialize(EVENT_HANDLER(ursine::ecs::Entity));
 
     void onSegmentChange(EVENT_HANDLER(LevelSegmentManager));
 
     void connectToEvent(bool connect);
+
+    void playAnimation(void);
 
 } Meta(Enable);

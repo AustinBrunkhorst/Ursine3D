@@ -46,6 +46,11 @@ void CharacterControllerSystem::Process(Entity *entity)
     auto child = transform->GetChild(0);
     auto cam = transform->GetComponentInChildren<Camera>( );
 
+    auto mediumRotationFloor = controller->GetMediumRotationFloor( );
+    auto highRotationFloor = controller->GetHighRotationFloor( );
+    auto lowRotationFactor = controller->GetLowRotationFactor( );
+    auto mediumRotationFactor = controller->GetMediumRotationFactor( );
+
     // This is an immidiate fix, cause fuck eet. - Jordan
     rigidbody->SetGravity( SVec3( 0.0f, -100.0f, 0.0f ) );
     
@@ -57,6 +62,12 @@ void CharacterControllerSystem::Process(Entity *entity)
 
         if (abs(lookDir.Y( )) < controller->m_deadZoneSnap)
             lookDir.Y( ) = 0.0f;
+
+        // Rotation Zones & Factors Modification
+        if (lookDir.Length() < mediumRotationFloor)
+            lookDir = lookDir * lowRotationFactor;
+        else if (lookDir.Length( ) < highRotationFloor)
+            lookDir = lookDir * mediumRotationFactor;
 
         auto lookAngle = lookDir * rotateSpeed;
 

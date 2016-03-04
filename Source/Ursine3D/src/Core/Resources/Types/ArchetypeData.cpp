@@ -3,6 +3,8 @@
 #include "ArchetypeData.h"
 #include "ArchetypeReader.h"
 
+#include "EntitySerializer.h"
+
 namespace ursine
 {
     namespace resources
@@ -13,6 +15,13 @@ namespace ursine
         const Json &ArchetypeData::GetData(void)
         {
             return m_data;
+        }
+
+        ecs::EntityHandle ArchetypeData::Instantiate(ecs::World *world) const
+        {
+            ecs::EntitySerializer serializer;
+
+            return serializer.DeserializeArchetype( world, m_data );
         }
 
         void ArchetypeData::Write(pipeline::ResourceWriter &output)

@@ -182,6 +182,16 @@ namespace ursine
             return m_model->GetDebug();
         }
 
+        void Model3D::SetActive(bool flag)
+        {
+            m_model->SetActive( flag );
+        }
+
+        bool Model3D::GetActive(void) const
+        {
+            return m_model->GetActive( );
+        }
+
         RenderMask Model3D::GetRenderMask(void) const
         {
             return static_cast<RenderMask>(m_model->GetRenderMask() & 0xFFFFFFFF);
@@ -284,7 +294,7 @@ namespace ursine
             SetMeshIndex(input["meshIndex"].int_value());
         }
 
-    #if defined(URSINE_WITH_EDITOR)
+#if defined(URSINE_WITH_EDITOR)
 
         void Model3D::GenerateConvexHull(void)
         {
@@ -323,8 +333,8 @@ namespace ursine
             config.duration = TimeSpan::FromSeconds(15.0f);
             config.header = "BVH Triangle Mesh Collider Limitations";
             config.message = "<ol><li>Performance intensive.<li/>"
-                "<li>Cannot be Dynamic.<li/>"
-                "<li>Need Dynamic concave colliders? Use <strong>Convex Decomposition<strong>.<li/><ol/>";
+                    "<li>Cannot be Dynamic.<li/>"
+                    "<li>Need Dynamic concave colliders? Use <strong>Convex Decomposition<strong>.<li/><ol/>";
 
             EditorPostNotification(config);
         }
@@ -343,7 +353,6 @@ namespace ursine
                 convex->GenerateConvexHulls(this);
             });
         }
-
-    #endif
+#endif
     }
 }

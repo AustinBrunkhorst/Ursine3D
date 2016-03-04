@@ -1,20 +1,10 @@
 package ursine.editor.windows;
 
 import ursine.native.Extern;
+import ursine.editor.resources.ResourceItem;
 
 import ursine.controls.ContextMenu;
 import ursine.controls.Notification;
-
-extern class ResourceItem {
-    var guid : String;
-    var type : String;
-    var displayName : String;
-    var relativePathDisplayName : String;
-    var sourceFile : String;
-    var hasPreview : Bool;
-    var previewFile : String;
-    var extension : String;
-}
 
 class ProjectBrowser extends WindowHandler {
     var m_browser : ursine.controls.ProjectBrowser;

@@ -13,7 +13,12 @@ namespace ursine
         public:
             ArchetypeData(const Json &archetypeJson);
 
+            // Gets the cached archetype data for this resource
             const Json &GetData(void);
+
+            // Instatiates the archetype represented in this resource
+            // in the given world
+            ecs::EntityHandle Instantiate(ecs::World *world) const;
 
         private:
             Json m_data;

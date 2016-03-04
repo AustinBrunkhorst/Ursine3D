@@ -16,6 +16,20 @@
 #include <Component.h>
 #include <RigidbodyComponent.h>
 
+namespace ursine
+{
+    namespace physics
+    {
+        class Contact;
+    } // physics namespace
+} // ursine namespace
+
+enum HealthEvents
+{
+    HEALTH_DAMAGE_TAKEN,
+    HEALTH_ZERO
+};
+
 struct HealthEventArgs : ursine::EventArgs
 {
     float health;
@@ -26,7 +40,9 @@ struct HealthEventArgs : ursine::EventArgs
         , percentage( percentage ) { }
 };
 
-class Health : public ursine::ecs::Component
+class Health 
+    : public ursine::ecs::Component
+    , public ursine::EventDispatcher<HealthEvents>
 {
     NATIVE_COMPONENT;
 
@@ -41,14 +57,19 @@ public:
         std::string ArchetypeToSpawnOnDeath,
         GetArchetypeOnDeath,
         SetArchetypeOnDeath
-        );
+    );
+
+    EditorField(
+        bool deleteOnZeroHealth,
+        GetDeleteOnZeroHealth,
+        SetDeleteOnZeroHealth
+    );
 
     EditorField(
         bool SpawnOnDeath,
         GetSpawnOnDeath,
         SetSpawnOnDeath
-        );
-
+    );
 
     Meta(Enable)
     Health(void);
@@ -61,16 +82,19 @@ public:
     const std::string& GetArchetypeOnDeath(void) const;
     void SetArchetypeOnDeath(const std::string& objToSpawn);
 
+    bool GetDeleteOnZeroHealth(void) const;
+    void SetDeleteOnZeroHealth(bool flag);
+
     bool GetSpawnOnDeath(void) const;
     void SetSpawnOnDeath(const bool state);
 
     void DealDamage(const float damage);
+    void DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit);
 
 private:
     void OnInitialize(void) override;
-    void ConnectToAllCritSpots(void);
+    void sendDamageTextEvent(const ursine::SVec3& contact, float damage, bool crit);
 
-    void OnDamaged(EVENT_HANDLER(game::DAMAGE_EVENT));
     void OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
 
     float m_health;
@@ -78,6 +102,7 @@ private:
 
     std::string m_objToSpawn;
 
+    bool m_deleteOnZero;
     bool m_spawnOnDeath;
 
-} Meta(Enable, WhiteListMethods, DisplayName( "Health" ), RequiresComponents( typeof( ursine::ecs::Rigidbody ) ));
+} Meta(Enable, WhiteListMethods, DisplayName( "Health" ));

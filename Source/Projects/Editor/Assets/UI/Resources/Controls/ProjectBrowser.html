@@ -25,7 +25,7 @@
                     </div>
                 </template>
                 <template id="resourceRepeat" is="dom-repeat" items="{{directoryResources}}" as="resource">
-                    <div class="resource" on-dblclick="_onResourceDblClick" on-contextmenu="_onResourceContextMenu">
+                    <div class="resource" on-mousedown="_onResourceMouseDown" on-dblclick="_onResourceDblClick" on-contextmenu="_onResourceContextMenu">
                         <div class="thumbnail" ext$="{{resource.extension}}" has-preview$="{{resource.hasPreview}}">
                         <template is="dom-if" if="{{resource.hasPreview}}">
                             <img src="{{resource.previewFile}}">
@@ -69,6 +69,13 @@
             },
             created: function() {
                 this._lastSelectedTreeItem = null;
+
+                this._isDraggingResource = false;
+                this._draggedResource = null;
+                this._draggedResourcePreview = null;
+                this._draggedResourceTarget = null;
+                this._resourceDragMouseMoveHandler = this._onResourceDragMouseMove.bind( this );
+                this._resourceDragMouseUpHandler = this._onResourceDragMouseUp.bind( this );
             },
             attached: function() {
                 this.$.folderTree.setAsRoot( true );
@@ -181,6 +188,94 @@
 
                 menu.open( e.clientX, e.clientY );
             },
+            _onResourceMouseDown: function(e) {
+                var resource = e.model.resource;
+
+                var result = this.fire( 'resource-dragstart', {
+                    resource: resource
+                } );
+
+                // determine if this was explicitly cancelled
+                if (result.preventDrag === true)
+                    return;
+
+                this._draggedResource = resource;
+
+                document.addEventListener( 'mouseup', this._resourceDragMouseUpHandler, true );
+                document.addEventListener( 'mousemove', this._resourceDragMouseMoveHandler, true );
+            },
+            _onResourceDragMouseMove: function(e) {
+                if (!this._isDraggingResource) {
+                    this._draggedResourcePreview =
+                        this._createResourceDragPreview( this._draggedResource );
+
+                    this._isDraggingResource = true;
+                }
+
+                // update preview position
+                this._draggedResourcePreview.style.left = e.clientX +'px';
+                this._draggedResourcePreview.style.top = e.clientY +'px';
+
+                // check for drop targets
+                var target = this._findResourceDropTarget(
+                    document.elementFromPoint( e.clientX, e.clientY )
+                );
+
+                // no target
+                if (target == null) {
+                    this._draggedResourcePreview.removeAttribute( 'drag-state' );
+                    this._draggedResourceTarget = null;
+                // target has changed from the preview mouse move
+                } else if (target !== this._draggedResourceTarget) {
+                    var eventData = {
+                        detail: {
+                            resource: this._draggedResource
+                        }
+                    };
+
+                    var dragEvent = new CustomEvent( 'resource-drag', eventData );
+
+                    target.dispatchEvent( dragEvent );
+
+                    this._draggedResourcePreview.setAttribute( 'drag-state',
+                        eventData.detail.acceptDrop === true ? 'accepted' : 'rejected'
+                    );
+
+                    this._draggedResourceTarget = target;
+                }
+            },
+            _onResourceDragMouseUp: function() {
+                document.removeEventListener( 'mouseup', this._resourceDragMouseUpHandler, true );
+                document.removeEventListener( 'mousemove', this._resourceDragMouseMoveHandler, true );
+
+                if (!this._isDraggingResource)
+                    return;
+
+                this._isDraggingResource = false;
+
+                // dispatch a drop event on a target if applicable
+                if (
+                    this._draggedResourceTarget !== null &&
+                    this._draggedResourcePreview.getAttribute( 'drag-state' ) == 'accepted'
+                ) {
+                    var dropEvent = new CustomEvent( 'resource-drop', {
+                        detail: {
+                            resource: this._draggedResource
+                        }
+                    } );
+
+                    this._draggedResourceTarget.dispatchEvent( dropEvent );
+
+                    this._draggedResourceTarget = null;
+                }
+
+                var preview = this._draggedResourcePreview;
+
+                if (preview.parentNode)
+                    preview.parentNode.removeChild( preview );
+
+                this._draggedResourcePreview = null;
+            },
             _onResourceDblClick: function(e) {
                 this.fire( 'resource-dblclick', {
                     resource: e.model.resource
@@ -256,6 +351,28 @@
                 this._lastSelectedTreeItem = item;
             },
 
+            _createResourceDragPreview: function(resource) {
+                var preview = document.createElement( 'div' );
+
+                preview.classList.add( 'resource-drag-preview' );
+                preview.innerText = resource.displayName;
+
+                document.body.appendChild( preview );
+
+                return preview;
+            },
+            _findResourceDropTarget: function(element) {
+                var node = element;
+
+                // walk the parent until we find an element with the appropriate attribute
+                for (; node && node !== document; node = node.parentNode) {
+                    if (node.hasAttribute( 'accepts-resource-drop' ))
+                        return node;
+                }
+
+                // the input element doesn't have a tree
+                return null;
+            },
             _createDirectoryTreeItem: function(directoryNode) {
                 var item = new TreeViewItemControl( );
 
