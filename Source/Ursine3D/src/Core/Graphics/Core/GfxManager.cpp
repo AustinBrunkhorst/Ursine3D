@@ -46,7 +46,7 @@ namespace ursine
     {
         bool sort(_DRAWHND &h1, _DRAWHND &h2)
         {
-            if ( *reinterpret_cast<unsigned long long*>(&h1) < *reinterpret_cast<unsigned long long*>(&h2) )
+            if (*reinterpret_cast<unsigned long long*>(&h1) < *reinterpret_cast<unsigned long long*>(&h2))
                 return true;
             return false;
         }
@@ -67,6 +67,7 @@ namespace ursine
             viewportManager = new ViewportManager;
             uiManager = new GfxUIManager;
             drawingManager = new DrawingManager;
+            fontManager = new FontManager;
             gfxProfiler = new GfxProfiler;
 
             /////////////////////////////////////////////////////////////////
@@ -129,7 +130,7 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_EMISSIVE, "EmissiveShader");
                 shaderManager->LoadShader(SHADER_FORWARD, "ForwardRenderer");
                 shaderManager->LoadShader(SHADER_SPRITE_TEXT, "SpriteTextShader");
-                
+
                 //load compute
                 shaderManager->LoadShader(SHADER_MOUSEPOSITION, "MouseTypeID");
             }
@@ -214,6 +215,7 @@ namespace ursine
             viewportManager->Uninitialize();
             uiManager->Uninitialize();
             drawingManager->Uninitialize();
+            fontManager->Uninitialize();
             gfxProfiler->Uninitialize();
 
             //last
@@ -231,6 +233,7 @@ namespace ursine
             delete viewportManager;
             delete uiManager;
             delete drawingManager;
+            delete fontManager;
             delete gfxProfiler;
         }
 
@@ -249,22 +252,22 @@ namespace ursine
             UAssert(m_drawCount < MAX_DRAW_CALLS, "Out of available draw calls! Let Matt know, easy fix.");
 
             //get a new draw call
-            _DRAWHND &drawCall = m_drawList[ m_drawCount++ ];
+            _DRAWHND &drawCall = m_drawList[m_drawCount++];
             drawCall.buffer_ = 0;
 
-            switch ( render->Type_ )
+            switch (render->Type_)
             {
                 //rendering a model
             case RENDERABLE_MODEL3D:
             {
-                Model3D *current = &renderableManager->m_renderableModel3D[ render->Index_ ];
+                Model3D *current = &renderableManager->m_renderableModel3D[render->Index_];
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
-                
-                drawCall.Material_ = current->GetTextureHandle( ) & 0xFFFF;
 
-                drawCall.Model_ = current->GetModelHandle( ) & 0xFFFF;
+                drawCall.Material_ = current->GetTextureHandle() & 0xFFFF;
+
+                drawCall.Model_ = current->GetModelHandle() & 0xFFFF;
                 drawCall.Overdraw_ = current->GetOverdraw();
                 drawCall.Shader_ = drawCall.Overdraw_ ? SHADER_OVERDRAW_MODEL : SHADER_DEFERRED_DEPTH;
                 drawCall.Type_ = drawCall.Overdraw_ ? RENDERABLE_OVERDRAW : render->Type_;
@@ -272,27 +275,27 @@ namespace ursine
             break;
             case RENDERABLE_BILLBOARD2D:
             {
-                Billboard2D *current = &renderableManager->m_renderableBillboards[ render->Index_ ];
+                Billboard2D *current = &renderableManager->m_renderableBillboards[render->Index_];
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
 
-                GfxHND texHandle = current->GetTextureHandle( );
+                GfxHND texHandle = current->GetTextureHandle();
                 drawCall.Material_ = texHandle & 0xFFFF;
-                
+
                 drawCall.Shader_ = SHADER_BILLBOARD2D;
                 drawCall.Overdraw_ = current->GetOverdraw();
             }
             break;
             case RENDERABLE_LIGHT:
             {
-                Light *current = &renderableManager->m_renderableLights[ render->Index_ ];
+                Light *current = &renderableManager->m_renderableLights[render->Index_];
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Overdraw_ = current->GetOverdraw();
 
-                switch ( current->GetType() )
+                switch (current->GetType())
                 {
                 case Light::LIGHT_DIRECTIONAL:
                     drawCall.Shader_ = SHADER_DIRECTIONAL_LIGHT;
@@ -310,27 +313,28 @@ namespace ursine
             break;
             case RENDERABLE_PS:
             {
-                ParticleSystem *current = &renderableManager->m_renderableParticleSystems[ render->Index_ ];
+                ParticleSystem *current = &renderableManager->m_renderableParticleSystems[render->Index_];
 
-                GfxHND texHandle = current->GetTextureHandle( );
+                GfxHND texHandle = current->GetTextureHandle();
                 drawCall.Material_ = texHandle & 0xFFFF;
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
-                drawCall.Overdraw_ = current->GetOverdraw( );
+                drawCall.Overdraw_ = current->GetOverdraw();
                 drawCall.Shader_ = SHADER_PARTICLE;
             }
             break;
             case RENDERABLE_SPRITE_TEXT:
             {
-                SpriteText *current = &renderableManager->m_renderableSpriteText[ render->Index_ ];
+                SpriteText *current = &renderableManager->m_renderableSpriteText[render->Index_];
 
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Overdraw_ = current->GetOverdraw();
                 drawCall.Shader_ = SHADER_SPRITE_TEXT;
+                drawCall.Material_ = current->GetFontHandle( ) & 0xFFFF;
             }
-                break;
+            break;
             default:
                 break;
             }
@@ -341,7 +345,7 @@ namespace ursine
             UAssert(m_currentlyRendering == false, "Attempted to start the frame without ending the last one!");
             m_currentlyRendering = true;
 
-            while ( m_rendering );
+            while (m_rendering);
 
             m_rendering = true;
 
@@ -355,7 +359,7 @@ namespace ursine
             //cache state of all graphics objects
             renderableManager->CacheFrame();
 
-            float colorArray[ 4 ] = { 0,0,0,1 };
+            float colorArray[4] = { 0,0,0,1 };
             dxCore->GetDeviceContext()->ClearRenderTargetView(dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->RenderTargetView, colorArray);
         }
 
@@ -366,7 +370,7 @@ namespace ursine
             m_sceneActive = true;
 
             //clear draw call list
-            memset(reinterpret_cast<unsigned long long*>(&m_drawList[ 0 ]), 0, sizeof(unsigned long long) * m_drawCount * 2);
+            memset(reinterpret_cast<unsigned long long*>(&m_drawList[0]), 0, sizeof(unsigned long long) * m_drawCount * 2);
             m_drawCount = 0;
 
             //clear debug buffer
@@ -418,11 +422,11 @@ namespace ursine
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN, DEPTH_STENCIL_COUNT);
             dxCore->SetBlendState(BLEND_STATE_DEFAULT);
 
-            modelManager->BindModel( INTERNAL_QUAD );
+            modelManager->BindModel(INTERNAL_QUAD);
             shaderManager->BindShader(SHADER_PRIMITIVE);
             layoutManager->SetInputLayout(SHADER_PRIMITIVE);
-            textureManager->MapSamplerState( SAMPLER_STATE_WRAP_TEX );
-            textureManager->MapTextureByID( INTERNAL_BLANK_TEX );
+            textureManager->MapSamplerState(SAMPLER_STATE_WRAP_TEX);
+            textureManager->MapTextureByID(INTERNAL_BLANK_TEX);
 
             bufferManager->MapCameraBuffer(SMat4::Identity(), SMat4::Identity());
             bufferManager->MapTransformBuffer(SMat4(-2, 2, 1));
@@ -432,11 +436,11 @@ namespace ursine
             pcb.color = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
-            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
+            shaderManager->Render(modelManager->GetModelIndexcountByID(INTERNAL_QUAD));
 
 
             /////////////////////////////////////////////////////////////////
-            if ( cam.GetRenderMode() == VIEWPORT_RENDER_DEFERRED )
+            if (cam.GetRenderMode() == VIEWPORT_RENDER_DEFERRED)
                 RenderScene_Deferred(dt, camera);
             else
                 RenderScene_Forward(dt, camera);
@@ -444,7 +448,7 @@ namespace ursine
             dxCore->EndDebugEvent();
             return;
             //close thread handle if needed
-            if ( m_threadHandle != nullptr )
+            if (m_threadHandle != nullptr)
                 CloseHandle(m_threadHandle);
 
             return;
@@ -462,7 +466,7 @@ namespace ursine
         {
             auto *data = reinterpret_cast<threadData*>(lpParam);
 
-            if ( data->forward == true )
+            if (data->forward == true)
             {
                 data->gfx->RenderScene_Forward(data->dt, data->viewport);
             }
@@ -512,46 +516,46 @@ namespace ursine
             RenderPass DeferredPipeline;
 
             // define the passes
-            RenderPass          deferredPass( "DeferredPass" );
-            RenderPass          spotlightPass( "SpotlightPass" );
-            RenderPass          pointlightPass( "PointLightPass" );
-            RenderPass          directionalLightPass( "DirectionalLightPass" );
-            RenderPass          emissivePass( "EmissivePass" );
-            LineRendererPass    lineRenderPass( false );
-            PointRendererPass   pointRenderPass( false );
-            RenderPass          overdrawPass( "OverdrawPass" );
-            LineRendererPass    overdrawLinePass( true, "OverdrawLine" );
-            PointRendererPass   overdrawPointPass( true, "OverdrawPoint" );
-            RenderPass          particlePass( "ParticlePass" );
-            RenderPass          billboardPass( "BillboardPass" );
-            RenderPass          textPass( "SpriteTextPass" );
+            RenderPass          deferredPass("DeferredPass");
+            RenderPass          spotlightPass("SpotlightPass");
+            RenderPass          pointlightPass("PointLightPass");
+            RenderPass          directionalLightPass("DirectionalLightPass");
+            RenderPass          emissivePass("EmissivePass");
+            LineRendererPass    lineRenderPass(false);
+            PointRendererPass   pointRenderPass(false);
+            RenderPass          overdrawPass("OverdrawPass");
+            LineRendererPass    overdrawLinePass(true, "OverdrawLine");
+            PointRendererPass   overdrawPointPass(true, "OverdrawPoint");
+            RenderPass          particlePass("ParticlePass");
+            RenderPass          billboardPass("BillboardPass");
+            RenderPass          textPass("SpriteTextPass");
 
             // create processors
-            auto modelProcessor        = Model3DProcessor( );
-            auto slProcessor           = SpotLightProcessor();
-            auto plProcessor           = PointLightProcessor( );
-            auto dlProcessor           = DirectionalLightProcessor( );
-            auto particleProcessor     = ParticleSystemProcessor( );
-            auto billboardPorcessor    = Billboard2DProcessor( );
-            auto textProcessor         = SpriteTextProcessor( );
-            
+            auto modelProcessor = Model3DProcessor();
+            auto slProcessor = SpotLightProcessor();
+            auto plProcessor = PointLightProcessor();
+            auto dlProcessor = DirectionalLightProcessor();
+            auto particleProcessor = ParticleSystemProcessor();
+            auto billboardPorcessor = Billboard2DProcessor();
+            auto textProcessor = SpriteTextProcessor();
+
             // CREATE GLOBALS
-            GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBuffer( SHADERTYPE_VERTEX );
-            GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewIdentity( SHADERTYPE_VERTEX );
-            GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBufferGeom( SHADERTYPE_GEOMETRY );
-            GlobalCBuffer<PointGeometryBuffer, BUFFER_POINT_GEOM>   spriteGeomBuff( SHADERTYPE_GEOMETRY );
-            GlobalCBuffer<TransformBuffer, BUFFER_TRANSFORM>        identityTransform( SHADERTYPE_VERTEX );
-            GlobalCBuffer<TransformBuffer, BUFFER_TRANSFORM>        fullscreenTransform( SHADERTYPE_VERTEX );
-            GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invView( SHADERTYPE_VERTEX );
-            GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invProjection( SHADERTYPE_PIXEL );
+            GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBuffer(SHADERTYPE_VERTEX);
+            GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewIdentity(SHADERTYPE_VERTEX);
+            GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBufferGeom(SHADERTYPE_GEOMETRY);
+            GlobalCBuffer<PointGeometryBuffer, BUFFER_POINT_GEOM>   spriteGeomBuff(SHADERTYPE_GEOMETRY);
+            GlobalCBuffer<TransformBuffer, BUFFER_TRANSFORM>        identityTransform(SHADERTYPE_VERTEX);
+            GlobalCBuffer<TransformBuffer, BUFFER_TRANSFORM>        fullscreenTransform(SHADERTYPE_VERTEX);
+            GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invView(SHADERTYPE_VERTEX);
+            GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invProjection(SHADERTYPE_PIXEL);
 
             // input RTs
-            GlobalGPUResource   depthInput( SHADER_SLOT_0, RESOURCE_INPUT_DEPTH );
-            GlobalGPUResource   diffuseRT( SHADER_SLOT_1, RESOURCE_INPUT_RT );
-            GlobalGPUResource   normalRT( SHADER_SLOT_2, RESOURCE_INPUT_RT );
-            GlobalGPUResource   specPowRT( SHADER_SLOT_3, RESOURCE_INPUT_RT );
-            GlobalGPUResource   debugInput( SHADER_SLOT_0, RESOURCE_INPUT_RT );
-            GlobalGPUResource   lightmapRT( SHADER_SLOT_1, RESOURCE_INPUT_RT );
+            GlobalGPUResource   depthInput(SHADER_SLOT_0, RESOURCE_INPUT_DEPTH);
+            GlobalGPUResource   diffuseRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
+            GlobalGPUResource   normalRT(SHADER_SLOT_2, RESOURCE_INPUT_RT);
+            GlobalGPUResource   specPowRT(SHADER_SLOT_3, RESOURCE_INPUT_RT);
+            GlobalGPUResource   debugInput(SHADER_SLOT_0, RESOURCE_INPUT_RT);
+            GlobalGPUResource   lightmapRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
 
             // other resources
             GlobalGPUResource   spriteModel(SHADER_SLOT_0, RESOURCE_MODEL);
@@ -560,7 +564,7 @@ namespace ursine
             GlobalGPUResource   fullscreenModel(SHADER_SLOT_0, RESOURCE_MODEL);
             GlobalGPUResource   particleModel(SHADER_SLOT_0, RESOURCE_MODEL);
             GlobalGPUResource   fontTexture(SHADER_SLOT_0, RESOURCE_TEXTURE);
-            
+
             /////////////////////////////////////////////////////////
             // DEFINING PIPELINE
             {
@@ -568,173 +572,173 @@ namespace ursine
                 // DEFERRED PASS
                 {
                     deferredPass.
-                        Set( 
-                            { 
-                                RENDER_TARGET_DEFERRED_COLOR, 
-                                RENDER_TARGET_DEFERRED_NORMAL, 
-                                RENDER_TARGET_DEFERRED_SPECPOW 
-                            } 
-                        ).
-                        Set( SHADER_DEFERRED_DEPTH ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_BACKCULL ).
-                        Set( BLEND_STATE_COUNT ).
-                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                        Set(
+                    {
+                        RENDER_TARGET_DEFERRED_COLOR,
+                        RENDER_TARGET_DEFERRED_NORMAL,
+                            RENDER_TARGET_DEFERRED_SPECPOW
+                    }
+                            ).
+                        Set(SHADER_DEFERRED_DEPTH).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_BACKCULL).
+                        Set(BLEND_STATE_COUNT).
+                        Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                        AddResource( &viewBuffer ).
+                        AddResource(&viewBuffer).
 
-                        Accepts( RENDERABLE_MODEL3D ).
-                        Processes( &modelProcessor ).
-                    InitializePass( );
+                        Accepts(RENDERABLE_MODEL3D).
+                        Processes(&modelProcessor).
+                        InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
                 // SPOTLIGHT PASS
                 {
                     spotlightPass.
-                        Set( { RENDER_TARGET_SWAPCHAIN } ).
-                        Set( SHADER_SPOT_LIGHT ).
-                        Set( DEPTH_STENCIL_COUNT ).
-                        Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_BACKCULL ).
-                        Set( BLEND_STATE_ADDITIVE ).
-                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                        Set({ RENDER_TARGET_SWAPCHAIN }).
+                        Set(SHADER_SPOT_LIGHT).
+                        Set(DEPTH_STENCIL_COUNT).
+                        Set(DEPTH_STATE_NODEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_BACKCULL).
+                        Set(BLEND_STATE_ADDITIVE).
+                        Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                        AddResource( &viewBuffer ).
-                        AddResource( &invProjection ).
-                        AddResource( &lightConeModel ).
+                        AddResource(&viewBuffer).
+                        AddResource(&invProjection).
+                        AddResource(&lightConeModel).
 
-                        AddResource( &depthInput ).
-                        AddResource( &diffuseRT ).
-                        AddResource( &normalRT ).
-                        AddResource( &specPowRT ).
+                        AddResource(&depthInput).
+                        AddResource(&diffuseRT).
+                        AddResource(&normalRT).
+                        AddResource(&specPowRT).
 
-                        Accepts( RENDERABLE_LIGHT ).
-                        Processes( &slProcessor ).
-                    InitializePass( );
+                        Accepts(RENDERABLE_LIGHT).
+                        Processes(&slProcessor).
+                        InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
                 // POINT LIGHT PASS
                 {
                     pointlightPass.
-                        Set( { RENDER_TARGET_SWAPCHAIN } ).
-                        Set( SHADER_POINT_LIGHT ).
-                        Set( DEPTH_STENCIL_COUNT ).
-                        Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_BACKCULL ).
-                        Set( BLEND_STATE_ADDITIVE ).
-                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                        Set({ RENDER_TARGET_SWAPCHAIN }).
+                        Set(SHADER_POINT_LIGHT).
+                        Set(DEPTH_STENCIL_COUNT).
+                        Set(DEPTH_STATE_NODEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_BACKCULL).
+                        Set(BLEND_STATE_ADDITIVE).
+                        Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                        AddResource( &viewBuffer ).
-                        AddResource( &invProjection ).
-                        AddResource( &lightSphereModel ).
+                        AddResource(&viewBuffer).
+                        AddResource(&invProjection).
+                        AddResource(&lightSphereModel).
 
-                        AddResource( &depthInput ).
-                        AddResource( &diffuseRT ).
-                        AddResource( &normalRT ).
-                        AddResource( &specPowRT ).
+                        AddResource(&depthInput).
+                        AddResource(&diffuseRT).
+                        AddResource(&normalRT).
+                        AddResource(&specPowRT).
 
-                        Accepts( RENDERABLE_LIGHT ).
-                        Processes( &plProcessor ).
-                    InitializePass( );
+                        Accepts(RENDERABLE_LIGHT).
+                        Processes(&plProcessor).
+                        InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
                 // DIRECTIONAL LIGHT PASS
                 {
                     directionalLightPass.
-                        Set( { RENDER_TARGET_SWAPCHAIN } ).
-                        Set( SHADER_DIRECTIONAL_LIGHT ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_BACKCULL ).
-                        Set( BLEND_STATE_ADDITIVE ).
-                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                        Set({ RENDER_TARGET_SWAPCHAIN }).
+                        Set(SHADER_DIRECTIONAL_LIGHT).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_NODEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_BACKCULL).
+                        Set(BLEND_STATE_ADDITIVE).
+                        Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                        AddResource( &viewIdentity ).
-                        AddResource( &fullscreenTransform ).
-                        AddResource( &fullscreenModel ).
+                        AddResource(&viewIdentity).
+                        AddResource(&fullscreenTransform).
+                        AddResource(&fullscreenModel).
 
-                        AddResource( &depthInput ).
-                        AddResource( &diffuseRT ).
-                        AddResource( &normalRT ).
-                        AddResource( &specPowRT ).
+                        AddResource(&depthInput).
+                        AddResource(&diffuseRT).
+                        AddResource(&normalRT).
+                        AddResource(&specPowRT).
 
-                        Accepts( RENDERABLE_LIGHT ).
-                        Processes( &dlProcessor ).
-                    InitializePass( );
+                        Accepts(RENDERABLE_LIGHT).
+                        Processes(&dlProcessor).
+                        InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
                 // EMISSIVE PASS
                 {
                     emissivePass.
-                        Set( { RENDER_TARGET_SWAPCHAIN } ).
-                        Set( SHADER_EMISSIVE ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_BACKCULL ).
-                        Set( BLEND_STATE_ADDITIVE ).
-                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                        Set({ RENDER_TARGET_SWAPCHAIN }).
+                        Set(SHADER_EMISSIVE).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_NODEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_BACKCULL).
+                        Set(BLEND_STATE_ADDITIVE).
+                        Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                        AddResource( &viewIdentity ).
-                        AddResource( &fullscreenTransform ).
-                        AddResource( &fullscreenModel ).
+                        AddResource(&viewIdentity).
+                        AddResource(&fullscreenTransform).
+                        AddResource(&fullscreenModel).
 
-                        AddResource( &depthInput ).
-                        AddResource( &diffuseRT ).
-                        AddResource( &normalRT ).
-                        AddResource( &specPowRT ).
+                        AddResource(&depthInput).
+                        AddResource(&diffuseRT).
+                        AddResource(&normalRT).
+                        AddResource(&specPowRT).
 
-                        IsFullscreenPass( true ).
-                    InitializePass( );
+                        IsFullscreenPass(true).
+                        InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
                 // LINE RENDER PASS
                 {
                     lineRenderPass.
-                        Set( { RENDER_TARGET_SWAPCHAIN } ).
-                        Set( SHADER_BASIC ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_LINE_RENDERING ).
-                        Set( BLEND_STATE_COUNT ).
-                        Set( DXCore::TOPOLOGY_LINE_LIST ).
+                        Set({ RENDER_TARGET_SWAPCHAIN }).
+                        Set(SHADER_BASIC).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_LINE_RENDERING).
+                        Set(BLEND_STATE_COUNT).
+                        Set(DXCore::TOPOLOGY_LINE_LIST).
 
-                        AddResource( &identityTransform ).
-                        AddResource( &viewBuffer ).
+                        AddResource(&identityTransform).
+                        AddResource(&viewBuffer).
 
-                        IsFullscreenPass( true ).
-                    InitializePass( );
+                        IsFullscreenPass(true).
+                        InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
                 // POINT RENDER PASS
                 {
                     pointRenderPass.
-                        Set( { RENDER_TARGET_SWAPCHAIN } ).
-                        Set( SHADER_POINT ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_NOCULL ).
-                        Set( BLEND_STATE_COUNT ).
-                        Set( DXCore::TOPOLOGY_POINT_LIST ).
+                        Set({ RENDER_TARGET_SWAPCHAIN }).
+                        Set(SHADER_POINT).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_NOCULL).
+                        Set(BLEND_STATE_COUNT).
+                        Set(DXCore::TOPOLOGY_POINT_LIST).
 
-                        AddResource( &identityTransform ).
-                        AddResource( &viewBuffer ).
+                        AddResource(&identityTransform).
+                        AddResource(&viewBuffer).
 
-                        IsFullscreenPass( true ).
-                    InitializePass( );
+                        IsFullscreenPass(true).
+                        InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
@@ -742,168 +746,168 @@ namespace ursine
                 {
                     overdrawPass.
                         Set(
-                            {
-                                RENDER_TARGET_DEFERRED_COLOR,
-                                RENDER_TARGET_DEFERRED_NORMAL,
-                                RENDER_TARGET_DEFERRED_SPECPOW
-                            }
-                        ).
-                        Set( SHADER_DEFERRED_DEPTH ).
-                        Set( DEPTH_STENCIL_OVERDRAW ).
-                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_NOCULL ).
-                        Set( BLEND_STATE_COUNT ).
-                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                    {
+                        RENDER_TARGET_DEFERRED_COLOR,
+                        RENDER_TARGET_DEFERRED_NORMAL,
+                            RENDER_TARGET_DEFERRED_SPECPOW
+                    }
+                            ).
+                        Set(SHADER_DEFERRED_DEPTH).
+                        Set(DEPTH_STENCIL_OVERDRAW).
+                        Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_NOCULL).
+                        Set(BLEND_STATE_COUNT).
+                        Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                        AddResource( &viewBuffer ).
+                        AddResource(&viewBuffer).
 
-                        Accepts( RENDERABLE_OVERDRAW ).
-                        Processes( &modelProcessor ).
-                    InitializePass( );
+                        Accepts(RENDERABLE_OVERDRAW).
+                        Processes(&modelProcessor).
+                        InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
                 // OVERDRAW LINE PASS
                 {
                     overdrawLinePass.
-                        Set( { RENDER_TARGET_SWAPCHAIN } ).
-                        Set( SHADER_BASIC ).
-                        Set( DEPTH_STENCIL_COUNT ).
-                        Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_LINE_RENDERING ).
-                        Set( BLEND_STATE_COUNT ).
-                        Set( DXCore::TOPOLOGY_LINE_LIST ).
+                        Set({ RENDER_TARGET_SWAPCHAIN }).
+                        Set(SHADER_BASIC).
+                        Set(DEPTH_STENCIL_COUNT).
+                        Set(DEPTH_STATE_NODEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_LINE_RENDERING).
+                        Set(BLEND_STATE_COUNT).
+                        Set(DXCore::TOPOLOGY_LINE_LIST).
 
-                        AddResource( &identityTransform ).
-                        AddResource( &viewBuffer ).
+                        AddResource(&identityTransform).
+                        AddResource(&viewBuffer).
 
 
-                        IsFullscreenPass( true ).
-                    InitializePass( );
+                        IsFullscreenPass(true).
+                        InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
                 // OVERDRAW POINT PASS
                 {
                     overdrawPointPass.
-                        Set( { RENDER_TARGET_SWAPCHAIN } ).
-                        Set( SHADER_POINT ).
-                        Set( DEPTH_STENCIL_COUNT ).
-                        Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_NOCULL ).
-                        Set( BLEND_STATE_COUNT ).
-                        Set( DXCore::TOPOLOGY_POINT_LIST ).
+                        Set({ RENDER_TARGET_SWAPCHAIN }).
+                        Set(SHADER_POINT).
+                        Set(DEPTH_STENCIL_COUNT).
+                        Set(DEPTH_STATE_NODEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_NOCULL).
+                        Set(BLEND_STATE_COUNT).
+                        Set(DXCore::TOPOLOGY_POINT_LIST).
 
-                        AddResource( &identityTransform ).
-                        AddResource( &viewBuffer ).
+                        AddResource(&identityTransform).
+                        AddResource(&viewBuffer).
 
-                        IsFullscreenPass( true ).
-                    InitializePass( );
+                        IsFullscreenPass(true).
+                        InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
                 // PARTICLE PASS
                 {
                     particlePass.
-                        Set( { RENDER_TARGET_SWAPCHAIN } ).
-                        Set( SHADER_PARTICLE ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_NOCULL ).
-                        Set( BLEND_STATE_ADDITIVE ).
-                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                        Set({ RENDER_TARGET_SWAPCHAIN }).
+                        Set(SHADER_PARTICLE).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_NOCULL).
+                        Set(BLEND_STATE_ADDITIVE).
+                        Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                        AddResource( &viewBuffer ).
-                        AddResource( &particleModel ).
-                        AddResource( &invView ).
+                        AddResource(&viewBuffer).
+                        AddResource(&particleModel).
+                        AddResource(&invView).
 
-                        Accepts( RENDERABLE_PS ).
-                        Processes( &particleProcessor ).
-                        OverrideLayout( SHADER_OVERRIDE ).
-                    InitializePass( );
+                        Accepts(RENDERABLE_PS).
+                        Processes(&particleProcessor).
+                        OverrideLayout(SHADER_OVERRIDE).
+                        InitializePass();
                 }
-            
+
                 /////////////////////////////////////////////////////////
                 // BILLBOARD PASS
                 {
                     billboardPass.
                         Set(
-                            {
-                                RENDER_TARGET_SWAPCHAIN,
-                                RENDER_TARGET_DEFERRED_NORMAL,
-                                RENDER_TARGET_DEFERRED_SPECPOW
-                            }
-                        ).
-                        Set( SHADER_BILLBOARD2D ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_BACKCULL ).
-                        Set( BLEND_STATE_COUNT ).
-                        Set( DXCore::TOPOLOGY_POINT_LIST ).
+                    {
+                        RENDER_TARGET_SWAPCHAIN,
+                        RENDER_TARGET_DEFERRED_NORMAL,
+                            RENDER_TARGET_DEFERRED_SPECPOW
+                    }
+                            ).
+                        Set(SHADER_BILLBOARD2D).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_BACKCULL).
+                        Set(BLEND_STATE_COUNT).
+                        Set(DXCore::TOPOLOGY_POINT_LIST).
 
-                        AddResource( &viewBuffer ).
-                        AddResource( &spriteModel ).
-                        AddResource( &viewBufferGeom ).
-                        AddResource( &spriteGeomBuff).
+                        AddResource(&viewBuffer).
+                        AddResource(&spriteModel).
+                        AddResource(&viewBufferGeom).
+                        AddResource(&spriteGeomBuff).
 
-                        Accepts( RENDERABLE_BILLBOARD2D ).
-                        Processes( &billboardPorcessor ).
-                    InitializePass( );
+                        Accepts(RENDERABLE_BILLBOARD2D).
+                        Processes(&billboardPorcessor).
+                        InitializePass();
                 }
-            
+
                 /////////////////////////////////////////////////////////
                 // SPRITE TEXT PASS
                 {
                     textPass.
-                         Set(
-                            { 
-                                RENDER_TARGET_SWAPCHAIN,
-                                RENDER_TARGET_DEFERRED_NORMAL,
-                                RENDER_TARGET_DEFERRED_SPECPOW
-                            }
-                        ).
-                        Set( SHADER_SPRITE_TEXT ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_SOLID_NOCULL ).
-                        Set( BLEND_STATE_COUNT ).
-                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                        Set(
+                    {
+                        RENDER_TARGET_SWAPCHAIN,
+                        RENDER_TARGET_DEFERRED_NORMAL,
+                            RENDER_TARGET_DEFERRED_SPECPOW
+                    }
+                            ).
+                        Set(SHADER_SPRITE_TEXT).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_NOCULL).
+                        Set(BLEND_STATE_COUNT).
+                        Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                        AddResource( &viewBuffer ).
-                        AddResource( &particleModel ).
-                        AddResource( &invView ).
-                        AddResource( &fontTexture ).
+                        AddResource(&viewBuffer).
+                        AddResource(&particleModel).
+                        AddResource(&invView).
+                        AddResource(&fontTexture).
 
-                        Accepts( RENDERABLE_SPRITE_TEXT ).
-                        Processes( &textProcessor ).
+                        Accepts(RENDERABLE_SPRITE_TEXT).
+                        Processes(&textProcessor).
                         OverrideLayout(SHADER_OVERRIDE).
-                    InitializePass( );
+                        InitializePass();
                 }
             }
 
             /////////////////////////////////////////////////////////
             // CREATE PIPELINE
             DeferredPipeline.
-                AddPrePass( &deferredPass ).
-                AddPrePass( &spotlightPass ).
-                AddPrePass( &pointlightPass ).
-                AddPrePass( &directionalLightPass ).
-                AddPrePass( &emissivePass ).
-                AddPrePass( &lineRenderPass ).
-                AddPrePass( &pointRenderPass ).
-                AddPrePass( &overdrawPass ).
-                AddPrePass( &overdrawLinePass ).
-                AddPrePass( &overdrawPointPass ).
-                AddPrePass( &particlePass ).
-                AddPrePass( &billboardPass ).
-                AddPrePass( &textPass ).
-            InitializePass( );
+                AddPrePass(&deferredPass).
+                AddPrePass(&spotlightPass).
+                AddPrePass(&pointlightPass).
+                AddPrePass(&directionalLightPass).
+                AddPrePass(&emissivePass).
+                AddPrePass(&lineRenderPass).
+                AddPrePass(&pointRenderPass).
+                AddPrePass(&overdrawPass).
+                AddPrePass(&overdrawLinePass).
+                AddPrePass(&overdrawPointPass).
+                AddPrePass(&particlePass).
+                AddPrePass(&billboardPass).
+                AddPrePass(&textPass).
+                InitializePass();
 
             /////////////////////////////////////////////////////////
             // UPDATE RESOURCES
@@ -915,74 +919,74 @@ namespace ursine
 
             // viewBuffer(SHADERTYPE_VERTEX);
             // viewBufferGeom(SHADERTYPE_GEOMETRY);
-            cb.view = SMat4::Transpose( currentCamera.GetViewMatrix( ) ).ToD3D( );
-            cb.projection = SMat4::Transpose( currentCamera.GetProjMatrix( ) ).ToD3D( );
-            viewBuffer.Update( cb );
-            viewBufferGeom.Update( cb );
+            cb.view = SMat4::Transpose(currentCamera.GetViewMatrix()).ToD3D();
+            cb.projection = SMat4::Transpose(currentCamera.GetProjMatrix()).ToD3D();
+            viewBuffer.Update(cb);
+            viewBufferGeom.Update(cb);
 
             // viewIdentity(SHADERTYPE_VERTEX);
-            cb.view = SMat4::Identity( ).ToD3D( );
-            cb.projection = SMat4::Identity( ).ToD3D( );
-            viewIdentity.Update( cb );
-            
+            cb.view = SMat4::Identity().ToD3D();
+            cb.projection = SMat4::Identity().ToD3D();
+            viewIdentity.Update(cb);
+
             // spriteGeomBuff(SHADERTYPE_GEOMETRY);
             pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
             pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
             spriteGeomBuff.Update(pgb);
-            
+
             // identityTransform(SHADERTYPE_VERTEX);
-            tb.transform = SMat4::Identity( ).ToD3D( );
-            identityTransform.Update( tb );
+            tb.transform = SMat4::Identity().ToD3D();
+            identityTransform.Update(tb);
 
             // fullscreenTransform(SHADERTYPE_VERTEX);
-            tb.transform = SMat4(-2, 2, 1).ToD3D( );
-            fullscreenTransform.Update( tb );
+            tb.transform = SMat4(-2, 2, 1).ToD3D();
+            fullscreenTransform.Update(tb);
 
             // invView( SHADERTYPE_VERTEX );
-            SMat4 temp = currentCamera.GetViewMatrix( );
-            temp.Transpose( );
-            temp.Inverse( );
-            ivb.invView = temp.ToD3D( );
-            invView.Update( ivb, SHADER_SLOT_4 );
+            SMat4 temp = currentCamera.GetViewMatrix();
+            temp.Transpose();
+            temp.Inverse();
+            ivb.invView = temp.ToD3D();
+            invView.Update(ivb, SHADER_SLOT_4);
 
             // invProjection( SHADERTYPE_PIXEL );
-            temp = currentCamera.GetProjMatrix( );
-            temp.Transpose( );
-            temp.Inverse( );
-            ivb.invView = temp.ToD3D( );
-            currentCamera.GetPlanes( ivb.nearPlane, ivb.farPlane );
-            invProjection.Update( ivb );
+            temp = currentCamera.GetProjMatrix();
+            temp.Transpose();
+            temp.Inverse();
+            ivb.invView = temp.ToD3D();
+            currentCamera.GetPlanes(ivb.nearPlane, ivb.farPlane);
+            invProjection.Update(ivb);
 
             // TARGET INPUTS //////////////////
             // input RTs
             // depthInput(SHADER_SLOT_0, RESOURCE_INPUT_DEPTH);
-            depthInput.Update( DEPTH_STENCIL_MAIN );
+            depthInput.Update(DEPTH_STENCIL_MAIN);
 
             // diffuseRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
-            diffuseRT.Update( RENDER_TARGET_DEFERRED_COLOR );
+            diffuseRT.Update(RENDER_TARGET_DEFERRED_COLOR);
 
             // normalRT(SHADER_SLOT_2, RESOURCE_INPUT_RT);
-            normalRT.Update( RENDER_TARGET_DEFERRED_NORMAL );
+            normalRT.Update(RENDER_TARGET_DEFERRED_NORMAL);
 
             // specPowRT(SHADER_SLOT_3, RESOURCE_INPUT_RT);
-            specPowRT.Update( RENDER_TARGET_DEFERRED_SPECPOW );
+            specPowRT.Update(RENDER_TARGET_DEFERRED_SPECPOW);
             // debugInput(SHADER_SLOT_0, RESOURCE_INPUT_RT);
-            debugInput.Update( RENDER_TARGET_DEBUG );
+            debugInput.Update(RENDER_TARGET_DEBUG);
 
             // lightmapRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
-            lightmapRT.Update( RENDER_TARGET_LIGHTMAP );
+            lightmapRT.Update(RENDER_TARGET_LIGHTMAP);
 
             // TEXTURES AND MODELS /////////////
-            lightConeModel.Update( INTERNAL_CONE );
-            lightSphereModel.Update( INTERNAL_SPHERE );
-            fullscreenModel.Update( INTERNAL_QUAD );
-            spriteModel.Update( INTERNAL_QUAD );
-            particleModel.Update( INTERNAL_POINT_INDICES );
-            fontTexture.Update( 0 );
+            lightConeModel.Update(INTERNAL_CONE);
+            lightSphereModel.Update(INTERNAL_SPHERE);
+            fullscreenModel.Update(INTERNAL_QUAD);
+            spriteModel.Update(INTERNAL_QUAD);
+            particleModel.Update(INTERNAL_POINT_INDICES);
+            fontTexture.Update(0);
 
             /////////////////////////////////////////////////////////
             // RENDER
-            DeferredPipeline.Execute( currentCamera );
+            DeferredPipeline.Execute(currentCamera);
 
             return;
         }
@@ -1021,21 +1025,21 @@ namespace ursine
             RenderPass MainPipeline;
 
             // define the passes
-            RenderPass forwardPass( "ForwardPass" );
-            RenderPass billboardPass( "BillboardPass" );
-            LineRendererPass lineRenderPass( false );
-            LineRendererPass overdrawLinePass( true, "OverdrawLine" );
-            RenderPass particlePass( "ParticlePass" );
-            RenderPass overdrawPass( "OverdrawPass" );
-            RenderPass textPass( "SpriteTextPass" );
-            PointRendererPass pointRenderPass( false );
-            PointRendererPass overdrawPointPass( true, "OverdrawPoint" );
+            RenderPass forwardPass("ForwardPass");
+            RenderPass billboardPass("BillboardPass");
+            LineRendererPass lineRenderPass(false);
+            LineRendererPass overdrawLinePass(true, "OverdrawLine");
+            RenderPass particlePass("ParticlePass");
+            RenderPass overdrawPass("OverdrawPass");
+            RenderPass textPass("SpriteTextPass");
+            PointRendererPass pointRenderPass(false);
+            PointRendererPass overdrawPointPass(true, "OverdrawPoint");
 
             // create processors
-            auto modelProcessor     = Model3DProcessor( );
-            auto billboardPorcessor = Billboard2DProcessor( );
-            auto particleProcessor  = ParticleSystemProcessor( );
-            auto textProcessor      = SpriteTextProcessor( );
+            auto modelProcessor = Model3DProcessor();
+            auto billboardPorcessor = Billboard2DProcessor();
+            auto particleProcessor = ParticleSystemProcessor();
+            auto textProcessor = SpriteTextProcessor();
 
             // CREATE GLOBALS
             GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>                      viewBuffer(SHADERTYPE_VERTEX);
@@ -1043,7 +1047,7 @@ namespace ursine
             GlobalCBuffer<PointGeometryBuffer, BUFFER_POINT_GEOM>           geomBuff(SHADERTYPE_GEOMETRY);
             GlobalCBuffer<TransformBuffer, BUFFER_TRANSFORM>                identity(SHADERTYPE_VERTEX);
             GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>                   invView(SHADERTYPE_VERTEX);
-            
+
             GlobalGPUResource spriteModel(SHADER_SLOT_0, RESOURCE_MODEL);
             GlobalGPUResource particleModel(SHADER_SLOT_0, RESOURCE_MODEL);
             GlobalGPUResource fontTexture(SHADER_SLOT_0, RESOURCE_TEXTURE);
@@ -1052,196 +1056,196 @@ namespace ursine
                 /////////////////////////////////////////////////////////
                 // FORWARD PASS
                 forwardPass.
-                    Set( 
-                        { 
-                            RENDER_TARGET_SWAPCHAIN, 
-                            RENDER_TARGET_DEFERRED_NORMAL, 
-                            RENDER_TARGET_DEFERRED_SPECPOW 
-                        } 
-                    ).
-                    Set( SHADER_FORWARD ).
-                    Set( DEPTH_STENCIL_MAIN ).
-                    Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                    Set( SAMPLER_STATE_WRAP_TEX ).
-                    Set( RASTER_STATE_SOLID_BACKCULL ).
-                    Set( BLEND_STATE_COUNT ).
-                    Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                    Set(
+                {
+                    RENDER_TARGET_SWAPCHAIN,
+                    RENDER_TARGET_DEFERRED_NORMAL,
+                        RENDER_TARGET_DEFERRED_SPECPOW
+                }
+                        ).
+                    Set(SHADER_FORWARD).
+                    Set(DEPTH_STENCIL_MAIN).
+                    Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                    Set(SAMPLER_STATE_WRAP_TEX).
+                    Set(RASTER_STATE_SOLID_BACKCULL).
+                    Set(BLEND_STATE_COUNT).
+                    Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                    AddResource( &viewBuffer ).
+                    AddResource(&viewBuffer).
 
-                    Accepts( RENDERABLE_MODEL3D ).
-                    Processes( &modelProcessor ).
-                InitializePass( );
+                    Accepts(RENDERABLE_MODEL3D).
+                    Processes(&modelProcessor).
+                    InitializePass();
 
                 /////////////////////////////////////////////////////////
                 // BILLBOARD PASS
                 billboardPass.
                     Set(
-                        {
-                            RENDER_TARGET_SWAPCHAIN,
-                            RENDER_TARGET_DEFERRED_NORMAL,
-                            RENDER_TARGET_DEFERRED_SPECPOW
-                        }
-                    ).
-                    Set( SHADER_BILLBOARD2D ).
-                    Set( DEPTH_STENCIL_MAIN ).
-                    Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                    Set( SAMPLER_STATE_WRAP_TEX ).
-                    Set( RASTER_STATE_SOLID_BACKCULL ).
-                    Set( BLEND_STATE_COUNT ).
-                    Set( DXCore::TOPOLOGY_POINT_LIST ).
+                {
+                    RENDER_TARGET_SWAPCHAIN,
+                    RENDER_TARGET_DEFERRED_NORMAL,
+                        RENDER_TARGET_DEFERRED_SPECPOW
+                }
+                        ).
+                    Set(SHADER_BILLBOARD2D).
+                    Set(DEPTH_STENCIL_MAIN).
+                    Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                    Set(SAMPLER_STATE_WRAP_TEX).
+                    Set(RASTER_STATE_SOLID_BACKCULL).
+                    Set(BLEND_STATE_COUNT).
+                    Set(DXCore::TOPOLOGY_POINT_LIST).
 
-                    AddResource( &viewBuffer ).
-                    AddResource( &spriteModel ).
-                    AddResource( &viewBufferGeom ).
-                    AddResource( &geomBuff ).
+                    AddResource(&viewBuffer).
+                    AddResource(&spriteModel).
+                    AddResource(&viewBufferGeom).
+                    AddResource(&geomBuff).
 
-                    Accepts( RENDERABLE_BILLBOARD2D ).
-                    Processes( &billboardPorcessor ).
-                InitializePass( );
+                    Accepts(RENDERABLE_BILLBOARD2D).
+                    Processes(&billboardPorcessor).
+                    InitializePass();
 
                 /////////////////////////////////////////////////////////
                 // LINE RENDER PASS
                 lineRenderPass.
-                    Set( { RENDER_TARGET_SWAPCHAIN } ).
-                    Set( SHADER_BASIC ).
-                    Set( DEPTH_STENCIL_MAIN ).
-                    Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                    Set( SAMPLER_STATE_WRAP_TEX ).
-                    Set( RASTER_STATE_LINE_RENDERING ).
-                    Set( BLEND_STATE_COUNT ).
-                    Set( DXCore::TOPOLOGY_LINE_LIST ).
+                    Set({ RENDER_TARGET_SWAPCHAIN }).
+                    Set(SHADER_BASIC).
+                    Set(DEPTH_STENCIL_MAIN).
+                    Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                    Set(SAMPLER_STATE_WRAP_TEX).
+                    Set(RASTER_STATE_LINE_RENDERING).
+                    Set(BLEND_STATE_COUNT).
+                    Set(DXCore::TOPOLOGY_LINE_LIST).
 
                     AddResource(&identity).
-                InitializePass( );
+                    InitializePass();
 
                 overdrawLinePass.
-                    Set( { RENDER_TARGET_SWAPCHAIN } ).
-                    Set( SHADER_BASIC ).
-                    Set( DEPTH_STENCIL_COUNT ).
-                    Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                    Set( SAMPLER_STATE_WRAP_TEX ).
-                    Set( RASTER_STATE_LINE_RENDERING ).
-                    Set( BLEND_STATE_COUNT ).
-                    Set( DXCore::TOPOLOGY_LINE_LIST ).
+                    Set({ RENDER_TARGET_SWAPCHAIN }).
+                    Set(SHADER_BASIC).
+                    Set(DEPTH_STENCIL_COUNT).
+                    Set(DEPTH_STATE_NODEPTH_NOSTENCIL).
+                    Set(SAMPLER_STATE_WRAP_TEX).
+                    Set(RASTER_STATE_LINE_RENDERING).
+                    Set(BLEND_STATE_COUNT).
+                    Set(DXCore::TOPOLOGY_LINE_LIST).
 
                     AddResource(&identity).
-                InitializePass();
+                    InitializePass();
 
                 /////////////////////////////////////////////////////////
                 // POINT RENDER PASS
                 pointRenderPass.
-                    Set( { RENDER_TARGET_SWAPCHAIN } ).
-                    Set( SHADER_POINT ).
-                    Set( DEPTH_STENCIL_MAIN ).
-                    Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                    Set( SAMPLER_STATE_WRAP_TEX ).
-                    Set( RASTER_STATE_SOLID_NOCULL ).
-                    Set( BLEND_STATE_COUNT ).
-                    Set( DXCore::TOPOLOGY_POINT_LIST ).
+                    Set({ RENDER_TARGET_SWAPCHAIN }).
+                    Set(SHADER_POINT).
+                    Set(DEPTH_STENCIL_MAIN).
+                    Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                    Set(SAMPLER_STATE_WRAP_TEX).
+                    Set(RASTER_STATE_SOLID_NOCULL).
+                    Set(BLEND_STATE_COUNT).
+                    Set(DXCore::TOPOLOGY_POINT_LIST).
 
-                    AddResource( &identity ).
-                InitializePass( );
+                    AddResource(&identity).
+                    InitializePass();
 
                 overdrawPointPass.
-                    Set( { RENDER_TARGET_SWAPCHAIN } ).
-                    Set( SHADER_POINT ).
-                    Set( DEPTH_STENCIL_COUNT ).
-                    Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                    Set( SAMPLER_STATE_WRAP_TEX ).
-                    Set( RASTER_STATE_SOLID_NOCULL ).
-                    Set( BLEND_STATE_COUNT ).
-                    Set( DXCore::TOPOLOGY_POINT_LIST ).
+                    Set({ RENDER_TARGET_SWAPCHAIN }).
+                    Set(SHADER_POINT).
+                    Set(DEPTH_STENCIL_COUNT).
+                    Set(DEPTH_STATE_NODEPTH_NOSTENCIL).
+                    Set(SAMPLER_STATE_WRAP_TEX).
+                    Set(RASTER_STATE_SOLID_NOCULL).
+                    Set(BLEND_STATE_COUNT).
+                    Set(DXCore::TOPOLOGY_POINT_LIST).
 
-                    AddResource( &identity ).
-                InitializePass( );
+                    AddResource(&identity).
+                    InitializePass();
 
                 /////////////////////////////////////////////////////////
                 // PARTICLE PASS
                 particlePass.
-                    Set( { RENDER_TARGET_SWAPCHAIN } ).
-                    Set( SHADER_PARTICLE ).
-                    Set( DEPTH_STENCIL_MAIN ).
-                    Set( DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL ).
-                    Set( SAMPLER_STATE_WRAP_TEX ).
-                    Set( RASTER_STATE_SOLID_NOCULL ).
-                    Set( BLEND_STATE_ADDITIVE ).
-                    Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                    Set({ RENDER_TARGET_SWAPCHAIN }).
+                    Set(SHADER_PARTICLE).
+                    Set(DEPTH_STENCIL_MAIN).
+                    Set(DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL).
+                    Set(SAMPLER_STATE_WRAP_TEX).
+                    Set(RASTER_STATE_SOLID_NOCULL).
+                    Set(BLEND_STATE_ADDITIVE).
+                    Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                    AddResource( &viewBuffer ).
-                    AddResource( &particleModel ).
-                    AddResource( &invView ).
+                    AddResource(&viewBuffer).
+                    AddResource(&particleModel).
+                    AddResource(&invView).
 
-                    Accepts( RENDERABLE_PS ).
-                    Processes( &particleProcessor ).
-                    OverrideLayout( SHADER_OVERRIDE ).
-                InitializePass( );
+                    Accepts(RENDERABLE_PS).
+                    Processes(&particleProcessor).
+                    OverrideLayout(SHADER_OVERRIDE).
+                    InitializePass();
 
                 /////////////////////////////////////////////////////////
                 // OVERDRAW PASS
                 overdrawPass.
-                      Set( 
-                        { 
-                            RENDER_TARGET_DEFERRED_COLOR, 
-                            RENDER_TARGET_DEFERRED_NORMAL, 
-                            RENDER_TARGET_DEFERRED_SPECPOW 
-                        } 
-                    ).
-                    Set( SHADER_DEFERRED_DEPTH ).
-                    Set( DEPTH_STENCIL_OVERDRAW ).
-                    Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                    Set( SAMPLER_STATE_WRAP_TEX ).
-                    Set( RASTER_STATE_SOLID_NOCULL ).
-                    Set( BLEND_STATE_COUNT ).
-                    Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                    Set(
+                {
+                    RENDER_TARGET_DEFERRED_COLOR,
+                    RENDER_TARGET_DEFERRED_NORMAL,
+                        RENDER_TARGET_DEFERRED_SPECPOW
+                }
+                        ).
+                    Set(SHADER_DEFERRED_DEPTH).
+                    Set(DEPTH_STENCIL_OVERDRAW).
+                    Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                    Set(SAMPLER_STATE_WRAP_TEX).
+                    Set(RASTER_STATE_SOLID_NOCULL).
+                    Set(BLEND_STATE_COUNT).
+                    Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                    AddResource( &viewBuffer ).
+                    AddResource(&viewBuffer).
 
-                    Accepts( RENDERABLE_OVERDRAW ).
-                    Processes( &modelProcessor ).
-                InitializePass( );
+                    Accepts(RENDERABLE_OVERDRAW).
+                    Processes(&modelProcessor).
+                    InitializePass();
 
                 /////////////////////////////////////////////////////////
                 // SPRITE TEXT PASS
                 textPass.
-                     Set(
-                        {
-                            RENDER_TARGET_SWAPCHAIN,
-                            RENDER_TARGET_DEFERRED_NORMAL,
-                            RENDER_TARGET_DEFERRED_SPECPOW
-                        }
-                    ).
-                    Set( SHADER_SPRITE_TEXT ).
-                    Set( DEPTH_STENCIL_MAIN ).
-                    Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                    Set( SAMPLER_STATE_WRAP_TEX ).
-                    Set( RASTER_STATE_SOLID_NOCULL ).
-                    Set( BLEND_STATE_COUNT ).
-                    Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+                    Set(
+                {
+                    RENDER_TARGET_SWAPCHAIN,
+                    RENDER_TARGET_DEFERRED_NORMAL,
+                        RENDER_TARGET_DEFERRED_SPECPOW
+                }
+                        ).
+                    Set(SHADER_SPRITE_TEXT).
+                    Set(DEPTH_STENCIL_MAIN).
+                    Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                    Set(SAMPLER_STATE_WRAP_TEX).
+                    Set(RASTER_STATE_SOLID_NOCULL).
+                    Set(BLEND_STATE_COUNT).
+                    Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
 
-                    AddResource( &viewBuffer ).
-                    AddResource( &particleModel ).
-                    AddResource( &invView ).
-                    AddResource( &fontTexture ).
+                    AddResource(&viewBuffer).
+                    AddResource(&particleModel).
+                    AddResource(&invView).
+                    AddResource(&fontTexture).
 
-                    Accepts( RENDERABLE_SPRITE_TEXT ).
-                    Processes( &textProcessor ).
+                    Accepts(RENDERABLE_SPRITE_TEXT).
+                    Processes(&textProcessor).
                     OverrideLayout(SHADER_OVERRIDE).
-                InitializePass( );
+                    InitializePass();
 
                 /////////////////////////////////////////////////////////
                 // INIT PIPELINE
                 MainPipeline.
-                    AddPrePass( &forwardPass ).
-                    AddPrePass( &billboardPass ).
-                    AddPrePass( &overdrawPass ).
-                    AddPrePass( &lineRenderPass ).
-                    AddPrePass( &pointRenderPass ).
-                    AddPrePass( &overdrawLinePass ).
-                    AddPrePass( &overdrawPointPass ).
-                    AddPrePass( &particlePass ).
-                    AddPrePass( &textPass ).
-                InitializePass( );
+                    AddPrePass(&forwardPass).
+                    AddPrePass(&billboardPass).
+                    AddPrePass(&overdrawPass).
+                    AddPrePass(&lineRenderPass).
+                    AddPrePass(&pointRenderPass).
+                    AddPrePass(&overdrawLinePass).
+                    AddPrePass(&overdrawPointPass).
+                    AddPrePass(&particlePass).
+                    AddPrePass(&textPass).
+                    InitializePass();
             }
 
             /////////////////////////////////////////////////////////
@@ -1251,31 +1255,31 @@ namespace ursine
             TransformBuffer tb;
             invViewBuffer ipb;
 
-            cb.view = SMat4::Transpose( currentCamera.GetViewMatrix( ) ).ToD3D( );
-            cb.projection = SMat4::Transpose( currentCamera.GetProjMatrix( ) ).ToD3D( );
+            cb.view = SMat4::Transpose(currentCamera.GetViewMatrix()).ToD3D();
+            cb.projection = SMat4::Transpose(currentCamera.GetProjMatrix()).ToD3D();
 
-            viewBuffer.Update( cb );
-            viewBufferGeom.Update( cb );
-            spriteModel.Update( 0 );
-            particleModel.Update( INTERNAL_POINT_INDICES );
-            fontTexture.Update( 0 );
+            viewBuffer.Update(cb);
+            viewBufferGeom.Update(cb);
+            spriteModel.Update(0);
+            particleModel.Update(INTERNAL_POINT_INDICES);
+            fontTexture.Update(0);
 
-            pgb.cameraPosition = SVec4( currentCamera.GetPosition( ), 1 ).ToD3D( );
-            pgb.cameraUp = SVec4( currentCamera.GetUp( ), 0 ).ToD3D( );
-            geomBuff.Update( pgb );
+            pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
+            pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
+            geomBuff.Update(pgb);
 
-            tb.transform = SMat4::Identity( ).ToD3D( );
-            identity.Update( tb );
+            tb.transform = SMat4::Identity().ToD3D();
+            identity.Update(tb);
 
-            SMat4 temp = currentCamera.GetViewMatrix( );
-            temp.Transpose( );
-            temp.Inverse( );
-            ipb.invView = temp.ToD3D( );
-            invView.Update( ipb, SHADER_SLOT_4 );
+            SMat4 temp = currentCamera.GetViewMatrix();
+            temp.Transpose();
+            temp.Inverse();
+            ipb.invView = temp.ToD3D();
+            invView.Update(ipb, SHADER_SLOT_4);
 
             /////////////////////////////////////////////////////////
             // EXECUTE RENDER CALL //////////////////////////////////
-            MainPipeline.Execute( currentCamera );
+            MainPipeline.Execute(currentCamera);
         }
 
         void GfxManager::EndScene()
@@ -1353,7 +1357,7 @@ namespace ursine
             shaderManager->BindShader(SHADER_UI);
             layoutManager->SetInputLayout(SHADER_UI);
             bufferManager->MapTransformBuffer(SMat4(-2, 2, 1) * trans);
-            modelManager->BindModel( INTERNAL_QUAD );
+            modelManager->BindModel(INTERNAL_QUAD);
         }
 
         void GfxManager::RenderComputeMousePos()
@@ -1365,8 +1369,8 @@ namespace ursine
 
             ScreenToClient(wHND, &point);
 
-            if ( point.x < 0 ) point.x = 0;
-            if ( point.y < 0 ) point.y = 0;
+            if (point.x < 0) point.x = 0;
+            if (point.y < 0) point.y = 0;
 
             //@matt set proper mouse position
             dataToCS.mousePos = DirectX::XMINT4(point.x, point.y, 0, 0);
@@ -1381,15 +1385,15 @@ namespace ursine
             dxCore->GetDeviceContext()->CSSetShaderResources(1, 1, &srv);
 
             //set UAV as output 
-            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID ], nullptr);
-            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID_CPU, 1, &bufferManager->m_computeUAV[ COMPUTE_BUFFER_ID_CPU ], nullptr);
+            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID, 1, &bufferManager->m_computeUAV[COMPUTE_BUFFER_ID], nullptr);
+            dxCore->GetDeviceContext()->CSSetUnorderedAccessViews(COMPUTE_BUFFER_ID_CPU, 1, &bufferManager->m_computeUAV[COMPUTE_BUFFER_ID_CPU], nullptr);
 
             //call the compute shader. Results *should* be written to the UAV above
             dxCore->GetDeviceContext()->Dispatch(1, 1, 1);
 
             //copy data to intermediary buffer
             //                                                           CPU read-only staging buffer                            GPU compute output
-            dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID_CPU ], bufferManager->m_computeBufferArray[ COMPUTE_BUFFER_ID ]);
+            dxCore->GetDeviceContext()->CopyResource(bufferManager->m_computeBufferArray[COMPUTE_BUFFER_ID_CPU], bufferManager->m_computeBufferArray[COMPUTE_BUFFER_ID]);
 
             //read from intermediary buffer
             ComputeIDOutput dataFromCS;
@@ -1411,19 +1415,19 @@ namespace ursine
             unsigned w, h;
             gfxInfo->GetDimensions(w, h);
 
-            if ( tempID != -1 && tempID < 73727 && (unsigned)point.x < w && (unsigned)point.y < h )
+            if (tempID != -1 && tempID < 73727 && (unsigned)point.x < w && (unsigned)point.y < h)
             {
-                switch ( type )
+                switch (type)
                 {
                 case RENDERABLE_MODEL3D:
                 case 3: // work around for overdraw, since bitfield only holds 4 values
-                    m_currentID = renderableManager->m_renderableModel3D[ index ].GetEntityID( );
+                    m_currentID = renderableManager->m_renderableModel3D[index].GetEntityID();
                     break;
                 case RENDERABLE_BILLBOARD2D:
-                    m_currentID = renderableManager->m_renderableBillboards[ index ].GetEntityID( );
+                    m_currentID = renderableManager->m_renderableBillboards[index].GetEntityID();
                     break;
                 case RENDERABLE_SPRITE_TEXT:
-                    m_currentID = renderableManager->m_renderableSpriteText[ index ].GetEntityID( );
+                    m_currentID = renderableManager->m_renderableSpriteText[index].GetEntityID();
                     break;
                 }
             }
@@ -1479,7 +1483,7 @@ namespace ursine
             textureManager->MapTextureByID(handle->Index_);
 
             //render to screen
-            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
+            shaderManager->Render(modelManager->GetModelIndexcountByID(INTERNAL_QUAD));
         }
 
         void GfxManager::RenderDynamicTextureInViewport(GfxHND& texHandle, const float posX, const float posY, GfxHND& camera)
@@ -1540,7 +1544,7 @@ namespace ursine
             textureManager->MapTextureByID(handle->Index_);
 
             //render to screen
-            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
+            shaderManager->Render(modelManager->GetModelIndexcountByID(INTERNAL_QUAD));
         }
 
         void GfxManager::RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void* input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY)
@@ -1616,7 +1620,7 @@ namespace ursine
 
         void GfxManager::Resize(int width, int height)
         {
-            if ( !m_ready )
+            if (!m_ready)
                 return;
 
             gfxInfo->SetDimensions(width, height);
@@ -1645,7 +1649,7 @@ namespace ursine
 
             UAssert(newRender->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
 
-           
+
 
             // get viewport
             Camera &cam = cameraManager->GetCamera(camera);
@@ -1679,7 +1683,7 @@ namespace ursine
 
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(input)->ShaderMap);
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
-            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
+            shaderManager->Render(modelManager->GetModelIndexcountByID(INTERNAL_QUAD));
         }
 
         void GfxManager::RenderUI_Main(RENDER_TARGETS input)
@@ -1699,7 +1703,7 @@ namespace ursine
 
             dxCore->GetDeviceContext()->PSSetShaderResources(0, 1, &dxCore->GetRenderTargetMgr()->GetRenderTarget(input)->ShaderMap);
             dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN);
-            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
+            shaderManager->Render(modelManager->GetModelIndexcountByID(INTERNAL_QUAD));
         }
     }
 }

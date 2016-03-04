@@ -227,15 +227,16 @@ namespace ursine
 
         float ParticleEmitter::GetRotationRange(void) const
         {
-            return m_rotationRange.GetMax( );
-        }
-        void ParticleEmitter::SetRotationRange(const float range)
-        {
-            m_rotationRange.SetMax(range);
-            m_rotationRange.SetMin(-range);
+            return (m_rotationRange.GetMax( ) * 180.0f) / PI;
         }
 
-        float ParticleEmitter::GetRoll(void) const
+        void ParticleEmitter::SetRotationRange(const float range)
+        {
+            m_rotationRange.SetMax((range * PI) / 180.0f);
+            m_rotationRange.SetMin(-(range * PI) / 180.0f);
+        }
+
+        float ParticleEmitter::GetRoll(void)
         {
             return (m_roll * 180.0f) / PI;
         }
@@ -253,7 +254,7 @@ namespace ursine
         void ParticleEmitter::SetRollRange(const float range)
         {
             m_rollRange.SetMax((range * PI) / 180.0f);
-            m_rollRange.SetMin(-(range * PI) / 180.0f);
+            m_rollRange.SetMin( -(range * PI) / 180.0f);
         }
 
         const SVec3 &ParticleEmitter::GetVelocity(void) const
@@ -359,6 +360,8 @@ namespace ursine
         {
             float dt = Application::Instance->GetDeltaTime( );
 
+            if (dt > 0.2f)
+                dt = 0.2f;
             // if we are able to spawn or we don't care about spawn count AND we are able to emit
             if (((m_spawnCount < m_emitCount) || (m_emitCount == 0)) && m_emitRate != 0)
             {
@@ -391,6 +394,8 @@ namespace ursine
                     --activeParticles;
                     continue;
                 }
+
+                gpuData[x].rotation[0] -= cpuData[x].roll * dt;
 
                 // update position with velocity
                 gpuData[ x ].position[ 0 ] += cpuData[ x ].velocity.X( ) * dt;

@@ -40,5 +40,5 @@ private:
     // update current bay
     void UpdateBay(InteractionBay* bay, const int closestIndex);
 
-    std::unordered_map<ursine::ecs::EntityID, InteractionBay*> m_interactionBays;
+    std::unordered_map<ursine::ecs::EntityHandle, InteractionBay*> m_interactionBays;
 } Meta(Enable, AutoAddEntitySystem);

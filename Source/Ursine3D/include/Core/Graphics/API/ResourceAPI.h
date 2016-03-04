@@ -18,6 +18,7 @@
 #include "ModelInfo.h"
 #include "AnimationInfo.h"
 #include "GUID.h"
+#include "FontData.h"
 
 namespace ursine
 {
@@ -80,12 +81,19 @@ namespace ursine
             void DestroyAnimation(GfxHND &handle);
 
             ufmt_loader::AnimInfo *GetAnimInfo(const GfxHND &handle);
-            
+
+            /////////////////////////////////////////////////////////
+            // FONT
+            /////////////////////////////////////////////////////////
+            GfxHND CreateBitmapFont(uint8_t *binaryData, size_t binarySize);
+            void DestroyBitmapFont(GfxHND &fontHandle);
+            void RegisterTexture(GfxHND fontHandle, const std::string &fontName, GfxHND textureHandle);
+
         private:
             privData *m_privates;
 
         private:
-            void SetPrivates(void *priv, void *priv2);
+            void SetPrivates(void *priv, void *priv2, void *priv3);
             void Initialize();
             void Uninitialize();
         };

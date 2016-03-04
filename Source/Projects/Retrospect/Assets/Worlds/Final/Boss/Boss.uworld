@@ -1,0 +1,544 @@
+{
+"entities": [
+{
+"children": [
+{
+"children": [], 
+"components": {
+"PlayerSpawnPoint": {
+".uid": 7, 
+"playerArchetype": "Player1", 
+"spawnSegment": 68
+}, 
+"Transform": {
+".uid": 6, 
+"rotation": {
+"w": 1.0000003576278687, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 30.209320068359375, 
+"y": 23, 
+"z": -25.293964385986328
+}
+}
+}, 
+"name": "Player1BossSpawn"
+}, {
+"children": [], 
+"components": {
+"PlayerSpawnPoint": {
+".uid": 9, 
+"playerArchetype": "Player2", 
+"spawnSegment": 68
+}, 
+"Transform": {
+".uid": 8, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.065325640141963959, 
+"y": 0.065325640141963959, 
+"z": 0.065325640141963959
+}, 
+"translation": {
+"x": 66.3363037109375, 
+"y": 23.85334587097168, 
+"z": 12.529571533203125
+}
+}
+}, 
+"name": "Player2BossSpawn"
+}
+], 
+"components": {
+"Transform": {
+".uid": 5, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 383.13372802734375, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "PlayerBossSpawn"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 11, 
+"changeOnThisSegment": 70
+}, 
+"Camera": {
+".uid": 12, 
+"active": true, 
+"clearColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
+"farPlane": 1000, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 1024, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 13, 
+"animationClipName": "", 
+"delta": 2, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 483.89987182617188, 
+"y": 42.731346130371094, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 483.89987182617188, 
+"y": 42.731346130371094, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": 278.89715576171875, 
+"y": 34.673160552978516, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 238.70785522460938, 
+"y": 87.407127380371094, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 211.46693420410156, 
+"y": 87.407127380371094, 
+"z": 85.337455749511719
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 96.383377075195313, 
+"y": 101.49486541748047, 
+"z": 181.24046325683594
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.24085387587547302, 
+"x": 0, 
+"y": -0.97056150436401367, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": -118.66352844238281, 
+"y": 101.49486541748047, 
+"z": 74.627738952636719
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.5982973575592041, 
+"x": 0, 
+"y": -0.80127447843551636, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": -24.074785232543945, 
+"y": 64.535087585449219, 
+"z": -21.717721939086914
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.5982973575592041, 
+"x": 0, 
+"y": -0.80127447843551636, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 596.0166015625, 
+"y": 64.535087585449219, 
+"z": -21.717721939086914
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"EntityAnimatorFocusModifier": {
+".uid": 14, 
+"focusEntity": "BossCameraFocusPoint"
+}, 
+"Transform": {
+".uid": 10, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 483.89987182617188, 
+"y": 42.731346130371094, 
+"z": 0
+}
+}
+}, 
+"name": "BossRoomOpenCamera"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Transform": {
+".uid": 25, 
+"rotation": {
+"w": 0.13784138858318329, 
+"x": 0, 
+"y": 0.99045419692993164, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 11.496125221252441, 
+"y": 31.29704475402832, 
+"z": -18.65997314453125
+}
+}, 
+"VineSpawner": {
+".uid": 26
+}
+}, 
+"name": "VineSpawn"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 27, 
+"rotation": {
+"w": 0.86559396982192993, 
+"x": 0, 
+"y": 0.50074642896652222, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 11.496103286743164, 
+"y": 31.297000885009766, 
+"z": 17.966733932495117
+}
+}, 
+"VineSpawner": {
+".uid": 28
+}
+}, 
+"name": "VineSpawn"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 29, 
+"rotation": {
+"w": 0.86449408531188965, 
+"x": 0, 
+"y": -0.50264298915863037, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -13.947798728942871, 
+"y": 31.296947479248047, 
+"z": 17.966680526733398
+}
+}, 
+"VineSpawner": {
+".uid": 30
+}
+}, 
+"name": "VineSpawn"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 31, 
+"rotation": {
+"w": 0.47287136316299438, 
+"x": 0, 
+"y": -0.88113158941268921, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -16.91417121887207, 
+"y": 31.296895980834961, 
+"z": -18.007406234741211
+}
+}, 
+"VineSpawner": {
+".uid": 32
+}
+}, 
+"name": "VineSpawn"
+}
+], 
+"components": {
+"Transform": {
+".uid": 24, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "BossPhase1VineSpawns Archetype"
+}
+], 
+"settings": {
+"children": [], 
+"components": {
+"PhysicsSettings": {
+".uid": 3, 
+"enableDebugDraw": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"playmodeDebugDraw": false
+}, 
+"Transform": {
+".uid": 2, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WorldConfig": {
+".uid": 4, 
+"systems": [
+{
+"type": "CharacterControllerSystem"
+}, {
+"type": "CheatSystem"
+}, {
+"type": "CommandQueueSystem"
+}, {
+"type": "InputControllerSystem"
+}, {
+"type": "ProjectileSystem"
+}
+]
+}
+}, 
+"name": "World Settings"
+}, 
+"v": "0.0"
+}

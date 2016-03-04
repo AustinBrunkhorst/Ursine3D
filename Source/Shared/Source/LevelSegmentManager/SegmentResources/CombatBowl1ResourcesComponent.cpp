@@ -21,3 +21,13 @@ CombatBowl1Resources::CombatBowl1Resources(void)
     : BaseComponent( )
 {
 }
+
+const ursine::resources::ResourceReference &CombatBowl1Resources::GetWorldData(void) const
+{
+    return m_worldToMerge;
+}
+
+void CombatBowl1Resources::SetWorldData(const ursine::resources::ResourceReference &world)
+{
+    m_worldToMerge = world;
+}

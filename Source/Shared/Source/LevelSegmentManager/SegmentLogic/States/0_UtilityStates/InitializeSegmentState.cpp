@@ -16,27 +16,41 @@
 #include "InitializeSegmentState.h"
 
 #include "SegmentLogicStateIncludes.h"
-
 #include "UnloadResourceComponent.h"
 
-InitializeSegmentState::InitializeSegmentState(const ursine::Array<std::string> &loadInArchetypes, LevelSegments unloadSegment)
+#include <World.h>
+#include <Scene.h>
+
+using namespace ursine;
+using namespace ecs;
+
+InitializeSegmentState::InitializeSegmentState(const resources::ResourceReference &loadInWorld, LevelSegments unloadSegment)
     : SegmentLogicState( "Initialize Segment State" )
-    , m_loadInArchetypes( loadInArchetypes )
+    , m_loadInWorld( loadInWorld )
     , m_unloadSegment( unloadSegment )
+    , m_segmentManager( nullptr )
 {
 }
 
 void InitializeSegmentState::Enter(SegmentLogicStateMachine *machine)
 {
-    auto segmentManager = machine->GetSegmentManager( );
-    auto world = segmentManager->GetOwner( )->GetWorld( );
+    m_segmentManager = machine->GetSegmentManager( );
+    auto world = m_segmentManager->GetOwner( )->GetWorld( );
 
-    for (auto &archetype : m_loadInArchetypes)
-    {
-        auto e = world->CreateEntityFromArchetype(
-            WORLD_ARCHETYPE_PATH + archetype + ".uatype", archetype
-        );
+    // subscribe to entity added events so we can add the unload resource component
+    world->Listener( this )
+        .On( WORLD_ENTITY_ADDED, &InitializeSegmentState::onEntityAdded );
 
-        e->AddComponent<UnloadResource>( segmentManager, m_unloadSegment );
-    }
+    world->MergeWorld( world->GetOwner( )->GetResourceManager( ), m_loadInWorld );
+
+    world->Listener( this )
+        .Off( WORLD_ENTITY_ADDED, &InitializeSegmentState::onEntityAdded );
+}
+
+void InitializeSegmentState::onEntityAdded(EVENT_HANDLER(World))
+{
+    EVENT_ATTRS(World, EntityEventArgs);
+
+    if (!args->entity->HasComponent<UnloadResource>( ))
+        args->entity->AddComponent<UnloadResource>( m_segmentManager, m_unloadSegment );
 }

@@ -17,6 +17,7 @@
 #include "SMat4.h"
 #include "ViewportRenderModes.h"
 #include "EntityConfig.h"
+#include "Color.h"
 
 namespace ursine
 {
@@ -104,8 +105,11 @@ namespace ursine
             unsigned GetMask(void) const;
             void SetMask(const unsigned long long renderMask);
 
-            ecs::EntityID GetEntityID(void) const;
-            void SetEntityID(const ecs::EntityID id);
+            const ecs::EntityHandle &GetEntity(void) const;
+            void SetEntity(const ecs::EntityHandle handle);
+
+            const Color &GetClearColor(void) const;
+            void SetClearColor(const Color &color);
 
         private:
             // calcualte all vectors based upon up
@@ -115,7 +119,7 @@ namespace ursine
             unsigned long long m_cameraMask;
 
             // entity ID
-            ecs::EntityID m_entityID;
+            ecs::EntityHandle m_entity;
 
             // field of view, near, var
             float m_fov;
@@ -147,6 +151,8 @@ namespace ursine
             float m_screenY;
             float m_screenWidth;
             float m_screenHeight;
+
+            Color m_clearColor;
         };
     }
 }

@@ -65,12 +65,12 @@ InteractionBaySystem::InteractionBaySystem(World* world)
 void InteractionBaySystem::Enable(const EntityHandle &entity)
 {
     // grab all comps needed
-    m_interactionBays[ entity->GetID( ) ] = entity->GetComponent<InteractionBay>( );
+    m_interactionBays[ entity ] = entity->GetComponent<InteractionBay>( );
 }
 
 void InteractionBaySystem::Disable(const EntityHandle &entity)
 {
-    m_interactionBays.erase( entity->GetID( ) );
+    m_interactionBays.erase( entity );
 }
 
 void InteractionBaySystem::onUpdate(EVENT_HANDLER(World))
@@ -106,7 +106,7 @@ void InteractionBaySystem::UpdateBay(InteractionBay* bay, const int closestIndex
 {
     Interactable* currInteractable;
     CommandQueue* queue = bay->GetOwner( )->GetComponent<CommandQueue>( );
-    auto id = bay->GetOwner( )->GetID( );
+    auto id = bay->GetOwner( );
 
     // get new current interactable
     currInteractable = bay->m_interactables[ closestIndex ];

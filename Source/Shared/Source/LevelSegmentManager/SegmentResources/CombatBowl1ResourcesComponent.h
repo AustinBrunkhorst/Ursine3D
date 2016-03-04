@@ -15,6 +15,7 @@
 
 #include <Component.h>
 #include <Array.h>
+#include <WorldData.h>
 
 class CombatBowl1Resources : public ursine::ecs::Component
 {
@@ -24,6 +25,17 @@ public:
 
     CombatBowl1Resources(void);
 
-    ursine::Array<std::string> archetypesToLoad;
+    EditorResourceField(
+        ursine::resources::WorldData,
+        world,
+        GetWorldData,
+        SetWorldData
+    );
+
+    const ursine::resources::ResourceReference &GetWorldData(void) const;
+    void SetWorldData(const ursine::resources::ResourceReference &world);
+
+private:
+    ursine::resources::ResourceReference m_worldToMerge;
 
 } Meta(Enable);

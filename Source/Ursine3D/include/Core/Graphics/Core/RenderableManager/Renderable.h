@@ -93,22 +93,22 @@ namespace ursine
 
             void GetMaterialData(float &emiss, float &pow, float &intensity) const;
             void SetMaterialData(float emiss, float pow, float intensity);
-            
+
             float GetEmissive(void) const;
             void SetEmissive(float emiss);
-            
+
             float GetSpecularPower(void) const;
             void SetSpecularPower(float power);
-            
+
             float GetSpecularIntensity(void) const;
             void SetSpecularIntensity(float intensity);
-            
+
             float &GetAnimationTime(void);
             void SetAnimationTime(const float time);
-            
+
             const Color &GetColor() const;
             void SetColor(const Color color);
-            
+
             std::vector<SMat4> &GetMatrixPalette(void);
 
             int GetMeshIndex(void) const;
@@ -155,7 +155,7 @@ namespace ursine
 
             void SetPosition(const ursine::SVec3 &position);
             const ursine::SVec3 &GetPosition(void) const;
-
+            
             void SetColor(const Color color);
             const Color &GetColor() const;
 
@@ -332,6 +332,9 @@ namespace ursine
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
 
+            GfxHND GetFontHandle(void) const;
+            void SetFontHandle(GfxHND handle);
+
         private:
             float m_size;
 
@@ -349,6 +352,8 @@ namespace ursine
             float m_ppu;
 
             Alignment m_alignment;
+
+            GfxHND m_fontHandle;
         };
     }
 }

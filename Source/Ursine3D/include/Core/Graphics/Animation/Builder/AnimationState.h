@@ -22,6 +22,12 @@ namespace ursine
     {
     public:
         EditorField(
+            bool loopAnimation,
+            IsLooping,
+            SetLooping
+            );
+
+        EditorField(
             std::string stateName,
             GetName,
             SetName
@@ -41,6 +47,9 @@ namespace ursine
         *  @return Void.
         */
         AnimationState(void);
+
+        bool IsLooping(void) const;
+        void SetLooping(const bool isLooping);
 
         const std::string &GetName(void) const;
         void SetName(const std::string& name);
@@ -91,8 +100,11 @@ namespace ursine
 
         const float &GetTransPosition(void) const;
         void SetTransPosition(const float& tPos);
+        
+        void PlayingAnimation();// const float deltaTime);
 
     private:
+        bool m_looping;
         std::string m_name;
         //time position to play animation
         float m_timePos;

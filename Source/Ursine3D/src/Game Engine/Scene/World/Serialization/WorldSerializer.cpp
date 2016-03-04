@@ -16,7 +16,8 @@
 #include "WorldSerializer.h"
 #include "EntitySerializer.h"
 
-#include <NameManager.h>
+#include "WorldConfigComponent.h"
+#include "SystemManager.h"
 
 namespace ursine
 {
@@ -31,12 +32,7 @@ namespace ursine
             const auto kVersion = "0.0";
         }
 
-        WorldSerializer::WorldSerializer(void)
-        {
-
-        }
-
-        Json WorldSerializer::Serialize(World *world) const
+        Json WorldSerializer::Serialize(World *world)
         {
             Json::object data;
 
@@ -76,11 +72,11 @@ namespace ursine
             return data;
         }
 
-        World *WorldSerializer::Deserialize(const std::string &fileName) const
+        World *WorldSerializer::Deserialize(const std::string &filename)
         {
             std::string data;
 
-            if (!fs::LoadAllText( fileName, data ))
+            if (!fs::LoadAllText( filename, data ))
                 throw SerializationException( "Unable to read world file." );
 
             std::string jsonError;
@@ -100,7 +96,7 @@ namespace ursine
             return Deserialize( worldData );
         }
 
-        World *WorldSerializer::Deserialize(const Json &worldData) const
+        World *WorldSerializer::Deserialize(const Json &worldData)
         {
             auto &versionData = worldData[ kKeyVersion ];
 
@@ -152,6 +148,40 @@ namespace ursine
             }
 
             return world;
+        }
+
+        void WorldSerializer::MergeDeserialize(World::Handle from, World *to)
+        {
+            EntitySerializer entitySerializer;
+
+            // merge the existing systems in the world config
+            auto toSystemManager = to->GetSystemManager( );
+
+            auto &newSettings = from->GetSettings( );
+            auto newConfig = newSettings->GetComponent<WorldConfig>( );
+            auto &newSystems = newConfig->GetSystems( );
+
+            for (auto &newSystem : newSystems)
+            {
+                auto systemType = meta::Type::GetFromName( newSystem.type );
+
+                // If the new system isn't found, add it to the current systems
+                if (!toSystemManager->HasSystem( systemType ))
+                    toSystemManager->AddSystem( systemType );
+            }
+
+            // Add the world's entities to the existing world
+            auto em = from->GetEntityManager( );
+            EntitySerializer serializer;
+
+            auto toAddEntities = em->GetRootEntities( );
+
+            for (auto &entityData : toAddEntities)
+            {
+                auto data = serializer.Serialize( entityData );
+
+                serializer.Deserialize( to, data );
+            }
         }
     }
 }

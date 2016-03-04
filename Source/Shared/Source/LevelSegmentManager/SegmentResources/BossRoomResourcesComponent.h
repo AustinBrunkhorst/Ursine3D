@@ -15,6 +15,7 @@
 
 #include <Component.h>
 #include <Array.h>
+#include <WorldData.h>
 
 class BossRoomResources : public ursine::ecs::Component
 {
@@ -24,6 +25,19 @@ public:
 
     BossRoomResources(void);
 
-    ursine::Array<std::string> archetypesToLoad;
+    EditorResourceField(
+        ursine::resources::WorldData,
+        world,
+        GetWorldData,
+        SetWorldData
+    );
+
+    const ursine::resources::ResourceReference &GetWorldData(void) const;
+    void SetWorldData(const ursine::resources::ResourceReference &world);
+
+    std::string bossTopEntityName;
+
+private:
+    ursine::resources::ResourceReference m_worldToMerge;
 
 } Meta(Enable);

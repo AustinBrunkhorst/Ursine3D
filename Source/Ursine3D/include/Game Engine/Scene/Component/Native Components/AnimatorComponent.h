@@ -1,16 +1,16 @@
-/* ---------------------------------------------------------------------------
-** Team Bear King
-** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+/*---------------------------------------------------------------------------
+**Team Bear King
+**?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** AnimatorComponent.h
+* *AnimatorComponent.h
 **
-** Author:
-** - Matt Yan - m.yan@digipen.edu
-** - Hyung Jun Park - park.hyungjun@digipen.edu
-**
-** Contributors:
-** - <list in same format as author if applicable>
-** -------------------------------------------------------------------------*/
+**Author:
+**- Matt Yan - m.yan@digipen.edu
+**- Hyung Jun Park - park.hyungjun@digipen.edu
+*
+**Contributors:
+**- <list in same format as author if applicable>
+**-------------------------------------------------------------------------*/
 
 #pragma once
 
@@ -21,6 +21,7 @@
 #include "AnimationBuilder.h"
 #include "Array.h"
 #include "Model3DComponent.h"
+#include "TransformComponent.h"
 #include "AnimationClipData.h"
 
 namespace ursine
@@ -36,34 +37,34 @@ namespace ursine
                 std::string currentState,
                 GetcurrState,
                 SetcurrState
-                );
+            );
 
             EditorField(
                 std::string futureState,
                 GetfutState,
                 SetfutState
-                );
+            );
 
             //Slider
             // blending starting position of current state
             EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
-                EditorField(
-                    float currtransPos,
-                    GetcurrTransPosRatio,
-                    SetcurrTransPosRatio
-                    );
+            EditorField(
+                float currtransPos,
+                GetcurrTransPosRatio,
+                SetcurrTransPosRatio
+            );
 
             //Slider
             // blending end position of future state
             EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
-                EditorField(
-                    float futtransPos,
-                    GetfutTransPosRatio,
-                    SetfutTransPosRatio
-                    );
+            EditorField(
+                float futtransPos,
+                GetfutTransPosRatio,
+                SetfutTransPosRatio
+            );
 
             Meta(Enable)
-                StateBlender(void);
+            StateBlender(void);
 
             const std::string &GetcurrState(void) const;
             void SetcurrState(const std::string& cstate);
@@ -84,7 +85,7 @@ namespace ursine
             void SetfutTransFrm(const unsigned int& tFrm);
 
             const StateBlender *GetStateBlenderByNames(const std::string& currst, const std::string& futst);
-
+            
         private:
             // name of current state
             std::string m_currState;
@@ -104,9 +105,7 @@ namespace ursine
             WhiteListMethods,
             EnableArrayType,
             DisplayName("State Blender")
-            );
-
-        /////////////////////////////////////////////////////////////
+        );
 
         class Animator : public Component
         {
@@ -116,7 +115,12 @@ namespace ursine
             EditorButton(
                 ImportAnimation,
                 "Import Animation"
-                );
+            );
+
+            EditorButton(
+                ImportRig,
+                "Import Rig"
+            );
 
             // Get animation as a resource not by name
             EditorResourceField(
@@ -139,12 +143,6 @@ namespace ursine
             );
 
             EditorField(
-                bool loopAnimation,
-                IsLooping,
-                SetLooping
-            );
-
-            EditorField(
                 bool playAnimation,
                 IsPlaying,
                 SetPlaying
@@ -161,7 +159,7 @@ namespace ursine
                 IsDebug,
                 SetDebug
             );
-
+            
             EditorField(
                 float timeScalar,
                 GetTimeScalar,
@@ -177,25 +175,24 @@ namespace ursine
             // stick this in a system
             void UpdateAnimation(const float dt);
 
+            void Debugging(const AnimationRig& _rig, const std::vector<SMat4>& vec);
+
             // getter / setter //////////////////////////////////////
             bool IsPlaying(void) const;
             void SetPlaying(const bool isPlaying);
-
-            bool IsLooping(void) const;
-            void SetLooping(const bool isLooping);
 
             bool IsStateChanging(void) const;
             void SetStateChanging(const bool stateChange);
 
             bool IsDebug(void) const;
             void SetDebug(const bool useDebug);
-
+            
             float GetTimeScalar(void) const;
             void SetTimeScalar(const float scalar);
 
             const std::string &GetRig(void) const;
             void SetRig(const std::string &rig);
-
+            
             float GetAnimationTimePosition(void) const;
             void SetAnimationTimePosition(const float position);
 
@@ -206,16 +203,17 @@ namespace ursine
             const std::string &GetCurrentState(void) const;
             void SetCurrentState(const std::string &state);
 
-            const std::string &GetStateName(void) const;
-            void SetStateName(const std::string &state);
-
             // Array of animation states
             ursine::Array<ursine::AnimationState> stArray;
             // Array of state blender
             ursine::Array<ursine::ecs::StateBlender> stBlender;
 
-            void UpdateState(AnimationState* currSt, const Animation* currAni,
-                AnimationState* futSt, const Animation* futAni, const float& dt, float& transFactor);
+            void UpdateState(AnimationState *currSt, const Animation *currAni,
+                AnimationState *futSt, const Animation *futAni, const float& dt, float& transFactor);
+
+            void ChangeState(AnimationState *currSt, AnimationState *futSt,
+                const float &currloopTimePos, const float &futloopTimePos, 
+                const float &currNoloopTimePos, const float &futNoloopTimePos);
 
             void GetTransFrmByRatio(AnimationState& state, unsigned int& frameIndex, const float& ratio);
 
@@ -223,15 +221,15 @@ namespace ursine
             // save and load
             // => save both Arrays
             // => when load model, don't just load these, but should also load the animation if it doesn't exist
-
+            
         private:
             bool m_playing;
-            bool m_looping;
             bool m_debug;
             bool m_changeState;
             float m_speedScalar;
 
-            std::string m_Rig;
+            std::string m_rig;
+            EntityHandle m_rigRoot;
             std::string m_curStName;
             std::string m_futStName;
             std::string m_animationName;
@@ -243,15 +241,22 @@ namespace ursine
             static void recursClearChildren(const std::vector<Handle<Transform>> &children);
             void clearChildren(void);
             void importAnimation(void);
+            void createBoneEntities(ursine::ecs::Transform *parent, const AnimationBone &bone);
+
+            void importRig(void);
+
+            void updateRigTransforms(ursine::ecs::Component::Handle<Transform> boneTrans, const AnimationBone &boneData);
+
+            void enableDeletionOnEntities(const ursine::ecs::EntityHandle &entity);
 
             // try make state can get animation by EditorResourceField
 
         } Meta(
-            Enable,
-            WhiteListMethods,
-            DisplayName( "Animator" )
+            Enable, 
+            WhiteListMethods, 
+            DisplayName("Animator")
         ) EditorMeta(
-            RequiresComponents( typeof( ursine::ecs::Model3D ) )
+                RequiresComponents(typeof(ursine::ecs::Model3D))
         );
     }
 }

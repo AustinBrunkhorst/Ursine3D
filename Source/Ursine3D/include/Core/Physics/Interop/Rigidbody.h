@@ -44,7 +44,7 @@ namespace ursine
             static Rigidbody *DownCast(BodyBase *body);
             static const Rigidbody *DownCast(const BodyBase *body);
 
-            void SetBodyFlag(BodyFlag bodyFlag);
+            void SetBodyFlag(BodyFlag bodyFlag, bool remove = true);
             BodyFlag GetBodyFlag(void) const;
 
             void SetTransform(ecs::Transform *transform);
@@ -82,8 +82,8 @@ namespace ursine
             void SetAngularVelocity(const SVec3 &angularVelocity);
             SVec3 GetAngularVelocity(void) const;
 
-            void SetGhost(bool enable);
-            bool GetGhost(void) const;
+            void SetDisableContactResponse(bool disable);
+            bool GetDisableContactResponse(void) const;
 
             void SetContinuousCollisionDetection(bool enable);
             bool GetContinuousCollisionDetection(void) const;
@@ -113,7 +113,7 @@ namespace ursine
 
             bool m_enableSleeping;
 
-            bool m_ghost;
+            bool m_disableContactResponse;
 
             bool m_continuousCollisionDetection;
 

@@ -482,45 +482,35 @@ namespace ursine
 
 	INLINE void SMat4::Transpose(void)
 	{
-		Transpose( *this );
-	}
-
-	INLINE void SMat4::Transpose(SMat4 &mat)
-	{
 		// swap m[0][1] and m[1][0]
-		float temp = mat.m[ 0 ][ 1 ];
-		mat.m[ 0 ][ 1 ] = mat.m[ 1 ][ 0 ];
-		mat.m[ 1 ][ 0 ] = temp;
+		float temp = m[ 0 ][ 1 ];
+		m[ 0 ][ 1 ] = m[ 1 ][ 0 ];
+		m[ 1 ][ 0 ] = temp;
 
 		// swap m[0][2] and m[2][0]
-		temp = mat.m[ 0 ][ 2 ];
-		mat.m[ 0 ][ 2 ] = mat.m[ 2 ][ 0 ];
-		mat.m[ 2 ][ 0 ] = temp;
+		temp = m[ 0 ][ 2 ];
+		m[ 0 ][ 2 ] = m[ 2 ][ 0 ];
+		m[ 2 ][ 0 ] = temp;
 
 		// swap m[0][3] and m[3][0]
-		temp = mat.m[ 0 ][ 3 ];
-		mat.m[ 0 ][ 3 ] = mat.m[ 3 ][ 0 ];
-		mat.m[ 3 ][ 0 ] = temp;
+		temp = m[ 0 ][ 3 ];
+		m[ 0 ][ 3 ] = m[ 3 ][ 0 ];
+		m[ 3 ][ 0 ] = temp;
 
 		// swap m[1][2] and m[2][1]
-		temp = mat.m[ 1 ][ 2 ];
-		mat.m[ 1 ][ 2 ] = mat.m[ 2 ][ 1 ];
-		mat.m[ 2 ][ 1 ] = temp;
+		temp = m[ 1 ][ 2 ];
+		m[ 1 ][ 2 ] = m[ 2 ][ 1 ];
+		m[ 2 ][ 1 ] = temp;
 
 		// swap m[1][3] and m[3][1]
-		temp = mat.m[ 1 ][ 3 ];
-		mat.m[ 1 ][ 3 ] = mat.m[ 3 ][ 1 ];
-		mat.m[ 3 ][ 1 ] = temp;
+		temp = m[ 1 ][ 3 ];
+		m[ 1 ][ 3 ] = m[ 3 ][ 1 ];
+		m[ 3 ][ 1 ] = temp;
 
 		// swap m[2][3] and m[3][2]
-		temp = mat.m[ 2 ][ 3 ];
-		mat.m[ 2 ][ 3 ] = mat.m[ 3 ][ 2 ];
-		mat.m[ 3 ][ 2 ] = temp;
-	}
-
-	INLINE SMat4 SMat4::Transpose(void) const
-	{
-		return Transpose( *this );
+		temp = m[ 2 ][ 3 ];
+		m[ 2 ][ 3 ] = m[ 3 ][ 2 ];
+		m[ 3 ][ 2 ] = temp;
 	}
 
 	INLINE SMat4 SMat4::Transpose(const SMat4 &mat)

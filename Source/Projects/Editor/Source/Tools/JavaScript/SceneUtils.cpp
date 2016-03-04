@@ -61,7 +61,7 @@ JSFunction(SceneSaveWorld)
             saveWorld( world, saveFileName );
 
             editor->SetProjectStatus( saveFileName.stem( ).string( ) );
-        }
+    }
     }
     else
     {
@@ -168,7 +168,7 @@ JSFunction(SceneGetRootEntities)
         ids->SetValue( 
             static_cast<int>( i ), 
             CefV8Value::CreateUInt( root[ i ]->GetID( ) )
-        );
+    );
     }
 
     return ids;
@@ -177,7 +177,7 @@ JSFunction(SceneGetRootEntities)
 JSFunction(SceneGetActiveEntities)
 {
     auto *world = getActiveWorld( );
-    
+
     if (!world)
         return CefV8Value::CreateArray( 0 );
 
@@ -190,7 +190,7 @@ JSFunction(SceneGetActiveEntities)
         ids->SetValue( 
             static_cast<int>( i ), 
             CefV8Value::CreateUInt( active[ i ]->GetID( ) )
-        );
+    );
     }
 
     return ids;
@@ -269,12 +269,12 @@ namespace
     }
 
     Scene &getScene(void)
-    {
+        {
         return getProject( )->GetScene( );
-    }
-
+        }
+            
     ecs::World *getActiveWorld(void)
-    {
+            {
         return getScene( ).GetActiveWorld( );
     }
 
@@ -299,12 +299,12 @@ namespace
     }
 
     void saveWorld(ecs::World *world, const fs::path &path)
-    {
-        auto data = ecs::WorldSerializer( ).Serialize( world );
+        {
+        auto data = ecs::WorldSerializer::Serialize( world );
 
         UAssert( fs::WriteAllText( path.string( ), data.dump( true ) ),
             "Unable to save world.\nfile: %s",
-            path.string( ).c_str( )
-        );
+                path.string( ).c_str( )
+            );
     }
 }

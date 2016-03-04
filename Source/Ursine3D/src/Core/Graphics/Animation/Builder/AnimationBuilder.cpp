@@ -29,11 +29,11 @@ namespace ursine
     void AnimationBuilder::GenerateAnimationData(
         const AnimationState *currentState,
         const AnimationState *futureState,
-        const AnimationRig* rig,
+        AnimationRig* rig, 
         std::vector<SMat4>& outputMatPal,
         std::vector<SMat4> &outputBones,
         const float &transFactor
-        )
+    )
     {
         // get the current time
         float time = (float)currentState->GetTimePosition();
@@ -54,7 +54,7 @@ namespace ursine
             // get the two current keyframes
             const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
             const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
-
+        
             // check if the current keyframe set holds the time value between them
             if (f1[0].length <= time && time < f2[0].length)
             {
@@ -64,7 +64,8 @@ namespace ursine
                     f2,
                     time,
                     boneCount,
-                    m_toParentTransforms
+                    m_toParentTransforms,
+                    rig
                     );
                 // kick out, we're done
                 break;
@@ -107,7 +108,8 @@ namespace ursine
                             f2,
                             fut_time,
                             boneCount,
-                            m_toFutParentTransforms
+                            m_toFutParentTransforms,
+                            rig
                             );
                         // kick out, we're done
                         break;
@@ -115,7 +117,7 @@ namespace ursine
                 }
             }
         }
-
+        
         // root bone has no transform, therefor is just defaulted to the first interpolated matrix
         float trans = transFactor;
         if (!futAnimation)
@@ -235,19 +237,19 @@ namespace ursine
 
                 // get values
                 auto trans = SVec3(
-                    keyframe.trans.x,
-                    keyframe.trans.y,
+                    keyframe.trans.x, 
+                    keyframe.trans.y, 
                     keyframe.trans.z
-                    );
+                );
 
                 auto scale = SVec3(1, 1, 1);
 
                 auto rot = SQuat(
-                    keyframe.rot.x,
-                    keyframe.rot.y,
-                    keyframe.rot.z,
+                    keyframe.rot.x, 
+                    keyframe.rot.y, 
+                    keyframe.rot.z, 
                     keyframe.rot.w
-                    );
+                );
 
                 // add keyframe to animation
                 animation->AddKeyframe(
@@ -257,7 +259,7 @@ namespace ursine
                     scale,
                     rot,
                     keyframe.time
-                    );
+                );
             }
         }
 
@@ -306,7 +308,8 @@ namespace ursine
         const std::vector<AnimationKeyframe>& frame2,
         const float time,
         const unsigned boneCount,
-        std::vector<SMat4> &finalTransform
+        std::vector<SMat4> &finalTransform,
+        AnimationRig *rig
         )
     {
         // get the percentage between current frame and next frame
@@ -317,18 +320,21 @@ namespace ursine
         {
             // get the current guy
             SMat4 &current = finalTransform[x];
-
+            
             // position
             SVec3 p = (1.0f - lerpPercent) * frame1[x].translation + frame2[x].translation * lerpPercent;
-
+            
             // scale
             SVec3 s = (1.0f - lerpPercent) * frame1[x].scale + frame2[x].scale * lerpPercent;
-
+            
             // rotation
             SQuat q = frame1[x].rotation.Slerp(frame2[x].rotation, lerpPercent);
+            
+            auto &bone = rig->GetBone( x );
 
-            // construct matrix for this matrix
-            current = SMat4(p, q, s);
+            bone.SetTranslation( p );
+            bone.SetRotation( q );
+            bone.SetScale( s );
 
             // construct matrix for this matrix
             current = SMat4(p, q, s);
@@ -341,7 +347,7 @@ namespace ursine
         unsigned parentIndex,
         const std::vector<graphics::ufmt_loader::BoneInfo>& rigData,
         AnimationRig* rig
-        )
+    )
     {
         // grab bone
         auto &bone = rigData[currentIndex];
@@ -354,7 +360,7 @@ namespace ursine
             boneData.boneSpacePosition.x,
             boneData.boneSpacePosition.y,
             boneData.boneSpacePosition.z
-            );
+        );
 
         auto boneScale = SVec3(1, 1, 1);
 
@@ -363,24 +369,24 @@ namespace ursine
             boneData.boneSpaceRotation.y,
             boneData.boneSpaceRotation.z,
             boneData.boneSpaceRotation.w
-            );
+        );
 
 
         // get bind transform ///////////////////////////////////////
-        auto bindTrans = SVec3(
-            boneData.bindPosition.x,
-            boneData.bindPosition.y,
-            boneData.bindPosition.z
-            );
+        auto bindTrans = SVec3( 
+            boneData.bindPosition.x, 
+            boneData.bindPosition.y, 
+            boneData.bindPosition.z 
+        );
 
         auto bindScale = SVec3(1, 1, 1);
 
-        auto bindRot = SQuat(
-            boneData.bindRotation.x,
-            boneData.bindRotation.y,
-            boneData.bindRotation.z,
-            boneData.bindRotation.w
-            );
+        auto bindRot = SQuat( 
+            boneData.bindRotation.x, 
+            boneData.bindRotation.y, 
+            boneData.bindRotation.z, 
+            boneData.bindRotation.w 
+        );
 
         // add as a bone to the current mesh
         rig->AddBone(
@@ -392,18 +398,18 @@ namespace ursine
             bindScale,
             bindRot,
             parentIndex
-            );
+        );
 
         // iterate through all existing children
         for (auto &x : hierarchy[currentIndex])
         {
-            rec_LoadBoneMesh(
-                hierarchy,
-                x,
-                currentIndex,
-                rigData,
-                rig
-                );
+            rec_LoadBoneMesh( 
+                hierarchy, 
+                x, 
+                currentIndex, 
+                rigData, 
+                rig 
+            );
         }
     }
 }

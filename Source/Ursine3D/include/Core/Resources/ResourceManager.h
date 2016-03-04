@@ -21,7 +21,7 @@ namespace ursine
             void SetResourceDirectory(const fs::path &resourceDirectory);
 
             ResourceReference CreateReference(const GUID &guid);
-            ResourceData::Handle LoadReference(const ResourceReference &reference, bool ignoreCache);
+            ResourceData::Handle LoadReference(const ResourceReference &reference, bool ignoreCache = false);
 
             bool ResourceExists(const GUID &guid) const;
 

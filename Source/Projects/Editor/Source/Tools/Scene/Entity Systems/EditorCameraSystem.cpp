@@ -104,7 +104,7 @@ void EditorCameraSystem::OnSceneReady(Scene *scene)
         m_cameraEntity = m_world->CreateEntity( kEditorCameraEntityName );
 
     m_cameraEntity->EnableDeletion( false );
-    m_cameraEntity->EnableSerialization( true );
+    m_cameraEntity->EnableSerialization( false );
 
     m_camera = m_cameraEntity->GetComponent<ecs::Camera>( );
 

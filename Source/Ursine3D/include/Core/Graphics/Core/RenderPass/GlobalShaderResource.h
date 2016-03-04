@@ -99,7 +99,7 @@ namespace ursine
         class GlobalGPUResource : public GlobalShaderResource
         {
         public:
-            GlobalGPUResource(ShaderSlot shaderSlot, ResourceType type);
+            GlobalGPUResource(ShaderSlot shaderSlot, ResourceType type, SHADERTYPE shadertype = static_cast<SHADERTYPE>(6));
             virtual ~GlobalGPUResource(void);
 
             // update whatever is on the gpu

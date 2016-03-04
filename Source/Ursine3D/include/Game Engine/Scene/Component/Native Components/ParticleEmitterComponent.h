@@ -105,7 +105,6 @@ namespace ursine
                 SetRollRange
             );
 
-
             EditorField(
                 SVec3 velocity,
                 GetVelocity,
@@ -172,7 +171,7 @@ namespace ursine
             float GetRotationRange(void) const;
             void SetRotationRange(const float range);
 
-            float GetRoll(void) const;
+            float GetRoll(void);
             void SetRoll(const float roll);
 
             float GetRollRange(void) const;

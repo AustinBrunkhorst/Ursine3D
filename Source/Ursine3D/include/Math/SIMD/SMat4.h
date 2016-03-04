@@ -92,9 +92,6 @@ namespace ursine
 		void TRS(const SVec3 &translation, const SQuat &rotation, const SVec3 &scale);
 
 		void Transpose(void);
-		static void Transpose(SMat4 &mat);
-
-		SMat4 Transpose(void) const;
 		static SMat4 Transpose(const SMat4 &mat);
 
 		void Inverse(void);

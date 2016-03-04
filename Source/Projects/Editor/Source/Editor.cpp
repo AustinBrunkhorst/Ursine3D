@@ -10,14 +10,12 @@
 ** Contributors: 
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
- 
+
 #include "Precompiled.h"
- 
-#include "Editor.h" 
-#include "Project.h" 
- 
+
+#include "Editor.h"
+#include "Project.h"
 #include <Application.h>
-   
 #include <Scene.h>
 #include <WindowManager.h>
 #include <UIManager.h>
@@ -29,13 +27,13 @@ using namespace ursine;
 
 namespace rp = resources::pipeline;
 
-namespace 
+namespace
 {
     const auto kWindowTitle = "Ursine3D Editor";
     const auto kWindowIcon = "Resources/Icon.png";
 
     const std::string kEntryPointDir = "file:///Assets/UI/Resources/"; 
-
+     
     const auto kEntryPointLauncher = "Launcher.html";
     const auto kEntryPointSplash = "Splash.html";
     const auto kEntryPointEditor = "Editor.html";
@@ -49,27 +47,27 @@ namespace
 }
 
 CORE_SYSTEM_DEFINITION( Editor );
-
-Editor::Editor(void)
-    : m_graphics( nullptr )
+ 
+Editor::Editor(void)   
+    : m_graphics( nullptr ) 
     , m_project( nullptr ) { }
 
-Editor::~Editor(void) { }
-
+Editor::~Editor(void) { } 
+    
 ///////////////////////////////////////////////////////////////////////////////
 // Misc
 ///////////////////////////////////////////////////////////////////////////////
 
 const EditorWindow &Editor::GetMainWindow(void) const
-{
+{ 
     return m_mainWindow;
 }
-
+     
 const EditorPreferences &Editor::GetPreferences(void) const
 {
     return m_preferences;
 }
-
+     
 ///////////////////////////////////////////////////////////////////////////////
 
 Project *Editor::GetProject(void)
@@ -144,12 +142,12 @@ void Editor::LoadProject(const std::string &filename)
 
     UAssert( ShellExecuteEx( &shExecInfo ) == TRUE,
         "Unable to spawn editor process."
-    );
-
+    ); 
+     
     CloseHandle( shExecInfo.hProcess );
 
 #endif
-
+     
     Application::Instance->Exit( );
 }
 
@@ -186,7 +184,7 @@ void Editor::OnInitialize(void)
         m_startupConfig.windowFlags = SDL_WINDOW_RESIZABLE;
         m_startupConfig.windowSize = { 475, 275 };
         m_startupConfig.updateHandler = &Editor::onEditorUpdate;
-    }
+}
     // couldn't find a project, configure the launcher
     else
     {
@@ -235,7 +233,7 @@ void Editor::OnRemove(void)
 
     delete m_project;
 
-    m_project = nullptr;
+    m_project = nullptr;   
 }
 
 void Editor::loadPreferences(void)
@@ -247,7 +245,7 @@ void Editor::loadPreferences(void)
         UAssert( fs::LoadAllText( kDefaultPreferencesFile, prefsJsonText ),
             "Unable to load default preferences."
         );
-    }
+}
 
     std::string prefsJsonError;
 
@@ -290,7 +288,7 @@ std::string Editor::findAvailableProject(void) const
     {
         if (fs::exists( file ))
             return file;
-    }
+}
 
     // couldn't find one
     return "";
@@ -331,7 +329,7 @@ void Editor::initializeWindow(void)
     
     m_mainWindow.m_window->SetLocationCentered( );
     m_mainWindow.m_window->SetIcon( kWindowIcon );
-}
+}  
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -353,25 +351,25 @@ void Editor::initializeGraphics(void)
     gfxConfig.windowHeight = static_cast<unsigned>( m_startupConfig.windowSize.Y( ) );
     gfxConfig.enableDebugInfo = false;
     gfxConfig.enableProfiling = false;
-        
+
     m_graphics->StartGraphics( gfxConfig );
     m_graphics->Resize( gfxConfig.windowWidth, gfxConfig.windowHeight );
-
+      
     auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
-
+       
     auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
-
+        
     handle.SetPosition( 0, 0 );
-
+      
     m_project->GetScene( ).SetViewport( viewport );
-
+     
     m_graphics->SetGameViewport( viewport );
-}
+}    
 
 ///////////////////////////////////////////////////////////////////////////////
 
 void Editor::initializeUI(void)
-{
+{   
     auto *uiManager = GetCoreSystem( UIManager );
 
     m_mainWindow.m_ui = uiManager->CreateView( 
@@ -391,9 +389,9 @@ void Editor::initializeUI(void)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-
+       
 void Editor::initializeProject(const std::string &filename)
-{
+    {
     std::string projectJsonText;
 
     UAssert( fs::LoadAllText( filename, projectJsonText ),
@@ -413,13 +411,13 @@ void Editor::initializeProject(const std::string &filename)
     project.rootDirectory = fs::path( filename ).parent_path( );
 
     m_project->initialize( project );
-
+         
     auto &recentProjects = m_preferences.recentProjects;
 
     // add it as a recent project if it doesn't already exist
     if (recentProjects.Find( filename ) == recentProjects.end( ))
         recentProjects.Push( filename );
-
+         
     auto &resourcePipeline = m_project->GetResourcePipeline( );
 
     resourcePipeline.Listener( this )
@@ -428,10 +426,10 @@ void Editor::initializeProject(const std::string &filename)
         .On( rp::RP_BUILD_COMPLETE, &Editor::onPipelinePreBuildComplete );
 
     resourcePipeline.Build( );
-}
+    }
 
 void Editor::exitSplashScreen(void)
-{
+    {
     auto window = m_mainWindow.m_window;
 
     // will be shown in onUILoaded( )
@@ -476,7 +474,7 @@ void Editor::onUILoaded(EVENT_HANDLER(ursine::UIView))
     {
         m_mainWindow.m_window->Show( true );
     } );
-}
+    }
 
 ///////////////////////////////////////////////////////////////////////////////
 

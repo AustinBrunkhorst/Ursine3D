@@ -25,5 +25,8 @@ ChangeSegmentState::ChangeSegmentState(LevelSegments changeToSegment)
 
 void ChangeSegmentState::Enter(SegmentLogicStateMachine *machine)
 {
-    machine->GetSegmentManager( )->SetCurrentSegment( m_segment );
+    auto manager = machine->GetSegmentManager( );
+
+    if (manager->GetCurrentSegment( ) < m_segment)
+        manager->SetCurrentSegment( m_segment );
 }

@@ -24,11 +24,22 @@ namespace ursine
 {
     AnimationState::AnimationState()
         : m_name("")
+        , m_looping(true)
         , m_timePos(0.0f)
         , m_transPos(0.0f)
         , m_animname("")
         , m_animation(nullptr)
     {}
+
+    bool AnimationState::IsLooping(void) const
+    {
+        return m_looping;
+    }
+
+    void AnimationState::SetLooping(const bool isLooping)
+    {
+        m_looping = isLooping;
+    }
 
     const std::string &AnimationState::GetName(void) const
     {
@@ -39,7 +50,7 @@ namespace ursine
     {
         m_name = name;
     }
-
+    
     float AnimationState::GetTimePosition(void) const
     {
         return m_timePos;
@@ -70,13 +81,13 @@ namespace ursine
     {
         return m_animname;
     }
-
+    
     void AnimationState::SetAnimationName(const std::string& name)
     {
         if ("" == name)
             return;
         m_animname = name;
-
+        
         Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
         if (!targetAnimation)
         {
@@ -120,5 +131,20 @@ namespace ursine
     void AnimationState::SetTransPosition(const float& tPos)
     {
         m_transPos = tPos;
+    }
+    
+    void AnimationState::PlayingAnimation(void)
+    {
+        unsigned keyframeCount1 = m_animation->GetRigKeyFrameCount();
+        auto &curr_firstFrame = m_animation->GetKeyframe(0, 0);
+        auto &curr_lastFrame = m_animation->GetKeyframe(keyframeCount1 - 1, 0);
+
+        if (GetTimePosition() > curr_lastFrame.length)
+        {
+            if (IsLooping())
+                SetTimePosition(curr_firstFrame.length);
+            else
+                SetTimePosition(curr_lastFrame.length);
+        }
     }
 }

@@ -25,56 +25,56 @@ namespace ursine
             NATIVE_COMPONENT;
 
             friend class PhysicsSystem;
-			friend class Model3D;
 
         public:
-			EditorField(
+            EditorField(
                 SVec3 offset,
                 GetOffset,
                 SetOffset
             );
 
-			EditorField(
-				bool ghost,
-				GetGhost,
-				SetGhost
-			);
+            EditorField(
+                bool disableContactResponse,
+                GetDisableContactResponse,
+                SetDisableContactResponse
+            );
 
-			EditorField(
-				bool enableContactCallback,
-				GetEnableContactCallback,
-				SetEnableContactCallback
-			);
+            EditorField(
+                bool enableContactCallback,
+                GetEnableContactCallback,
+                SetEnableContactCallback
+            );
 
             Body(void);
-			~Body(void);
+            ~Body(void);
 
             Meta(Disable)
-			void OnInitialize(void) override;
+            void OnInitialize(void) override;
 
             void SetOffset(const SVec3 &offset);
             SVec3 GetOffset(void) const;
 
-			void SetGhost(bool enable);
-			bool GetGhost(void) const;
+            void SetDisableContactResponse(bool disable);
+            bool GetDisableContactResponse(void) const;
 
-			void SetEnableContactCallback(bool enable);
-			bool GetEnableContactCallback(void) const;
+            void SetEnableContactCallback(bool enable);
+            bool GetEnableContactCallback(void) const;
 
-			void SetAwake(void);
+            void SetAwake(void);
 
         private:
             physics::Body m_body;
 
-			bool m_enableContactCallback;
+            bool m_enableContactCallback;
 
-			void onTransformChange(EVENT_HANDLER(Entity));
+            void onTransformChange(EVENT_HANDLER(Entity));
 
         } Meta(
             Enable, 
             DisplayName( "Body" )
         ) EditorMeta(
-            DisableComponentRemoval
+            DisableComponentRemoval,
+            HiddenInSelector
         );
     }
 }

@@ -21,3 +21,13 @@ BossRoomResources::BossRoomResources(void)
     : BaseComponent( )
 {
 }
+
+const ursine::resources::ResourceReference &BossRoomResources::GetWorldData(void) const
+{
+    return m_worldToMerge;
+}
+
+void BossRoomResources::SetWorldData(const ursine::resources::ResourceReference &world)
+{
+    m_worldToMerge = world;
+}
