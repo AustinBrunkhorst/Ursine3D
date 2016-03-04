@@ -6,12 +6,18 @@
 namespace ursine 
 {
     rp::ResourceItem::ResourceItem(ResourcePipelineManager *manager, const GUID &guid)
-        : m_manager( manager )
+        : m_isDirectoryResource( false )
+        , m_manager( manager )
         , m_directoryNode( nullptr )
         , m_parent( nullptr )
         , m_guid( guid ) { }
 
     rp::ResourceItem::~ResourceItem(void) { }
+
+    bool rp::ResourceItem::IsDirectoryResource(void) const
+    {
+        return m_isDirectoryResource;
+    }
 
     rp::ResourceItem::Handle rp::ResourceItem::GetParent(void) const
     {

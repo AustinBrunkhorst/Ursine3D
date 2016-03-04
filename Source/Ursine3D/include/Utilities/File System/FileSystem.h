@@ -26,11 +26,15 @@ namespace ursine
         typedef std::vector<path> FileList;
         typedef boost::hash<path> PathHasher;
 
+        typedef directory_iterator DirectoryIterator;
+        typedef recursive_directory_iterator RecursiveDirectoryIterator;
+
         bool LoadAllText(const std::string &fileName, std::string &output);
         bool WriteAllText(const std::string &fileName, const std::string &text);
 
         std::string SafeFileName(const std::string &fileName, char replacement);
 
         path MakeRelativePath(const path &from, const path &to);
+        bool PathContainsFile(path directory, path file);
     }
 }

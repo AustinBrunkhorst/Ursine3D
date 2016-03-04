@@ -23,6 +23,8 @@ namespace ursine
                 ResourceItem(ResourcePipelineManager *manager, const GUID &guid);
                 ~ResourceItem(void);
 
+                bool IsDirectoryResource(void) const;
+
                 Handle GetParent(void) const;
 
                 const GUID &GetGUID(void) const;
@@ -40,6 +42,8 @@ namespace ursine
 
             private:
                 friend class ResourcePipelineManager;
+
+                bool m_isDirectoryResource;
 
                 ResourcePipelineManager *m_manager;
                 ResourceDirectoryNode *m_directoryNode;

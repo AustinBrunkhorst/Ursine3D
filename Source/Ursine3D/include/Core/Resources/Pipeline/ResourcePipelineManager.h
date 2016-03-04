@@ -68,7 +68,8 @@ namespace ursine
 
                 std::unordered_map<fs::path, FileWatchAction, fs::PathHasher> m_pendingFileActions;
 
-                std::mutex m_buildMutex;
+                mutable std::mutex m_buildMutex;
+                mutable std::mutex m_databaseMutex;
 
                 ResourcePipelineManager(const ResourcePipelineManager &rhs) = delete;
                 ResourcePipelineManager &operator=(const ResourcePipelineManager &rhs) = delete;
@@ -84,7 +85,10 @@ namespace ursine
                 );
 
                 // determines how to handle a resource
-                ResourceItem::Handle registerResource(const fs::path &fileName, bool isGenerated = false);
+                ResourceItem::Handle registerResource(
+                    const fs::path &fileName, 
+                    bool isGenerated = false
+                );
 
                 // imports an existing resource (with existing meta file)
                 ResourceItem::Handle addExistingResource(
@@ -109,8 +113,8 @@ namespace ursine
                 // inserts this resource into the directory tree
                 void insertResource(ResourceItem::Handle resource);
 
-                // determines if the given directory should be treated as a resource
-                bool isDirectoryResource(const fs::path &directory);
+                // determines if the given path has handlers for the build pipeline
+                bool hasResourceHandlers(const fs::path &directory);
 
                 // reloads the meta data for this resource
                 void reloadResourceMeta(ResourceItem::Handle resource);
@@ -161,6 +165,10 @@ namespace ursine
                 ///////////////////////////////////////////////////////////////
                 // Utilities
                 ///////////////////////////////////////////////////////////////
+
+                // attempts to find a directory resource that contains this filename.
+                // nullptr if it doesn't exist
+                ResourceItem::Handle getDirectoryResource(const fs::path &fileName) const;
 
                 // gets build file name for this resource
                 fs::path getResourceBuildFile(const GUID &guid) const;

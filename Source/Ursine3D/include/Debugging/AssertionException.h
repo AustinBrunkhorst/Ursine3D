@@ -4,7 +4,7 @@
 
 #include <string>
 
-#define UAssertCatchable(assertion, ...) if(!(assertion)) { throw ursine::AssertionException(URSINE_FFL,##__VA_ARGS__); }
+#define UAssertCatchable(assertion, ...) (!!(assertion) || (throw ursine::AssertionException(URSINE_FFL,##__VA_ARGS__), 0))
 
 namespace ursine
 {

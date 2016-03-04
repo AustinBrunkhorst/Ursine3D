@@ -67,7 +67,7 @@ namespace ursine
                     UAssert( defaultCtor.IsValid( ), 
                         "Component type '%s' doesn't have a default dynamic constructor.",
                         derived.GetName( ).c_str( )
-                    )
+                    );
                 }
             }
         }

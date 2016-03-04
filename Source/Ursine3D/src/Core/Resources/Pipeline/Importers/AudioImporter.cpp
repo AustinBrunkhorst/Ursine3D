@@ -26,6 +26,8 @@ namespace ursine
             context.AddGeneratedResource( path );
         }
 
+        std::cout << "Audio Importer" << std::endl;
+
         return std::make_shared<AudioData>( );
     }
 }

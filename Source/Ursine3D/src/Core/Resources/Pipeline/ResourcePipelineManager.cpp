@@ -244,8 +244,8 @@ namespace ursine
     {
         try
         {
-            fs::directory_iterator it( directoryName );
-            fs::directory_iterator itEnd;
+            fs::DirectoryIterator it( directoryName );
+            fs::DirectoryIterator itEnd;
 
             for (; it != itEnd; ++it)
             {
@@ -253,7 +253,8 @@ namespace ursine
 
                 if (is_directory( entry ))
                 {
-                    if (isDirectoryResource( entry ))
+                    // treat as directory resource
+                    if (hasResourceHandlers( entry ))
                     {
                         ResourceItem::Handle resource;
 
@@ -278,9 +279,11 @@ namespace ursine
                         {
                             directory->m_resources.push_back( resource );
 
+                            resource->m_isDirectoryResource = true;
                             resource->m_directoryNode = directory;
                         }
                     } 
+                    // treat as directory
                     else
                     {
                         auto *subDirectory = 
@@ -668,7 +671,7 @@ namespace ursine
         resource->m_directoryNode = currentNode;
     }
 
-    bool rp::ResourcePipelineManager::isDirectoryResource(const fs::path &directory)
+    bool rp::ResourcePipelineManager::hasResourceHandlers(const fs::path &directory)
     { 
         auto handlers = detectResourceHandlers( directory );
 
@@ -1046,16 +1049,36 @@ namespace ursine
             return true;
 
         auto buildTime = last_write_time( resource->m_buildFileName );
-        auto sourceTime = last_write_time( resource->m_fileName );
-
-        if (sourceTime > buildTime)
-            return true;
-
         auto metaTime = last_write_time( resource->m_metaFileName );
 
         if (metaTime > buildTime)
             return true;
-                
+
+        // directory resources are invalidated if recursively, any files
+        // are newer than the build time
+        if (resource->m_isDirectoryResource)
+        {
+            fs::RecursiveDirectoryIterator it( resource->GetSourceFileName( ) );
+            fs::RecursiveDirectoryIterator itEnd;
+
+            for (; it != itEnd; ++it)
+            {
+                auto fileTime = last_write_time( *it );
+
+                URSINE_TODO( "Respect sync exclusion properties." );
+
+                if (fileTime > buildTime)
+                    return true;
+            }
+        }
+        else
+        {
+            auto sourceTime = last_write_time( resource->m_fileName );
+
+            if (sourceTime > buildTime)
+                return true;
+        }
+
         // this puppy is all up to date
         return false;
     }
@@ -1173,10 +1196,24 @@ namespace ursine
             // if it doesn't exist, we're assuming it is added
             if (search == m_pathToResource.end( ))
             {
-                auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, absoluteFilePath );
+                auto directoryResource = getDirectoryResource( absoluteFilePath );
+
+                // this file is actually part of a resource, so modify the resource it belongs to
+                if (directoryResource != nullptr)
+                {
+                    auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, directoryResource );
+                
+                    if (handler.joinable( ))
+                        handler.detach( );
+                }
+                // add this baby
+                else
+                {
+                    auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, absoluteFilePath );
             
-                if (handler.joinable( ))
-                    handler.detach( );
+                    if (handler.joinable( ))
+                        handler.detach( );
+                }
             }
             // exists, so we'll modify it
             else
@@ -1210,6 +1247,7 @@ namespace ursine
         }
         catch (AssertionException &e)
         {
+            // if UWarnings are disabled, tell the compiler to hush
             URSINE_UNUSED( e );
 
             UWarning( "Unable to add resource.\nresource: %s\nerror: %s", 
@@ -1240,6 +1278,9 @@ namespace ursine
 
             return;
         }
+
+        resource->m_isDirectoryResource = 
+            is_directory( fileName ) && hasResourceHandlers( fileName );
 
         Application::PostMainThread( [=]
         {
@@ -1299,6 +1340,26 @@ namespace ursine
     void rp::ResourcePipelineManager::onResourceRemoved(ResourceItem::Handle resource)
     {
 
+    }
+
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::getDirectoryResource(const fs::path &fileName) const
+    {
+        std::lock_guard<std::mutex> lock( m_databaseMutex );
+
+        // search for a directory resource where the directory contains this file name
+        for (auto &entry : m_database)
+        {
+            auto &item = entry.second;
+
+            if (item->m_isDirectoryResource && 
+                fs::PathContainsFile( item->m_fileName, fileName )
+            )
+            {
+                return item;
+            }  
+        }
+
+        return nullptr;
     }
 
     ///////////////////////////////////////////////////////////////////////////

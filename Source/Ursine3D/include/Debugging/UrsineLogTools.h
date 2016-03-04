@@ -76,15 +76,15 @@
 #endif
 
 #if (URSINE_OUTPUT_CONSOLE | URSINE_OUTPUT_FILE)
-    #define UAssert(assertion, ...) if(!(assertion)) { ursine::logging::Assert(URSINE_FFL,##__VA_ARGS__); }
-    #define UError(message, ...) ursine::logging::Error(URSINE_FFL, message,##__VA_ARGS__)
+    #define UAssert(assertion, ...) (!!(assertion) || (ursine::logging::Assert(URSINE_FFL,##__VA_ARGS__), 0))
+    #define UError(message, ...) do { ursine::logging::Error(URSINE_FFL, message,##__VA_ARGS__); } while (0)
 
     #if (URSINE_OUTPUT_WARNINGS)
-        #define UWarning(message, ...) ursine::logging::Warning(URSINE_FFL, message,##__VA_ARGS__)
-        #define UWarningIf(condition, message, ...)
+        #define UWarning(message, ...) do { ursine::logging::Warning(URSINE_FFL, message,##__VA_ARGS__); } while (0)
+        #define UWarningIf(condition, message, ...) (!!!(condition) || (ursine::logging::Warning(URSINE_FFL, message,##__VA_ARGS__), 0))
     #else
         #define UWarning(message, ...)
-        #define UWarningIf(condition, message, ...) if(!(condition)) { UWarning( message, __VA_ARGS__ ); }
+        #define UWarningIf(condition, message, ...)
     #endif
 #else
     #define UAssert(assertion, ...)
