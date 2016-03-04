@@ -28,6 +28,7 @@
 #include "AudioEmitterComponent.h"
 #include "TrailComponent.h"
 #include "CritspotComponent.h"
+#include <Core/Audio/AudioManager.h>
 
 
 ENTITY_SYSTEM_DEFINITION( BaseWeaponSystem );
@@ -162,6 +163,9 @@ namespace
 
         // set reload timer
         weapon.m_reloadTimer = weapon.m_reloadTime;
+
+        URSINE_TODO("Fix sound hack for weapons");
+        GetCoreSystem(AudioManager)->PlayGlobalEvent("Reload_Gun_Hand");
 
         return RELOAD_SUCCESS;
     }
@@ -299,8 +303,8 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        //URSINE_TODO("Fix sound hack for weapons");
-       // m_emitters[ id ]->AddSoundToPlayQueue(kFireGun);
+        URSINE_TODO("Fix sound hack for weapons");
+        GetCoreSystem(AudioManager)->PlayGlobalEvent( "Fire_Gun_Hand" );
     
         // reset firing sequence
         /*weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
@@ -428,8 +432,8 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
     {
         weapon.m_fireTimer = weapon.m_fireRate;
 
-        // play sound
-        //m_emitters[ id ]->AddSoundToPlayQueue(kFireGun);
+        URSINE_TODO("Fix sound hack for weapons");
+        GetCoreSystem(AudioManager)->PlayGlobalEvent("Fire_Gun_Hand");
 
         //// reset firing sequence
         //weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
