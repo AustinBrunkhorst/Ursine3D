@@ -4,7 +4,7 @@
 "children": [], 
 "components": {
 "Animator": {
-".uid": 51, 
+".uid": 57, 
 "animation": "", 
 "changeState": false, 
 "currentRig": "Player", 
@@ -16,7 +16,7 @@
 "timeScalar": 1
 }, 
 "Model3D": {
-".uid": 52, 
+".uid": 58, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -34,7 +34,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 50, 
+".uid": 56, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -60,7 +60,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 59, 
+".uid": 65, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -84,7 +84,7 @@
 "children": [], 
 "components": {
 "Transform": {
-".uid": 60, 
+".uid": 66, 
 "rotation": {
 "w": 0.49999997019767761, 
 "x": 0.49999997019767761, 
@@ -108,11 +108,11 @@
 ], 
 "components": {
 "Audio Listener 3D": {
-".uid": 54, 
+".uid": 60, 
 "testing": []
 }, 
 "Camera": {
-".uid": 55, 
+".uid": 61, 
 "active": false, 
 "clearColor": {
 "a": 1, 
@@ -136,7 +136,7 @@
 }
 }, 
 "Transform": {
-".uid": 53, 
+".uid": 59, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -156,17 +156,59 @@
 }
 }, 
 "name": "Camera"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 70, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 71, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Transform": {
+".uid": 69, 
+"rotation": {
+"w": -4.3711388286737929e-08, 
+"x": 0, 
+"y": -1, 
+"z": 0
+}, 
+"scale": {
+"x": 5, 
+"y": 5, 
+"z": 5
+}, 
+"translation": {
+"x": 0, 
+"y": 6.4583020210266113, 
+"z": 0
+}
+}
+}, 
+"name": "Box"
 }
 ], 
 "components": {
 "Audio Emitter": {
-".uid": 39, 
+".uid": 45, 
 "Loop": false, 
 "Mute": false, 
 "Volume": 100
 }, 
 "CharacterController": {
-".uid": 40, 
+".uid": 46, 
 "deadZone": 0.099999994039535522, 
 "deadZoneSnap": 0.14999999105930328, 
 "lockLooking": false, 
@@ -174,28 +216,28 @@
 "rotateSpeed": 11.289999961853027
 }, 
 "CommandQueue": {
-".uid": 41
+".uid": 47
 }, 
 "CylinderCollider": {
-".uid": 42, 
+".uid": 48, 
 "height": 30, 
 "radius": 5
 }, 
 "Health": {
-".uid": 43, 
-"ArchetypeToSpawnOnDeath": ".uatype", 
+".uid": 49, 
+"ArchetypeToSpawnOnDeath": "FX/JordanFire.uatype", 
 "EntityHealth": 100, 
 "SpawnOnDeath": true
 }, 
 "InputController": {
-".uid": 44, 
+".uid": 50, 
 "UseKeyboard": false
 }, 
 "InteractionBay": {
-".uid": 45
+".uid": 51
 }, 
 "Inventory": {
-".uid": 46, 
+".uid": 52, 
 "LastStand": "P2HitScanWeapon.uatype", 
 "MeleeWeapon": "", 
 "PrimaryWeapon": "", 
@@ -204,11 +246,11 @@
 "m_currWeapon": 0
 }, 
 "PlayerID": {
-".uid": 47, 
+".uid": 53, 
 "PlayerId": 1
 }, 
 "Rigidbody": {
-".uid": 48, 
+".uid": 54, 
 "bodyFlag": 2, 
 "disableContactResponse": false, 
 "enableContactCallback": true, 
@@ -230,7 +272,7 @@
 "sleepToggle": true
 }, 
 "SweptController": {
-".uid": 49, 
+".uid": 55, 
 "active": true, 
 "airAcceleration": 30, 
 "airDeceleration": 40, 
@@ -252,7 +294,7 @@
 }
 }, 
 "Transform": {
-".uid": 38, 
+".uid": 44, 
 "rotation": {
 "w": 1, 
 "x": 0, 

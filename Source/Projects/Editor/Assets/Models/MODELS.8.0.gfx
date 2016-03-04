@@ -1,12 +1,18 @@
 #
 #First is file name, second is model name
 
-#Entrenched_Test1.fbx Entrenched
-#BossArenaFBX.fbx BossRoom
-#EntryRoomFBX(Revised).fbx EntryRoom
-#PlantMonster.fbx PlantMonster
-#Pipe_Bent.fbx PipeBent
-#Pipe_Straight.fbx PipeStraight
+Entrenched_Test1.fbx Entrenched
+BossArenaFBX.fbx BossRoom
+EntryRoomFBX(Revised).fbx EntryRoom
+PlantMonster.fbx PlantMonster
+Pipe_Bent.fbx PipeBent
+Pipe_Straight.fbx PipeStraight
+BaseModel.fbx Base
+HiRezSphere.fbx HiRezSphere
+#BossDoor.fbx BossDoor
+#BossArenaScaled2.fbx BossRoom2
+#CombatBowlPass3.fbx CombatBowl
+#BossRoomAlphaTesting.fbx. BossRoom3
 
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
@@ -30,15 +36,24 @@ bomber.8.0.mdl Bomber
 #romekolezyum.fbx remeko
 
 # Player Animations
-#Player_Idle.fbx Player
-#Player_Death.fbx Player_Death
-#Player_Die.fbx Player_Die
-#Player_Jump.fbx Player_Jump
-#Player_Run.fbx Player_Run
-#Player_Win.fbx Player_Win
+Player1_Idle.fbx Player
+#Player1_Die.fbx Player_Die
+#Player1_Jump.fbx Player_Jump
+#Player1_Run.fbx Player_Run
+#Player1_Win.fbx Player_Win
+#Player1_Straf_L.fbx Player_Straf_L
+#Player1_Straf_R.fbx Player_Straf_R
+
+Player2_Idle.fbx Player2
+#Player2_Die.fbx Player2_Die
+#Player2_Jump.fbx Player2_Jump
+#Player2_Run.fbx Player2_Run
+#Player2_Win.fbx Player2_Win
+#Player2_Straf_L.fbx Player2_Straf_L
+#Player2_Straf_R.fbx Player2_Straf_R
 
 # Gun Animations
-#Gun_Idle.fbx Gun_Idle
+Gun_Idle.fbx Gun_Idle
 #Gun_Jump.fbx Gun_Jump
 #Gun_Run.fbx Gun_Run
 #Gun_Shoot.fbx Gun_Shoot

@@ -5,13 +5,11 @@
 "components": {
 "BossRoomResources": {
 ".uid": 6, 
-"archetypesToLoad": [], 
 "bossTopEntityName": "BossRotatingTop", 
 "worldToMerge": "Retrospect/Assets/Worlds/Final/Boss/Boss.uworld"
 }, 
 "CombatBowl1Resources": {
 ".uid": 7, 
-"archetypesToLoad": [], 
 "worldToMerge": "Retrospect/Assets/Worlds/Final/CombatBowl1/CombatBowl1.uworld"
 }, 
 "LevelSegmentManager": {
@@ -91,6 +89,10 @@
 "type": "InputControllerSystem"
 }, {
 "type": "ProjectileSystem"
+}, {
+"type": "TimeDeathSystem"
+}, {
+"type": "DamageTextSystem"
 }
 ]
 }

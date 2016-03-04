@@ -48,6 +48,8 @@ namespace ursine
         */
         AnimationState(void);
 
+        void OnSceneReady(void);
+
         bool IsLooping(void) const;
         void SetLooping(const bool isLooping);
 

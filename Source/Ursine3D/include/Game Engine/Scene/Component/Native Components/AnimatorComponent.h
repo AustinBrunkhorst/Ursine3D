@@ -171,6 +171,7 @@ namespace ursine
             ~Animator(void);
 
             void OnInitialize(void) override;
+            void OnSceneReady(Scene *scene) override;
 
             // stick this in a system
             void UpdateAnimation(const float dt);

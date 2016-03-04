@@ -661,6 +661,8 @@ namespace ursine
                 nullptr 
             );
 
+            auto *scene = m_world->GetOwner( );
+
             for (uint32 i = 0; i < size; ++i)
             {
                 ComponentTypeMask mask;
@@ -672,6 +674,10 @@ namespace ursine
                     auto *component = m_componentTypes[ i ][ id ];
 
                     component->onInitialize( );
+
+                    // if the scene is already initialized, call on scene ready
+                    if (scene)
+                        component->onSceneReady( scene );
 
                     args.component = component;
 

@@ -236,6 +236,8 @@ namespace ursine
 
         void TextureManager::UnloadTexture(GfxHND handle)
         {
+            URSINE_TODO( "Fix this." );
+            return;
             int id;
             _RESOURCEHND *hnd = HND_RSRCE(handle);
 

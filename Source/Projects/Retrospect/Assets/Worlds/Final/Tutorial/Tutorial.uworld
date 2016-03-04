@@ -4,12 +4,12 @@
 "children": [], 
 "components": {
 "PlayerSpawnPoint": {
-".uid": 11, 
+".uid": 6, 
 "playerArchetype": "Player1", 
 "spawnSegment": 76
 }, 
 "Transform": {
-".uid": 10, 
+".uid": 5, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -22,9 +22,9 @@
 "z": 1
 }, 
 "translation": {
-"x": 0, 
-"y": 0, 
-"z": -5.6254787445068359
+"x": -111.96633911132813, 
+"y": 1, 
+"z": -17
 }
 }
 }, 
@@ -33,12 +33,12 @@
 "children": [], 
 "components": {
 "PlayerSpawnPoint": {
-".uid": 13, 
+".uid": 8, 
 "playerArchetype": "Player2", 
 "spawnSegment": 76
 }, 
 "Transform": {
-".uid": 12, 
+".uid": 7, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -51,9 +51,9 @@
 "z": 1
 }, 
 "translation": {
-"x": 0, 
-"y": 0, 
-"z": 5.6254801750183105
+"x": -111.96633911132813, 
+"y": 1, 
+"z": 20
 }
 }
 }, 
@@ -64,7 +64,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 16, 
+".uid": 11, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -74,7 +74,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 17, 
+".uid": 12, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -82,7 +82,8 @@
 }
 }, 
 "Model3D": {
-".uid": 18, 
+".uid": 13, 
+"active": true, 
 "castsShadows": false, 
 "color": {
 "a": 1, 
@@ -99,7 +100,7 @@
 "specularPower": 165
 }, 
 "Transform": {
-".uid": 15, 
+".uid": 10, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -122,25 +123,85 @@
 }, {
 "children": [], 
 "components": {
+"EntityAnimator": {
+".uid": 15, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 16, 
+"keyFrames": [
+{
+"delta": 4, 
+"ease": 13, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": -460, 
+"y": -460, 
+"z": -460
+}, 
+"scaleKey": true
+}, {
+"delta": 4, 
+"ease": 13, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": -520, 
+"y": -520, 
+"z": -520
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
 "Model3D": {
-".uid": 20, 
-"castsShadows": false, 
+".uid": 16, 
+"active": true, 
+"castsShadows": true, 
 "color": {
 "a": 1, 
-"b": 0, 
-"g": 0, 
-"r": 0
+"b": 1, 
+"g": 1, 
+"r": 1
 }, 
-"emissive": 3, 
+"emissive": 0, 
 "materialName": "Blank", 
 "meshIndex": -1, 
 "modelName": "HiRezSphere", 
 "renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
+"specularIntensity": 1, 
+"specularPower": 1
 }, 
 "Transform": {
-".uid": 19, 
+".uid": 14, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -148,9 +209,9 @@
 "z": 0
 }, 
 "scale": {
-"x": -300, 
-"y": -300, 
-"z": -300
+"x": -505.94393920898438, 
+"y": -505.94393920898438, 
+"z": -505.94393920898438
 }, 
 "translation": {
 "x": 0, 
@@ -163,129 +224,959 @@
 }, {
 "children": [], 
 "components": {
+"EntityAnimator": {
+".uid": 18, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": -443.67086791992188, 
+"y": 146.94096374511719, 
+"z": -681.73333740234375
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": 658.4595947265625, 
+"y": 146.93952941894531, 
+"z": 420.399169921875
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
 "Light": {
-".uid": 22, 
+".uid": 19, 
 "color": {
 "a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
+"b": 0.1953125, 
+"g": 0.0030517578125, 
+"r": 0.013566017150878906
 }, 
-"intensity": 1, 
-"radius": 1, 
+"intensity": 2, 
+"radius": 300, 
 "renderMask": 0, 
 "spotlightAngles": {
-"x": 15, 
-"y": 30
+"x": 45, 
+"y": 90
 }, 
 "type": 0
 }, 
 "Transform": {
-".uid": 21, 
+".uid": 17, 
 "rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
+"w": 0.59622204303741455, 
+"x": 0.55586743354797363, 
+"y": 0.52860385179519653, 
+"z": -0.23685210943222046
 }, 
 "scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
 "z": 1
 }, 
 "translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
+"x": 351.43960571289063, 
+"y": 146.93992614746094, 
+"z": 113.37860107421875
 }
 }
 }, 
-"name": "Directional Light"
+"name": "Directional Light   (3)"
 }, {
 "children": [], 
 "components": {
+"EntityAnimator": {
+".uid": 24, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -573.79315185546875, 
+"y": 64.723617553710938, 
+"z": -97.865875244140625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -480.72164916992188, 
+"y": 64.723220825195313, 
+"z": -409.53289794921875
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -257.36959838867188, 
+"y": 64.722702026367188, 
+"z": -530.36962890625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 197.97175598144531, 
+"y": 64.722412109375, 
+"z": -530.3673095703125
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 514.8900146484375, 
+"y": 64.721878051757813, 
+"z": -303.17782592773438
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 599.05584716796875, 
+"y": 64.721603393554688, 
+"z": 5.7035655975341797
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 399.2794189453125, 
+"y": 64.7210693359375, 
+"z": -472.13357543945313
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 34.157451629638672, 
+"y": 64.720703125, 
+"z": -578.470458984375
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -362.07464599609375, 
+"y": 64.719993591308594, 
+"z": -477.57958984375
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -519.32391357421875, 
+"y": 64.71978759765625, 
+"z": -400.78311157226563
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
 "Light": {
-".uid": 27, 
+".uid": 25, 
 "color": {
 "a": 1, 
 "b": 1, 
 "g": 1, 
 "r": 1
 }, 
-"intensity": 1, 
-"radius": 1, 
+"intensity": 3, 
+"radius": 200, 
 "renderMask": 0, 
 "spotlightAngles": {
-"x": 15, 
-"y": 30
+"x": 45, 
+"y": 90
 }, 
-"type": 0
+"type": 1
 }, 
 "Transform": {
-".uid": 26, 
+".uid": 23, 
 "rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
 }, 
 "scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
 "z": 1
 }, 
 "translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
+"x": 535.45745849609375, 
+"y": 64.721839904785156, 
+"z": -269.23590087890625
 }
 }
 }, 
-"name": "Directional Light (1)"
+"name": "white1"
 }, {
 "children": [], 
 "components": {
+"EntityAnimator": {
+".uid": 30, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -573.7958984375, 
+"y": 64.723953247070313, 
+"z": 2.1241896152496338
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -526.39404296875, 
+"y": 266.16009521484375, 
+"z": 2.1241829395294189
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -256.86334228515625, 
+"y": 524.7054443359375, 
+"z": 2.1241695880889893
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 244.76202392578125, 
+"y": 524.70269775390625, 
+"z": 2.1241588592529297
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 473.63980102539063, 
+"y": 337.56329345703125, 
+"z": 2.1241507530212402
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 559.09619140625, 
+"y": 132.38059997558594, 
+"z": 2.1241440773010254
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 421.7928466796875, 
+"y": 399.0369873046875, 
+"z": 2.1241312026977539
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 4.7528648376464844, 
+"y": 605.546630859375, 
+"z": 2.1241159439086914
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -492.12362670898438, 
+"y": 376.38668823242188, 
+"z": 2.1240994930267334
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
 "Light": {
-".uid": 32, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"intensity": 1, 
-"radius": 1, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
 ".uid": 31, 
+"color": {
+"a": 1, 
+"b": 0.734375, 
+"g": 0, 
+"r": 0.091796875
+}, 
+"intensity": 5, 
+"radius": 200, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 45, 
+"y": 90
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 29, 
 "rotation": {
-"w": -4.3711388286737929e-08, 
-"x": 0, 
-"y": 1, 
-"z": 0
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
 }, 
 "scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
 "z": 1
 }, 
 "translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
+"x": 487.94732666015625, 
+"y": 317.32080078125, 
+"z": 2.1241500377655029
 }
 }
 }, 
-"name": "Directional Light  (2)"
+"name": "bue"
 }, {
 "children": [], 
 "components": {
+"EntityAnimator": {
+".uid": 36, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -573.7950439453125, 
+"y": 64.723846435546875, 
+"z": 103.43495941162109
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -541.5604248046875, 
+"y": 64.723541259765625, 
+"z": 304.17208862304688
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -420.07186889648438, 
+"y": 64.723258972167969, 
+"z": 488.57534790039063
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -237.86619567871094, 
+"y": 64.722946166992188, 
+"z": 536.27838134765625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -3.3246817588806152, 
+"y": 64.722450256347656, 
+"z": 580.75494384765625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 202.86058044433594, 
+"y": 64.722160339355469, 
+"z": 525.8770751953125
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 374.08184814453125, 
+"y": 64.721916198730469, 
+"z": 418.1080322265625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 525.636962890625, 
+"y": 64.721389770507813, 
+"z": 201.16184997558594
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 591.34893798828125, 
+"y": 64.7210693359375, 
+"z": 62.248321533203125
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 536.74151611328125, 
+"y": 64.720802307128906, 
+"z": 249.54417419433594
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 333.8638916015625, 
+"y": 64.720436096191406, 
+"z": 516.396728515625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 34.588768005371094, 
+"y": 64.720146179199219, 
+"z": 560.37847900390625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -304.11651611328125, 
+"y": 64.71978759765625, 
+"z": 452.96676635742188
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -515.78240966796875, 
+"y": 64.719482421875, 
+"z": 205.312255859375
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
 "Light": {
 ".uid": 37, 
 "color": {
@@ -294,82 +1185,41 @@
 "g": 1, 
 "r": 1
 }, 
-"intensity": 1, 
-"radius": 1, 
+"intensity": 3, 
+"radius": 200, 
 "renderMask": 0, 
 "spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 36, 
-"rotation": {
-"w": -0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": -6.1817239327410789e-08
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
-}
-}
-}, 
-"name": "Directional Light   (3)"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 42, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"intensity": 1, 
-"radius": 150.26731872558594, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 50
+"x": 45, 
+"y": 90
 }, 
 "type": 1
 }, 
 "Transform": {
-".uid": 41, 
+".uid": 35, 
 "rotation": {
-"w": 0.65427792072296143, 
-"x": 0.75625395774841309, 
-"y": 0, 
-"z": 0
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
 }, 
 "scale": {
-"x": 154.15058898925781, 
-"y": 154.15058898925781, 
-"z": 150.26731872558594
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
 }, 
 "translation": {
-"x": 0, 
-"y": 43.425643920898438, 
-"z": 9.0050439834594727
+"x": 305.088623046875, 
+"y": 64.72039794921875, 
+"z": 531.883544921875
 }
 }
 }, 
-"name": "Spot Light"
+"name": "white1 (1)"
 }
 ], 
 "components": {
 "Transform": {
-".uid": 14, 
+".uid": 9, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -390,25 +1240,3743 @@
 }, 
 "name": "TutorialRoom Archetype"
 }, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 41, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 42, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 43, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 44, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 45, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 46, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 47, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 48, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 49, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 50, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 51, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 52, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 53, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 54, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 55, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 56, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 58, 
+"dimensions": {
+"x": 1, 
+"y": 5, 
+"z": 1
+}
+}, 
+"Ghost": {
+".uid": 59, 
+"disableContactResponse": true, 
+"enableContactCallback": true, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SegmentChangeTrigger": {
+".uid": 60, 
+"changeNewSegment": 2, 
+"changeOnThisSegment": 1, 
+"triggerPlayer1": false, 
+"triggerPlayer2": false
+}, 
+"Transform": {
+".uid": 57, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -67.561264038085938, 
+"y": 15.988882064819336, 
+"z": 0
+}
+}
+}, 
+"name": "GateZone"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 65, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 66, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 67, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -111.51685333251953, 
+"y": -20, 
+"z": -50.034858703613281
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -111.51685333251953, 
+"y": 15.988901138305664, 
+"z": -50.034858703613281
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 68, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 64, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -111.51685333251953, 
+"y": -20, 
+"z": -50.034858703613281
+}
+}
+}, 
+"name": "Right Wall"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 70, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 71, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 72, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -150.36338806152344, 
+"y": -20, 
+"z": 30
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -150.36338806152344, 
+"y": 15.988901138305664, 
+"z": 30
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 73, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 69, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -150.36338806152344, 
+"y": -20, 
+"z": 30
+}
+}
+}, 
+"name": "Back Wall 1"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 75, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 76, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 77, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -111.51685333251953, 
+"y": -20, 
+"z": 54.090084075927734
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -111.51685333251953, 
+"y": 15.988901138305664, 
+"z": 54.090084075927734
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 78, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 74, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -111.51685333251953, 
+"y": -20, 
+"z": 54.090084075927734
+}
+}
+}, 
+"name": "Left Wall"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 80, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 81, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 82, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -150.36338806152344, 
+"y": -20, 
+"z": -26.149738311767578
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -150.36338806152344, 
+"y": 15.988901138305664, 
+"z": -26.149738311767578
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 83, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 79, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -150.36338806152344, 
+"y": -20, 
+"z": -26.149738311767578
+}
+}
+}, 
+"name": "Back Wall 2"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 85, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 86, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 87, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": -20, 
+"z": -27.423912048339844
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": 15.988901138305664, 
+"z": -27.423912048339844
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": 15.988901138305664, 
+"z": -57.423908233642578
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 88, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 84, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -73.007888793945313, 
+"y": -20, 
+"z": -27.423912048339844
+}
+}
+}, 
+"name": "Right Door"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 90, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 91, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 92, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": -20, 
+"z": 32.044895172119141
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": 16, 
+"z": 32.044895172119141
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": -73.007888793945313, 
+"y": 15.988901138305664, 
+"z": 59
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 93, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 89, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -73.007888793945313, 
+"y": -20, 
+"z": 32.044895172119141
+}
+}
+}, 
+"name": "Left Door"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 62, 
+"changeOnThisSegment": 1, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 63
+}, 
+"Transform": {
+".uid": 61, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Cage"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 98, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 99, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 100, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 66.5, 
+"y": -20, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.89999997615814209, 
+"ease": 0, 
+"position": {
+"x": 66.5, 
+"y": 16, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 101, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 97, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 66.5, 
+"y": -20, 
+"z": 61
+}
+}
+}, 
+"name": "Wall2"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 103, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 104, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 105, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 120.07420349121094, 
+"y": -20, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.80000001192092896, 
+"ease": 0, 
+"position": {
+"x": 120.07420349121094, 
+"y": 16, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 106, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 102, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 120.07420349121094, 
+"y": -20, 
+"z": -60
+}
+}
+}, 
+"name": "Wall3"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 108, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 109, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 110, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 66, 
+"y": -20, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 66, 
+"y": 16, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 111, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 107, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 66, 
+"y": -20, 
+"z": -60
+}
+}
+}, 
+"name": "Wall1"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 113, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 114, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 115, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 120.07420349121094, 
+"y": -20, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.60000002384185791, 
+"ease": 0, 
+"position": {
+"x": 120.07420349121094, 
+"y": 16, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 116, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 112, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 120.07420349121094, 
+"y": -20, 
+"z": 61
+}
+}
+}, 
+"name": "Wall 4"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 118, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 119, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 120, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 7.8266401290893555, 
+"y": -20, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.69999998807907104, 
+"ease": 0, 
+"position": {
+"x": 7.8266401290893555, 
+"y": 16, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 121, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 117, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 7.8266401290893555, 
+"y": -20, 
+"z": 61
+}
+}
+}, 
+"name": "Wall5"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 123, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 124, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 125, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -34.847270965576172, 
+"y": -20, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.5, 
+"ease": 0, 
+"position": {
+"x": -34.847270965576172, 
+"y": 16, 
+"z": 61
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 126, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 122, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -34.847270965576172, 
+"y": -20, 
+"z": 61
+}
+}
+}, 
+"name": "Wall7"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 128, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 129, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 130, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 7.8266401290893555, 
+"y": -20, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.60000002384185791, 
+"ease": 0, 
+"position": {
+"x": 7.8266401290893555, 
+"y": 16, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 131, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 127, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 7.8266401290893555, 
+"y": -20, 
+"z": -60
+}
+}
+}, 
+"name": "Wall6"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 133, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 134, 
+"dimensions": {
+"x": 1, 
+"y": 10, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 135, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -34.847270965576172, 
+"y": -20, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 0.20000000298023224, 
+"ease": 0, 
+"position": {
+"x": -34.847270965576172, 
+"y": 16, 
+"z": -60
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 136, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 132, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": -34.847270965576172, 
+"y": -20, 
+"z": -60
+}
+}
+}, 
+"name": "Wall8"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 95, 
+"changeOnThisSegment": 2, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 96
+}, 
+"Transform": {
+".uid": 94, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Hallway"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 138, 
+"changeOnThisSegment": 12, 
+"whenGreaterThan": false
+}, 
+"Body": {
+".uid": 139, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 140, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 141, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 310.75787353515625, 
+"y": 24, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 310.75787353515625, 
+"y": -50, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 142, 
+"active": false, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 137, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 101.09949493408203
+}, 
+"translation": {
+"x": 310.75787353515625, 
+"y": 24, 
+"z": 0
+}
+}, 
+"VisibilityTrigger": {
+".uid": 143, 
+"changeOnThisSegment": 3
+}
+}, 
+"name": "SecretDoor"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 148, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 149, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 150, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 126, 
+"y": -20, 
+"z": 2.5
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 110.91108703613281, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 126, 
+"y": -1.5175325870513916, 
+"z": 2.5
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 110.91108703613281, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 151, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 147, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 110.91108703613281, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 126, 
+"y": -20, 
+"z": 2.5
+}
+}
+}, 
+"name": "Stair 1"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 153, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 154, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 155, 
+"animationClipName": "", 
+"delta": 2.5, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 244.56011962890625, 
+"y": -20, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 100, 
+"y": 34.305904388427734, 
+"z": 180
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 244.56011962890625, 
+"y": 24.600309371948242, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 100, 
+"y": 34.305904388427734, 
+"z": 180
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 156, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 152, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 100, 
+"y": 34.305904388427734, 
+"z": 180
+}, 
+"translation": {
+"x": 244.56011962890625, 
+"y": -20, 
+"z": 0.75308448076248169
+}
+}
+}, 
+"name": "Platform"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 158, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 159, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 160, 
+"animationClipName": "", 
+"delta": 1.5, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.17974853515625, 
+"y": -20, 
+"z": 2.5
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 110.35331726074219, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.17974853515625, 
+"y": 14.076117515563965, 
+"z": 2.5
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 110.35331726074219, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 161, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 157, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 110.35331726074219, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 142.17974853515625, 
+"y": -20, 
+"z": 2.5
+}
+}
+}, 
+"name": "Stair2"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 163, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 164, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 165, 
+"animationClipName": "", 
+"delta": 2, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 159.12113952636719, 
+"y": -20, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 99.741287231445313, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 159.12113952636719, 
+"y": 24.600309371948242, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 99.741287231445313, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 166, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 162, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 99.741287231445313, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 159.12113952636719, 
+"y": -20, 
+"z": 0.75308448076248169
+}
+}
+}, 
+"name": "Stair 3"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 168, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 169, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 170, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 246.99998474121094, 
+"y": -116.49999237060547, 
+"z": 50.531318664550781
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 246.99998474121094, 
+"y": 24.600200653076172, 
+"z": 50.531318664550781
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 171, 
+"active": true, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 167, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"translation": {
+"x": 246.99998474121094, 
+"y": -116.49999237060547, 
+"z": 50.531318664550781
+}
+}
+}, 
+"name": "Invis wall"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 173, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 174, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 175, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 246.99998474121094, 
+"y": -116.49999237060547, 
+"z": -48.903610229492188
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 246.99998474121094, 
+"y": 24.600210189819336, 
+"z": -48.903610229492188
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 176, 
+"active": true, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 172, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"translation": {
+"x": 246.99998474121094, 
+"y": -116.49999237060547, 
+"z": -48.903610229492188
+}
+}
+}, 
+"name": "Invis wall   (3)"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 145, 
+"changeOnThisSegment": 3, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 146
+}, 
+"Transform": {
+".uid": 144, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Stairs"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 181, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 182, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 183, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": 598.99993896484375, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 180.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": 77.565193176269531, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 180.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 184, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 180, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 180.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 142.01020812988281, 
+"y": 598.99993896484375, 
+"z": 0
+}
+}
+}, 
+"name": "Top Box"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 186, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 187, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 188, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": -71.704429626464844
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": 48.401729583740234, 
+"z": -71.704429626464844
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 189, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 185, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": -71.704429626464844
+}
+}
+}, 
+"name": "BottomBox"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 191, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 192, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 193, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": 72
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": 48.401729583740234, 
+"z": 72
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.700000762939453
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 194, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 190, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": 72
+}
+}
+}, 
+"name": "BottomBox (1)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 196, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 197, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 198, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": 2.8542771339416504
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 142.01020812988281, 
+"y": 28.401729583740234, 
+"z": 2.8542771339416504
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 180.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 199, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 195, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": 0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 59.89154052734375, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 142.01020812988281, 
+"y": -30, 
+"z": 2.8542771339416504
+}
+}
+}, 
+"name": "BottomBox  (2)"
+}, {
+"children": [], 
+"components": {
+"Body": {
+".uid": 201, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 202, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 203, 
+"animationClipName": "", 
+"delta": 2.5, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 2.5, 
+"ease": 0, 
+"position": {
+"x": -7.5144777297973633, 
+"y": -20, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1000, 
+"y": 34.305904388427734, 
+"z": 1000
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -7.5144801139831543, 
+"y": 24.600309371948242, 
+"z": 0.75308448076248169
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1000, 
+"y": 34.305904388427734, 
+"z": 1000
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Model3D": {
+".uid": 204, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 200, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": -0.70492243766784668, 
+"z": 0
+}, 
+"scale": {
+"x": 1000, 
+"y": 34.305904388427734, 
+"z": 1000
+}, 
+"translation": {
+"x": -7.5144777297973633, 
+"y": -20, 
+"z": 0.75308448076248169
+}
+}
+}, 
+"name": "Ground"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 178, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 179
+}, 
+"Transform": {
+".uid": 177, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "ShootingRangeAnimation"
+}, {
+"children": [
+{
 "children": [
 {
 "children": [], 
 "components": {
 "ParticleEmitter": {
-".uid": 48, 
+".uid": 211, 
 "emitCount": 0, 
 "emitRate": 1000, 
 "emitRateVariance": 0, 
 "emitterSize": {
-"x": 20, 
+"x": 10, 
 "y": 0, 
-"z": 20
+"z": 10
 }, 
 "fill": 1, 
 "lifetime": 2, 
 "lifetimeVariance": 0, 
 "roll": 0, 
-"rollVariance": 0, 
+"rollVariance": 57.2957763671875, 
 "rotation": 0, 
 "rotationVariance": 3.1399998664855957, 
 "size": 5, 
@@ -425,7 +4993,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 49, 
+".uid": 212, 
 "color": {
 "a": 1, 
 "b": 0.93359375, 
@@ -438,7 +5006,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 47, 
+".uid": 210, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -462,20 +5030,20 @@
 "children": [], 
 "components": {
 "ParticleEmitter": {
-".uid": 51, 
+".uid": 214, 
 "emitCount": 0, 
 "emitRate": 1000, 
 "emitRateVariance": 0, 
 "emitterSize": {
-"x": 20, 
+"x": 10, 
 "y": 0, 
-"z": 20
+"z": 10
 }, 
 "fill": 1, 
 "lifetime": 2, 
 "lifetimeVariance": 0, 
 "roll": 0, 
-"rollVariance": 0, 
+"rollVariance": 57.2957763671875, 
 "rotation": 0, 
 "rotationVariance": 3.1399998664855957, 
 "size": 5, 
@@ -492,7 +5060,141 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 52, 
+".uid": 215, 
+"color": {
+"a": 1, 
+"b": 0.88671875, 
+"g": 0.0588836669921875, 
+"r": 0.62962710857391357
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 213, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 217, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 218, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 216, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 220, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 221, 
 "color": {
 "a": 1, 
 "b": 0.890625, 
@@ -505,7 +5207,2904 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 50, 
+".uid": 219, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -9.9058456420898438, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 209, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": -23.693214416503906
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": 27.244169235229492, 
+"z": -23.693214416503906
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": -20, 
+"z": -23.693214416503906
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 208, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": -23.693214416503906
+}
+}
+}, 
+"name": "FX_SimulationStart Archetype"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 225, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 226, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 224, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 228, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 229, 
+"color": {
+"a": 1, 
+"b": 0.8828125, 
+"g": 0.0413818359375, 
+"r": 0.62149864435195923
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 227, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 231, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 232, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 230, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 234, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 235, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 233, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -9.9058456420898438, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 223, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": 26.947725296020508
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": 27.244169235229492, 
+"z": 26.947725296020508
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": -20, 
+"z": 26.947725296020508
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 222, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": 26.947725296020508
+}
+}
+}, 
+"name": "FX_SimulationStart Archetype (1)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 239, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 240, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 238, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 242, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 243, 
+"color": {
+"a": 1, 
+"b": 0.89453125, 
+"g": 0.034942626953125, 
+"r": 0.6275782585144043
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 241, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 245, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 246, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 244, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 248, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 249, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 247, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -9.9058456420898438, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 237, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 100.69409942626953, 
+"y": -47.244171142578125, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0, 
+"ease": 0, 
+"position": {
+"x": 100.69409942626953, 
+"y": 27.244169235229492, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 100.69409942626953, 
+"y": -20, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 236, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 100.69409942626953, 
+"y": -47.244171142578125, 
+"z": 2.8739039897918701
+}
+}
+}, 
+"name": "FX_SimulationStart Archetype  (2)"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 206, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 207
+}, 
+"Transform": {
+".uid": 205, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Wave1Animations"
+}, {
+"children": [
+{
+"children": [
+{
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 256, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 257, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 255, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 259, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 10, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 260, 
+"color": {
+"a": 1, 
+"b": 0.54296875, 
+"g": 0.0190887451171875, 
+"r": 0.33341675996780396
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 258, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 262, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 263, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 261, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 265, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 266, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 264, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -9.9058456420898438, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 254, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 8.6071996688842773, 
+"y": -47.244171142578125, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0, 
+"ease": 0, 
+"position": {
+"x": 8.6071996688842773, 
+"y": 27.244169235229492, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 8.6071996688842773, 
+"y": -20, 
+"z": 2.8739039897918701
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 253, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 8.6071996688842773, 
+"y": -47.244171142578125, 
+"z": 2.8739039897918701
+}
+}
+}, 
+"name": "FX_SimulationStart Archetype   (3)"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 251, 
+"changeOnThisSegment": 5, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 252
+}, 
+"Transform": {
+".uid": 250, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Wave2Animations"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 268, 
+"changeOnThisSegment": 9, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 269
+}, 
+"Transform": {
+".uid": 267, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "ReviveAnimation"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 271, 
+"changeOnThisSegment": 10, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 272
+}, 
+"Transform": {
+".uid": 270, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Dual Animation"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"AnimateTutorialText": {
+".uid": 280, 
+"characterDeleteCooldown": 0.05000000074505806, 
+"characterWriteCooldown": 0.079999998211860657, 
+"lineEndCooldown": 0.5, 
+"textLines": [
+"Rookie Training Simulation:", "Initialized...", "System Ready...", "Sec. Cam #3...", "Initialized...", "Finding Targets..."
+]
+}, 
+"SpriteText": {
+".uid": 281, 
+"alignment": 0, 
+"size": 18, 
+"text": "", 
+"textColor": {
+"a": 1, 
+"b": 0.082926750183105469, 
+"g": 0.796875, 
+"r": 0.07159423828125
+}, 
+"useFiltering": true
+}, 
+"Transform": {
+".uid": 279, 
+"rotation": {
+"w": -0.064331099390983582, 
+"x": -0.24389669299125671, 
+"y": 0.95114922523498535, 
+"z": -0.17801028490066528
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -10.640419960021973, 
+"y": -9.5538330078125, 
+"z": 25.423828125
+}
+}
+}, 
+"name": "TextObject"
+}
+], 
+"components": {
+"Camera": {
+".uid": 274, 
+"active": true, 
+"clearColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
+"farPlane": 1000, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 1024, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 275, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 23, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 23, 
+"position": {
+"x": 210.92774963378906, 
+"y": 455, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 13, 
+"ease": 23, 
+"position": {
+"x": 210.92774963378906, 
+"y": 450, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 23, 
+"position": {
+"x": 210.92774963378906, 
+"y": 150, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": -32.103950500488281, 
+"y": 45.334251403808594, 
+"z": 2.7650752067565918
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": true, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 273, 
+"rotation": {
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -32.103950500488281, 
+"y": 45.334251403808594, 
+"z": 2.7650752067565918
+}
+}
+}, 
+"name": "IntroCamera"
+}, {
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 283, 
+"dimensions": {
+"x": 1, 
+"y": 5, 
+"z": 1
+}
+}, 
+"Ghost": {
+".uid": 284, 
+"disableContactResponse": true, 
+"enableContactCallback": true, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SegmentChangeTrigger": {
+".uid": 285, 
+"changeNewSegment": 3, 
+"changeOnThisSegment": 2, 
+"triggerPlayer1": false, 
+"triggerPlayer2": false
+}, 
+"Transform": {
+".uid": 282, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 111.18831634521484, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 53.010089874267578, 
+"y": 15.988882064819336, 
+"z": 0
+}
+}
+}, 
+"name": "StairZone"
+}, {
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 287, 
+"dimensions": {
+"x": 1, 
+"y": 5, 
+"z": 1
+}
+}, 
+"Ghost": {
+".uid": 288, 
+"disableContactResponse": true, 
+"enableContactCallback": true, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SegmentChangeTrigger": {
+".uid": 289, 
+"changeNewSegment": 4, 
+"changeOnThisSegment": 3, 
+"triggerPlayer1": true, 
+"triggerPlayer2": true
+}, 
+"Transform": {
+".uid": 286, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 101.06306457519531, 
+"y": 18.810878753662109, 
+"z": 79.452133178710938
+}, 
+"translation": {
+"x": 208.6556396484375, 
+"y": 60.778266906738281, 
+"z": 0
+}
+}
+}, 
+"name": "ShootingZone"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 293, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 294, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 295, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 100.20036315917969, 
+"y": -20, 
+"z": 1.9420790672302246
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 100.20036315917969, 
+"y": 48.436412811279297, 
+"z": 1.9420790672302246
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Health": {
+".uid": 296, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 30, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 297, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 298, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 292, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 100.20035552978516, 
+"y": -19.999998092651367, 
+"z": 1.9420789480209351
+}
+}
+}, 
+"name": "DummyTarget1"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 300, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 301, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 302, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 80.029510498046875, 
+"y": -20, 
+"z": -23.971530914306641
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.029510498046875, 
+"y": 48.436412811279297, 
+"z": -23.971530914306641
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Health": {
+".uid": 303, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 30, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 304, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 305, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 299, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 80.029502868652344, 
+"y": -19.999998092651367, 
+"z": -23.971529006958008
+}
+}
+}, 
+"name": "DummyTarget2"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 307, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 308, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 309, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 80.804466247558594, 
+"y": -20, 
+"z": 26.263629913330078
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.804466247558594, 
+"y": 48.436412811279297, 
+"z": 26.263629913330078
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Health": {
+".uid": 310, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 30, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 311, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 312, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 306, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 80.804458618164063, 
+"y": -19.999998092651367, 
+"z": 26.263628005981445
+}
+}
+}, 
+"name": "DummyTarget3"
+}
+], 
+"components": {
+"DeathTriggerGroup": {
+".uid": 291, 
+"changeNewSegment": 6
+}, 
+"Transform": {
+".uid": 290, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Wave1Trigger"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 316, 
+"changeOnThisSegment": 6, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 317, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 318, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 8.6071996688842773, 
+"y": -20, 
+"z": 1.9420790672302246
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 10, 
+"y": 15, 
+"z": 10
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 8.6071996688842773, 
+"y": 48.436412811279297, 
+"z": 1.9420790672302246
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 10, 
+"y": 15, 
+"z": 10
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Health": {
+".uid": 319, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 50, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 320, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 321, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 315, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 10, 
+"y": 15, 
+"z": 10
+}, 
+"translation": {
+"x": 8.6071987152099609, 
+"y": -19.999998092651367, 
+"z": 1.9420789480209351
+}
+}
+}, 
+"name": "LongDistanceDummy"
+}
+], 
+"components": {
+"DeathTriggerGroup": {
+".uid": 314, 
+"changeNewSegment": 8
+}, 
+"Transform": {
+".uid": 313, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Wave2Trigger"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 325, 
+"changeOnThisSegment": 8, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 326, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 327, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 2.4000000953674316, 
+"ease": 0, 
+"position": {
+"x": 100.20024108886719, 
+"y": 48.436347961425781, 
+"z": -67.378303527832031
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 3.2999999523162842, 
+"ease": 0, 
+"position": {
+"x": 100.19995880126953, 
+"y": 48.436206817626953, 
+"z": 70.662254333496094
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2.4000000953674316, 
+"ease": 0, 
+"position": {
+"x": 100.20035552978516, 
+"y": 48.436408996582031, 
+"z": -3
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Health": {
+".uid": 328, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 20, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 329, 
+"active": false, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 330, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 324, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 100.20023345947266, 
+"y": 48.436344146728516, 
+"z": -67.3782958984375
+}
+}, 
+"VisibilityTrigger": {
+".uid": 331, 
+"changeOnThisSegment": 8
+}
+}, 
+"name": "DummyTargetRunny2"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 333, 
+"changeOnThisSegment": 8, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 334, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 335, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 102.60926818847656, 
+"y": 48.435764312744141, 
+"z": 77.380752563476563
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 71.050079345703125, 
+"y": 48.436191558837891, 
+"z": -6.7866816520690918
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 98.237648010253906, 
+"y": 48.436088562011719, 
+"z": -89.893218994140625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 119.77227020263672, 
+"y": 48.435886383056641, 
+"z": 2.6265020370483398
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Health": {
+".uid": 336, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 20, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 337, 
+"active": false, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 338, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 332, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 102.60926055908203, 
+"y": 48.435760498046875, 
+"z": 77.380744934082031
+}
+}, 
+"VisibilityTrigger": {
+".uid": 339, 
+"changeOnThisSegment": 8
+}
+}, 
+"name": "DummyTargetRunny"
+}
+], 
+"components": {
+"DeathTriggerGroup": {
+".uid": 323, 
+"changeNewSegment": 11
+}, 
+"Transform": {
+".uid": 322, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Wave3Trigger"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 341, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 200, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 340, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": -117.09284973144531, 
+"y": 94.411445617675781, 
+"z": 0
+}
+}
+}, 
+"name": "Point Light"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 346, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 200, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 345, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 213.45440673828125, 
+"y": 94.411445617675781, 
+"z": 0
+}
+}
+}, 
+"name": "Point Light (1)"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 359, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 45, 
+"y": 0, 
+"z": 45
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 360, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 358, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 362, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 45, 
+"y": 0, 
+"z": 45
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 363, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 361, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -529,29 +8128,29 @@
 "children": [], 
 "components": {
 "AnimateParticleReset": {
-".uid": 54, 
+".uid": 365, 
 "easeFunction": 0, 
-"endDuration": 0.10000000149011612, 
+"endDuration": 0.5, 
 "startDuration": 2, 
 "startOnAwake": true, 
 "stopOnComplete": false, 
-"timeToChange": 5
+"timeToChange": 10
 }, 
 "ParticleEmitter": {
-".uid": 55, 
+".uid": 366, 
 "emitCount": 1000, 
 "emitRate": 200000, 
 "emitRateVariance": 0, 
 "emitterSize": {
-"x": 20, 
+"x": 45, 
 "y": 0, 
-"z": 20
+"z": 45
 }, 
 "fill": 1, 
 "lifetime": 2, 
 "lifetimeVariance": 0, 
-"roll": 5.5249234455231655e-37, 
-"rollVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
 "rotation": 0, 
 "rotationVariance": 3.1399998664855957, 
 "size": 5, 
@@ -568,7 +8167,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 56, 
+".uid": 367, 
 "color": {
 "a": 1, 
 "b": 0.93359375, 
@@ -581,7 +8180,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 53, 
+".uid": 364, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -605,29 +8204,29 @@
 "children": [], 
 "components": {
 "AnimateParticleReset": {
-".uid": 58, 
+".uid": 369, 
 "easeFunction": 0, 
-"endDuration": 0.10000000149011612, 
+"endDuration": 0.5, 
 "startDuration": 2, 
 "startOnAwake": true, 
 "stopOnComplete": false, 
-"timeToChange": 5
+"timeToChange": 10
 }, 
 "ParticleEmitter": {
-".uid": 59, 
+".uid": 370, 
 "emitCount": 1000, 
 "emitRate": 200000, 
 "emitRateVariance": 0, 
 "emitterSize": {
-"x": 20, 
+"x": 45, 
 "y": 0, 
-"z": 20
+"z": 45
 }, 
 "fill": 1, 
 "lifetime": 2, 
 "lifetimeVariance": 0, 
-"roll": 3.2097698692470762e-37, 
-"rollVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
 "rotation": 0, 
 "rotationVariance": 3.1399998664855957, 
 "size": 5, 
@@ -644,7 +8243,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 60, 
+".uid": 371, 
 "color": {
 "a": 1, 
 "b": 0.890625, 
@@ -657,7 +8256,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 57, 
+".uid": 368, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -677,11 +8276,28 @@
 }
 }, 
 "name": "UpRing"
-}
-], 
+}, {
+"children": [], 
 "components": {
+"Light": {
+".uid": 351, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 200, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 1
+}, 
 "Transform": {
-".uid": 46, 
+".uid": 350, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -694,8 +8310,96 @@
 "z": 1
 }, 
 "translation": {
+"x": 0.85194778442382813, 
+"y": 223.43389892578125, 
+"z": 0
+}
+}
+}, 
+"name": "Point Light  (2)"
+}
+], 
+"components": {
+"AnimateOnSegment": {
+".uid": 356, 
+"changeOnThisSegment": 11, 
+"whenGreaterThan": false
+}, 
+"EntityAnimator": {
+".uid": 357, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 202.92715454101563, 
+"y": -129.0224609375, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
 "x": 0, 
 "y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 12.356683731079102, 
+"y": 1, 
+"z": 7.1788878440856934
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 202.92715454101563, 
+"y": 75, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 12.356683731079102, 
+"y": 1, 
+"z": 7.1788878440856934
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 355, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 12.356683731079102, 
+"y": 1, 
+"z": 7.1788878440856934
+}, 
+"translation": {
+"x": 202.92715454101563, 
+"y": -129.0224609375, 
 "z": 0
 }
 }
@@ -750,6 +8454,12 @@
 "type": "ProjectileSystem"
 }, {
 "type": "TrailSystem"
+}, {
+"type": "TimeDeathSystem"
+}, {
+"type": "DamageTextSystem"
+}, {
+"type": "DamageOnCollideSystem"
 }
 ]
 }

@@ -131,7 +131,8 @@ namespace ursine
 
         void Billboard2D::onTextureReload(void)
         {
-            invalidateTexture( true );
+            if (resourcesAreAvailable( ))
+                invalidateTexture( true );
         }
     }
 }

@@ -42,9 +42,6 @@ namespace ursine
                 &owner->GetWorld( )->GetEntitySystem<PhysicsSystem>( )->m_simulation 
             );
 
-            m_rigidbody.SetUserID( owner->GetID( ) );
-            m_rigidbody.SetUserPointer( this );
-
             GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Rigidbody::onTransformChange );
         }

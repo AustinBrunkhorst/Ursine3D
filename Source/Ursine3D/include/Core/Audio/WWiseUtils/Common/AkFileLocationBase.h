@@ -35,8 +35,8 @@ struct AkFileSystemFlags;
 class CAkFileLocationBase
 {
 public:
-	CAkFileLocationBase();
-	virtual ~CAkFileLocationBase();
+	CAkFileLocationBase(void);
+	virtual ~CAkFileLocationBase(void);
 
 	//
 	// Global path functions.
