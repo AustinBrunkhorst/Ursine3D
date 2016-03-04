@@ -121,7 +121,9 @@ namespace ursine
         {            
         #ifdef BULLET_PHYSICS
 
-            if (remove && m_simulation)
+			auto addRemove = remove && m_simulation && GetUserPointer( );
+
+            if (addRemove)
                 m_simulation->RemoveRigidbody( this );
 
             if (m_bodyType != BF_DYNAMIC)
@@ -149,7 +151,7 @@ namespace ursine
             if (m_simulation && (bodyFlag == BF_STATIC || bodyFlag == BF_KINEMATIC))
                 m_simulation->ClearContacts( *this );
 
-            if (remove && m_simulation)
+            if (addRemove)
                 m_simulation->AddRigidbody( this );
 
             SetMass( m_mass );
@@ -587,13 +589,13 @@ namespace ursine
 
         void Rigidbody::addToSimulation(void)
         {
-            if (m_simulation)
+            if (m_simulation && GetUserPointer( ))
                 m_simulation->AddRigidbody( this );
         }
 
         void Rigidbody::removeFromSimulation(void)
         {
-            if (m_simulation)
+            if (m_simulation && GetUserPointer( ))
                 m_simulation->RemoveRigidbody( this );
         }
 

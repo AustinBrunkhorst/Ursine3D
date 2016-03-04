@@ -365,7 +365,7 @@ namespace ursine
         {
             CollisionEventArgs args;
 
-#       ifdef BULLET_PHYSICS
+        #ifdef BULLET_PHYSICS
 
             auto *dispatcher = m_dynamicsWorld->getDispatcher( );
             int numManifolds = dispatcher->getNumManifolds( );

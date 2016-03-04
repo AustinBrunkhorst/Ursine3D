@@ -39,6 +39,7 @@ namespace ursine
             // The pointer to the component
             union
             {
+				ecs::Component *component;
                 ecs::Rigidbody *rigidbody;
                 ecs::Body *body;
                 ecs::Ghost *ghost;

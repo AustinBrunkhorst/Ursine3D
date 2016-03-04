@@ -72,6 +72,7 @@ namespace ursine
             AkGameObjectID m_nextEmptyID;
 
             void OnInitialize(void) override;
+            void OnSceneReady(Scene *scene) override;
             void OnRemove(void) override;
 
             void onComponentAdded(EVENT_HANDLER(World));
@@ -79,6 +80,6 @@ namespace ursine
 
             void onUpdate(EVENT_HANDLER(World));
 
-        } Meta(Disable, WhiteListMethods, AutoAddEntitySystem);
+        } Meta(Enable, WhiteListMethods, AutoAddEntitySystem);
     }
 }

@@ -342,6 +342,8 @@ namespace ursine
 
         void ModelManager::UnloadModel(GfxHND handle)
         {
+            URSINE_TODO( "Fix this." );
+            return;
             auto *hnd = HND_RSRCE( handle );
 
             if (handle != 0)

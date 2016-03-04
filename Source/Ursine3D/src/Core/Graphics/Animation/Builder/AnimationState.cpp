@@ -31,6 +31,26 @@ namespace ursine
         , m_animation(nullptr)
     {}
 
+    void AnimationState::OnSceneReady(void)
+    {
+        Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
+        if (!targetAnimation)
+        {
+#if defined(URSINE_WITH_EDITOR)
+            NotificationConfig error;
+
+            error.type = NOTIFY_ERROR;
+            error.header = "Animation doesn't exist";
+            error.message = "To add animation into the state, animation should exist in the Animation List";
+
+            EditorPostNotification(error);
+#endif
+            return;
+        }
+
+        m_animation = targetAnimation;
+    }
+
     bool AnimationState::IsLooping(void) const
     {
         return m_looping;
@@ -84,26 +104,7 @@ namespace ursine
     
     void AnimationState::SetAnimationName(const std::string& name)
     {
-        if ("" == name)
-            return;
         m_animname = name;
-        
-        Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
-        if (!targetAnimation)
-        {
-#if defined(URSINE_WITH_EDITOR)
-            NotificationConfig error;
-
-            error.type = NOTIFY_ERROR;
-            error.header = "Animation doesn't exist";
-            error.message = "To add animation into the state, animation should exist in the Animation List";
-
-            EditorPostNotification(error);
-#endif
-            return;
-        }
-
-        m_animation = targetAnimation;
     }
 
     // make this can handle multiple names of animation name
@@ -135,6 +136,9 @@ namespace ursine
     
     void AnimationState::PlayingAnimation(void)
     {
+        if (!m_animation)
+            return;
+
         unsigned keyframeCount1 = m_animation->GetRigKeyFrameCount();
         auto &curr_firstFrame = m_animation->GetKeyframe(0, 0);
         auto &curr_lastFrame = m_animation->GetKeyframe(keyframeCount1 - 1, 0);

@@ -14,20 +14,28 @@
 
 NATIVE_COMPONENT_DEFINITION( PlayerSpawnPoint );
 
+using namespace ursine;
+using namespace ecs;
+
 PlayerSpawnPoint::PlayerSpawnPoint(void)
     : BaseComponent( )
     , m_segment( LevelSegments::Empty )
 {
 }
 
-const std::string &PlayerSpawnPoint::GetPlayerArchetype(void) const
+const resources::ResourceReference &PlayerSpawnPoint::GetPlayerArchetype(void) const
 {
     return m_archetype;
 }
 
-void PlayerSpawnPoint::SetPlayerArchetype(const std::string &archetype)
+void PlayerSpawnPoint::SetPlayerArchetype(const resources::ResourceReference &archetype)
 {
     m_archetype = archetype;
+
+    if (!resourcesAreAvailable( ))
+        return;
+
+    NOTIFY_COMPONENT_CHANGED( "playerArchetype", m_archetype );
 }
 
 LevelSegments PlayerSpawnPoint::GetSpawnSegment(void)

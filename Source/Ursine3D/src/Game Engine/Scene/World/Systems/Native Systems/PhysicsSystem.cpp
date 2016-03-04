@@ -218,16 +218,6 @@ namespace ursine
             SetEnableDebugDraw( false );
 
         #endif
-
-            // This is a real gross thing I'm doing to try and fix
-            // an issue I'm having with bullet and collision flags
-            auto rigidbodies = m_world->GetEntitiesFromFilter( Filter( ).All<Rigidbody>( ) );
-
-            for (auto &entity : rigidbodies)
-            {
-                auto rigidbody = entity->GetComponent<Rigidbody>( );
-                rigidbody->SetBodyFlag( rigidbody->GetBodyFlag( ) );
-            }
         }
 
         void PhysicsSystem::onComponentAdded(EVENT_HANDLER(World))
@@ -297,6 +287,9 @@ namespace ursine
                 );
 
                 m_rigidbodies.push_back( rigidbody );
+
+                rigidbody->m_rigidbody.SetUserPointer( rigidbody );
+                rigidbody->m_rigidbody.SetUserID( rigidbody->GetOwner( )->GetID( ) );
             }
             else if (component->Is<Ghost>( ))
             {
@@ -336,7 +329,7 @@ namespace ursine
                 }
                 else
                 {
-                    // TODO: Remove this when austin's thing is done
+                    // TODO: Remove this when austin's thing is done (OnSceneReady)
                     if (entity->HasComponent<BoxCollider>( ))
                     {
                         ghost->m_ghost.SetCollider(
@@ -402,10 +395,18 @@ namespace ursine
                 );
 
                 m_ghosts.push_back( ghost );
+
+                ghost->m_ghost.SetUserPointer( ghost );
+                ghost->m_ghost.SetUserID( ghost->GetOwner( )->GetID( ) );
             }
             else if (component->Is<Body>( ))
             {
-                m_bodies.push_back( reinterpret_cast<Body*>( const_cast<Component*>( args->component ) ) );
+                auto body = entity->GetComponent<Body>( );
+
+                m_bodies.push_back( body );
+
+                body->m_body.SetUserPointer( body );
+                body->m_body.SetUserID( body->GetOwner( )->GetID( ) );
             }
             else if (component->Is<SphereCollider>( ))
             {
@@ -654,25 +655,23 @@ namespace ursine
             else if (entity->HasComponent<Rigidbody>( ))
             {
                 auto rigidbody = entity->GetComponent<Rigidbody>( );
+                auto addingRemoving = !emptyCollider && rigidbody->m_rigidbody.GetUserPointer( );
 
-                // m_world->GetOwner( ) is required so we can make sure
-                // we aren't serializing
-                if (!emptyCollider && m_world->GetOwner( ))
+                if (addingRemoving)
                     m_simulation.RemoveRigidbody( &rigidbody->m_rigidbody );
 
                 // Assign the collider
                 rigidbody->m_rigidbody.SetCollider( collider, emptyCollider );
 
-                if (!emptyCollider && m_world->GetOwner( ))
+                if (addingRemoving)
                     m_simulation.AddRigidbody( &rigidbody->m_rigidbody );
             }
             else if (entity->HasComponent<Ghost>( ))
             {
                 auto ghost = entity->GetComponent<Ghost>( );
+                auto addingRemoving = !emptyCollider && ghost->m_ghost.GetUserPointer( );
 
-                // m_world->GetOwner( ) is required so we can make sure
-                // we aren't serializing
-                if (!emptyCollider && m_world->GetOwner( ))
+                if (addingRemoving)
                     m_simulation.RemoveGhost( &ghost->m_ghost );
 
                 // Assign the collider
@@ -680,7 +679,7 @@ namespace ursine
 
                 ghost->m_ghost.SetTransform( entity->GetTransform( ) );
 
-                if (!emptyCollider && m_world->GetOwner( ))
+                if (addingRemoving)
                     m_simulation.AddGhost( &ghost->m_ghost );
             }
 
