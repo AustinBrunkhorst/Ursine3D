@@ -1,7 +1,7 @@
 #
 #First is file name, second is model name
 
-BossArenaFBX.fbx BossRoom
+#BossArenaFBX.fbx BossRoom
 EntryRoomFBX(Revised).fbx EntryRoom
 PlantMonster.fbx PlantMonster
 Pipe_Bent.fbx PipeBent
@@ -10,8 +10,10 @@ BaseModel.fbx Base
 HiRezSphere.fbx HiRezSphere
 BossDoor.fbx BossDoor
 #BossArenaScaled2.fbx BossRoom2
-#CombatBowlPass3.fbx CombatBowl
+CombatBowlPass3.fbx CombatBowl
 #BossRoomAlphaTesting.fbx. BossRoom3
+BossRoom4.fbx BossRoom4
+ConduitRoom1.fbx Conduit1
 
 Cube.8.0.mdl Cube
 pedestal.8.0.mdl Pedestal
