@@ -103,26 +103,57 @@ SURFACE_DATA UnpackGBuffer(int2 location)
 
 float3 CalcPoint( float3 position, Material material )
 {
+    //float3 ToLight = lightPos.xyz - position;
+    //float3 ToEye = -position;
+    //float DistToLight = length( ToLight );
+
+    //// Phong diffuse
+    //ToLight /= DistToLight; // Normalize
+    //
+    //// blinn specular
+    //ToEye = normalize( ToEye );
+    //float3 HalfWay = normalize( ToEye + ToLight );
+    //float NDotH = saturate( dot( HalfWay, material.normal ) );
+    //float specularValue = saturate( pow(NDotH, material.specPow) );
+
+    //// diffuse scalar from normal
+    //float normalScalar = saturate(dot(ToLight, material.normal));
+
+    //// Attenuation
+    //float attenuation = saturate(1.0f - (DistToLight / radius));
+    //
+    //// calculate light final color
+    //float3 finalLightColor = (diffuseColor.rgb + specularValue * material.specIntensity);
+
+    //finalLightColor *= normalScalar * attenuation * intensity;
+
+    //return finalLightColor;
+
+    //////////////////////////////////////////////////////////
+    //// NEW STUFF
+
     float3 ToLight = lightPos.xyz - position;
     float3 ToEye = -position;
-    float DistToLight = length( ToLight );
+    float DistToLight = length(ToLight);
 
     // Phong diffuse
+
     ToLight /= DistToLight; // Normalize
-    float NDotL = saturate( dot( ToLight, material.normal ) );
-    float3 finalColor = diffuseColor.rgb * NDotL * (intensity);
+    float NDotL = saturate(dot(ToLight, material.normal));
+    float3 finalColor = diffuseColor.rgb * NDotL;
+
+    // Blinn specular
+    ToEye = normalize(ToEye);
+    float3 HalfWay = normalize(ToEye + ToLight);
+    float NDotH = saturate(dot(HalfWay, material.normal));
+    finalColor += diffuseColor.rgb * pow(NDotH, material.specPow) *
+        material.specIntensity;
 
     // Attenuation
-    float attenuation = saturate( 1.0f - (DistToLight / radius) );
-    finalColor *= material.diffuseColor.xyz * attenuation;
+    float Attn = saturate(1.0f - (DistToLight / radius));
+    finalColor *= material.diffuseColor.xyz * Attn;
 
-    // specular
-    ToEye = normalize( ToEye );
-    float3 HalfWay = normalize( ToEye + ToLight );
-    float NDotH = saturate( dot( HalfWay, material.normal ) );
-    finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0) * material.specIntensity * attenuation * NDotL;
-
-    return finalColor;
+    return finalColor * intensity;
 }
 
 /////////////////////////////////////////////////////////////////////

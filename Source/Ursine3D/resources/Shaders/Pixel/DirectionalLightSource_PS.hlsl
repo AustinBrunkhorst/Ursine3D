@@ -152,7 +152,7 @@ float3 CalcPoint( float3 position, Material material )
     // apply normal scalar
     finalLightColor *= normalScalar;
 
-    return finalLightColor * material.diffuseColor.rgb;
+    return finalLightColor * material.diffuseColor.rgb * intensity;
 }
 
 
