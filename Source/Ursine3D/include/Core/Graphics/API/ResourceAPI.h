@@ -58,7 +58,8 @@ namespace ursine
             /////////////////////////////////////////////////////////
 
             // create a model
-            GfxHND CreateModel(const ufmt_loader::ModelInfo& modelInfo);
+            bool CheckModelExistence(const std::string &modelName);
+            GfxHND CreateModel(const ufmt_loader::ModelInfo &modelInfo);
             void DestroyModel(GfxHND &handle);
 
             // load/unload from GPU
@@ -74,8 +75,8 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // Animation
             /////////////////////////////////////////////////////////
-
-            GfxHND CreateAnimation(const ufmt_loader::AnimInfo& animeInfo);
+            bool CheckAnimExistence(const std::string &animeName);
+            GfxHND CreateAnimation(const ufmt_loader::AnimInfo &animeInfo);
             void DestroyAnimation(GfxHND &handle);
 
             ufmt_loader::AnimInfo *GetAnimInfo(const GfxHND &handle);

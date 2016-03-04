@@ -75,6 +75,11 @@ namespace ursine
         // MODEL
         /////////////////////////////////////////////////////////
 
+        bool ResourceAPI::CheckModelExistence(const std::string &modelName)
+        {
+            return m_privates->modelMgr->CheckModelExistence(modelName);
+        }
+
         GfxHND ResourceAPI::CreateModel(const ufmt_loader::ModelInfo &modelInfo)
         {
             return m_privates->modelMgr->CreateModel( modelInfo );
@@ -103,6 +108,11 @@ namespace ursine
         ufmt_loader::ModelInfo *ResourceAPI::GetModelInfo(const GfxHND &handle)
         {
             return m_privates->modelMgr->GetModelInfo( handle );
+        }
+
+        bool ResourceAPI::CheckAnimExistence(const std::string &animeName)
+        {
+            return m_privates->modelMgr->CheckAnimExistence(animeName);
         }
 
         GfxHND ResourceAPI::CreateAnimation(const ufmt_loader::AnimInfo &animeInfo)

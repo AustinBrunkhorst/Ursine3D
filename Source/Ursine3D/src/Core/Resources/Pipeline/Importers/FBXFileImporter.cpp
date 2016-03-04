@@ -24,7 +24,11 @@ namespace ursine
         );
         
         auto sourceFileDirectory = fileName.parent_path( );
-        
+
+        //// what if i want to import just model or just animation - to reduce memory for resources
+        //// like we separate jdl and jani. we don't need to import same model/rig several times.
+        //if( std::string::npos == sourceFileDirectory.string().find("Models") )
+
         auto animInfo = importer.GetAnimInfo( );
         
         // importing model info check

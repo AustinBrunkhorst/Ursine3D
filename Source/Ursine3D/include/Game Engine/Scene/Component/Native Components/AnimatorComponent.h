@@ -244,6 +244,8 @@ namespace ursine
             void clearChildren(void);
             void importAnimation(void);
 
+            // try make state can get animation by EditorResourceField
+
         } Meta(
             Enable,
             WhiteListMethods,

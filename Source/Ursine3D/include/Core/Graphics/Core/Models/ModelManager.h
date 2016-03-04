@@ -34,6 +34,7 @@ namespace ursine
             void Uninitialize(void);
 
             // create/destry model
+            bool CheckModelExistence(const std::string &modelName);
             GfxHND CreateModel(const ufmt_loader::ModelInfo &modelInfo);
             void DestroyModel(GfxHND &handle);
 
@@ -65,6 +66,7 @@ namespace ursine
             void Invalidate();
 
             // animation stuff
+            bool CheckAnimExistence(const std::string &animeName);
             GfxHND CreateAnimation(const ufmt_loader::AnimInfo &animeInfo);
             void DestroyAnimation(GfxHND &handle);
 
@@ -91,7 +93,7 @@ namespace ursine
             // animation
             unsigned m_nextAnimationID;
 
-            std::unordered_map<unsigned, ufmt_loader::AnimInfo> m_animationCache;
+            std::unordered_map<unsigned, ufmt_loader::AnimInfo> m_animeInfoCache;
         };
     }
 }
