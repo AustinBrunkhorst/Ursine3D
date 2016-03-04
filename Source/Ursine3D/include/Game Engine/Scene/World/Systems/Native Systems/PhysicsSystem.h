@@ -35,7 +35,7 @@ namespace ursine
         public:
             friend class Rigidbody;
 
-            Meta(DisableNonDynamic)
+            Meta(Enable, DisableNonDynamic)
             PhysicsSystem(World *world);
 
             bool Raycast(const ursine::physics::RaycastInput &input, ursine::physics::RaycastOutput &output,
@@ -80,15 +80,15 @@ namespace ursine
             void OnInitialize(void) override;
             void OnRemove(void) override;
 
-            void OnAfterLoad(void) override;
+            void OnSceneReady(Scene *scene) override;
 
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));
 
             void onUpdate(EVENT_HANDLER(World));
 
-            void addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider = false);
-            void removeCollider(Entity *entity);
+            void addCollider(const EntityHandle &entity, physics::ColliderBase *collider, bool emptyCollider = false);
+            void removeCollider(const EntityHandle &entity);
 
             bool sweep(physics::BodyBase *body, physics::ColliderBase *collider, const SVec3 &velocity, 
                        float dt, physics::SweepOutput &output, physics::SweepType type, bool sorted);
@@ -99,8 +99,8 @@ namespace ursine
 
     #endif
 
-            void removeExistingCollider(Entity *entity, ComponentTypeID newCollider);
+            void removeExistingCollider(const EntityHandle &entity, ComponentTypeID newCollider);
 
-        } Meta(Enable, AutoAddEntitySystem);
+        } Meta(Enable, WhiteListMethods, AutoAddEntitySystem);
     }
 }

@@ -21,7 +21,7 @@ namespace ursine
 }
 
 
-class DamageText : ursine::ecs::Component
+class DamageText : public ursine::ecs::Component
 {
     NATIVE_COMPONENT
 public:

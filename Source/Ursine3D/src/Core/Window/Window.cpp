@@ -27,6 +27,7 @@ namespace ursine
         , m_isFocused( true )
         , m_isFullscreen( false )
         , m_isShown( false )
+        , m_isMaximized( false )
         , m_id( SDL_GetWindowID( handle ) )
         , m_manager( manager )
         , m_handle( handle )
@@ -41,6 +42,34 @@ namespace ursine
     Window::~Window(void)
     {
         SDL_DestroyWindow( m_handle );
+    }
+
+    void Window::SetTitle(const std::string &title)
+    {
+        SDL_SetWindowTitle( m_handle, title.c_str( ) );
+    }
+
+    void Window::SetBordered(bool bordered)
+    {
+        SDL_SetWindowBordered( m_handle, bordered ? SDL_TRUE : SDL_FALSE );
+    }
+
+    void Window::SetResizable(bool resizable)
+    {
+#if defined(PLATFORM_WINDOWS)
+
+        auto hwnd = static_cast<HWND>( GetPlatformHandle( ) );
+
+        auto styleFlags = GetWindowLong( hwnd, GWL_STYLE );
+
+        if (resizable)
+            utils::FlagSet( styleFlags, WS_SIZEBOX );
+        else
+            utils::FlagUnset( styleFlags, WS_SIZEBOX );
+
+        SetWindowLong( hwnd, GWL_STYLE, styleFlags );
+
+#endif
     }
 
     const Vec2 &Window::GetSize(void) const
@@ -146,6 +175,29 @@ namespace ursine
         m_isFullscreen = fullscreen;
     }
 
+    bool Window::IsMaximized(void) const
+    {
+        return m_isMaximized;
+    }
+
+    void Window::SetMaximized(bool maximized)
+    {
+        if (maximized)
+            SDL_MaximizeWindow( m_handle );
+        else
+            SDL_RestoreWindow( m_handle );
+
+        m_isMaximized = maximized;
+    }
+
+    void Window::SetMinimized(bool minimized)
+    {
+        if (minimized)
+            SDL_MinimizeWindow( m_handle );
+        else
+            SDL_RestoreWindow( m_handle );
+    }
+
     bool Window::IsShown(void) const
     {
         return m_isShown;
@@ -165,9 +217,9 @@ namespace ursine
         m_isShown = show;
     }
 
-    void Window::SetIcon(const std::string &filename)
+    void Window::SetIcon(const std::string &fileName)
     {
-        auto surface = IMG_Load( filename.c_str( ) );
+        auto surface = IMG_Load( fileName.c_str( ) );
 
         SDL_SetWindowIcon( m_handle, surface );
 

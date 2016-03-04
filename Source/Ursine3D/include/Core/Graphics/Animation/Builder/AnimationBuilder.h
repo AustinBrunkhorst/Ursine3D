@@ -23,9 +23,11 @@
 
 namespace ursine
 {
-    namespace graphics{namespace ufmt_loader{
+    namespace graphics {
+        namespace ufmt_loader {
         class ModelInfo;
-    }}
+        }
+    }
 
     class AnimationBuilder
     {

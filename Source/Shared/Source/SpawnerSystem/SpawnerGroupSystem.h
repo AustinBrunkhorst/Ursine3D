@@ -23,15 +23,13 @@ class SpawnerGroupSystem : public ursine::ecs::EntitySystem
     ENTITY_SYSTEM;
 
 public:
-    
     SpawnerGroupSystem(ursine::ecs::World *world);
 
 private:
-
     void OnInitialize(void) override;
     void OnRemove(void) override;
 
-    void OnAfterLoad(void) override;
+    void OnSceneReady(ursine::Scene *scene) override;
 
     void onUpdate(EVENT_HANDLER(World));
 

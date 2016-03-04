@@ -38,6 +38,10 @@
 #include "GfxAPI.h"
 #include "Color.h"
 
+/// Resource Management
+
+#include "ResourcePipeline.h"
+
 /// UI
 
 #include "UIManager.h"

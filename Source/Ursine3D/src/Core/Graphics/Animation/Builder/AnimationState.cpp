@@ -17,6 +17,9 @@
 #include "AnimationBuilder.h"
 #include "Notification.h"
 
+#include "AnimationClipData.h"
+#include "Component.h"
+
 namespace ursine
 {
     AnimationState::AnimationState()
@@ -47,7 +50,7 @@ namespace ursine
     {
         m_name = name;
     }
-
+    
     float AnimationState::GetTimePosition(void) const
     {
         return m_timePos;
@@ -78,13 +81,13 @@ namespace ursine
     {
         return m_animname;
     }
-
+    
     void AnimationState::SetAnimationName(const std::string& name)
     {
         if ("" == name)
             return;
         m_animname = name;
-
+        
         Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
         if (!targetAnimation)
         {
@@ -130,10 +133,8 @@ namespace ursine
         m_transPos = tPos;
     }
     
-    void AnimationState::PlayingAnimation()//const float deltaTime)
+    void AnimationState::PlayingAnimation(void)
     {
-        //IncrementTimePosition(deltaTime);
-
         unsigned keyframeCount1 = m_animation->GetRigKeyFrameCount();
         auto &curr_firstFrame = m_animation->GetKeyframe(0, 0);
         auto &curr_lastFrame = m_animation->GetKeyframe(keyframeCount1 - 1, 0);

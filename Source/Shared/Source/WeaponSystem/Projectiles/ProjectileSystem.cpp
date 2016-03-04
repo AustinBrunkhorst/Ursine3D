@@ -21,7 +21,7 @@ ProjectileSystem::ProjectileSystem( ursine::ecs::World * world )
 {
 }
 
-void ProjectileSystem::Process( ursine::ecs::Entity * entity )
+void ProjectileSystem::Process(const ursine::ecs::EntityHandle &entity)
 {
     entity->GetComponent<Projectile>( )->Update( ursine::Application::Instance->GetDeltaTime( ) );
 }

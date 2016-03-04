@@ -28,17 +28,17 @@ namespace ursine
 
         void Renderable::Initialize()
         {
-			m_useOverdraw = false;
-			m_useDebugRendering = false;
+            m_useOverdraw = false;
+            m_useDebugRendering = false;
             m_mask = 0;
         }
 
-        void Renderable::SetEntityUniqueID(const ecs::EntityUniqueID id)
+        void Renderable::SetEntityID(ecs::EntityID id)
         {
             m_entityID = id;
         }
 
-        ecs::EntityUniqueID Renderable::GetEntityUniqueID() const
+        ecs::EntityID Renderable::GetEntityID() const
         {
             return m_entityID;
         }
@@ -109,18 +109,48 @@ namespace ursine
         //model3d
         void Model3D::Initialize(void)
         {
-			Renderable::Initialize( );
+            Renderable::Initialize();
 
-            m_modelResourceName = "Cube";
-            m_materialTextureName = "UV";
+            m_textureHandle = INTERNAL_BLANK_TEX;
+            m_modelHandle = 0;
 
-            m_emissive = 0.45f;
+            m_emissive = 0.0f;
             m_specPow = 0;
             m_specIntensity = 0;
             SetOverdraw(false);
             SetDebug(false);
             m_color = Color(1, 1, 1, 1);
             m_meshIndex = -1;
+        }
+
+        const char *Model3D::GetModelName(void)
+        {
+            return m_modelResourceName.c_str();
+        }
+
+        void Model3D::SetModelName(std::string modelName)
+        {
+            m_modelResourceName = modelName;
+        }
+
+        GfxHND Model3D::GetModelHandle(void) const
+        {
+            return m_modelHandle;
+        }
+
+        void Model3D::SetModelHandle(GfxHND handle)
+        {
+            m_modelHandle = handle;
+        }
+
+        GfxHND Model3D::GetTextureHandle()
+        {
+            return m_textureHandle;
+        }
+
+        void Model3D::SetTextureHandle(GfxHND handle)
+        {
+            m_textureHandle = handle;
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
@@ -130,62 +160,72 @@ namespace ursine
             m_specIntensity = intensity;
         }
 
-	    void Model3D::GetMaterialData(float &emiss, float &pow, float &intensity)
+        void Model3D::GetMaterialData(float &emiss, float &pow, float &intensity) const
         {
             emiss = m_emissive;
             pow = m_specPow;
             intensity = m_specIntensity;
         }
 
-		void Model3D::SetEmissive(float emiss)
-		{
-			m_emissive = emiss;
-		}
-
-		float Model3D::GetEmissive(void) const
-		{
-			return m_emissive;
-		}
-
-		void Model3D::SetSpecularPower(float power)
-		{
-			m_specPow = power;
-		}
-
-		float Model3D::GetSpecularPower(void) const
-		{
-			return m_specPow;
-		}
-
-		void Model3D::SetSpecularIntensity(float intensity)
-		{
-			m_specIntensity = intensity;
-		}
-
-		float Model3D::GetSpecularIntensity(void) const
-		{
-			return m_specIntensity;
-		}
-
-		void Model3D::SetAnimationTime(const float time)
-		{
-			m_animationTime = time;
-		}
-
-		float & Model3D::GetAnimationTime(void)
-		{
-			// TODO: insert return statement here
-			return m_animationTime;
-		}
-
-        void Model3D::SetColor(const Color color)
+        float Model3D::GetEmissive(void) const
         {
-            m_color = color;
+            return m_emissive;
+        }
+
+        void Model3D::SetEmissive(float emiss)
+        {
+            m_emissive = emiss;
+        }
+
+        float Model3D::GetSpecularPower(void) const
+        {
+            return m_specPow;
+        }
+
+        void Model3D::SetSpecularPower(float power)
+        {
+            m_specPow = power;
+        }
+
+        float Model3D::GetSpecularIntensity(void) const
+        {
+            return m_specIntensity;
+        }
+
+        void Model3D::SetSpecularIntensity(float intensity)
+        {
+            m_specIntensity = intensity;
+        }
+
+        float & Model3D::GetAnimationTime(void)
+        {
+            // TODO: insert return statement here
+            return m_animationTime;
+        }
+
+        void Model3D::SetAnimationTime(const float time)
+        {
+            m_animationTime = time;
+        }
+
+        bool Model3D::GetShadowCaster(void) const
+        {
+            return m_shadowCaster;
+        }
+
+        void Model3D::SetShaderCaster(bool castShadow)
+        {
+            m_shadowCaster = castShadow;
         }
 
         const Color &Model3D::GetColor() const
         {
             return m_color;
+        }
+
+        void Model3D::SetColor(const Color color)
+        {
+            m_color = color;
         }
 
         std::vector<SMat4>& Model3D::GetMatrixPalette()
@@ -203,38 +243,6 @@ namespace ursine
             m_meshIndex = index;
         }
 
-        bool Model3D::GetShadowCaster(void) const
-        {
-            return m_shadowCaster;
-        }
-
-        void Model3D::SetShaderCaster(bool castShadow)
-        {
-            m_shadowCaster = castShadow;
-        }
-
-
-        const char *Model3D::GetModelName(void)
-        {
-            return m_modelResourceName.c_str();
-        }
-
-        void Model3D::SetModel(std::string modelName)
-        {
-            m_modelResourceName = modelName;
-        }
-
-        const char *Model3D::GetMaterialslName(void)
-        {
-            return m_materialTextureName.c_str();
-        }
-
-        void Model3D::SetMaterial(std::string materialName)
-        {
-            m_materialTextureName = materialName;
-        }
-
-
         ///////////////////////////////////////////////////////////////////
         //billboard2d
         Billboard2D::Billboard2D(void)
@@ -242,6 +250,7 @@ namespace ursine
             m_textureName = "Default";
             m_width = 1;
             m_height = 1;
+            m_textureHandle = 0;
         }
 
         const char *Billboard2D::GetTextureName(void)
@@ -252,6 +261,16 @@ namespace ursine
         void Billboard2D::SetTexture(std::string texName)
         {
             m_textureName = texName;
+        }
+
+        GfxHND Billboard2D::GetTextureHandle(void) const
+        {
+            return m_textureHandle;
+        }
+
+        void Billboard2D::SetTextureHandle(GfxHND handle)
+        {
+            m_textureHandle = handle;
         }
 
         void Billboard2D::SetDimensions(float width, float height)
@@ -291,7 +310,7 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////
         // universal light
-        void Light::Initialize(void) 
+        void Light::Initialize(void)
         {
             m_type = LIGHT_DIRECTIONAL;
             m_position = SVec3(0, 0, 0);
@@ -302,7 +321,7 @@ namespace ursine
 
             m_spotlightAngles = Vec2(15, 30);
 
-            Renderable::Initialize( );
+            Renderable::Initialize();
         }
 
         Light::LightType Light::GetType(void)
@@ -400,7 +419,7 @@ namespace ursine
             m_spotlightTransform = transf;
         }
 
-        const SMat4& Light::GetSpotlightTransform()
+        const SMat4& Light::GetSpotlightTransform() const
         {
             return m_spotlightTransform;
         }
@@ -416,7 +435,7 @@ namespace ursine
         {
             m_backIndex = 0;
             Renderable::Initialize();
-            m_textureName = "Blank";
+            m_textureHandle = 0;
             m_useAdditive = true;
             m_worldSpace = true;
         }
@@ -443,7 +462,7 @@ namespace ursine
 
         unsigned ParticleSystem::GetParticleVectorSize(void) const
         {
-            return static_cast<unsigned>(m_gpuParticleData.size( ));
+            return static_cast<unsigned>(m_gpuParticleData.size());
         }
 
         unsigned ParticleSystem::GetActiveParticleCount(void) const
@@ -460,13 +479,13 @@ namespace ursine
         {
             // no available particles, we need to expand
             // should be amortized
-            if ( GetInactiveParticleCount() == 0 )
+            if (GetInactiveParticleCount() == 0)
             {
                 // push new particle to the back
-                m_gpuParticleData.push_back(Particle_GPU( ));
+                m_gpuParticleData.push_back(Particle_GPU());
                 m_cpuParticleData.push_back(Particle_CPU());
             }
-            
+
             // bam! allocated
             return m_backIndex++;
         }
@@ -503,24 +522,26 @@ namespace ursine
             m_particleColor = color;
         }
 
-        const std::string & ParticleSystem::GetParticleTexture(void) const
+        GfxHND ParticleSystem::GetTextureHandle(void) const
         {
-            return m_textureName;
+            return m_textureHandle;
         }
 
-        void ParticleSystem::SetParticleTexture(const std::string & texName)
+        void ParticleSystem::SetTextureHandle(GfxHND handle)
         {
-            m_textureName = texName;
+            m_textureHandle = handle;
         }
+
         bool ParticleSystem::GetAdditive(void) const
         {
             return m_useAdditive;
         }
+
         void ParticleSystem::SetAdditive(const bool useAdditive)
         {
             m_useAdditive = useAdditive;
         }
-             
+
         bool ParticleSystem::GetSystemSpace(void) const
         {
             return m_worldSpace;
@@ -549,6 +570,7 @@ namespace ursine
             m_alignment = ALIGN_LEFT;
             m_filter = true;
             m_color = Color::White;
+            m_fontHandle = 0;
         }
 
         float SpriteText::GetSize(void) const
@@ -637,6 +659,15 @@ namespace ursine
         void SpriteText::SetColor(const Color &color)
         {
             m_color = color;
+        }
+
+        GfxHND SpriteText::GetFontHandle(void) const
+        {
+            return m_fontHandle;
+        }
+        void SpriteText::SetFontHandle(GfxHND handle)
+        {
+            m_fontHandle = handle;
         }
     }
 }

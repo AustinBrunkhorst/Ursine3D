@@ -56,37 +56,37 @@ namespace ursine
                 std::string ExplosionEffectArchetype,
                 GetEffectName,
                 SetEffectName
-                );
+            );
 
             EditorField(
                 float Radius,
                 GetRadius,
                 SetRadius
-                );
+            );
 
             EditorField(
                 float Damage,
                 GetDamage,
                 SetDamage
-                );
+            );
 
             EditorField(
                 float DamageFalloffPercent,
                 GetDamageFallOff,
                 SetDamageFallOff
-                );
+            );
             
             EditorField(
                 bool DamagesPlayers,
                 GetDamagePlayers,
                 SetDamagePlayers
-                );
+            );
 
             EditorField(
                 bool DamagesEnemies,
                 GetDamageEnemies,
                 SetDamageEnemies
-                );
+            );
 
         private:
             std::string m_effectName;
@@ -106,6 +106,6 @@ namespace ursine
             // determines if the explosion damages enemies
             bool m_damageEnemies;
 
-        } Meta(Enable, DisplayName("Explosion"));
+        } Meta(Enable, DisplayName( "Explosion" ));
     }
 }

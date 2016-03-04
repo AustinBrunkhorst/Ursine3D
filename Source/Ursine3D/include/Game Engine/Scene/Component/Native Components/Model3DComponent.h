@@ -19,8 +19,16 @@
 #include "RenderMask.h"
 #include "ModelResource.h"
 
+#include "TextureData.h"
+#include "ModelData.h"
+
 namespace ursine
 {
+    namespace graphics
+    {
+        class GfxAPI;
+    }
+
     namespace ecs
     {
         class Model3D : public Component
@@ -57,16 +65,18 @@ namespace ursine
                 SetColor
             );
 
-            EditorField(
-                std::string modelName,
-                GetModelResourceName,
-                SetModelResourceName
+            EditorResourceField(
+                ursine::resources::ModelData,
+                model,
+                GetModel,
+                SetModel
             );
 
-            EditorField(
-                std::string materialName,
-                GetMaterial,
-                SetMaterial
+            EditorResourceField(
+                ursine::resources::TextureData,
+                texture,
+                GetTexture,
+                SetTexture
             );
 
             EditorMeta(BitMaskEditor)
@@ -82,12 +92,14 @@ namespace ursine
                 SetEmissive
             );
 
+            EditorMeta(InputRange(0.0f, 255.0f, 1.0f, "{{value.toPrecision( 3 )}}"))
             EditorField(
                 float specularPower,
                 GetSpecularPower,
                 SetSpecularPower
             );
 
+            EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
             EditorField(
                 float specularIntensity,
                 GetSpecularIntensity,
@@ -105,18 +117,18 @@ namespace ursine
             ~Model3D(void);
 
             void OnInitialize(void) override;
+            void OnSceneReady(Scene *scene) override;
 
             std::vector<SMat4> &GetMatrixPalette(void);
 
-            //get/set model name
-            void SetModelResourceName(const std::string &name);
-            const std::string &GetModelResourceName(void) const;
+            const resources::ResourceReference &GetModel(void) const;
+            void SetModel(const resources::ResourceReference &model);
+
+            const resources::ResourceReference &GetTexture(void) const;
+            void SetTexture(const resources::ResourceReference &texture);
 
             // get the model resource to access the mesh
             const graphics::ModelResource *GetModelResource(void) const;
-
-            void SetMaterial(const std::string &name);
-            const std::string &GetMaterial(void) const;
 
             //get/set color
             void SetColor(const ursine::Color &color);
@@ -158,16 +170,20 @@ namespace ursine
             void OnDeserialize(const Json &input) override;
 
         private:
+            graphics::GfxAPI *m_graphics;
 
             // This model component's model in the renderer
             graphics::Model3D *m_model;
 
             RenderableComponentBase *m_base;
-
-            std::string m_modelName;
-            std::string m_materialName;
+            
+            resources::ResourceReference m_modelResource;
+            resources::ResourceReference m_textureResource;
 
             void updateRenderer(void);
+
+            void invalidateTexture(bool unload = true);
+            void invalidateModel(bool unload = true);
 
         } Meta(Enable, WhiteListMethods, DisplayName( "Model3D" ));
     }

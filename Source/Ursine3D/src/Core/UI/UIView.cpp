@@ -27,8 +27,13 @@
 
 namespace ursine
 {
-    UIView::UIView(Window::Handle window, const CefBrowserSettings &settings, const std::string &url)
-        : m_window( window )
+    UIView::UIView(
+        Window::Handle window, 
+        const CefBrowserSettings &settings,
+        const std::string &url
+    )
+        : EventDispatcher( this )
+        , m_window( window )
     {
         CefWindowInfo info;
 
@@ -117,8 +122,17 @@ namespace ursine
         return m_browser != nullptr;
     }
 
-    void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, const Json &data)
+    void UIView::Message(
+        UIMessageCommand command, 
+        const std::string &target, 
+        const std::string &message, 
+        const Json &data
+    )
     {
+        // noop if the browser is currently loading
+        if (m_browser->IsLoading( ))
+            return;
+
         auto processMessage = CefProcessMessage::Create( target );
 
         auto args = processMessage->GetArgumentList( );
@@ -142,7 +156,17 @@ namespace ursine
         return this;
     }
 
-    bool UIView::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString &message, const CefString &source, int line)
+    CefRefPtr<CefLoadHandler> UIView::GetLoadHandler(void)
+    {
+        return this;
+    }
+
+    bool UIView::OnConsoleMessage(
+        CefRefPtr<CefBrowser> browser, 
+        const CefString &message, 
+        const CefString &source, 
+        int line
+    )
     {
         SetConsoleColor( CC_TEXT_BRIGHT_GREEN );
 
@@ -150,15 +174,15 @@ namespace ursine
 
         SetConsoleColor( CC_TEXT_BRIGHT_YELLOW );
 
-        auto filename = fs::path( source ).filename( ).string( );
+        auto fileName = fs::path( source ).filename( ).string( );
 
-        if (!filename.empty( ))
+        if (!fileName.empty( ))
         {
             printf( "[" );
 
             SetConsoleColor( CC_TEXT_YELLOW );
 
-            printf( "%s", filename.c_str( ) );
+            printf( "%s", fileName.c_str( ) );
 
             SetConsoleColor( CC_TEXT_WHITE );
 
@@ -182,7 +206,12 @@ namespace ursine
         return false;
     }
 
-    void UIView::OnCursorChange(CefRefPtr<CefBrowser> browser, CefCursorHandle cursor, CursorType type, const CefCursorInfo &customCursorInfo)
+    void UIView::OnCursorChange(
+        CefRefPtr<CefBrowser> browser, 
+        CefCursorHandle cursor, 
+        CursorType type, 
+        const CefCursorInfo &customCursorInfo
+    )
     {
         auto handle = m_window->GetPlatformHandle( );
 
@@ -196,6 +225,15 @@ namespace ursine
 
         SetCursor( cursor );
 #endif
+    }
+
+    void UIView::OnLoadEnd(
+        CefRefPtr<CefBrowser> browser, 
+        CefRefPtr<CefFrame> frame, 
+        int httpStatusCode
+    )
+    {
+        Dispatch( UI_LOADED, EventArgs::Empty );
     }
 
     void UIView::onKeyboard(EVENT_HANDLER(KeyboardManager))

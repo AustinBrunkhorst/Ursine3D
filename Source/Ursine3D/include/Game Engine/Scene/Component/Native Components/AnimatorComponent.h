@@ -22,6 +22,7 @@
 #include "Array.h"
 #include "Model3DComponent.h"
 #include "TransformComponent.h"
+#include "AnimationClipData.h"
 
 namespace ursine
 {
@@ -36,33 +37,34 @@ namespace ursine
                 std::string currentState,
                 GetcurrState,
                 SetcurrState
-                );
+            );
 
             EditorField(
                 std::string futureState,
                 GetfutState,
                 SetfutState
-                );
+            );
 
             //Slider
             // blending starting position of current state
             EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
-                EditorField(
-                    float currtransPos,
-                    GetcurrTransPosRatio,
-                    SetcurrTransPosRatio
-                    );
+            EditorField(
+                float currtransPos,
+                GetcurrTransPosRatio,
+                SetcurrTransPosRatio
+            );
 
+            //Slider
             // blending end position of future state
             EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
-                EditorField(
-                    float futtransPos,
-                    GetfutTransPosRatio,
-                    SetfutTransPosRatio
-                    );
+            EditorField(
+                float futtransPos,
+                GetfutTransPosRatio,
+                SetfutTransPosRatio
+            );
 
             Meta(Enable)
-                StateBlender(void);
+            StateBlender(void);
 
             const std::string &GetcurrState(void) const;
             void SetcurrState(const std::string& cstate);
@@ -83,7 +85,7 @@ namespace ursine
             void SetfutTransFrm(const unsigned int& tFrm);
 
             const StateBlender *GetStateBlenderByNames(const std::string& currst, const std::string& futst);
-
+            
         private:
             // name of current state
             std::string m_currState;
@@ -103,16 +105,13 @@ namespace ursine
             WhiteListMethods,
             EnableArrayType,
             DisplayName("State Blender")
-            );
-
-        /////////////////////////////////////////////////////////////
+        );
 
         class Animator : public Component
         {
             NATIVE_COMPONENT;
 
         public:
-
             EditorButton(
                 ImportAnimation,
                 "Import Animation"
@@ -123,16 +122,18 @@ namespace ursine
                 "Import Rig"
             );
 
+            // Get animation as a resource not by name
+            EditorResourceField(
+                ursine::resources::AnimationClipData,
+                clip,
+                GetClip,
+                SetClip
+            );
+
             EditorField(
                 std::string currentState,
                 GetCurrentState,
                 SetCurrentState
-            );
-
-            EditorField(
-                std::string animation,
-                GetAnimation,
-                SetAnimation
             );
 
             EditorField(
@@ -158,7 +159,7 @@ namespace ursine
                 IsDebug,
                 SetDebug
             );
-
+            
             EditorField(
                 float timeScalar,
                 GetTimeScalar,
@@ -173,7 +174,7 @@ namespace ursine
 
             // stick this in a system
             void UpdateAnimation(const float dt);
-            
+
             void Debugging(const AnimationRig& _rig, const std::vector<SMat4>& vec);
 
             // getter / setter //////////////////////////////////////
@@ -185,24 +186,22 @@ namespace ursine
 
             bool IsDebug(void) const;
             void SetDebug(const bool useDebug);
-
+            
             float GetTimeScalar(void) const;
             void SetTimeScalar(const float scalar);
 
             const std::string &GetRig(void) const;
             void SetRig(const std::string &rig);
-
+            
             float GetAnimationTimePosition(void) const;
             void SetAnimationTimePosition(const float position);
 
+            const resources::ResourceReference &GetClip(void) const;
+            void SetClip(const resources::ResourceReference &clip);
+            void invalidateClip(void);
+
             const std::string &GetCurrentState(void) const;
             void SetCurrentState(const std::string &state);
-
-            const std::string &GetStateName(void) const;
-            void SetStateName(const std::string &state);
-
-            const std::string &GetAnimation(void) const;
-            void SetAnimation(const std::string &name);
 
             // Array of animation states
             ursine::Array<ursine::AnimationState> stArray;
@@ -222,7 +221,7 @@ namespace ursine
             // save and load
             // => save both Arrays
             // => when load model, don't just load these, but should also load the animation if it doesn't exist
-
+            
         private:
             bool m_playing;
             bool m_debug;
@@ -230,27 +229,34 @@ namespace ursine
             float m_speedScalar;
 
             std::string m_rig;
-            ursine::ecs::Entity *m_rigRoot;
+            EntityHandle m_rigRoot;
             std::string m_curStName;
             std::string m_futStName;
             std::string m_animationName;
             std::string m_stateName;
             std::vector<Animation*> m_animlist;
 
-            static void recursClearChildren(const std::vector< Handle<Transform> > &children);
+            resources::ResourceReference m_clipResource;
+
+            static void recursClearChildren(const std::vector<Handle<Transform>> &children);
             void clearChildren(void);
             void importAnimation(void);
-            void importRig(void);
             void createBoneEntities(ursine::ecs::Transform *parent, const AnimationBone &bone);
+
+            void importRig(void);
 
             void updateRigTransforms(ursine::ecs::Component::Handle<Transform> boneTrans, const AnimationBone &boneData);
 
+            void enableDeletionOnEntities(const ursine::ecs::EntityHandle &entity);
+
+            // try make state can get animation by EditorResourceField
+
         } Meta(
-            Enable,
-            WhiteListMethods,
+            Enable, 
+            WhiteListMethods, 
             DisplayName("Animator")
-            ) EditorMeta(
+        ) EditorMeta(
                 RequiresComponents(typeof(ursine::ecs::Model3D))
-                );
+        );
     }
 }

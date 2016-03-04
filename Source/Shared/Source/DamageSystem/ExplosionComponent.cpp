@@ -6,48 +6,47 @@
 #include "Vec3.h"
 #include "HealthComponent.h"
 
-
 namespace ursine
 {
     namespace ecs
     {
-        NATIVE_COMPONENT_DEFINITION(ExplosionComponent);
+        NATIVE_COMPONENT_DEFINITION( ExplosionComponent );
 
         static const int g_players = 0;
         static const int g_enemies = 1;
 
-        ExplosionComponent::ExplosionComponent(): BaseComponent()
-            , m_effectName("FX_ExplosionBall.uatype")
-            , m_radius(2.0f)
-            , m_damage(1.0f)
-            , m_damageFalloffAmount(0.5)
-            , m_damagePlayers(true)
-            , m_damageEnemies(false)
-        {
-        }
+        ExplosionComponent::ExplosionComponent(void)
+            : BaseComponent( )
+            , m_effectName( "FX_ExplosionBall.uatype" )
+            , m_radius( 2.0f )
+            , m_damage( 1.0f )
+            , m_damageFalloffAmount( 0.5 )
+            , m_damagePlayers( true )
+            , m_damageEnemies( false ) { }
 
         void ExplosionComponent::Explode()
         {
-            Vec3 ourPosition = GetOwner()->GetTransform()->GetWorldPosition();
+            Vec3 ourPosition = GetOwner( )->GetTransform( )->GetWorldPosition( );
 
-            EntityVector entities[2] = {};
+            EntityHandleVector entities[2];
+
             // if we hurt players, get anything with a player id in our radius
             if (m_damagePlayers)
             {
-                entities[g_players] = GetOwner()->GetWorld()->GetEntitiesFromFilter(Filter().All< PlayerID >());
+                entities[ g_players ] = GetOwner( )->GetWorld( )->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
             }
 
             // do the same check for enemies
             if (m_damageEnemies)
             {
-                entities[g_enemies] = GetOwner()->GetWorld()->GetEntitiesFromFilter(Filter().All< AIHorde >());
+                entities[ g_enemies ] = GetOwner( )->GetWorld( )->GetEntitiesFromFilter( Filter( ).All<AIHorde>( ) );
             }
 
-            for (EntityVector &entVec : entities)
+            for (auto &entVec : entities)
             {
                 for (auto dmgEntity : entVec)
                 {
-                    float dist = dmgEntity->GetTransform()->GetWorldPosition().Distance( ourPosition );
+                    float dist = dmgEntity->GetTransform( )->GetWorldPosition( ).Distance( ourPosition );
 
                     if (dist < m_radius)
                     {
@@ -55,37 +54,35 @@ namespace ursine
                         float scaledDmg = m_damage - m_damage * (dist / m_radius) * m_damageFalloffAmount;
 
                         // for now we are going to ignore falloff for testing
-                        auto health = dmgEntity->GetComponent<Health>();
+                        auto health = dmgEntity->GetComponent<Health>( );
 
                         if (health)
-                            health->DealDamage(scaledDmg);
-                    } 
+                            health->DealDamage( scaledDmg );
+                    }
                 }
             }
 
-            auto explosion = GetOwner()->GetWorld()->CreateEntityFromArchetype(
-                WORLD_ARCHETYPE_PATH "FX/"+ m_effectName,
+            auto explosion = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(
+                WORLD_ARCHETYPE_PATH "FX/" + m_effectName,
                 m_effectName + "Explosion"
-                );
+            );
 
+            explosion->GetTransform( )->SetWorldPosition( ourPosition );
 
-
-            explosion->GetTransform()->SetWorldPosition( ourPosition );
-            
-            GetOwner()->Delete();
+            GetOwner( )->Delete( );
         }
 
-        const std::string& ExplosionComponent::GetEffectName() const
+        const std::string &ExplosionComponent::GetEffectName(void) const
         {
             return m_effectName;
         }
 
-        void ExplosionComponent::SetEffectName(const std::string& name)
+        void ExplosionComponent::SetEffectName(const std::string &name)
         {
             m_effectName = name;
         }
 
-        float ExplosionComponent::GetRadius() const
+        float ExplosionComponent::GetRadius(void) const
         {
             return m_radius;
         }
@@ -95,7 +92,7 @@ namespace ursine
             m_radius = rad;
         }
 
-        float ExplosionComponent::GetDamage() const
+        float ExplosionComponent::GetDamage(void) const
         {
             return m_damage;
         }
@@ -105,7 +102,7 @@ namespace ursine
             m_damage = dmg;
         }
 
-        float ExplosionComponent::GetDamageFallOff() const
+        float ExplosionComponent::GetDamageFallOff(void) const
         {
             return m_damageFalloffAmount;
         }
@@ -115,7 +112,7 @@ namespace ursine
             m_damageFalloffAmount = falloff;
         }
 
-        bool ExplosionComponent::GetDamagePlayers() const
+        bool ExplosionComponent::GetDamagePlayers(void) const
         {
             return m_damagePlayers;
         }
@@ -125,7 +122,7 @@ namespace ursine
             m_damagePlayers = dmg;
         }
 
-        bool ExplosionComponent::GetDamageEnemies() const
+        bool ExplosionComponent::GetDamageEnemies(void) const
         {
             return m_damagePlayers;
         }

@@ -20,11 +20,11 @@ class ScaleTool : public EditorTool
 public:
     ScaleTool(Editor *editor, ursine::ecs::World *world);
 
-    void OnEnable(ursine::ecs::EntityUniqueID selected) override;
+    void OnEnable(const ursine::ecs::EntityHandle &selected) override;
     void OnDisable(void) override;
 
-    void OnSelect(ursine::ecs::Entity *entity) override;
-    void OnDeselect(ursine::ecs::Entity *entity) override;
+    void OnSelect(const ursine::ecs::EntityHandle &entity) override;
+    void OnDeselect(const ursine::ecs::EntityHandle &entity) override;
 
     void OnMouseDown(const ursine::MouseButtonArgs &args) override;
     void OnMouseUp(const ursine::MouseButtonArgs &args) override;
@@ -42,9 +42,9 @@ private:
     EditorCameraSystem *m_editorCameraSystem;
 
     // visual representation of the 3 axis
-    ursine::ecs::Entity *m_gizmo;
+    ursine::ecs::EntityHandle m_gizmo;
 
-    ursine::ecs::EntityUniqueID m_selected;
+    ursine::ecs::EntityHandle m_selected;
 
     // Whether or not the user is clicking and dragging on the gizmo
     bool m_dragging;
@@ -77,7 +77,7 @@ private:
     ursine::Vec2 m_screenDir;
 
     // Helper for setting world and screen directions
-    void setDirectionVectors(const ursine::SVec3 &basisVector, ursine::ecs::Entity *selected);
+    void setDirectionVectors(const ursine::SVec3 &basisVector, const ursine::ecs::EntityHandle &selected);
 
     // Helpers for handling the spawned translation archetype
     void enableAxis(void);
@@ -91,5 +91,5 @@ private:
     void disableHover(void);
 
     // recursive helper function
-    void setEntitySerializationToggle(bool toggle, ursine::ecs::Entity *entity);
+    void setEntitySerializationToggle(bool toggle, const ursine::ecs::EntityHandle &entity);
 };

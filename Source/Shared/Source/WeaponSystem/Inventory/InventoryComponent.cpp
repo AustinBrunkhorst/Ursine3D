@@ -51,7 +51,7 @@ namespace
 
 WeaponSlotInfo::WeaponSlotInfo(WeaponType index, const std::string& weapon) :
     m_weaponSlotType( index ),
-    m_weaponLoaded( nullptr ),
+    m_weaponLoaded( ),
     m_weaponToLoad( weapon ),
     m_ammoCount( -1 ),
     m_clipCount( -1 )
@@ -102,14 +102,14 @@ void Inventory::OnInitialize(void)
 void Inventory::Init(void)
 {
     // try to get camera position
-    ursine::ecs::Camera* cam = GetOwner( )->GetComponentInChildren<ursine::ecs::Camera>( );
+    auto *cam = GetOwner( )->GetComponentInChildren<ecs::Camera>( );
 
     if ( cam )
     {
         m_cameraHandle = cam->GetOwner( )->GetTransform( );
 
         // try to get right arm position
-        ursine::ecs::Entity* arm = cam->GetOwner( )->GetChildByName("RightArm");
+        auto arm = cam->GetOwner( )->GetChildByName( "RightArm" );
 
         if ( arm )
         {

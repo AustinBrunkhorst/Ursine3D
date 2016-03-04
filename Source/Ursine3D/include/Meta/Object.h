@@ -12,6 +12,9 @@
 
 #include "Json.h"
 
+// Constructs a variant that wraps an object
+#define ObjectVariant(object) ursine::meta::Variant { object, ursine::meta::variant_policy::WrapObject( ) }
+
 namespace ursine
 {
     namespace meta

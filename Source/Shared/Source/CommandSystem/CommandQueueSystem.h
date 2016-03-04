@@ -21,6 +21,6 @@ public:
     CommandQueueSystem(ursine::ecs::World *world);
 
 protected:
-    void Process(ursine::ecs::Entity *entity) override;
+    void Process(const ursine::ecs::EntityHandle &entity) override;
 
 } Meta(Enable);

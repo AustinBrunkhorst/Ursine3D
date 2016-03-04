@@ -45,8 +45,8 @@ namespace ursine
             // Called when the system is initialized
             virtual void OnInitialize(void) { }
 
-            // Called when the world completed serialization
-            virtual void OnAfterLoad(void) { }
+            // Called when a new scene is ready
+            virtual void OnSceneReady(Scene *scene) { }
 
             // Called when the system is removed from the world
             virtual void OnRemove(void) { }

@@ -45,7 +45,7 @@ void SpawnerGroupSystem::OnRemove(void)
         .Off( WORLD_ENTITY_COMPONENT_REMOVED, &SpawnerGroupSystem::onComponentRemoved );
 }
 
-void SpawnerGroupSystem::OnAfterLoad(void)
+void SpawnerGroupSystem::OnSceneReady(Scene *scene)
 {
     auto entities = m_world->GetEntitiesFromFilter( Filter( ).All<SpawnerGroup>( ) );
 
@@ -53,6 +53,7 @@ void SpawnerGroupSystem::OnAfterLoad(void)
     {
         // Add the spawner group to our internal array so we can update it
         auto group = entity->GetComponent<SpawnerGroup>( );
+
         addSpawnerGroup( group );
     }
 }

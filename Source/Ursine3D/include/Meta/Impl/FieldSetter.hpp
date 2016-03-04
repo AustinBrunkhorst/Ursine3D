@@ -22,6 +22,8 @@ namespace ursine
 
             void SetValue(Variant &obj, const Variant &value) override
             {
+                UAssert( value.IsValid( ), "Setting invalid value." );
+
                 auto &instance = obj.GetValue<ClassType>( );
 
                 (instance.*m_method)( value.GetValue<NonReferenceArgType>( ) );
@@ -47,6 +49,8 @@ namespace ursine
 
             void SetValue(Variant &obj, const Variant &value) override
             {
+                UAssert( value.IsValid( ), "Setting invalid value." );
+
                 auto &instance = obj.GetValue<ClassType>( );
 
                 const_cast<NonConstFieldType&>( instance.*m_field ) = value.GetValue<FieldType>( );

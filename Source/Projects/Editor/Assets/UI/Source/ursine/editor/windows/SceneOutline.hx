@@ -30,6 +30,7 @@ class SceneOutline extends WindowHandler {
         m_rootView = new TreeView( );
         {
             m_rootView.setAsRoot( true );
+            m_rootView.enableModification = true;
         }
 
         m_entityItems = new Map<UInt, TreeViewItem>( );
@@ -41,7 +42,7 @@ class SceneOutline extends WindowHandler {
         resetScene( );
 
         Editor.instance.broadcastManager.getChannel( 'SceneManager' )
-            .on( 'Reset', resetScene );
+            .on( 'WorldChanged', resetScene );
 
         Editor.instance.broadcastManager.getChannel( 'EntityManager' )
             .on( EntityEvent.EntityAdded, onEntityAdded )

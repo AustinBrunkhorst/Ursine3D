@@ -151,10 +151,24 @@ namespace ursine
             void SetRenderMask(ursine::ecs::RenderMask mask);
 
             SVec3 ScreenToWorld(const Vec2 &screenPos, float depth) const;
-			Vec2 WorldToScreen(const SVec3 &worldPos) const;
+            Vec2 WorldToScreen(const SVec3 &worldPos) const;
 
-			// grabs object position from the gpu
-			SVec3 GetMouseWorldPosition(void) const;
+            // grabs object position from the gpu
+            SVec3 GetMouseWorldPosition(void) const;
+
+            ///////////////////////////////////////////////////////////////////
+            // Editor Specific Functionality
+            ///////////////////////////////////////////////////////////////////
+        
+        #if defined(URSINE_WITH_EDITOR)
+
+            URSINE_TODO( "Cache this information in the project temp" );
+
+            Meta(Disable)
+            float lookZoomFactor;
+
+            Meta(Disable)
+            SVec3 focusPosition;
 
             bool IsEditorCamera(void) const;
             void SetEditorCamera(bool editorCamera);
@@ -163,21 +177,26 @@ namespace ursine
             // if selected. Used by the editor
             void SetEditorSelectionMode(bool selected);
 
+            void OnSerialize(Json::object &output) const override;
+            void OnDeserialize(const Json &input) override;
+
+        #endif
+
             const Color &GetClearColor(void) const;
             void SetClearColor(const Color &color);
+
         private:
             bool m_active;
             bool m_isEditorCamera;
             bool m_inEditorSelectionMode;
 
             int m_renderLayer;
-			unsigned m_renderMask;
+            unsigned m_renderMask;
 
             Vec2 m_viewportPosition;
             Vec2 m_viewportSize;
 
             graphics::GfxAPI *m_graphics;
-
         } Meta(Enable, WhiteListMethods, DisplayName( "Camera" ));
     }
 }

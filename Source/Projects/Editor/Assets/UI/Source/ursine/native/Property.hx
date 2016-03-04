@@ -8,4 +8,5 @@ class Property {
     public static var InputRange = "InputRange";
     public static var MultiLineEditor = "MultiLineEditor";
     public static var Annotation = "Annotation";
+    public static var ResourceType = "ResourceType";
 }

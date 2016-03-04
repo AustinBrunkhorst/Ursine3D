@@ -24,9 +24,6 @@ public:
     TimeDeathSystem( ursine::ecs::World* world );
 
 protected:
-    void Process( ursine::ecs::Entity* entity );
-
+    void Process(const ursine::ecs::EntityHandle &entity) override;
 
 } Meta( Enable );
-
-

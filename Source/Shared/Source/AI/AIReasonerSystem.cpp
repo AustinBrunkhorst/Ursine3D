@@ -84,7 +84,7 @@ namespace ursine
             // try to grab the player as the target
             auto players = m_world->GetEntitiesFromFilter( Filter().All< PlayerID >() );
 
-            Entity *target = nullptr;
+            EntityHandle target;
 
             // if we can't find a player, just go to the closest waypoint
             if (players.size() < 1)

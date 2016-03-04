@@ -33,6 +33,8 @@ namespace ursine
         : public EventDispatcher<ApplicationEventType>
     {
     public:
+        typedef std::function<void(void)> Task;
+
         static Application *Instance;
 
         Application(int argc, char *argv[]);
@@ -57,9 +59,7 @@ namespace ursine
         template<typename SystemType>
         SystemType *CoreSystem(void);
 
-        typedef std::function<void(void)> MainThreadCallback;
-
-        void ExecuteOnMainThread(MainThreadCallback callback);
+		static void PostMainThread(Task task);
 
     protected:
         // determines if the application should continue updating
@@ -83,11 +83,11 @@ namespace ursine
 
         EventDispatcher<uint32> m_platformEvents;
 
-        std::mutex m_mutex;
+		std::mutex m_mutex;
 
-        std::vector<MainThreadCallback> m_mainThreadCallbacks;
+		std::vector<Task> m_tasks;
 
-        void executeMainThreadCallbacks(void);
+		void flushTasks(void);
     };
 }
 

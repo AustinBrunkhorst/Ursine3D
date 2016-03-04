@@ -13,8 +13,6 @@
 
 #include "RotateTool.h"
 
-#include <EditorConfig.h>
-#include <SystemManager.h>
 #include <CameraComponent.h>
 #include <Model3DComponent.h>
 #include <DebugSystem.h>
@@ -24,41 +22,41 @@ using namespace ecs;
 
 RotateTool::RotateTool(Editor *editor, World *world)
     : EditorTool( editor, world )
-    , m_gizmo( nullptr )
-    , m_selected( -1 )
+    , m_gizmo( )
+    , m_selected( )
     , m_dragging( false )
+    , m_hovering( false )
+    , m_axisType( -1 )
     , m_snapping( false )
     , m_local( false )
     , m_deleteGizmo( false )
-    , m_hovering( false )
-    , m_axisType( -1 )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
 }
 
-void RotateTool::OnEnable(EntityUniqueID selected)
+void RotateTool::OnEnable(const EntityHandle &selected)
 {
     m_selected = selected;
 
-    if (m_selected != -1)
+    if (m_selected)
         enableAxis( );
 }
 
 void RotateTool::OnDisable(void)
 {
-    m_selected = -1;
+    m_selected = EntityHandle::Invalid( );
     m_dragging = false;
     m_snapping = false;
     
     disableAxis( );
 }
 
-void RotateTool::OnSelect(Entity* entity)
+void RotateTool::OnSelect(const EntityHandle &entity)
 {
-    auto prevSelected = m_gizmo != nullptr;
+    auto prevSelected = m_gizmo.IsValid( );
     
-    m_selected = entity->GetUniqueID( );
+    m_selected = entity;
 
     if (!prevSelected)
         enableAxis( );
@@ -66,9 +64,9 @@ void RotateTool::OnSelect(Entity* entity)
     m_deleteGizmo = false;
 }
 
-void RotateTool::OnDeselect(Entity* entity)
+void RotateTool::OnDeselect(const EntityHandle &entity)
 {
-    m_selected = -1;
+    m_selected = EntityHandle::Invalid( );
     
     m_deleteGizmo = true;
 }
@@ -89,7 +87,7 @@ void RotateTool::OnMouseMove(const MouseMoveArgs& args)
 {
     // m_worldDir is the plane normal.  Get distance to rotate about it
 
-    if (m_dragging && m_selected != -1)
+    if (m_dragging && m_selected)
     {
         // Project the delta vector onto the screen direction vector
         auto b = args.positionDelta;
@@ -101,7 +99,7 @@ void RotateTool::OnMouseMove(const MouseMoveArgs& args)
         float dot = a.Dot( b );
         auto proj = ( dot / b.LengthSquared( ) ) * b;
         auto dist = proj.Length( );
-        auto selected = m_world->GetEntityUnique( m_selected )->GetTransform( );
+        auto selected = m_selected->GetTransform( );
 
         if (dot < 0.0f)
             dist = -dist;
@@ -163,9 +161,8 @@ void RotateTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
     }
 }
 
-void RotateTool::setDirectionVectors(const SVec3& basisVector, Entity* selected)
+void RotateTool::setDirectionVectors(const SVec3 &basisVector, const EntityHandle &selected)
 {
-    
     auto computeVec = selected->GetTransform( )->GetWorldRotation( ) * basisVector;
     
     m_worldDir = basisVector;
@@ -211,13 +208,13 @@ void RotateTool::disableAxis(void)
         m_gizmo->Delete( );
     }
 
-    m_gizmo = nullptr;
+    m_gizmo = EntityHandle::Invalid( );
     m_axis = nullptr;
 }
 
 void RotateTool::updateAxis(void)
 {
-    if (m_selected == -1 || m_gizmo == nullptr)
+    if (!m_selected || !m_gizmo)
         return;
 
     // update the size of the gizmo
@@ -228,8 +225,7 @@ void RotateTool::updateAxis(void)
 
     gizTrans->SetWorldScale( SVec3(camVec.Length() * 0.03f ) );
 
-    auto selected = m_world->GetEntityUnique( m_selected );
-    auto selTrans = selected->GetTransform( );
+    auto selTrans = m_selected->GetTransform( );
 
     gizTrans->SetWorldPosition( selTrans->GetWorldPosition( ) );
 
@@ -309,17 +305,18 @@ void RotateTool::updateHoverAxis(void)
 {
     // get the current entity ID the mouse is over
     auto newID = m_graphics->GetMousedOverID();
-    auto entity = m_world->GetEntityUnique(newID);
+    auto entity = m_world->GetEntity( newID );
 
     if (!entity || m_altDown)
     {
         disableHover( );
+
         return;
     }
 
-    auto entityTrans = entity->GetTransform();
+    auto entityTrans = entity->GetTransform( );
 
-    auto root = entityTrans->GetRoot();
+    auto root = entityTrans->GetRoot( );
 
     if (!root)
     {
@@ -327,31 +324,28 @@ void RotateTool::updateHoverAxis(void)
         return;
     }
 
-    auto rootName = root->GetOwner()->GetName();
+    auto rootName = root->GetOwner( )->GetName( );
 
     // if we're clicking on ourselves, set the dragging flag,
     // and the vector we're dragging on
     if (rootName == "RotationGizmo")
     {
-        // Get the selected entity
-        auto selected = m_world->GetEntityUnique(m_selected);
-
         // Get the gizmo's name (the models are under the parent named the axis' name)
         auto name = entityTrans->GetParent()->GetOwner()->GetName();
 
         if ( name == "xAxis" )
         {
-            setDirectionVectors(SVec3::UnitX(), selected);
+            setDirectionVectors(SVec3::UnitX(), m_selected);
             m_axisType = 1;
         }
         else if ( name == "yAxis" )
         {
-            setDirectionVectors(SVec3::UnitY(), selected);
+            setDirectionVectors(SVec3::UnitY(), m_selected);
             m_axisType = 2;
         }
         else if ( name == "zAxis" )
         {
-            setDirectionVectors(SVec3::UnitZ(), selected);
+            setDirectionVectors(SVec3::UnitZ(), m_selected);
             m_axisType = 3;
         }
         else
@@ -395,9 +389,9 @@ void RotateTool::disableHover(void)
     }
 }
 
-void RotateTool::setEntitySerializationToggle(bool toggle, Entity* entity)
+void RotateTool::setEntitySerializationToggle(bool toggle, const EntityHandle &entity)
 {
-    for (auto child : entity->GetTransform( )->GetChildren( ))
+    for (auto &child : entity->GetTransform( )->GetChildren( ))
     {
         setEntitySerializationToggle( toggle, child->GetOwner( ) );
     }

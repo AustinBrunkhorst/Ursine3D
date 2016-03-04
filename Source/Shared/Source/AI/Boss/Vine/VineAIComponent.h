@@ -159,8 +159,8 @@ public:
 
     EntityAnimator *GetAnimator(void);
 
-    ursine::ecs::Entity *GetTarget(void);
-    void SetTarget(ursine::ecs::Entity *target);
+    ursine::ecs::EntityHandle GetTarget(void);
+    void SetTarget(ursine::ecs::EntityHandle target);
 
     void SetHomeLocation(const ursine::SVec3 &homeLocation);
     const ursine::SVec3 &GetHomeLocation(void) const;
@@ -201,6 +201,6 @@ private:
 
     EntityAnimator *m_animator;
 
-    ursine::ecs::Entity *m_target;
+    ursine::ecs::EntityHandle m_target;
 
 } Meta(Enable);

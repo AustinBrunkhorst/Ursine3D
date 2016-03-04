@@ -48,13 +48,14 @@ namespace ursine
                 SetColor
             );
 
-			EditorMeta(BitMaskEditor)
-			EditorField(
-				ursine::ecs::RenderMask renderMask,
-				GetRenderMask,
-				SetRenderMask
-			);
+            EditorMeta(BitMaskEditor)
+            EditorField(
+                ursine::ecs::RenderMask renderMask,
+                GetRenderMask,
+                SetRenderMask
+            );
 
+            EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
             EditorField(
                 float intensity,
                 GetIntensity,

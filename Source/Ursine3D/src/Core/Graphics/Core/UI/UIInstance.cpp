@@ -147,7 +147,7 @@ namespace ursine
             m_width = width;
             m_height = height;
 
-            GfxManager->textureManager->ResizeDynamicTexture(m_mainTarget, width, height);
+            GfxManager->textureManager->ResizeDynamicTexture( m_mainTarget, width, height );
         }
 
         CefRect UIInstance::getPopupRectInView(const CefRect &original)

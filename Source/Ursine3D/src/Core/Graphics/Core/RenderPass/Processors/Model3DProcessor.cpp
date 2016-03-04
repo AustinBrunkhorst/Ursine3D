@@ -135,7 +135,7 @@ namespace ursine
                 m_manager->bufferManager->MapTransformBuffer( model.GetWorldMatrix( ) );
 
                 // set model
-                m_manager->modelManager->BindModel( 
+                m_manager->modelManager->BindModel(
                     handle.Model_, 
                     x 
                 );
@@ -155,9 +155,9 @@ namespace ursine
                 m_manager->dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
 
                 PrimitiveColorBuffer pcb;
-                pcb.color.x = 0.75f;
-                pcb.color.y = 0.75f;
-                pcb.color.z = 0.45f;
+                pcb.color.x = 0.53f;
+                pcb.color.y = 0.53f;
+                pcb.color.z = 0.17f;
                 m_manager->bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(
                     &pcb, 
                     SHADERTYPE_PIXEL
@@ -171,7 +171,7 @@ namespace ursine
                     &mdb, 
                     SHADERTYPE_PIXEL
                 );
-                m_manager->textureManager->MapTextureByName( "Blank" );
+                m_manager->textureManager->MapTextureByID( INTERNAL_BLANK_TEX );
 
                 for (unsigned x = 0; x < count; ++x)
                 {
@@ -219,9 +219,9 @@ namespace ursine
                 m_manager->dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
 
                 PrimitiveColorBuffer pcb;
-                pcb.color.x = 0.75f;
-                pcb.color.y = 0.75f;
-                pcb.color.z = 0.45f;
+                pcb.color.x = 0.53f;
+                pcb.color.y = 0.53f;
+                pcb.color.z = 0.17f;
                 m_manager->bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
 
                 MaterialDataBuffer mdb;
@@ -229,10 +229,14 @@ namespace ursine
                 mdb.specularPower = 0;
                 mdb.specularIntensity = 0;
                 m_manager->bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
-                m_manager->textureManager->MapTextureByName("Blank");
+                m_manager->textureManager->MapTextureByID( INTERNAL_BLANK_TEX );
 
                 // set model
-                 m_manager->modelManager->BindModel(handle.Model_, meshIndex);
+                 m_manager->modelManager->BindModel(
+                     handle.Model_, 
+                     meshIndex
+                );
+
                  m_manager->shaderManager->Render(m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex));
 
                  m_manager->dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);

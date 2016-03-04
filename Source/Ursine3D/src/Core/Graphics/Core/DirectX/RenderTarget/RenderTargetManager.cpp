@@ -24,10 +24,11 @@ namespace ursine
     {
         namespace DXCore
         {
-            void RenderTargetManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext)
+            void RenderTargetManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext, GfxInfo *gfxInfo)
             {
                 m_device = device;
                 m_deviceContext = devicecontext;
+                m_gfxInfo = gfxInfo;
 
                 m_renderTargets.resize(RENDER_TARGET_COUNT);
 
@@ -246,8 +247,8 @@ namespace ursine
                 textureDesc.MipLevels = 1;
                 textureDesc.ArraySize = 1;
                 textureDesc.Format = format;
-                textureDesc.SampleDesc.Count = 1;
-                textureDesc.SampleDesc.Quality = 0;
+                textureDesc.SampleDesc.Count = m_gfxInfo->GetSampleCount( );
+                textureDesc.SampleDesc.Quality = m_gfxInfo->GetSampleQuality( );
                 textureDesc.Usage = D3D11_USAGE_DEFAULT;
                 textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
                 textureDesc.CPUAccessFlags = 0;
@@ -258,7 +259,7 @@ namespace ursine
                 ///////////////////////////////////////////////////////////////
                 // Setup the description of the render target view.
                 renderTargetViewDesc.Format = textureDesc.Format;
-                renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+                renderTargetViewDesc.ViewDimension = textureDesc.SampleDesc.Count > 1 ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
                 renderTargetViewDesc.Texture2D.MipSlice = 0;
 
                 result = m_device->CreateRenderTargetView(m_renderTargets[ target ]->TextureMap, &renderTargetViewDesc, &m_renderTargets[ target ]->RenderTargetView);
@@ -267,7 +268,7 @@ namespace ursine
                 ///////////////////////////////////////////////////////////////
                 // Setup the description of the shader resource view.
                 shaderResourceViewDesc.Format = textureDesc.Format;
-                shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+                shaderResourceViewDesc.ViewDimension = renderTargetViewDesc.ViewDimension == D3D11_RTV_DIMENSION_TEXTURE2D ? D3D11_SRV_DIMENSION_TEXTURE2D : D3D11_SRV_DIMENSION_TEXTURE2DMS;
                 shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
                 shaderResourceViewDesc.Texture2D.MipLevels = 1;
 

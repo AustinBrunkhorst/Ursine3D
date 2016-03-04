@@ -36,7 +36,7 @@ namespace ursine
             void CalculatePath(WaypointAgent &agent, const Vec3 &goal);
 
         private:
-            std::unordered_map<EntityUniqueID, Component::Handle<Waypoint> > m_waypoints;
+            std::unordered_map<EntityHandle, Component::Handle<Waypoint>> m_waypoints;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;

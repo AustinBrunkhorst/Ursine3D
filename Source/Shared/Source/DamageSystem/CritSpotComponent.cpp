@@ -28,4 +28,3 @@ CritSpot::~CritSpot(void)
 void CritSpot::OnInitialize(void)
 {
 }
-

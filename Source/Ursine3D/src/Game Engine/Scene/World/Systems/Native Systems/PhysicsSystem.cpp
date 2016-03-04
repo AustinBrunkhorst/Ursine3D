@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -198,7 +198,7 @@ namespace ursine
         #endif
         }
 
-        void PhysicsSystem::OnAfterLoad(void)
+        void PhysicsSystem::OnSceneReady(Scene *scene)
         {
             auto levelSettings = m_world->GetSettings( );
 
@@ -238,7 +238,7 @@ namespace ursine
             auto &component = args->component;
 
             // If the user added a collider, remove the others that may exist
-            if (m_collisionShapes.Matches( entity ) && 
+            if (m_collisionShapes.Matches( entity.Get( ) ) && 
                 m_collisionShapes.Matches( component->GetTypeMask( ) ))
                 removeExistingCollider( entity, component->GetTypeID( ) );
 
@@ -280,7 +280,7 @@ namespace ursine
                 }
 
                 // If the entity does not have a collision shape, add an empty one
-                if (!m_collisionShapes.Matches( entity ))
+                if (!m_collisionShapes.Matches( entity.Get( ) ))
                     entity->AddComponent<EmptyCollider>( );
 
                 // set the transform
@@ -388,7 +388,7 @@ namespace ursine
                 }
 
                 // If the entity does not have a collision shape, add an empty one
-                if (!m_collisionShapes.Matches( entity ))
+                if (!m_collisionShapes.Matches( entity.Get( ) ))
                     entity->AddComponent<EmptyCollider>( );
 
                 // set the transform
@@ -625,7 +625,7 @@ namespace ursine
 
     #endif
 
-        void PhysicsSystem::addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider)
+        void PhysicsSystem::addCollider(const EntityHandle &entity, physics::ColliderBase *collider, bool emptyCollider)
         {
             bool removeBody = true;
 
@@ -689,7 +689,7 @@ namespace ursine
                 entity->RemoveComponent<EmptyCollider>( );
         }
 
-        void PhysicsSystem::removeCollider(Entity *entity)
+        void PhysicsSystem::removeCollider(const EntityHandle &entity)
         {
             if (entity->HasComponent<Body>( ))
                 entity->RemoveComponent<Body>( );
@@ -711,7 +711,7 @@ namespace ursine
             }
         }
 
-        void PhysicsSystem::removeExistingCollider(Entity *entity, ComponentTypeID newCollider)
+        void PhysicsSystem::removeExistingCollider(const EntityHandle &entity, ComponentTypeID newCollider)
         {
             for (auto *comp : entity->GetComponents( ))
             {

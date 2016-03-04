@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -16,7 +16,8 @@
 #include "WorldSerializer.h"
 #include "EntitySerializer.h"
 
-#include <WorldConfigComponent.h>
+#include "WorldConfigComponent.h"
+#include "SystemManager.h"
 
 namespace ursine
 {
@@ -41,7 +42,7 @@ namespace ursine
 
             EntitySerializer entitySerializer;
 
-            auto *settingsEntity = world->GetSettings( );
+            auto &settingsEntity = world->GetSettings( );
 
             data[ kKeySettings ] = 
                 entitySerializer.Serialize( settingsEntity );
@@ -55,7 +56,7 @@ namespace ursine
                 if (entityID == settingsEntity->m_id)
                     continue;
 
-                auto *entity = world->m_entityManager->GetEntity( entityID );
+                auto entity = world->m_entityManager->GetEntityByID( entityID );
 
                 // only serialize if enabled
                 if (entity->IsSerializationEnabled( ))
@@ -75,7 +76,7 @@ namespace ursine
         {
             std::string data;
 
-            if (!fs::LoadText( filename, data ))
+            if (!fs::LoadAllText( filename, data ))
                 throw SerializationException( "Unable to read world file." );
 
             std::string jsonError;
@@ -146,109 +147,41 @@ namespace ursine
                 );
             }
 
-            world->DispatchLoad( );
-
             return world;
         }
 
-        void WorldSerializer::MergeDeserialize(const std::string& filename, World* world)
+        void WorldSerializer::MergeDeserialize(World::Handle from, World *to)
         {
-            std::string data;
-
-            if (!fs::LoadText( filename, data ))
-                throw SerializationException( "Unable to read world file." );
-
-            std::string jsonError;
-
-            auto worldData = Json::parse( data, jsonError );
-
-            if (!jsonError.empty( ))
-            {
-                std::stringstream error;
-
-                error << "Error parsing world. Error: ";
-                error << jsonError;
-
-                throw SerializationException( error.str( ) );
-            }
-
-            auto &versionData = worldData[ kKeyVersion ];
-
-            if (versionData.is_null( ))
-            {
-                throw SerializationException( 
-                    "World missing serialization version." 
-                );
-            }
-
-            auto version = versionData.string_value( ).c_str( );
-
             EntitySerializer entitySerializer;
 
-            auto &settingsData = worldData[ kKeySettings ];
-
             // merge the existing systems in the world config
-            if (!settingsData.is_null( ))
+            auto toSystemManager = to->GetSystemManager( );
+
+            auto &newSettings = from->GetSettings( );
+            auto newConfig = newSettings->GetComponent<WorldConfig>( );
+            auto &newSystems = newConfig->GetSystems( );
+
+            for (auto &newSystem : newSystems)
             {
-                auto currentSettings = world->GetSettings( );
-                auto config = currentSettings->GetComponent<WorldConfig>( );
-                auto currentSystems = config->GetSystems( );
+                auto systemType = meta::Type::GetFromName( newSystem.type );
 
-                auto newSystems = settingsData[ "components" ][ "WorldConfig" ][ "systems" ];
-
-                for (auto newSystem : newSystems.array_items( ))
-                {
-                    auto found = false;
-                    auto systemType = newSystem[ "type" ].string_value( );
-
-                    for (auto &currentSystem : currentSystems)
-                    {
-                        if (currentSystem.type == systemType)
-                        {
-                            found = true;
-                            break;
-                        }
-                    }
-
-                    // If the new system isn't found, add it to the current systems
-                    if (!found)
-                    {
-                        WorldEntitySystem system;
-
-                        system.type = systemType;
-
-                        currentSystems.Push( system );
-                    }
-                }
-
-                // assign the merged systems
-                config->SetSystems( currentSystems );
+                // If the new system isn't found, add it to the current systems
+                if (!toSystemManager->HasSystem( systemType ))
+                    toSystemManager->AddSystem( systemType );
             }
 
             // Add the world's entities to the existing world
-            auto &entitiesData = worldData[ kKeyEntities ];
+            auto em = from->GetEntityManager( );
+            EntitySerializer serializer;
 
-            if (!entitiesData.is_array( ))
+            auto toAddEntities = em->GetRootEntities( );
+
+            for (auto &entityData : toAddEntities)
             {
-                std::stringstream error;
+                auto data = serializer.Serialize( entityData );
 
-                error << "Expected '";
-                error << kKeyEntities; 
-                error << "' to be an array.";
-                
-                throw SerializationException( error.str( ) );
+                serializer.Deserialize( to, data );
             }
-
-            for (auto &entityData : entitiesData.array_items( ))
-            {
-                entitySerializer.Deserialize( 
-                    world, 
-                    entityData, 
-                    version 
-                );
-            }
-
-            world->DispatchLoad( );
         }
     }
 }

@@ -29,7 +29,6 @@ namespace ursine
 			NATIVE_COMPONENT;
 
 		public:
-
             EditorMeta(InputRange( 0.0f, 100.0f, 1, "{{value}}%" ))
 			EditorField(
 				float Volume,
@@ -51,7 +50,6 @@ namespace ursine
 
             Meta(Enable)
 			AudioEmitter(void);
-			~AudioEmitter(void);
 
 			float GetVolume(void) const;
 			void SetVolume(float volume);
@@ -65,11 +63,9 @@ namespace ursine
 			std::string GetFrontSound(void);
 			void PopFrontSound(void);
 			bool SoundsEmpty(void);
-			void AddSoundToPlayQueue(std::string sound);
+			void AddSoundToPlayQueue(const std::string &sound);
 
 			ListenerIndex GetListeners(void);
-
-			void OnInitialize(void) override;
 
 		private:
 			bool m_loop;
@@ -79,7 +75,6 @@ namespace ursine
 			
 			// fire and forget
 			std::queue<std::string> m_soundsFAF;
-
 		} Meta(Enable, WhiteListMethods, DisplayName( "Audio Emitter" ));
 	}
 }

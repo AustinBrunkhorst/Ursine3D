@@ -34,7 +34,7 @@ namespace ursine
             return Matches( entity->m_typeMask );
         }
 
-        bool Filter::Matches(const ComponentTypeMask& typeMask) const
+        bool Filter::Matches(const ComponentTypeMask &typeMask) const
         {
             return ((m_maskOne      & typeMask) != 0              || m_maskOne == 0) &&
                    ((m_maskContains & typeMask) == m_maskContains || m_maskContains == 0) &&

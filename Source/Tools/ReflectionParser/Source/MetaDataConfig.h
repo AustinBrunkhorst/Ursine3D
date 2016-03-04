@@ -20,8 +20,8 @@ namespace native_property
 
     const auto DisplayName = "DisplayName";
 
-    const auto DisablePtrType = "DisablePtrType";
-    const auto DisableConstPtrType = "DisableConstPtrType";
+    const auto EnablePtrType = "EnablePtrType";
+    const auto EnableConstPtrType = "EnableConstPtrType";
 
     const auto EnableArrayType = "EnableArrayType";
 

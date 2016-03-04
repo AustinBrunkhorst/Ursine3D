@@ -24,41 +24,41 @@ using namespace ecs;
 
 ScaleTool::ScaleTool(Editor *editor, ursine::ecs::World *world)
     : EditorTool( editor, world )
-    , m_gizmo( nullptr )
-    , m_selected( -1 )
+    , m_gizmo( )
+    , m_selected( )
     , m_dragging( false )
+    , m_hovering( false )
+    , m_axisType( -1 )
     , m_snapping( false )
     , m_local( false )
     , m_deleteGizmo( false )
-    , m_hovering( false )
-    , m_axisType( -1 )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
 }
 
-void ScaleTool::OnEnable(EntityUniqueID selected)
+void ScaleTool::OnEnable(const EntityHandle &selected)
 {
     m_selected = selected;
 
-    if (m_selected != -1)
+    if (m_selected)
         enableAxis( );
 }
 
 void ScaleTool::OnDisable(void)
 {
-    m_selected = -1;
+    m_selected = EntityHandle::Invalid( );
     m_dragging = false;
     m_snapping = false;
     
     disableAxis( );
 }
 
-void ScaleTool::OnSelect(Entity* entity)
+void ScaleTool::OnSelect(const EntityHandle &entity)
 {
-    auto prevSelected = m_gizmo != nullptr;
+    auto prevSelected = m_gizmo.IsValid( );
     
-    m_selected = entity->GetUniqueID( );
+    m_selected = entity;
 
     if (!prevSelected)
         enableAxis( );
@@ -66,9 +66,9 @@ void ScaleTool::OnSelect(Entity* entity)
     m_deleteGizmo = false;
 }
 
-void ScaleTool::OnDeselect(Entity* entity)
+void ScaleTool::OnDeselect(const EntityHandle &entity)
 {
-    m_selected = -1;
+    m_selected = EntityHandle::Invalid( );
     
     m_deleteGizmo = true;
 }
@@ -87,7 +87,7 @@ void ScaleTool::OnMouseUp(const MouseButtonArgs& args)
 
 void ScaleTool::OnMouseMove(const MouseMoveArgs& args)
 {
-    if (m_dragging && m_selected != -1)
+    if (m_dragging && m_selected)
     {
         // Project the delta vector onto the screen direction vector
         auto b = args.positionDelta;
@@ -99,7 +99,7 @@ void ScaleTool::OnMouseMove(const MouseMoveArgs& args)
         float dot = a.Dot( b );
         auto proj = ( dot / b.LengthSquared( ) ) * b;
         auto dist = proj.Length( );
-        auto selected = m_world->GetEntityUnique( m_selected )->GetTransform( );
+        auto selected = m_selected->GetTransform( );
 
         if (dot < 0.0f)
             dist = -dist;
@@ -185,7 +185,7 @@ void ScaleTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
     }
 }
 
-void ScaleTool::setDirectionVectors(const SVec3& basisVector, Entity* selected)
+void ScaleTool::setDirectionVectors(const SVec3& basisVector, const EntityHandle &selected)
 {
     if (m_local)
         m_worldDir = selected->GetTransform( )->GetWorldRotation( ) * basisVector;
@@ -229,13 +229,13 @@ void ScaleTool::disableAxis(void)
         m_gizmo->Delete( );
     }
 
-    m_gizmo = nullptr;
+    m_gizmo = EntityHandle::Invalid( );
     m_axis = nullptr;
 }
 
 void ScaleTool::updateAxis(void)
 {
-    if (m_selected == -1 || m_gizmo == nullptr)
+    if (!m_selected || !m_gizmo)
         return;
 
     // update the size of the gizmo
@@ -246,8 +246,7 @@ void ScaleTool::updateAxis(void)
 
     gizTrans->SetWorldScale( SVec3(camVec.Length() * 0.04f ) );
 
-    auto selected = m_world->GetEntityUnique( m_selected );
-    auto selTrans = selected->GetTransform( );
+    auto selTrans = m_selected->GetTransform( );
 
     gizTrans->SetWorldPosition( selTrans->GetWorldPosition( ) );
 
@@ -317,7 +316,7 @@ void ScaleTool::updateHoverAxis(void)
 {
     // get the current entity ID the mouse is over
     auto newID = m_graphics->GetMousedOverID( );
-    auto entity = m_world->GetEntityUnique( newID );
+    auto entity = m_world->GetEntity( newID );
 
     if (!entity || m_altDown)
     {
@@ -341,31 +340,28 @@ void ScaleTool::updateHoverAxis(void)
     // and the vector we're dragging on
     if (rootName == "ScaleGizmo")
     {
-        // Get the selected entity
-        auto selected = m_world->GetEntityUnique( m_selected );
-
         // Get the gizmo's name (the models are under the parent named the axis' name)
         auto name = entityTrans->GetParent( )->GetOwner( )->GetName( );
 
         if ( name == "xAxis" )
         {
-            setDirectionVectors(SVec3::UnitX(), selected);
+            setDirectionVectors(SVec3::UnitX(), m_selected);
             m_axisType = 1;
         }
         else if ( name == "yAxis" )
         {
-            setDirectionVectors(SVec3::UnitY(), selected);
+            setDirectionVectors(SVec3::UnitY(), m_selected);
             m_axisType = 2;
         }
         else if ( name == "zAxis" )
         {
-            setDirectionVectors(SVec3::UnitZ(), selected);
+            setDirectionVectors(SVec3::UnitZ(), m_selected);
             m_axisType = 3;
         }
         else if(name == "allAxis")
         {
             m_axisType = 4;
-            setDirectionVectors(SVec3(1.0f, 1.0f, 1.0f), selected);
+            setDirectionVectors(SVec3(1.0f, 1.0f, 1.0f), m_selected);
         }
         else
         {
@@ -408,9 +404,9 @@ void ScaleTool::disableHover(void)
     }
 }
 
-void ScaleTool::setEntitySerializationToggle(bool toggle, Entity* entity)
+void ScaleTool::setEntitySerializationToggle(bool toggle, const EntityHandle &entity)
 {
-    for (auto child : entity->GetTransform( )->GetChildren( ))
+    for (auto &child : entity->GetTransform( )->GetChildren( ))
     {
         setEntitySerializationToggle( toggle, child->GetOwner( ) );
     }

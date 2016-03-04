@@ -267,7 +267,7 @@ void SpawnPattern::spawn(SpawnerGroup *group, Spawner *spawner, SpawnPatternCont
 
     auto offset = newDirection * math::Rand( 0.0f, m_spawnDistanceVariance );
 
-    auto *entity = spawner->spawnEnemy( group, origin + offset );
+    auto entity = spawner->spawnEnemy( group, origin + offset );
 
     ++m_activeEnemies;
     ++spawner->m_activeEnemies;

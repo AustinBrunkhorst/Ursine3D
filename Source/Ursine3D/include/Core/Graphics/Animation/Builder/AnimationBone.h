@@ -42,14 +42,14 @@ namespace ursine
         *  @return Void.
         */
         void InitializeBone(
-            const std::string &name, 
-            const SVec3 &trans, 
-            const SVec3 &scale, 
-            const SQuat &rotation, 
+            const std::string &name,
+            const SVec3 &trans,
+            const SVec3 &scale,
+            const SQuat &rotation,
             const unsigned boneID,
             const unsigned parentID,
             AnimationBone *parent
-        );
+            );
 
         // is the current bone the root bone?
         bool IsRoot(void) const;

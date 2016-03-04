@@ -17,7 +17,7 @@
 
 #include "GfxDefines.h"
 #include "Mesh.h"
-#include "..\..\..\..\..\include\Core\Graphics\Core\Models\Mesh.h"
+#include "VertexDefinitions.h"
 
 namespace ursine
 {
@@ -117,6 +117,11 @@ namespace ursine
         void Mesh::SetLocalToParentTransform(const SMat4 &transform)
         {
             m_localToParent = transform;
+        }
+
+        std::vector<AnimationVertex> & Mesh::GetRawModelData()
+        {
+            return m_rawModelData;
         }
     }
 }

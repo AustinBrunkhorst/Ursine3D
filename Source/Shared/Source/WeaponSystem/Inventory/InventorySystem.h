@@ -25,15 +25,15 @@ struct Inventory;
 class InventorySystem
     : public ursine::ecs::FilterSystem
 {
-    ENTITY_SYSTEM ;
+    ENTITY_SYSTEM;
 
 public:
-    InventorySystem(ursine::ecs::World* world);
+    InventorySystem(ursine::ecs::World *world);
 
 protected:
     void onUpdate(EVENT_HANDLER(World)) override;
-    void Enable(ursine::ecs::Entity* entity) override;
-    void Disable(ursine::ecs::Entity* entity) override;
+    void Enable(const ursine::ecs::EntityHandle &entity) override;
+    void Disable(const ursine::ecs::EntityHandle &entity) override;
 
 private:
     // check if inventory needs to have things updated
@@ -53,6 +53,5 @@ private:
     // Deactivate previous weapon of swap
     void DeactivateWeapon(Inventory* inventory, const int index);
 
-    std::unordered_map< ursine::ecs::EntityUniqueID, ursine::ecs::Component::Handle< Inventory > > m_inventories;
+    std::unordered_map<ursine::ecs::EntityHandle, Inventory*> m_inventories;
 } Meta(Enable, AutoAddEntitySystem);
-

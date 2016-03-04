@@ -125,7 +125,8 @@ namespace
 
                 enumEntries.emplace_back( Json::object {
                     { "key", key },
-                    { "value", value.SerializeJson( ) }
+                    // use double to ensure it's the number value, not key value
+                    { "value", value.ToDouble( ) }
                 } );
             }
 

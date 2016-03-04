@@ -6,43 +6,6 @@ function $extend(from, fields) {
 	if( fields.toString !== Object.prototype.toString ) proto.toString = fields.toString;
 	return proto;
 }
-var Application = function() { };
-$hxClasses["Application"] = Application;
-Application.__name__ = ["Application"];
-Application.main = function() {
-	window.addEventListener("WebComponentsReady",Application.initWindows);
-};
-Application.initWindows = function() {
-	var editor = new ursine_editor_Editor();
-	var mainDockContainer = window.document.body.querySelector("#main-dock-container");
-	var mainDock = new DockContainerControl();
-	mainDock.style.width = "100%";
-	mainDock.style.height = "100%";
-	mainDockContainer.appendChild(mainDock);
-	var sceneView = new ursine_editor_windows_SceneView();
-	var leftColumn = mainDock.addColumn();
-	leftColumn.style.width = "20%";
-	var row = leftColumn.addRow();
-	row.style.height = "100%";
-	var column = row.addColumn();
-	column.style.width = "100%";
-	column.appendChild(new ursine_editor_windows_EntityInspector().window);
-	var middleColumn = mainDock.addColumn();
-	middleColumn.style.width = "60%";
-	var row1 = middleColumn.addRow();
-	row1.style.height = "100%";
-	var column1 = row1.addColumn();
-	column1.style.width = "100%";
-	column1.appendChild(sceneView.window);
-	var rightColumn = mainDock.addColumn();
-	rightColumn.style.width = "20%";
-	var row2 = rightColumn.addRow();
-	row2.style.height = "100%";
-	var column2 = row2.addColumn();
-	column2.style.width = "100%";
-	column2.appendChild(new ursine_editor_windows_SceneOutline().window);
-	sceneView.onViewportInvalidated();
-};
 var EReg = function(r,opt) {
 	opt = opt.split("u").join("");
 	this.r = new RegExp(r,opt);
@@ -67,6 +30,59 @@ EReg.prototype = {
 		return s.replace(this.r,by);
 	}
 	,__class__: EReg
+};
+var EditorMain = function() { };
+$hxClasses["EditorMain"] = EditorMain;
+EditorMain.__name__ = ["EditorMain"];
+EditorMain.main = function() {
+	window.addEventListener("WebComponentsReady",EditorMain.initWindows);
+};
+EditorMain.initWindows = function() {
+	var editor = new ursine_editor_Editor();
+	var mainDockContainer = window.document.body.querySelector("#main-dock-container");
+	var mainDock = new DockContainerControl();
+	mainDock.style.width = "100%";
+	mainDock.style.height = "100%";
+	mainDockContainer.appendChild(mainDock);
+	var sceneView = new ursine_editor_windows_SceneView();
+	var entityInspector = new ursine_editor_windows_EntityInspector();
+	var sceneOutline = new ursine_editor_windows_SceneOutline();
+	var projectBrowser = new ursine_editor_windows_ProjectBrowser();
+	var leftColumn = mainDock.addColumn();
+	leftColumn.style.width = "20%";
+	var row = leftColumn.addRow();
+	row.style.height = "100%";
+	var column = row.addColumn();
+	column.style.width = "100%";
+	column.appendChild(entityInspector.window);
+	var rightColumn = mainDock.addColumn();
+	rightColumn.style.width = "80%";
+	var topRow = rightColumn.addRow();
+	topRow.style.height = "65%";
+	var innerLeftColumn = topRow.addColumn();
+	innerLeftColumn.style.width = "80%";
+	var row1 = innerLeftColumn.addRow();
+	row1.style.height = "100%";
+	var column1 = row1.addColumn();
+	column1.style.width = "100%";
+	column1.appendChild(sceneView.window);
+	var innerRightColumn = topRow.addColumn();
+	innerRightColumn.style.width = "20%";
+	var row2 = innerRightColumn.addRow();
+	row2.style.height = "100%";
+	var column2 = row2.addColumn();
+	column2.style.width = "100%";
+	column2.appendChild(sceneOutline.window);
+	var bottomRow = rightColumn.addRow();
+	bottomRow.style.height = "35%";
+	var column3 = bottomRow.addColumn();
+	column3.style.width = "100%";
+	var row3 = column3.addRow();
+	row3.style.height = "100%";
+	var column4 = row3.addColumn();
+	column4.style.width = "100%";
+	column4.appendChild(projectBrowser.window);
+	haxe_Timer.delay($bind(sceneView,sceneView.onViewportInvalidated),100);
 };
 var HxOverrides = function() { };
 $hxClasses["HxOverrides"] = HxOverrides;
@@ -566,16 +582,16 @@ ursine_editor_Editor.prototype = {
 			ursine_native_Extern.ScenePlayStart();
 		});
 		btnToggle.addEventListener("click",function() {
-			var paused = toolsContainer.classList.contains("paused");
-			toolsContainer.classList.toggle("paused",!paused);
-			ursine_native_Extern.SceneSetPlayState(!paused);
+			var playing = !toolsContainer.classList.contains("paused");
+			toolsContainer.classList.toggle("paused",playing);
+			ursine_native_Extern.SceneSetPlayState(!playing);
 		});
 		btnStep.addEventListener("click",function() {
 			if(btnStep.classList.contains("disabled")) return;
 			ursine_native_Extern.SceneStep();
 		});
 		btnStop.addEventListener("click",function() {
-			toolsContainer.classList.remove("running");
+			toolsContainer.classList.remove("running","paused");
 			ursine_native_Extern.ScenePlayStop();
 		});
 	}
@@ -693,6 +709,7 @@ var ursine_editor_menus_DebugMenu = function() { };
 $hxClasses["ursine.editor.menus.DebugMenu"] = ursine_editor_menus_DebugMenu;
 ursine_editor_menus_DebugMenu.__name__ = ["ursine","editor","menus","DebugMenu"];
 ursine_editor_menus_DebugMenu.doEditorReload = function() {
+	window.location.reload(true);
 };
 ursine_editor_menus_DebugMenu.doEditorDebugTools = function() {
 	editor_commands_InspectEditorUI();
@@ -718,10 +735,7 @@ var ursine_editor_menus_EntityMenu = function() { };
 $hxClasses["ursine.editor.menus.EntityMenu"] = ursine_editor_menus_EntityMenu;
 ursine_editor_menus_EntityMenu.__name__ = ["ursine","editor","menus","EntityMenu"];
 ursine_editor_menus_EntityMenu.doCreateEmpty = function() {
-	editor_commands_CreateEntity();
-};
-ursine_editor_menus_EntityMenu.doCreateFromArchetype = function() {
-	editor_commands_CreateEntityFromArchetype();
+	editor_commands_CreateEmptyEntity();
 };
 ursine_editor_menus_EntityMenu.doCreatePlane = function() {
 	editor_commands_CreatePlane();
@@ -751,11 +765,21 @@ ursine_editor_menus_EntityMenu.prototype = $extend(ursine_editor_MenuItemHandler
 var ursine_editor_menus_FileMenu = function() { };
 $hxClasses["ursine.editor.menus.FileMenu"] = ursine_editor_menus_FileMenu;
 ursine_editor_menus_FileMenu.__name__ = ["ursine","editor","menus","FileMenu"];
-ursine_editor_menus_FileMenu.doNew = function() {
-	ursine_native_Extern.SceneLoad();
+ursine_editor_menus_FileMenu.doNewWorld = function() {
+	ursine_native_Extern.ProjectSetEmptyScene();
 };
-ursine_editor_menus_FileMenu.doOpen = function() {
-	ursine_native_Extern.SceneSave();
+ursine_editor_menus_FileMenu.doSaveWorld = function() {
+	ursine_native_Extern.SceneSaveWorld();
+};
+ursine_editor_menus_FileMenu.doSaveWorldAs = function() {
+	ursine_native_Extern.SceneSaveWorldAs();
+};
+ursine_editor_menus_FileMenu.doSaveProject = function() {
+	var notification = new NotificationControl(3,"Thanks for saving fella, but this doesn't do anything right now.","Save Project");
+	notification.show();
+};
+ursine_editor_menus_FileMenu.doOpenProject = function() {
+	ursine_native_Extern.ProjectOpenNew();
 };
 ursine_editor_menus_FileMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_FileMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -823,6 +847,13 @@ ursine_editor_scene_component_ComponentDatabase.prototype = {
 	,getEnumValue: function(enewm,key) {
 		var result = Lambda.find(enewm,function(entry) {
 			return entry.key == key;
+		});
+		if(result == null) return null; else return result.value;
+	}
+	,getEnumNumberValue: function(enewm,value) {
+		if(!(typeof(value) == "string")) return value;
+		var result = Lambda.find(enewm,function(entry) {
+			return entry.key == value;
 		});
 		if(result == null) return null; else return result.value;
 	}
@@ -1074,7 +1105,9 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		var database = ursine_editor_Editor.instance.componentDatabase;
 		var componentType = database.getComponentType(this.component.type);
 		while(this.m_typeFields.length > 0) this.m_typeFields.pop().remove();
-		var fields = ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[type];
+		var fields;
+		var key = database.getEnumNumberValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,type);
+		fields = ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[key];
 		var _g = 0;
 		while(_g < fields.length) {
 			var fieldName = fields[_g];
@@ -1348,7 +1381,7 @@ ursine_editor_scene_component_inspectors_fields_DefaultFieldInspector.prototype 
 	updateValue: function(value) {
 		this.m_instance = value;
 		if(this.m_isEnum) {
-			if(this.m_isBitMaskEditor) this.loadEnumBitMaskValue(value); else this.m_comboInput.value = value;
+			if(this.m_isBitMaskEditor) this.loadEnumBitMaskValue(value); else this.m_comboInput.value = ursine_editor_Editor.instance.componentDatabase.getEnumNumberValue(this.m_type.enumValue,value);
 		} else if(this.m_arrayInspector != null) this.m_arrayInspector.updateValue(value); else {
 			var _g = 0;
 			var _g1 = this.m_type.fields;
@@ -1537,6 +1570,55 @@ ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.prototype =
 		this.m_number.value = number;
 	}
 	,__class__: ursine_editor_scene_component_inspectors_fields_NumberFieldInspector
+});
+var ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector = function(owner,instance,field,type) {
+	var _g = this;
+	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
+	var resourceType = Reflect.field(field.meta,ursine_native_Property.ResourceType);
+	if(resourceType == null) {
+		var error = new NotificationControl(2,"Field <strong class=\"highlight\">" + field.name + "</strong> missing meta property <strong class=\"highlight\">ResourceType<strong>","Error");
+		error.show();
+	} else this.m_resourceType = resourceType.typeName;
+	var _this = window.document;
+	this.m_displayText = _this.createElement("div");
+	this.m_displayText.classList.add("resource-reference");
+	this.m_displayText.setAttribute("accepts-resource-drop","true");
+	this.m_displayText.addEventListener("click",function(e) {
+		var resources = ursine_native_Extern.ProjectGetResourcesByType(_g.m_resourceType);
+		var selector = new ResourceReferenceSelectionPopupControl(resources);
+		selector.addEventListener("resource-selected",$bind(_g,_g.onResourceSelected));
+		window.document.body.appendChild(selector);
+		selector.show(e.clientX,e.clientY);
+	});
+	this.m_displayText.addEventListener("resource-drag",$bind(this,this.onResourceDrag));
+	this.m_displayText.addEventListener("resource-drop",$bind(this,this.onResourceDrop));
+	this.inspector.container.appendChild(this.m_displayText);
+	this.updateValue(instance);
+};
+$hxClasses["ursine.editor.scene.component.inspectors.fields.ResourceReferenceInspector"] = ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector;
+ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","ResourceReferenceInspector"];
+ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
+ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
+	updateValue: function(value) {
+		var resource = ursine_native_Extern.ProjectGetResource(value.guid);
+		var valid = resource != null;
+		if(valid) this.m_displayText.innerText = resource.displayName; else this.m_displayText.innerText = "";
+		this.m_displayText.classList.toggle("invalid",!valid);
+		this.m_instance = value;
+	}
+	,onResourceSelected: function(e) {
+		var resource = e.detail.resource;
+		this.notifyChanged(this.m_field,{ guid : resource.guid});
+	}
+	,onResourceDrag: function(e) {
+		var resource = e.detail.resource;
+		e.detail.acceptDrop = resource.type == this.m_resourceType;
+	}
+	,onResourceDrop: function(e) {
+		var resource = e.detail.resource;
+		this.notifyChanged(this.m_field,{ guid : resource.guid});
+	}
+	,__class__: ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector
 });
 var ursine_editor_scene_component_inspectors_fields_StringFieldInspector = function(owner,instance,field,type) {
 	var _g = this;
@@ -1984,6 +2066,49 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 	}
 	,__class__: ursine_editor_windows_EntityInspector
 });
+var ursine_editor_windows_ProjectBrowser = function() {
+	ursine_editor_WindowHandler.call(this);
+	this.window.heading = "Project";
+	this.window.classList.add("project-browser-window");
+	this.m_browser = new ProjectBrowserControl(ursine_native_Extern.ProjectGetResourceTree());
+	this.m_browser.addEventListener("resource-dblclick",$bind(this,this.onResourceDblClick));
+	this.m_browser.addEventListener("resource-contextmenu",$bind(this,this.onResourceContextMenu));
+	this.window.container.appendChild(this.m_browser);
+	ursine_editor_Editor.instance.broadcastManager.getChannel("ResourcePipeline").on("ResourceAdded",$bind(this,this.onResourceAdded)).on("ResourceModified",$bind(this,this.onResourceModified));
+};
+$hxClasses["ursine.editor.windows.ProjectBrowser"] = ursine_editor_windows_ProjectBrowser;
+ursine_editor_windows_ProjectBrowser.__name__ = ["ursine","editor","windows","ProjectBrowser"];
+ursine_editor_windows_ProjectBrowser.__super__ = ursine_editor_WindowHandler;
+ursine_editor_windows_ProjectBrowser.prototype = $extend(ursine_editor_WindowHandler.prototype,{
+	onResourceAdded: function(data) {
+		var resource = ursine_native_Extern.ProjectGetResource(data.guid);
+		if(resource == null) throw new js__$Boot_HaxeError("Invalid resource added.");
+		this.m_browser.addResource(resource);
+		var notification = new NotificationControl(3,"<strong class=\"highlight\">" + resource.relativePathDisplayName + "</div>","Resource Imported");
+		notification.show();
+	}
+	,onResourceModified: function(data) {
+	}
+	,onResourceDblClick: function(e) {
+		var extension = e.detail.resource.extension.substr(1).toLowerCase();
+		var handler = Reflect.field(this,"" + extension + "_DblClickHandler");
+		if(handler != null) handler(e);
+	}
+	,onResourceContextMenu: function(e) {
+		var resource = e.detail.resource;
+		var extension = HxOverrides.substr(resource.extension,1,null).toLowerCase();
+		var handler = Reflect.field(this,"" + extension + "_ContextMenuHandler");
+		if(handler != null) {
+			e.detail.menu.addSeparator();
+			handler(e);
+		}
+	}
+	,uworld_DblClickHandler: function(e) {
+		var resource = e.detail.resource;
+		ursine_native_Extern.SceneSetActiveWorld(resource.guid);
+	}
+	,__class__: ursine_editor_windows_ProjectBrowser
+});
 var ursine_editor_windows_SceneOutline = function() {
 	this.m_selectedEntities = null;
 	ursine_editor_windows_SceneOutline.instance = this;
@@ -1992,11 +2117,12 @@ var ursine_editor_windows_SceneOutline = function() {
 	this.window.classList.add("scene-outline-window");
 	this.m_rootView = new TreeViewControl();
 	this.m_rootView.setAsRoot(true);
+	this.m_rootView.enableModification = true;
 	this.m_entityItems = new haxe_ds_IntMap();
 	this.m_selectedEntities = [];
 	this.window.container.appendChild(this.m_rootView);
 	this.resetScene();
-	ursine_editor_Editor.instance.broadcastManager.getChannel("SceneManager").on("Reset",$bind(this,this.resetScene));
+	ursine_editor_Editor.instance.broadcastManager.getChannel("SceneManager").on("WorldChanged",$bind(this,this.resetScene));
 	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on(ursine_editor_scene_entity_EntityEvent.EntityAdded,$bind(this,this.onEntityAdded)).on(ursine_editor_scene_entity_EntityEvent.EntityRemoved,$bind(this,this.onEntityRemoved)).on(ursine_editor_scene_entity_EntityEvent.EntityNameChanged,$bind(this,this.onEntityNameChanged)).on(ursine_editor_scene_entity_EntityEvent.EntityParentChanged,$bind(this,this.onEntityParentChanged)).on(ursine_editor_scene_entity_EntityEvent.ComponentAdded,$bind(this,this.onComponentAdded)).on(ursine_editor_scene_entity_EntityEvent.ComponentRemoved,$bind(this,this.onComponentRemoved));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
 };
@@ -2240,6 +2366,9 @@ var ursine_editor_windows_SceneView = function() {
 	this.m_selector = null;
 	ursine_editor_NativeCanvasWindowHandler.call(this,"SceneView");
 	this.window.heading = "Scene";
+	this.window.container.setAttribute("accepts-resource-drop","true");
+	this.window.container.addEventListener("resource-drag",$bind(this,this.onResourceDrag));
+	this.window.container.addEventListener("resource-drop",$bind(this,this.onResourceDrop));
 	this.onViewportInvalidated();
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
 };
@@ -2280,6 +2409,7 @@ ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWi
 		});
 		this.m_selector.addEventListener("closed",$bind(this,this.clearCommandSelector));
 		haxe_Timer.delay(function() {
+			if(_g.m_selector == null) return;
 			window.document.body.appendChild(_g.m_selector);
 			var bounds = _g.window.container.getBoundingClientRect();
 			_g.m_selector.show(bounds.left + (bounds.width - 225) * 0.5,bounds.height * 0.35);
@@ -2288,6 +2418,16 @@ ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWi
 	,clearCommandSelector: function() {
 		this.m_selector = null;
 		haxe_Timer.delay(($_=this.window,$bind($_,$_.focus)),1);
+	}
+	,onResourceDrag: function(e) {
+		var resource = e.detail.resource;
+		e.detail.acceptDrop = ursine_editor_windows_SceneView.m_acceptedResourceDrops.indexOf(resource.type) != -1;
+	}
+	,onResourceDrop: function(e) {
+		var resource = e.detail.resource;
+		var _g = resource.type;
+		var m_resourceTypeArchetype = _g;
+		ursine_native_Extern.SceneInstantiateArchetype(resource.guid);
 	}
 	,__class__: ursine_editor_windows_SceneView
 });
@@ -2307,14 +2447,35 @@ ursine_native_Extern.CreateEntity = function() {
 ursine_native_Extern.GetNativeComponentDatabase = function() {
 	return GetNativeComponentDatabase();
 };
+ursine_native_Extern.ProjectGetResourceTree = function() {
+	return ProjectGetResourceTree();
+};
+ursine_native_Extern.ProjectGetResourcesByType = function(type) {
+	return ProjectGetResourcesByType(type);
+};
+ursine_native_Extern.ProjectGetResource = function(guid) {
+	return ProjectGetResource(guid);
+};
+ursine_native_Extern.ProjectSetEmptyScene = function() {
+	return ProjectSetEmptyScene();
+};
+ursine_native_Extern.ProjectOpenNew = function() {
+	return ProjectOpenNew();
+};
+ursine_native_Extern.SceneSaveWorld = function() {
+	return SceneSaveWorld();
+};
+ursine_native_Extern.SceneSaveWorldAs = function() {
+	return SceneSaveWorldAs();
+};
+ursine_native_Extern.SceneSetActiveWorld = function(guid) {
+	return SceneSetActiveWorld(guid);
+};
+ursine_native_Extern.SceneInstantiateArchetype = function(guid) {
+	return SceneInstantiateArchetype(guid);
+};
 ursine_native_Extern.SceneGetRootEntities = function() {
 	return SceneGetRootEntities();
-};
-ursine_native_Extern.SceneLoad = function() {
-	return SceneLoad();
-};
-ursine_native_Extern.SceneSave = function() {
-	return SceneSave();
 };
 ursine_native_Extern.ScenePlayStart = function() {
 	return ScenePlayStart();
@@ -2427,8 +2588,8 @@ js_Boot.__toStr = {}.toString;
 ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mouseover","mouseout"];
 ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
-ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreateFromArchetype : { mainMenuItem : ["Entity/Create/From Archetype"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
-ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNew : { mainMenuItem : ["File/Load Scene",false,false,"file-open"]}, doOpen : { mainMenuItem : ["File/Save Scene",false,false,"file-save"]}}};
+ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
+ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNewWorld : { mainMenuItem : ["File/New World",false,true]}, doSaveWorld : { mainMenuItem : ["File/Save World",false,false]}, doSaveWorldAs : { mainMenuItem : ["File/Save World As",false,false]}, doSaveProject : { mainMenuItem : ["File/Save Project",true,false]}, doOpenProject : { mainMenuItem : ["File/Open Project",false,false]}}};
 ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
 ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
@@ -2444,6 +2605,7 @@ ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.__meta__ =
 ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Color"]}};
 ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector.__meta__ = { obj : { fieldInspector : ["EntitySystemSelector"]}};
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = { obj : { fieldInspector : ["int","unsigned int","float","double"]}};
+ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.__meta__ = { obj : { fieldInspector : ["ResourceReference"]}};
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__meta__ = { obj : { fieldInspector : ["std::string"]}};
 ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.__meta__ = { obj : { fieldInspector : ["UNKNOWN"]}};
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Vec2","ursine::Vec3","ursine::SVec3","ursine::Vec4","ursine::SVec4","ursine::SQuat"]}};
@@ -2458,6 +2620,8 @@ ursine_editor_scene_entity_EntityEvent.ComponentArrayInserted = "ComponentArrayI
 ursine_editor_scene_entity_EntityEvent.ComponentArraySet = "ComponentArraySet";
 ursine_editor_scene_entity_EntityEvent.ComponentArrayRemove = "ComponentArrayRemove";
 ursine_editor_windows_EntityInspector.m_smallWindowWidth = 245;
+ursine_editor_windows_SceneView.m_resourceTypeArchetype = "ursine::resources::ArchetypeData";
+ursine_editor_windows_SceneView.m_acceptedResourceDrops = [ursine_editor_windows_SceneView.m_resourceTypeArchetype];
 ursine_native_Property.DisableComponentRemoval = "DisableComponentRemoval";
 ursine_native_Property.HiddenInInspector = "HiddenInInspector";
 ursine_native_Property.HiddenInSelector = "HiddenInSelector";
@@ -2465,5 +2629,6 @@ ursine_native_Property.ForceEditorType = "ForceEditorType";
 ursine_native_Property.InputRange = "InputRange";
 ursine_native_Property.MultiLineEditor = "MultiLineEditor";
 ursine_native_Property.Annotation = "Annotation";
-Application.main();
+ursine_native_Property.ResourceType = "ResourceType";
+EditorMain.main();
 })(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

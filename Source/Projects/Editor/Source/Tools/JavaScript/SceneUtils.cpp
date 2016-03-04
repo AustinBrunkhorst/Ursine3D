@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -18,30 +18,159 @@
 #include "Editor.h"
 #include "Project.h"
 
-#include <SystemManager.h>
-#include <WorldSerializer.h>
-#include <WorldConfigComponent.h>
-#include <SystemManager.h>
-#include <Timer.h>
+#include "EditorCameraSystem.h"
+#include "EditorToolSystem.h"
 
-#include <FileSystem.h>
-#include <UIFileDialogCallback.h>
+#include <FileDialog.h>
+
+#include <SystemManager.h>
+
+#include <WorldSerializer.h>
+
+#include <WorldConfigComponent.h>
+#include <SelectedComponent.h>
 
 using namespace ursine;
 
 namespace
 {
-    void doLoadScene(int selectedFilter, const fs::FileList &files);
-    void doSaveScene(int selectedFilter, const fs::FileList &files);
+    const ursine::GUID kNullGUID = GUIDNullGenerator( )( );
 
-    void doOpenErrorLog(Notification &notification);
+    Project *getProject(void);
+    Scene &getScene(void);
+    ecs::World *getActiveWorld(void);
+
+    fs::path selectSavePath(const fs::path &defaultPath);
+    void saveWorld(ecs::World *world, const fs::path &path);
+}
+
+JSFunction(SceneSaveWorld)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    auto *project = getProject( );
+    auto &lastOpened = project->GetLastOpenedWorld( );
+
+    auto item = project->GetResourcePipeline( ).GetItem( lastOpened );
+
+    auto *world = getActiveWorld( );
+
+    // empty world, we MUST save as
+    if (!item)
+    {
+        auto saveFileName = selectSavePath( "" );
+
+        if (!saveFileName.empty( ))
+        {
+            saveWorld( world, saveFileName );
+
+            editor->SetProjectStatus( saveFileName.stem( ).string( ) );
+    }
+    }
+    else
+    {
+        saveWorld( world, item->GetSourceFileName( ) );
+    }
+
+    return CefV8Value::CreateBool( true );
+}
+
+JSFunction(SceneSaveWorldAs)
+{
+    auto *project = getProject( );
+    auto &lastOpened = project->GetLastOpenedWorld( );
+
+    auto item = project->GetResourcePipeline( ).GetItem( lastOpened );
+
+    auto *world = getActiveWorld( );
+
+    auto saveFileName = selectSavePath( item ? item->GetSourceFileName( ) : "" );
+
+    if (!saveFileName.empty( ))
+    {
+        saveWorld( world, saveFileName );
+    }
+
+    return CefV8Value::CreateBool( true );
+}
+
+JSFunction(SceneSetActiveWorld)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto guid = GUIDStringGenerator( )( arguments[ 0 ]->GetStringValue( ).ToString( ) );
+
+    Application::PostMainThread( [=] {
+        auto &scene = getScene( );
+
+        resources::ResourceReference reference = guid;
+
+        scene.SetActiveWorld( reference );
+
+        auto *world = scene.GetActiveWorld( );
+
+        if (world)
+        {
+            URSINE_TODO( "this is hacky and weirdly placed" );
+            world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
+        }
+    } );
+    
+    return CefV8Value::CreateBool( true );
+}
+
+JSFunction(SceneInstantiateArchetype)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto guid = GUIDStringGenerator( )( arguments[ 0 ]->GetStringValue( ).ToString( ) );
+
+    Application::PostMainThread( [=] {
+        auto *project = getProject( );
+        auto &scene = project->GetScene( );
+        auto *world = scene.GetActiveWorld( );
+
+        if (!world)
+            return;
+
+        resources::ResourceReference reference = guid;
+
+        auto entity = world->CreateEntityFromArchetype( reference );
+
+        auto *tools = world->GetEntitySystem<EditorToolSystem>( );
+
+        if (tools)
+            tools->ClearSelectedEntities( );
+
+        auto *cameraSystem = world->GetEntitySystem<EditorCameraSystem>( );
+
+        // move it to focus
+        if (cameraSystem)
+            entity->GetTransform( )->SetWorldPosition( cameraSystem->GetEditorFocusPosition( ) );
+
+        entity->AddComponent<ecs::Selected>( );
+
+        auto resource = project->GetResourcePipeline( ).GetItem( guid );
+
+        if (resource)
+            entity->SetName( resource->GetDisplayName( ) +" Archetype" );
+        else
+            entity->SetName( "Untitled Archetype" );
+    } );
+    
+    return CefV8Value::CreateBool( true );
 }
 
 JSFunction(SceneGetRootEntities)
 {
-    auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
+    auto *world = getActiveWorld( );
+    
+    if (!world)
+        return CefV8Value::CreateArray( 0 );
 
-    auto root = scene->GetWorld( )->GetRootEntities( );
+    auto root = world->GetRootEntities( );
 
     auto ids = CefV8Value::CreateArray( static_cast<int>( root.size( ) ) );
 
@@ -49,8 +178,8 @@ JSFunction(SceneGetRootEntities)
     {
         ids->SetValue( 
             static_cast<int>( i ), 
-            CefV8Value::CreateUInt( root[ i ]->GetUniqueID( ) )
-        );
+            CefV8Value::CreateUInt( root[ i ]->GetID( ) )
+    );
     }
 
     return ids;
@@ -58,9 +187,12 @@ JSFunction(SceneGetRootEntities)
 
 JSFunction(SceneGetActiveEntities)
 {
-    auto scene = GetCoreSystem( Editor )->GetProject( )->GetScene( );
+    auto *world = getActiveWorld( );
 
-    auto &active = scene->GetWorld( )->GetActiveEntities( );
+    if (!world)
+        return CefV8Value::CreateArray( 0 );
+
+    auto active = world->GetActiveEntities( );
 
     auto ids = CefV8Value::CreateArray( static_cast<int>( active.size( ) ) );
 
@@ -68,65 +200,17 @@ JSFunction(SceneGetActiveEntities)
     {
         ids->SetValue( 
             static_cast<int>( i ), 
-            CefV8Value::CreateUInt( active[ i ]->GetUniqueID( ) )
-        );
+            CefV8Value::CreateUInt( active[ i ]->GetID( ) )
+    );
     }
 
     return ids;
 }
 
-JSFunction(SceneLoad)
-{
-    auto *editor = GetCoreSystem( Editor );
-
-    CefRefPtr<UIFileDialogCallback> callback = 
-        new UIFileDialogCallback( doLoadScene );
-
-    std::vector<CefString> filters {
-        "World Files|.uworld"
-    };
-
-    editor->GetMainUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
-        FILE_DIALOG_OPEN,
-        "Load World",
-        "",
-        filters,
-        0,
-        callback
-    );
-
-    return CefV8Value::CreateUndefined( );
-}
-
-JSFunction(SceneSave)
-{
-    auto *editor = GetCoreSystem( Editor );
-
-    CefRefPtr<UIFileDialogCallback> callback = 
-        new UIFileDialogCallback( doSaveScene );
-
-    std::vector<CefString> filters {
-        "World Files|.uworld"
-    };
-
-    editor->GetMainUI( )->GetBrowser( )->GetHost( )->RunFileDialog(
-        static_cast<CefBrowserHost::FileDialogMode>( FILE_DIALOG_SAVE | FILE_DIALOG_OVERWRITEPROMPT_FLAG ),
-        "Save World",
-        "",
-        filters,
-        0,
-        callback
-    );
-
-    return CefV8Value::CreateUndefined( );
-}
-
 JSFunction(ScenePlayStart)
 {
-    Application::Instance->ExecuteOnMainThread( [] {
-        auto *editor = GetCoreSystem( Editor );
-
-        editor->GetProject( )->SetPlayState( PS_PLAYING );
+    Application::PostMainThread( [] {
+        getProject( )->SetPlayState( PS_PLAYING );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -139,10 +223,8 @@ JSFunction(SceneSetPlayState)
 
     auto playing = arguments[ 0 ]->GetBoolValue( );
 
-    Application::Instance->ExecuteOnMainThread( [=] {
-        auto *editor = GetCoreSystem( Editor );
-
-        editor->GetProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
+    Application::PostMainThread( [=] {
+        getProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -150,10 +232,10 @@ JSFunction(SceneSetPlayState)
 
 JSFunction(SceneStep)
 {
-    Application::Instance->ExecuteOnMainThread( [=] {
-        auto *editor = GetCoreSystem( Editor );
+    Application::PostMainThread( [=] {
+        auto &scene = getScene( );
 
-        editor->GetProject( )->GetScene( )->Step( );
+        scene.Step( );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -161,10 +243,8 @@ JSFunction(SceneStep)
 
 JSFunction(ScenePlayStop)
 {
-    Application::Instance->ExecuteOnMainThread( [] {
-        auto *editor = GetCoreSystem( Editor );
-
-        editor->GetProject( )->SetPlayState( PS_EDITOR );
+    Application::PostMainThread( [] {
+        getProject( )->SetPlayState( PS_EDITOR );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -192,83 +272,50 @@ JSFunction(SceneGetEntitySystems)
 
 namespace
 {
-    void doLoadScene(int selectedFilter, const fs::FileList &files)
+    Project *getProject(void)
     {
-        if (files.empty( ))
-            return;
-
         auto *editor = GetCoreSystem( Editor );
 
-        auto file = files[ 0 ].string( );
-
-        try
-        {
-            auto world = ecs::WorldSerializer::Deserialize( file );
-
-            Application::Instance->ExecuteOnMainThread( [=] {
-                URSINE_TODO( "this is hacky and weirdly placed" );
-                world->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
-
-                editor->GetProject( )->SetWorld( world );
-            } );
-        }
-        catch (const ecs::SerializationException &e)
-        {
-            UWarning( "World deserialization failure.\nfile: %s\n\n%s",
-                file.c_str( ),
-                e.GetError( ).c_str( ) 
-            );
-
-            NotificationConfig error;
-
-            error.type = NOTIFY_ERROR;
-            error.header = "Load Error";
-            error.message = "Unable to load world.";
-            
-            error.buttons = 
-            {
-                { "Open Error Log", doOpenErrorLog }
-            };
-
-            editor->PostNotification( error );
-        }
+        return editor->GetProject( );
     }
 
-    void doSaveScene(int selectedFilter, const fs::FileList &files)
-    {
-        if (files.empty( ))
-            return;
-
-        auto *editor = GetCoreSystem( Editor );
-        auto world = editor->GetProject( )->GetScene( )->GetWorld( );
-
-        auto serialized = ecs::WorldSerializer::Serialize( world );
-
-        auto path = files[ 0 ];
-
-        if (!fs::WriteText( path.string( ), serialized.dump( true ) ))
+    Scene &getScene(void)
         {
-            UWarning( "Could not write to world file.\nfile: %s",
+        return getProject( )->GetScene( );
+        }
+            
+    ecs::World *getActiveWorld(void)
+            {
+        return getScene( ).GetActiveWorld( );
+    }
+
+    fs::path selectSavePath(const fs::path &defaultPath)
+    {
+        fs::FileDialog saveDialog;
+
+        saveDialog.config.mode = fs::FDM_SAVE;
+        saveDialog.config.initialPath = defaultPath;
+        saveDialog.config.windowTitle = "Save World";
+        saveDialog.config.parentWindow = GetCoreSystem( Editor )->GetMainWindow( ).GetWindow( );
+        saveDialog.config.filters = {
+            { "World Files", { "*.uworld" } }
+        };
+
+        auto result = saveDialog.Open( );
+
+        if (result)
+            return result.selectedFiles[ 0 ];
+
+        return "";
+    }
+
+    void saveWorld(ecs::World *world, const fs::path &path)
+        {
+        auto data = ecs::WorldSerializer::Serialize( world );
+
+        UAssert( fs::WriteAllText( path.string( ), data.dump( true ) ),
+            "Unable to save world.\nfile: %s",
                 path.string( ).c_str( )
             );
-
-            NotificationConfig error;
-
-            error.type = NOTIFY_ERROR;
-            error.header = "Save Error";
-            error.message = "Unable to save world.";
-
-            error.buttons =
-            {
-                { "Open Error Log", doOpenErrorLog }
-            };
-
-            editor->PostNotification( error );
-        }
-    }
-
-    void doOpenErrorLog(Notification &notification)
-    {
-        utils::OpenPath( URSINE_ERROR_LOG_FILE );
     }
 }

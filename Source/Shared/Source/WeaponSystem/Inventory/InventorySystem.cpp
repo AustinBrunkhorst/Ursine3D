@@ -19,8 +19,7 @@
 #include <AnimatorComponent.h>
 #include "FirePosComponent.h"
 
-
-ENTITY_SYSTEM_DEFINITION( InventorySystem ) ;
+ENTITY_SYSTEM_DEFINITION( InventorySystem );
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -35,26 +34,21 @@ namespace
 ////  Inventory System  ////
 ////////////////////////////
 
-InventorySystem::InventorySystem(ursine::ecs::World* world)
-    : FilterSystem( world, Filter( ).One< Inventory >( ) )
+InventorySystem::InventorySystem(World* world)
+    : FilterSystem( world, Filter( ).One<Inventory>( ) )
 {
 }
 
-
-void InventorySystem::Enable(ursine::ecs::Entity* entity)
+void InventorySystem::Enable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
     // grab all comps needed
     if ( entity->HasComponent< Inventory >( ) )
-        m_inventories[ uniqueID ] = entity->GetComponent< Inventory >( );
+        m_inventories[ entity ] = entity->GetComponent< Inventory >( );
 }
 
-void InventorySystem::Disable(ursine::ecs::Entity* entity)
+void InventorySystem::Disable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
-    m_inventories.erase( uniqueID );
+    m_inventories.erase( entity );
 }
 
 void InventorySystem::onUpdate(EVENT_HANDLER(World))

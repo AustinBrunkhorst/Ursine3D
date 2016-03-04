@@ -65,17 +65,17 @@ namespace ursine
             // SET COLOR ////////////////////////////////////////////
             // set color
             auto &color = particleSystem.GetColor( );
-            pgb.cameraUp.x = color.r;
-            pgb.cameraUp.y = color.g;
-            pgb.cameraUp.z = color.b;
-            pgb.cameraUp.w = color.a;
+            pgb.cameraUp.x = pow(color.r, 2.2f);
+            pgb.cameraUp.y = pow(color.g, 2.2f);
+            pgb.cameraUp.z = pow(color.b, 2.2f);
+            pgb.cameraUp.w = pow(color.a, 2.2f);
             m_manager->bufferManager->MapBuffer<BUFFER_POINT_GEOM>(
                 &pgb, 
                 SHADERTYPE_VERTEX
             );
 
             // SET TEXTURE //////////////////////////////////////////
-            m_manager->textureManager->MapTextureByName( particleSystem.GetParticleTexture( ) );
+            m_manager->textureManager->MapTextureByID( handle.Material_ );
         }
 
         void ParticleSystemProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)

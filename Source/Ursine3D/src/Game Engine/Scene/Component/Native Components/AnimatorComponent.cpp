@@ -16,10 +16,10 @@
 
 #include "AnimatorComponent.h"
 #include "Notification.h"
-#include "../Serialization/AnimationInfo.h"
+#include "AnimationInfo.h"
 #include <Model3DComponent.h>
 
-typedef ursine::graphics::ufmt_loader::AnimInfo AniInfo;
+#include "Notification.h"
 
 namespace
 {
@@ -32,12 +32,12 @@ namespace ursine
     namespace ecs
     {
         StateBlender::StateBlender(void)
-            : m_currState("")
-            , m_futState("")
-            , m_ctrnsRate(1.f)
-            , m_ftrnsRate(0.f)
-            , m_ctrnsFrm(0)
-            , m_ftrnsFrm(0)
+            : m_currState( "" )
+            , m_futState( "" )
+            , m_ctrnsRate( 1.f )
+            , m_ftrnsRate( 0.f )
+            , m_ctrnsFrm( 0 )
+            , m_ftrnsFrm( 0 )
         {
         }
 
@@ -46,7 +46,7 @@ namespace ursine
             return m_currState;
         }
 
-        void StateBlender::SetcurrState(const std::string& cstate)
+        void StateBlender::SetcurrState(const std::string &cstate)
         {
             m_currState = cstate;
         }
@@ -56,7 +56,7 @@ namespace ursine
             return m_futState;
         }
 
-        void StateBlender::SetfutState(const std::string& fstate)
+        void StateBlender::SetfutState(const std::string &fstate)
         {
             m_futState = fstate;
         }
@@ -66,7 +66,7 @@ namespace ursine
             return m_ctrnsRate;
         }
 
-        void StateBlender::SetcurrTransPosRatio(const float& tPos)
+        void StateBlender::SetcurrTransPosRatio(const float &tPos)
         {
             m_ctrnsRate = tPos;
         }
@@ -76,7 +76,7 @@ namespace ursine
             return m_ftrnsRate;
         }
 
-        void StateBlender::SetfutTransPosRatio(const float& tPos)
+        void StateBlender::SetfutTransPosRatio(const float &tPos)
         {
             m_ftrnsRate = tPos;
         }
@@ -86,7 +86,7 @@ namespace ursine
             return m_ctrnsFrm;
         }
 
-        void StateBlender::SetcurrTransFrm(const unsigned int& tFrm)
+        void StateBlender::SetcurrTransFrm(const unsigned int &tFrm)
         {
             m_ctrnsFrm = tFrm;
         }
@@ -96,22 +96,22 @@ namespace ursine
             return m_ftrnsFrm;
         }
 
-        void StateBlender::SetfutTransFrm(const unsigned int& tFrm)
+        void StateBlender::SetfutTransFrm(const unsigned int &tFrm)
         {
             m_ftrnsFrm = tFrm;
         }
 
-        const StateBlender *StateBlender::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
+        const StateBlender *StateBlender::GetStateBlenderByNames(const std::string &currst, const std::string &futst)
         {
             if (currst == m_currState && futst == m_futState)
                 return this;
+
             return nullptr;
         }
 
-
         NATIVE_COMPONENT_DEFINITION(Animator);
 
-        Animator::Animator(void)
+        Animator::Animator( )
             : BaseComponent( )
             , m_playing(true)
             , m_debug(false)
@@ -122,8 +122,6 @@ namespace ursine
             , m_futStName("")
             , m_animationName("")
             , m_stateName("")
-            , m_animlist(0)
-            , m_rigRoot(nullptr)
         {
         }
 
@@ -140,7 +138,6 @@ namespace ursine
             {
                 x = SMat4::Identity( );
             }
-            URSINE_TODO( "Get the rig root \"OnSceneReady\"" );
         }
 
         void Animator::UpdateAnimation(const float dt)
@@ -162,8 +159,8 @@ namespace ursine
             if (!currentState)
                 return;
 
-            const Animation *currentAnimation = (nullptr == currentState) ? nullptr : currentState->GetAnimation( );
-            const Animation *futureAnimation = (nullptr == futureState) ? nullptr : futureState->GetAnimation( );
+            const Animation *currentAnimation = ( nullptr == currentState ) ? nullptr : currentState->GetAnimation( );
+            const Animation *futureAnimation = ( nullptr == futureState ) ? nullptr : futureState->GetAnimation( );
             auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
 
             if (nullptr == currentAnimation || nullptr == rig)
@@ -183,7 +180,9 @@ namespace ursine
                 transFactor = 0.0;
 
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
-            std::vector<SMat4> tempVec(100);
+            std::vector<SMat4> tempVec;
+
+            tempVec.resize( 100 );
 
             // blending / playing animation should take place in here
             UpdateState(currentState, currentAnimation, futureState, futureAnimation, dt, transFactor);
@@ -195,7 +194,7 @@ namespace ursine
                 rig,
                 matrixPalette,
                 tempVec,
-                (float)transFactor
+                ( float )transFactor
             );
 
             // Update the rig transforms
@@ -211,8 +210,12 @@ namespace ursine
         void Animator::Debugging(const AnimationRig& _rig, const std::vector<SMat4>& vec)
         {
             auto *graphics = GetCoreSystem(graphics::GfxAPI);
+
             URSINE_TODO("Remove this when we implement proper animation clips and stuf")
-                std::vector<SVec3> bonePoints(100);
+            std::vector<SVec3> bonePoints;
+
+            bonePoints.resize( 100 );
+
             auto &hierarchy = _rig.GetHierarchyTable( );
             auto &worldTransform = GetOwner( )->GetTransform( )->GetLocalToWorldMatrix( );
 
@@ -241,6 +244,7 @@ namespace ursine
 
             // render points
             graphics->DrawingMgr.SetOverdraw(true);
+
             for (unsigned x = 0; x < boneCount; ++x)
             {
                 int distance = 0;
@@ -317,17 +321,7 @@ namespace ursine
         {
             m_speedScalar = scalar;
         }
-
-        const std::string &Animator::GetAnimation(void) const
-        {
-            return m_animationName;
-        }
-
-        void Animator::SetAnimation(const std::string& name)
-        {
-            m_animationName = name;
-        }
-
+        
         const std::string &Animator::GetRig(void) const
         {
             return m_rig;
@@ -354,13 +348,56 @@ namespace ursine
             {
                 if (x.GetName( ) == m_curStName)
                 {
-                    x.SetTimePosition(position);
+                    x.SetTimePosition( position );
                     return;
                 }
             }
         }
 
-        const std::string& Animator::GetCurrentState(void) const
+        const resources::ResourceReference &Animator::GetClip(void) const
+        {
+            return m_clipResource;
+        }
+
+        void Animator::SetClip(const resources::ResourceReference &clip)
+        {
+            m_clipResource = clip;
+        
+            if (!resourcesAreAvailable( ))
+                return;
+
+            invalidateClip( );
+
+            NOTIFY_COMPONENT_CHANGED( "clip", m_clipResource );
+        }
+
+        void Animator::invalidateClip(void)
+        {
+            auto data = loadResource<resources::AnimationClipData>( m_clipResource );
+
+            std::string str;
+
+            if (data == nullptr)
+            {
+                NotificationConfig config;
+
+                config.type = NOTIFY_WARNING;
+                config.header = "Warning";
+                config.message = "There is no matching animation clip resource.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds( 5.0f );
+
+                m_animationName = "";
+            }
+            else
+            {
+                auto handle = data->GetAnimeHandle( );
+
+                m_animationName = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( handle )->name;
+            }
+        }
+
+        const std::string &Animator::GetCurrentState(void) const
         {
             return m_curStName;
         }
@@ -370,148 +407,31 @@ namespace ursine
             if ("" == m_curStName)
             {
                 m_curStName = state;
-                NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
+
+                NOTIFY_COMPONENT_CHANGED( "currentState", m_curStName );
             }
             else
                 m_futStName = state;
         }
 
-        const std::string& Animator::GetStateName(void) const
+        void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
         {
-            return m_stateName;
+            for (auto &child : children)
+            {
+                recursClearChildren(child->GetChildren( ));
+
+                child->GetOwner( )->Delete( );
+            }
         }
 
-        void Animator::SetStateName(const std::string &state)
+        void Animator::clearChildren(void)
         {
-            m_stateName = state;
+            recursClearChildren(GetOwner( )->GetTransform( )->GetChildren( ));
         }
 
-#if defined(URSINE_WITH_EDITOR)
-
-        void Animator::ImportAnimation(void)
-        {
-            if (m_animationName.size( ) == 0)
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_INFO;
-                config.header = "Error";
-                config.message = "Please type in the name of the animation.";
-                config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds(5.0f);
-
-                EditorPostNotification(config);
-
-                return;
-            }
-
-            // We must have a rig set if we are about to import an animation
-            auto *rigRoot = GetOwner( )->GetChildByName( kRigRootName );
-            
-            if (!rigRoot)
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_WARNING;
-                config.header = "Warning";
-                config.message = "You must first import a rig before importing an animation.";
-                config.duration = TimeSpan::FromSeconds( 5.0f );
-                config.dismissible = true;
-
-                EditorPostNotification( config );
-
-                return;
-            }
-
-            // Main thread operation
-            Application::Instance->ExecuteOnMainThread( [=] {
-                importAnimation( );
-            } );
-        }
-
-        void Animator::ImportRig(void)
-        {
-            // If the name isn't typed in yet
-            if (m_rig.size( ) == 0)
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_INFO;
-                config.header = "Error";
-                config.message = "Please type in the name of the rig.";
-                config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds( 5.0f );
-
-                EditorPostNotification( config );
-
-                return;
-            }
-
-            auto owner = GetOwner( );
-            auto *rigRoot = owner->GetChildByName( kRigRootName );
-
-            // If we currently have a generated rig root
-            if (rigRoot)
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_WARNING;
-                config.header = "Warning";
-                config.message = "This action will delete all of the Rig_Root's children. Continue?";
-                config.dismissible = false;
-                config.duration = 0;
-
-                NotificationButton yes, no;
-
-                yes.text = "Yes";
-                yes.onClick = [=](Notification &notification) {
-                    notification.Close( );
-
-                    // Main thread operation
-                    Application::Instance->ExecuteOnMainThread( [=] {
-                        rigRoot->EnableDeletion( true );
-                        rigRoot->Delete( );
-                        importRig( );
-                    } );
-                };
-
-                no.text = "No";
-                no.onClick = [=](Notification &notification) {
-                    notification.Close( );
-                };
-
-                config.buttons = { yes, no };
-
-                EditorPostNotification(config);
-                return;
-            }
-
-            auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
-
-            if (!rig)
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_INFO;
-                config.header = "Error";
-                config.message = "The rig name entered is invalid.";
-                config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds( 5.0f );
-
-                EditorPostNotification( config );
-
-                return;
-            }
-
-            Application::Instance->ExecuteOnMainThread( [=] {
-                importRig( );
-            } );
-        }
-
-#endif
-
-        void Animator::UpdateState(AnimationState *currSt, const Animation *currAni,
-            AnimationState *futSt, const Animation *futAni, const float& dt, float& transFactor)
+        void Animator::UpdateState(AnimationState* currSt, const Animation* currAni,
+                                   AnimationState* futSt, const Animation* futAni, 
+                                   const float& dt, float& transFactor)
         {
             if (m_playing)
             {
@@ -666,9 +586,9 @@ namespace ursine
             }
         }
         
-        void Animator::ChangeState( AnimationState *currSt, AnimationState *futSt,
-            const float &currloopTimePos, const float &futloopTimePos,
-            const float &currNoloopTimePos, const float &futNoloopTimePos )
+        void Animator::ChangeState(AnimationState *currSt, AnimationState *futSt,
+                                   const float &currloopTimePos, const float &futloopTimePos,
+                                   const float &currNoloopTimePos, const float &futNoloopTimePos)
         {
             // if change state is checked, change state as future state
             if (m_changeState)
@@ -700,13 +620,13 @@ namespace ursine
         }
 
         // find the closest animation keyframe of the state, and set a transition position
-        void Animator::GetTransFrmByRatio(AnimationState& state, unsigned int& frameIndex, const float& ratio)
+        void Animator::GetTransFrmByRatio(AnimationState &state, unsigned int &frameIndex, const float &ratio)
         {
             unsigned keyframeCount = state.GetAnimation( )->GetRigKeyFrameCount( );
-            auto &firstFrame = state.GetAnimation( )->GetKeyframe(0, 0);
-            auto &lastFrame = state.GetAnimation( )->GetKeyframe(keyframeCount - 1, 0);
+            auto &firstFrame = state.GetAnimation( )->GetKeyframe( 0, 0 );
+            auto &lastFrame = state.GetAnimation( )->GetKeyframe( keyframeCount - 1, 0 );
             auto totallength = lastFrame.length - firstFrame.length;
-
+            
             auto delta = 1.0f / totallength;
             auto sec = ratio / delta; // if total 4 second anime, ratio 1 means the momemt of 4 sec
 
@@ -714,14 +634,15 @@ namespace ursine
             float diff = totallength;
             for (unsigned int i = 0; i < state.GetAnimation( )->GetRigKeyFrameCount( ); ++i)
             {
-                if (fabs(sec - state.GetAnimation( )->GetKeyframe(i, 0).length) < diff)
+                if (fabs( sec - state.GetAnimation( )->GetKeyframe( i, 0 ).length ) < diff)
                 {
-                    diff = fabs(sec - state.GetAnimation( )->GetKeyframe(i, 0).length);
+                    diff = fabs( sec - state.GetAnimation( )->GetKeyframe( i, 0 ).length );
                     frameIndex = i;
                 }
             }
         }
-        
+
+
         StateBlender *Animator::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
         {
             NotificationConfig config;
@@ -729,8 +650,8 @@ namespace ursine
             config.type = NOTIFY_WARNING;
             config.header = "Warning";
             config.message = "There is no matching State Blender in the list";
-            config.dismissible = false;
-            config.duration = 0;
+            config.dismissible = true;
+            config.duration = TimeSpan::FromSeconds( 5.0f );
 
             if (currst == "" || futst == "")
             {
@@ -739,7 +660,7 @@ namespace ursine
 
             for (auto &x : stBlender)
             {
-                if (nullptr != x.GetStateBlenderByNames(currst, futst))
+                if (nullptr != x.GetStateBlenderByNames( currst, futst ))
                     return &(x);
             }
 
@@ -747,82 +668,88 @@ namespace ursine
             return nullptr;
         }
 
-                void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
+#if defined(URSINE_WITH_EDITOR)
+
+        void Animator::ImportRig(void)
         {
-            for (auto &child : children)
+            // If the name isn't typed in yet
+            if (m_rig.size( ) == 0)
             {
-                recursClearChildren(child->GetChildren( ));
+                NotificationConfig config;
 
-                child->GetOwner( )->Delete( );
-            }
-        }
+                config.type = NOTIFY_INFO;
+                config.header = "Error";
+                config.message = "Please type in the name of the rig.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds( 5.0f );
 
-        void Animator::clearChildren(void)
-        {
-            recursClearChildren(GetOwner( )->GetTransform( )->GetChildren( ));
-        }
+                EditorPostNotification( config );
 
-        // import animation to the current state
-        // if I get animation builder here, how can I put animation to the state?
-        void Animator::importAnimation(void)
-        {
-            std::string janiFileName("Assets/Animations/");
-            janiFileName += m_animationName + ".jani";
-            HANDLE hFile_ani = CreateFile(janiFileName.c_str( ), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-
-            if (!hFile_ani)
                 return;
-
-            AniInfo ufmt_ani;
-            // Serialize in model and animation
-            UAssert(true == ufmt_ani.SerializeIn(hFile_ani), "Fail to serialize jani file.", janiFileName.c_str( ));
-
-            unsigned animationIndex = 0;
-            // Check if there is same animation already
-            const Animation *checker = AnimationBuilder::GetAnimationByName(m_animationName);
-
-            if (nullptr == checker)
-                animationIndex = AnimationBuilder::LoadAnimation(ufmt_ani, m_animationName);
-
-            CloseHandle(hFile_ani);
-
-            // Check if the animation is in animlist, push back if not
-            bool bExist = false;
-            for (auto &x : m_animlist)
-            {
-                if (m_animationName == x->GetName( ))
-                {
-                    bExist = true;
-                    break;
-                }
             }
 
-            if (!bExist)
+            auto owner = GetOwner( );
+            auto rigRoot = owner->GetChildByName( kRigRootName );
+
+            // If we currently have a generated rig root
+            if (rigRoot)
             {
-                // add to animlist
-                m_animlist.push_back(AnimationBuilder::GetAnimationByName(m_animationName));
+                NotificationConfig config;
 
-                // Get the animation list entity.  If it doesn't exist, create it
-                auto *owner = GetOwner( );
-                auto *world = owner->GetWorld( );
-                auto *animList = owner->GetChildByName( kAnimationListName );
+                config.type = NOTIFY_WARNING;
+                config.header = "Warning";
+                config.message = "This action will delete all of the Rig_Root's children. Continue?";
+                config.dismissible = false;
+                config.duration = 0;
 
-                if (!animList)
-                {
-                    animList = world->CreateEntity( kAnimationListName );
-                    owner->GetTransform( )->AddChildAlreadyInLocal( animList->GetTransform( ) );
-                }
+                NotificationButton yes, no;
 
-                auto *alTrans = animList->GetTransform( );
-                auto *newEntity = animList->GetChildByName( m_animationName );
+                yes.text = "Yes";
+                yes.onClick = [=](Notification &notification) {
+                    notification.Close( );
 
-                if (!newEntity)
-                {
-                    newEntity = world->CreateEntity( m_animationName );
-                    alTrans->AddChildAlreadyInLocal( newEntity->GetTransform( ) );
-                }
+                    // Main thread operation
+                    Application::PostMainThread( [=] {
+                        rigRoot->EnableDeletion( true );
+                        rigRoot->Delete( );
+                        importRig( );
+                    } );
+                };
+
+                no.text = "No";
+                no.onClick = [=](Notification &notification) {
+                    notification.Close( );
+                };
+
+                config.buttons = { yes, no };
+
+                EditorPostNotification(config);
+                return;
             }
+
+            auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
+
+            if (!rig)
+            {
+                NotificationConfig config;
+
+                config.type = NOTIFY_INFO;
+                config.header = "Error";
+                config.message = "The rig name entered is invalid.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds( 5.0f );
+
+                EditorPostNotification( config );
+
+                return;
+            }
+
+            Application::PostMainThread( [=] {
+                importRig( );
+            } );
         }
+
+#endif
 
         void Animator::importRig(void)
         {
@@ -850,8 +777,7 @@ namespace ursine
             auto boneEntity = world->CreateEntity( bone.GetName( ) );
             auto boneTrans = boneEntity->GetTransform( );
 
-            boneEntity->EnableDeletion( false );
-            boneEntity->EnableHierarchyChange( false );
+            enableDeletionOnEntities( boneEntity );
 
             parent->AddChildAlreadyInLocal( boneTrans );
 
@@ -878,11 +804,114 @@ namespace ursine
                 updateRigTransforms( boneTrans->GetChild( i ), *children[ i ] );
         }
 
-        // Question
-        // I'm trying to add/remove entity by StateArray.
-        // Adding is not hard(Except naming), but how can I remove entity from the blending tree?
-        // how can I add/remove entity when I add/remove Array?
-        // And how will you control BlendTree for all model?
-        // how can I save blendtree? -> by new file format
+        void Animator::enableDeletionOnEntities(const ursine::ecs::EntityHandle &entity)
+        {
+            entity->EnableDeletion( true );
+            entity->EnableHierarchyChange( true );
+
+            for (auto &child : *entity->GetChildren( ))
+            {
+                enableDeletionOnEntities( GetOwner( )->GetWorld( )->GetEntity( child ) );
+            }
+        }
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        void Animator::ImportAnimation(void)
+        {
+            if (m_animationName.size( ) == 0)
+            {
+                NotificationConfig config;
+
+                config.type = NOTIFY_INFO;
+                config.header = "Error";
+                config.message = "Please type in the name of the animation.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds( 5.0f );
+
+                EditorPostNotification( config );
+
+                return;
+            }
+
+            // main thread operation
+            Application::PostMainThread( [=]
+            {
+                importAnimation( );
+            } );
+        }
+
+    #endif
+
+        // import animation to the current state
+        // if I get animation builder here, how can I put animation to the state?
+        void Animator::importAnimation(void)
+        {
+            unsigned animationIndex = 0;
+            // Check if there is same animation already
+            const Animation *checker = AnimationBuilder::GetAnimationByName( m_animationName );
+            if (nullptr == checker)
+            {
+                auto data = loadResource<resources::AnimationClipData>( m_clipResource );
+                if (data == nullptr)
+                {
+                    NotificationConfig config;
+
+                    config.type = NOTIFY_WARNING;
+                    config.header = "Warning";
+                    config.message = "There is no matching animation clip resource.";
+                    config.dismissible = true;
+                    config.duration = TimeSpan::FromSeconds( 5.0f );
+
+                    EditorPostNotification( config );
+                }
+                else
+                {
+                    auto handle = data->GetAnimeHandle( );
+
+                    auto *animInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo( handle );
+
+                    if (animInfo->IsValid( ))
+                        animationIndex = AnimationBuilder::LoadAnimation( *animInfo, m_animationName );
+                }
+            }
+
+            // Check if the animation is in animlist, push back if not
+            bool bExist = false;
+            for (auto &x : m_animlist)
+            {
+                if (m_animationName == x->GetName( ))
+                {
+                    bExist = true;
+                    break;
+                }
+            }
+
+            if (!bExist)
+            {
+               // add to animlist
+                m_animlist.push_back( AnimationBuilder::GetAnimationByName( m_animationName ) );
+
+                // Get the animation list entity.  If it doesn't exist, create it
+                auto owner = GetOwner( );
+                auto world = owner->GetWorld( );
+                auto animList = owner->GetChildByName( kAnimationListName );
+
+                if (!animList)
+                {
+                    animList = world->CreateEntity( kAnimationListName );
+                    owner->GetTransform( )->AddChildAlreadyInLocal( animList->GetTransform( ) );
+                }
+
+                auto alTrans = animList->GetTransform( );
+                auto newEntity = animList->GetChildByName( m_animationName );
+
+                if (!newEntity)
+                {
+                    newEntity = world->CreateEntity( m_animationName );
+                    alTrans->AddChildAlreadyInLocal( newEntity->GetTransform( ) );
+                }
+            }
+        }
     }
 }

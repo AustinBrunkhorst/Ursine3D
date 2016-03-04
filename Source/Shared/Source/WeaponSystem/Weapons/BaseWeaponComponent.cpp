@@ -4,9 +4,6 @@
 
 NATIVE_COMPONENT_DEFINITION( BaseWeapon );
 
-
-
-
 BaseWeapon::BaseWeapon( void ) :
     BaseComponent( ),
     AbstractProjWeapon( )
@@ -23,9 +20,7 @@ void BaseWeapon::OnInitialize( void )
     AbstractWeaponInit( BaseWeapon, GetOwner( ) );
 }
 
-
 void BaseWeapon::RemoveMySelf(void)
 {
     GetOwner( )->Delete( );
 }
-

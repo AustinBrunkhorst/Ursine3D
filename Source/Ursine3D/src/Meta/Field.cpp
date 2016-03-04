@@ -89,6 +89,11 @@ namespace ursine
             return m_getter->GetValue( instance );
         }
 
+        Variant Field::GetValueReference(const Variant &instance) const
+        {
+            return m_getter->GetValueReference( instance );
+        }
+
         bool Field::SetValue(Variant &instance, const Variant &value) const
         {
             // read only?

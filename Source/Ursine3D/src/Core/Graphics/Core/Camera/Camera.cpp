@@ -260,7 +260,7 @@ namespace ursine
 
             // check to see if the whitelist bit is set
             if (renderMask & (0x1u << 63u))
-                return (renderMask - (0x1u << 63u)) == m_entityID;
+                return (renderMask - (0x1u << 63u)) == m_entity->GetID( );
 
             // else, return the regular mask comparison
             return (renderMask & m_cameraMask) != 0;
@@ -278,14 +278,14 @@ namespace ursine
             m_cameraMask = renderMask;
         }
 
-        ecs::EntityID Camera::GetEntityID(void) const
+        const ecs::EntityHandle &Camera::GetEntity(void) const
         {
-            return m_entityID;
+            return m_entity;
         }
 
-        void Camera::SetEntityID(const ecs::EntityID id)
+        void Camera::SetEntity(const ecs::EntityHandle id)
         {
-            m_entityID = id;
+            m_entity = id;
         }
 
         void Camera::CalculateVectors(const SVec3 &up)

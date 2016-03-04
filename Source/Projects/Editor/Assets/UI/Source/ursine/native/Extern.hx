@@ -17,6 +17,42 @@ class Extern {
         return untyped __js__( "GetNativeComponentDatabase()" );
     }
 
+    public static function ProjectGetResourceTree() {
+        return untyped __js__( "ProjectGetResourceTree()" );
+    }
+
+    public static function ProjectGetResourcesByType(type : String) {
+        return untyped __js__( "ProjectGetResourcesByType(type)" );
+    }
+
+    public static function ProjectGetResource(guid : String) {
+        return untyped __js__( "ProjectGetResource(guid)" );
+    }
+
+    public static function ProjectSetEmptyScene() {
+        return untyped __js__( "ProjectSetEmptyScene()" );
+    }
+
+    public static function ProjectOpenNew() {
+        return untyped __js__( "ProjectOpenNew()" );
+    }
+
+    public static function SceneSaveWorld() {
+        return untyped __js__( "SceneSaveWorld()" );
+    }
+
+    public static function SceneSaveWorldAs() {
+        return untyped __js__( "SceneSaveWorldAs()" );
+    }
+
+    public static function SceneSetActiveWorld(guid : String) {
+        return untyped __js__( "SceneSetActiveWorld(guid)" );
+    }
+
+    public static function SceneInstantiateArchetype(guid : String) {
+        return untyped __js__( "SceneInstantiateArchetype(guid)" );
+    }
+
     public static function SceneGetRootEntities() {
         return untyped __js__( "SceneGetRootEntities()" );
     }

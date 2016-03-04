@@ -30,7 +30,7 @@ namespace ursine
             static World *Deserialize(const Json &data);
 
             // Merge a new world with an existing one (systems and entities)
-            static void MergeDeserialize(const std::string &filename, World *world);
+            static void MergeDeserialize(World::Handle from, World *to);
         };
     }
 }

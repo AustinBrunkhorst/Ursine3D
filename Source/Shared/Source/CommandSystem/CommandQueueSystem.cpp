@@ -16,17 +16,17 @@
 
 #include <SystemConfig.h>
 
-ENTITY_SYSTEM_DEFINITION(CommandQueueSystem);
+ENTITY_SYSTEM_DEFINITION( CommandQueueSystem );
 
-CommandQueueSystem::CommandQueueSystem(ursine::ecs::World* world)
-    : FilterSystem(world, ursine::ecs::Filter().All<CommandQueue, InputController>(), 68) {}
+CommandQueueSystem::CommandQueueSystem(ursine::ecs::World *world)
+    : FilterSystem( world, ursine::ecs::Filter( ).All<CommandQueue, InputController>( ), 68 ) { }
 
-void CommandQueueSystem::Process(ursine::ecs::Entity* entity)
+void CommandQueueSystem::Process(const ursine::ecs::EntityHandle &entity)
 {
-    auto *commandQueue = entity->GetComponent<CommandQueue>();
+    auto *commandQueue = entity->GetComponent<CommandQueue>( );
 
-    UAssert(commandQueue != nullptr, "HEY THERE");
+    UAssert( commandQueue != nullptr, "HEY THERE" );
 
-    commandQueue->Update();
+    commandQueue->Update( );
 }
 
