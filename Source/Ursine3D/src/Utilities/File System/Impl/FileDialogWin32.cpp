@@ -293,7 +293,7 @@ namespace
         {
             WorkingDirectorySaver saver;
 
-            success = !!GetOpenFileName( &ofn );
+            success = !!GetSaveFileName( &ofn );
         }
 
         if (success) 
