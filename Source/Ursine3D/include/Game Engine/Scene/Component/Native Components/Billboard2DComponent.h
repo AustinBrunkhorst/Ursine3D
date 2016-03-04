@@ -73,7 +73,7 @@ namespace ursine
             void updateRenderer(void);
 
             void invalidateTexture(bool unload = true);
-            void invalidateTexture2();
+            void onTextureReload(void);
         } Meta(
             Enable, 
             WhiteListMethods, 
