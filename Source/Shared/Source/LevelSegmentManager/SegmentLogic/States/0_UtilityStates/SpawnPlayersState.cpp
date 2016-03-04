@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------------
+\/* ---------------------------------------------------------------------------
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -45,6 +45,27 @@ void SpawnPlayersState::Enter(SegmentLogicStateMachine *machine)
     auto spawnPoints = world->GetEntitiesFromFilter( Filter( ).All<PlayerSpawnPoint>( ) );
 
     UAssert( spawnPoints.size( ) != 0, "Error: This state requires spawn points to be present in the level." );
+
+    // If the number of spawn points found are greater than two, find the two that are nearest to our current segment
+    if (spawnPoints.size( ) > 2)
+    {
+        auto cur = segmentManager->GetCurrentSegment( );
+
+        auto spawnPoint1 = spawnPoints[ 0 ]->GetComponent<PlayerSpawnPoint>( );
+        auto spawnPoint2 = spawnPoints[ 1 ]->GetComponent<PlayerSpawnPoint>( );
+
+        for (size_t i = 2; i < spawnPoints.size( ); ++i)
+        {
+            auto newSpawn = spawnPoints[ i ]->GetComponent<PlayerSpawnPoint>( );
+
+            if (newSpawn->GetSpawnSegment( ) > spawnPoint1->GetSpawnSegment( ))
+                spawnPoint1 = newSpawn;
+            else if (newSpawn->GetSpawnSegment( ) > spawnPoint2->GetSpawnSegment( ))
+                spawnPoint2 = newSpawn;
+        }
+
+        spawnPoints = { spawnPoint1->GetOwner( ), spawnPoint2->GetOwner( ) };
+    }
 
     for (auto &spawnPoint : spawnPoints)
     {

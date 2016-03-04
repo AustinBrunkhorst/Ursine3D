@@ -104,21 +104,21 @@ void WeaponPickup::SetAmmoInfo(const int ammo, const int clip)
     m_clipCount = clip;
 }
 
-void WeaponPickup::StartInteraction(const CommandQueue *queue, ursine::ecs::EntityID id)
+void WeaponPickup::StartInteraction(const CommandQueue *queue, ursine::ecs::EntityHandle &entity)
 {
     // get invetory
-    m_inventories[ id ] = queue->GetOwner( )->GetComponent<Inventory>( );
+    m_inventories[ entity ] = queue->GetOwner( )->GetComponent<Inventory>( );
 
     //if ( CheckForAmmo( id ) )
     //    return;
 
     // start time
-    m_times[ id ] = ursine::Application::Instance->GetDeltaTime( );
+    m_times[ entity ] = ursine::Application::Instance->GetDeltaTime( );
 }
 
-void WeaponPickup::Interact(const CommandQueue *queue, ecs::EntityID id)
+void WeaponPickup::Interact(const CommandQueue *queue, ecs::EntityHandle &entity)
 {
-    Inventory* inventory = &*m_inventories[ id ];
+    Inventory* inventory = &*m_inventories[ entity ];
 
     if ( inventory == nullptr )
         return;
@@ -127,7 +127,7 @@ void WeaponPickup::Interact(const CommandQueue *queue, ecs::EntityID id)
     if ( queue->QueryCommand(game::INTERACT_COMMAND) )
     {
         // grab time
-        float* time = &m_times[ id ];
+        float* time = &m_times[ entity ];
 
         // update
         *time += ursine::Application::Instance->GetDeltaTime( );
@@ -145,14 +145,14 @@ void WeaponPickup::Interact(const CommandQueue *queue, ecs::EntityID id)
     // interact not being held, so reset time
     else
     {
-        m_times[ id ] = 0.0f;
+        m_times[ entity ] = 0.0f;
     }
 }
 
-void WeaponPickup::StopInteraction(const CommandQueue *queue, ecs::EntityID id)
+void WeaponPickup::StopInteraction(const CommandQueue *queue, ecs::EntityHandle &entity)
 {
-    m_times.erase( id );
-    m_inventories.erase( id );
+    m_times.erase( entity );
+    m_inventories.erase( entity );
 }
 
 void WeaponPickup::InteractionComplete(void)
@@ -161,9 +161,9 @@ void WeaponPickup::InteractionComplete(void)
     GetOwner( )->Delete( );
 }
 
-void WeaponPickup::CheckForAmmo(const ecs::EntityID id)
+void WeaponPickup::CheckForAmmo(const ecs::EntityHandle &entity)
 {
-    Inventory* inventory = &*m_inventories[ id ];
+    Inventory* inventory = &*m_inventories[ entity ];
 
     if ( inventory == nullptr )
         return;

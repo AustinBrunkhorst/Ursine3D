@@ -122,27 +122,3 @@ void main()
     gOutput[ 0 ].depth = depthTexture.Load( int3(xPos, yPos, 0) ).x;
     return;
 }
-
-
-////if current ID is overdraw, we need to account for that
-//if ((currID >> 20) & 0xF)
-//{
-//    usingOverdraw = true;
-//}
-//
-////check if the ID is actually valid
-//// AND either this is a better distance, or the status is changing to overdraw
-//if ((distanceSqr < bestDistance || (currentStatus == false && (currID >> 20) & 0xF)) && (currID < 16710680))
-//{
-//    //save the current answer, ONLY if it satisfies the current overdraw
-//    if (usingOverdraw == false || (usingOverdraw == true && ((currID >> 20) & 0xF)))
-//    {
-//        bestAnswer = currID;
-//        bestDistance = distanceSqr;
-//
-//        if (((currID >> 20) & 0xF))
-//        {
-//            currentStatus = true;
-//        }
-//    }
-//}

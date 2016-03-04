@@ -346,7 +346,7 @@ public:
 		m_totalTorque.setValue(btScalar(0.0), btScalar(0.0), btScalar(0.0));
 	}
 	
-	void updateInertiaTensor();    
+	void updateInertiaTensor();
 	
 	const btVector3&     getCenterOfMassPosition() const { 
 		return m_worldTransform.getOrigin(); 

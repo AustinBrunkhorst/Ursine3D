@@ -56,9 +56,12 @@ namespace ursine
             /// Resources
 
             // A resource has been rebuilt
-            WORLD_EDITOR_RESOURCE_MODIFIED
+            WORLD_EDITOR_RESOURCE_MODIFIED,
 
         #endif
+
+            // Starting index for events defined out of engine
+            WORLD_EVENT_USER
         };
 
         struct WorldEventArgs : EventArgs

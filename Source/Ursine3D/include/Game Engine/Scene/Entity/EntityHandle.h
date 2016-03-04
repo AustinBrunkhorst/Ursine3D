@@ -26,6 +26,7 @@ namespace ursine
         {
         public:
             EntityHandle(void);
+            EntityHandle(Entity *entity);
             EntityHandle(const EntityHandle &rhs);
             EntityHandle(const EntityHandle &&rhs);
             EntityHandle &operator=(const EntityHandle &rhs);
@@ -51,8 +52,6 @@ namespace ursine
             EntityID m_id;
             EntityIDVersion m_version;
             const EntityManager *m_manager;
-
-            EntityHandle(Entity *entity);
         };
     }
 }

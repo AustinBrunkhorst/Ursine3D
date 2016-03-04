@@ -91,9 +91,10 @@ namespace ursine
         ///////////////////////////////////////////////////////////////////////
         GlobalGPUResource::GlobalGPUResource(
             ShaderSlot shaderSlot, 
-            ResourceType type
+            ResourceType type,
+            SHADERTYPE shadertype
         )
-            : GlobalShaderResource(shaderSlot, type, SHADERTYPE_COUNT)
+            : GlobalShaderResource(shaderSlot, type, shadertype)
             , m_resourceID( -1 )
         {
         }
@@ -128,7 +129,35 @@ namespace ursine
                     static_cast<RENDER_TARGETS>( m_resourceID ) )->ShaderMap;
 
                 // map it on gpu
-                m_manager->dxCore->GetDeviceContext( )->PSSetShaderResources( m_slotIndex, 1, &rt );
+                if(m_targetShader == SHADERTYPE_COUNT)
+                    m_manager->dxCore->GetDeviceContext( )->PSSetShaderResources( 
+                        m_slotIndex, 
+                        1, 
+                        &rt 
+                    );
+                else
+                {
+                    switch(m_targetShader)
+                    {
+                    case SHADERTYPE_VERTEX:
+                        m_manager->dxCore->GetDeviceContext()->VSSetShaderResources( 
+                            m_slotIndex, 
+                            1, 
+                            &rt 
+                        );
+                        break;
+                    case SHADERTYPE_PIXEL:
+                        m_manager->dxCore->GetDeviceContext()->PSSetShaderResources( 
+                            m_slotIndex, 
+                            1, 
+                            &rt 
+                        );
+                        break;
+                    default:
+                        UAssert( false, "Invalid shader targer for binding RT!" );
+                        break;
+                    }
+                }
             }
             break;
             case RESOURCE_INPUT_DEPTH:
@@ -139,7 +168,35 @@ namespace ursine
                 );
 
                 // map to gpu
-                m_manager->dxCore->GetDeviceContext( )->PSSetShaderResources( m_slotIndex, 1, &srv );
+                if (m_targetShader == SHADERTYPE_COUNT)
+                    m_manager->dxCore->GetDeviceContext()->PSSetShaderResources(
+                        m_slotIndex,
+                        1,
+                        &srv
+                    );
+                else
+                {
+                    switch (m_targetShader)
+                    {
+                    case SHADERTYPE_VERTEX:
+                        m_manager->dxCore->GetDeviceContext()->VSSetShaderResources(
+                            m_slotIndex,
+                            1,
+                            &srv
+                        );
+                        break;
+                    case SHADERTYPE_PIXEL:
+                        m_manager->dxCore->GetDeviceContext()->PSSetShaderResources(
+                            m_slotIndex,
+                            1,
+                            &srv
+                        );
+                        break;
+                    default:
+                        UAssert( false, "Invalid shader targer for binding RT!" );
+                        break;
+                    }
+                }
             }
                 break;
             default:

@@ -98,6 +98,12 @@ namespace ursine
                 SetRenderMask
             );
 
+            EditorField(
+                Color clearColor,
+                GetClearColor,
+                SetClearColor
+            );
+
             Meta(Enable)
             Camera(void);
             ~Camera(void);
@@ -145,10 +151,10 @@ namespace ursine
             void SetRenderMask(ursine::ecs::RenderMask mask);
 
             SVec3 ScreenToWorld(const Vec2 &screenPos, float depth) const;
-			Vec2 WorldToScreen(const SVec3 &worldPos) const;
+            Vec2 WorldToScreen(const SVec3 &worldPos) const;
 
-			// grabs object position from the gpu
-			SVec3 GetMouseWorldPosition(void) const;
+            // grabs object position from the gpu
+            SVec3 GetMouseWorldPosition(void) const;
 
             ///////////////////////////////////////////////////////////////////
             // Editor Specific Functionality
@@ -176,13 +182,16 @@ namespace ursine
 
         #endif
 
+            const Color &GetClearColor(void) const;
+            void SetClearColor(const Color &color);
+
         private:
             bool m_active;
             bool m_isEditorCamera;
             bool m_inEditorSelectionMode;
 
             int m_renderLayer;
-			unsigned m_renderMask;
+            unsigned m_renderMask;
 
             Vec2 m_viewportPosition;
             Vec2 m_viewportSize;

@@ -93,6 +93,11 @@ namespace ursine
             template<typename SystemType>
             SystemType *GetEntitySystem(void);
 
+            void MergeWorld(
+                resources::ResourceManager &resourceManager, 
+                resources::ResourceReference &worldResource
+            );
+
         private:
             friend class Entity;
             friend class EntityHandle;

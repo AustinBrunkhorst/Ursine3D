@@ -73,7 +73,7 @@ private:
 
     bool m_enableDebugOutput;
 
-    void OnInitialize(void) override;
+    void OnSceneReady(ursine::Scene *scene) override;
 
     void initTutorialLogic(void);
     
