@@ -24,7 +24,7 @@ namespace ursine
         public:
             FodderAIStateMachine();
 
-            virtual void Initialize(ecs::Entity *actor) override;
+            virtual void Initialize(ecs::EntityHandle actor) override;
 
             ~FodderAIStateMachine();
 
