@@ -388,7 +388,7 @@ namespace ursine
                 }
 
                 // If the entity does not have a collision shape, add an empty one
-                if (!m_collisionShapes.Matches( entity ))
+                if (!m_collisionShapes.Matches( entity.Get( ) ))
                     entity->AddComponent<EmptyCollider>( );
 
                 // set the transform

@@ -24,7 +24,7 @@ class InitializeSegmentState : public SegmentLogicState
 public:
 
     InitializeSegmentState(
-        const std::string &loadInWorld,
+        const ursine::resources::ResourceReference &loadInWorld,
         LevelSegments unloadSegment
     );
 
@@ -32,7 +32,7 @@ public:
 
 private:
 
-    std::string m_loadInWorld;
+    ursine::resources::ResourceReference m_loadInWorld;
     LevelSegments m_unloadSegment;
 
     LevelSegmentManager *m_segmentManager;

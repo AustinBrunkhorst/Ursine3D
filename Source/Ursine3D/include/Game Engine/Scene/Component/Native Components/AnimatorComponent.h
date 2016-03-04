@@ -22,6 +22,7 @@
 #include "Array.h"
 #include "Model3DComponent.h"
 #include "TransformComponent.h"
+#include "AnimationClipData.h"
 
 namespace ursine
 {
@@ -202,9 +203,6 @@ namespace ursine
             const std::string &GetCurrentState(void) const;
             void SetCurrentState(const std::string &state);
 
-            const std::string &GetStateName(void) const;
-            void SetStateName(const std::string &state);
-
             // Array of animation states
             ursine::Array<ursine::AnimationState> stArray;
             // Array of state blender
@@ -231,7 +229,7 @@ namespace ursine
             float m_speedScalar;
 
             std::string m_rig;
-            ursine::ecs::Entity *m_rigRoot;
+            EntityHandle m_rigRoot;
             std::string m_curStName;
             std::string m_futStName;
             std::string m_animationName;
@@ -243,11 +241,14 @@ namespace ursine
             static void recursClearChildren(const std::vector<Handle<Transform>> &children);
             void clearChildren(void);
             void importAnimation(void);
-            void importRig(void);
             void createBoneEntities(ursine::ecs::Transform *parent, const AnimationBone &bone);
 
+            void importRig(void);
+
             void updateRigTransforms(ursine::ecs::Component::Handle<Transform> boneTrans, const AnimationBone &boneData);
-            
+
+            void enableDeletionOnEntities(const ursine::ecs::EntityHandle &entity);
+
         } Meta(
             Enable, 
             WhiteListMethods, 

@@ -65,7 +65,7 @@ namespace
     }
 
     // Give projectiles velocity with spread
-    void ProjectileVelocity( AbstractProjWeapon& weapon, ursine::ecs::Entity& proj)
+    void ProjectileVelocity( AbstractProjWeapon& weapon, ursine::ecs::EntityHandle& proj)
     {
         ursine::SVec3 start, end;  
 
@@ -75,10 +75,10 @@ namespace
         start.Normalize( );
 
         // give projectile velocity and position
-        proj.GetComponent<ursine::ecs::Rigidbody>( )->SetVelocity( start * proj.GetComponent<Projectile>( )->GetSpeed( ) );
+        proj->GetComponent<Rigidbody>( )->SetVelocity( start * proj->GetComponent<Projectile>( )->GetSpeed( ) );
     }
 
-    void ProjectileSetUp(ursine::ecs::Entity& proj, AbstractProjWeapon& weapon)
+    void ProjectileSetUp(ursine::ecs::EntityHandle& proj, AbstractProjWeapon& weapon)
     {
         // add projectile component if not found
         if (!proj->HasComponent<Projectile>( ))
@@ -111,7 +111,7 @@ namespace
         damageComp.SetDamageInterval( weapon.GetDamageInterval( ) );
         damageComp.SetDeleteOnCollision( weapon.GetDeleteOnCollision( ) );
 
-        proj.GetTransform( )->SetWorldPosition( weapon.m_firePosHandle->GetWorldPosition( ) );
+        proj->GetTransform( )->SetWorldPosition( weapon.m_firePosHandle->GetWorldPosition( ) );
 
         ProjectileVelocity( weapon, proj );
     }
@@ -231,25 +231,21 @@ BaseWeaponSystem::BaseWeaponSystem( ursine::ecs::World *world )
 
 void BaseWeaponSystem::Enable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetID( );
-    
     // grab all comps needed
     if (entity->HasComponent< BaseWeapon >( ))
-        m_weapons[ uniqueID ] = entity->GetComponent< BaseWeapon >( );
+        m_weapons[ entity ] = entity->GetComponent< BaseWeapon >( );
 
-    m_transforms[ uniqueID ] = entity->GetTransform( );
+    m_transforms[ entity ] = entity->GetTransform( );
 
     // grab audio emitter from root
-    m_emitters[ uniqueID ] = entity->GetComponent< AudioEmitter >( );
+    m_emitters[ entity ] = entity->GetComponent< AudioEmitter >( );
 }
 
 void BaseWeaponSystem::Disable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetID( );
-
-    m_weapons.erase( uniqueID );
-    m_transforms.erase( uniqueID );
-    m_emitters.erase( uniqueID );
+    m_weapons.erase( entity );
+    m_transforms.erase( entity );
+    m_emitters.erase( entity );
 }
 
 void BaseWeaponSystem::onUpdate(EVENT_HANDLER(World))
@@ -296,7 +292,7 @@ void BaseWeaponSystem::EvaluateProjectileWeapons(const float dt)
     }
 }
 
-void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, ursine::ecs::EntityHandle entity)
+void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const EntityHandle &entity)
 {
     if (weapon.FireLogic( ))
     {
@@ -313,7 +309,7 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, ursine::
         weapon.m_animatorHandle->SetPlaying(true);*/
 
         // create particle at weapons fire pos and parent to weapon
-        ursine::ecs::Entity* e = m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + weapon.m_fireParticle);
+        auto e = m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + weapon.m_fireParticle);
         weapon.m_firePosHandle->AddChildAlreadyInLocal(e->GetTransform( ));
 
 
@@ -338,7 +334,7 @@ void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs
     ProjectileSetUp( proj, weapon );
 
     // temp vars for  creating projectiles
-    ursine::ecs::Entity* cloneProj = nullptr;
+    EntityHandle cloneProj = nullptr;
 
     // create the number of projectiles fired
     for ( int i = 1; i < projectilesFired; ++i )
@@ -347,7 +343,7 @@ void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs
         cloneProj = proj->Clone( );
 
         // give projectile a velocity
-        ProjectileVelocity( weapon, *cloneProj );
+        ProjectileVelocity( weapon, cloneProj );
     }
 }
 
@@ -366,25 +362,21 @@ void HitscanWeaponSystem::Initialize(void)
 
 void HitscanWeaponSystem::Enable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetID( );
-
     // grab all comps needed
     if (entity->HasComponent<HitscanWeapon>( ))
-        m_weapons[ uniqueID ] = entity->GetComponent<HitscanWeapon>( );
+        m_weapons[ entity ] = entity->GetComponent<HitscanWeapon>( );
 
-    m_transforms[ uniqueID ] = entity->GetTransform( );
+    m_transforms[ entity ] = entity->GetTransform( );
 
     // grab audio emitter from root
-    m_emitters[ uniqueID ] = entity->GetComponent<AudioEmitter>( );
+    m_emitters[ entity ] = entity->GetComponent<AudioEmitter>( );
 }
 
 void HitscanWeaponSystem::Disable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetID( );
-
-    m_weapons.erase( uniqueID );
-    m_transforms.erase( uniqueID );
-    m_emitters.erase( uniqueID );
+    m_weapons.erase( entity );
+    m_transforms.erase( entity );
+    m_emitters.erase( entity );
 }
 
 void HitscanWeaponSystem::onUpdate(EVENT_HANDLER(World))
@@ -430,7 +422,7 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
     }
 }
 
-void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, EntityHandle &entity)
+void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const EntityHandle &entity)
 {
     if (weapon.FireLogic( ))
     {

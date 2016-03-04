@@ -109,23 +109,19 @@ namespace ursine
             return nullptr;
         }
 
-        NATIVE_COMPONENT_DEFINITION( Animator );
-        
         NATIVE_COMPONENT_DEFINITION(Animator);
 
         Animator::Animator( )
             : BaseComponent( )
             , m_playing(true)
-            , m_looping(true)
             , m_debug(false)
             , m_changeState(false)
             , m_speedScalar(1.0f)
-            , m_Rig("")
+            , m_rig("")
             , m_curStName("")
             , m_futStName("")
             , m_animationName("")
             , m_stateName("")
-            , m_animlist(0)
         {
         }
 
@@ -142,17 +138,6 @@ namespace ursine
             {
                 x = SMat4::Identity( );
             }
-
-            auto *gfx = GetCoreSystem(graphics::GfxAPI);
-            auto *world = GetOwner( )->GetWorld( );
-
-            auto *animListEntity = world->GetEntityFromName("Animation List");
-            if(!animListEntity)
-                animListEntity = world->CreateEntity("Animation List");
-
-            auto *blendTreeEntity = world->GetEntityFromName("Blending Tree");
-            if(!blendTreeEntity)
-                blendTreeEntity = world->CreateEntity("Blending Tree");
         }
 
         void Animator::UpdateAnimation(const float dt)
@@ -176,7 +161,7 @@ namespace ursine
 
             const Animation *currentAnimation = ( nullptr == currentState ) ? nullptr : currentState->GetAnimation( );
             const Animation *futureAnimation = ( nullptr == futureState ) ? nullptr : futureState->GetAnimation( );
-            auto *rig = AnimationBuilder::GetAnimationRigByName( m_Rig );
+            auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
 
             if (nullptr == currentAnimation || nullptr == rig)
                 return;
@@ -195,7 +180,9 @@ namespace ursine
                 transFactor = 0.0;
 
             auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
-            std::vector<SMat4> tempVec( 100 );
+            std::vector<SMat4> tempVec;
+
+            tempVec.resize( 100 );
 
             // blending / playing animation should take place in here
             UpdateState(currentState, currentAnimation, futureState, futureAnimation, dt, transFactor);
@@ -208,7 +195,7 @@ namespace ursine
                 matrixPalette,
                 tempVec,
                 ( float )transFactor
-                );
+            );
 
             // Update the rig transforms
             updateRigTransforms( m_rigRoot->GetTransform( )->GetChild( 0 ), rig->GetBone( 0 ) );
@@ -223,8 +210,12 @@ namespace ursine
         void Animator::Debugging(const AnimationRig& _rig, const std::vector<SMat4>& vec)
         {
             auto *graphics = GetCoreSystem(graphics::GfxAPI);
+
             URSINE_TODO("Remove this when we implement proper animation clips and stuf")
-                std::vector<SVec3> bonePoints(100);
+            std::vector<SVec3> bonePoints;
+
+            bonePoints.resize( 100 );
+
             auto &hierarchy = _rig.GetHierarchyTable( );
             auto &worldTransform = GetOwner( )->GetTransform( )->GetLocalToWorldMatrix( );
 
@@ -243,7 +234,7 @@ namespace ursine
                 {
                     walker = hierarchy[walker];
                     distance++;
-        }
+                }
 
                 if (distance > maxNodeDistance) maxNodeDistance = distance;
 
@@ -253,8 +244,9 @@ namespace ursine
 
             // render points
             graphics->DrawingMgr.SetOverdraw(true);
+
             for (unsigned x = 0; x < boneCount; ++x)
-        {
+            {
                 int distance = 0;
                 int walker = hierarchy[x];
 
@@ -262,7 +254,7 @@ namespace ursine
                 {
                     walker = hierarchy[walker];
                     distance++;
-        }
+                }
 
                 float interp = (float)distance / (float)maxNodeDistance;
                 //draw points
@@ -279,12 +271,12 @@ namespace ursine
 
             // render lines
             for (size_t x = boneCount - 1; x >= 1; --x)
-        {
+            {
                 SVec3 &p1 = bonePoints[x];
                 SVec3 &p2 = bonePoints[hierarchy[x]];
 
                 graphics->DrawingMgr.DrawLine(p1, p2);
-        }
+            }
 
             graphics->DrawingMgr.SetOverdraw(false);
         }
@@ -332,17 +324,7 @@ namespace ursine
         
         const std::string &Animator::GetRig(void) const
         {
-            return m_animationName;
-        }
-        
-        void Animator::SetAnimation(const std::string& name)
-        {
-            m_animationName = name;
-        }
-        
-        const std::string &Animator::GetRig( ) const
-        {
-            return m_Rig;
+            return m_rig;
         }
 
         void Animator::SetRig(const std::string &rig)
@@ -393,63 +375,44 @@ namespace ursine
         {
             auto data = loadResource<resources::AnimationClipData>( m_clipResource );
 
-                config.type = NOTIFY_INFO;
-                config.header = "Error";
-                config.message = "Please type in the name of the animation.";
-                config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds( 5.0f );
-                config.dismissible = true;
+            std::string str;
 
-                EditorPostNotification( config );
-
-                return;
-            }
-
-            auto owner = GetOwner( );
-            auto *children = owner->GetChildren( );
-
-            if (children->size( ) > 0)
+            if (data == nullptr)
             {
                 NotificationConfig config;
 
                 config.type = NOTIFY_WARNING;
                 config.header = "Warning";
-                config.message = "This action will delete all of the Animation List's children. Continue?";
-                config.dismissible = false;
-                config.duration = 0;
+                config.message = "There is no matching animation clip resource.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds( 5.0f );
 
-                NotificationButton yes, no;
-
-                yes.text = "Yes";
-                yes.onClick = [=](Notification &notification) {
-                    notification.Close( );
-
-                    // Main thread operation
-                    Timer::Create(0).Completed([=] {
-                        clearChildren( );
-                        importAnimation( );
-                    });
-                };
-
-                no.text = "No";
-                no.onClick = [=](Notification &notification) {
-                    notification.Close( );
-                };
-
-                config.buttons = { yes, no };
-
-                EditorPostNotification( config );
+                m_animationName = "";
             }
             else
             {
-                // Main thread operation
-                Timer::Create(0).Completed([=] {
-                    importAnimation( );
-                });
+                auto handle = data->GetAnimeHandle( );
+
+                m_animationName = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( handle )->name;
             }
         }
 
-#endif
+        const std::string &Animator::GetCurrentState(void) const
+        {
+            return m_curStName;
+        }
+
+        void Animator::SetCurrentState(const std::string &state)
+        {
+            if ("" == m_curStName)
+            {
+                m_curStName = state;
+
+                NOTIFY_COMPONENT_CHANGED( "currentState", m_curStName );
+            }
+            else
+                m_futStName = state;
+        }
 
         void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
         {
@@ -466,70 +429,21 @@ namespace ursine
             recursClearChildren(GetOwner( )->GetTransform( )->GetChildren( ));
         }
 
-        // import animation to the current state
-        // if I get animation builder here, how can I put animation to the state?
-        void Animator::importAnimation(void)
-        {
-            std::string janiFileName("Assets/Animations/");
-            janiFileName += m_animationName + ".jani";
-            HANDLE hFile_ani = CreateFile(janiFileName.c_str( ), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-            if (!hFile_ani)
-                return;
-
-            AniInfo ufmt_ani;
-            // Serialize in model and animation
-            UAssert(true == ufmt_ani.SerializeIn(hFile_ani), "Fail to serialize jani file.", janiFileName.c_str( ));
-
-            unsigned animationIndex = 0;
-            // Check if there is same animation already
-            const Animation* checker = AnimationBuilder::GetAnimationByName(m_animationName);
-            if(nullptr == checker)
-                animationIndex = AnimationBuilder::LoadAnimation(ufmt_ani, m_animationName);
-            CloseHandle(hFile_ani);
-
-            // Check if the animation is in animlist, push back if not
-            bool bExist = false;
-            for (auto &x : m_animlist)
-            {
-                if (m_animationName == x->GetName( ))
-                {
-                    bExist = true;
-                    break;
-                }
-            }
-
-            if (!bExist)
-            {
-                // add to animlist
-                m_animlist.push_back(AnimationBuilder::GetAnimationByName(m_animationName));
-
-                auto *gfx = GetCoreSystem(graphics::GfxAPI);
-                auto *world = GetOwner( )->GetWorld( );
-                auto *animList = world->GetEntityFromName("Animation List");
-                auto *alTrans = animList->GetTransform( );
-                auto *newEntity = world->GetEntityFromName(m_animationName.c_str( ));
-                if (!newEntity)
-                {
-                    newEntity = world->CreateEntity(m_animationName.c_str( ));
-                    alTrans->AddChild(newEntity->GetTransform( ));
-                }
-            }
-        }
-
         void Animator::UpdateState(AnimationState* currSt, const Animation* currAni,
-            AnimationState* futSt, const Animation* futAni, const float& dt, float& transFactor)
+                                   AnimationState* futSt, const Animation* futAni, 
+                                   const float& dt, float& transFactor)
         {
             if (m_playing)
             {
-                currSt->IncrementTimePosition(dt * m_speedScalar);
-                
+                currSt->IncrementTimePosition(dt  *m_speedScalar);
+
                 /////////////////////////////////////////////////////
                 // this will be applied to all animations that state has
                 // const Animation *m_animation; will be changed as std::vector<Animation*>
                 /////////////////////////////////////////////////////
                 unsigned keyframeCount1 = currAni->GetRigKeyFrameCount( );
-                auto &curr_firstFrame = currAni->GetKeyframe( 0, 0 );
-                auto &curr_lastFrame = currAni->GetKeyframe( keyframeCount1 - 1, 0 );
+                auto &curr_firstFrame = currAni->GetKeyframe(0, 0);
+                auto &curr_lastFrame = currAni->GetKeyframe(keyframeCount1 - 1, 0);
 
                 bool bFut = false;
                 if (futSt)
@@ -541,19 +455,17 @@ namespace ursine
                 // if there is no future state or future animation, then loop current animation again and again
                 if (!bFut)
                 {
-                    if (currSt->GetTimePosition( ) > curr_lastFrame.length)
-                    {
-                        if (m_looping)
-                            currSt->SetTimePosition(curr_firstFrame.length);
-                        else
-                            currSt->SetTimePosition(curr_lastFrame.length);
-                    }
+                    currSt->PlayingAnimation( );// dt  *m_speedScalar);
                 }
                 // if there is future state and animation
                 else
                 {
                     // need to check state blender
-                    StateBlender* stb = GetStateBlenderByNames(currSt->GetName( ), futSt->GetName( ));
+                    StateBlender *stb = GetStateBlenderByNames(currSt->GetName( ), futSt->GetName( ));
+
+                    // if user didn't defined state blender, 
+                    // then just start blending right now without delay.
+                    // (or then play as default state blender which is currTimePos = 1.0f, futTimePos = 0.0f)
                     if (nullptr == stb)
                     {
                         futSt->IncrementTimePosition(dt  *m_speedScalar);
@@ -565,51 +477,33 @@ namespace ursine
                         unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
                         auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
                         auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
-                        futSt->IncrementTimePosition(dt * m_speedScalar);
-                        transFactor += dt * m_speedScalar;
-                        if (transFactor > 1.0f)
-                            transFactor = 1.0f;
-
+                    
                         // if the future state reaches at its last frame
                         if (futSt->GetTimePosition( ) > fut_lastFrame.length)
                         {
-                            if (m_changeState)
-                            {
-                                m_curStName = m_futStName;
-                                m_futStName = "";
-                                NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
-                                currSt = futSt;
-                                futSt = nullptr;
-                            }
-                            else
-                            {
-                                if (m_looping)
-                                {
-                                    currSt->SetTimePosition(curr_firstFrame.length);
-                                    futSt->SetTimePosition(fut_firstFrame.length);
-                                    transFactor = 0.0f;
-                                }
-                                else
-                                {
-                                    currSt->SetTimePosition(curr_lastFrame.length);
-                                    futSt->SetTimePosition(fut_lastFrame.length);
-                                    transFactor = 0.0f;
-                                }
-                            }
+                            ChangeState(currSt, futSt
+                                , curr_firstFrame.length 
+                                , fut_firstFrame.length
+                                , curr_lastFrame.length
+                                , fut_lastFrame.length );
+
+                            transFactor = 0.0f;
+                        }
+                    }
                     else
                     {
                         bool bCurrEnd = false;
                         if (currSt->GetTimePosition( ) > curr_lastFrame.length)
                         {
-                            currSt->SetTimePosition( curr_lastFrame.length );
+                            currSt->SetTimePosition(curr_lastFrame.length);
                             bCurrEnd = true;
                         }
-
+                    
                         // To check if current state is reached at the same frame as state blender's
                         unsigned int curFrameIndex = 0;
-                        GetTransFrmByRatio( *currSt, curFrameIndex, stb->GetcurrTransPosRatio( ) );
-                        stb->SetcurrTransFrm( curFrameIndex );
-
+                        GetTransFrmByRatio(*currSt, curFrameIndex, stb->GetcurrTransPosRatio( ));
+                        stb->SetcurrTransFrm(curFrameIndex);
+                    
                         // Can't check actual frame's length since that keyframe could be dummy value.
                         // so we just check it by index.
                         unsigned index1 = 0, index2 = 0;
@@ -620,11 +514,11 @@ namespace ursine
                             for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
                             {
                                 // get the two current keyframes
-                                const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes( x );
-                                const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes( x + 1 );
-
+                                const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes(x);
+                                const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes(x + 1);
+                    
                                 // check if the current keyframe set holds the time value between them
-                                if (f1[ 0 ].length <= currSt->GetTimePosition( ) && currSt->GetTimePosition( ) < f2[ 0 ].length)
+                                if (f1[0].length <= currSt->GetTimePosition( ) && currSt->GetTimePosition( ) < f2[0].length)
                                     break;
 
                                 ++index1;
@@ -648,18 +542,19 @@ namespace ursine
                         if (bBlending)
                         {
                             // if blending is true, start transitioning from this state to that state
-                            futSt->IncrementTimePosition(dt * m_speedScalar);
-                            transFactor += dt * m_speedScalar;
+                            futSt->IncrementTimePosition(dt  *m_speedScalar);
+
+                            transFactor += dt  *m_speedScalar;
                             if (transFactor > 1.0f)
                                 transFactor = 1.0f;
-                                                
+                    
                             /////////////////////////////////////////////////////
                             // this will be applied to all animations that state has
                             // const Animation *m_animation; will be changed as std::vector<Animation*>
                             /////////////////////////////////////////////////////
                             unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
-                            auto &fut_firstFrame = futAni->GetKeyframe( 0, 0 );
-                            auto &fut_lastFrame = futAni->GetKeyframe( keyframeCount2 - 1, 0 );
+                            auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
+                            auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
                     
                             if (futSt->GetTimePosition( ) > fut_lastFrame.length)
                             {
@@ -691,48 +586,35 @@ namespace ursine
             }
         }
         
-        void Animator::ChangeState( AnimationState *currSt, AnimationState *futSt,
-            const float &currloopTimePos, const float &futloopTimePos,
-            const float &currNoloopTimePos, const float &futNoloopTimePos )
+        void Animator::ChangeState(AnimationState *currSt, AnimationState *futSt,
+                                   const float &currloopTimePos, const float &futloopTimePos,
+                                   const float &currNoloopTimePos, const float &futNoloopTimePos)
         {
             // if change state is checked, change state as future state
-                                if (m_changeState)
-                                {
-                                    m_curStName = m_futStName;
-                                    m_futStName = "";
-                                    NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
-                                    currSt = futSt;
-                                    futSt = nullptr;
-                                }
+            if (m_changeState)
+            {
+                m_curStName = m_futStName;
+                m_futStName = "";
+
+                NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
+                currSt = futSt;
+                futSt = nullptr;
+            }
             // if not, then it means state will not be changed.
-                                else
-                                {
-                                    if (m_looping)
-                                    {
-                                        currSt->SetTimePosition(curr_firstFrame.length);
-                                        futSt->SetTimePosition(futAni->GetKeyframe(stb->GetfutTransFrm( ), 0).length);
-                                    }
-                                    else
-                                    {
-                                        currSt->SetTimePosition(curr_lastFrame.length);
-                                        futSt->SetTimePosition(fut_lastFrame.length);
-                                    }
-                                }
-                            }
-                        }
+            else
+            {
+                // if curr state checked looping, then start the whole animation(from curr to fut)
+                // all over again.
+                if (currSt->IsLooping( ))
+                {
+                    currSt->SetTimePosition(currloopTimePos);
+                    futSt->SetTimePosition(futloopTimePos);
+                }
                 // else just stop there.
-                        else
-                        {
-                            // if current state reached at the end
-                            if (bCurrEnd)
-                            {
-                                if(m_looping)
-                                    currSt->SetTimePosition(curr_firstFrame.length);
-                                else
-                                    currSt->SetTimePosition(curr_lastFrame.length);
-                            }
-                        }
-                    }
+                else
+                {
+                    currSt->SetTimePosition(currNoloopTimePos);
+                    futSt->SetTimePosition(futNoloopTimePos);
                 }
             }
         }
@@ -786,82 +668,88 @@ namespace ursine
             return nullptr;
         }
 
-        void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
+#if defined(URSINE_WITH_EDITOR)
+
+        void Animator::ImportRig(void)
         {
-            for (auto &child : children)
+            // If the name isn't typed in yet
+            if (m_rig.size( ) == 0)
             {
-                recursClearChildren(child->GetChildren( ));
+                NotificationConfig config;
 
-                child->GetOwner( )->Delete( );
-            }
-        }
+                config.type = NOTIFY_INFO;
+                config.header = "Error";
+                config.message = "Please type in the name of the rig.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds( 5.0f );
 
-        void Animator::clearChildren(void)
-        {
-            recursClearChildren(GetOwner( )->GetTransform( )->GetChildren( ));
-        }
+                EditorPostNotification( config );
 
-        // import animation to the current state
-        // if I get animation builder here, how can I put animation to the state?
-        void Animator::importAnimation(void)
-        {
-            std::string janiFileName("Assets/Animations/");
-            janiFileName += m_animationName + ".jani";
-            HANDLE hFile_ani = CreateFile(janiFileName.c_str( ), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
-
-            if (!hFile_ani)
                 return;
-
-            AniInfo ufmt_ani;
-            // Serialize in model and animation
-            UAssert(true == ufmt_ani.SerializeIn(hFile_ani), "Fail to serialize jani file.", janiFileName.c_str( ));
-
-            unsigned animationIndex = 0;
-            // Check if there is same animation already
-            const Animation *checker = AnimationBuilder::GetAnimationByName(m_animationName);
-
-            if (nullptr == checker)
-                animationIndex = AnimationBuilder::LoadAnimation(ufmt_ani, m_animationName);
-
-            CloseHandle(hFile_ani);
-
-            // Check if the animation is in animlist, push back if not
-            bool bExist = false;
-            for (auto &x : m_animlist)
-            {
-                if (m_animationName == x->GetName( ))
-                {
-                    bExist = true;
-                    break;
-                }
             }
 
-            if (!bExist)
+            auto owner = GetOwner( );
+            auto rigRoot = owner->GetChildByName( kRigRootName );
+
+            // If we currently have a generated rig root
+            if (rigRoot)
             {
-                // add to animlist
-                m_animlist.push_back(AnimationBuilder::GetAnimationByName(m_animationName));
+                NotificationConfig config;
 
-                // Get the animation list entity.  If it doesn't exist, create it
-                auto *owner = GetOwner( );
-                auto *world = owner->GetWorld( );
-                auto *animList = owner->GetChildByName( kAnimationListName );
+                config.type = NOTIFY_WARNING;
+                config.header = "Warning";
+                config.message = "This action will delete all of the Rig_Root's children. Continue?";
+                config.dismissible = false;
+                config.duration = 0;
 
-                if (!animList)
-                {
-                    animList = world->CreateEntity( kAnimationListName );
-                    owner->GetTransform( )->AddChildAlreadyInLocal( animList->GetTransform( ) );
-                }
+                NotificationButton yes, no;
 
-                auto *alTrans = animList->GetTransform( );
-                auto *newEntity = animList->GetChildByName( m_animationName );
+                yes.text = "Yes";
+                yes.onClick = [=](Notification &notification) {
+                    notification.Close( );
 
-                if (!newEntity)
-                {
-                    newEntity = world->CreateEntity( m_animationName );
-                    alTrans->AddChildAlreadyInLocal( newEntity->GetTransform( ) );
-                }
+                    // Main thread operation
+                    Application::PostMainThread( [=] {
+                        rigRoot->EnableDeletion( true );
+                        rigRoot->Delete( );
+                        importRig( );
+                    } );
+                };
+
+                no.text = "No";
+                no.onClick = [=](Notification &notification) {
+                    notification.Close( );
+                };
+
+                config.buttons = { yes, no };
+
+                EditorPostNotification(config);
+                return;
             }
+
+            auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
+
+            if (!rig)
+            {
+                NotificationConfig config;
+
+                config.type = NOTIFY_INFO;
+                config.header = "Error";
+                config.message = "The rig name entered is invalid.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds( 5.0f );
+
+                EditorPostNotification( config );
+
+                return;
+            }
+
+            Application::PostMainThread( [=] {
+                importRig( );
+            } );
         }
+
+#endif
 
         void Animator::importRig(void)
         {
@@ -889,8 +777,7 @@ namespace ursine
             auto boneEntity = world->CreateEntity( bone.GetName( ) );
             auto boneTrans = boneEntity->GetTransform( );
 
-            boneEntity->EnableDeletion( false );
-            boneEntity->EnableHierarchyChange( false );
+            enableDeletionOnEntities( boneEntity );
 
             parent->AddChildAlreadyInLocal( boneTrans );
 
@@ -917,7 +804,18 @@ namespace ursine
                 updateRigTransforms( boneTrans->GetChild( i ), *children[ i ] );
         }
 
-        #if defined(URSINE_WITH_EDITOR)
+        void Animator::enableDeletionOnEntities(const ursine::ecs::EntityHandle &entity)
+        {
+            entity->EnableDeletion( true );
+            entity->EnableHierarchyChange( true );
+
+            for (auto &child : *entity->GetChildren( ))
+            {
+                enableDeletionOnEntities( GetOwner( )->GetWorld( )->GetEntity( child ) );
+            }
+        }
+
+    #if defined(URSINE_WITH_EDITOR)
 
         void Animator::ImportAnimation(void)
         {
@@ -936,70 +834,14 @@ namespace ursine
                 return;
             }
 
-            auto owner = GetOwner( );
-            auto *children = owner->GetChildren( );
-
-            if (children->size( ) > 0)
+            // main thread operation
+            Application::PostMainThread( [=]
             {
-                NotificationConfig config;
-
-                config.type = NOTIFY_WARNING;
-                config.header = "Warning";
-                config.message = "This action will delete all of the Animation List's children. Continue?";
-                config.dismissible = false;
-                config.duration = 0;
-
-                NotificationButton yes, no;
-
-                yes.text = "Yes";
-                yes.onClick = [=](Notification &notification)
-                {
-                    notification.Close( );
-
-                    // main thread operation
-                    Application::PostMainThread( [=]
-                    {
-                        clearChildren( );
-                        importAnimation( );
-                    } );
-                };
-
-                no.text = "No";
-                no.onClick = [=](Notification &notification)
-                {
-                    notification.Close( );
-                };
-
-                config.buttons = { yes, no };
-
-                EditorPostNotification( config );
-            }
-            else
-            {
-                // main thread operation
-                Application::PostMainThread( [=]
-                {
-                    importAnimation( );
-                } );
-            }
+                importAnimation( );
+            } );
         }
 
-        #endif
-
-        void Animator::recursClearChildren(const std::vector<Handle<Transform>> &children)
-        {
-            for (auto &child : children)
-            {
-                recursClearChildren( child->GetChildren( ) );
-
-                child->GetOwner( )->Delete( );
-            }
-        }
-
-        void Animator::clearChildren(void)
-        {
-            recursClearChildren( GetOwner( )->GetTransform( )->GetChildren( ) );
-        }
+    #endif
 
         // import animation to the current state
         // if I get animation builder here, how can I put animation to the state?
@@ -1047,18 +889,27 @@ namespace ursine
 
             if (!bExist)
             {
-                // add to animlist
+               // add to animlist
                 m_animlist.push_back( AnimationBuilder::GetAnimationByName( m_animationName ) );
 
-                auto *gfx = GetCoreSystem(graphics::GfxAPI);
-                auto *world = GetOwner( )->GetWorld( );
-                auto animList = world->GetEntityFromName( "Animation List" );
-                auto *alTrans = animList->GetTransform( );
-                auto newEntity = world->GetEntityFromName( m_animationName.c_str( ) );
+                // Get the animation list entity.  If it doesn't exist, create it
+                auto owner = GetOwner( );
+                auto world = owner->GetWorld( );
+                auto animList = owner->GetChildByName( kAnimationListName );
+
+                if (!animList)
+                {
+                    animList = world->CreateEntity( kAnimationListName );
+                    owner->GetTransform( )->AddChildAlreadyInLocal( animList->GetTransform( ) );
+                }
+
+                auto alTrans = animList->GetTransform( );
+                auto newEntity = animList->GetChildByName( m_animationName );
+
                 if (!newEntity)
                 {
-                    newEntity = world->CreateEntity( m_animationName.c_str( ) );
-                    alTrans->AddChild( newEntity->GetTransform( ) );
+                    newEntity = world->CreateEntity( m_animationName );
+                    alTrans->AddChildAlreadyInLocal( newEntity->GetTransform( ) );
                 }
             }
         }

@@ -27,6 +27,7 @@
 #include "WorldSerializer.h"
 
 #include "WorldConfigComponent.h"
+#include "WorldData.h"
 
 #include "EntityHandle.h"
 
@@ -229,27 +230,32 @@ namespace ursine
         }
 
         void World::queueEntityDeletion(Entity *entity)
-            {
-			m_deleted.emplace_back( EntityHandle( entity ) );
-        }
-
-        void World::MergeWorld(const std::string &filename)
         {
-            WorldSerializer::MergeDeserialize( filename, this );
+            m_deleted.emplace_back( EntityHandle( entity ) );
         }
 
-        void World::deleteEntity(Entity *entity)
-		{
-			m_nameManager->Remove( entity->GetID( ) );
-			m_entityManager->Remove( entity.Get( ) );
-		}
-				
+        void World::MergeWorld(
+            resources::ResourceManager &resourceManager,
+            resources::ResourceReference &worldResource
+        )
+        {
+            auto data = worldResource.Load<resources::WorldData>( resourceManager );
+
+            WorldSerializer::MergeDeserialize( data->GetData( ), this );
+        }
+
+        void World::deleteEntity(const EntityHandle &entity)
+        {
+            m_nameManager->Remove( entity->GetID( ) );
+            m_entityManager->Remove( entity );
+        }
+                
         void World::clearDeletionQueue(void)
         {
-			std::lock_guard<std::mutex> lock( m_deletionMutex );
+            std::lock_guard<std::mutex> lock( m_deletionMutex );
 
-			for (auto &entity : m_deleted)
-				m_entityManager->BeforeRemove( entity.Get( ) );
+            for (auto &entity : m_deleted)
+                m_entityManager->BeforeRemove( entity.Get( ) );
 
             while (m_deleted.size( ))
             {

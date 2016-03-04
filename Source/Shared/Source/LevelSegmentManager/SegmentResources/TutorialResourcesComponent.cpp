@@ -21,3 +21,13 @@ TutorialResources::TutorialResources(void)
     : BaseComponent( )
 {
 }
+
+const ursine::resources::ResourceReference &TutorialResources::GetWorldData(void) const
+{
+    return m_worldToMerge;
+}
+
+void TutorialResources::SetWorldData(const ursine::resources::ResourceReference &world)
+{
+    m_worldToMerge = world;
+}

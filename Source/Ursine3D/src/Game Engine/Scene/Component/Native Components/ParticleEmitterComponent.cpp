@@ -257,27 +257,6 @@ namespace ursine
             m_rollRange.SetMin( -(range * PI) / 180.0f);
         }
 
-        float ParticleEmitter::GetRoll(void) const
-        {
-            return (m_roll * 180.0f) / PI;
-        }
-
-        void ParticleEmitter::SetRoll(const float roll)
-        {
-            m_roll = (roll * PI) / 180.0f;;
-        }
-
-        float ParticleEmitter::GetRollRange(void) const
-        {
-            return (m_rollRange.GetMax() * 180.0f) / PI;
-        }
-
-        void ParticleEmitter::SetRollRange(const float range)
-        {
-            m_rollRange.SetMax((range * PI) / 180.0f);
-            m_rollRange.SetMin(-(range * PI) / 180.0f);
-        }
-
         const SVec3 &ParticleEmitter::GetVelocity(void) const
         {
             return m_initialVelocity;

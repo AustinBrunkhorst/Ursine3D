@@ -97,7 +97,7 @@ namespace game
     {
         ursine::ecs::Transform* m_camHandle;
 
-        WeaponActivationEventArgs(ursine::ecs::EntityHandle &who, ursine::ecs::Transform* camHandle = nullptr, int ammo = -1, int clip = -1)
+        WeaponActivationEventArgs(const ursine::ecs::EntityHandle &who, ursine::ecs::Transform* camHandle = nullptr, int ammo = -1, int clip = -1)
             : WeaponDeactivationEventArgs(who, ammo, clip)
             , m_camHandle(camHandle) { }
     };

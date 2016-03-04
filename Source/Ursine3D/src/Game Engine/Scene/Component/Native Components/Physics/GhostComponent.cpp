@@ -40,7 +40,7 @@ namespace ursine
             GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Ghost::onTransformChange );
 
-            m_ghost.SetUserID( GetOwner( )->GetUniqueID( ) );
+            m_ghost.SetUserID( GetOwner( )->GetID( ) );
             m_ghost.SetUserPointer( this );
         }
 

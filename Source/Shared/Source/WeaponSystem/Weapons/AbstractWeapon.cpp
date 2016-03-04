@@ -88,7 +88,7 @@ void AbstractWeapon::Initialize(const ecs::EntityHandle &owner)
         .On(game::DEACTIVATE_WEAPON, &AbstractWeapon::DeactivateWeapon);
 }
 
-void AbstractWeapon::ConnectTrigger(ursine::ecs::Entity* obj)
+void AbstractWeapon::ConnectTrigger(const ursine::ecs::EntityHandle &obj)
 {
     obj->Listener(this)
         .On(game::FIRE_START, &AbstractWeapon::TriggerPulled)
@@ -471,8 +471,7 @@ void AbstractWeapon::DeactivateWeapon(const ursine::ecs::EntityHandle &whoToDisc
 
 void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
 {
-    EVENT_SENDER(ursine::ecs::Entity, sender);
-    game::WeaponActivationEventArgs* args = static_cast<game::WeaponActivationEventArgs*>( const_cast<ursine::EventArgs*>( _args ) );
+    EVENT_ATTRS(ursine::ecs::Entity, game::WeaponActivationEventArgs);
 
     ActivateWeapon(sender, args->whoToConnect, args->m_camHandle, args->m_ammo, args->m_clip);
 }

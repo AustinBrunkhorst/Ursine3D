@@ -41,18 +41,14 @@ InventorySystem::InventorySystem(World* world)
 
 void InventorySystem::Enable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetID( );
-
     // grab all comps needed
     if ( entity->HasComponent< Inventory >( ) )
-        m_inventories[ uniqueID ] = entity->GetComponent< Inventory >( );
+        m_inventories[ entity ] = entity->GetComponent< Inventory >( );
 }
 
 void InventorySystem::Disable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetID( );
-
-    m_inventories.erase( uniqueID );
+    m_inventories.erase( entity );
 }
 
 void InventorySystem::onUpdate(EVENT_HANDLER(World))

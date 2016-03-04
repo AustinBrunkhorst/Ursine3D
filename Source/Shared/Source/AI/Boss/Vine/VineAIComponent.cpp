@@ -194,12 +194,12 @@ EntityAnimator *VineAI::GetAnimator(void)
     return m_animator;
 }
 
-Entity *VineAI::GetTarget(void)
+EntityHandle VineAI::GetTarget(void)
 {
     return m_target;
 }
 
-void VineAI::SetTarget(Entity *target)
+void VineAI::SetTarget(EntityHandle target)
 {
     m_target = target;
 }

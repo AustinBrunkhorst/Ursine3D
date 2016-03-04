@@ -177,7 +177,7 @@ JSMethod(EntityHandler::remove)
         return CefV8Value::CreateBool( false );
 
     Application::PostMainThread( [=] {
-        entity->Delete( );
+        handle->Delete( );
     } );
 
     return CefV8Value::CreateBool( true );

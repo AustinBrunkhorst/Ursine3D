@@ -26,16 +26,16 @@ namespace ursine
         Rigidbody::Rigidbody(void)
             : BaseComponent( )
             , m_rigidbody( 1.0f, nullptr )
-			, m_enableContactCallback( false ) { }
+            , m_enableContactCallback( false ) { }
 
-		Rigidbody::~Rigidbody(void)
-		{
-			GetOwner( )->Listener( this )
+        Rigidbody::~Rigidbody(void)
+        {
+            GetOwner( )->Listener( this )
                 .Off( ENTITY_TRANSFORM_DIRTY, &Rigidbody::onTransformChange );
-		}
+        }
 
-		void Rigidbody::OnInitialize(void)
-		{
+        void Rigidbody::OnInitialize(void)
+        {
             auto *owner = GetOwner( ).Get( );
 
             m_rigidbody.SetSimulation( 
@@ -43,11 +43,11 @@ namespace ursine
             );
 
             m_rigidbody.SetUserID( owner->GetID( ) );
-			m_rigidbody.SetUserPointer( this );
+            m_rigidbody.SetUserPointer( this );
 
-			GetOwner( )->Listener( this )
+            GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Rigidbody::onTransformChange );
-		}
+        }
 
         BodyFlag Rigidbody::GetBodyFlag(void) const
         {
@@ -150,50 +150,50 @@ namespace ursine
             m_rigidbody.SetAngularVelocity( angularVelocity );
         }
 
-	    SVec3 Rigidbody::GetAngularVelocity(void) const
+        SVec3 Rigidbody::GetAngularVelocity(void) const
         {
             return m_rigidbody.GetAngularVelocity( );
         }
 
-		void Rigidbody::SetGravity(const SVec3& gravity)
-		{
-			m_rigidbody.SetGravity( gravity );
-		}
+        void Rigidbody::SetGravity(const SVec3& gravity)
+        {
+            m_rigidbody.SetGravity( gravity );
+        }
 
-	    SVec3 Rigidbody::GetGravity(void) const
-		{
-			return m_rigidbody.GetGravity( );
-		}
+        SVec3 Rigidbody::GetGravity(void) const
+        {
+            return m_rigidbody.GetGravity( );
+        }
 
         void Rigidbody::SetDisableContactResponse(bool disable)
-	    {
+        {
             m_rigidbody.SetDisableContactResponse( disable );
-	    }
+        }
 
         bool Rigidbody::GetDisableContactResponse(void) const
-	    {
+        {
             return m_rigidbody.GetDisableContactResponse( );
-	    }
+        }
 
-		void Rigidbody::SetEnableContactCallback(bool enable)
-		{
-			m_enableContactCallback = enable;
-		}
+        void Rigidbody::SetEnableContactCallback(bool enable)
+        {
+            m_enableContactCallback = enable;
+        }
 
-	    bool Rigidbody::GetEnableContactCallback(void) const
-		{
-			return m_enableContactCallback;
-		}
+        bool Rigidbody::GetEnableContactCallback(void) const
+        {
+            return m_enableContactCallback;
+        }
 
-		void Rigidbody::SetContinuousCollisionDetection(bool enable)
-		{
-			m_rigidbody.SetContinuousCollisionDetection( enable );
-		}
+        void Rigidbody::SetContinuousCollisionDetection(bool enable)
+        {
+            m_rigidbody.SetContinuousCollisionDetection( enable );
+        }
 
-		bool Rigidbody::GetContinuousCollisionDetection(void) const
-		{
-			return m_rigidbody.GetContinuousCollisionDetection( );
-		}
+        bool Rigidbody::GetContinuousCollisionDetection(void) const
+        {
+            return m_rigidbody.GetContinuousCollisionDetection( );
+        }
 
         void Rigidbody::AddForce(const SVec3& force)
         {

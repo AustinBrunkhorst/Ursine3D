@@ -92,8 +92,6 @@ void Project::SetPlayState(ScenePlayState state)
 
     if (lastState == PS_EDITOR && (state == PS_PLAYING || state == PS_PAUSED))
     {
-        ecs::WorldSerializer serializer;
-
         auto *oldWorld = m_scene.GetActiveWorld( );
 
         m_worldCache = ecs::WorldSerializer::Serialize( oldWorld );

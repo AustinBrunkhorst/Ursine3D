@@ -93,7 +93,10 @@ namespace ursine
             template<typename SystemType>
             SystemType *GetEntitySystem(void);
 
-            void MergeWorld(const std::string &filename);
+            void MergeWorld(
+                resources::ResourceManager &resourceManager, 
+                resources::ResourceReference &worldResource
+            );
 
         private:
             friend class Entity;

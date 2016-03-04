@@ -87,7 +87,7 @@ const EntityHandle &LevelSegmentManager::GetPlayer2(void)
     return m_player2;
 }
 
-void LevelSegmentManager::OnInitialize(void)
+void LevelSegmentManager::OnSceneReady(Scene *scene)
 {
     // subscribe to update
     GetOwner( )->GetWorld( )->Listener( this )
@@ -118,7 +118,7 @@ void LevelSegmentManager::initTutorialLogic(void)
 
     // Initial state for spawning the level
     auto initState = stateM->AddState<InitializeSegmentState>(
-        resources->worldToMerge, 
+        resources->GetWorldData( ),
         LevelSegments::CB1_SimulationStartCinematic
     );
 
@@ -170,7 +170,7 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
 
     // Initial state for spawning the level
     auto initState = stateM->AddState<InitializeSegmentState>(
-        resources->worldToMerge,
+        resources->GetWorldData( ),
         LevelSegments::Empty
     );
 
@@ -258,7 +258,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
     // initial state for spawning the level
     auto initState = initStateM->AddState<InitializeSegmentState>(
-        resources->worldToMerge,
+        resources->GetWorldData( ),
         LevelSegments::Empty
     );
 
