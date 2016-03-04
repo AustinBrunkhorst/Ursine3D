@@ -239,7 +239,7 @@ void Project::onResourceModified(EVENT_HANDLER(rp::ResourcePipelineManager))
     auto *world = m_scene.GetActiveWorld( );
 
     if (world)
-{
+    {
         ecs::EditorWorldResourceModifiedArgs e( args->resource->GetGUID( ) );
 
         world->Dispatch( ecs::WORLD_EDITOR_RESOURCE_MODIFIED, &e );

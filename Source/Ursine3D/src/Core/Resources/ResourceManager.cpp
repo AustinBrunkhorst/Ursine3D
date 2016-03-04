@@ -39,6 +39,8 @@ namespace ursine
 
         void ResourceManager::ReloadIfCached(const GUID &guid)
         {
+            std::lock_guard<std::mutex> lock( m_databaseMutex );
+
             if (m_database.find( guid ) != m_database.end( ))
                 hardLoadResource( guid );
         }

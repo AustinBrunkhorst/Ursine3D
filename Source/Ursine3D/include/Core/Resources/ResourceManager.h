@@ -7,6 +7,8 @@
 
 #include "GUID.h"
 
+#include <mutex>
+
 namespace ursine
 {
     namespace resources
@@ -35,6 +37,8 @@ namespace ursine
             fs::path m_resourceDirectory;
 
             std::unordered_map<GUID, ResourceData::Handle, GUIDHasher> m_database;
+
+            std::mutex m_databaseMutex;
 
             ResourceManager(const ResourceManager &rhs) = delete;
             ResourceManager &operator=(const ResourceManager &rhs) = delete;

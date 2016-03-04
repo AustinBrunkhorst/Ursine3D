@@ -383,7 +383,11 @@ JSMethod(EntityHandler::removeComponent)
     Application::PostMainThread( [=] {
         auto &newHandle = getHandle( );
 
-        if (newHandle && newHandle->HasComponent( id ))
+        ecs::ComponentTypeMask mask;
+
+        mask.set( id, true );
+
+        if (newHandle && newHandle->HasComponent( mask ))
             newHandle->RemoveComponent( id );
     } );
 
@@ -427,7 +431,11 @@ JSMethod(EntityHandler::componentSet)
     Application::PostMainThread( [=] {
         auto &newHandle = getHandle( );
 
-        if (!newHandle || !newHandle->HasComponent( id ))
+        ecs::ComponentTypeMask mask;
+
+        mask.set( id, true );
+
+        if (!newHandle || !newHandle->HasComponent( mask ))
             return;
 
         auto instance = ObjectVariant( component );
@@ -483,7 +491,11 @@ JSMethod(EntityHandler::componentFieldUpdate)
     {
         auto &newHandle = getHandle( );
 
-        if (!newHandle || !newHandle->HasComponent( id ))
+        ecs::ComponentTypeMask mask;
+
+        mask.set( id, true );
+
+        if (!newHandle || !newHandle->HasComponent( mask ))
             return;
 
         auto &fieldMeta = field.GetMeta( );
@@ -561,7 +573,11 @@ JSMethod(EntityHandler::componentFieldArrayUpdate)
     Application::PostMainThread( [=] {
         auto &newHandle = getHandle( );
 
-        if (!newHandle || !newHandle->HasComponent( id ))
+        ecs::ComponentTypeMask mask;
+
+        mask.set( id, true );
+
+        if (!newHandle || !newHandle->HasComponent( mask ))
             return;
 
         auto instance = ObjectVariant( component );
@@ -626,7 +642,11 @@ JSMethod(EntityHandler::componentFieldArrayInsert)
     Application::PostMainThread( [=] {
         auto &newHandle = getHandle( );
 
-        if (!newHandle || !newHandle->HasComponent( id ))
+        ecs::ComponentTypeMask mask;
+
+        mask.set( id, true );
+
+        if (!newHandle || !newHandle->HasComponent( mask ))
             return;
 
         auto instance = ObjectVariant( component );
@@ -689,7 +709,11 @@ JSMethod(EntityHandler::componentFieldArrayRemove)
     Application::PostMainThread( [=] {
         auto &newHandle = getHandle( );
 
-        if (!newHandle || !newHandle->HasComponent( id ))
+        ecs::ComponentTypeMask mask;
+
+        mask.set( id, true );
+
+        if (!newHandle || !newHandle->HasComponent( mask ))
             return;
 
         auto instance = ObjectVariant( component );
@@ -748,7 +772,11 @@ JSMethod(EntityHandler::componentFieldArraySwap)
     Application::PostMainThread( [=] {
         auto &newHandle = getHandle( );
 
-        if (!newHandle || !newHandle->HasComponent( id ))
+        ecs::ComponentTypeMask mask;
+
+        mask.set( id, true );
+
+        if (!newHandle || !newHandle->HasComponent( mask ))
             return;
 
         auto instance = ObjectVariant( component );
@@ -861,7 +889,11 @@ JSMethod(EntityHandler::componentButtonInvoke)
     Application::PostMainThread( [=] {
         auto &newHandle = getHandle( );
 
-        if (!newHandle || !newHandle->HasComponent( id ))
+        ecs::ComponentTypeMask mask;
+
+        mask.set( id, true );
+
+        if (!newHandle || !newHandle->HasComponent( mask ))
             return;
 
         auto instance = ObjectVariant( component );

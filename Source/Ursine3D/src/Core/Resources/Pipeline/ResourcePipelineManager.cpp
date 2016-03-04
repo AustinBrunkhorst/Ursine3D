@@ -37,6 +37,10 @@ namespace ursine
         // maximum dimensions for a build preview
         const auto kMaxPreviewDimensions = Vec2 { 128.0f, 128.0f };
 
+        // duration to wait until there are no actions on pending file action
+        // to be considered stale
+        const auto kResourceActionStaleDuration = milliseconds( 1500 );
+
         const meta::Type::Set &getImporterTypes(void)
         {
             static auto importerTypes = typeof( rp::ResourceImporter ).GetDerivedClasses( );
@@ -123,6 +127,14 @@ namespace ursine
         );
 
         m_fileWatcher.watch( );
+
+        m_fileActionProcessorThread = std::thread(
+            &ResourcePipelineManager::processPendingFileActions,
+            this 
+        );
+
+        if (m_fileActionProcessorThread.joinable( ))
+            m_fileActionProcessorThread.detach( );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -213,6 +225,8 @@ namespace ursine
         return search->second;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
     rp::ResourceItem::List rp::ResourcePipelineManager::GetItemsByType(const meta::Type &type) const
     {
         ResourceItem::List matched;
@@ -225,6 +239,8 @@ namespace ursine
 
         return matched;
     }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     fs::path rp::ResourcePipelineManager::CreateTemporaryFileName(void) const
     {
@@ -623,6 +639,8 @@ namespace ursine
         return resource;
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
     void rp::ResourcePipelineManager::insertResource(ResourceItem::Handle resource)
     {
         auto *currentNode = m_rootDirectory;
@@ -670,6 +688,8 @@ namespace ursine
         // set the owning directory node
         resource->m_directoryNode = currentNode;
     }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     bool rp::ResourcePipelineManager::hasResourceHandlers(const fs::path &directory)
     { 
@@ -1128,10 +1148,24 @@ namespace ursine
         fs::WatchID id,
         const std::string &directory,
         const std::string &fileName,
-        fs::Action action,
+        fs::Action type,
         std::string oldFileName
     )
     {
+        FileWatchAction actionData;
+
+        actionData.type = type;
+        actionData.directory = directory;
+        actionData.fileName = fileName;
+        actionData.oldFileName = oldFileName;
+        actionData.absoluteFilePath = actionData.directory / actionData.fileName;
+
+        actionData.time = system_clock::now( );
+
+        std::lock_guard<std::mutex> lock( m_fileWatchActionMutex );
+
+        m_pendingFileActions[ actionData.absoluteFilePath ] = actionData;
+
         /*switch(action)
         {
         case efsw::Actions::Add:
@@ -1149,13 +1183,42 @@ namespace ursine
         default:
             std::cout << "Should never happen!" << std::endl;
         }*/
+    }
 
-        fs::path directoryPath = directory;
-        fs::path fileNamePath = fileName;
+    ///////////////////////////////////////////////////////////////////////////
 
-        auto absoluteFilePath = directoryPath / fileNamePath;
+    void rp::ResourcePipelineManager::processPendingFileActions(void)
+    {
+        while (true)
+        {
+            decltype( m_pendingFileActions ) actionsCopy;
 
-        switch (action)
+            // clear the pending file actions by move constructing it to the copy
+            {
+                std::lock_guard<std::mutex> lock( m_fileWatchActionMutex );
+
+                actionsCopy = move( m_pendingFileActions );
+            }
+
+            for (auto &entry : actionsCopy)
+                processPendingFileAction( entry.second );
+
+            // make sure we don't exhaust the CPU
+            std::this_thread::sleep_for( milliseconds( 500 ) );
+        }
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::processPendingFileAction(const FileWatchAction &action)
+    {
+        auto now = system_clock::now( );
+
+        // this guy isn't stale yet, ignore him
+        if (now - action.time > kResourceActionStaleDuration)
+            return;
+
+        switch (action.type)
         {
         case fs::Actions::Delete:
         {
@@ -1167,14 +1230,14 @@ namespace ursine
         {
             URSINE_TODO( "Directory resource modification." );
 
-            auto extension = absoluteFilePath.extension( ).string( );
+            auto extension = action.absoluteFilePath.extension( ).string( );
 
             utils::MakeLowerCase( extension );
 
             // meta file modified
             if (extension == kMetaFileExtension)
             {
-                auto sourceFile = change_extension( absoluteFilePath, "" );
+                auto sourceFile = change_extension( action.absoluteFilePath, "" );
 
                 auto search = m_pathToResource.find( sourceFile );
 
@@ -1191,12 +1254,12 @@ namespace ursine
                 return;
             }
 
-            auto search = m_pathToResource.find( absoluteFilePath );
+            auto search = m_pathToResource.find( action.absoluteFilePath );
 
             // if it doesn't exist, we're assuming it is added
             if (search == m_pathToResource.end( ))
             {
-                auto directoryResource = getDirectoryResource( absoluteFilePath );
+                auto directoryResource = getDirectoryResource( action.absoluteFilePath );
 
                 // this file is actually part of a resource, so modify the resource it belongs to
                 if (directoryResource != nullptr)
@@ -1209,7 +1272,7 @@ namespace ursine
                 // add this baby
                 else
                 {
-                    auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, absoluteFilePath );
+                    auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, action.absoluteFilePath );
             
                     if (handler.joinable( ))
                         handler.detach( );
@@ -1230,10 +1293,7 @@ namespace ursine
         }
     }
 
-    void rp::ResourcePipelineManager::processPendingFileActions(void)
-    {
-        
-    }
+    ///////////////////////////////////////////////////////////////////////////
 
     void rp::ResourcePipelineManager::onResourceAdded(const fs::path &fileName)
     {
@@ -1293,6 +1353,8 @@ namespace ursine
         } );
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
     void rp::ResourcePipelineManager::onResourceModified(ResourceItem::Handle resource)
     {
         std::lock_guard<std::mutex> lock( m_buildMutex );
@@ -1337,10 +1399,14 @@ namespace ursine
         } );
     }
 
+    ///////////////////////////////////////////////////////////////////////////
+
     void rp::ResourcePipelineManager::onResourceRemoved(ResourceItem::Handle resource)
     {
-
+        
     }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::getDirectoryResource(const fs::path &fileName) const
     {

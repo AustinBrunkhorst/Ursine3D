@@ -48,10 +48,13 @@ namespace ursine
             private:
                 struct FileWatchAction
                 {
-                    fs::Action action;
+                    fs::Action type;
                     fs::path directory;
                     fs::path fileName;
                     fs::path oldFileName;
+                    fs::path absoluteFilePath;
+
+                    std::chrono::time_point<std::chrono::system_clock> time;
                 };
 
                 ResourcePipelineConfig m_config;
@@ -62,6 +65,7 @@ namespace ursine
                 ResourceDirectoryNode *m_rootDirectory;
 
                 std::thread m_buildWorkerThread;
+                std::thread m_fileActionProcessorThread;
 
                 fs::FileWatcher m_fileWatcher;
                 fs::WatchID m_resourceDirectoryWatch;
@@ -70,6 +74,7 @@ namespace ursine
 
                 mutable std::mutex m_buildMutex;
                 mutable std::mutex m_databaseMutex;
+                mutable std::mutex m_fileWatchActionMutex;
 
                 ResourcePipelineManager(const ResourcePipelineManager &rhs) = delete;
                 ResourcePipelineManager &operator=(const ResourcePipelineManager &rhs) = delete;
@@ -152,11 +157,12 @@ namespace ursine
                     fs::WatchID watchid,
                     const std::string &dir,
                     const std::string &filename,
-                    fs::Action action,
+                    fs::Action type,
                     std::string oldFilename = ""
                 ) override;
 
                 void processPendingFileActions(void);
+                void processPendingFileAction(const FileWatchAction &action);
 
                 void onResourceAdded(const fs::path &fileName);
                 void onResourceModified(ResourceItem::Handle resource);
