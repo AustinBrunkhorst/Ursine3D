@@ -21,6 +21,8 @@
 #include <CameraComponent.h>
 #include <SweptControllerComponent.h>
 
+#include "AudioManager.h"
+
 using namespace ursine;
 using namespace ursine::ecs;
 
@@ -120,6 +122,8 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
 
         if (controller->m_jump)
         {
+            URSINE_TODO("Fix sound hack for weapons");
+            GetCoreSystem(AudioManager)->PlayGlobalEvent("Player_Jump");
             swept->Jump( );
             controller->m_jump = false;
         }
