@@ -15,6 +15,7 @@
 #include "ResourceAPI.h"
 #include "ModelManager.h"
 #include "TextureManager.h"
+#include "FontManager.h"
 
 namespace ursine
 {
@@ -24,60 +25,143 @@ namespace ursine
         {
             ModelManager *modelMgr;
             TextureManager *textureMgr;
+            FontManager *fontMgr;
         };
 
-        //get model handle
-        GfxHND ResourceAPI::GetModelHandle(const char *name)
-        {
-            return m_privates->modelMgr->GetModelIDByName(name);
-        }
-
+        /////////////////////////////////////////////////////////
+        // TEXTURE
+        /////////////////////////////////////////////////////////
         //get texture handle
-        GfxHND ResourceAPI::GetTexHandle(const char *name)
+
+        GfxHND ResourceAPI::CreateDynamicTexture(const unsigned width, const unsigned height)
         {
-            return m_privates->textureMgr->GetTextureIDByName(name);
+            return m_privates->textureMgr->CreateDynamicTexture( width, height );
         }
 
-        GfxHND ResourceAPI::CreateTexture(const unsigned width, const unsigned height)
+        void ResourceAPI::ResizeDynamicTexture(GfxHND &handle, const unsigned width, const unsigned height)
         {
-            return m_privates->textureMgr->CreateDynamicTexture(width, height);
+            m_privates->textureMgr->ResizeDynamicTexture( handle, width, height );
         }
 
-        void ResourceAPI::ResizeTexture(GfxHND& handle, const unsigned width, const unsigned height)
+        void ResourceAPI::DestroyDynamicTexture(GfxHND &handle)
         {
-            m_privates->textureMgr->ResizeDynamicTexture(handle, width, height);
+            m_privates->textureMgr->DestroyDynamicTexture( handle );
         }
 
-        void ResourceAPI::DestroyTexture(GfxHND& handle)
+        GfxHND ResourceAPI::CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height)
         {
-            m_privates->textureMgr->DestroyDynamicTexture(handle);
+            return m_privates->textureMgr->CreateTexture( binaryData, binarySize, width, height );
         }
 
-        ModelResource *ResourceAPI::GetModelResource(const GfxHND & handle)
+        void ResourceAPI::DestroyTexture(GfxHND &handle)
         {
-            return m_privates->modelMgr->GetModel(static_cast<unsigned>(handle));
+            m_privates->textureMgr->DestroyTexture( handle );
         }
 
-        ModelResource * ResourceAPI::GetModelResource(const std::string & modelName)
+        void ResourceAPI::LoadTexture(GfxHND handle)
         {
-            return m_privates->modelMgr->GetModel(modelName);
+            m_privates->textureMgr->LoadTexture( handle );
         }
 
-        void ResourceAPI::SetPrivates(void *priv, void *priv2)
+        void ResourceAPI::UnloadTexture(GfxHND handle)
         {
-            m_privates->modelMgr = reinterpret_cast<ModelManager*>(priv);
-            m_privates->textureMgr = reinterpret_cast<TextureManager*>(priv2);
+            m_privates->textureMgr->UnloadTexture( handle );
         }
 
-        void ResourceAPI::Initialize()
+        void ResourceAPI::GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize)
+        {
+            m_privates->textureMgr->GetBinaryInformation( handle, dataPtr, binarySize );
+        }
+
+        /////////////////////////////////////////////////////////
+        // MODEL
+        /////////////////////////////////////////////////////////
+
+        bool ResourceAPI::CheckModelExistence(const std::string &modelName)
+        {
+            return m_privates->modelMgr->CheckModelExistence(modelName);
+        }
+
+        GfxHND ResourceAPI::CreateModel(const ufmt_loader::ModelInfo &modelInfo)
+        {
+            return m_privates->modelMgr->CreateModel( modelInfo );
+        }
+
+        void ResourceAPI::DestroyModel(GfxHND &handle)
+        {
+            m_privates->modelMgr->DestroyModel( handle );
+        }
+
+        void ResourceAPI::LoadModel(GfxHND handle)
+        {
+            m_privates->modelMgr->LoadModel( handle );
+        }
+
+        void ResourceAPI::UnloadModel(GfxHND handle)
+        {
+            m_privates->modelMgr->UnloadModel( handle );
+        }
+
+        ModelResource *ResourceAPI::GetModelResource(GfxHND handle)
+        {
+            return m_privates->modelMgr->GetModel( static_cast<unsigned>( handle & 0xFFFF ) );
+        }
+
+        ufmt_loader::ModelInfo *ResourceAPI::GetModelInfo(const GfxHND &handle)
+        {
+            return m_privates->modelMgr->GetModelInfo( handle );
+        }
+
+        bool ResourceAPI::CheckAnimExistence(const std::string &animeName)
+        {
+            return m_privates->modelMgr->CheckAnimExistence(animeName);
+        }
+
+        GfxHND ResourceAPI::CreateAnimation(const ufmt_loader::AnimInfo &animeInfo)
+        {
+            return m_privates->modelMgr->CreateAnimation( animeInfo );
+        }
+
+        void ResourceAPI::DestroyAnimation(GfxHND &handle)
+        {
+            m_privates->modelMgr->DestroyAnimation( handle );
+        }
+
+        ufmt_loader::AnimInfo *ResourceAPI::GetAnimInfo(const GfxHND &handle)
+        {
+            return m_privates->modelMgr->GeAnimeInfo( handle );
+        }
+
+        GfxHND ResourceAPI::CreateBitmapFont(uint8_t *binaryData, size_t binarySize)
+        {
+            return m_privates->fontMgr->CreateBitmapFont( binaryData, binarySize );
+        }
+
+        void ResourceAPI::DestroyBitmapFont(GfxHND &fontHandle)
+        {
+            m_privates->fontMgr->DestroyBitmapFont( fontHandle );
+        }
+
+        void ResourceAPI::RegisterTexture(GfxHND fontHandle, const std::string &fontName, GfxHND textureHandle)
+        {
+            m_privates->fontMgr->RegisterTexture( fontHandle, fontName, textureHandle );
+        }
+
+        void ResourceAPI::SetPrivates(void *priv, void *priv2, void *priv3)
+        {
+            m_privates->modelMgr = reinterpret_cast<ModelManager*>( priv );
+            m_privates->textureMgr = reinterpret_cast<TextureManager*>( priv2 );
+            m_privates->fontMgr = reinterpret_cast<FontManager*>(priv3);
+        }
+
+        void ResourceAPI::Initialize(void)
         {
             m_privates = new privData;
         }
 
-        void ResourceAPI::Uninitialize()
+        void ResourceAPI::Uninitialize(void)
         {
             delete m_privates;
         }
     }
-
 }

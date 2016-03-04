@@ -53,12 +53,12 @@ void BossAI::SetVineArchetype(const std::string &vineArchetype)
     m_vineArchetype = vineArchetype;
 }
 
-Entity *BossAI::GetSeedshotEntity(void)
+EntityHandle BossAI::GetSeedshotEntity(void)
 {
     return GetOwner( )->GetChildByName( m_seedshotEntity );
 }
 
-void BossAI::AddSpawnedVine(Entity *vine)
+void BossAI::AddSpawnedVine(EntityHandle vine)
 {
     auto health = vine->GetComponent<Health>( );
 

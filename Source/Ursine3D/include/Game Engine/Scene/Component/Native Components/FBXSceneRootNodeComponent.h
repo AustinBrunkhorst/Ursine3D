@@ -15,11 +15,12 @@
 
 #include "Component.h"
 #include <string>
+#include "ModelData.h"
 
 #if defined(URSINE_WITH_EDITOR)
 
 #include "EditorConfig.h"
-
+ 
 #endif
 
 namespace ursine
@@ -50,10 +51,11 @@ namespace ursine
                 "Generate BVH Triangle Mesh Colliders For Scene"
             );
 
-            EditorField(
-                std::string sceneName,
-                GetSceneName,
-                SetSceneName
+            EditorResourceField(
+                ursine::resources::ModelData,
+                sceneModel,
+                GetModel,
+                SetModel
             );
 
             FBXSceneRootNode(void);
@@ -62,18 +64,19 @@ namespace ursine
             Meta(Disable)
             void OnInitialize(void);
 
-            const std::string &GetSceneName(void) const;
-            void SetSceneName(const std::string &map);
+            const ursine::resources::ResourceReference &GetModel(void) const;
+            void SetModel(const ursine::resources::ResourceReference &model);
 
         private:
-            std::string m_sceneName;
-
+            ursine::resources::ResourceReference m_modelResource;
+            graphics::GfxHND m_modelHandle;
             
         #if defined(URSINE_WITH_EDITOR)
 
             static void recursClearChildren(const std::vector< Handle<Transform> > &children);
             void clearChildren(void);
             void importScene(void);
+            void invalidateModel(bool unload = true);
 
             bool m_notificationPresent;
 

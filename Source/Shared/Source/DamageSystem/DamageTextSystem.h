@@ -34,7 +34,6 @@ class DamageText;
 //////////////////////
 //////////////////////
 
-
 class DamageTextSystem
     : public ursine::ecs::EntitySystem
 {
@@ -52,19 +51,16 @@ protected:
 private:
     void onDamageText(EVENT_HANDLER(game::DAMGE_TEXT_EVENT));
 
-    void updateDamageText(ursine::ecs::Entity* damageText, DamageText* damageTextComp, float dt);
+    void updateDamageText(const ursine::ecs::EntityHandle &damageText, DamageText* damageTextComp, float dt);
 
     void createDamageText(const game::DamageEventArgs* args);
-    void deleteDamageText(ursine::ecs::Entity* textObject);
+    void deleteDamageText(const ursine::ecs::EntityHandle &textObject);
 
     std::string m_critText;
     std::string m_normText;
 
-    std::unordered_map< ursine::ecs::Entity*, DamageText* > m_damageTexts;
-    std::unordered_map< ursine::ecs::Entity*, ursine::ecs::SpriteText* > m_spriteTexts;
-    std::unordered_map< ursine::ecs::Entity*, ursine::ecs::Transform* > m_transforms;
+    std::unordered_map<ursine::ecs::EntityHandle, DamageText*> m_damageTexts;
+    std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::SpriteText*> m_spriteTexts;
+    std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::Transform*> m_transforms;
     
 } Meta(Enable);
-
-
-

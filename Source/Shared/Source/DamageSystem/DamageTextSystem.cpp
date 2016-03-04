@@ -60,7 +60,7 @@ void DamageTextSystem::onUpdate(EVENT_HANDLER(World))
 
     for ( auto damageText : m_damageTexts )
     {
-        updateDamageText(damageText.first, damageText.second, dt);
+        updateDamageText( damageText.first, damageText.second, dt);
     }
 }
 
@@ -71,17 +71,17 @@ void DamageTextSystem::onDamageText(void* _sender, const ursine::EventArgs* _arg
     createDamageText(args);
 }
 
-void DamageTextSystem::updateDamageText(ursine::ecs::Entity* damageText, DamageText* damageTextComp, float dt)
+void DamageTextSystem::updateDamageText(const EntityHandle &damageText, DamageText* damageTextComp, float dt)
 {
-    ursine::ecs::Transform* transform = m_transforms[ damageText ];
-    ursine::ecs::SpriteText* spriteText = m_spriteTexts[ damageText ];
+    Transform* transform = m_transforms[ damageText ];
+    SpriteText* spriteText = m_spriteTexts[ damageText ];
 
     // upate lifetime
     damageTextComp->IncrementLifeTime( dt );
 
     if ( damageTextComp->GetLifeTime( ) > damageTextComp->GetTotalLifeTime( ) )
     {
-        deleteDamageText(damageText);
+        deleteDamageText( damageText );
         return;
     }
 
@@ -99,7 +99,7 @@ void DamageTextSystem::updateDamageText(ursine::ecs::Entity* damageText, DamageT
 
 void DamageTextSystem::createDamageText(const game::DamageEventArgs* args)
 {
-    Entity* damageText;
+    EntityHandle damageText;
 
     // load valid damage text archetype
     if (args->crit)
@@ -139,7 +139,7 @@ void DamageTextSystem::createDamageText(const game::DamageEventArgs* args)
     m_transforms[ damageText ] = transform;
 }
 
-void DamageTextSystem::deleteDamageText(ursine::ecs::Entity* textObject)
+void DamageTextSystem::deleteDamageText(const EntityHandle &textObject)
 {
     m_spriteTexts.erase( textObject );
     m_damageTexts.erase( textObject );

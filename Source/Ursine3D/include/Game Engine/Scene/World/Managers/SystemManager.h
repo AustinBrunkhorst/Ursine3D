@@ -50,9 +50,6 @@ namespace ursine
             // OnInitialize has been called
             bool m_initialized;
 
-            // onAfterLoad has been called
-            bool m_loaded;
-
             std::vector<EntitySystem*> m_systems;
 
             SystemManager(World *world);
@@ -60,7 +57,7 @@ namespace ursine
 
             void OnInitialize(void) override;
 
-            void onAfterLoad(void);
+            void initializeScene(void);
         };
     }
 }

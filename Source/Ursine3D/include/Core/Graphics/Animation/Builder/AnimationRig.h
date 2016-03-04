@@ -25,8 +25,8 @@ namespace ursine
     class AnimationRig
     {
     public:
-        AnimationRig(void);
-        AnimationRig(const std::string &name);
+        AnimationRig( void );
+        AnimationRig( const std::string &name );
 
         /** @brief initializes this rig for loading
         *
@@ -35,7 +35,7 @@ namespace ursine
         *  @param boneCount number of bones in rig
         *  @return Void.
         */
-        void InitializeRig(const unsigned boneCount);
+        void InitializeRig( const unsigned boneCount );
 
         /** @brief adds a bone to this rig
         *
@@ -67,19 +67,19 @@ namespace ursine
 
         // gettors and setters //////////////////////////////////////
 
-        const std::string &GetName(void) const;
-        void SetName(const std::string &name);
+        const std::string &GetName( void ) const;
+        void SetName( const std::string &name );
 
-        const std::vector<SMat4> &GetOffsetMatrices(void) const;
+        const std::vector<SMat4> &GetOffsetMatrices( void ) const;
 
-        const std::vector<AnimationBone> &GetBoneData(void) const;
-        AnimationBone &GetBone(const unsigned boneID);
+        const std::vector<AnimationBone> &GetBoneData( void ) const;
+        AnimationBone &GetBone( const unsigned boneID );
 
-        unsigned GetParentID(const unsigned childID) const;
+        unsigned GetParentID( const unsigned childID ) const;
 
-        unsigned GetBoneCount(void) const;
+        unsigned GetBoneCount( void ) const;
 
-        const std::vector<unsigned> &GetHierarchyTable(void) const;
+        const std::vector<unsigned> &GetHierarchyTable( void ) const;
     private:
         std::string m_name;
 

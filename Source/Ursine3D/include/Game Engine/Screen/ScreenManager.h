@@ -86,7 +86,7 @@ namespace ursine
 
         // screens mapped to their ID
         std::unordered_map<ScreenID, Screen*> m_map;
-    } Meta(Register);
+    } Meta(Register, EnablePtrType);
 
     extern ScreenManager *gScreenManager;
 }

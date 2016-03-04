@@ -40,6 +40,11 @@ namespace ursine
         template<typename A>
         constexpr A IndexToMask(A value);
 
+        void MakeLowerCase(std::string &input);
+        void MakeUpperCase(std::string &input);
+
+        void CopyToClipboard(const std::string &text);
+
         // Insertions sorts the given container
         template<typename Container, class Predicate>
         void InsertionSort(Container &v, Predicate predicate);

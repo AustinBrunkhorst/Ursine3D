@@ -14,13 +14,15 @@
 #pragma once
 
 #include "World.h"
+#include "ResourceManager.h"
 #include "GFXAPIDefines.h"
-#include <Core/Graphics/API/GfxAPI.h>
+
+#include "SceneEvent.h"
+
+#include "DeltaTime.h"
 
 namespace ursine
 {
-    class GfxAPI;
-
     enum ScenePlayState
     {
         PS_EDITOR,
@@ -28,22 +30,24 @@ namespace ursine
         PS_PAUSED
     };
 
-    class Scene
+    class Scene : public EventDispatcher<SceneEventType>
     {
     public:
-        typedef std::shared_ptr<Scene> Handle;
-
         Scene(void);
         ~Scene(void);
 
-        ecs::World *GetWorld(void);
-        void SetWorld(ecs::World *world);
+        ecs::World *GetActiveWorld(void);
+
+        void SetActiveWorld(ecs::World::Handle world);
+        bool SetActiveWorld(const resources::ResourceReference &reference);
 
         graphics::GfxHND GetViewport(void) const;
         void SetViewport(graphics::GfxHND viewport);
 
         ScenePlayState GetPlayState(void) const;
         void SetPlayState(ScenePlayState state);
+
+        resources::ResourceManager &GetResourceManager(void);
 
         void Step(void) const;
 
@@ -53,10 +57,15 @@ namespace ursine
         void LoadConfiguredSystems(void);
 
     private:
+        Scene(const Scene &rhs) = delete;
+        Scene &operator=(const Scene &rhs) = delete;
+
         ScenePlayState m_playState;
 
         graphics::GfxHND m_viewport;
 
-        ecs::World::Handle m_world;
+        ecs::World::Handle m_activeWorld;
+
+        resources::ResourceManager m_resourceManager;
     };
 }

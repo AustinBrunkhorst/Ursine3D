@@ -117,6 +117,7 @@ namespace ursine
                 SetVelocityRange
             );
 
+            EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
             EditorField(
                 float fill,
                 GetFill,
@@ -164,7 +165,7 @@ namespace ursine
             float GetSizeRange(void) const;
             void SetSizeRange(const float range);
 
-            float GetRotation(void);
+            float GetRotation(void) const;
             void SetRotation(const float rotation);
 
             float GetRotationRange(void) const;

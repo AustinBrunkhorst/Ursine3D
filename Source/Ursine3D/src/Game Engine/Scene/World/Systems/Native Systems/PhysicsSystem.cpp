@@ -198,7 +198,7 @@ namespace ursine
         #endif
         }
 
-        void PhysicsSystem::OnAfterLoad(void)
+        void PhysicsSystem::OnSceneReady(Scene *scene)
         {
             auto levelSettings = m_world->GetSettings( );
 
@@ -218,16 +218,6 @@ namespace ursine
             SetEnableDebugDraw( false );
 
         #endif
-
-            // This is a real gross thing I'm doing to try and fix
-            // an issue I'm having with bullet and collision flags
-            /*auto rigidbodies = m_world->GetEntitiesFromFilter( Filter( ).All<Rigidbody>( ) );
-
-            for (auto &entity : rigidbodies)
-            {
-                auto rigidbody = entity->GetComponent<Rigidbody>( );
-                rigidbody->SetBodyFlag( rigidbody->GetBodyFlag( ) );
-            }*/
         }
 
         void PhysicsSystem::onComponentAdded(EVENT_HANDLER(World))
@@ -238,7 +228,7 @@ namespace ursine
             auto &component = args->component;
 
             // If the user added a collider, remove the others that may exist
-            if (m_collisionShapes.Matches( entity ) && 
+            if (m_collisionShapes.Matches( entity.Get( ) ) && 
                 m_collisionShapes.Matches( component->GetTypeMask( ) ))
                 removeExistingCollider( entity, component->GetTypeID( ) );
 
@@ -280,7 +270,7 @@ namespace ursine
                 }
 
                 // If the entity does not have a collision shape, add an empty one
-                if (!m_collisionShapes.Matches( entity ))
+                if (!m_collisionShapes.Matches( entity.Get( ) ))
                     entity->AddComponent<EmptyCollider>( );
 
                 // set the transform
@@ -298,8 +288,8 @@ namespace ursine
 
                 m_rigidbodies.push_back( rigidbody );
 
-				rigidbody->m_rigidbody.SetUserPointer( rigidbody );
-				rigidbody->m_rigidbody.SetUserID( rigidbody->GetOwner( )->GetUniqueID( ) );
+                rigidbody->m_rigidbody.SetUserPointer( rigidbody );
+                rigidbody->m_rigidbody.SetUserID( rigidbody->GetOwner( )->GetID( ) );
             }
             else if (component->Is<Ghost>( ))
             {
@@ -391,7 +381,7 @@ namespace ursine
                 }
 
                 // If the entity does not have a collision shape, add an empty one
-                if (!m_collisionShapes.Matches( entity ))
+                if (!m_collisionShapes.Matches( entity.Get( ) ))
                     entity->AddComponent<EmptyCollider>( );
 
                 // set the transform
@@ -406,17 +396,17 @@ namespace ursine
 
                 m_ghosts.push_back( ghost );
 
-				ghost->m_ghost.SetUserPointer( ghost );
-				ghost->m_ghost.SetUserID( ghost->GetOwner( )->GetUniqueID( ) );
+                ghost->m_ghost.SetUserPointer( ghost );
+                ghost->m_ghost.SetUserID( ghost->GetOwner( )->GetID( ) );
             }
             else if (component->Is<Body>( ))
             {
-				auto body = entity->GetComponent<Body>( );
+                auto body = entity->GetComponent<Body>( );
 
                 m_bodies.push_back( body );
 
-				body->m_body.SetUserPointer( body );
-				body->m_body.SetUserID( body->GetOwner( )->GetUniqueID( ) );
+                body->m_body.SetUserPointer( body );
+                body->m_body.SetUserID( body->GetOwner( )->GetID( ) );
             }
             else if (component->Is<SphereCollider>( ))
             {
@@ -636,7 +626,7 @@ namespace ursine
 
     #endif
 
-        void PhysicsSystem::addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider)
+        void PhysicsSystem::addCollider(const EntityHandle &entity, physics::ColliderBase *collider, bool emptyCollider)
         {
             bool removeBody = true;
 
@@ -665,7 +655,7 @@ namespace ursine
             else if (entity->HasComponent<Rigidbody>( ))
             {
                 auto rigidbody = entity->GetComponent<Rigidbody>( );
-				auto addingRemoving = !emptyCollider && rigidbody->m_rigidbody.GetUserPointer( );
+                auto addingRemoving = !emptyCollider && rigidbody->m_rigidbody.GetUserPointer( );
 
                 if (addingRemoving)
                     m_simulation.RemoveRigidbody( &rigidbody->m_rigidbody );
@@ -679,7 +669,7 @@ namespace ursine
             else if (entity->HasComponent<Ghost>( ))
             {
                 auto ghost = entity->GetComponent<Ghost>( );
-				auto addingRemoving = !emptyCollider && ghost->m_ghost.GetUserPointer( );
+                auto addingRemoving = !emptyCollider && ghost->m_ghost.GetUserPointer( );
 
                 if (addingRemoving)
                     m_simulation.RemoveGhost( &ghost->m_ghost );
@@ -698,7 +688,7 @@ namespace ursine
                 entity->RemoveComponent<EmptyCollider>( );
         }
 
-        void PhysicsSystem::removeCollider(Entity *entity)
+        void PhysicsSystem::removeCollider(const EntityHandle &entity)
         {
             if (entity->HasComponent<Body>( ))
                 entity->RemoveComponent<Body>( );
@@ -720,7 +710,7 @@ namespace ursine
             }
         }
 
-        void PhysicsSystem::removeExistingCollider(Entity *entity, ComponentTypeID newCollider)
+        void PhysicsSystem::removeExistingCollider(const EntityHandle &entity, ComponentTypeID newCollider)
         {
             for (auto *comp : entity->GetComponents( ))
             {

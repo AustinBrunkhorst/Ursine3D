@@ -1,3 +1,9 @@
+Texture2D colorTexture : register(t0);
+
+//sample type
+SamplerState SampleType : register(s0);
+
+
 cbuffer PrimColorBuffer : register(b5)
 {
   float4 color;

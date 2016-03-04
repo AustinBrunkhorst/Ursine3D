@@ -18,23 +18,23 @@ namespace ursine
     namespace ecs
     {
         template<class ComponentType>
-        void EntityManager::AddComponent(Entity *entity, ComponentType *component)
+        void EntityManager::AddComponent(const EntityHandle &entity, ComponentType *component)
         {
             static_assert(std::is_base_of<Component, ComponentType>::value,
                 "The specified type is not a component!");
 
-#ifdef CONFIG_DEBUG
+        #if defined(CONFIG_DEBUG)
 
             UAssert( IsComponentRegistered( ComponentType ),
                 "Component type not registered." );
 
-#endif
+        #endif
 
             AddComponent( entity, static_cast<Component*>( component ) );
         }
 
         template<class ComponentType>
-        void EntityManager::RemoveComponent(Entity *entity)
+        void EntityManager::RemoveComponent(const EntityHandle &entity)
         {
             static_assert(!std::is_same<ComponentType, Transform>::value,
                 "You can't remove a transform component." );
@@ -56,15 +56,17 @@ namespace ursine
         template <class ComponentType>
         ComponentType* EntityManager::GetComponentInChildren(const Entity* entity) const
         {
-            return static_cast<ComponentType*>(GetComponentInChildren(entity,
-                GetComponentID(ComponentType)));
+            return static_cast<ComponentType*>(
+                GetComponentInChildren( entity, GetComponentID( ComponentType ) )
+            );
         }
 
         template <class ComponentType>
         ComponentType* EntityManager::GetComponentInParent(const Entity* entity) const
         {
-            return static_cast<ComponentType*>(GetComponentInParent(entity,
-                GetComponentID(ComponentType)));
+            return static_cast<ComponentType*>(
+                GetComponentInParent( entity, GetComponentID( ComponentType ) )
+            );
         }
 
         template <class ComponentType>

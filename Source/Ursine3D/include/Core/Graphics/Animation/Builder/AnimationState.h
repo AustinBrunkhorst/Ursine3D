@@ -100,7 +100,7 @@ namespace ursine
 
         const float &GetTransPosition(void) const;
         void SetTransPosition(const float& tPos);
-
+        
         void PlayingAnimation();// const float deltaTime);
 
     private:

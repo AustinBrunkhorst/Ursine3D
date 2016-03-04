@@ -4,6 +4,17 @@
 #include <iostream>
 
 BitmapFont::BitmapFont(void)
+    : m_input( )
+    , m_binaryData( nullptr )
+    , m_binarySize( 0 )
+    , m_position( 0 )
+    , m_useBinary( false )
+    , m_infoData( )
+    , m_commonData( )
+    , m_pageData( )
+    , m_characterData( )
+
+
 {
 }
 
@@ -49,6 +60,40 @@ void BitmapFont::Load(const std::string textPath)
     } while ( !m_input.eof() );
 }
 
+void BitmapFont::Load(uint8_t * binaryData, size_t size)
+{
+    m_useBinary = true;
+
+    m_binaryData = binaryData;
+    m_binarySize = size;
+    m_position = 0;
+
+    ValidateFile( ); 
+
+    do
+    {
+        int blockSize;
+        switch (GetBlockType(blockSize))
+        {
+        case 1:
+            ReadInfoData(blockSize);
+            break;
+        case 2:
+            ReadCommonData(blockSize);
+            break;
+        case 3:
+            ReadPageData(blockSize);
+            break;
+        case 4:
+            ReadCharacterData(blockSize);
+            break;
+        case 5:
+            ReadKerningData(blockSize);
+            break;
+        }
+    } while ( m_position < m_binarySize );
+}
+
 const std::vector<std::string>& BitmapFont::GetTextureFiles(void) const
 {
     return m_pageData;
@@ -62,6 +107,16 @@ const std::vector<CharacterData>& BitmapFont::GetCharacterData(void) const
 const CommonData & BitmapFont::GetCommonData(void) const
 {
     return m_commonData;
+}
+
+const InfoData & BitmapFont::GetInfoData(void) const
+{
+    return m_infoData;
+}
+
+const std::vector<std::string> &BitmapFont::GetPageData(void) const
+{
+    return m_pageData;
 }
 
 bool BitmapFont::ValidateFile(void)

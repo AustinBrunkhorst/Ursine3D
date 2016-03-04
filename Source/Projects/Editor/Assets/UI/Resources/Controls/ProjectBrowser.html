@@ -1,0 +1,413 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+<link rel="import" href="TreeView.html">
+<link rel="import" href="ContextMenu.html">
+
+<dom-module id="x-project-browser">
+    <link rel="import" type="css" href="../Style/Controls/ProjectBrowser.css">
+    <template>
+        <div class="columns">
+            <div class="left">
+                <x-tree-view id="folderTree"></x-tree-view>
+            </div>
+            <div class="right">
+                <div class="contents-toolbar">
+                    <div id="breadCrumbs">
+                    <template id="crumbRepeat" is="dom-repeat" items="{{crumbs}}" as="crumb">
+                        <div on-click="_onCrumbSelected">{{crumb}}</div>
+                    </template>
+                    </div>
+                </div>
+                <div id="folderContent">
+                <template id="folderRepeat" is="dom-repeat" items="{{directoryFolders}}" as="folder">
+                    <div class="resource" on-dblclick="_onFolderDblClick" on-contextmenu="_onFolderContextMenu">
+                        <div class="thumbnail folder"></div>
+                        <div class="display-name">{{folder.displayName}}</div>
+                    </div>
+                </template>
+                <template id="resourceRepeat" is="dom-repeat" items="{{directoryResources}}" as="resource">
+                    <div class="resource" on-mousedown="_onResourceMouseDown" on-dblclick="_onResourceDblClick" on-contextmenu="_onResourceContextMenu">
+                        <div class="thumbnail" resource-type$="{{resource.type}}" has-preview$="{{resource.hasPreview}}">
+                        <template is="dom-if" if="{{resource.hasPreview}}">
+                            <img src="{{resource.previewFile}}">
+                        </template>
+                        </div>
+                        <div class="display-name">{{resource.displayName}}</div>
+                    </div>
+                </template>
+                </div>
+            </div>
+        </div>
+    </template>
+    <script>
+        var ProjectBrowserControl = Polymer({
+            is: "x-project-browser",
+            properties: {
+                crumbs: {
+                    type: Array,
+                    value: [ ]
+                },
+                directoryFolders: {
+                    type: Array,
+                    value: [ ]
+                },
+                directoryResources: {
+                    type: Array,
+                    value: [ ]
+                }
+            },
+            factoryImpl: function(treeRoot) {
+                this._resources = treeRoot;
+                this._pathToResourceEntry = { };
+                this._pathToDirectoryItem = { };
+
+                this._projectDirectory =
+                    this._createDirectoryCrumbs( this._resources.path )
+                        .slice( 0, -1 )
+                        .join( '\\' );
+
+                this._buildTree( treeRoot );
+            },
+            created: function() {
+                this._lastSelectedTreeItem = null;
+
+                this._isDraggingResource = false;
+                this._draggedResource = null;
+                this._draggedResourcePreview = null;
+                this._draggedResourceTarget = null;
+                this._resourceDragMouseMoveHandler = this._onResourceDragMouseMove.bind( this );
+                this._resourceDragMouseUpHandler = this._onResourceDragMouseUp.bind( this );
+            },
+            attached: function() {
+                this.$.folderTree.setAsRoot( true );
+                this.$.folderTree.enableModification = false;
+            },
+
+            browseDirectory: function(directoryPath) {
+                var entry = this._pathToResourceEntry[ directoryPath ];
+
+                if (!entry)
+                    return;
+
+                this._browseDirectory( entry );
+
+                this._selectDirectoryItem( this._pathToDirectoryItem[ directoryPath ] );
+            },
+            addResource: function(resourceData) {
+                var currentNode = this._resources;
+
+                var directories = this._createDirectoryCrumbs( resourceData.relativePathDisplayName );
+
+                // remove the file name
+                directories.pop( );
+
+                var currentPath = this._projectDirectory;
+
+                for (var i = 0; i < directories.length; ++i) {
+                    var directory = directories[ i ];
+
+                    currentPath += '\\'+ directory;
+
+                    var subDir = currentNode.subDirectories.find( function(inputDir, dir) {
+                        return this._createDirectoryCrumbs( dir.path ).pop( ) == inputDir;
+                    }.bind( this, directory ) );
+
+                    // exists, advance the node
+                    if (subDir) {
+                        currentNode = subDir;
+                    } else {
+                        var newNode = this._createDirectoryNode( currentPath );
+
+                        currentNode.subDirectories.push( newNode );
+
+                        var currentItem = this._pathToDirectoryItem[ currentNode.path ];
+
+                        currentItem.child.appendChild(
+                            this._createDirectoryTreeItem( newNode )
+                        );
+
+                        currentNode = newNode;
+                    }
+                }
+
+                currentNode.resources.push( resourceData );
+
+                // if this directory is open, refresh the contents
+                if (this._lastSelectedTreeItem && this._lastSelectedTreeItem.directoryData.path == currentNode.path) {
+                    this.set( 'directoryFolders', currentNode.subDirectories.slice( 0 ) );
+                    this.set( 'directoryResources', currentNode.resources.slice( 0 ) );
+                }
+            },
+
+            _onTreeItemClick: function(item) {
+                this._selectDirectoryItem( item );
+
+                this._browseDirectory( item.directoryData );
+            },
+            _onTreeItemDblClick: function(item) {
+                item.opened = !item.opened;
+            },
+            _onTreeItemContextMenu: function(item, e) {
+                var menu = new ContextMenuControl( );
+
+                var showInExplorer = menu.addItem( 'Show In Explorer', function() {
+                    ProcessOpen( item.directoryData.path, false );
+                }.bind( this ) );
+
+                showInExplorer.icon = 'folder-closed';
+
+                menu.open( e.clientX, e.clientY );
+            },
+            _onCrumbSelected: function(e) {
+                var index = this.get( 'crumbs' ).length - e.model.__data__.index - 1;
+
+                var absCrumbs = this._createDirectoryCrumbs(
+                    this._lastSelectedTreeItem.directoryData.path
+                );
+
+                for (var i = 0; i < index; ++i)
+                    absCrumbs.pop( );
+
+                this.browseDirectory( absCrumbs.join( '\\' ) );
+            },
+            _onFolderDblClick: function(e) {
+                var folder = e.model.folder;
+
+                this._selectDirectoryItem( this._pathToDirectoryItem[ folder.path ] );
+                this._browseDirectory( folder );
+            },
+            _onFolderContextMenu: function(e) {
+                var menu = new ContextMenuControl( );
+
+                var folder = e.model.folder;
+
+                var showInExplorer = menu.addItem( 'Show In Explorer', function() {
+                    ProcessOpen( this._getFileDirectory( folder.path ), false );
+                }.bind( this ) );
+
+                showInExplorer.icon = 'folder-closed';
+
+                menu.open( e.clientX, e.clientY );
+            },
+            _onResourceMouseDown: function(e) {
+                var resource = e.model.resource;
+
+                var result = this.fire( 'resource-dragstart', {
+                    resource: resource
+                } );
+
+                // determine if this was explicitly cancelled
+                if (result.preventDrag === true)
+                    return;
+
+                this._draggedResource = resource;
+
+                document.addEventListener( 'mouseup', this._resourceDragMouseUpHandler, true );
+                document.addEventListener( 'mousemove', this._resourceDragMouseMoveHandler, true );
+            },
+            _onResourceDragMouseMove: function(e) {
+                if (!this._isDraggingResource) {
+                    this._draggedResourcePreview =
+                        this._createResourceDragPreview( this._draggedResource );
+
+                    this._isDraggingResource = true;
+                }
+
+                // update preview position
+                this._draggedResourcePreview.style.left = e.clientX +'px';
+                this._draggedResourcePreview.style.top = e.clientY +'px';
+
+                // check for drop targets
+                var target = this._findResourceDropTarget(
+                    document.elementFromPoint( e.clientX, e.clientY )
+                );
+
+                // no target
+                if (target == null) {
+                    this._draggedResourcePreview.removeAttribute( 'drag-state' );
+                    this._draggedResourceTarget = null;
+                // target has changed from the preview mouse move
+                } else if (target !== this._draggedResourceTarget) {
+                    var eventData = {
+                        detail: {
+                            resource: this._draggedResource
+                        }
+                    };
+
+                    var dragEvent = new CustomEvent( 'resource-drag', eventData );
+
+                    target.dispatchEvent( dragEvent );
+
+                    this._draggedResourcePreview.setAttribute( 'drag-state',
+                        eventData.detail.acceptDrop === true ? 'accepted' : 'rejected'
+                    );
+
+                    this._draggedResourceTarget = target;
+                }
+            },
+            _onResourceDragMouseUp: function() {
+                document.removeEventListener( 'mouseup', this._resourceDragMouseUpHandler, true );
+                document.removeEventListener( 'mousemove', this._resourceDragMouseMoveHandler, true );
+
+                if (!this._isDraggingResource)
+                    return;
+
+                this._isDraggingResource = false;
+
+                // dispatch a drop event on a target if applicable
+                if (
+                    this._draggedResourceTarget !== null &&
+                    this._draggedResourcePreview.getAttribute( 'drag-state' ) == 'accepted'
+                ) {
+                    var dropEvent = new CustomEvent( 'resource-drop', {
+                        detail: {
+                            resource: this._draggedResource
+                        }
+                    } );
+
+                    this._draggedResourceTarget.dispatchEvent( dropEvent );
+
+                    this._draggedResourceTarget = null;
+                }
+
+                var preview = this._draggedResourcePreview;
+
+                if (preview.parentNode)
+                    preview.parentNode.removeChild( preview );
+
+                this._draggedResourcePreview = null;
+            },
+            _onResourceDblClick: function(e) {
+                this.fire( 'resource-dblclick', {
+                    resource: e.model.resource
+                } );
+            },
+            _onResourceContextMenu: function(e) {
+                var menu = new ContextMenuControl( );
+
+                var resource = e.model.resource;
+
+                var showInExplorer = menu.addItem( 'Show In Explorer', function() {
+                    ProcessOpen( this._getFileDirectory( resource.sourceFile ), false );
+                }.bind( this ) );
+
+                showInExplorer.icon = 'folder-closed';
+
+                var open = menu.addItem( 'Open', function() {
+                    ProcessOpen( resource.sourceFile, false );
+                }.bind( this ) );
+
+                open.icon = 'open-file';
+
+                if (e.ctrlKey) {
+                    menu.addSeparator( );
+
+                    var makeEditorResource = menu.addItem( 'Make Editor Resource', function() {
+                        ProjectMakeEditorResource( resource.guid );
+                    }.bind( this ) );
+                }
+
+                this.fire( 'resource-contextmenu', {
+                    resource: e.model.resource,
+                    menu: menu
+                } );
+
+                menu.open( e.clientX, e.clientY );
+            },
+
+            _buildTree: function(treeRoot) {
+                this._buildDirectory( treeRoot, this.$.folderTree );
+            },
+            _buildDirectory: function(directory, parent) {
+                var item = this._createDirectoryTreeItem( directory );
+
+                parent.appendChild( item );
+
+                for (var i = 0; i < directory.subDirectories.length; ++i)
+                    this._buildDirectory( directory.subDirectories[ i ], item.child );
+            },
+            _browseDirectory: function(entry) {
+                if (this._lastBrowsedDirectory === entry.path)
+                    return;
+
+                this._lastBrowsedDirectory = entry.path;
+
+                var relativeDir = this._getRelativeResourceDirectory( entry.path );
+                var crumbs = this._createDirectoryCrumbs( relativeDir );
+
+                this.set( 'crumbs', crumbs );
+
+                this.set( 'directoryFolders', entry.subDirectories.slice( 0 ) );
+
+                this.set( 'directoryResources', entry.resources.slice( 0 ) );
+            },
+            _selectDirectoryItem: function(item) {
+                if (this._lastSelectedTreeItem !== null)
+                    this._lastSelectedTreeItem.selected = false;
+
+                item.selected = true;
+
+                item.scrollIntoViewIfNeeded( );
+
+                this._lastSelectedTreeItem = item;
+            },
+
+            _createResourceDragPreview: function(resource) {
+                var preview = document.createElement( 'div' );
+
+                preview.classList.add( 'resource-drag-preview' );
+                preview.innerText = resource.displayName;
+
+                document.body.appendChild( preview );
+
+                return preview;
+            },
+            _findResourceDropTarget: function(element) {
+                var node = element;
+
+                // walk the parent until we find an element with the appropriate attribute
+                for (; node && node !== document; node = node.parentNode) {
+                    if (node.hasAttribute( 'accepts-resource-drop' ))
+                        return node;
+                }
+
+                // the input element doesn't have a tree
+                return null;
+            },
+            _createDirectoryTreeItem: function(directoryNode) {
+                var item = new TreeViewItemControl( );
+
+                item.text = directoryNode.displayName;
+
+                item.directoryData = directoryNode;
+
+                item.textElement.addEventListener( 'click', this._onTreeItemClick.bind( this, item ) );
+                item.textElement.addEventListener( 'dblclick', this._onTreeItemDblClick.bind( this, item ) );
+                item.textElement.addEventListener( 'contextmenu', this._onTreeItemContextMenu.bind( this, item ) );
+
+                this._pathToResourceEntry[ directoryNode.path ] = directoryNode;
+                this._pathToDirectoryItem[ directoryNode.path ] = item;
+
+                return item;
+            },
+            _createDirectoryNode: function(path) {
+                return {
+                    path: path,
+                    displayName: this._createDirectoryCrumbs( path ).pop( ),
+                    subDirectories: [ ],
+                    resources: [ ]
+                };
+            },
+            _createDirectoryCrumbs: function(directory) {
+                return directory.split( /\/|\\/ );
+            },
+            _getFileDirectory: function(filename) {
+                return this._createDirectoryCrumbs( filename ).slice( 0, -1 ).join( '\\' );
+            },
+            _getRelativeResourceDirectory: function(directory) {
+                var basePathLength = this._projectDirectory.length;
+
+                return directory.substr( basePathLength + 1 );
+            }
+        });
+    </script>
+</dom-module>

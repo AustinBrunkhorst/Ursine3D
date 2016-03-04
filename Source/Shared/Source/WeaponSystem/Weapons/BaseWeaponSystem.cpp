@@ -1,4 +1,3 @@
-
 /* ----------------------------------------------------------------------------
 ** Team Bear King
 ** ?2016 DigiPen Institute of Technology, All Rights Reserved.
@@ -39,12 +38,12 @@ using namespace ursine::ecs;
 
 #define EXTRA_DIST 30.0f
 
-
 namespace
 {
     const std::string kFireGun = "FIRE_GUN_HAND";
     const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
     const ursine::Randomizer random;
+
     // Apply spread / accuracy to shooting
     void GetSpreadValues(Randomizer& spread, const float accuracy, float& xSpread, float& ySpread)
     {
@@ -66,7 +65,7 @@ namespace
     }
 
     // Give projectiles velocity with spread
-    void ProjectileVelocity( AbstractProjWeapon& weapon, ursine::ecs::Entity& proj)
+    void ProjectileVelocity( AbstractProjWeapon& weapon, ursine::ecs::EntityHandle& proj)
     {
         ursine::SVec3 start, end;  
 
@@ -76,79 +75,79 @@ namespace
         start.Normalize( );
 
         // give projectile velocity and position
-        proj.GetComponent<ursine::ecs::Rigidbody>( )->SetVelocity( start * proj.GetComponent<Projectile>( )->GetSpeed( ) );
+        proj->GetComponent<Rigidbody>( )->SetVelocity( start * proj->GetComponent<Projectile>( )->GetSpeed( ) );
     }
 
-    void ProjectileSetUp(ursine::ecs::Entity& proj, AbstractProjWeapon& weapon)
+    void ProjectileSetUp(ursine::ecs::EntityHandle& proj, AbstractProjWeapon& weapon)
     {
         // add projectile component if not found
-        if ( !proj.HasComponent<Projectile>( ) )
+        if (!proj->HasComponent<Projectile>( ))
         {
-            proj.AddComponent<Projectile>( );
+            proj->AddComponent<Projectile>( );
         }
 
         // add damage on collide component if not found
-        if ( !proj.HasComponent<DamageOnCollide>( ) )
+        if (!proj->HasComponent<DamageOnCollide>( ))
         {
-            proj.AddComponent<DamageOnCollide>( );
+            proj->AddComponent<DamageOnCollide>( );
         }
 
         // add rigidbody component if not found
-        if ( !proj.HasComponent<ursine::ecs::Rigidbody>( ) )
+        if (!proj->HasComponent<ursine::ecs::Rigidbody>( ))
         {
-            proj.AddComponent<ursine::ecs::Rigidbody>( );
+            proj->AddComponent<ursine::ecs::Rigidbody>( );
         }
 
-        Projectile& projComp = *proj.GetComponent<Projectile>( );
+        Projectile &projComp = *proj->GetComponent<Projectile>( );
         // set proj speed
         projComp.SetSpeed( weapon.GetProjSpeed( ) );
         // calc the lifet of proj base on weapons range
         projComp.CalculateLifeTime( weapon.GetMaxRange( ) );
 
         // set proj damage stats
-        DamageOnCollide& damageComp = *proj.GetComponent<DamageOnCollide>( );
+        DamageOnCollide &damageComp = *proj->GetComponent<DamageOnCollide>( );
         damageComp.SetDamageToApply( weapon.GetDamageToApply( ) );
         damageComp.SetCritModifier( weapon.GetCritModifier( ) );
         damageComp.SetDamageInterval( weapon.GetDamageInterval( ) );
         damageComp.SetDeleteOnCollision( weapon.GetDeleteOnCollision( ) );
 
-        proj.GetTransform( )->SetWorldPosition( weapon.m_firePosHandle->GetWorldPosition( ) );
+        proj->GetTransform( )->SetWorldPosition( weapon.m_firePosHandle->GetWorldPosition( ) );
 
         ProjectileVelocity( weapon, proj );
     }
 
     // Is weapon out of ammo
-    bool OutofAmmo(AbstractWeapon& weapon)
+    bool OutofAmmo(AbstractWeapon &weapon)
     {
         // can't reload if no ammo or clip is full
-        if ( weapon.m_ammoCount == 0 )
+        if (weapon.m_ammoCount == 0)
             return true;
 
         return false;
     }
 
     // Is weapon's clip full
-    bool ClipFull(AbstractWeapon& weapon)
+    bool ClipFull(AbstractWeapon &weapon)
     {
         return weapon.m_clipCount == weapon.m_clipSize;
     }
 
     // reload weapon
-    int Reload(AbstractWeapon& weapon)
+    int Reload(AbstractWeapon &weapon)
     {
         // Is weapon out of ammo?
-        if ( OutofAmmo( weapon ) )
+        if (OutofAmmo( weapon ))
             return NO_AMMO;
 
         // is weapon's clip full
-        if ( ClipFull( weapon ) )
+        if (ClipFull( weapon ))
             return CLIP_FULL;
 
-        if ( weapon.m_maxAmmoCount == UNLIMITED_AMMO )
+        if (weapon.m_maxAmmoCount == UNLIMITED_AMMO)
             weapon.m_clipCount = weapon.m_clipSize;
 
         // reset clip to max
-        else if ( weapon.m_ammoCount > weapon.m_clipSize )
+        else if (weapon.m_ammoCount > weapon.m_clipSize)
         {
             weapon.m_clipCount = weapon.m_clipSize;
             weapon.m_ammoCount -= weapon.m_clipSize;
@@ -168,24 +167,24 @@ namespace
     }
 
     // Decrement time from weapon's fire timer
-    void DecrementFireTimer(const float dt, AbstractWeapon& weapon)
+    void DecrementFireTimer(const float dt, AbstractWeapon &weapon)
     {
-        if ( !weapon.m_semiAutomatic )
+        if (!weapon.m_semiAutomatic)
             weapon.m_fireTimer -= dt;
     }
 
     // Decrement time from weapon's reload timer
-    void DecrementReloadTimer(const float dt, AbstractWeapon& weapon)
+    void DecrementReloadTimer(const float dt, AbstractWeapon &weapon)
     {
         weapon.m_reloadTimer -= dt;
     }
 
     // Tries to remove the number of rounds specified from the clip
     //   and returns the actual number of rounds removed
-    int RemoveRoundsFromClip(AbstractWeapon& weapon)
+    int RemoveRoundsFromClip(AbstractWeapon &weapon)
     {
         // only shoot 5 if clip is unlimited
-        if ( weapon.m_clipSize == UNLIMITED_CLIP )
+        if (weapon.m_clipSize == UNLIMITED_CLIP)
             return weapon.m_projFireCount;
 
         // how many rounds were removed
@@ -195,7 +194,7 @@ namespace
         weapon.m_clipCount -= weapon.m_projFireCount;
 
         // if rounds removed were more than amount in clip
-        if ( weapon.m_clipCount < 0 )
+        if (weapon.m_clipCount < 0)
         {
             // calculating actual count removed
             roundsRemoved += weapon.m_clipCount;
@@ -205,14 +204,11 @@ namespace
         return roundsRemoved;
     }
 
-    void ReloadWeapon(AbstractWeapon& weapon)
+    void ReloadWeapon(AbstractWeapon &weapon)
     {
         URSINE_TODO("Have to apply reload animation");
 
-        if ( Reload( weapon ) )
-        {
-
-        }
+        if (Reload( weapon )) { }
     }
 
     void ResetIdleSequence(AbstractWeapon* weapon)
@@ -233,27 +229,23 @@ BaseWeaponSystem::BaseWeaponSystem( ursine::ecs::World *world )
 {
 }
 
-void BaseWeaponSystem::Enable(ursine::ecs::Entity *entity)
+void BaseWeaponSystem::Enable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-    
     // grab all comps needed
     if (entity->HasComponent< BaseWeapon >( ))
-        m_weapons[ uniqueID ] = entity->GetComponent< BaseWeapon >( );
+        m_weapons[ entity ] = entity->GetComponent< BaseWeapon >( );
 
-    m_transforms[ uniqueID ] = entity->GetTransform( );
+    m_transforms[ entity ] = entity->GetTransform( );
 
     // grab audio emitter from root
-    m_emitters[ uniqueID ] = entity->GetComponent< AudioEmitter >( );
+    m_emitters[ entity ] = entity->GetComponent< AudioEmitter >( );
 }
 
-void BaseWeaponSystem::Disable(ursine::ecs::Entity *entity)
+void BaseWeaponSystem::Disable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
-    m_weapons.erase( uniqueID );
-    m_transforms.erase( uniqueID );
-    m_emitters.erase(uniqueID);
+    m_weapons.erase( entity );
+    m_transforms.erase( entity );
+    m_emitters.erase( entity );
 }
 
 void BaseWeaponSystem::onUpdate(EVENT_HANDLER(World))
@@ -265,18 +257,18 @@ void BaseWeaponSystem::onUpdate(EVENT_HANDLER(World))
 
 void BaseWeaponSystem::EvaluateProjectileWeapons(const float dt)
 {
-    for ( auto it : m_weapons )
+    for (auto it : m_weapons)
     {
         AbstractProjWeapon* weapon = it.second;
 
         //weapon->m_animatorHandle->UpdateAnimation(dt);
 
         // skip if not active
-        if ( !weapon->m_active )
+        if (!weapon->m_active)
             continue;
 
         // Can weapon be fired
-        switch ( weapon->CanFire( ) )
+        switch (weapon->CanFire( ))
         {
         case RELOAD_IN_PROCESS:
             DecrementReloadTimer( dt, *weapon );
@@ -300,9 +292,9 @@ void BaseWeaponSystem::EvaluateProjectileWeapons(const float dt)
     }
 }
 
-void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, ursine::ecs::EntityUniqueID id)
+void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const EntityHandle &entity)
 {
-    if ( weapon.FireLogic( ) )
+    if (weapon.FireLogic( ))
     {
         weapon.m_fireTimer = weapon.m_fireRate;
 
@@ -317,12 +309,12 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, ursine::
         weapon.m_animatorHandle->SetPlaying(true);*/
 
         // create particle at weapons fire pos and parent to weapon
-        ursine::ecs::Entity* e = m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + weapon.m_fireParticle);
+        auto e = m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + weapon.m_fireParticle);
         weapon.m_firePosHandle->AddChildAlreadyInLocal(e->GetTransform( ));
 
 
         // number of rounds that were fired
-        CreateProjectiles(weapon, *m_transforms[  id ], RemoveRoundsFromClip(weapon));
+        CreateProjectiles( weapon, *m_transforms[ entity ], RemoveRoundsFromClip( weapon ) );
     }
 }
 
@@ -333,14 +325,16 @@ void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs
         return;
 
     // Create the projectile that is desired to shoot
-    ursine::ecs::Entity* proj =
-        m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + weapon.GetArchetypeToShoot( ), "Bullet");
+    auto proj = m_world->CreateEntityFromArchetype( 
+        WORLD_ARCHETYPE_PATH + weapon.GetArchetypeToShoot( ), 
+        "Bullet" 
+    );
 
     // set up projectile stats based on gun
-    ProjectileSetUp(*proj, weapon);
+    ProjectileSetUp( proj, weapon );
 
     // temp vars for  creating projectiles
-    ursine::ecs::Entity* cloneProj = nullptr;
+    EntityHandle cloneProj = nullptr;
 
     // create the number of projectiles fired
     for ( int i = 1; i < projectilesFired; ++i )
@@ -349,70 +343,62 @@ void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs
         cloneProj = proj->Clone( );
 
         // give projectile a velocity
-        ProjectileVelocity( weapon, *cloneProj );
+        ProjectileVelocity( weapon, cloneProj );
     }
 }
-
-
 
 
 /////////////////////////////////
 ////  Hitscan Weapon System  ////
 /////////////////////////////////
 
-HitscanWeaponSystem::HitscanWeaponSystem(ursine::ecs::World* world)
-    : FilterSystem( world, Filter( ).One< HitscanWeapon>( ).All< AudioEmitter >( ) )
-{
-}
+HitscanWeaponSystem::HitscanWeaponSystem(World *world)
+    : FilterSystem( world, Filter( ).One<HitscanWeapon>( ).All<AudioEmitter>( ) ) { }
 
 void HitscanWeaponSystem::Initialize(void)
 {
     m_physicsSystem = m_world->GetEntitySystem<PhysicsSystem>( );
 }
 
-void HitscanWeaponSystem::Enable(ursine::ecs::Entity *entity)
+void HitscanWeaponSystem::Enable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
     // grab all comps needed
     if (entity->HasComponent<HitscanWeapon>( ))
-        m_weapons[ uniqueID ] = entity->GetComponent<HitscanWeapon>( );
+        m_weapons[ entity ] = entity->GetComponent<HitscanWeapon>( );
 
-    m_transforms[ uniqueID ] = entity->GetTransform( );
+    m_transforms[ entity ] = entity->GetTransform( );
 
     // grab audio emitter from root
-    m_emitters[ uniqueID ] = entity->GetComponent<AudioEmitter>( );
+    m_emitters[ entity ] = entity->GetComponent<AudioEmitter>( );
 }
 
-void HitscanWeaponSystem::Disable(ursine::ecs::Entity *entity)
+void HitscanWeaponSystem::Disable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
-    m_weapons.erase(uniqueID);
-    m_transforms.erase(uniqueID);
-    m_emitters.erase(uniqueID);
+    m_weapons.erase( entity );
+    m_transforms.erase( entity );
+    m_emitters.erase( entity );
 }
 
 void HitscanWeaponSystem::onUpdate(EVENT_HANDLER(World))
 {
     float dt = Application::Instance->GetDeltaTime( );
 
-    EvaluateHitscanWeapons(dt);
+    EvaluateHitscanWeapons( dt );
 }
 
 void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
 {
-    for ( auto it : m_weapons )
+    for (auto it : m_weapons)
     {
-        AbstractHitscanWeapon* weapon = it.second;
+        AbstractHitscanWeapon *weapon = it.second;
 
         //weapon->m_animatorHandle->UpdateAnimation( dt );
 
-        if ( !weapon->m_active )
+        if (!weapon->m_active)
             continue;
 
         // Can weapon be fired
-        switch ( weapon->CanFire( ) )
+        switch (weapon->CanFire( ))
         {
         case RELOAD_IN_PROCESS:
             DecrementReloadTimer( dt, *weapon );
@@ -421,7 +407,7 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
             ReloadWeapon( *weapon );
             break;
         case FIRE_TIMER_SET:
-            DecrementFireTimer(dt, *weapon);
+            DecrementFireTimer( dt, *weapon );
             break;
         case TRIGGER_NOT_PULLED:
             ResetIdleSequence( weapon );
@@ -436,9 +422,9 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
     }
 }
 
-void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon& weapon, ursine::ecs::EntityUniqueID id)
+void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const EntityHandle &entity)
 {
-    if ( weapon.FireLogic( ) )
+    if (weapon.FireLogic( ))
     {
         weapon.m_fireTimer = weapon.m_fireRate;
 
@@ -452,16 +438,15 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon& weapon, ursin
         //weapon.m_animatorHandle->SetPlaying(true);
 
         // create particle at weapons fire pos and parent to weapon
-        ursine::ecs::Entity* e = m_world->CreateEntityFromArchetype (WORLD_ARCHETYPE_PATH + weapon.m_fireParticle );
+        auto e = m_world->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + weapon.m_fireParticle );
         weapon.m_firePosHandle->AddChildAlreadyInLocal( e->GetTransform( ) );
         
-
         // number of rounds that were fired
-        CreateRaycasts(weapon, *m_transforms[ id ], RemoveRoundsFromClip(weapon));
+        CreateRaycasts( weapon, *m_transforms[ entity ], RemoveRoundsFromClip( weapon ) );
     }
 }
 
-void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired)
+void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon &weapon, Transform &trans, const int projectilesFired)
 {
     physics::RaycastInput rayin;   // input for raycast check
     physics::RaycastOutput rayout; // output from raycast check
@@ -470,15 +455,17 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::
     {
         ConstructRaycast( weapon, rayin.start, rayin.end );
 
-        if ( m_physicsSystem->Raycast( rayin, rayout, weapon.m_raycastType, weapon.m_debug, weapon.m_drawDuration, weapon.m_alwaysDraw ) )
+        if (m_physicsSystem->Raycast( rayin, rayout, weapon.m_raycastType, weapon.m_debug, weapon.m_drawDuration, weapon.m_alwaysDraw ))
         {
-            switch ( weapon.m_raycastType )
+            switch (weapon.m_raycastType)
             {
             case physics::RAYCAST_ALL_HITS:
                 break;
             case physics::RAYCAST_CLOSEST_HIT:
             {
-                RaycastClosestHitLogic( rayin.end - rayin.start, rayout, weapon );
+                    auto delta = rayin.end - rayin.start;
+
+                    RaycastClosestHitLogic( delta, rayout, weapon );
                 break;
             }
             default:
@@ -490,15 +477,15 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::
     }
 }
 
-void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursine::physics::RaycastOutput& rayout, AbstractHitscanWeapon& weapon)
+void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursine::physics::RaycastOutput &rayout, AbstractHitscanWeapon &weapon)
 {
-    ursine::ecs::Entity* e = nullptr;  // for any entities created within loop below
+    EntityHandle e;
 
     // get first object hit w/ health and apply damage
-    ursine::ecs::Entity* objHit = m_world->GetEntityUnique( rayout.entity.front( ) );
+    auto objHit = m_world->GetEntity( rayout.entity.front( ) );
 
     // where did rayact collide at
-    ursine::SVec3& collisionPoint = rayout.hit[ 0 ];
+    ursine::SVec3 &collisionPoint = rayout.hit[ 0 ];
 
     // create shot particle
     e = m_world->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + weapon.m_shotParticle );
@@ -508,7 +495,7 @@ void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursi
     bool crit = false;
 
     // was a crit spot hit
-    if ( objHit->HasComponent< CritSpot >( ) )
+    if (objHit->HasComponent<CritSpot>( ))
     {
         crit = true;
 
@@ -529,7 +516,7 @@ void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursi
         objHit->GetRoot( )->GetComponent< Health >( )->DealDamage(collisionPoint, damage, crit );
 
         if (!crit)
-            objHit->GetTransform( )->AddChild( e->GetTransform( ) );
+        objHit->GetTransform( )->AddChild( e->GetTransform( ) );
     }
 	else if ( objHit->GetComponent<Health>( ) )
 	{
@@ -540,39 +527,38 @@ void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursi
 	}
 
 
-    CreateTrail(weapon, collisionPoint);
+    CreateTrail( weapon, collisionPoint );
 }
 
 
-
-void HitscanWeaponSystem::CreateTrail(AbstractHitscanWeapon& weapon, ursine::SVec3& trailEnd)
+void HitscanWeaponSystem::CreateTrail(AbstractHitscanWeapon &weapon, ursine::SVec3 &trailEnd)
 {
     if ( weapon.m_trailParticle.find(".uatype") == std::string::npos )
         return;
 
     // create trial for raycast
-    ursine::ecs::Entity* e = m_world->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + weapon.m_trailParticle);
-    e->GetTransform( )->SetWorldPosition(weapon.m_firePosHandle->GetWorldPosition( ));
+    auto e = m_world->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + weapon.m_trailParticle );
+    e->GetTransform( )->SetWorldPosition( weapon.m_firePosHandle->GetWorldPosition( ) );
 
     // check if trail comp was present
     //   done after spawning of other particles because endpoint may change if crit spot was hit
-    if ( e->HasComponent< TrailComponent >( ) )
+    if (e->HasComponent<TrailComponent>( ))
     {
-        e->GetComponent< TrailComponent >( )->SetVecToEnd( trailEnd );
+        e->GetComponent<TrailComponent>( )->SetVecToEnd( trailEnd );
     }
 }
 
 
-void HitscanWeaponSystem::GetSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet)
+void HitscanWeaponSystem::GetSpawnLocation(const EntityHandle &other, ursine::physics::RaycastOutput &rayout, ursine::SVec3 &posToSet)
 {
-    ursine::ecs::Entity* entity;
+    EntityHandle entity;
     size_t size = rayout.entity.size( );
 
-    for ( size_t i = 0; i <size; ++i )
+    for (size_t i = 0; i < size; ++i)
     {
-        entity = m_world->GetEntityUnique(rayout.entity[ i ]);
+        entity = m_world->GetEntity( rayout.entity[ i ] );
 
-        if ( entity == other )
+        if (entity == other)
         {
             posToSet = rayout.hit[ i ];
             break;
@@ -581,21 +567,19 @@ void HitscanWeaponSystem::GetSpawnLocation(ursine::ecs::Entity* other, ursine::p
 }
 
 
-void HitscanWeaponSystem::SpawnCollisionParticle(ursine::SVec3& collisionPoint, ursine::SVec3& raycastVec, ursine::ecs::Entity* other)
+void HitscanWeaponSystem::SpawnCollisionParticle(ursine::SVec3 &collisionPoint, ursine::SVec3 &raycastVec, const EntityHandle &other)
 {
-    ursine::physics::RaycastInput rayin;   // input for raycast check
+    ursine::physics::RaycastInput rayin; // input for raycast check
     ursine::physics::RaycastOutput rayout; // output from raycast check
-
-    ursine::ecs::Entity* entity = nullptr; // for all objects be checked against
 
     raycastVec.Normalize( );
 
     // raycast info
     rayin.start = collisionPoint;
-    rayin.end = rayin.start + ( EXTRA_DIST * raycastVec );
+    rayin.end = rayin.start + (EXTRA_DIST * raycastVec);
 
     // get ray to edge of other object
-    m_physicsSystem->Raycast(rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false);
+    m_physicsSystem->Raycast( rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false );
 
-    GetSpawnLocation(other->GetRoot( ), rayout, collisionPoint);
+    GetSpawnLocation( other->GetRoot( ), rayout, collisionPoint );
 }

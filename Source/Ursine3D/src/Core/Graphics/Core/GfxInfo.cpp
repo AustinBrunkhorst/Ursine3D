@@ -120,6 +120,12 @@ namespace ursine
             return m_maxSampleQuality;
         }
 
+        void GfxInfo::SetSampleCountAndQuality(unsigned count, unsigned quality)
+        {
+            m_maxSampleCount = count;
+            m_maxSampleQuality = quality;
+        }
+
         void GfxInfo::GetDimensions(unsigned &w, unsigned &h)
         {
             w = m_windowWidth;

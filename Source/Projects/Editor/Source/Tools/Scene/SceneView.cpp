@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -15,6 +15,7 @@
 
 #include "SceneView.h"
 
+#include "Editor.h"
 #include "Project.h"
 
 #include "EditorCameraSystem.h"
@@ -49,7 +50,10 @@ void SceneView::onFocusChanged(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    auto world = m_editor->GetProject( )->GetScene( )->GetWorld( );
+    auto *world = m_editor->GetProject( )->GetScene( ).GetActiveWorld( );
+
+    if (!world)
+        return;
 
     auto focused = (args->name == event::Focus);
 
@@ -63,7 +67,10 @@ void SceneView::onMouseFocusChanged(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    auto world = m_editor->GetProject( )->GetScene( )->GetWorld( );
+    auto *world = m_editor->GetProject( )->GetScene( ).GetActiveWorld( );
+
+    if (!world)
+        return;
 
     auto focused = (args->name == event::MouseOver);
 
@@ -77,7 +84,7 @@ void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
 {
     EVENT_ATTRS(NativeEditorTool, NativeToolEvent);
 
-    auto scene = m_editor->GetProject( )->GetScene( );
+    auto &scene = m_editor->GetProject( )->GetScene( );
 
     auto x = static_cast<unsigned>(
         args->data->GetValue( "x" )->GetDoubleValue( )
@@ -97,7 +104,7 @@ void SceneView::onViewportInvalidated(EVENT_HANDLER(NativeEditorTool))
         )
     );
 
-    auto handle = scene->GetViewport( );
+    auto handle = scene.GetViewport( );
 
     auto &viewport =
         GetCoreSystem( graphics::GfxAPI )->ViewportMgr.GetViewport( handle );

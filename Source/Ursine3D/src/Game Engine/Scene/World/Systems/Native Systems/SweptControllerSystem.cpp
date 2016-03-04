@@ -40,7 +40,7 @@ namespace ursine
 			m_physics = m_world->GetEntitySystem<PhysicsSystem>( );
 		}
 
-		void SweptControllerSystem::Process(Entity* entity)
+		void SweptControllerSystem::Process(const EntityHandle &entity)
 		{
 			auto &c = *entity->GetComponent<SweptController>( );
 
@@ -165,13 +165,15 @@ namespace ursine
 
 			// Does a sweep for every kinematic object the character is in contact with
 			// using the velocity of that object. (for moving platforms and such)
-			for (auto *e : c.m_kinematicContacts)
+			for (auto &e : c.m_kinematicContacts)
 			{
+                auto *ptr = e.Get( );
+
 				// Objects stored are from previous frame, so make sure they are still valid.
 				// Additionally, do not sweep with another player's velocity, nothing meaningful will come of that
-				if (e && e->HasComponent<Rigidbody>( ) && !e->HasComponent<SweptController>( ))
+				if (ptr && ptr->HasComponent<Rigidbody>( ) && !ptr->HasComponent<SweptController>( ))
 				{
-					auto rigidbody = e->GetComponent<Rigidbody>( );
+					auto rigidbody = ptr->GetComponent<Rigidbody>( );
 
 					sweptCollision( c, rigidbody->GetVelocity( ), dt, true );
 				}
@@ -238,7 +240,7 @@ namespace ursine
 					//    continue;
 
 					// Keep track of kinematic objects for next update.
-					controller.addIfKinematic( m_world->GetEntityUnique( output.entity[ i ] ) );
+					controller.addIfKinematic( m_world->GetEntity( output.entity[ i ] ) );
 					
 					// Move forward to the first time of impact.
 					// A time of 0 is valid, it just wont result in any translation.
@@ -472,7 +474,7 @@ namespace ursine
 					// continue;
 
 					// Keep track of kinematic objects for next update.
-					controller.addIfKinematic( m_world->GetEntityUnique( output.entity[ i ] ) );
+					controller.addIfKinematic( m_world->GetEntity( output.entity[ i ] ) );
 
 					auto trans = controller.m_transform;
 					

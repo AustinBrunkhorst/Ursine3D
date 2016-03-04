@@ -97,6 +97,18 @@ class ComponentDatabase {
         return result == null ? null : result.value;
     }
 
+    public function getEnumNumberValue(enewm : NativeEnum, value : Dynamic) : Dynamic {
+        // the value already is a number
+        if (!Std.is( value, String ))
+            return value;
+
+        var result = Lambda.find( enewm, function(entry : EnumEntry) {
+            return entry.key == value;
+        } );
+
+        return result == null ? null : result.value;
+    }
+
     public function getComponentTypes() : Array<String> {
         var keys : Array<String> = new Array<String>( );
 

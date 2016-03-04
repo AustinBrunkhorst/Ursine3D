@@ -20,7 +20,7 @@ namespace ursine
     class UIFileDialogCallback : public CefRunFileDialogCallback
     {
     public:
-        typedef std::function<void(int, fs::FileList)> Callback;
+        typedef std::function<void(int, const fs::FileList&)> Callback;
 
         UIFileDialogCallback(Callback callback);
 

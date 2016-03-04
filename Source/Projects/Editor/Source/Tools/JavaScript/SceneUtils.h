@@ -16,16 +16,22 @@
 #include <NativeJSFunction.h>
 
 Meta(Enable, ExposeJavaScript)
+JSFunction(SceneSaveWorld);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(SceneSaveWorldAs);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(SceneSetActiveWorld);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(SceneInstantiateArchetype);
+
+Meta(Enable, ExposeJavaScript)
 JSFunction(SceneGetRootEntities);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(SceneGetActiveEntities);
-
-Meta(Enable, ExposeJavaScript)
-JSFunction(SceneLoad);
-
-Meta(Enable, ExposeJavaScript)
-JSFunction(SceneSave);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(ScenePlayStart);

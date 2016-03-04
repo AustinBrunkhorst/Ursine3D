@@ -13,32 +13,60 @@
 
 #pragma once
 
-#include <Scene.h>
-#include <UIView.h>
+#include "ProjectConfig.h"
 
-class EditorEntityManager;
+#include <ResourcePipelineManager.h>
+#include <Scene.h>
+
+#include "EditorEntityManager.h"
+#include "EditorResourcePipelineManager.h"
 
 class Project
 {
 public:
-    typedef std::shared_ptr<Project> Handle;
-
-    Project(ursine::UIView::Handle ui);
+    Project(void);
     ~Project(void);
 
-    ursine::Scene::Handle GetScene(void);
-    ursine::UIView::Handle GetUI(void);
+    const ProjectConfig &GetConfig(void) const;
+
+    ursine::rp::ResourcePipelineManager &GetResourcePipeline(void);
+    ursine::resources::ResourceManager &GetBuiltInResourceManager(void);
+
+    ursine::Scene &GetScene(void);
 
     ursine::ScenePlayState GetPlayState(void) const;
     void SetPlayState(ursine::ScenePlayState state);
 
-    void SetWorld(ursine::ecs::World *world);
+    void SetEmptyScene(void);
+
+    const ursine::GUID &GetLastOpenedWorld(void);
+
+    bool CreateEditorResource(const ursine::GUID &resourceGUID) const;
+
 private:
+    friend class Editor;
+
+    Project(const Project &rhs) = delete;
+    Project &operator=(const Project &rhs) = delete;
+
+    void initialize(const ProjectConfig &config);
+
+    void initializeScene(const ursine::resources::ResourceReference &startingWorld);
+
+    void onSceneWorldChanged(EVENT_HANDLER(ursine::Scene));
+
+    void onResourceModified(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+
+    ProjectConfig m_config;
+
+    ursine::rp::ResourcePipelineManager m_resourcePipeline;
+    ursine::resources::ResourceManager m_builtInResourceManager;
+
+    ursine::Scene m_scene;
     ursine::Json m_worldCache;
 
-    ursine::UIView::Handle m_ui;
+    EditorEntityManager *m_entityManager;
+    EditorResourcePipelineManager *m_pipelineManager;
 
-    ursine::Scene::Handle m_scene;
-
-    EditorEntityManager m_entityManager;
+    ursine::GUID m_lastOpenedWorld;
 };

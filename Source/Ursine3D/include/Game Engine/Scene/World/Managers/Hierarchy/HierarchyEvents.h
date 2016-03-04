@@ -14,17 +14,17 @@
 #pragma once
 
 #include "EventArgs.h"
-#include "EntityConfig.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        struct ParentChangedArgs : public EventArgs
+        struct ParentChangedArgs : EventArgs
         {
-			Entity *newParent, *oldParent;
+            EntityHandle newParent;
+            EntityHandle oldParent;
       
-            ParentChangedArgs(Entity *newParent, Entity *oldParent);
+            ParentChangedArgs(const EntityHandle &newParent, const EntityHandle &oldParent);
         };
     }
 }

@@ -27,12 +27,12 @@ public:
     EditorToolSystem(ursine::ecs::World *world);
     ~EditorToolSystem(void);
 
-    ursine::ecs::Entity *GetCurrentFocus(void);
+    const ursine::ecs::EntityHandle &GetCurrentFocus(void);
 
     void ClearSelectedEntities(void);
 
 private:
-    void OnAfterLoad(void) override;
+    void OnSceneReady(ursine::Scene *scene) override;
     void OnRemove(void) override;
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
@@ -64,7 +64,7 @@ private:
     EditorCameraSystem *m_editorCameraSystem;
 
     // current ID we're locked onto
-    ursine::ecs::EntityUniqueID m_currentSelected;
+    ursine::ecs::EntityHandle m_currentSelected;
 
     std::unordered_map<ursine::KeyboardKey, EditorTool*> m_tools;
 

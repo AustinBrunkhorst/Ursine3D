@@ -1,4 +1,4 @@
-/* ---------------------------------------------------------------------------
+\/* ---------------------------------------------------------------------------
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -70,7 +70,7 @@ void SpawnPlayersState::Enter(SegmentLogicStateMachine *machine)
     for (auto &spawnPoint : spawnPoints)
     {
         auto point = spawnPoint->GetComponent<PlayerSpawnPoint>( );
-        Entity *player = spawn ? nullptr : players[ index++ ];
+        auto player = spawn ? EntityHandle::Invalid( ) : players[ index++ ];
 
         if (spawn)
         {

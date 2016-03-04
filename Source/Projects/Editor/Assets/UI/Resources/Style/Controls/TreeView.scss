@@ -10,7 +10,7 @@ $item-indent: 6px;
   color: white;
 
   ::content {
-    @for $i from 2 through 10 {
+    @for $i from 2 through 30 {
       @include repeat-selector( 'x-tree-view-item', $i, '.text' ) {
         padding-left: $base-item-indent + ($item-indent * $i) !important;
       }

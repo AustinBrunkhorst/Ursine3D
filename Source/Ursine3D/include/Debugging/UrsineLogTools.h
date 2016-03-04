@@ -13,9 +13,13 @@
 
 #pragma once
 
+#include "DebuggingConfig.h"
+
 #include "UrsineBuildConfig.h"
 #include "UrsineTypes.h"
 #include "UrsineConsoleColor.h"
+
+#include "AssertionException.h"
 
 #include <string>
 
@@ -67,18 +71,20 @@
     #define URSINE_ERROR_LOG_HEADER "FATAL ERROR"
 #endif
 
-#define URSINE_FFL __FILE__, __FUNCTION__, __LINE__
+#ifndef URSINE_UNCAUGHT_ASSERTION_LOG_HEADER
+    #define URSINE_UNCAUGHT_ASSERTION_LOG_HEADER "UNCAUGHT ASSERTION"
+#endif
 
 #if (URSINE_OUTPUT_CONSOLE | URSINE_OUTPUT_FILE)
-    #define UAssert(assertion, ...) if(!(assertion)) { ursine::logging::Assert(URSINE_FFL,##__VA_ARGS__); }
-    #define UError(message, ...) ursine::logging::Error(URSINE_FFL, message,##__VA_ARGS__)
+    #define UAssert(assertion, ...) (!!(assertion) || (ursine::logging::Assert(URSINE_FFL,##__VA_ARGS__), 0))
+    #define UError(message, ...) do { ursine::logging::Error(URSINE_FFL, message,##__VA_ARGS__); } while (0)
 
     #if (URSINE_OUTPUT_WARNINGS)
-        #define UWarning(message, ...) ursine::logging::Warning(URSINE_FFL, message,##__VA_ARGS__)
-        #define UWarningIf(condition, message, ...)
+        #define UWarning(message, ...) do { ursine::logging::Warning(URSINE_FFL, message,##__VA_ARGS__); } while (0)
+        #define UWarningIf(condition, message, ...) (!!!(condition) || (ursine::logging::Warning(URSINE_FFL, message,##__VA_ARGS__), 0))
     #else
         #define UWarning(message, ...)
-        #define UWarningIf(condition, message, ...) if(!(condition)) { UWarning( message, __VA_ARGS__ ); }
+        #define UWarningIf(condition, message, ...)
     #endif
 #else
     #define UAssert(assertion, ...)
@@ -86,13 +92,6 @@
     #define UWarning(message, ...)
     #define UWarningIf(condition, message, ...)
 #endif
-
-#define URSINE_FFL_ARGS const std::string &file,    \
-                        const std::string &function,\
-                        uint line                   \
-
-#define URSINE_LOG_FORMATTED const std::string format,\
-                             const Args&... args      \
 
 namespace ursine
 {
@@ -114,15 +113,23 @@ namespace ursine
         template<typename... Args>
         void Error(URSINE_FFL_ARGS, URSINE_LOG_FORMATTED);
 
+        void UncaughtAssertion(const AssertionException &exception);
+
         template<typename... Args>
-        void Log(FILE *handle, const std::string &title, 
-            ConsoleColor title_color, URSINE_FFL_ARGS, URSINE_LOG_FORMATTED);
+        void Log(
+            FILE *handle, 
+            const std::string &title, 
+            ConsoleColor titleColor, 
+            URSINE_FFL_ARGS, 
+            URSINE_LOG_FORMATTED
+        );
 
         void OutputInfo(FILE *handle, URSINE_FFL_ARGS);
 
         void OutputTime(FILE *handle);
         void OutputStack(FILE *handle);
         void OutputWDir(FILE *handle);
+        void OutputThreadInfo(FILE *handle);
 
         void ExitError(void);
     }

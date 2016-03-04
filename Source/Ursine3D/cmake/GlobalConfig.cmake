@@ -45,6 +45,7 @@ declare_dependency(BulletPhysics)
 declare_dependency(WWise)
 declare_dependency(FBX)
 declare_dependency(DirectX)
+declare_dependency(FileWatcher)
 
 # ------------------------------------------------------------------------------
 # Global Compiler Definitions
@@ -61,7 +62,7 @@ if (MSVC)
     ursine_add_compile_flags(
         "/W3" # warning level 3
         "/WX" # warnings as errors
-        "/Zm200" # increased compiler heap memory
+        "/Zm500" # increased compiler heap memory
         "/bigobj" # increased object file size
     )
 

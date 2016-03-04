@@ -165,11 +165,11 @@ class Editor {
         } );
 
         btnToggle.addEventListener( 'click', function() {
-            var paused = toolsContainer.classList.contains( 'paused' );
+            var playing = !toolsContainer.classList.contains( 'paused' );
 
-            toolsContainer.classList.toggle( 'paused', !paused );
+            toolsContainer.classList.toggle( 'paused', playing );
 
-            Extern.SceneSetPlayState( !paused );
+            Extern.SceneSetPlayState( !playing );
         } );
 
         btnStep.addEventListener( 'click', function() {
@@ -180,7 +180,7 @@ class Editor {
         } );
 
         btnStop.addEventListener( 'click', function() {
-            toolsContainer.classList.remove( 'running' );
+            toolsContainer.classList.remove( 'running', 'paused' );
 
             Extern.ScenePlayStop( );
         } );

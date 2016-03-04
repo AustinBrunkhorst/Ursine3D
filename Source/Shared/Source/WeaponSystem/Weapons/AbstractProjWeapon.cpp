@@ -48,5 +48,3 @@ void AbstractProjWeapon::SetArchetypeToShoot(const std::string& archetype)
 
     CheckArchetypeToShoot( m_archetypeToShoot );
 }
-
-

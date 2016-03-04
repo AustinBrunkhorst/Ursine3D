@@ -74,7 +74,7 @@ namespace ursine
 
             //create APIs
             ResourceMgr.Initialize();
-            ResourceMgr.SetPrivates(m_privates->gfxCore_->modelManager, m_privates->gfxCore_->textureManager);
+            ResourceMgr.SetPrivates(m_privates->gfxCore_->modelManager, m_privates->gfxCore_->textureManager, m_privates->gfxCore_->fontManager);
             RenderableMgr.Initialize();
             RenderableMgr.SetPrivates(m_privates->gfxCore_->renderableManager);
             CameraMgr.Initialize();
@@ -151,7 +151,7 @@ namespace ursine
             m_privates->gfxCore_->RenderToDynamicTexture(srcWidth, srcHeight, input, inputWidth, inputHeight, destTexture, destinationX, destinationX);
         }
 
-        ursine::ecs::EntityUniqueID GfxAPI::GetMousedOverID()
+        ecs::EntityID GfxAPI::GetMousedOverID()
         {
             return m_privates->gfxCore_->GetCurrentUniqueID();
         }

@@ -32,7 +32,9 @@ public:
     EditorIconSystem(ursine::ecs::World *world);
 
 private:
-    void OnInitialize(void) override;
+    ursine::resources::ResourceManager &m_toolResources;
+
+    void OnSceneReady(ursine::Scene *scene) override;
     void OnRemove(void) override;
 
     void onIconAdd(EVENT_HANDLER(ursine::ecs::World));

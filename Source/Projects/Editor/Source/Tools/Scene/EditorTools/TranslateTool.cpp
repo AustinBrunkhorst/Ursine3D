@@ -13,42 +13,42 @@
 using namespace ursine;
 using namespace ecs;
 
-TranslateTool::TranslateTool(Editor* editor, ursine::ecs::World *world)
+TranslateTool::TranslateTool(Editor *editor, World *world)
     : EditorTool( editor, world )
-    , m_gizmo( nullptr )
-    , m_selected( -1 )
+    , m_gizmo( )
+    , m_selected( )
     , m_dragging( false )
-    , m_snapping( false )
-    , m_local( false )
     , m_hovering( false )
     , m_axisType( -1 )
+    , m_snapping( false )
+    , m_local( false )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
 }
 
-void TranslateTool::OnEnable(EntityUniqueID selected)
+void TranslateTool::OnEnable(const EntityHandle &selected)
 {
     m_selected = selected;
 
-    if (m_selected != -1)
+    if (m_selected)
         enableAxis( );
 }
 
 void TranslateTool::OnDisable(void)
 {
-    m_selected = -1;
+    m_selected = EntityHandle::Invalid( );
     m_dragging = false;
     m_snapping = false;
 
     disableAxis( );
 }
 
-void TranslateTool::OnSelect(Entity* entity)
+void TranslateTool::OnSelect(const EntityHandle &entity)
 {
-    auto prevSelected = m_gizmo != nullptr;
+    auto prevSelected = m_gizmo.IsValid( );
     
-    m_selected = entity->GetUniqueID( );
+    m_selected = entity;
 
     if (!prevSelected)
         enableAxis( );
@@ -56,9 +56,9 @@ void TranslateTool::OnSelect(Entity* entity)
     m_deleteGizmo = false;
 }
 
-void TranslateTool::OnDeselect(Entity* entity)
+void TranslateTool::OnDeselect(const EntityHandle &entity)
 {
-    m_selected = -1;
+    m_selected = EntityHandle::Invalid( );
 
     m_deleteGizmo = true;
 }
@@ -77,7 +77,7 @@ void TranslateTool::OnMouseUp(const MouseButtonArgs& args)
 
 void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
 {
-    if (m_dragging && m_selected != -1)
+    if (m_dragging && m_selected)
     {
         // Project the delta vector onto the screen direction vector
         auto b = args.positionDelta;
@@ -89,7 +89,7 @@ void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
         float dot = a.Dot( b );
         auto proj = ( dot / b.LengthSquared( ) ) * b;
         auto dist = proj.Length( );
-        auto selected = m_world->GetEntityUnique( m_selected )->GetTransform( );
+        auto selected = m_selected->GetTransform( );
         auto gizmo = m_gizmo->GetTransform( );
 
         if (dot < 0.0f)
@@ -155,7 +155,7 @@ void TranslateTool::OnUpdate(KeyboardManager *kManager, MouseManager *mManager)
     }
 }
 
-void TranslateTool::setDirectionVectors(const SVec3& basisVector, Entity *selected)
+void TranslateTool::setDirectionVectors(const SVec3& basisVector, const EntityHandle &selected)
 {
     if (m_local)
         m_worldDir = selected->GetTransform( )->GetWorldRotation( ) * basisVector;
@@ -199,13 +199,13 @@ void TranslateTool::disableAxis(void)
         m_gizmo->Delete( );
     }
 
-    m_gizmo = nullptr;
+    m_gizmo = EntityHandle::Invalid( );
     m_axis = nullptr;
 }
 
 void TranslateTool::updateAxis(void)
 {
-    if (m_selected == -1 || m_gizmo == nullptr)
+    if (!m_selected|| !m_gizmo)
         return;
 
     // update the size of the gizmo
@@ -217,8 +217,7 @@ void TranslateTool::updateAxis(void)
     gizTrans->SetWorldScale( SVec3(camVec.Length() * 0.04f) );
 
     // Update the position of things
-    auto selected = m_world->GetEntityUnique( m_selected );
-    auto selTrans = selected->GetTransform( );
+    auto selTrans = m_selected->GetTransform( );
 
     gizTrans->SetWorldPosition( selTrans->GetWorldPosition( ) );
 
@@ -331,7 +330,7 @@ void TranslateTool::updateHoverAxis(void)
 {
     // get the current entity ID the mouse is over
     auto newID = m_graphics->GetMousedOverID( );
-    auto entity = m_world->GetEntityUnique( newID );
+    auto entity = m_world->GetEntity( newID );
 
     if (!entity || m_altDown)
     {
@@ -355,13 +354,11 @@ void TranslateTool::updateHoverAxis(void)
     // and the vector we're dragging on
     if (rootName == "TranslationGizmo")
     {
-        // Get the selected entity
-        auto selected = m_world->GetEntityUnique( m_selected );
-
-        if (!selected)
+        if (!m_selected)
         {
             m_deleteGizmo = true;
-            m_selected = -1;
+            m_selected = EntityHandle::Invalid( );
+
             return;
         }
 
@@ -370,17 +367,17 @@ void TranslateTool::updateHoverAxis(void)
 
         if ( name == "xAxis" )
         {
-            setDirectionVectors(SVec3::UnitX(), selected);
+            setDirectionVectors(SVec3::UnitX(), m_selected);
             m_axisType = 1;
         }
         else if ( name == "yAxis" )
         {
-            setDirectionVectors(SVec3::UnitY(), selected);
+            setDirectionVectors(SVec3::UnitY(), m_selected);
             m_axisType = 2;
         }
         else if ( name == "zAxis" )
         {
-            setDirectionVectors(SVec3::UnitZ(), selected);
+            setDirectionVectors(SVec3::UnitZ(), m_selected);
             m_axisType = 3;
         }
         else
@@ -390,17 +387,17 @@ void TranslateTool::updateHoverAxis(void)
             if ( name == "zxPlane" )
             {
                 m_axisType = 4;
-                setDirectionVectors(SVec3(1.0f, 0.0f, 1.0f), selected);
+                setDirectionVectors(SVec3(1.0f, 0.0f, 1.0f), m_selected);
             }
             else if ( name == "yzPlane" )
             {
                 m_axisType = 5;
-                setDirectionVectors(SVec3(0.0f, 1.0f, 1.0f), selected);
+                setDirectionVectors(SVec3(0.0f, 1.0f, 1.0f), m_selected);
             }
             else if ( name == "xyPlane" )
             {
                 m_axisType = 6;
-                setDirectionVectors(SVec3(1.0f, 1.0f, 0.0f), selected);
+                setDirectionVectors(SVec3(1.0f, 1.0f, 0.0f), m_selected);
             }
         }
 
@@ -439,9 +436,9 @@ void TranslateTool::disableHover(void)
     }
 }
 
-void TranslateTool::setEntitySerializationToggle(bool toggle, Entity *entity)
+void TranslateTool::setEntitySerializationToggle(bool toggle, const EntityHandle &entity)
 {
-    for (auto child : entity->GetTransform( )->GetChildren( ))
+    for (auto &child : entity->GetTransform( )->GetChildren( ))
     {
         setEntitySerializationToggle( toggle, child->GetOwner( ) );
     }

@@ -125,8 +125,10 @@ namespace ursine
             if (m_initialized)
                 system->OnInitialize( );
 
-            if (m_loaded)
-                system->OnAfterLoad( );
+            auto *scene = m_world->GetOwner( );
+
+            if (scene != nullptr)
+                system->OnSceneReady( scene );
         }
 
         const meta::Type::List &SystemManager::GetExposedTypes(void)
@@ -137,7 +139,6 @@ namespace ursine
         SystemManager::SystemManager(World *world)
             : WorldManager( world )
             , m_initialized( false )
-            , m_loaded( false )
         {
             configureSystems( );
 
@@ -215,15 +216,15 @@ namespace ursine
             m_initialized = true;
         }
 
-        void SystemManager::onAfterLoad(void)
+        void SystemManager::initializeScene(void)
         {
+            auto *scene = m_world->GetOwner( );
+
             for (auto system : m_systems)
             {
                 if (system)
-                    system->OnAfterLoad( );
+                    system->OnSceneReady( scene );
             }
-
-            m_loaded = true;
         }
     }
 }

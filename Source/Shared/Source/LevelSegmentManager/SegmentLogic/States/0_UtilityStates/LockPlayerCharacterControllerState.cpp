@@ -32,8 +32,8 @@ LockPlayerCharacterControllerState::LockPlayerCharacterControllerState(bool lock
 void LockPlayerCharacterControllerState::Enter(SegmentLogicStateMachine *machine)
 {
     auto segmentManager = machine->GetSegmentManager( );
-    auto *p1 = segmentManager->GetPlayer1( );
-    auto *p2 = segmentManager->GetPlayer2( );
+    auto &p1 = segmentManager->GetPlayer1( );
+    auto &p2 = segmentManager->GetPlayer2( );
 
     UAssert( p1 && p2, "Error: The players haven't been spawned." );
 

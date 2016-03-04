@@ -21,11 +21,11 @@ class EditorTool
 public:
     EditorTool(Editor *editor, ursine::ecs::World *world);
 
-    virtual void OnEnable(ursine::ecs::EntityUniqueID selected) { }
+    virtual void OnEnable(const ursine::ecs::EntityHandle &selected) { }
     virtual void OnDisable(void) { }
 
-    virtual void OnSelect(ursine::ecs::Entity *selected) { }
-    virtual void OnDeselect(ursine::ecs::Entity *deselected) { }
+    virtual void OnSelect(const ursine::ecs::EntityHandle &selected) { }
+    virtual void OnDeselect(const ursine::ecs::EntityHandle &deselected) { }
 
     virtual void OnUpdate(ursine::KeyboardManager *kManager, ursine::MouseManager *mManager) { }
 

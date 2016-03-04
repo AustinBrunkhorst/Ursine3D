@@ -42,16 +42,15 @@ public:
 
 protected:
     void onUpdate(EVENT_HANDLER(World)) override;
-    void Enable(ursine::ecs::Entity* entity) override;
-    void Disable(ursine::ecs::Entity* entity) override;
+    void Enable(const ursine::ecs::EntityHandle &entity) override;
+    void Disable(const ursine::ecs::EntityHandle &entity) override;
 
 private:
+    void TrailSystem::UpdateTrail(const ursine::ecs::EntityHandle &entity, TrailComponent *trail);
 
-    void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* const trail);
-
-    std::unordered_map< ursine::ecs::EntityUniqueID, TrailComponent* > m_trails;
-    std::unordered_map< ursine::ecs::EntityUniqueID, ursine::ecs::Transform* > m_transforms;
-    std::unordered_map< ursine::ecs::EntityUniqueID, ursine::ecs::ParticleEmitter* > m_particleEmitter;
+    std::unordered_map<ursine::ecs::EntityHandle, TrailComponent*> m_trails;
+    std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::Transform*> m_transforms;
+    std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::ParticleEmitter*> m_particleEmitter;
 
 } Meta(Enable);
 

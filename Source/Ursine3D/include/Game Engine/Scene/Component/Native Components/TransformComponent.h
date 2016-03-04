@@ -160,9 +160,11 @@ namespace ursine
             // Hierarchy
             ////////////////////////////////////////////////////////////////////
 
-            Handle<Transform> GetRoot(void) const;
+            Handle<Transform> &GetRoot(void);
+            const Handle<Transform> &GetRoot(void) const;
 
-            Handle<Transform> GetParent(void) const;
+            Handle<Transform> &GetParent(void);
+            const Handle<Transform> &GetParent(void) const;
 
             // Check to see if this transform is a 
             // child (anywhere in the hierarchy) of the given parent
@@ -185,10 +187,10 @@ namespace ursine
 
             // Find child by their index in the list
             // If the index is too large, return nullptr
-            Handle<Transform> GetChild(uint index);
-            const Handle<Transform> GetChild(uint index) const;
+            Handle<Transform> &GetChild(uint index);
+            const Handle<Transform> &GetChild(uint index) const;
 
-            const std::vector< Handle<Transform> > &GetChildren(void) const;
+            const std::vector<Handle<Transform>> &GetChildren(void) const;
 
             // Find this transform's index in relation to the other children
             uint GetSiblingIndex(void) const;
@@ -266,7 +268,7 @@ namespace ursine
 
             void dispatchAndSetDirty(bool transChanged, bool scaleChanged, bool rotChanged);
             void dispatchAndSetDirty(const TransformChangedArgs *args);
-            void dispatchParentChange(Handle<Transform> oldParent, Handle<Transform> newParent) const;
+            void dispatchParentChange(const Handle<Transform> &oldParent, const Handle<Transform> &newParent) const;
 
             void onParentDirty(EVENT_HANDLER(Entity));
 

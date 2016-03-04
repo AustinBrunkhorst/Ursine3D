@@ -188,7 +188,7 @@
                 // convert rgb input to HSV
                 var rgb = this._hsv2rgb( this._currentHue, this._currentSaturation, this._currentBrightness );
 
-                // update new color
+                // update ProjectBrowser color
                 this.newColor.r = rgb[ 0 ];
                 this.newColor.g = rgb[ 1 ];
                 this.newColor.b = rgb[ 2 ];
@@ -237,7 +237,7 @@
                 var green = this.$.channelGreen.value / 255;
                 var blue = this.$.channelBlue.value / 255;
 
-                // update new color
+                // update ProjectBrowser color
                 this.newColor.r = red;
                 this.newColor.g = green;
                 this.newColor.b = blue;
@@ -273,7 +273,7 @@
 
                 var rgb = this._hsv2rgb( hue, saturation, brightness );
 
-                // update new color
+                // update ProjectBrowser color
                 this.newColor.r = rgb[ 0 ];
                 this.newColor.g = rgb[ 1 ];
                 this.newColor.b = rgb[ 2 ];

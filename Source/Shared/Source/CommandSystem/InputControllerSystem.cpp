@@ -25,7 +25,7 @@ InputControllerSystem::InputControllerSystem(ursine::ecs::World* world)
 {
 }
 
-void InputControllerSystem::Process(ursine::ecs::Entity* entity)
+void InputControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
 {
     auto *inputController = entity->GetComponent<InputController>( );
 

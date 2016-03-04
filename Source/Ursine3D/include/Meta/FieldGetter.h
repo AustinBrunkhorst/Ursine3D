@@ -11,6 +11,7 @@ namespace ursine
         {
         public:
             Variant GetValue(const Variant &obj) override;
+            Variant GetValueReference(const Variant &obj) override;
         };
     }
 }

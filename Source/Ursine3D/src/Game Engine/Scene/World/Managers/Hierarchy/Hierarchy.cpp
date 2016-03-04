@@ -22,33 +22,13 @@ namespace ursine
 {
     namespace ecs
     {
-        const std::vector<EntityID> *Hierarchy::GetChildren(const Entity *entity) const
+        void Hierarchy::AddEntity(const EntityHandle &entity)
         {
-            return m_nodes[ entity->GetID( ) ].Children( );
-        }
-
-        EntityID Hierarchy::GetParent(const Entity *entity) const
-        {
-            return m_nodes[ entity->GetID( ) ].Parent( );
-        }
-
-        EntityID Hierarchy::GetRoot(const Entity *entity) const
-        {
-            return m_nodes[ entity->GetID( ) ].Root( );
-        }
-
-        const RootHierarchyNode &Hierarchy::GetRootNode(void) const
-        {
-            return m_root;
-        }
-
-        void Hierarchy::AddEntity(Entity *entity)
-        {
-            auto id = entity->GetID( );
+            auto id = entity->m_id;
 
             // grow the array's size if needed
             if (id >= m_nodes.size( ))
-                m_nodes.emplace_back( entity->GetID( ) );
+                m_nodes.emplace_back( id );
 
             // Add it to the root
             m_root.AddChild( id );
@@ -58,9 +38,9 @@ namespace ursine
                 .On( ENTITY_PARENT_CHANGED, &Hierarchy::parentChanged );
         }
 
-        void Hierarchy::RemoveEntity(Entity *entity)
+        void Hierarchy::RemoveEntity(const EntityHandle &entity)
         {
-            auto id = entity->GetID( );
+            auto id = entity->m_id;
             auto &entityNode = m_nodes[ id ];
 
             // Remove this entity from the parent
@@ -79,48 +59,65 @@ namespace ursine
                 .Off( ENTITY_PARENT_CHANGED, &Hierarchy::parentChanged );
         }
 
-        uint Hierarchy::GetSiblingIndex(const Entity *entity) const
+        const std::vector<EntityID> *Hierarchy::GetChildren(EntityID entity) const
         {
-            auto ID = entity->GetID( );
-            auto &children = *getSiblingArray( ID );
+            return m_nodes[ entity ].Children( );
+        }
+
+        EntityID Hierarchy::GetParent(EntityID entity) const
+        {
+            return m_nodes[ entity ].Parent( );
+        }
+
+        EntityID Hierarchy::GetRoot(EntityID entity) const
+        {
+            return m_nodes[ entity ].Root( );
+        }
+
+        const RootHierarchyNode &Hierarchy::GetRootNode(void) const
+        {
+            return m_root;
+        }
+
+        uint Hierarchy::GetSiblingIndex(EntityID entity) const
+        {
+            auto &children = *getSiblingArray( entity );
 
             int i = 0;
 
             for (auto &child : children)
             {
-                if (child == ID)
+                if (child == entity)
                     return i;
                 else
                     ++i;
             }
 
             UAssert( i == children.size( ), 
-                "This shouldn't happen. Something is wrong with the scene" );
+                "This shouldn't happen. Something is wrong with the scene" 
+            );
 
             return 0;
         }
 
-        void Hierarchy::SetAsFirstSibling(const Entity *entity)
+        void Hierarchy::SetAsFirstSibling(EntityID entity)
         {
             SetSiblingIndex( entity, 0 );
         }
 
-#include <iostream>
-        void Hierarchy::SetSiblingIndex(const Entity *entity, uint index)
+        void Hierarchy::SetSiblingIndex(EntityID entity, uint index)
         {
-            auto ID = entity->GetID( );
-            auto &children = *getSiblingArray( ID );
-
-            std::cout << entity->GetName( ) << std::endl;
+            auto &children = *getSiblingArray( entity );
 
             UAssert( index < children.size( ), 
                 "This is an invalid index." 
             );
 
-            int i = 0;
+            auto i = 0;
+
             for (auto &child : children)
             {
-                if (child == ID)
+                if (child == entity)
                     break;
                 else
                     ++i;
@@ -131,23 +128,24 @@ namespace ursine
             );
 
             // walk from the old place to the new place, making sure all things are moved
-            int dir = static_cast<int>( index ) > i ? 1 : -1;
-            for (int j = i; j != index; j += dir)
+            auto dir = static_cast<int>( index ) > i ? 1 : -1;
+
+            for (auto j = i; j != index; j += dir)
             {
                 children[ j ] = children[ j + dir ];
-                children[ j + dir ] = ID;
+                children[ j + dir ] = entity;
             }
         }
 
         void Hierarchy::parentChanged(EVENT_HANDLER(Entity))
         {
-            EVENT_ATTRS( Entity, ParentChangedArgs );
+            EVENT_ATTRS(Entity, ParentChangedArgs);
 
-            auto entityID = sender->GetID( );
+            auto entityID = sender->m_id;
             auto &entityNode = m_nodes[ entityID ];
 
-            auto oldID = args->oldParent ? args->oldParent->GetID( ) : -1;
-            auto newID = args->newParent ? args->newParent->GetID( ) : -1;
+            auto oldID = args->oldParent ? args->oldParent->m_id : -1;
+            auto newID = args->newParent ? args->newParent->m_id : -1;
 
             if (oldID == newID)
                 return;

@@ -36,7 +36,7 @@ namespace ursine
 
         void Rigidbody::OnInitialize(void)
         {
-            auto owner = GetOwner( );
+            auto *owner = GetOwner( ).Get( );
 
             m_rigidbody.SetSimulation( 
                 &owner->GetWorld( )->GetEntitySystem<PhysicsSystem>( )->m_simulation 

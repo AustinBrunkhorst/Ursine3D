@@ -23,6 +23,7 @@ public:
     BitmapFont(void);
 
     void Load(const std::string textPath);
+    void Load(uint8_t *binaryData, size_t size);
 
     // acessor stuff for rendering
     const std::vector<std::string> &GetTextureFiles(void) const;
@@ -31,16 +32,36 @@ public:
 
     const CommonData &GetCommonData(void) const;
 
+    const InfoData &GetInfoData(void) const;
+
+    const std::vector<std::string> &GetPageData(void) const;
+
 private:
     template<typename T>
     T ReadData(int size)
     {
-        if ( m_input.is_open() )
+        if(m_binaryData == nullptr)
         {
+            if ( m_input.is_open() )
+            {
+                char buffer[ 16 ];
+                memset(buffer, 0, sizeof(char) * 16);
+
+                m_input.read(buffer, size);
+
+                return *reinterpret_cast<T*>(buffer);
+            }
+        }
+        else
+        {
+            // read the binary
             char buffer[ 16 ];
+
             memset(buffer, 0, sizeof(char) * 16);
 
-            m_input.read(buffer, size);
+            memcpy(buffer, m_binaryData + m_position, sizeof(char) * size);
+
+            m_position += size;
 
             return *reinterpret_cast<T*>(buffer);
         }
@@ -52,12 +73,28 @@ private:
     template<>
     int16_t ReadData(int size)
     {
-        if ( m_input.is_open() )
+        if (m_binaryData == nullptr)
         {
+            if ( m_input.is_open() )
+            {
+                char buffer[ 16 ];
+                memset(buffer, 0, sizeof(char) * 16);
+
+                m_input.read(buffer, size);
+
+                return buffer[ 0 ] | buffer[ 1 ] << 8;
+            }
+        }
+        else
+        {
+            // read the binary
             char buffer[ 16 ];
+
             memset(buffer, 0, sizeof(char) * 16);
 
-            m_input.read(buffer, size);
+            memcpy(buffer, m_binaryData + m_position, sizeof(char) * size);
+
+            m_position += size;
 
             return buffer[ 0 ] | buffer[ 1 ] << 8;
         }
@@ -78,6 +115,11 @@ private:
 
 private:
     std::fstream                m_input;
+    uint8_t                     *m_binaryData;
+    size_t                      m_binarySize;
+    size_t                      m_position;
+
+    bool                        m_useBinary;
 
     InfoData                    m_infoData;
     CommonData                  m_commonData;

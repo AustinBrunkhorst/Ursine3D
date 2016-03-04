@@ -44,7 +44,7 @@ class LightInspector extends ComponentInspectionHandler {
         setType( typeInstance );
     }
 
-    private function setType(type : UInt) {
+    private function setType(type) {
         var database = Editor.instance.componentDatabase;
 
         var componentType = database.getComponentType( component.type );
@@ -53,7 +53,7 @@ class LightInspector extends ComponentInspectionHandler {
         while (m_typeFields.length > 0)
             m_typeFields.pop( ).remove( );
 
-        var fields = m_typeToFields[ type ];
+        var fields = m_typeToFields[ database.getEnumNumberValue( m_lightTypeEnum, type ) ];
 
         // add type fields
         for (fieldName in fields) {

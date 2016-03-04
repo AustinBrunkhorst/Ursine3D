@@ -216,7 +216,7 @@ namespace ursine
             m_sizeRange.SetMin(-range);
         }
 
-        float ParticleEmitter::GetRotation(void)
+        float ParticleEmitter::GetRotation(void) const
         {
             return (m_rotation * 180.0f) / PI;
         }
@@ -348,6 +348,7 @@ namespace ursine
                 cpuData.velocity = GenerateVelocity( );
                 cpuData.lifeTime = cpuData.totalLifetime = GenerateLifetime( );
                 cpuData.acceleration = SVec3(0.f, 0.f, 0.f);
+                cpuData.roll = m_roll + m_rollRange.GetValue( );
 
                 ++m_spawnCount;
             }
@@ -361,8 +362,8 @@ namespace ursine
 
             if (dt > 0.2f)
                 dt = 0.2f;
-
-            if ( (m_spawnCount < m_emitCount) || m_emitCount == 0 )
+            // if we are able to spawn or we don't care about spawn count AND we are able to emit
+            if (((m_spawnCount < m_emitCount) || (m_emitCount == 0)) && m_emitRate != 0)
             {
                 m_currentTime += dt;
 

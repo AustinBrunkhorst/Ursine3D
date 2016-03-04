@@ -31,13 +31,13 @@ namespace ursine
 
         LocalTimerManager &UtilityManager::GetTimers(Entity *entity)
         {
-            auto search = m_timers.find( entity->m_uniqueID );
+            auto search = m_timers.find( entity->m_id );
 
             if (search == m_timers.end( ))
             {
                 // add it for the first time
                 return m_timers.emplace(
-                    entity->m_uniqueID, 
+                    entity->m_id, 
                     GetCoreSystem( TimerManager )
                 ).first->second;
             }
@@ -47,13 +47,13 @@ namespace ursine
 
         LocalTweenManager &UtilityManager::GetTweens(Entity *entity)
         {
-            auto search = m_tweens.find( entity->m_uniqueID );
+            auto search = m_tweens.find( entity->m_id );
 
             if (search == m_tweens.end( ))
             {
                 // add it for the first time
                 return m_tweens.emplace(
-                    entity->m_uniqueID, 
+                    entity->m_id, 
                     GetCoreSystem( TweenManager )
                 ).first->second;
             }

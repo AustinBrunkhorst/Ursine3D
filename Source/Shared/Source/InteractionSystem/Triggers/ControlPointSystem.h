@@ -15,14 +15,13 @@
 class ControlPointSystem : public ursine::ecs::FilterSystem
 {
     ENTITY_SYSTEM;
-public:
 
-    ControlPointSystem(ursine::ecs::World * world);
+public:
+    ControlPointSystem(ursine::ecs::World *world);
+
     void Begin(void) override;
-    void Process(ursine::ecs::Entity* entity) override;
+    void Process(const ursine::ecs::EntityHandle &entity) override;
 
 private:
-
     float m_dt;
-
 } Meta(Enable);

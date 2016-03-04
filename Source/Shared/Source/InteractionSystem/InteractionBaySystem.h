@@ -25,28 +25,20 @@ struct InteractionBay;
 
 class InteractionBaySystem : public ursine::ecs::FilterSystem
 {
-    ENTITY_SYSTEM ;
+    ENTITY_SYSTEM;
 
 public:
-    InteractionBaySystem(ursine::ecs::World* world);
+    InteractionBaySystem(ursine::ecs::World *world);
 
 protected:
     void onUpdate(EVENT_HANDLER(World)) override;
-    void Enable(ursine::ecs::Entity* entity) override;
-    void Disable(ursine::ecs::Entity* entity) override;
+
+    void Enable(const ursine::ecs::EntityHandle &entity) override;
+    void Disable(const ursine::ecs::EntityHandle &entity) override;
 
 private:
-
     // update current bay
     void UpdateBay(InteractionBay* bay, const int closestIndex);
 
-    std::unordered_map< ursine::ecs::EntityUniqueID, InteractionBay* > m_interactionBays;
+    std::unordered_map<ursine::ecs::EntityHandle, InteractionBay*> m_interactionBays;
 } Meta(Enable, AutoAddEntitySystem);
-
-
-
-
-
-
-
-

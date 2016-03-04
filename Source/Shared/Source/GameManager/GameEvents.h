@@ -57,15 +57,14 @@ namespace game
     {
         ursine::Vec2 m_moveDir;
 
-        MovementEventArgs(ursine::Vec2& moveDir)
-            : m_moveDir(moveDir)
-        { }
+        MovementEventArgs(ursine::Vec2 &moveDir)
+            : m_moveDir( moveDir ) { }
     };
 
     struct DamageEventArgs : public ursine::EventArgs
     {
         DamageEventArgs(const ursine::SVec3 &hitPosition,
-                        ursine::ecs::Entity *entityHit,
+                        ursine::ecs::EntityHandle &entityHit,
                         float damage, bool crit)
             : hitPosition(hitPosition)
             , entityHit(entityHit)
@@ -74,7 +73,7 @@ namespace game
         { }
 
         const ursine::SVec3& hitPosition;
-        ursine::ecs::Entity *entityHit;
+        ursine::ecs::EntityHandle entityHit;
         float damage;
         bool crit;
 
@@ -86,20 +85,20 @@ namespace game
         int m_ammo;
         int m_clip;
 
-        ursine::ecs::Entity* whoToConnect;
+        ursine::ecs::EntityHandle whoToConnect;
 
-        WeaponDeactivationEventArgs(ursine::ecs::Entity* who, int ammo = 1, int clip = -1)
-            : m_ammo(ammo), m_clip(clip), whoToConnect(who)
-        { }
+        WeaponDeactivationEventArgs(const ursine::ecs::EntityHandle &who, int ammo = 1, int clip = -1)
+            : m_ammo( ammo )
+            , m_clip( clip )
+            , whoToConnect( who ) { }
     };
 
     struct WeaponActivationEventArgs : WeaponDeactivationEventArgs
     {
         ursine::ecs::Transform* m_camHandle;
 
-        WeaponActivationEventArgs(ursine::ecs::Entity* who, ursine::ecs::Transform* camHandle = nullptr, int ammo = -1, int clip = -1)
-            : WeaponDeactivationEventArgs(who, ammo, clip), m_camHandle(camHandle)
-        { }
+        WeaponActivationEventArgs(const ursine::ecs::EntityHandle &who, ursine::ecs::Transform* camHandle = nullptr, int ammo = -1, int clip = -1)
+            : WeaponDeactivationEventArgs(who, ammo, clip)
+            , m_camHandle(camHandle) { }
     };
-
 }

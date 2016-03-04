@@ -15,6 +15,7 @@
     #define Meta(...) __attribute__((annotate(#__VA_ARGS__)))
 
     #define EditorField(expression, getter, setter) Meta(Enable, Getter(#getter), Setter(#setter)) expression
+    #define EditorResourceField(resourceType, fieldName, getter, setter) Meta(Enable, ResourceType(typeof(resourceType)), Getter(#getter), Setter(#setter)) ursine::resources::ResourceReference fieldName
 
     #define EditorAnnotate(annotation) EditorMeta(Annotation(annotation))
 
@@ -51,6 +52,8 @@
     #define EditorMeta(...) 
 
     #define EditorField(expression, getter, setter)
+    #define EditorResourceField(resourceType, fieldName, getter, setter)
+
     #define EditorAnnotate(annotation)
 
     #if defined(URSINE_WITH_EDITOR)

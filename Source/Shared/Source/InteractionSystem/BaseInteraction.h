@@ -36,7 +36,7 @@ class CommandQueue;
 
 struct Interaction
 {
-    virtual void StartInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) = 0;
-    virtual void Interact(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) = 0;
-    virtual void StopInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) = 0;
+    virtual void StartInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity) = 0;
+    virtual void Interact(const CommandQueue* queue, ursine::ecs::EntityHandle &entity) = 0;
+    virtual void StopInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity) = 0;
 };

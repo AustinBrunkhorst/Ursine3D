@@ -33,8 +33,8 @@ public:
 
     typedef std::vector<InteractionMethod> Interactions;
 
-    ButtonActionCommand(PlayerAction* action, ursine::ecs::Entity* owner);
-    ButtonActionCommand(PlayerAction* action, ursine::ecs::Entity* owner, Interactions& methods);
+    ButtonActionCommand(PlayerAction *action, const ursine::ecs::EntityHandle &owner);
+    ButtonActionCommand(PlayerAction *action, const ursine::ecs::EntityHandle &owner, Interactions& methods);
 
     ButtonActionCommand& AddActionCommand(InteractionMethod&& interaction);
 
@@ -45,9 +45,6 @@ protected:
 
 private:
     PlayerAction* m_action;
-    ursine::ecs::Entity* m_owner;
+    ursine::ecs::EntityHandle m_owner;
     Interactions m_interactionMethods;
-
 };
-
-

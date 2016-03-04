@@ -20,10 +20,10 @@ namespace editor_commands
     JSFunction(CreateEmptyEntity);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
-    JSFunction(CreateEntityFromArchetype);
+    JSFunction(CreatePlane);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
-    JSFunction(CreatePlane);
+    JSFunction(CreateCamera);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
     JSFunction(CreateBox);
