@@ -26,7 +26,7 @@
                 </template>
                 <template id="resourceRepeat" is="dom-repeat" items="{{directoryResources}}" as="resource">
                     <div class="resource" on-mousedown="_onResourceMouseDown" on-dblclick="_onResourceDblClick" on-contextmenu="_onResourceContextMenu">
-                        <div class="thumbnail" ext$="{{resource.extension}}" has-preview$="{{resource.hasPreview}}">
+                        <div class="thumbnail" resource-type$="{{resource.type}}" has-preview$="{{resource.hasPreview}}">
                         <template is="dom-if" if="{{resource.hasPreview}}">
                             <img src="{{resource.previewFile}}">
                         </template>

@@ -177,8 +177,10 @@ JSMethod(EntityHandler::remove)
         return CefV8Value::CreateBool( false );
 
     Application::PostMainThread( [=] {
-        if (handle)
-            handle->Delete( );
+        auto &newHandle = getHandle( );
+
+        if (newHandle)
+            newHandle->Delete( );
     } );
 
     return CefV8Value::CreateBool( true );
@@ -203,12 +205,17 @@ JSMethod(EntityHandler::setName)
 {
     auto &handle = getHandle( );
 
-    if (handle)
-    {
-        handle->SetName( arguments[ 0 ]->GetStringValue( ) );
+    if (!handle)
+        return CefV8Value::CreateBool( false );
 
-        return CefV8Value::CreateBool( true );
-    }
+    auto name = arguments[ 0 ]->GetStringValue( );
+
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
+
+        if (newHandle)
+            newHandle->SetName( name );
+    } );
 
     return CefV8Value::CreateBool( false );
 }
@@ -336,11 +343,13 @@ JSMethod(EntityHandler::addComponent)
 
     // have this run in the main thread
     Application::PostMainThread( [=] {
-        if (handle && !handle->HasComponent( componentTypeMask ))
+        auto &newHandle = getHandle( );
+
+        if (newHandle && !newHandle->HasComponent( componentTypeMask ))
         {
             auto instance = componentType.CreateDynamic( );
 
-            handle->AddComponent( instance.GetValue<ecs::Component*>( ) );
+            newHandle->AddComponent( instance.GetValue<ecs::Component*>( ) );
         }
     } );
 
@@ -372,8 +381,10 @@ JSMethod(EntityHandler::removeComponent)
 
     // Have this run in the main thread
     Application::PostMainThread( [=] {
-        if (handle)
-            handle->RemoveComponent( id );
+        auto &newHandle = getHandle( );
+
+        if (newHandle && newHandle->HasComponent( id ))
+            newHandle->RemoveComponent( id );
     } );
 
     return CefV8Value::CreateBool( true );
@@ -404,18 +415,25 @@ JSMethod(EntityHandler::componentSet)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = handle->GetComponent(
-        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
-    );
+    auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+
+    auto *component = handle->GetComponent( id );
 
     if (!component)
         return CefV8Value::CreateBool( false );
 
     auto value = JsonSerializer::Serialize( arguments[ 1 ] );
 
-    auto instance = ObjectVariant( component );
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
 
-    componentType.DeserializeJson( instance, value );
+        if (!newHandle || !newHandle->HasComponent( id ))
+            return;
+
+        auto instance = ObjectVariant( component );
+
+        componentType.DeserializeJson( instance, value );
+    } );
 
     return CefV8Value::CreateUndefined( );
 }
@@ -443,9 +461,9 @@ JSMethod(EntityHandler::componentFieldUpdate)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = handle->GetComponent(
-        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
-    );
+    auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+
+    auto *component = handle->GetComponent( id );
 
     if (!component)
         JSThrow( "Component doesn't exist.", nullptr );
@@ -463,7 +481,9 @@ JSMethod(EntityHandler::componentFieldUpdate)
 
     Application::PostMainThread( [=](void) mutable
     {
-        if (!handle)
+        auto &newHandle = getHandle( );
+
+        if (!newHandle || !newHandle->HasComponent( id ))
             return;
 
         auto &fieldMeta = field.GetMeta( );
@@ -487,7 +507,7 @@ JSMethod(EntityHandler::componentFieldUpdate)
         else
         {
             field.SetValue( instance, valueToSet );
-    }
+        }
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -519,14 +539,12 @@ JSMethod(EntityHandler::componentFieldArrayUpdate)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = handle->GetComponent(
-        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
-    );
+    auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+
+    auto *component = handle->GetComponent( id );
 
     if (!component)
         JSThrow( "Component doesn't exist.", nullptr );
-
-    auto instance = ObjectVariant( component );
 
     auto field = componentType.GetField( fieldName );
 
@@ -538,14 +556,24 @@ JSMethod(EntityHandler::componentFieldArrayUpdate)
     if (!fieldType.IsArray( ))
         JSThrow( "Field is not an array type.", nullptr );
 
-    auto fieldInstance = field.GetValue( instance );
-
-    auto arrayWrapper = fieldInstance.GetArray( );
-    
     auto value = JsonSerializer::Serialize( arguments[ 3 ] );
-    auto valueToSet = fieldType.GetArrayType( ).DeserializeJson( value );
 
-    arrayWrapper.SetValue( arrayIndex, valueToSet );
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
+
+        if (!newHandle || !newHandle->HasComponent( id ))
+            return;
+
+        auto instance = ObjectVariant( component );
+
+        auto fieldInstance = field.GetValue( instance );
+
+        auto arrayWrapper = fieldInstance.GetArray( );
+        
+        auto valueToSet = fieldType.GetArrayType( ).DeserializeJson( value );
+
+        arrayWrapper.SetValue( arrayIndex, valueToSet );
+    } );
 
     return CefV8Value::CreateBool( true );
 }
@@ -576,14 +604,12 @@ JSMethod(EntityHandler::componentFieldArrayInsert)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = handle->GetComponent(
-        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
-    );
+    auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+
+    auto *component = handle->GetComponent( id );
 
     if (!component)
         JSThrow( "Component doesn't exist.", nullptr );
-
-    auto instance = ObjectVariant( component );
 
     auto field = componentType.GetField( fieldName );
 
@@ -594,15 +620,25 @@ JSMethod(EntityHandler::componentFieldArrayInsert)
 
     if (!fieldType.IsArray( ))
         JSThrow( "Field is not an array type.", nullptr );
-
-    auto fieldInstance = field.GetValue( instance );
-
-    auto arrayWrapper = fieldInstance.GetArray( );
     
     auto value = JsonSerializer::Serialize( arguments[ 3 ] );
-    auto valueToInsert = fieldType.GetArrayType( ).DeserializeJson( value );
 
-    arrayWrapper.Insert( arrayIndex, valueToInsert );
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
+
+        if (!newHandle || !newHandle->HasComponent( id ))
+            return;
+
+        auto instance = ObjectVariant( component );
+
+        auto fieldInstance = field.GetValue( instance );
+
+        auto arrayWrapper = fieldInstance.GetArray( );
+
+        auto valueToInsert = fieldType.GetArrayType( ).DeserializeJson( value );
+
+        arrayWrapper.Insert( arrayIndex, valueToInsert );
+    } );
 
     return CefV8Value::CreateBool( true );
 }
@@ -633,14 +669,12 @@ JSMethod(EntityHandler::componentFieldArrayRemove)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = handle->GetComponent(
-        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
-    );
+    auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
+
+    auto *component = handle->GetComponent( id );
 
     if (!component)
         JSThrow( "Component doesn't exist.", nullptr );
-
-    auto instance = ObjectVariant( component );
 
     auto field = componentType.GetField( fieldName );
 
@@ -652,11 +686,20 @@ JSMethod(EntityHandler::componentFieldArrayRemove)
     if (!fieldType.IsArray( ))
         JSThrow( "Field is not an array type.", nullptr );
 
-    auto fieldInstance = field.GetValue( instance );
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
 
-    auto arrayWrapper = fieldInstance.GetArray( );
+        if (!newHandle || !newHandle->HasComponent( id ))
+            return;
 
-    arrayWrapper.Remove( arrayIndex );
+        auto instance = ObjectVariant( component );
+
+        auto fieldInstance = field.GetValue( instance );
+
+        auto arrayWrapper = fieldInstance.GetArray( );
+
+        arrayWrapper.Remove( arrayIndex );
+    } );
 
     return CefV8Value::CreateBool( true );
 }
@@ -688,14 +731,9 @@ JSMethod(EntityHandler::componentFieldArraySwap)
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = handle->GetComponent(
-        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
-    );
+    auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-    if (!component)
-        JSThrow( "Component doesn't exist.", nullptr );
-
-    auto instance = ObjectVariant( component );
+    auto *component = handle->GetComponent( id );
 
     auto field = componentType.GetField( fieldName );
 
@@ -707,15 +745,24 @@ JSMethod(EntityHandler::componentFieldArraySwap)
     if (!fieldType.IsArray( ))
         JSThrow( "Field is not an array type.", nullptr );
 
-    auto fieldInstance = field.GetValue( instance );
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
 
-    auto arrayWrapper = fieldInstance.GetArray( );
+        if (!newHandle || !newHandle->HasComponent( id ))
+            return;
 
-    auto value1 = arrayWrapper.GetValue( arrayIndex1 );
-    auto value2 = arrayWrapper.GetValue( arrayIndex2 );
+        auto instance = ObjectVariant( component );
 
-    arrayWrapper.SetValue( arrayIndex1, value2 );
-    arrayWrapper.SetValue( arrayIndex2, value1 );
+        auto fieldInstance = field.GetValue( instance );
+
+        auto arrayWrapper = fieldInstance.GetArray( );
+
+        auto value1 = arrayWrapper.GetValue( arrayIndex1 );
+        auto value2 = arrayWrapper.GetValue( arrayIndex2 );
+
+        arrayWrapper.SetValue( arrayIndex1, value2 );
+        arrayWrapper.SetValue( arrayIndex2, value1 );
+    } );
 
     return CefV8Value::CreateBool( true );
 }
@@ -790,19 +837,14 @@ JSMethod(EntityHandler::componentButtonInvoke)
 
     auto componentType = meta::Type::GetFromName( componentName );
 
-    if (!componentType.IsValid( ))
-        JSThrow( "Unknown component type.", nullptr );
-
     auto &componentID = componentType.GetStaticField( "ComponentID" );
 
     if (!componentID.IsValid( ))
         JSThrow( "Invalid component type.", nullptr );
 
-    auto *component = handle->GetComponent(
-        componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( ) 
-    );
+    auto id = componentID.GetValue( ).GetValue<ecs::ComponentTypeID>( );
 
-    auto instance = ObjectVariant( component );
+    auto *component = handle->GetComponent( id );
 
     auto method = componentType.GetMethod( buttonName );
 
@@ -816,7 +858,16 @@ JSMethod(EntityHandler::componentButtonInvoke)
         buttonName.c_str( )
     );
 
-    method.Invoke( instance );
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
+
+        if (!newHandle || !newHandle->HasComponent( id ))
+            return;
+
+        auto instance = ObjectVariant( component );
+
+        method.Invoke( instance );
+    } );
 
     return CefV8Value::CreateUndefined( );
 }
@@ -877,27 +928,38 @@ JSMethod(EntityHandler::setParent)
     if (!handle)
         return CefV8Value::CreateBool( false );
 
-    auto *transform = handle->GetTransform( );
-
     auto targetParent = arguments[ 0 ];
+    unsigned targetParentID;
 
-    // detaching parent
-    if (targetParent->IsNull( ))
-    {
-        auto currentParent = transform->GetParent( );
+    auto targetParentIsNull = targetParent->IsNull( );
 
-        if (currentParent)
-            currentParent->RemoveChild( transform );
-    }
-    else
-    {
-        auto targetEntity = handle->GetWorld( )->GetEntity( targetParent->GetUIntValue( ) );
+    if (!targetParentIsNull)
+         targetParentID = targetParent->GetUIntValue( );
 
-        if (!targetEntity)
-            return CefV8Value::CreateBool( false );
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
 
-        targetEntity->GetTransform( )->AddChild( transform );
-    }
+        if (newHandle)
+            return;
+
+        auto *transform = newHandle->GetTransform( );
+
+        // detaching parent
+        if (targetParentIsNull)
+        {
+            auto currentParent = transform->GetParent( );
+
+            if (currentParent)
+                currentParent->RemoveChild( transform );
+        }
+        else
+        {
+            auto targetEntity = newHandle->GetWorld( )->GetEntity( targetParentID );
+
+            if (!targetEntity)
+                targetEntity->GetTransform( )->AddChild( transform );
+        }
+    } );
 
     return CefV8Value::CreateBool( true );
 }
@@ -928,9 +990,16 @@ JSMethod(EntityHandler::setSiblingIndex)
     if (!handle)
         return CefV8Value::CreateBool( false );
 
-    handle->GetTransform( )->SetSiblingIndex( 
-        arguments[ 0 ]->GetUIntValue( ) 
-    );
+    auto siblingIndex = arguments[ 0 ]->GetUIntValue( ) ;
+
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
+
+        if (!newHandle)
+            return;
+
+        handle->GetTransform( )->SetSiblingIndex( siblingIndex );
+    } );
 
     return CefV8Value::CreateBool( true );
 }

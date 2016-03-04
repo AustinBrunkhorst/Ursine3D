@@ -163,7 +163,7 @@ $toolbar-height: 25px;
           @include icon-regular( $icon-regular-folder-closed, 54px );
         }
 
-        &[ext=".uworld"] {
+        &[resource-type*="WorldData"] {
           color: $color-accent;
           text-shadow: 0 1px 2px rgba(black, 0.75);
 
@@ -174,7 +174,7 @@ $toolbar-height: 25px;
           }
         }
 
-        &[ext=".uatype"] {
+        &[resource-type*="ArchetypeData"] {
           color: $color-accent;
           text-shadow: 0 1px 2px rgba(black, 0.75);
 
@@ -185,7 +185,7 @@ $toolbar-height: 25px;
           }
         }
 
-        &[ext=".uaudio"] {
+        &[resource-type*="AudioData"] {
           color: $color-accent;
           text-shadow: 0 1px 2px rgba(black, 0.75);
 
@@ -196,7 +196,7 @@ $toolbar-height: 25px;
           }
         }
 
-        &[ext=".uaevent"] {
+        &[resource-type*="AudioEventData"] {
           color: $color-accent;
           text-shadow: 0 1px 2px rgba(black, 0.75);
 
@@ -207,7 +207,7 @@ $toolbar-height: 25px;
           }
         }
 
-        &[ext=".fbx"] {
+        &[resource-type*="ModelData"] {
           color: $color-accent;
           text-shadow: 0 1px 2px rgba(black, 0.75);
 
@@ -218,7 +218,7 @@ $toolbar-height: 25px;
           }
         }
 
-        &[ext=".uanim"] {
+        &[resource-type*="AnimationClipData"] {
           color: $color-accent;
           text-shadow: 0 1px 2px rgba(black, 0.75);
 
