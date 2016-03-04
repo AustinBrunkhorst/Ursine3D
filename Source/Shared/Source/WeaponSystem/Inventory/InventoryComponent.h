@@ -72,13 +72,6 @@ public:
         GetLastStandWeapon,
         SetLastStandWeapon
     );
-
-    EditorResourceField(
-        ursine::resources::ArchetypeData,
-        lastStand,
-        GetLastStandData,
-        SetLastStandData
-    );
    
     EditorField(
         std::string SecondaryWeapon,
