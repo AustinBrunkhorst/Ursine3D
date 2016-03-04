@@ -41,6 +41,15 @@ namespace game
         AREA_CLEAR,
 
 
+        ////////////////////////////////
+        ////  Empower / Disempower  ////
+        ////////////////////////////////
+        EMPOWER_ACTIVE,
+        EMPOWER_UNACTIVE,
+        DISEMPOWER_ACTIVE,
+        DISEMPOWER_UNACTIVE,
+
+
         //////////////////////////
         ////  Command Events  ////
         //////////////////////////

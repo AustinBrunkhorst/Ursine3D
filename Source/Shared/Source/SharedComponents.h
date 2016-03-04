@@ -58,7 +58,8 @@
 //          Triggers           //
 /////////////////////////////////
 
-#include "InteractionSystem/RaidTriggers/RaidTriggerComponent.h"
+#include "InteractionSystem/RaidTriggers/EmpowerTriggerComponent.h"
+#include "InteractionSystem/RaidTriggers/DisempowerTriggerComponent.h"
 
 /////////////////////////////////
 //        Weapon System        //

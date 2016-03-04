@@ -287,5 +287,10 @@ namespace ursine
                 return nullptr;
             }
         }
+
+        void World::MessageUI(const std::string &message, const Json &data)
+        {
+            URSINE_TODO( "Message Scene ScreenManager" );
+        }
     }
 }

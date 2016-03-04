@@ -101,6 +101,8 @@ namespace ursine
             Screen *GetOwner(void) const;
             void SetOwner(Screen *owner);
 
+            void MessageUI(const std::string &message, const Json &data);
+
             void DispatchLoad(void);
 
             void MergeWorld(const std::string &filename);
