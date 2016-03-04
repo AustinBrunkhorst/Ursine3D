@@ -5,6 +5,9 @@
 #include "Entity.h"
 #include "Vec3.h"
 
+#include "VineAIState.h"
+
+
 class AIStateMachine;
 
 namespace ursine
@@ -20,10 +23,20 @@ namespace ursine
             virtual void Update(AIStateMachine *stateMachine) override;
             virtual void Exit(AIStateMachine *stateMachine) override;
 
+            virtual bool CanExit(void) override { return m_finished; }
+
+            void SetAnimationClip(const std::string &clip);
+
         private:
             void applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3& contact, float damage);
 
+            void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
+
+            std::string m_clipName;
+
             float m_damage;
+
+            bool m_finished;
         };
     }
 }

@@ -142,7 +142,10 @@ void FodderAI::OnInitialize(void)
 
 
     auto pauseState = m_stateMachine.AddState<sm::PauseState>( "FodderPauseState", m_pauseTime );
+
     auto damageState = m_stateMachine.AddState<sm::DamageState>( "FodderDamageState", m_damage );
+
+    damageState->SetAnimationClip("FodderAttack");
 
     // next connection is to move from walk state to damage state on collision
     auto trans = walkState->AddTransition( damageState, "WalkStateToDamageState" );

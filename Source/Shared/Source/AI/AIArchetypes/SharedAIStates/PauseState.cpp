@@ -23,11 +23,9 @@ namespace ursine
             auto why = stateMachine->GetFloat("PauseTimer");
             stateMachine->SetFloat("PauseTimer", m_delay);
 
-            std::cout << "entered pause state" << std::endl;
         }
         void PauseState::Update(AIStateMachine *stateMachine)
         {
-            std::cout << " updated pause state" << std::endl;
 
             auto currTime = stateMachine->GetFloat( "PauseTimer" );
 

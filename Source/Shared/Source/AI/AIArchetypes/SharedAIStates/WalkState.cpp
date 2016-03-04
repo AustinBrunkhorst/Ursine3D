@@ -34,8 +34,6 @@ namespace ursine
         {
             using namespace std::placeholders;
 
-            std::cout << "entered walk state" << std::endl;
-
             // first get the entity
             Entity *aiActor = stateMachine->GetEntity();
 
@@ -65,8 +63,6 @@ namespace ursine
 
         void WalkState::Update(AIStateMachine *stateMachine)
         {
-            std::cout << "updated walk state" << std::endl;
-
             updateSurroundingActorsList(stateMachine);
 
             auto aiTrans = stateMachine->GetEntity()->GetTransform();
@@ -163,8 +159,6 @@ namespace ursine
 
         void WalkState::Exit(AIStateMachine *stateMachine)
         {
-            std::cout << "exited walk state" << std::endl;
-
             m_move->SetEnable(false);
         }
 

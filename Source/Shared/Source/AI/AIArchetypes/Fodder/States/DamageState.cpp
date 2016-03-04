@@ -10,6 +10,8 @@
 #include "DamageState.h"
 #include <AI/AIArchetypes/Fodder/FodderAIComponent.h>
 #include <PlayerLogic/PlayerIDComponent.h>
+#include <EntityAnimation/EntityAnimatorComponent.h>
+#include <DamageSystem/DamageOnCollideComponent.h>
 
 
 using namespace ursine::ecs;
@@ -20,25 +22,43 @@ namespace ursine
         DamageState::DamageState(std::string name, float damage)
             : AIState( name )
             , m_damage( damage )
+            , m_finished( false )
         {
         }
 
 
         void DamageState::Enter(AIStateMachine *stateMachine)
         {
-            // in the future we could play an animation here
-            std::cout << "Entered Damage State" << std::endl;
+            auto animator = stateMachine->GetEntity()->GetComponent<EntityAnimator>();
+
+            auto dmgComp = stateMachine->GetEntity()->AddComponent<DamageOnCollide>();
+
+            dmgComp->SetDamageToApply( m_damage );
+
+            dmgComp->SetDamageInterval(1.0f);
+
+            dmgComp->SetDeleteOnCollision(false);
+
+            animator->Play( m_clipName );
+
+            animator->Listener(this)
+                .On(EntityAnimatorEvent::FinishedAnimating, &DamageState::onAnimationFinished);
         }
+
         void DamageState::Update(AIStateMachine *stateMachine)
         {
             // this is where we could check on animation and exit once done
-            std::cout << "Updated Damage State" << std::endl;
         }
+
         void DamageState::Exit(AIStateMachine *stateMachine)
         {
-            // once we exit we can actually deal the damage
-            std::cout << "Exited Damage State" << std::endl;
+            // delete that I don wanna do no mo dmg
+            stateMachine->GetEntity()->RemoveComponent<DamageOnCollide>();
+        }
 
+        void DamageState::SetAnimationClip(const std::string& clip)
+        {
+            m_clipName = clip;
         }
 
         void DamageState::applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3& contact, float damage)
@@ -50,7 +70,15 @@ namespace ursine
             // NOTE: we need to change a variable here to change from this state to the delay state
         }
 
+        void DamageState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
+        {
+            EVENT_ATTRS(EntityAnimator, ursine::ecs::EntityEventArgs);
 
+            m_finished = true;
+
+            sender->Listener(this)
+                .Off(EntityAnimatorEvent::FinishedAnimating, &DamageState::onAnimationFinished);
+        }
 
     }
 }
