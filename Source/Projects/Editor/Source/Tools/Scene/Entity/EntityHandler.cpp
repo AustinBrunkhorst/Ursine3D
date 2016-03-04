@@ -177,7 +177,8 @@ JSMethod(EntityHandler::remove)
         return CefV8Value::CreateBool( false );
 
     Application::PostMainThread( [=] {
-        handle->Delete( );
+        if (handle)
+            handle->Delete( );
     } );
 
     return CefV8Value::CreateBool( true );
@@ -335,7 +336,7 @@ JSMethod(EntityHandler::addComponent)
 
     // have this run in the main thread
     Application::PostMainThread( [=] {
-        if (!handle->HasComponent( componentTypeMask ))
+        if (handle && !handle->HasComponent( componentTypeMask ))
         {
             auto instance = componentType.CreateDynamic( );
 
@@ -371,7 +372,8 @@ JSMethod(EntityHandler::removeComponent)
 
     // Have this run in the main thread
     Application::PostMainThread( [=] {
-        handle->RemoveComponent( id );
+        if (handle)
+            handle->RemoveComponent( id );
     } );
 
     return CefV8Value::CreateBool( true );
@@ -467,21 +469,24 @@ JSMethod(EntityHandler::componentFieldUpdate)
 
     Application::PostMainThread( [=](void) mutable
     {
-    if (editorSetter)
-    {
-        auto &setter = componentType.GetMethod( editorSetter->setter );
+        if (!handle)
+            return;
 
-        UAssert( setter.IsValid( ), 
-            "Unknown editor setter '%s' on component type '%s'.",
-            editorSetter->setter.c_str( ),
-            componentType.GetName( ).c_str( )
-        );
+        if (editorSetter)
+        {
+            auto &setter = componentType.GetMethod( editorSetter->setter );
 
-        meta::Field::SetValue( instance, valueToSet, setter );
-    }
-    else
-    {
-        field.SetValue( instance, valueToSet );
+            UAssert( setter.IsValid( ), 
+                "Unknown editor setter '%s' on component type '%s'.",
+                editorSetter->setter.c_str( ),
+                componentType.GetName( ).c_str( )
+            );
+
+            meta::Field::SetValue( instance, valueToSet, setter );
+        }
+        else
+        {
+            field.SetValue( instance, valueToSet );
     }
     } );
 
@@ -978,12 +983,12 @@ JSMethod(EntityHandler::clone)
     return CefV8Value::CreateUInt( clone->GetID( ) );
 }
 
-const ecs::EntityHandle &EntityHandler::getHandle(void)
+const ecs::EntityHandle &EntityHandler::getHandle(void) const
 {
     auto *activeWorld = m_scene->GetActiveWorld( );
 
-    // make sure the world is still valid
-    if (activeWorld != m_world)
+    // make sure the world is still valid and the entity is still available
+    if (activeWorld != m_world || !m_handle->IsAvailable( ))
         return ecs::EntityHandle::Invalid( );
 
     return m_handle;
