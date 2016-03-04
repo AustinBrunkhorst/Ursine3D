@@ -1,0 +1,511 @@
+{
+"children": [
+{
+"children": [
+{
+"children": [], 
+"components": {
+"EntityAnimatorClip": {
+".uid": 20, 
+"clipName": "FodderAttack", 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": false, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}, {
+"delta": 1, 
+"ease": 25, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": false, 
+"rotation": {
+"w": 0.95473647117614746, 
+"x": 0.29745000600814819, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": false, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}
+], 
+"looping": false
+}, 
+"Transform": {
+".uid": 19, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.85919308662414551, 
+"y": 4.447209358215332, 
+"z": 0.99999892711639404
+}, 
+"translation": {
+"x": 0, 
+"y": 2.4631302356719971, 
+"z": 0
+}
+}
+}, 
+"name": "Animation Clip: FodderAttack"
+}, {
+"children": [], 
+"components": {
+"ApplyImpulseOnHit": {
+".uid": 22, 
+"effectSweptController": true, 
+"impulse": 1, 
+"localDirectionInfluence": {
+"x": 1, 
+"y": 1, 
+"z": 0
+}, 
+"worldDirectionInfluence": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 23, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Ghost": {
+".uid": 24, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"Model3D": {
+".uid": 25, 
+"active": true, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 21, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.85919392108917236, 
+"y": 4.4472136497497559, 
+"z": 0.99999988079071045
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Model"
+}, {
+"children": [], 
+"components": {
+"ApplyImpulseOnHit": {
+".uid": 27, 
+"effectSweptController": true, 
+"impulse": 1, 
+"localDirectionInfluence": {
+"x": 1, 
+"y": 1, 
+"z": 0
+}, 
+"worldDirectionInfluence": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 28, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"Ghost": {
+".uid": 29, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"Model3D": {
+".uid": 30, 
+"active": true, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 26, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.85919392108917236, 
+"y": 4.4472136497497559, 
+"z": 0.99999988079071045
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Model"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 18, 
+"animationClipName": "FodderAttack", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": false, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}, {
+"delta": 1, 
+"ease": 25, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": false, 
+"rotation": {
+"w": 0.95473647117614746, 
+"x": 0.29745000600814819, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": false, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scaleKey": false
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Transform": {
+".uid": 17, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.99999606609344482, 
+"y": 0.99999606609344482, 
+"z": 0.99999606609344482
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "FodderAnimator"
+}, {
+"children": [], 
+"components": {
+"Ghost": {
+".uid": 32, 
+"disableContactResponse": true, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SphereCollider": {
+".uid": 33, 
+"radius": 6
+}, 
+"Transform": {
+".uid": 31, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "GhostSphere"
+}, {
+"children": [], 
+"components": {
+"SpriteText": {
+".uid": 35, 
+"alignment": 1, 
+"size": 20, 
+"text": "Fodder", 
+"textColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0.875
+}, 
+"useFiltering": true
+}, 
+"Transform": {
+".uid": 34, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.99999815225601196, 
+"y": 0.99999916553497314, 
+"z": 0.99999892711639404
+}, 
+"translation": {
+"x": 0, 
+"y": 3, 
+"z": 0
+}
+}
+}, 
+"name": "Label"
+}
+], 
+"components": {
+"AIMovementController": {
+".uid": 11, 
+"Speed": 2, 
+"enabled": true
+}, 
+"AIType": {
+".uid": 12
+}, 
+"BoxCollider": {
+".uid": 13, 
+"dimensions": {
+"x": 1, 
+"y": 5, 
+"z": 1
+}
+}, 
+"FodderAI": {
+".uid": 14, 
+"AttackDelay": 1, 
+"AttackRange": 6, 
+"Cohesion": 0.5, 
+"Separation": 0.5, 
+"TotalBoidBehaviorScale": 0.5, 
+"damageOnAttack": 3
+}, 
+"Health": {
+".uid": 15, 
+"ArchetypeToSpawnOnDeath": ".uatype", 
+"EntityHealth": 30, 
+"SpawnOnDeath": false, 
+"deleteOnZeroHealth": true
+}, 
+"Rigidbody": {
+".uid": 16, 
+"bodyFlag": 0, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": true, 
+"freezeYRotation": true, 
+"freezeZRotation": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0.5, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": false
+}, 
+"Transform": {
+".uid": 10, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 20, 
+"y": 2, 
+"z": 20.423555374145508
+}
+}
+}, 
+"v": "0.2submission"
+}

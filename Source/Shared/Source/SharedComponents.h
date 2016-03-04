@@ -87,6 +87,7 @@
 
 #include "AIHordelingTypeComponent.h"
 #include "FodderAIComponent.h"
+#include "TankAIComponent.h"
 
 /////////////////////////////////
 //       Level Logic           //

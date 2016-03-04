@@ -3,14 +3,12 @@
 #include "StateMachine.h"
 #include "Entity.h"
 
+class AIState;
+
 namespace ursine
 {
     namespace sm
     {
-
-
-        class AIState;
-
         class AIStateMachine : public StateMachine
         {
         public:

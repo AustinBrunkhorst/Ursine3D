@@ -5,10 +5,10 @@
 #include "Entity.h"
 #include "Vec3.h"
 
-#include "VineAIState.h"
-
 
 class AIStateMachine;
+
+class EntityAnimator;
 
 namespace ursine
 {
@@ -33,6 +33,8 @@ namespace ursine
             void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 
             std::string m_clipName;
+
+            EntityAnimator *m_animator;
 
             float m_damage;
 

@@ -13,7 +13,7 @@ namespace ursine
         class AIState : public ursine::sm::State
         {
         public:
-            AIState(std::string &name) : State(name) {}
+            AIState(const std::string &name) : State(name) {}
 
 
             virtual void OnEnter(StateMachine *machine) override final;

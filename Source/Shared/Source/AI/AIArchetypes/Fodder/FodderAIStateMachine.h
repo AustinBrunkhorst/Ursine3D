@@ -1,3 +1,13 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** 2016 DigiPen Institute of Technology, All Rights Reserved.
+**
+** FodderAIStateMachine.h
+**
+** Author:
+** - Joshua Shlemmer - joshua.shlemmer@digipen.edu
+**
+** -------------------------------------------------------------------------*/
 #pragma once
 
 #include "AIStateMachine.h"
@@ -19,8 +29,6 @@ namespace ursine
             ~FodderAIStateMachine();
 
             //void Update(void) override;
-
-            FodderAI *GetAI(void) const;
 
         private:
             void onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));

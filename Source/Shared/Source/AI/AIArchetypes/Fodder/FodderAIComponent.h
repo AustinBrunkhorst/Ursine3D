@@ -14,9 +14,9 @@
 #include <Component.h>
 
 #include "FodderAIStateMachine.h"
+
+// sometimes VS thinks it doesn't need it but it do
 #include "AIMovementControllerComponent.h"
-#include <limits>
-#include <Game Engine/Scene/Component/Native Components/Physics/CapsuleColliderComponent.h>
 
 class FodderAI : public ursine::ecs::Component
 {
@@ -24,7 +24,6 @@ class FodderAI : public ursine::ecs::Component
 
 public:
 
-    EditorMeta(InputRange(0.0f, std::numeric_limits<float>::infinity()))
     EditorField(
         float AttackDelay,
         GetPauseTime,

@@ -21,6 +21,7 @@ namespace ursine
     {
         DamageState::DamageState(std::string name, float damage)
             : AIState( name )
+            , m_animator( nullptr )
             , m_damage( damage )
             , m_finished( false )
         {
@@ -29,9 +30,9 @@ namespace ursine
 
         void DamageState::Enter(AIStateMachine *stateMachine)
         {
-            auto animator = stateMachine->GetEntity()->GetComponent<EntityAnimator>();
+            m_animator = stateMachine->GetEntity()->GetComponentInChildren<EntityAnimator>();
 
-            auto dmgComp = stateMachine->GetEntity()->AddComponent<DamageOnCollide>();
+            auto dmgComp = m_animator->GetOwner()->AddComponent<DamageOnCollide>();
 
             dmgComp->SetDamageToApply( m_damage );
 
@@ -39,9 +40,9 @@ namespace ursine
 
             dmgComp->SetDeleteOnCollision(false);
 
-            animator->Play( m_clipName );
+            m_animator->Play( m_clipName );
 
-            animator->Listener(this)
+            m_animator->Listener(this)
                 .On(EntityAnimatorEvent::FinishedAnimating, &DamageState::onAnimationFinished);
         }
 
@@ -53,7 +54,7 @@ namespace ursine
         void DamageState::Exit(AIStateMachine *stateMachine)
         {
             // delete that I don wanna do no mo dmg
-            stateMachine->GetEntity()->RemoveComponent<DamageOnCollide>();
+            m_animator->GetOwner()->RemoveComponent<DamageOnCollide>();
         }
 
         void DamageState::SetAnimationClip(const std::string& clip)

@@ -154,7 +154,9 @@ namespace ursine
             playerDirection.Normalize();
 
             // apply to movement
-            setTargetDirection(  playerDirection);
+            setTargetDirection(  playerDirection );
+
+            aiTrans->LookAt( SVec3( playerPos.X(), aiTrans->GetWorldPosition().Y(), playerPos.Z() ) );
         }
 
         void WalkState::Exit(AIStateMachine *stateMachine)
