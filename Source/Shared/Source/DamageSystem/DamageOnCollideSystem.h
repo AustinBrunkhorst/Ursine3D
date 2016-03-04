@@ -32,8 +32,8 @@ public:
 
 protected:
     void onUpdate(EVENT_HANDLER(World)) override;
-    void Enable(ursine::ecs::Entity* entity) override;
-    void Disable(ursine::ecs::Entity* entity) override;
+    void Enable(const ursine::ecs::EntityHandle &entity) override;
+    void Disable(const ursine::ecs::EntityHandle &entity) override;
 
 private:
 
@@ -43,7 +43,7 @@ private:
     // entity removed
     void OnEntityRemoved(EVENT_HANDLER(World));
 
-    std::unordered_map< ursine::ecs::EntityUniqueID, DamageOnCollide* > m_damage;
+    std::unordered_map<ursine::ecs::EntityHandle, DamageOnCollide*> m_damage;
 } Meta(Enable);
 
 

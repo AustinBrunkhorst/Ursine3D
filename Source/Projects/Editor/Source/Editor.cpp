@@ -10,21 +10,19 @@
 ** Contributors: 
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
- 
+
 #include "Precompiled.h"
- 
-#include "Editor.h" 
-#include "Project.h"         
-   
-#include <Application.h>   
-       
+
+#include "Editor.h"
+#include "Project.h"
+#include <Application.h>
 #include <Scene.h>
 #include <WindowManager.h>
-#include <UIManager.h>   
+#include <UIManager.h>
 #include <Timer.h>
-  
+
 #include <ResourcePipelineManager.h>
-  
+
 using namespace ursine;
 
 namespace rp = resources::pipeline;

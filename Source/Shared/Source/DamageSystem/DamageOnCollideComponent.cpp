@@ -143,9 +143,9 @@ void DamageOnCollide::SetSpawnOnHit(bool state)
     m_spawnOnHit = state;
 }
 
-void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED))
+void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
 {
-    EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
+    EVENT_ATTRS(Entity, physics::CollisionEventArgs);
 
     if (!m_deleted)
     {
@@ -154,7 +154,7 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
         if (!root->HasComponent<Health>( ))
             return;
 
-        if (m_damageTimeMap.find( root->GetUniqueID( ) ) != m_damageTimeMap.end( ))
+        if (m_damageTimeMap.find( root->GetID( ) ) != m_damageTimeMap.end( ))
             return;
 
         float damage = m_damageToApply;
@@ -165,6 +165,13 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
         {
             crit = true;
             damage *= m_critModifier;
+
+            auto critComp = args->otherEntity->GetComponent<CritSpot>( );
+
+            // add other object to damage interval map
+            //   if not deleting due to collision
+            m_damageTimeMap[ critComp->GetOwner( )->GetID( ) ] = m_damageInterval;
+            m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetID( ) ] = m_damageInterval;
         }
 
         applyDamage(root, args->contacts.front( ).point, damage, crit);
@@ -176,7 +183,7 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
 }
 
 
-void DamageOnCollide::applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3& contact, float damage, bool crit)
+void DamageOnCollide::applyDamage(const EntityHandle &obj, const SVec3& contact, float damage, bool crit)
 {
     Health* healthComp = obj->GetComponent< Health >( );
 
@@ -186,7 +193,7 @@ void DamageOnCollide::applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3&
     //   if not deleting due to collision
     if (!m_deleteOnCollision)
     {
-        m_damageTimeMap[ obj->GetUniqueID( ) ] = m_damageInterval;
+        m_damageTimeMap[ obj->GetID( ) ] = m_damageInterval;
     }
 }
 
@@ -229,17 +236,10 @@ void DamageOnCollide::deleteOnCollision(void)
         GetOwner( )->Delete( );
         m_deleted = true;
     }
-    else
-    {
-        // add other object to damage interval map 
-        //   if not deleting due to collision
-        m_damageTimeMap[ critComp->GetOwner( )->GetID( ) ] = m_damageInterval;
-        m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetID( ) ] = m_damageInterval;
-    }
 }
 
 
-void DamageOnCollide::onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
+void DamageOnCollide::onDeath(EVENT_HANDLER(ursine::ecs::Entity))
 {
     if (m_spawnOnDeath && m_objToSpawn != ".uatype")
     {
@@ -250,9 +250,9 @@ void DamageOnCollide::onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 }
 
 
-void DamageOnCollide::getSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet)
+void DamageOnCollide::getSpawnLocation(const ursine::ecs::EntityHandle &other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet)
 {
-    ursine::ecs::EntityHandle entity;
+    EntityHandle entity;
     size_t size = rayout.entity.size( );
 
     for (size_t i = 0; i <size; ++i)
@@ -269,10 +269,10 @@ void DamageOnCollide::getSpawnLocation(ursine::ecs::Entity* other, ursine::physi
 }
 
 
-void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other, bool crit)
+void DamageOnCollide::spawnCollisionParticle(const ursine::ecs::EntityHandle &other, bool crit)
 {
     if (m_spawnOnHit)
-{
+    {
         // quick access to transform of owner
         Transform* trans = GetOwner( )->GetTransform( );
 
@@ -280,7 +280,7 @@ void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other, bool cr
         SVec3 pos = trans->GetWorldPosition( );
 
         if (crit)
-    {
+        {
             // input for raycast check
             physics::RaycastInput rayin;
             
@@ -297,16 +297,16 @@ void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other, bool cr
                 velocity = GetOwner( )->GetComponent<Rigidbody>( )->GetVelocity( );
 
 
-        // is the owner of this component within the oject it is colliding with
-        //   - if inside then we want to spawn particle behind the objects current position
-            if ( velocity.Dot(other->GetTransform( )->GetWorldPosition( ) - trans->GetWorldPosition( )) <= 0 )
-            velocity = -velocity;
+            // is the owner of this component within the oject it is colliding with
+            //   - if inside then we want to spawn particle behind the objects current position
+            if (velocity.Dot(other->GetTransform( )->GetWorldPosition( ) - trans->GetWorldPosition( )) <= 0)
+                velocity = -velocity;
 
-        // raycast info
-        rayin.start = trans->GetWorldPosition( );
-        rayin.end = pos = rayin.start + velocity;
+            // raycast info
+            rayin.start = trans->GetWorldPosition( );
+            rayin.end = pos = rayin.start + velocity;
 
-        // get ray to edge of other object
+            // get ray to edge of other object
             GetOwner( )->GetWorld( )->GetEntitySystem<PhysicsSystem>( )->Raycast(rayin, rayout, physics::RAYCAST_ALL_HITS, false, 1.0f, false);
 
             getSpawnLocation(other->GetRoot( ), rayout, pos);
@@ -314,11 +314,11 @@ void DamageOnCollide::spawnCollisionParticle(ursine::ecs::Entity* other, bool cr
 
         if (m_objToSpawnOnHit != ".uatype")
         {
-        // create particle
-            ursine::ecs::Entity* obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawnOnHit);
-        obj->GetTransform( )->SetWorldPosition( pos );
+            // create particle
+            auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawnOnHit);
+            obj->GetTransform( )->SetWorldPosition( pos );
 
-        // parent so that it follows objects and dies with object
+            // parent so that it follows objects and dies with object
             other->GetTransform( )->AddChild(obj->GetTransform( ));
         }
     }

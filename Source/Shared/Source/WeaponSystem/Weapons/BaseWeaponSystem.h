@@ -31,6 +31,7 @@ namespace ursine
 struct AbstractProjWeapon;
 struct AbstractHitscanWeapon;
 struct HitscanWeapon;
+struct BaseWeapon;
 
 class BaseWeaponSystem
     : public ursine::ecs::FilterSystem
@@ -48,13 +49,13 @@ protected:
 private:
     void EvaluateProjectileWeapons(const float dt);
 
-    void FireProjectileWeapon(BaseWeapon &weapon, ursine::ecs::EntityID id);
+    void FireProjectileWeapon(BaseWeapon &weapon, ursine::ecs::EntityHandle &entity);
 
     void CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
     
-    std::unordered_map < ursine::ecs::EntityID, AbstractProjWeapon* > m_weapons;
-    std::unordered_map < ursine::ecs::EntityID, ursine::ecs::Transform* > m_transforms;
-    std::unordered_map < ursine::ecs::EntityID, ursine::ecs::AudioEmitter* > m_emitters;
+    std::unordered_map<ursine::ecs::EntityHandle, AbstractProjWeapon*> m_weapons;
+    std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::Transform*> m_transforms;
+    std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::AudioEmitter*> m_emitters;
 
 } Meta(Enable, AutoAddEntitySystem);
 
@@ -75,15 +76,13 @@ protected:
 private:
     void EvaluateHitscanWeapons(const float dt);
 
-    void FireHitscanWeapon(AbstractHitscanWeapon &weapon, ursine::ecs::EntityID id);
-
-    ursine::ecs::PhysicsSystem* m_physicsSystem;
+    void FireHitscanWeapon(AbstractHitscanWeapon &weapon, ursine::ecs::EntityHandle &handle);
 
     void CreateTrail(AbstractHitscanWeapon &weapon, ursine::SVec3 &trailEnd);
 
     ursine::ecs::PhysicsSystem *m_physicsSystem;
 
-    std::unordered_map<ursine::ecs::EntityID, HitscanWeapon*> m_weapons;
-    std::unordered_map<ursine::ecs::EntityID, ursine::ecs::Transform*> m_transforms;
-    std::unordered_map<ursine::ecs::EntityID, ursine::ecs::AudioEmitter*> m_emitters;
+    std::unordered_map<ursine::ecs::EntityHandle, HitscanWeapon*> m_weapons;
+    std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::Transform*> m_transforms;
+    std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::AudioEmitter*> m_emitters;
 } Meta(Enable, AutoAddEntitySystem);

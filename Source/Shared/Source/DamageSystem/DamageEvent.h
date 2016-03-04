@@ -28,7 +28,7 @@ public:
                     ursine::ecs::Entity *entityHit)
         : damage( damage )
         , crit( crit )
-        , hitPosition(hitPosition)
+        , hitPosition( hitPosition )
         , entityHit( entityHit )
         { }
 

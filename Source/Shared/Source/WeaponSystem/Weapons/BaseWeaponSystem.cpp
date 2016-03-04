@@ -296,7 +296,7 @@ void BaseWeaponSystem::EvaluateProjectileWeapons(const float dt)
     }
 }
 
-void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, ursine::ecs::EntityID id)
+void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, ursine::ecs::EntityHandle entity)
 {
     if (weapon.FireLogic( ))
     {
@@ -318,7 +318,7 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, ursine::
 
 
         // number of rounds that were fired
-        CreateProjectiles( weapon, *m_transforms[ id ], RemoveRoundsFromClip( weapon ) );
+        CreateProjectiles( weapon, *m_transforms[ entity ], RemoveRoundsFromClip( weapon ) );
     }
 }
 
@@ -430,7 +430,7 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
     }
 }
 
-void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, EntityID id)
+void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, EntityHandle &entity)
 {
     if (weapon.FireLogic( ))
     {
@@ -450,7 +450,7 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, Entit
         weapon.m_firePosHandle->AddChildAlreadyInLocal( e->GetTransform( ) );
         
         // number of rounds that were fired
-        CreateRaycasts( weapon, *m_transforms[ id ], RemoveRoundsFromClip( weapon ) );
+        CreateRaycasts( weapon, *m_transforms[ entity ], RemoveRoundsFromClip( weapon ) );
     }
 }
 

@@ -105,8 +105,8 @@ namespace ursine
             unsigned GetMask(void) const;
             void SetMask(const unsigned long long renderMask);
 
-            ecs::EntityID GetEntityID(void) const;
-            void SetEntityID(const ecs::EntityID id);
+            const ecs::EntityHandle &GetEntity(void) const;
+            void SetEntity(const ecs::EntityHandle handle);
 
             const Color &GetClearColor(void) const;
             void SetClearColor(const Color &color);
@@ -119,7 +119,7 @@ namespace ursine
             unsigned long long m_cameraMask;
 
             // entity ID
-            ecs::EntityID m_entityID;
+            ecs::EntityHandle m_entity;
 
             // field of view, near, var
             float m_fov;

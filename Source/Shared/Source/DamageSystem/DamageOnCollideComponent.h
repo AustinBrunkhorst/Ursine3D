@@ -29,9 +29,6 @@ class DamageOnCollide : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
-    Meta(Enable)
-    DamageOnCollide(void);
-    ~DamageOnCollide(void);
 
     ////////////////////////////////////////////////////////////////////
     // Expose data to editor
@@ -40,49 +37,49 @@ public:
         float DamageToApply,
         GetDamageToApply,
         SetDamageToApply
-        );
+    );
 
     EditorField(
         float CritModifier,
         GetCritModifier,
         SetCritModifier
-        );
+    );
 
     EditorField(
         std::string ArchetypeOnDeath,
         GetArchetypeOnDeath,
         SetArchetypeOnDeath
-        );
+    );
 
     EditorField(
         std::string ArchetypeOnHit,
         GetArchetypeOnHit,
         SetArchetypeOnHit
-        );
+    );
 
     EditorField(
         float DamageInterval,
         GetDamageInterval,
         SetDamageInterval
-        );
+    );
 
     EditorField(
         bool DeleteOnCollision,
         GetDeleteOnCollision,
         SetDeleteOnCollision
-        );
+    );
 
     EditorField(
         bool SpawnOnDeath,
         GetSpawnOnDeath,
         SetSpawnOnDeath
-        );
+    );
 
     EditorField(
         bool SpawnOnHit,
         GetSpawnOnHit,
         SetSpawnOnHit
-        );
+    );
 
     DamageOnCollide(void);
     ~DamageOnCollide(void);
@@ -145,18 +142,18 @@ private:
     bool m_spawnOnDeath;
 
     // map of all objects hit
-    std::unordered_map<ursine::ecs::EntityID, float> m_damageTimeMap;
+    std::unordered_map<ursine::ecs::EntityHandle, float> m_damageTimeMap;
 
-    void onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
-    void onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
+    void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
+    void onCollide(EVENT_HANDLER(ursine::ecs::Entity));
 
-    void getSpawnLocation(ursine::ecs::Entity* other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet);
+    void getSpawnLocation(const ursine::ecs::EntityHandle &other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet);
 
     // spawn particle at collision point and parent to player
-    void spawnCollisionParticle(ursine::ecs::Entity* other, bool crit);
+    void spawnCollisionParticle(const ursine::ecs::EntityHandle &other, bool crit);
 
     void deleteOnCollision(void);
 
-    void applyDamage(ursine::ecs::Entity* obj, const ursine::SVec3& contact, float damage, bool crit);
+    void applyDamage(const ursine::ecs::EntityHandle &obj, const ursine::SVec3& contact, float damage, bool crit);
 
 } Meta (Enable, DisplayName( "DamageOnCollide" ));
