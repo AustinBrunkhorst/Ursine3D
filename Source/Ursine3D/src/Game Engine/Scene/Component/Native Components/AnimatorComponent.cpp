@@ -138,16 +138,6 @@ namespace ursine
             {
                 x = SMat4::Identity( );
             }
-<<<<<<< HEAD
-=======
-
-            auto *gfx = GetCoreSystem(graphics::GfxAPI);
-            auto *world = GetOwner( )->GetWorld( );
-
-            auto animListEntity = world->GetEntityFromName( "Animation List" );
-            if (!animListEntity)
-                animListEntity = world->CreateEntity( "Animation List" );
->>>>>>> refs/remotes/origin/resource-management
         }
 
         void Animator::UpdateAnimation(const float dt)
