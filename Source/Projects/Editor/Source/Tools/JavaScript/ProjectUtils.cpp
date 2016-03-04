@@ -16,6 +16,8 @@
 #include "ProjectUtils.h"
 #include "Editor.h"
 
+#include <FileDialog.h>
+
 using namespace ursine;
 
 namespace
@@ -122,6 +124,34 @@ JSFunction(ProjectSetEmptyScene)
     auto *editor = GetCoreSystem( Editor );
 
     editor->GetProject( )->SetEmptyScene( );
+
+	return CefV8Value::CreateBool( true );
+}
+
+JSFunction(ProjectOpenNew)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetProject( )->SetEmptyScene( );
+
+    fs::FileDialog openDialog;
+
+    openDialog.config.mode = fs::FDM_OPEN;
+    openDialog.config.initialPath = "";
+    openDialog.config.windowTitle = "Open Project";
+    openDialog.config.parentWindow = editor->GetMainWindow( ).GetWindow( );
+    openDialog.config.filters = {
+        { "Ursine3D Projects", { "*.ursineproj" } }
+    };
+
+    auto result = openDialog.Open( );
+
+    if (result)
+    {
+        Application::PostMainThread( [=] {
+            editor->LoadProject( result.selectedFiles[ 0 ].string( ) );
+        } );
+    }
 
 	return CefV8Value::CreateBool( true );
 }

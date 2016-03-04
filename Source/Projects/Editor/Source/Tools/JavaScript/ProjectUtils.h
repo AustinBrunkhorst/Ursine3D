@@ -32,3 +32,6 @@ JSFunction(ProjectMakeEditorResource);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectSetEmptyScene);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(ProjectOpenNew);

@@ -245,7 +245,7 @@ void Editor::loadPreferences(void)
         UAssert( fs::LoadAllText( kDefaultPreferencesFile, prefsJsonText ),
             "Unable to load default preferences."
         );
-}
+    }
 
     std::string prefsJsonError;
 
@@ -390,11 +390,22 @@ void Editor::initializeUI(void)
 
 ///////////////////////////////////////////////////////////////////////////////
        
-void Editor::initializeProject(const std::string &filename)
+void Editor::initializeProject(const std::string &fileName)
+{
+    fs::path projectFileName;
+
+    try
     {
+        projectFileName = fs::canonical( fileName );
+    }
+    catch (...)
+    {
+        UError( "Unable to resolve project file name." );
+    }
+
     std::string projectJsonText;
 
-    UAssert( fs::LoadAllText( filename, projectJsonText ),
+    UAssert( fs::LoadAllText( projectFileName.string( ), projectJsonText ),
         "Unable to open project file."
     );
 
@@ -408,15 +419,15 @@ void Editor::initializeProject(const std::string &filename)
 
     auto project = meta::Type::DeserializeJson<ProjectConfig>( projectJson );
 
-    project.rootDirectory = fs::path( filename ).parent_path( );
+    project.rootDirectory = projectFileName.parent_path( );
 
     m_project->initialize( project );
          
     auto &recentProjects = m_preferences.recentProjects;
 
     // add it as a recent project if it doesn't already exist
-    if (recentProjects.Find( filename ) == recentProjects.end( ))
-        recentProjects.Push( filename );
+    if (recentProjects.Find( projectFileName.string( ) ) == recentProjects.end( ))
+        recentProjects.Insert( recentProjects.begin( ), projectFileName.string( ) );
          
     auto &resourcePipeline = m_project->GetResourcePipeline( );
 
@@ -426,10 +437,10 @@ void Editor::initializeProject(const std::string &filename)
         .On( rp::RP_BUILD_COMPLETE, &Editor::onPipelinePreBuildComplete );
 
     resourcePipeline.Build( );
-    }
+}
 
 void Editor::exitSplashScreen(void)
-    {
+{
     auto window = m_mainWindow.m_window;
 
     // will be shown in onUILoaded( )
@@ -474,7 +485,7 @@ void Editor::onUILoaded(EVENT_HANDLER(ursine::UIView))
     {
         m_mainWindow.m_window->Show( true );
     } );
-    }
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 

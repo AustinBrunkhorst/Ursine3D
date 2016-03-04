@@ -33,6 +33,10 @@ class Extern {
         return untyped __js__( "ProjectSetEmptyScene()" );
     }
 
+    public static function ProjectOpenNew() {
+        return untyped __js__( "ProjectOpenNew()" );
+    }
+
     public static function SceneSaveWorld() {
         return untyped __js__( "SceneSaveWorld()" );
     }

@@ -1,22 +1,24 @@
 package ursine.editor.menus;
 
+import ursine.native.Extern;
+
 import ursine.controls.Notification;
 
 @menuIndex( 0 )
 class FileMenu extends MenuItemHandler {
     @mainMenuItem( "File/New World", false, true )
     static function doNewWorld() {
-        ursine.native.Extern.ProjectSetEmptyScene( );
+        Extern.ProjectSetEmptyScene( );
     }
 
     @mainMenuItem( "File/Save World", false, false )
     static function doSaveWorld() {
-        ursine.native.Extern.SceneSaveWorld( );
+        Extern.SceneSaveWorld( );
     }
 
     @mainMenuItem( "File/Save World As", false, false )
     static function doSaveWorldAs() {
-        ursine.native.Extern.SceneSaveWorldAs( );
+        Extern.SceneSaveWorldAs( );
     }
 
     @mainMenuItem( "File/Save Project", true, false )
@@ -28,5 +30,10 @@ class FileMenu extends MenuItemHandler {
         );
 
         notification.show( );
+    }
+
+    @mainMenuItem( "File/Open Project", false, false )
+    static function doOpenProject() {
+        Extern.ProjectOpenNew( );
     }
 }

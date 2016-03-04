@@ -19,12 +19,16 @@
 #include "Project.h"
 
 #include "EditorCameraSystem.h"
+#include "EditorToolSystem.h"
 
 #include <FileDialog.h>
 
-#include <WorldConfigComponent.h>
 #include <SystemManager.h>
+
 #include <WorldSerializer.h>
+
+#include <WorldConfigComponent.h>
+#include <SelectedComponent.h>
 
 using namespace ursine;
 
@@ -135,11 +139,18 @@ JSFunction(SceneInstantiateArchetype)
 
         auto entity = world->CreateEntityFromArchetype( reference );
 
+        auto *tools = world->GetEntitySystem<EditorToolSystem>( );
+
+        if (tools)
+            tools->ClearSelectedEntities( );
+
         auto *cameraSystem = world->GetEntitySystem<EditorCameraSystem>( );
 
-        // move to focus location
+        // move it to focus
         if (cameraSystem)
             entity->GetTransform( )->SetWorldPosition( cameraSystem->GetEditorFocusPosition( ) );
+
+        entity->AddComponent<ecs::Selected>( );
 
         auto resource = project->GetResourcePipeline( ).GetItem( guid );
 
