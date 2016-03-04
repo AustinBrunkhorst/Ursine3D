@@ -531,6 +531,13 @@ void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursi
         if (!crit)
             objHit->GetTransform( )->AddChild( e->GetTransform( ) );
     }
+	else if ( objHit->GetComponent<Health>( ) )
+	{
+		objHit->GetComponent< Health >( )->DealDamage(collisionPoint, damage, crit );
+
+		if (!crit)
+			objHit->GetTransform( )->AddChild( e->GetTransform( ) );
+	}
 
 
     CreateTrail(weapon, collisionPoint);

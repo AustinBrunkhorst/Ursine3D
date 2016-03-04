@@ -3,365 +3,13 @@
 {
 "children": [], 
 "components": {
-"AnimateOnSegment": {
-".uid": 6, 
-"changeOnThisSegment": 8, 
-"whenGreaterThan": false
-}, 
-"BoxCollider": {
-".uid": 7, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 8, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 2.4000000953674316, 
-"ease": 0, 
-"position": {
-"x": 100.20024108886719, 
-"y": 48.436347961425781, 
-"z": -67.378303527832031
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}, {
-"delta": 3.2999999523162842, 
-"ease": 0, 
-"position": {
-"x": 100.19995880126953, 
-"y": 48.436206817626953, 
-"z": 70.662254333496094
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}, {
-"delta": 2.4000000953674316, 
-"ease": 0, 
-"position": {
-"x": 100.20035552978516, 
-"y": 48.436408996582031, 
-"z": -3
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": true, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Health": {
-".uid": 9, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 20, 
-"SpawnOnDeath": true, 
-"deleteOnZeroHealth": true
-}, 
-"Model3D": {
-".uid": 10, 
-"active": false, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cylinder", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Rigidbody": {
-".uid": 11, 
-"bodyFlag": 1, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"enableContinuousCollisionDetection": false, 
-"freezeXRotation": false, 
-"freezeYRotation": false, 
-"freezeZRotation": false, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
-}, 
-"mass": 0, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"sleepToggle": true
-}, 
-"Transform": {
-".uid": 5, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"translation": {
-"x": 100.20024108886719, 
-"y": 48.436347961425781, 
-"z": -67.378303527832031
-}
-}
-}, 
-"name": "DummyTargetRunny2"
-}, {
-"children": [], 
-"components": {
-"AnimateOnSegment": {
-".uid": 13, 
-"changeOnThisSegment": 8, 
-"whenGreaterThan": false
-}, 
-"BoxCollider": {
-".uid": 14, 
-"dimensions": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 15, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 102.60926818847656, 
-"y": 48.435764312744141, 
-"z": 77.380752563476563
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 71.050079345703125, 
-"y": 48.436191558837891, 
-"z": -6.7866816520690918
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 98.237648010253906, 
-"y": 48.436088562011719, 
-"z": -89.893218994140625
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 119.77227020263672, 
-"y": 48.435886383056641, 
-"z": 2.6265020370483398
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": true, 
-"playOnAwake": false, 
-"smoothPath": true
-}, 
-"Health": {
-".uid": 16, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 20, 
-"SpawnOnDeath": true, 
-"deleteOnZeroHealth": true
-}, 
-"Model3D": {
-".uid": 17, 
-"active": false, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cylinder", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Rigidbody": {
-".uid": 18, 
-"bodyFlag": 1, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"enableContinuousCollisionDetection": false, 
-"freezeXRotation": false, 
-"freezeYRotation": false, 
-"freezeZRotation": false, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
-}, 
-"mass": 0, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"sleepToggle": true
-}, 
-"Transform": {
-".uid": 12, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"translation": {
-"x": 102.60926818847656, 
-"y": 48.435764312744141, 
-"z": 77.380752563476563
-}
-}
-}, 
-"name": "DummyTargetRunny"
-}, {
-"children": [], 
-"components": {
 "PlayerSpawnPoint": {
-".uid": 20, 
+".uid": 6, 
 "playerArchetype": "Player1", 
 "spawnSegment": 76
 }, 
 "Transform": {
-".uid": 19, 
+".uid": 5, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -385,12 +33,12 @@
 "children": [], 
 "components": {
 "PlayerSpawnPoint": {
-".uid": 22, 
+".uid": 8, 
 "playerArchetype": "Player2", 
 "spawnSegment": 76
 }, 
 "Transform": {
-".uid": 21, 
+".uid": 7, 
 "rotation": {
 "w": -4.3711388286737929e-08, 
 "x": 0, 
@@ -416,7 +64,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 25, 
+".uid": 11, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -426,7 +74,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 26, 
+".uid": 12, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -434,7 +82,7 @@
 }
 }, 
 "Model3D": {
-".uid": 27, 
+".uid": 13, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -452,7 +100,7 @@
 "specularPower": 165
 }, 
 "Transform": {
-".uid": 24, 
+".uid": 10, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -475,26 +123,85 @@
 }, {
 "children": [], 
 "components": {
+"EntityAnimator": {
+".uid": 15, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 16, 
+"keyFrames": [
+{
+"delta": 4, 
+"ease": 13, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": -460, 
+"y": -460, 
+"z": -460
+}, 
+"scaleKey": true
+}, {
+"delta": 4, 
+"ease": 13, 
+"position": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": -520, 
+"y": -520, 
+"z": -520
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
 "Model3D": {
-".uid": 29, 
+".uid": 16, 
 "active": true, 
-"castsShadows": false, 
+"castsShadows": true, 
 "color": {
 "a": 1, 
 "b": 1, 
 "g": 1, 
 "r": 1
 }, 
-"emissive": 3, 
+"emissive": 0, 
 "materialName": "Blank", 
 "meshIndex": -1, 
 "modelName": "HiRezSphere", 
 "renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
+"specularIntensity": 1, 
+"specularPower": 1
 }, 
 "Transform": {
-".uid": 28, 
+".uid": 14, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -502,9 +209,9 @@
 "z": 0
 }, 
 "scale": {
-"x": -500, 
-"y": -500, 
-"z": -500
+"x": -505.94393920898438, 
+"y": -505.94393920898438, 
+"z": -505.94393920898438
 }, 
 "translation": {
 "x": 0, 
@@ -517,163 +224,99 @@
 }, {
 "children": [], 
 "components": {
-"Light": {
-".uid": 31, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
+"EntityAnimator": {
+".uid": 18, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": -443.67086791992188, 
+"y": 146.94096374511719, 
+"z": -681.73333740234375
 }, 
-"intensity": 1, 
-"radius": 1, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 30, 
+"positionKey": true, 
 "rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
 }, 
+"rotationKey": true, 
 "scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
 "z": 1
 }, 
-"translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
-}
-}
-}, 
-"name": "Directional Light"
+"scaleKey": true
 }, {
-"children": [], 
-"components": {
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": 658.4595947265625, 
+"y": 146.93952941894531, 
+"z": 420.399169921875
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
 "Light": {
-".uid": 36, 
+".uid": 19, 
 "color": {
 "a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
+"b": 0.1953125, 
+"g": 0.0030517578125, 
+"r": 0.013566017150878906
 }, 
-"intensity": 1, 
-"radius": 1, 
+"intensity": 2, 
+"radius": 300, 
 "renderMask": 0, 
 "spotlightAngles": {
-"x": 15, 
-"y": 30
+"x": 45, 
+"y": 90
 }, 
 "type": 0
 }, 
 "Transform": {
-".uid": 35, 
+".uid": 17, 
 "rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": 0
+"w": 0.59622204303741455, 
+"x": 0.55586743354797363, 
+"y": 0.52860385179519653, 
+"z": -0.23685210943222046
 }, 
 "scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
 "z": 1
 }, 
 "translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
-}
-}
-}, 
-"name": "Directional Light (1)"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 41, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"intensity": 1, 
-"radius": 1, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 40, 
-"rotation": {
-"w": -4.3711388286737929e-08, 
-"x": 0, 
-"y": 1, 
-"z": 0
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
-}
-}
-}, 
-"name": "Directional Light  (2)"
-}, {
-"children": [], 
-"components": {
-"Light": {
-".uid": 46, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"intensity": 1, 
-"radius": 1, 
-"renderMask": 0, 
-"spotlightAngles": {
-"x": 15, 
-"y": 30
-}, 
-"type": 0
-}, 
-"Transform": {
-".uid": 45, 
-"rotation": {
-"w": -0.70710676908493042, 
-"x": 0, 
-"y": 0.70710676908493042, 
-"z": -6.1817239327410789e-08
-}, 
-"scale": {
-"x": 0.58947008848190308, 
-"y": 0.58947008848190308, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 35.355335235595703, 
-"z": 0
+"x": 351.43960571289063, 
+"y": 146.93992614746094, 
+"z": 113.37860107421875
 }
 }
 }, 
@@ -681,49 +324,902 @@
 }, {
 "children": [], 
 "components": {
+"EntityAnimator": {
+".uid": 24, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -573.79315185546875, 
+"y": 64.723617553710938, 
+"z": -97.865875244140625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -480.72164916992188, 
+"y": 64.723220825195313, 
+"z": -409.53289794921875
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -257.36959838867188, 
+"y": 64.722702026367188, 
+"z": -530.36962890625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 197.97175598144531, 
+"y": 64.722412109375, 
+"z": -530.3673095703125
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 514.8900146484375, 
+"y": 64.721878051757813, 
+"z": -303.17782592773438
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 599.05584716796875, 
+"y": 64.721603393554688, 
+"z": 5.7035655975341797
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 399.2794189453125, 
+"y": 64.7210693359375, 
+"z": -472.13357543945313
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 34.157451629638672, 
+"y": 64.720703125, 
+"z": -578.470458984375
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -362.07464599609375, 
+"y": 64.719993591308594, 
+"z": -477.57958984375
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -519.32391357421875, 
+"y": 64.71978759765625, 
+"z": -400.78311157226563
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
 "Light": {
-".uid": 51, 
+".uid": 25, 
 "color": {
 "a": 1, 
 "b": 1, 
 "g": 1, 
 "r": 1
 }, 
-"intensity": 1, 
-"radius": 150.26731872558594, 
+"intensity": 3, 
+"radius": 200, 
 "renderMask": 0, 
 "spotlightAngles": {
-"x": 15, 
-"y": 50
+"x": 45, 
+"y": 90
 }, 
 "type": 1
 }, 
 "Transform": {
-".uid": 50, 
+".uid": 23, 
 "rotation": {
-"w": 0.65427792072296143, 
-"x": 0.75625395774841309, 
-"y": 0, 
-"z": 0
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
 }, 
 "scale": {
-"x": 154.15058898925781, 
-"y": 154.15058898925781, 
-"z": 150.26731872558594
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
 }, 
 "translation": {
-"x": 0, 
-"y": 43.425643920898438, 
-"z": 9.0050439834594727
+"x": 535.45745849609375, 
+"y": 64.721839904785156, 
+"z": -269.23590087890625
 }
 }
 }, 
-"name": "Spot Light"
+"name": "white1"
+}, {
+"children": [], 
+"components": {
+"EntityAnimator": {
+".uid": 30, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -573.7958984375, 
+"y": 64.723953247070313, 
+"z": 2.1241896152496338
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -526.39404296875, 
+"y": 266.16009521484375, 
+"z": 2.1241829395294189
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -256.86334228515625, 
+"y": 524.7054443359375, 
+"z": 2.1241695880889893
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 244.76202392578125, 
+"y": 524.70269775390625, 
+"z": 2.1241588592529297
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 473.63980102539063, 
+"y": 337.56329345703125, 
+"z": 2.1241507530212402
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 559.09619140625, 
+"y": 132.38059997558594, 
+"z": 2.1241440773010254
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 421.7928466796875, 
+"y": 399.0369873046875, 
+"z": 2.1241312026977539
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 4.7528648376464844, 
+"y": 605.546630859375, 
+"z": 2.1241159439086914
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -492.12362670898438, 
+"y": 376.38668823242188, 
+"z": 2.1240994930267334
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
+"Light": {
+".uid": 31, 
+"color": {
+"a": 1, 
+"b": 0.734375, 
+"g": 0, 
+"r": 0.091796875
+}, 
+"intensity": 5, 
+"radius": 200, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 45, 
+"y": 90
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 29, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"translation": {
+"x": 487.94732666015625, 
+"y": 317.32080078125, 
+"z": 2.1241500377655029
+}
+}
+}, 
+"name": "bue"
+}, {
+"children": [], 
+"components": {
+"EntityAnimator": {
+".uid": 36, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -573.7950439453125, 
+"y": 64.723846435546875, 
+"z": 103.43495941162109
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -541.5604248046875, 
+"y": 64.723541259765625, 
+"z": 304.17208862304688
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -420.07186889648438, 
+"y": 64.723258972167969, 
+"z": 488.57534790039063
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -237.86619567871094, 
+"y": 64.722946166992188, 
+"z": 536.27838134765625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -3.3246817588806152, 
+"y": 64.722450256347656, 
+"z": 580.75494384765625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 202.86058044433594, 
+"y": 64.722160339355469, 
+"z": 525.8770751953125
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 374.08184814453125, 
+"y": 64.721916198730469, 
+"z": 418.1080322265625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 525.636962890625, 
+"y": 64.721389770507813, 
+"z": 201.16184997558594
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 591.34893798828125, 
+"y": 64.7210693359375, 
+"z": 62.248321533203125
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 536.74151611328125, 
+"y": 64.720802307128906, 
+"z": 249.54417419433594
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 333.8638916015625, 
+"y": 64.720436096191406, 
+"z": 516.396728515625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 34.588768005371094, 
+"y": 64.720146179199219, 
+"z": 560.37847900390625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -304.11651611328125, 
+"y": 64.71978759765625, 
+"z": 452.96676635742188
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": -515.78240966796875, 
+"y": 64.719482421875, 
+"z": 205.312255859375
+}, 
+"positionKey": true, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": true, 
+"smoothPath": true
+}, 
+"Light": {
+".uid": 37, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 3, 
+"radius": 200, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 45, 
+"y": 90
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 35, 
+"rotation": {
+"w": -0.48573106527328491, 
+"x": -0.57761263847351074, 
+"y": 0.42184257507324219, 
+"z": -0.5024644136428833
+}, 
+"scale": {
+"x": 2.1998980045318604, 
+"y": 2.1998980045318604, 
+"z": 1
+}, 
+"translation": {
+"x": 305.088623046875, 
+"y": 64.72039794921875, 
+"z": 531.883544921875
+}
+}
+}, 
+"name": "white1 (1)"
 }
 ], 
 "components": {
 "Transform": {
-".uid": 23, 
+".uid": 9, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -743,6 +1239,342 @@
 }
 }, 
 "name": "TutorialRoom Archetype"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 41, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 42, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 43, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 44, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 45, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 46, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 47, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 48, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 49, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 50, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 51, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 52, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 53, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Animation List"
+}, {
+"children": [], 
+"components": {
+"Transform": {
+".uid": 54, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Blending Tree"
 }, {
 "children": [], 
 "components": {
@@ -794,344 +1626,8 @@
 }, {
 "children": [], 
 "components": {
-"Transform": {
-".uid": 57, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 58, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 59, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 60, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 61, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 62, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 63, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 64, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 65, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 66, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 67, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 68, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 69, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Animation List"
-}, {
-"children": [], 
-"components": {
-"Transform": {
-".uid": 70, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Blending Tree"
-}, {
-"children": [], 
-"components": {
 "BoxCollider": {
-".uid": 72, 
+".uid": 58, 
 "dimensions": {
 "x": 1, 
 "y": 5, 
@@ -1139,7 +1635,7 @@
 }
 }, 
 "Ghost": {
-".uid": 73, 
+".uid": 59, 
 "disableContactResponse": true, 
 "enableContactCallback": true, 
 "offset": {
@@ -1149,14 +1645,14 @@
 }
 }, 
 "SegmentChangeTrigger": {
-".uid": 74, 
+".uid": 60, 
 "changeNewSegment": 2, 
 "changeOnThisSegment": 1, 
 "triggerPlayer1": false, 
 "triggerPlayer2": false
 }, 
 "Transform": {
-".uid": 71, 
+".uid": 57, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -1182,7 +1678,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 79, 
+".uid": 65, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -1192,7 +1688,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 80, 
+".uid": 66, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -1200,7 +1696,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 81, 
+".uid": 67, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -1259,7 +1755,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 82, 
+".uid": 68, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -1277,7 +1773,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 78, 
+".uid": 64, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -1301,7 +1797,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 84, 
+".uid": 70, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -1311,7 +1807,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 85, 
+".uid": 71, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -1319,7 +1815,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 86, 
+".uid": 72, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -1378,7 +1874,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 87, 
+".uid": 73, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -1396,7 +1892,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 83, 
+".uid": 69, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -1420,7 +1916,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 89, 
+".uid": 75, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -1430,7 +1926,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 90, 
+".uid": 76, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -1438,7 +1934,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 91, 
+".uid": 77, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -1497,7 +1993,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 92, 
+".uid": 78, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -1515,7 +2011,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 88, 
+".uid": 74, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -1539,7 +2035,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 94, 
+".uid": 80, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -1549,7 +2045,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 95, 
+".uid": 81, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -1557,7 +2053,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 96, 
+".uid": 82, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -1616,7 +2112,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 97, 
+".uid": 83, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -1634,7 +2130,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 93, 
+".uid": 79, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -1658,7 +2154,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 99, 
+".uid": 85, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -1668,7 +2164,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 100, 
+".uid": 86, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -1676,7 +2172,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 101, 
+".uid": 87, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -1757,7 +2253,7 @@
 "smoothPath": false
 }, 
 "Model3D": {
-".uid": 102, 
+".uid": 88, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -1775,7 +2271,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 98, 
+".uid": 84, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -1799,7 +2295,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 104, 
+".uid": 90, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -1809,7 +2305,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 105, 
+".uid": 91, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -1817,7 +2313,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 106, 
+".uid": 92, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -1898,7 +2394,7 @@
 "smoothPath": false
 }, 
 "Model3D": {
-".uid": 107, 
+".uid": 93, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -1916,7 +2412,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 103, 
+".uid": 89, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -1940,15 +2436,15 @@
 ], 
 "components": {
 "AnimateOnSegment": {
-".uid": 76, 
+".uid": 62, 
 "changeOnThisSegment": 1, 
 "whenGreaterThan": false
 }, 
 "EntityAnimatorGroup": {
-".uid": 77
+".uid": 63
 }, 
 "Transform": {
-".uid": 75, 
+".uid": 61, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -1974,7 +2470,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 112, 
+".uid": 98, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -1984,7 +2480,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 113, 
+".uid": 99, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -1992,7 +2488,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 114, 
+".uid": 100, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -2051,7 +2547,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 115, 
+".uid": 101, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -2069,7 +2565,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 111, 
+".uid": 97, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2093,7 +2589,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 117, 
+".uid": 103, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -2103,7 +2599,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 118, 
+".uid": 104, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -2111,7 +2607,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 119, 
+".uid": 105, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -2170,7 +2666,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 120, 
+".uid": 106, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -2188,7 +2684,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 116, 
+".uid": 102, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2212,7 +2708,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 122, 
+".uid": 108, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -2222,7 +2718,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 123, 
+".uid": 109, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -2230,7 +2726,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 124, 
+".uid": 110, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -2289,7 +2785,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 125, 
+".uid": 111, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -2307,7 +2803,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 121, 
+".uid": 107, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2331,7 +2827,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 127, 
+".uid": 113, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -2341,7 +2837,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 128, 
+".uid": 114, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -2349,7 +2845,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 129, 
+".uid": 115, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -2408,7 +2904,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 130, 
+".uid": 116, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -2426,7 +2922,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 126, 
+".uid": 112, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2450,7 +2946,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 132, 
+".uid": 118, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -2460,7 +2956,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 133, 
+".uid": 119, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -2468,7 +2964,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 134, 
+".uid": 120, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -2527,7 +3023,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 135, 
+".uid": 121, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -2545,7 +3041,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 131, 
+".uid": 117, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2569,7 +3065,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 137, 
+".uid": 123, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -2579,7 +3075,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 138, 
+".uid": 124, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -2587,7 +3083,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 139, 
+".uid": 125, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -2646,7 +3142,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 140, 
+".uid": 126, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -2664,7 +3160,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 136, 
+".uid": 122, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2688,7 +3184,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 142, 
+".uid": 128, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -2698,7 +3194,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 143, 
+".uid": 129, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -2706,7 +3202,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 144, 
+".uid": 130, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -2765,7 +3261,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 145, 
+".uid": 131, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -2783,7 +3279,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 141, 
+".uid": 127, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2807,7 +3303,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 147, 
+".uid": 133, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -2817,7 +3313,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 148, 
+".uid": 134, 
 "dimensions": {
 "x": 1, 
 "y": 10, 
@@ -2825,7 +3321,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 149, 
+".uid": 135, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -2884,7 +3380,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 150, 
+".uid": 136, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -2902,7 +3398,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 146, 
+".uid": 132, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2926,15 +3422,15 @@
 ], 
 "components": {
 "AnimateOnSegment": {
-".uid": 109, 
+".uid": 95, 
 "changeOnThisSegment": 2, 
 "whenGreaterThan": false
 }, 
 "EntityAnimatorGroup": {
-".uid": 110
+".uid": 96
 }, 
 "Transform": {
-".uid": 108, 
+".uid": 94, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -2955,12 +3451,15 @@
 }, 
 "name": "Hallway"
 }, {
-"children": [
-{
 "children": [], 
 "components": {
+"AnimateOnSegment": {
+".uid": 138, 
+"changeOnThisSegment": 12, 
+"whenGreaterThan": false
+}, 
 "Body": {
-".uid": 155, 
+".uid": 139, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -2970,7 +3469,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 156, 
+".uid": 140, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -2978,7 +3477,132 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 157, 
+".uid": 141, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 310.75787353515625, 
+"y": 24, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}, {
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 310.75787353515625, 
+"y": -50, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.70928430557250977, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 200
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Model3D": {
+".uid": 142, 
+"active": false, 
+"castsShadows": true, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cube", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Transform": {
+".uid": 137, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 200, 
+"z": 101.09949493408203
+}, 
+"translation": {
+"x": 310.75787353515625, 
+"y": 24, 
+"z": 0
+}
+}, 
+"VisibilityTrigger": {
+".uid": 143, 
+"changeOnThisSegment": 3
+}
+}, 
+"name": "SecretDoor"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Body": {
+".uid": 148, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"BoxCollider": {
+".uid": 149, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 150, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -3037,7 +3661,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 158, 
+".uid": 151, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -3055,7 +3679,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 154, 
+".uid": 147, 
 "rotation": {
 "w": 0.70928430557250977, 
 "x": 0, 
@@ -3079,7 +3703,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 160, 
+".uid": 153, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -3089,7 +3713,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 161, 
+".uid": 154, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3097,7 +3721,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 162, 
+".uid": 155, 
 "animationClipName": "", 
 "delta": 2.5, 
 "ease": 0, 
@@ -3156,7 +3780,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 163, 
+".uid": 156, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -3174,7 +3798,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 159, 
+".uid": 152, 
 "rotation": {
 "w": 0.70928430557250977, 
 "x": 0, 
@@ -3198,7 +3822,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 165, 
+".uid": 158, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -3208,7 +3832,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 166, 
+".uid": 159, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3216,7 +3840,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 167, 
+".uid": 160, 
 "animationClipName": "", 
 "delta": 1.5, 
 "ease": 0, 
@@ -3275,7 +3899,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 168, 
+".uid": 161, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -3293,7 +3917,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 164, 
+".uid": 157, 
 "rotation": {
 "w": 0.70928430557250977, 
 "x": 0, 
@@ -3317,7 +3941,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 170, 
+".uid": 163, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -3327,7 +3951,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 171, 
+".uid": 164, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3335,7 +3959,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 172, 
+".uid": 165, 
 "animationClipName": "", 
 "delta": 2, 
 "ease": 0, 
@@ -3394,7 +4018,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 173, 
+".uid": 166, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -3412,7 +4036,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 169, 
+".uid": 162, 
 "rotation": {
 "w": 0.70928430557250977, 
 "x": 0, 
@@ -3436,7 +4060,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 175, 
+".uid": 168, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -3446,7 +4070,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 176, 
+".uid": 169, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3454,7 +4078,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 177, 
+".uid": 170, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -3513,7 +4137,7 @@
 "smoothPath": false
 }, 
 "Model3D": {
-".uid": 178, 
+".uid": 171, 
 "active": true, 
 "castsShadows": true, 
 "color": {
@@ -3531,7 +4155,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 174, 
+".uid": 167, 
 "rotation": {
 "w": 0.70928430557250977, 
 "x": 0, 
@@ -3555,7 +4179,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 180, 
+".uid": 173, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -3565,7 +4189,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 181, 
+".uid": 174, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3573,7 +4197,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 182, 
+".uid": 175, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -3632,7 +4256,7 @@
 "smoothPath": false
 }, 
 "Model3D": {
-".uid": 183, 
+".uid": 176, 
 "active": true, 
 "castsShadows": true, 
 "color": {
@@ -3650,7 +4274,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 179, 
+".uid": 172, 
 "rotation": {
 "w": 0.70928430557250977, 
 "x": 0, 
@@ -3669,20 +4293,20 @@
 }
 }
 }, 
-"name": "Invis wall  (2)"
+"name": "Invis wall   (3)"
 }
 ], 
 "components": {
 "AnimateOnSegment": {
-".uid": 152, 
+".uid": 145, 
 "changeOnThisSegment": 3, 
 "whenGreaterThan": false
 }, 
 "EntityAnimatorGroup": {
-".uid": 153
+".uid": 146
 }, 
 "Transform": {
-".uid": 151, 
+".uid": 144, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -3708,7 +4332,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 188, 
+".uid": 181, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -3718,7 +4342,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 189, 
+".uid": 182, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3726,7 +4350,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 190, 
+".uid": 183, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -3785,7 +4409,7 @@
 "smoothPath": false
 }, 
 "Model3D": {
-".uid": 191, 
+".uid": 184, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -3803,7 +4427,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 187, 
+".uid": 180, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -3827,7 +4451,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 193, 
+".uid": 186, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -3837,7 +4461,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 194, 
+".uid": 187, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3845,7 +4469,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 195, 
+".uid": 188, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -3904,7 +4528,7 @@
 "smoothPath": false
 }, 
 "Model3D": {
-".uid": 196, 
+".uid": 189, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -3922,7 +4546,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 192, 
+".uid": 185, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -3946,7 +4570,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 198, 
+".uid": 191, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -3956,7 +4580,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 199, 
+".uid": 192, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -3964,7 +4588,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 200, 
+".uid": 193, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -4023,7 +4647,7 @@
 "smoothPath": false
 }, 
 "Model3D": {
-".uid": 201, 
+".uid": 194, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -4041,7 +4665,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 197, 
+".uid": 190, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -4065,7 +4689,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 203, 
+".uid": 196, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -4075,7 +4699,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 204, 
+".uid": 197, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -4083,7 +4707,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 205, 
+".uid": 198, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -4142,7 +4766,7 @@
 "smoothPath": false
 }, 
 "Model3D": {
-".uid": 206, 
+".uid": 199, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -4160,7 +4784,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 202, 
+".uid": 195, 
 "rotation": {
 "w": 0.70710676908493042, 
 "x": 0, 
@@ -4184,7 +4808,7 @@
 "children": [], 
 "components": {
 "Body": {
-".uid": 208, 
+".uid": 201, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
 "offset": {
@@ -4194,7 +4818,7 @@
 }
 }, 
 "BoxCollider": {
-".uid": 209, 
+".uid": 202, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -4202,7 +4826,7 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 210, 
+".uid": 203, 
 "animationClipName": "", 
 "delta": 2.5, 
 "ease": 0, 
@@ -4261,7 +4885,7 @@
 "smoothPath": true
 }, 
 "Model3D": {
-".uid": 211, 
+".uid": 204, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -4279,7 +4903,7 @@
 "specularPower": 0
 }, 
 "Transform": {
-".uid": 207, 
+".uid": 200, 
 "rotation": {
 "w": 0.70928430557250977, 
 "x": 0, 
@@ -4303,15 +4927,15 @@
 ], 
 "components": {
 "AnimateOnSegment": {
-".uid": 185, 
+".uid": 178, 
 "changeOnThisSegment": 4, 
 "whenGreaterThan": false
 }, 
 "EntityAnimatorGroup": {
-".uid": 186
+".uid": 179
 }, 
 "Transform": {
-".uid": 184, 
+".uid": 177, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -4332,129 +4956,57 @@
 }, 
 "name": "ShootingRangeAnimation"
 }, {
+"children": [
+{
+"children": [
+{
 "children": [], 
 "components": {
-"AnimateOnSegment": {
-".uid": 213, 
-"changeOnThisSegment": 4, 
-"whenGreaterThan": false
+"ParticleEmitter": {
+".uid": 211, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
 }, 
-"BoxCollider": {
-".uid": 214, 
-"dimensions": {
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
 "x": 1, 
-"y": 1, 
+"y": 0, 
 "z": 1
 }
 }, 
-"EntityAnimator": {
-".uid": 215, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 100.20036315917969, 
-"y": -20, 
-"z": 1.9420790672302246
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 100.20036315917969, 
-"y": 48.436412811279297, 
-"z": 1.9420790672302246
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Health": {
-".uid": 216, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 30, 
-"SpawnOnDeath": true, 
-"deleteOnZeroHealth": true
-}, 
-"Model3D": {
-".uid": 217, 
-"active": true, 
-"castsShadows": false, 
+"ParticleSystem": {
+".uid": 212, 
 "color": {
 "a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
 }, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cylinder", 
 "renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Rigidbody": {
-".uid": 218, 
-"bodyFlag": 1, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"enableContinuousCollisionDetection": false, 
-"freezeXRotation": false, 
-"freezeYRotation": false, 
-"freezeZRotation": false, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
-}, 
-"mass": 0, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"sleepToggle": true
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 212, 
+".uid": 210, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -4462,139 +5014,197 @@
 "z": 0
 }, 
 "scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"translation": {
-"x": 100.20036315917969, 
-"y": -20, 
-"z": 1.9420790672302246
-}
-}
-}, 
-"name": "DummyTarget1"
-}, {
-"children": [], 
-"components": {
-"AnimateOnSegment": {
-".uid": 220, 
-"changeOnThisSegment": 4, 
-"whenGreaterThan": false
-}, 
-"BoxCollider": {
-".uid": 221, 
-"dimensions": {
 "x": 1, 
 "y": 1, 
 "z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
 }
 }, 
-"EntityAnimator": {
-".uid": 222, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 80.029510498046875, 
-"y": -20, 
-"z": -23.971530914306641
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
+"name": "Down"
 }, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 80.029510498046875, 
-"y": 48.436412811279297, 
-"z": -23.971530914306641
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 214, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
 "y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
 "z": 0
 }, 
-"rotationKey": true, 
-"scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"scaleKey": true
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
 }
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
 }, 
-"Health": {
-".uid": 223, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 30, 
-"SpawnOnDeath": true, 
-"deleteOnZeroHealth": true
-}, 
-"Model3D": {
-".uid": 224, 
-"active": true, 
-"castsShadows": false, 
+"ParticleSystem": {
+".uid": 215, 
 "color": {
 "a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
+"b": 0.88671875, 
+"g": 0.0588836669921875, 
+"r": 0.62962710857391357
 }, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cylinder", 
 "renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
 }, 
-"Rigidbody": {
-".uid": 225, 
-"bodyFlag": 1, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"enableContinuousCollisionDetection": false, 
-"freezeXRotation": false, 
-"freezeYRotation": false, 
-"freezeZRotation": false, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
-}, 
-"mass": 0, 
-"offset": {
+"Transform": {
+".uid": 213, 
+"rotation": {
+"w": 1, 
 "x": 0, 
 "y": 0, 
 "z": 0
 }, 
-"sleepToggle": true
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 217, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 218, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 216, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 220, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 221, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
 }, 
 "Transform": {
 ".uid": 219, 
@@ -4605,36 +5215,23 @@
 "z": 0
 }, 
 "scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
-}, 
-"translation": {
-"x": 80.029510498046875, 
-"y": -20, 
-"z": -23.971530914306641
-}
-}
-}, 
-"name": "DummyTarget2"
-}, {
-"children": [], 
-"components": {
-"AnimateOnSegment": {
-".uid": 227, 
-"changeOnThisSegment": 4, 
-"whenGreaterThan": false
-}, 
-"BoxCollider": {
-".uid": 228, 
-"dimensions": {
 "x": 1, 
 "y": 1, 
 "z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -9.9058456420898438, 
+"z": 0
+}
 }
 }, 
+"name": "UpRing"
+}
+], 
+"components": {
 "EntityAnimator": {
-".uid": 229, 
+".uid": 209, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -4643,9 +5240,9 @@
 "delta": 1, 
 "ease": 0, 
 "position": {
-"x": 80.804466247558594, 
-"y": -20, 
-"z": 26.263629913330078
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": -23.693214416503906
 }, 
 "positionKey": true, 
 "rotation": {
@@ -4656,18 +5253,40 @@
 }, 
 "rotationKey": true, 
 "scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": 27.244169235229492, 
+"z": -23.693214416503906
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
 }, 
 "scaleKey": true
 }, {
 "delta": 2, 
 "ease": 0, 
 "position": {
-"x": 80.804466247558594, 
-"y": 48.436412811279297, 
-"z": 26.263629913330078
+"x": 80.094436645507813, 
+"y": -20, 
+"z": -23.693214416503906
 }, 
 "positionKey": true, 
 "rotation": {
@@ -4678,9 +5297,9 @@
 }, 
 "rotationKey": true, 
 "scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
+"x": 1, 
+"y": 1, 
+"z": 1
 }, 
 "scaleKey": true
 }
@@ -4692,55 +5311,8 @@
 "playOnAwake": false, 
 "smoothPath": false
 }, 
-"Health": {
-".uid": 230, 
-"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
-"EntityHealth": 30, 
-"SpawnOnDeath": true, 
-"deleteOnZeroHealth": true
-}, 
-"Model3D": {
-".uid": 231, 
-"active": true, 
-"castsShadows": false, 
-"color": {
-"a": 1, 
-"b": 1, 
-"g": 1, 
-"r": 1
-}, 
-"emissive": 0.44999998807907104, 
-"materialName": "Blank", 
-"meshIndex": -1, 
-"modelName": "Cylinder", 
-"renderMask": 0, 
-"specularIntensity": 0, 
-"specularPower": 0
-}, 
-"Rigidbody": {
-".uid": 232, 
-"bodyFlag": 1, 
-"disableContactResponse": false, 
-"enableContactCallback": false, 
-"enableContinuousCollisionDetection": false, 
-"freezeXRotation": false, 
-"freezeYRotation": false, 
-"freezeZRotation": false, 
-"gravity": {
-"x": 0, 
-"y": -10, 
-"z": 0
-}, 
-"mass": 0, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"sleepToggle": true
-}, 
 "Transform": {
-".uid": 226, 
+".uid": 208, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -4748,21 +5320,394 @@
 "z": 0
 }, 
 "scale": {
-"x": 6, 
-"y": 12, 
-"z": 6
+"x": 1, 
+"y": 1, 
+"z": 1
 }, 
 "translation": {
-"x": 80.804466247558594, 
-"y": -20, 
-"z": 26.263629913330078
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": -23.693214416503906
 }
 }
 }, 
-"name": "DummyTarget3"
+"name": "FX_SimulationStart Archetype"
 }, {
 "children": [
 {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 225, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 226, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 224, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105213165283203, 
+"z": 0
+}
+}
+}, 
+"name": "Down"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 228, 
+"emitCount": 0, 
+"emitRate": 1000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 229, 
+"color": {
+"a": 1, 
+"b": 0.8828125, 
+"g": 0.0413818359375, 
+"r": 0.62149864435195923
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 227, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -36.5587158203125, 
+"z": 0
+}
+}
+}, 
+"name": "Up"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 231, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": -40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 232, 
+"color": {
+"a": 1, 
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 230, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 41.105209350585938, 
+"z": 0
+}
+}
+}, 
+"name": "DownRing"
+}, {
+"children": [], 
+"components": {
+"ParticleEmitter": {
+".uid": 234, 
+"emitCount": 1000, 
+"emitRate": 200000, 
+"emitRateVariance": 0, 
+"emitterSize": {
+"x": 10, 
+"y": 0, 
+"z": 10
+}, 
+"fill": 1, 
+"lifetime": 2, 
+"lifetimeVariance": 0, 
+"roll": 0, 
+"rollVariance": 57.2957763671875, 
+"rotation": 0, 
+"rotationVariance": 3.1399998664855957, 
+"size": 5, 
+"sizeVariance": 0, 
+"velocity": {
+"x": 0, 
+"y": 40, 
+"z": 0
+}, 
+"velocityVariance": {
+"x": 1, 
+"y": 0, 
+"z": 1
+}
+}, 
+"ParticleSystem": {
+".uid": 235, 
+"color": {
+"a": 1, 
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
+}, 
+"renderMask": 0, 
+"renderMode": 0, 
+"systemSpace": 0, 
+"texture": "Smoke1"
+}, 
+"Transform": {
+".uid": 233, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": -9.9058456420898438, 
+"z": 0
+}
+}
+}, 
+"name": "UpRing"
+}
+], 
+"components": {
+"EntityAnimator": {
+".uid": 223, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": 26.947725296020508
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 0, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": 27.244169235229492, 
+"z": 26.947725296020508
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.094436645507813, 
+"y": -20, 
+"z": 26.947725296020508
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 222, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 80.094436645507813, 
+"y": -47.244171142578125, 
+"z": 26.947725296020508
+}
+}
+}, 
+"name": "FX_SimulationStart Archetype (1)"
+}, {
 "children": [
 {
 "children": [], 
@@ -4868,9 +5813,9 @@
 ".uid": 243, 
 "color": {
 "a": 1, 
-"b": 0.88671875, 
-"g": 0.0588836669921875, 
-"r": 0.62962710857391357
+"b": 0.89453125, 
+"g": 0.034942626953125, 
+"r": 0.6275782585144043
 }, 
 "renderMask": 0, 
 "renderMode": 0, 
@@ -5045,9 +5990,9 @@
 "delta": 1, 
 "ease": 0, 
 "position": {
-"x": 80.094436645507813, 
+"x": 100.69409942626953, 
 "y": -47.244171142578125, 
-"z": -23.693214416503906
+"z": 2.8739039897918701
 }, 
 "positionKey": true, 
 "rotation": {
@@ -5067,9 +6012,9 @@
 "delta": 0, 
 "ease": 0, 
 "position": {
-"x": 80.094436645507813, 
+"x": 100.69409942626953, 
 "y": 27.244169235229492, 
-"z": -23.693214416503906
+"z": 2.8739039897918701
 }, 
 "positionKey": true, 
 "rotation": {
@@ -5089,9 +6034,9 @@
 "delta": 2, 
 "ease": 0, 
 "position": {
-"x": 80.094436645507813, 
+"x": 100.69409942626953, 
 "y": -20, 
-"z": -23.693214416503906
+"z": 2.8739039897918701
 }, 
 "positionKey": true, 
 "rotation": {
@@ -5130,63 +6075,26 @@
 "z": 1
 }, 
 "translation": {
-"x": 80.094436645507813, 
+"x": 100.69409942626953, 
 "y": -47.244171142578125, 
-"z": -23.693214416503906
+"z": 2.8739039897918701
 }
 }
 }, 
-"name": "FX_SimulationStart Archetype"
-}, {
-"children": [
-{
-"children": [], 
+"name": "FX_SimulationStart Archetype  (2)"
+}
+], 
 "components": {
-"ParticleEmitter": {
-".uid": 253, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
+"AnimateOnSegment": {
+".uid": 206, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
 }, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 254, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
+"EntityAnimatorGroup": {
+".uid": 207
 }, 
 "Transform": {
-".uid": 252, 
+".uid": 205, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -5200,13 +6108,17 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 41.105213165283203, 
+"y": 0, 
 "z": 0
 }
 }
 }, 
-"name": "Down"
+"name": "Wave1Animations"
 }, {
+"children": [
+{
+"children": [
+{
 "children": [], 
 "components": {
 "ParticleEmitter": {
@@ -5230,7 +6142,7 @@
 "sizeVariance": 0, 
 "velocity": {
 "x": 0, 
-"y": 40, 
+"y": -40, 
 "z": 0
 }, 
 "velocityVariance": {
@@ -5243,9 +6155,9 @@
 ".uid": 257, 
 "color": {
 "a": 1, 
-"b": 0.8828125, 
-"g": 0.0413818359375, 
-"r": 0.62149864435195923
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
 }, 
 "renderMask": 0, 
 "renderMode": 0, 
@@ -5267,19 +6179,19 @@
 }, 
 "translation": {
 "x": 0, 
-"y": -36.5587158203125, 
+"y": 41.105213165283203, 
 "z": 0
 }
 }
 }, 
-"name": "Up"
+"name": "Down"
 }, {
 "children": [], 
 "components": {
 "ParticleEmitter": {
 ".uid": 259, 
-"emitCount": 1000, 
-"emitRate": 200000, 
+"emitCount": 0, 
+"emitRate": 1000, 
 "emitRateVariance": 0, 
 "emitterSize": {
 "x": 10, 
@@ -5293,11 +6205,11 @@
 "rollVariance": 57.2957763671875, 
 "rotation": 0, 
 "rotationVariance": 3.1399998664855957, 
-"size": 5, 
+"size": 10, 
 "sizeVariance": 0, 
 "velocity": {
 "x": 0, 
-"y": -40, 
+"y": 40, 
 "z": 0
 }, 
 "velocityVariance": {
@@ -5310,9 +6222,9 @@
 ".uid": 260, 
 "color": {
 "a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
+"b": 0.54296875, 
+"g": 0.0190887451171875, 
+"r": 0.33341675996780396
 }, 
 "renderMask": 0, 
 "renderMode": 0, 
@@ -5334,12 +6246,12 @@
 }, 
 "translation": {
 "x": 0, 
-"y": 41.105209350585938, 
+"y": -36.5587158203125, 
 "z": 0
 }
 }
 }, 
-"name": "DownRing"
+"name": "Up"
 }, {
 "children": [], 
 "components": {
@@ -5364,7 +6276,7 @@
 "sizeVariance": 0, 
 "velocity": {
 "x": 0, 
-"y": 40, 
+"y": -40, 
 "z": 0
 }, 
 "velocityVariance": {
@@ -5377,9 +6289,9 @@
 ".uid": 263, 
 "color": {
 "a": 1, 
-"b": 0.890625, 
-"g": 0.2574462890625, 
-"r": 0.69275665283203125
+"b": 0.93359375, 
+"g": 0.74324524402618408, 
+"r": 0.4558563232421875
 }, 
 "renderMask": 0, 
 "renderMode": 0, 
@@ -5388,314 +6300,6 @@
 }, 
 "Transform": {
 ".uid": 261, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": -9.9058456420898438, 
-"z": 0
-}
-}
-}, 
-"name": "UpRing"
-}
-], 
-"components": {
-"EntityAnimator": {
-".uid": 251, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 0, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 0, 
-"position": {
-"x": 80.094436645507813, 
-"y": -47.244171142578125, 
-"z": 26.947725296020508
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 0, 
-"ease": 0, 
-"position": {
-"x": 80.094436645507813, 
-"y": 27.244169235229492, 
-"z": 26.947725296020508
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 80.094436645507813, 
-"y": -20, 
-"z": 26.947725296020508
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": false, 
-"smoothPath": false
-}, 
-"Transform": {
-".uid": 250, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 80.094436645507813, 
-"y": -47.244171142578125, 
-"z": 26.947725296020508
-}
-}
-}, 
-"name": "FX_SimulationStart Archetype (1)"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 267, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 268, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 266, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 41.105213165283203, 
-"z": 0
-}
-}
-}, 
-"name": "Down"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 270, 
-"emitCount": 0, 
-"emitRate": 1000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": 40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 271, 
-"color": {
-"a": 1, 
-"b": 0.89453125, 
-"g": 0.034942626953125, 
-"r": 0.6275782585144043
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 269, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": -36.5587158203125, 
-"z": 0
-}
-}
-}, 
-"name": "Up"
-}, {
-"children": [], 
-"components": {
-"ParticleEmitter": {
-".uid": 273, 
-"emitCount": 1000, 
-"emitRate": 200000, 
-"emitRateVariance": 0, 
-"emitterSize": {
-"x": 10, 
-"y": 0, 
-"z": 10
-}, 
-"fill": 1, 
-"lifetime": 2, 
-"lifetimeVariance": 0, 
-"roll": 0, 
-"rollVariance": 57.2957763671875, 
-"rotation": 0, 
-"rotationVariance": 3.1399998664855957, 
-"size": 5, 
-"sizeVariance": 0, 
-"velocity": {
-"x": 0, 
-"y": -40, 
-"z": 0
-}, 
-"velocityVariance": {
-"x": 1, 
-"y": 0, 
-"z": 1
-}
-}, 
-"ParticleSystem": {
-".uid": 274, 
-"color": {
-"a": 1, 
-"b": 0.93359375, 
-"g": 0.74324524402618408, 
-"r": 0.4558563232421875
-}, 
-"renderMask": 0, 
-"renderMode": 0, 
-"systemSpace": 0, 
-"texture": "Smoke1"
-}, 
-"Transform": {
-".uid": 272, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -5719,7 +6323,7 @@
 "children": [], 
 "components": {
 "ParticleEmitter": {
-".uid": 276, 
+".uid": 265, 
 "emitCount": 1000, 
 "emitRate": 200000, 
 "emitRateVariance": 0, 
@@ -5749,7 +6353,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 277, 
+".uid": 266, 
 "color": {
 "a": 1, 
 "b": 0.890625, 
@@ -5762,7 +6366,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 275, 
+".uid": 264, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -5786,7 +6390,7 @@
 ], 
 "components": {
 "EntityAnimator": {
-".uid": 265, 
+".uid": 254, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -5795,7 +6399,7 @@
 "delta": 1, 
 "ease": 0, 
 "position": {
-"x": 100.69409942626953, 
+"x": 8.6071996688842773, 
 "y": -47.244171142578125, 
 "z": 2.8739039897918701
 }, 
@@ -5817,7 +6421,7 @@
 "delta": 0, 
 "ease": 0, 
 "position": {
-"x": 100.69409942626953, 
+"x": 8.6071996688842773, 
 "y": 27.244169235229492, 
 "z": 2.8739039897918701
 }, 
@@ -5839,7 +6443,7 @@
 "delta": 2, 
 "ease": 0, 
 "position": {
-"x": 100.69409942626953, 
+"x": 8.6071996688842773, 
 "y": -20, 
 "z": 2.8739039897918701
 }, 
@@ -5867,7 +6471,7 @@
 "smoothPath": false
 }, 
 "Transform": {
-".uid": 264, 
+".uid": 253, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -5880,26 +6484,26 @@
 "z": 1
 }, 
 "translation": {
-"x": 100.69409942626953, 
+"x": 8.6071996688842773, 
 "y": -47.244171142578125, 
 "z": 2.8739039897918701
 }
 }
 }, 
-"name": "FX_SimulationStart Archetype  (2)"
+"name": "FX_SimulationStart Archetype   (3)"
 }
 ], 
 "components": {
 "AnimateOnSegment": {
-".uid": 234, 
-"changeOnThisSegment": 4, 
+".uid": 251, 
+"changeOnThisSegment": 5, 
 "whenGreaterThan": false
 }, 
 "EntityAnimatorGroup": {
-".uid": 235
+".uid": 252
 }, 
 "Transform": {
-".uid": 233, 
+".uid": 250, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -5918,17 +6522,380 @@
 }
 }
 }, 
-"name": "Wave1Animations"
+"name": "Wave2Animations"
 }, {
 "children": [], 
 "components": {
 "AnimateOnSegment": {
+".uid": 268, 
+"changeOnThisSegment": 9, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 269
+}, 
+"Transform": {
+".uid": 267, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "ReviveAnimation"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 271, 
+"changeOnThisSegment": 10, 
+"whenGreaterThan": false
+}, 
+"EntityAnimatorGroup": {
+".uid": 272
+}, 
+"Transform": {
+".uid": 270, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Dual Animation"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"AnimateTutorialText": {
+".uid": 280, 
+"characterDeleteCooldown": 0.05000000074505806, 
+"characterWriteCooldown": 0.079999998211860657, 
+"lineEndCooldown": 0.5, 
+"textLines": [
+"Rookie Training Simulation:", "Initialized...", "System Ready...", "Sec. Cam #3...", "Initialized...", "Finding Targets..."
+]
+}, 
+"SpriteText": {
+".uid": 281, 
+"alignment": 0, 
+"size": 18, 
+"text": "", 
+"textColor": {
+"a": 1, 
+"b": 0.082926750183105469, 
+"g": 0.796875, 
+"r": 0.07159423828125
+}, 
+"useFiltering": true
+}, 
+"Transform": {
 ".uid": 279, 
-"changeOnThisSegment": 6, 
+"rotation": {
+"w": -0.064331099390983582, 
+"x": -0.24389669299125671, 
+"y": 0.95114922523498535, 
+"z": -0.17801028490066528
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -10.640419960021973, 
+"y": -9.5538330078125, 
+"z": 25.423828125
+}
+}
+}, 
+"name": "TextObject"
+}
+], 
+"components": {
+"Camera": {
+".uid": 274, 
+"active": true, 
+"clearColor": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 0
+}, 
+"farPlane": 1000, 
+"fov": 45, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 1024, 
+"renderMode": 1, 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 275, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 23, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 23, 
+"position": {
+"x": 210.92774963378906, 
+"y": 455, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 13, 
+"ease": 23, 
+"position": {
+"x": 210.92774963378906, 
+"y": 450, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 23, 
+"position": {
+"x": 210.92774963378906, 
+"y": 150, 
+"z": 0
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}, {
+"delta": 3, 
+"ease": 0, 
+"position": {
+"x": -32.103950500488281, 
+"y": 45.334251403808594, 
+"z": 2.7650752067565918
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": true, 
+"smoothPath": false
+}, 
+"Transform": {
+".uid": 273, 
+"rotation": {
+"w": 0.68841999769210815, 
+"x": 0.16146999597549438, 
+"y": -0.68841999769210815, 
+"z": 0.16146999597549438
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -32.103950500488281, 
+"y": 45.334251403808594, 
+"z": 2.7650752067565918
+}
+}
+}, 
+"name": "IntroCamera"
+}, {
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 283, 
+"dimensions": {
+"x": 1, 
+"y": 5, 
+"z": 1
+}
+}, 
+"Ghost": {
+".uid": 284, 
+"disableContactResponse": true, 
+"enableContactCallback": true, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SegmentChangeTrigger": {
+".uid": 285, 
+"changeNewSegment": 3, 
+"changeOnThisSegment": 2, 
+"triggerPlayer1": false, 
+"triggerPlayer2": false
+}, 
+"Transform": {
+".uid": 282, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 111.18831634521484, 
+"y": 34.305904388427734, 
+"z": 16.658269882202148
+}, 
+"translation": {
+"x": 53.010089874267578, 
+"y": 15.988882064819336, 
+"z": 0
+}
+}
+}, 
+"name": "StairZone"
+}, {
+"children": [], 
+"components": {
+"BoxCollider": {
+".uid": 287, 
+"dimensions": {
+"x": 1, 
+"y": 5, 
+"z": 1
+}
+}, 
+"Ghost": {
+".uid": 288, 
+"disableContactResponse": true, 
+"enableContactCallback": true, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"SegmentChangeTrigger": {
+".uid": 289, 
+"changeNewSegment": 4, 
+"changeOnThisSegment": 3, 
+"triggerPlayer1": true, 
+"triggerPlayer2": true
+}, 
+"Transform": {
+".uid": 286, 
+"rotation": {
+"w": 0.70710676908493042, 
+"x": 0, 
+"y": -0.70710676908493042, 
+"z": 0
+}, 
+"scale": {
+"x": 101.06306457519531, 
+"y": 18.810878753662109, 
+"z": 79.452133178710938
+}, 
+"translation": {
+"x": 208.6556396484375, 
+"y": 60.778266906738281, 
+"z": 0
+}
+}
+}, 
+"name": "ShootingZone"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 293, 
+"changeOnThisSegment": 4, 
 "whenGreaterThan": false
 }, 
 "BoxCollider": {
-".uid": 280, 
+".uid": 294, 
 "dimensions": {
 "x": 1, 
 "y": 1, 
@@ -5936,7 +6903,466 @@
 }
 }, 
 "EntityAnimator": {
-".uid": 281, 
+".uid": 295, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 100.20036315917969, 
+"y": -20, 
+"z": 1.9420790672302246
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 100.20036315917969, 
+"y": 48.436412811279297, 
+"z": 1.9420790672302246
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Health": {
+".uid": 296, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 30, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 297, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 298, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 292, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 100.20035552978516, 
+"y": -19.999998092651367, 
+"z": 1.9420789480209351
+}
+}
+}, 
+"name": "DummyTarget1"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 300, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 301, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 302, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 80.029510498046875, 
+"y": -20, 
+"z": -23.971530914306641
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.029510498046875, 
+"y": 48.436412811279297, 
+"z": -23.971530914306641
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Health": {
+".uid": 303, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 30, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 304, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 305, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 299, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 80.029502868652344, 
+"y": -19.999998092651367, 
+"z": -23.971529006958008
+}
+}
+}, 
+"name": "DummyTarget2"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 307, 
+"changeOnThisSegment": 4, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 308, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 309, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 1, 
+"ease": 0, 
+"position": {
+"x": 80.804466247558594, 
+"y": -20, 
+"z": 26.263629913330078
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 80.804466247558594, 
+"y": 48.436412811279297, 
+"z": 26.263629913330078
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": false, 
+"playOnAwake": false, 
+"smoothPath": false
+}, 
+"Health": {
+".uid": 310, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 30, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 311, 
+"active": true, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 312, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 306, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 80.804458618164063, 
+"y": -19.999998092651367, 
+"z": 26.263628005981445
+}
+}
+}, 
+"name": "DummyTarget3"
+}
+], 
+"components": {
+"DeathTriggerGroup": {
+".uid": 291, 
+"changeNewSegment": 6
+}, 
+"Transform": {
+".uid": 290, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Wave1Trigger"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 316, 
+"changeOnThisSegment": 6, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 317, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 318, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -5995,14 +7421,14 @@
 "smoothPath": false
 }, 
 "Health": {
-".uid": 282, 
+".uid": 319, 
 "ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
 "EntityHealth": 50, 
 "SpawnOnDeath": true, 
 "deleteOnZeroHealth": true
 }, 
 "Model3D": {
-".uid": 283, 
+".uid": 320, 
 "active": true, 
 "castsShadows": false, 
 "color": {
@@ -6020,7 +7446,7 @@
 "specularPower": 0
 }, 
 "Rigidbody": {
-".uid": 284, 
+".uid": 321, 
 "bodyFlag": 1, 
 "disableContactResponse": false, 
 "enableContactCallback": false, 
@@ -6042,7 +7468,7 @@
 "sleepToggle": true
 }, 
 "Transform": {
-".uid": 278, 
+".uid": 315, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -6055,29 +7481,527 @@
 "z": 10
 }, 
 "translation": {
-"x": 8.6071996688842773, 
-"y": -20, 
-"z": 1.9420790672302246
+"x": 8.6071987152099609, 
+"y": -19.999998092651367, 
+"z": 1.9420789480209351
 }
 }
 }, 
 "name": "LongDistanceDummy"
+}
+], 
+"components": {
+"DeathTriggerGroup": {
+".uid": 314, 
+"changeNewSegment": 8
+}, 
+"Transform": {
+".uid": 313, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Wave2Trigger"
 }, {
 "children": [
 {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 325, 
+"changeOnThisSegment": 8, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 326, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 327, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 2.4000000953674316, 
+"ease": 0, 
+"position": {
+"x": 100.20024108886719, 
+"y": 48.436347961425781, 
+"z": -67.378303527832031
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 3.2999999523162842, 
+"ease": 0, 
+"position": {
+"x": 100.19995880126953, 
+"y": 48.436206817626953, 
+"z": 70.662254333496094
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2.4000000953674316, 
+"ease": 0, 
+"position": {
+"x": 100.20035552978516, 
+"y": 48.436408996582031, 
+"z": -3
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Health": {
+".uid": 328, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 20, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 329, 
+"active": false, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 330, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 324, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 100.20023345947266, 
+"y": 48.436344146728516, 
+"z": -67.3782958984375
+}
+}, 
+"VisibilityTrigger": {
+".uid": 331, 
+"changeOnThisSegment": 8
+}
+}, 
+"name": "DummyTargetRunny2"
+}, {
+"children": [], 
+"components": {
+"AnimateOnSegment": {
+".uid": 333, 
+"changeOnThisSegment": 8, 
+"whenGreaterThan": false
+}, 
+"BoxCollider": {
+".uid": 334, 
+"dimensions": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}
+}, 
+"EntityAnimator": {
+".uid": 335, 
+"animationClipName": "", 
+"delta": 1, 
+"ease": 0, 
+"keyFrames": [
+{
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 102.60926818847656, 
+"y": 48.435764312744141, 
+"z": 77.380752563476563
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 71.050079345703125, 
+"y": 48.436191558837891, 
+"z": -6.7866816520690918
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 98.237648010253906, 
+"y": 48.436088562011719, 
+"z": -89.893218994140625
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}, {
+"delta": 2, 
+"ease": 0, 
+"position": {
+"x": 119.77227020263672, 
+"y": 48.435886383056641, 
+"z": 2.6265020370483398
+}, 
+"positionKey": true, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"rotationKey": true, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"scaleKey": true
+}
+], 
+"keyPosition": true, 
+"keyRotation": true, 
+"keyScale": true, 
+"loopAnimation": true, 
+"playOnAwake": false, 
+"smoothPath": true
+}, 
+"Health": {
+".uid": 336, 
+"ArchetypeToSpawnOnDeath": "CJ_Hallway_Smoke.uatype", 
+"EntityHealth": 20, 
+"SpawnOnDeath": true, 
+"deleteOnZeroHealth": true
+}, 
+"Model3D": {
+".uid": 337, 
+"active": false, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.44999998807907104, 
+"materialName": "Blank", 
+"meshIndex": -1, 
+"modelName": "Cylinder", 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0
+}, 
+"Rigidbody": {
+".uid": 338, 
+"bodyFlag": 1, 
+"disableContactResponse": false, 
+"enableContactCallback": false, 
+"enableContinuousCollisionDetection": false, 
+"freezeXRotation": false, 
+"freezeYRotation": false, 
+"freezeZRotation": false, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"mass": 0, 
+"offset": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"sleepToggle": true
+}, 
+"Transform": {
+".uid": 332, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 6, 
+"y": 12, 
+"z": 6
+}, 
+"translation": {
+"x": 102.60926055908203, 
+"y": 48.435760498046875, 
+"z": 77.380744934082031
+}
+}, 
+"VisibilityTrigger": {
+".uid": 339, 
+"changeOnThisSegment": 8
+}
+}, 
+"name": "DummyTargetRunny"
+}
+], 
+"components": {
+"DeathTriggerGroup": {
+".uid": 323, 
+"changeNewSegment": 11
+}, 
+"Transform": {
+".uid": 322, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Wave3Trigger"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 341, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 200, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 340, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": -117.09284973144531, 
+"y": 94.411445617675781, 
+"z": 0
+}
+}
+}, 
+"name": "Point Light"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 346, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 200, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 345, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 0.58947008848190308, 
+"y": 0.58947008848190308, 
+"z": 1
+}, 
+"translation": {
+"x": 213.45440673828125, 
+"y": 94.411445617675781, 
+"z": 0
+}
+}
+}, 
+"name": "Point Light (1)"
+}, {
 "children": [
 {
 "children": [], 
 "components": {
 "ParticleEmitter": {
-".uid": 291, 
+".uid": 359, 
 "emitCount": 0, 
 "emitRate": 1000, 
 "emitRateVariance": 0, 
 "emitterSize": {
-"x": 10, 
+"x": 45, 
 "y": 0, 
-"z": 10
+"z": 45
 }, 
 "fill": 1, 
 "lifetime": 2, 
@@ -6100,7 +8024,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 292, 
+".uid": 360, 
 "color": {
 "a": 1, 
 "b": 0.93359375, 
@@ -6113,7 +8037,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 290, 
+".uid": 358, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -6137,14 +8061,14 @@
 "children": [], 
 "components": {
 "ParticleEmitter": {
-".uid": 294, 
+".uid": 362, 
 "emitCount": 0, 
 "emitRate": 1000, 
 "emitRateVariance": 0, 
 "emitterSize": {
-"x": 10, 
+"x": 45, 
 "y": 0, 
-"z": 10
+"z": 45
 }, 
 "fill": 1, 
 "lifetime": 2, 
@@ -6153,7 +8077,7 @@
 "rollVariance": 57.2957763671875, 
 "rotation": 0, 
 "rotationVariance": 3.1399998664855957, 
-"size": 10, 
+"size": 5, 
 "sizeVariance": 0, 
 "velocity": {
 "x": 0, 
@@ -6167,12 +8091,12 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 295, 
+".uid": 363, 
 "color": {
 "a": 1, 
-"b": 0.54296875, 
-"g": 0.0190887451171875, 
-"r": 0.33341675996780396
+"b": 0.890625, 
+"g": 0.2574462890625, 
+"r": 0.69275665283203125
 }, 
 "renderMask": 0, 
 "renderMode": 0, 
@@ -6180,7 +8104,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 293, 
+".uid": 361, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -6203,15 +8127,24 @@
 }, {
 "children": [], 
 "components": {
+"AnimateParticleReset": {
+".uid": 365, 
+"easeFunction": 0, 
+"endDuration": 0.5, 
+"startDuration": 2, 
+"startOnAwake": true, 
+"stopOnComplete": false, 
+"timeToChange": 10
+}, 
 "ParticleEmitter": {
-".uid": 297, 
+".uid": 366, 
 "emitCount": 1000, 
 "emitRate": 200000, 
 "emitRateVariance": 0, 
 "emitterSize": {
-"x": 10, 
+"x": 45, 
 "y": 0, 
-"z": 10
+"z": 45
 }, 
 "fill": 1, 
 "lifetime": 2, 
@@ -6234,7 +8167,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 298, 
+".uid": 367, 
 "color": {
 "a": 1, 
 "b": 0.93359375, 
@@ -6247,7 +8180,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 296, 
+".uid": 364, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -6270,15 +8203,24 @@
 }, {
 "children": [], 
 "components": {
+"AnimateParticleReset": {
+".uid": 369, 
+"easeFunction": 0, 
+"endDuration": 0.5, 
+"startDuration": 2, 
+"startOnAwake": true, 
+"stopOnComplete": false, 
+"timeToChange": 10
+}, 
 "ParticleEmitter": {
-".uid": 300, 
+".uid": 370, 
 "emitCount": 1000, 
 "emitRate": 200000, 
 "emitRateVariance": 0, 
 "emitterSize": {
-"x": 10, 
+"x": 45, 
 "y": 0, 
-"z": 10
+"z": 45
 }, 
 "fill": 1, 
 "lifetime": 2, 
@@ -6301,7 +8243,7 @@
 }
 }, 
 "ParticleSystem": {
-".uid": 301, 
+".uid": 371, 
 "color": {
 "a": 1, 
 "b": 0.890625, 
@@ -6314,7 +8256,7 @@
 "texture": "Smoke1"
 }, 
 "Transform": {
-".uid": 299, 
+".uid": 368, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -6328,17 +8270,63 @@
 }, 
 "translation": {
 "x": 0, 
-"y": -9.9058456420898438, 
+"y": -36.558712005615234, 
 "z": 0
 }
 }
 }, 
 "name": "UpRing"
+}, {
+"children": [], 
+"components": {
+"Light": {
+".uid": 351, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 200, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 15, 
+"y": 30
+}, 
+"type": 1
+}, 
+"Transform": {
+".uid": 350, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0.85194778442382813, 
+"y": 223.43389892578125, 
+"z": 0
+}
+}
+}, 
+"name": "Point Light  (2)"
 }
 ], 
 "components": {
+"AnimateOnSegment": {
+".uid": 356, 
+"changeOnThisSegment": 11, 
+"whenGreaterThan": false
+}, 
 "EntityAnimator": {
-".uid": 289, 
+".uid": 357, 
 "animationClipName": "", 
 "delta": 1, 
 "ease": 0, 
@@ -6347,9 +8335,9 @@
 "delta": 1, 
 "ease": 0, 
 "position": {
-"x": 8.6071996688842773, 
-"y": -47.244171142578125, 
-"z": 2.8739039897918701
+"x": 202.92715454101563, 
+"y": -129.0224609375, 
+"z": 0
 }, 
 "positionKey": true, 
 "rotation": {
@@ -6360,18 +8348,18 @@
 }, 
 "rotationKey": true, 
 "scale": {
-"x": 1, 
+"x": 12.356683731079102, 
 "y": 1, 
-"z": 1
+"z": 7.1788878440856934
 }, 
 "scaleKey": true
 }, {
-"delta": 0, 
+"delta": 1, 
 "ease": 0, 
 "position": {
-"x": 8.6071996688842773, 
-"y": 27.244169235229492, 
-"z": 2.8739039897918701
+"x": 202.92715454101563, 
+"y": 75, 
+"z": 0
 }, 
 "positionKey": true, 
 "rotation": {
@@ -6382,31 +8370,9 @@
 }, 
 "rotationKey": true, 
 "scale": {
-"x": 1, 
+"x": 12.356683731079102, 
 "y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 0, 
-"position": {
-"x": 8.6071996688842773, 
-"y": -20, 
-"z": 2.8739039897918701
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
+"z": 7.1788878440856934
 }, 
 "scaleKey": true
 }
@@ -6419,7 +8385,7 @@
 "smoothPath": false
 }, 
 "Transform": {
-".uid": 288, 
+".uid": 355, 
 "rotation": {
 "w": 1, 
 "x": 0, 
@@ -6427,411 +8393,18 @@
 "z": 0
 }, 
 "scale": {
-"x": 1, 
+"x": 12.356683731079102, 
 "y": 1, 
-"z": 1
+"z": 7.1788878440856934
 }, 
 "translation": {
-"x": 8.6071996688842773, 
-"y": -47.244171142578125, 
-"z": 2.8739039897918701
-}
-}
-}, 
-"name": "FX_SimulationStart Archetype   (3)"
-}
-], 
-"components": {
-"AnimateOnSegment": {
-".uid": 286, 
-"changeOnThisSegment": 5, 
-"whenGreaterThan": false
-}, 
-"EntityAnimatorGroup": {
-".uid": 287
-}, 
-"Transform": {
-".uid": 285, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
+"x": 202.92715454101563, 
+"y": -129.0224609375, 
 "z": 0
 }
 }
 }, 
-"name": "Wave2Animations"
-}, {
-"children": [], 
-"components": {
-"AnimateOnSegment": {
-".uid": 303, 
-"changeOnThisSegment": 9, 
-"whenGreaterThan": false
-}, 
-"EntityAnimatorGroup": {
-".uid": 304
-}, 
-"Transform": {
-".uid": 302, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "ReviveAnimation"
-}, {
-"children": [], 
-"components": {
-"AnimateOnSegment": {
-".uid": 306, 
-"changeOnThisSegment": 10, 
-"whenGreaterThan": false
-}, 
-"EntityAnimatorGroup": {
-".uid": 307
-}, 
-"Transform": {
-".uid": 305, 
-"rotation": {
-"w": 1, 
-"x": 0, 
-"y": 0, 
-"z": 0
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}
-}, 
-"name": "Dual Animation"
-}, {
-"children": [
-{
-"children": [], 
-"components": {
-"AnimateTutorialText": {
-".uid": 315, 
-"characterDeleteCooldown": 0.05000000074505806, 
-"characterWriteCooldown": 0.079999998211860657, 
-"lineEndCooldown": 0.5, 
-"textLines": [
-"Rookie Training Simulation:", "Initialized...", "System Ready...", "Sec. Cam #3...", "Initialized...", "Finding Targets..."
-]
-}, 
-"SpriteText": {
-".uid": 316, 
-"alignment": 0, 
-"size": 18, 
-"text": "", 
-"textColor": {
-"a": 1, 
-"b": 0.082926750183105469, 
-"g": 0.796875, 
-"r": 0.07159423828125
-}, 
-"useFiltering": true
-}, 
-"Transform": {
-".uid": 314, 
-"rotation": {
-"w": -0.064331099390983582, 
-"x": -0.24389669299125671, 
-"y": 0.95114922523498535, 
-"z": -0.17801028490066528
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": -10.640419960021973, 
-"y": -9.5538330078125, 
-"z": 25.423828125
-}
-}
-}, 
-"name": "TextObject"
-}
-], 
-"components": {
-"Camera": {
-".uid": 309, 
-"active": true, 
-"clearColor": {
-"a": 1, 
-"b": 0, 
-"g": 0, 
-"r": 0
-}, 
-"farPlane": 1000, 
-"fov": 45, 
-"nearPlane": 0.10000000149011612, 
-"renderLayer": 0, 
-"renderMask": 1024, 
-"renderMode": 1, 
-"viewportPosition": {
-"x": 0, 
-"y": 0
-}, 
-"viewportSize": {
-"x": 1, 
-"y": 1
-}
-}, 
-"EntityAnimator": {
-".uid": 310, 
-"animationClipName": "", 
-"delta": 1, 
-"ease": 23, 
-"keyFrames": [
-{
-"delta": 1, 
-"ease": 23, 
-"position": {
-"x": 210.92774963378906, 
-"y": 481, 
-"z": 0
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.68841999769210815, 
-"x": 0.16146999597549438, 
-"y": -0.68841999769210815, 
-"z": 0.16146999597549438
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 13, 
-"ease": 23, 
-"position": {
-"x": 210.92774963378906, 
-"y": 481, 
-"z": 0
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.68841999769210815, 
-"x": 0.16146999597549438, 
-"y": -0.68841999769210815, 
-"z": 0.16146999597549438
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 2, 
-"ease": 23, 
-"position": {
-"x": 210.92774963378906, 
-"y": 102.00103759765625, 
-"z": 0
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.68841999769210815, 
-"x": 0.16146999597549438, 
-"y": -0.68841999769210815, 
-"z": 0.16146999597549438
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}, {
-"delta": 3, 
-"ease": 0, 
-"position": {
-"x": -32.103950500488281, 
-"y": 45.334251403808594, 
-"z": 2.7650752067565918
-}, 
-"positionKey": true, 
-"rotation": {
-"w": 0.68841999769210815, 
-"x": 0.16146999597549438, 
-"y": -0.68841999769210815, 
-"z": 0.16146999597549438
-}, 
-"rotationKey": true, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"scaleKey": true
-}
-], 
-"keyPosition": true, 
-"keyRotation": true, 
-"keyScale": true, 
-"loopAnimation": false, 
-"playOnAwake": true, 
-"smoothPath": false
-}, 
-"Transform": {
-".uid": 308, 
-"rotation": {
-"w": 0.68841999769210815, 
-"x": 0.16146999597549438, 
-"y": -0.68841999769210815, 
-"z": 0.16146999597549438
-}, 
-"scale": {
-"x": 1, 
-"y": 1, 
-"z": 1
-}, 
-"translation": {
-"x": -32.103950500488281, 
-"y": 45.334251403808594, 
-"z": 2.7650752067565918
-}
-}
-}, 
-"name": "IntroCamera"
-}, {
-"children": [], 
-"components": {
-"BoxCollider": {
-".uid": 318, 
-"dimensions": {
-"x": 1, 
-"y": 5, 
-"z": 1
-}
-}, 
-"Ghost": {
-".uid": 319, 
-"disableContactResponse": true, 
-"enableContactCallback": true, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"SegmentChangeTrigger": {
-".uid": 320, 
-"changeNewSegment": 3, 
-"changeOnThisSegment": 2, 
-"triggerPlayer1": false, 
-"triggerPlayer2": false
-}, 
-"Transform": {
-".uid": 317, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 111.18831634521484, 
-"y": 34.305904388427734, 
-"z": 16.658269882202148
-}, 
-"translation": {
-"x": 53.010089874267578, 
-"y": 15.988882064819336, 
-"z": 0
-}
-}
-}, 
-"name": "StairZone"
-}, {
-"children": [], 
-"components": {
-"BoxCollider": {
-".uid": 322, 
-"dimensions": {
-"x": 1, 
-"y": 5, 
-"z": 1
-}
-}, 
-"Ghost": {
-".uid": 323, 
-"disableContactResponse": true, 
-"enableContactCallback": true, 
-"offset": {
-"x": 0, 
-"y": 0, 
-"z": 0
-}
-}, 
-"SegmentChangeTrigger": {
-".uid": 324, 
-"changeNewSegment": 4, 
-"changeOnThisSegment": 3, 
-"triggerPlayer1": true, 
-"triggerPlayer2": true
-}, 
-"Transform": {
-".uid": 321, 
-"rotation": {
-"w": 0.70710676908493042, 
-"x": 0, 
-"y": -0.70710676908493042, 
-"z": 0
-}, 
-"scale": {
-"x": 101.06306457519531, 
-"y": 18.810878753662109, 
-"z": 79.452133178710938
-}, 
-"translation": {
-"x": 208.6556396484375, 
-"y": 60.778266906738281, 
-"z": 0
-}
-}
-}, 
-"name": "ShootingZone"
+"name": "FX_SimulationStart Archetype"
 }
 ], 
 "settings": {

@@ -167,6 +167,23 @@ void LevelSegmentManager::initTutorialLogic(void)
         LevelSegments::Tut_SimultaneousTriggerTutorial,
         LevelSegments::Tut_SimulationCreationCinematic
     } );
+
+	auto endingState = std::make_shared<SegmentLogicStateMachine>( "To Combat Bowl", this );
+
+	auto lock = endingState->AddState<LockPlayerCharacterControllerState>( true, false, true, false );
+	auto changeSeg = endingState->AddState<ChangeSegmentState>( LevelSegments::CB1_SimulationStartCinematic );
+	
+	auto trans = lock->AddTransition(
+		changeSeg, "Change To Change"
+	);
+
+	trans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 6.0f ) );
+
+	endingState->SetInitialState( lock );
+
+	addSegmentLogic( endingState, {
+        LevelSegments::Tut_SimultaneousTriggerTutorial
+    } );
 }
 
 void LevelSegmentManager::initCombatBowl1Logic(void)

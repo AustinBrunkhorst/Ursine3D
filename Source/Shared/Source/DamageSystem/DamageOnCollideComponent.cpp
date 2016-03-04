@@ -149,12 +149,13 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
 
     if (!m_deleted)
     {
-        auto root = args->otherEntity->GetRoot( );
+        auto root = args->otherEntity->GetRoot( )->GetComponent<Health>( );
+		auto entity = args->otherEntity->GetComponent<Health>( );
 
-        if (!root->HasComponent<Health>( ))
+        if (!root && !entity)
             return;
 
-        if (m_damageTimeMap.find( root->GetUniqueID( ) ) != m_damageTimeMap.end( ))
+        if (m_damageTimeMap.find( root->GetOwner( )->GetUniqueID( ) ) != m_damageTimeMap.end( ))
             return;
 
         float damage = m_damageToApply;
@@ -167,7 +168,10 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERS
             damage *= m_critModifier;
         }
 
-        applyDamage(root, args->contacts.front( ).point, damage, crit);
+		if (root)
+			applyDamage(root->GetOwner( ), args->contacts.front( ).point, damage, crit);
+		else
+			applyDamage(entity->GetOwner( ), args->contacts.front( ).point, damage, crit );
 
         spawnCollisionParticle(args->otherEntity, crit);
     }
