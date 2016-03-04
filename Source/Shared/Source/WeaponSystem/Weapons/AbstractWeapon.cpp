@@ -394,7 +394,7 @@ void AbstractWeapon::TriggerReleased( EVENT_HANDLER( game::FIRE_END ) )
 }
 
 
-void AbstractWeapon::ActivateWeapon(ursine::ecs::Entity* owner, ursine::ecs::Entity* whoToConnect, ursine::ecs::Transform* camHandle, int ammo, int clip)
+void AbstractWeapon::ActivateWeapon(const ursine::ecs::EntityHandle &owner, const ursine::ecs::EntityHandle &whoToConnect, ursine::ecs::Transform* camHandle, int ammo, int clip)
 {
     // connect to parent's fire event
     whoToConnect->Listener(this)
@@ -428,7 +428,7 @@ void AbstractWeapon::ActivateWeapon(ursine::ecs::Entity* owner, ursine::ecs::Ent
     m_animatorHandle = owner->GetComponentInChildren<ursine::ecs::Animator>( );
 }
 
-void AbstractWeapon::DetachWeapon(ursine::ecs::Entity* owner, ursine::ecs::Entity* whoToDisconnect)
+void AbstractWeapon::DetachWeapon(const ursine::ecs::EntityHandle &owner, const ursine::ecs::EntityHandle &whoToDisconnect)
 {
     // disconnect from parent's fire event
     whoToDisconnect->Listener(this)
@@ -458,7 +458,7 @@ void AbstractWeapon::DetachWeapon(ursine::ecs::Entity* owner, ursine::ecs::Entit
     RemoveMySelf( );
 }
 
-void AbstractWeapon::DeactivateWeapon(ursine::ecs::Entity* whoToDisconnect, int& saveAmmo, int& saveClip)
+void AbstractWeapon::DeactivateWeapon(const ursine::ecs::EntityHandle &whoToDisconnect, int& saveAmmo, int& saveClip)
 {
     // disconnect from parent's fire event
     whoToDisconnect->Listener(this)

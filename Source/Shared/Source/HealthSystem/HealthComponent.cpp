@@ -136,7 +136,7 @@ void Health::OnInitialize(void)
 
 void Health::sendDamageTextEvent(const ursine::SVec3& contact, float damage, bool crit)
 {
-    ursine::ecs::Entity* owner = GetOwner( );
+    ursine::ecs::EntityHandle owner = GetOwner( );
 
     game::DamageEventArgs dEvent(contact, owner, damage, crit);
 

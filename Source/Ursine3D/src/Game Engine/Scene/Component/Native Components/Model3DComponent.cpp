@@ -132,42 +132,42 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED("color", color);
         }
 
-	    const Color &Model3D::GetColor(void)
+        const Color &Model3D::GetColor(void)
         {
             return m_model->GetColor();
         }
 
-		float Model3D::GetEmissive(void) const
-		{
+        float Model3D::GetEmissive(void) const
+        {
             return m_model->GetEmissive();
-		}
+        }
 
-		void Model3D::SetEmissive(float emissive)
-		{
+        void Model3D::SetEmissive(float emissive)
+        {
             m_model->SetEmissive(emissive);
-		}
+        }
 
-		float Model3D::GetSpecularPower(void) const
-		{
+        float Model3D::GetSpecularPower(void) const
+        {
             return m_model->GetSpecularPower();
-		}
+        }
 
-		void Model3D::SetSpecularPower(float power)
-		{
+        void Model3D::SetSpecularPower(float power)
+        {
             m_model->SetSpecularPower(power);
-		}
+        }
 
-		float Model3D::GetSpecularIntensity(void) const
-		{
+        float Model3D::GetSpecularIntensity(void) const
+        {
             return m_model->GetSpecularIntensity();
-		}
+        }
 
-		void Model3D::SetSpecularIntensity(float intensity)
-		{
+        void Model3D::SetSpecularIntensity(float intensity)
+        {
             m_model->SetSpecularIntensity(intensity);
-		}
+        }
 
-		void Model3D::SetOverdraw(bool flag)
+        void Model3D::SetOverdraw(bool flag)
         {
             m_model->SetOverdraw(flag);
         }
@@ -358,7 +358,6 @@ namespace ursine
                 convex->GenerateConvexHulls(this);
             });
         }
-
 #endif
     }
 }

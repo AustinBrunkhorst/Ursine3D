@@ -25,7 +25,7 @@ class DamageEventArgs : public ursine::EventArgs
 public:
     DamageEventArgs(float damage, bool crit,
                     const ursine::SVec3 &hitPosition,
-                    ursine::ecs::Entity *entityHit)
+                    ursine::ecs::EntityHandle &entityHit)
         : damage( damage )
         , crit( crit )
         , hitPosition( hitPosition )
@@ -35,6 +35,6 @@ public:
     float damage;
     bool crit;
     ursine::SVec3 hitPosition;
-    ursine::ecs::Entity *entityHit;
+    ursine::ecs::EntityHandle entityHit;
 
 };

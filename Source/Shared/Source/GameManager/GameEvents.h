@@ -64,7 +64,7 @@ namespace game
     struct DamageEventArgs : public ursine::EventArgs
     {
         DamageEventArgs(const ursine::SVec3 &hitPosition,
-                        ursine::ecs::Entity *entityHit,
+                        ursine::ecs::EntityHandle &entityHit,
                         float damage, bool crit)
             : hitPosition(hitPosition)
             , entityHit(entityHit)
@@ -73,7 +73,7 @@ namespace game
         { }
 
         const ursine::SVec3& hitPosition;
-        ursine::ecs::Entity *entityHit;
+        ursine::ecs::EntityHandle entityHit;
         float damage;
         bool crit;
 

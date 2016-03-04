@@ -264,13 +264,13 @@ public:
     /////////////////////////////
 
     // Activate Weapon for use
-    void ActivateWeapon(ursine::ecs::Entity* owner, ursine::ecs::Entity* whatToConnect, ursine::ecs::Transform* camHandle, int ammo, int clip);
+    void ActivateWeapon(const ursine::ecs::EntityHandle &owner, const ursine::ecs::EntityHandle &whatToConnect, ursine::ecs::Transform* camHandle, int ammo, int clip);
 
     // Detatch weapon from parent and turn into interactable
-    void DetachWeapon(ursine::ecs::Entity* owner, ursine::ecs::Entity* whatToConnect);
+    void DetachWeapon(const ursine::ecs::EntityHandle &owner, const ursine::ecs::EntityHandle &whatToConnect);
 
     // Deactivate Weapon for use
-    void DeactivateWeapon(ursine::ecs::Entity* whatToDisconnect, int& saveAmmo, int& saveClip);
+    void DeactivateWeapon(const ursine::ecs::EntityHandle &whatToDisconnect, int& saveAmmo, int& saveClip);
 
 
     /////////////////////////////
@@ -339,7 +339,7 @@ public:
 
     bool GetTriggerPulled(void) const;
 
-    void ConnectTrigger(ursine::ecs::Entity* obj);
+    void ConnectTrigger(const ursine::ecs::EntityHandle &obj);
 
 protected:
 

@@ -25,8 +25,8 @@ namespace ursine
     namespace ecs
     {
         class Entity;
-		class Rigidbody;
-		class Body;
+        class Rigidbody;
+        class Body;
     }
 
     namespace physics
@@ -63,22 +63,22 @@ namespace ursine
 
             bool Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type);
 
-			bool Sweep(ColliderBase *collider, BodyBase *body, const SVec3 &velocity, 
-					   float dt, SweepOutput &output, SweepType type, bool sorted = false);
+            bool Sweep(ColliderBase *collider, BodyBase *body, const SVec3 &velocity, 
+                       float dt, SweepOutput &output, SweepType type, bool sorted = false);
 
             void SetGravity(const SVec3 &gravity);
             SVec3 GetGravity(void) const;
 
             void ClearContacts(Rigidbody &rigidbody);
 
-			void DispatchCollisionEvents(void);
+            void DispatchCollisionEvents(void);
 
         private:
 
             // terminate the simulation
             void destroySimulation(void);
 
-		#ifdef BULLET_PHYSICS
+        #ifdef BULLET_PHYSICS
             // collision configuration contains default setup for memory,
             // collision setup. Advanced users can create their own configuration.
             btDefaultCollisionConfiguration m_collisionConfig;
@@ -99,25 +99,25 @@ namespace ursine
             btGhostPairCallback m_ghostCallback;
 
             btSoftRigidDynamicsWorld *m_dynamicsWorld;
-		#endif
+        #endif
 
-			bool contactCallbackEnabled(const BodyBase *body);
+            bool contactCallbackEnabled(const BodyBase *body);
 
-			void dispatchContactEvent(
+            void dispatchContactEvent(
                 const BodyBase *thisBody, 
                 const BodyBase *otherBody,
-				const ecs::EntityHandle &thisEntity, 
+                const ecs::EntityHandle &thisEntity, 
                 const ecs::EntityHandle &otherEntity, 
                 PersistentManifold *manifold
             );
 
-			const ecs::EntityHandle &getEntityHandle(const BodyBase *body);
+            const ecs::EntityHandle &getEntityHandle(const BodyBase *body);
 
-			void calculateContactRelativeVelocity(
-			    const BodyBase *thisBody, 
+            void calculateContactRelativeVelocity(
+                const BodyBase *thisBody, 
                 const BodyBase *otherBody, 
                 Contact *contact
-			);
+            );
         };
     }
 }

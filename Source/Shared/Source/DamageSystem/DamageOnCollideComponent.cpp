@@ -154,7 +154,7 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
         if (!root->HasComponent<Health>( ))
             return;
 
-        if (m_damageTimeMap.find( root->GetID( ) ) != m_damageTimeMap.end( ))
+        if (m_damageTimeMap.find( root ) != m_damageTimeMap.end( ))
             return;
 
         float damage = m_damageToApply;
@@ -170,8 +170,8 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
 
             // add other object to damage interval map
             //   if not deleting due to collision
-            m_damageTimeMap[ critComp->GetOwner( )->GetID( ) ] = m_damageInterval;
-            m_damageTimeMap[ critComp->GetOwner( )->GetRoot( )->GetID( ) ] = m_damageInterval;
+            m_damageTimeMap[ critComp->GetOwner( ) ] = m_damageInterval;
+            m_damageTimeMap[ critComp->GetOwner( )->GetRoot( ) ] = m_damageInterval;
         }
 
         applyDamage(root, args->contacts.front( ).point, damage, crit);
@@ -193,14 +193,14 @@ void DamageOnCollide::applyDamage(const EntityHandle &obj, const SVec3& contact,
     //   if not deleting due to collision
     if (!m_deleteOnCollision)
     {
-        m_damageTimeMap[ obj->GetID( ) ] = m_damageInterval;
+        m_damageTimeMap[ obj ] = m_damageInterval;
     }
 }
 
 void DamageOnCollide::DecrementDamageIntervalTimes(float dt)
 {
     // Container for removing times that have lasted full interval
-    std::stack< int > idToRemove;
+    std::stack< EntityHandle > idToRemove;
 
     // Decrement time intervals
     for (auto &timeInterval : m_damageTimeMap)

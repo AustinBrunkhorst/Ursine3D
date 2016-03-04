@@ -21,143 +21,143 @@ namespace ursine
     std::unordered_map<std::string, Animation*>     AnimationBuilder::m_name2Animation;
     std::unordered_map<std::string, AnimationRig*>  AnimationBuilder::m_name2Rig;
     std::vector<SMat4>                              AnimationBuilder::m_toParentTransforms;
-	std::vector<SMat4>                              AnimationBuilder::m_toFutParentTransforms;
+    std::vector<SMat4>                              AnimationBuilder::m_toFutParentTransforms;
 
     unsigned AnimationBuilder::m_rigCount;
     unsigned AnimationBuilder::m_animationCount;
 
-	void AnimationBuilder::GenerateAnimationData(
-		const AnimationState *currentState,
-		const AnimationState *futureState,
+    void AnimationBuilder::GenerateAnimationData(
+        const AnimationState *currentState,
+        const AnimationState *futureState,
         AnimationRig* rig, 
         std::vector<SMat4>& outputMatPal,
         std::vector<SMat4> &outputBones,
-		const float &transFactor
+        const float &transFactor
     )
-	{
-		// get the current time
-		float time = (float)currentState->GetTimePosition();
-		// get the currently running animation
-		auto currentAnimation = currentState->GetAnimation();
-		// get the total keyframes for this animation
-		unsigned frameCount = currentAnimation->GetRigKeyFrameCount();
-		// get num of bones in this rig
-		unsigned boneCount = rig->GetBoneCount();
-		// make sure the rig bones match animation bones
+    {
+        // get the current time
+        float time = (float)currentState->GetTimePosition();
+        // get the currently running animation
+        auto currentAnimation = currentState->GetAnimation();
+        // get the total keyframes for this animation
+        unsigned frameCount = currentAnimation->GetRigKeyFrameCount();
+        // get num of bones in this rig
+        unsigned boneCount = rig->GetBoneCount();
+        // make sure the rig bones match animation bones
         if (boneCount != currentAnimation->GetDesiredBoneCount())
             return;
 
-		// determine the 2 current keyframes to use
-		// we assume that all frames exist, and that they were baked across all total keyframes
-		for (unsigned x = 0; x < frameCount - 1; ++x)
-		{
-			// get the two current keyframes
-			const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
-			const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
-		
-			// check if the current keyframe set holds the time value between them
-			if (f1[0].length <= time && time < f2[0].length)
-			{
-				// if it did, interpolate the two keyframes, save values, break out
-				interpolateRigKeyFrames(
-					f1,
-					f2,
-					time,
-					boneCount,
+        // determine the 2 current keyframes to use
+        // we assume that all frames exist, and that they were baked across all total keyframes
+        for (unsigned x = 0; x < frameCount - 1; ++x)
+        {
+            // get the two current keyframes
+            const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
+            const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
+        
+            // check if the current keyframe set holds the time value between them
+            if (f1[0].length <= time && time < f2[0].length)
+            {
+                // if it did, interpolate the two keyframes, save values, break out
+                interpolateRigKeyFrames(
+                    f1,
+                    f2,
+                    time,
+                    boneCount,
                     m_toParentTransforms,
                     rig
-					);
-				// kick out, we're done
-				break;
-			}
-		}
+                    );
+                // kick out, we're done
+                break;
+            }
+        }
 
-		//std::vector < AnimationKeyframe > f1;
-		//std::vector < AnimationKeyframe > f2;
-		//currentState->GetFrameByTime(f1, f2, time);
+        //std::vector < AnimationKeyframe > f1;
+        //std::vector < AnimationKeyframe > f2;
+        //currentState->GetFrameByTime(f1, f2, time);
 
-		// for the future animation
-		// get the future running animation
-		const Animation* futAnimation = nullptr;
-		if (futureState)
-		{
-			// get the future time
-			futAnimation = futureState->GetAnimation();
-			float fut_time = (float)futureState->GetTimePosition();
-			if (futAnimation)
-			{
-				// get the total keyframes for future animation
-				unsigned futframeCount = 0;
-				futframeCount = futAnimation->GetRigKeyFrameCount();
-				// make sure the rig bones match animation bones
-				if (boneCount != futAnimation->GetDesiredBoneCount())
-					return;
+        // for the future animation
+        // get the future running animation
+        const Animation* futAnimation = nullptr;
+        if (futureState)
+        {
+            // get the future time
+            futAnimation = futureState->GetAnimation();
+            float fut_time = (float)futureState->GetTimePosition();
+            if (futAnimation)
+            {
+                // get the total keyframes for future animation
+                unsigned futframeCount = 0;
+                futframeCount = futAnimation->GetRigKeyFrameCount();
+                // make sure the rig bones match animation bones
+                if (boneCount != futAnimation->GetDesiredBoneCount())
+                    return;
 
-				for (unsigned x = 0; x < futframeCount - 1; ++x)
-				{
-					// get the two current keyframes
-					const std::vector<AnimationKeyframe> &f1 = futAnimation->GetKeyframes(x);
-					const std::vector<AnimationKeyframe> &f2 = futAnimation->GetKeyframes(x + 1);
+                for (unsigned x = 0; x < futframeCount - 1; ++x)
+                {
+                    // get the two current keyframes
+                    const std::vector<AnimationKeyframe> &f1 = futAnimation->GetKeyframes(x);
+                    const std::vector<AnimationKeyframe> &f2 = futAnimation->GetKeyframes(x + 1);
 
-					// check if the current keyframe set holds the time value between them
-					if (f1[0].length <= fut_time && fut_time < f2[0].length)
-					{
-						// if it did, interpolate the two keyframes, save values, break out
-						interpolateRigKeyFrames(
-							f1,
-							f2,
-							fut_time,
-							boneCount,
+                    // check if the current keyframe set holds the time value between them
+                    if (f1[0].length <= fut_time && fut_time < f2[0].length)
+                    {
+                        // if it did, interpolate the two keyframes, save values, break out
+                        interpolateRigKeyFrames(
+                            f1,
+                            f2,
+                            fut_time,
+                            boneCount,
                             m_toFutParentTransforms,
                             rig
-							);
-						// kick out, we're done
-						break;
-					}
-				}
-			}
-		}
-		
-		// root bone has no transform, therefor is just defaulted to the first interpolated matrix
-		float trans = transFactor;
-		if (!futAnimation)
-			outputBones[0] = m_toParentTransforms[0];
-		else
-			outputBones[0] = m_toParentTransforms[0] * (1.0f - trans) + m_toFutParentTransforms[0] * trans;
+                            );
+                        // kick out, we're done
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // root bone has no transform, therefor is just defaulted to the first interpolated matrix
+        float trans = transFactor;
+        if (!futAnimation)
+            outputBones[0] = m_toParentTransforms[0];
+        else
+            outputBones[0] = m_toParentTransforms[0] * (1.0f - trans) + m_toFutParentTransforms[0] * trans;
 
-		// now we need to go through the bone hierarchy 
-		auto &boneData = rig->GetBoneData();
+        // now we need to go through the bone hierarchy 
+        auto &boneData = rig->GetBoneData();
 
-		// iterate through each bone
-		for (unsigned x = 1; x < boneCount; ++x)
-		{
-			SMat4 toParent;
-			// get the toParent transform
-			if (!futAnimation)
-				toParent = m_toParentTransforms[x];
-			else
-				toParent = m_toParentTransforms[x] * (1.0f - trans) + m_toFutParentTransforms[x] * trans;
+        // iterate through each bone
+        for (unsigned x = 1; x < boneCount; ++x)
+        {
+            SMat4 toParent;
+            // get the toParent transform
+            if (!futAnimation)
+                toParent = m_toParentTransforms[x];
+            else
+                toParent = m_toParentTransforms[x] * (1.0f - trans) + m_toFutParentTransforms[x] * trans;
 
-			// get the parent to root
-			const SMat4 &parentToRoot = outputBones[boneData[x].GetParentID()];
-			// calculate root transform
-			outputBones[x] = parentToRoot * toParent;
-		}
+            // get the parent to root
+            const SMat4 &parentToRoot = outputBones[boneData[x].GetParentID()];
+            // calculate root transform
+            outputBones[x] = parentToRoot * toParent;
+        }
 
-		// multiply by bone offset transform to get final transform
-		auto &offsetMatrices = rig->GetOffsetMatrices();
-		for (unsigned x = 0; x < boneCount; ++x)
-		{
+        // multiply by bone offset transform to get final transform
+        auto &offsetMatrices = rig->GetOffsetMatrices();
+        for (unsigned x = 0; x < boneCount; ++x)
+        {
             outputMatPal[x] = (outputBones[x] * offsetMatrices[x]);
-		}
-	}
+        }
+    }
 
     void AnimationBuilder::InitializeStaticData(void)
     {
         m_animationData.resize(128);
         m_animationRigData.resize(128);
         m_toParentTransforms.resize(128);
-		m_toFutParentTransforms.resize(128);
+        m_toFutParentTransforms.resize(128);
         m_rigCount = 0;
         m_animationCount = 0;
     }
@@ -182,9 +182,9 @@ namespace ursine
     Animation* AnimationBuilder::GetAnimationByName(const std::string& name)
     {
         if (m_name2Animation.end() == m_name2Animation.find(name))
-			return nullptr;
-		else
-			return m_name2Animation[name];
+            return nullptr;
+        else
+            return m_name2Animation[name];
     }
 
     AnimationRig *AnimationBuilder::GetAnimationRigByIndex(const unsigned index)
@@ -196,76 +196,76 @@ namespace ursine
 
     AnimationRig* AnimationBuilder::GetAnimationRigByName(const std::string& name)
     {
-		if (m_name2Rig.end() == m_name2Rig.find(name))
-			return nullptr;
-		else
-			return m_name2Rig[name];
+        if (m_name2Rig.end() == m_name2Rig.find(name))
+            return nullptr;
+        else
+            return m_name2Rig[name];
     }
 
     int AnimationBuilder::LoadAnimation(const graphics::ufmt_loader::AnimInfo &info, const std::string &name)
     {
-		unsigned animIndex = addAnimation();
-		auto animation = GetAnimationByIndex(animIndex);
+        unsigned animIndex = addAnimation();
+        auto animation = GetAnimationByIndex(animIndex);
 
-		// total clip count
-		unsigned clipCount = info.animDataArr[0].clipCount;
+        // total clip count
+        unsigned clipCount = info.animDataArr[0].clipCount;
 
-		// total bone count
-		unsigned boneCount = info.animDataArr[0].boneCount;
+        // total bone count
+        unsigned boneCount = info.animDataArr[0].boneCount;
 
-		// total keyframe Count
-		// since we are using unified animation keyframes,
-		// every keyIndices contain same number of keyframes
-		// but need to be fixed
-		unsigned keyCount = info.animDataArr[0].keyIndices[0][0];
+        // total keyframe Count
+        // since we are using unified animation keyframes,
+        // every keyIndices contain same number of keyframes
+        // but need to be fixed
+        unsigned keyCount = info.animDataArr[0].keyIndices[0][0];
 
-		// resize arrays to handle bone size
-		animation->SetData(keyCount, boneCount);
+        // resize arrays to handle bone size
+        animation->SetData(keyCount, boneCount);
 
-		// set name - let's use model name
-		animation->SetName(name);
+        // set name - let's use model name
+        animation->SetName(name);
 
-		// LOAD ANIMATION
-		// iterate through all keyframes in this RigKeyframe, iterate through each RigKeyframe,
-		for (unsigned rigIndex = 0; rigIndex < keyCount; ++rigIndex)
-		{
-			for (unsigned boneIndex = 0; boneIndex < boneCount; ++boneIndex)
-			{
-				// get keyframe from data
-				// need to be fixed too(remove clip or modify it)
-				auto keyframe = info.animDataArr[0].keyframes[0][boneIndex][rigIndex];
+        // LOAD ANIMATION
+        // iterate through all keyframes in this RigKeyframe, iterate through each RigKeyframe,
+        for (unsigned rigIndex = 0; rigIndex < keyCount; ++rigIndex)
+        {
+            for (unsigned boneIndex = 0; boneIndex < boneCount; ++boneIndex)
+            {
+                // get keyframe from data
+                // need to be fixed too(remove clip or modify it)
+                auto keyframe = info.animDataArr[0].keyframes[0][boneIndex][rigIndex];
 
-				// get values
-				auto trans = SVec3(
+                // get values
+                auto trans = SVec3(
                     keyframe.trans.x, 
                     keyframe.trans.y, 
                     keyframe.trans.z
                 );
 
-				auto scale = SVec3(1, 1, 1);
+                auto scale = SVec3(1, 1, 1);
 
-				auto rot = SQuat(
+                auto rot = SQuat(
                     keyframe.rot.x, 
                     keyframe.rot.y, 
                     keyframe.rot.z, 
                     keyframe.rot.w
                 );
 
-				// add keyframe to animation
-				animation->AddKeyframe(
-					rigIndex,
-					boneIndex,
-					trans,
-					scale,
-					rot,
-					keyframe.time
-				);
-			}
-		}
+                // add keyframe to animation
+                animation->AddKeyframe(
+                    rigIndex,
+                    boneIndex,
+                    trans,
+                    scale,
+                    rot,
+                    keyframe.time
+                );
+            }
+        }
 
-		// set values, return
+        // set values, return
         m_name2Animation[name] = animation;
-		return animIndex;
+        return animIndex;
     }
 
     int AnimationBuilder::LoadBoneData(const graphics::ufmt_loader::ModelInfo &modelData, const std::string &name)
@@ -303,49 +303,49 @@ namespace ursine
         return rigIndex;
     }
 
-	void AnimationBuilder::interpolateRigKeyFrames(
-		const std::vector<AnimationKeyframe>& frame1,
-		const std::vector<AnimationKeyframe>& frame2,
-		const float time,
-		const unsigned boneCount,
+    void AnimationBuilder::interpolateRigKeyFrames(
+        const std::vector<AnimationKeyframe>& frame1,
+        const std::vector<AnimationKeyframe>& frame2,
+        const float time,
+        const unsigned boneCount,
         std::vector<SMat4> &finalTransform,
         AnimationRig *rig
-		)
-	{
-		// get the percentage between current frame and next frame
-		float lerpPercent = (time - frame1[0].length) / (frame2[0].length - frame1[0].length);
+        )
+    {
+        // get the percentage between current frame and next frame
+        float lerpPercent = (time - frame1[0].length) / (frame2[0].length - frame1[0].length);
 
-		// for each one, interpolate between frame1[x] and frame2[x] with time, save result in finalTransform[x]
-		for (unsigned x = 0; x < boneCount; ++x)
-		{
-			// get the current guy
-			SMat4 &current = finalTransform[x];
-			
-			// position
+        // for each one, interpolate between frame1[x] and frame2[x] with time, save result in finalTransform[x]
+        for (unsigned x = 0; x < boneCount; ++x)
+        {
+            // get the current guy
+            SMat4 &current = finalTransform[x];
+            
+            // position
             SVec3 p = (1.0f - lerpPercent) * frame1[x].translation + frame2[x].translation * lerpPercent;
-			
-			// scale
+            
+            // scale
             SVec3 s = (1.0f - lerpPercent) * frame1[x].scale + frame2[x].scale * lerpPercent;
-			
-			// rotation
-			SQuat q = frame1[x].rotation.Slerp(frame2[x].rotation, lerpPercent);
-			
+            
+            // rotation
+            SQuat q = frame1[x].rotation.Slerp(frame2[x].rotation, lerpPercent);
+            
             auto &bone = rig->GetBone( x );
 
             bone.SetTranslation( p );
             bone.SetRotation( q );
             bone.SetScale( s );
 
-			// construct matrix for this matrix
-			current = SMat4(p, q, s);
-		}
-	}
+            // construct matrix for this matrix
+            current = SMat4(p, q, s);
+        }
+    }
 
     void AnimationBuilder::rec_LoadBoneMesh(
         std::vector<std::vector<unsigned>>& hierarchy,
         unsigned currentIndex,
         unsigned parentIndex,
-		const std::vector<graphics::ufmt_loader::BoneInfo>& rigData,
+        const std::vector<graphics::ufmt_loader::BoneInfo>& rigData,
         AnimationRig* rig
     )
     {
