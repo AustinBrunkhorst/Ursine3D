@@ -485,8 +485,8 @@ namespace ursine
                 meshTransform = meshTransform * geoTransform;
                 mConverter->ConvertMatrix(meshTransform); \
 
-                    // vertex, normal, tangent, texcoord, material
-                    ProcessVertices(mesh, newMesh);
+                // vertex, normal, tangent, texcoord, material
+                ProcessVertices(mesh, newMesh);
                 ProcessNormals(mesh, newMesh);
                 ProcessTangent(mesh, newMesh);
                 ProcessTexcoord(mesh, newMesh);
@@ -526,7 +526,7 @@ namespace ursine
                 {
                     FBX_DATA::CtrlPoint* newCtrlPoint = new FBX_DATA::CtrlPoint;
                     FbxVector4 controlPos = mesh->GetControlPointAt(i);
-                    //mConverter->ConvertVector(controlPos);
+                    mConverter->ConvertVector(controlPos);
                     newCtrlPoint->mPosition = FBXVectorToXMFLOAT3(controlPos);
                     (*control)[i] = newCtrlPoint;
                 }

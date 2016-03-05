@@ -104,7 +104,26 @@ namespace ursine
     
     void AnimationState::SetAnimationName(const std::string& name)
     {
+        if ("" == name)
+            return;
         m_animname = name;
+
+        Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
+        if (!targetAnimation)
+        {
+#if defined(URSINE_WITH_EDITOR)
+            NotificationConfig error;
+
+            error.type = NOTIFY_ERROR;
+            error.header = "Animation doesn't exist";
+            error.message = "To add animation into the state, animation should exist in the Animation List";
+
+            EditorPostNotification(error);
+#endif
+            return;
+        }
+
+        m_animation = targetAnimation;
     }
 
     // make this can handle multiple names of animation name

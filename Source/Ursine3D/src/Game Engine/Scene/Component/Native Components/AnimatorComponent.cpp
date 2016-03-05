@@ -128,6 +128,18 @@ namespace ursine
         Animator::~Animator(void)
         {
             m_animlist.clear( );
+
+            URSINE_TODO( "Jun! you should clear animation list, rig" );
+            auto owner = GetOwner();
+            auto world = owner->GetWorld();
+
+            ecs::EntityHandle entity = world->GetEntityFromName( kAnimationListName );
+
+            auto &matrixPalette = owner->GetComponent<Model3D>()->GetMatrixPalette();
+            for (auto &x : matrixPalette)
+            {
+                x = SMat4::Identity();
+            }
         }
 
         void Animator::OnInitialize(void)
@@ -142,7 +154,7 @@ namespace ursine
 
         void Animator::OnSceneReady(Scene *scene)
         {
-            importAnimation( );
+            //importAnimation( );
         }
 
         void Animator::UpdateAnimation(const float dt)
@@ -298,8 +310,7 @@ namespace ursine
         {
             m_playing = isPlaying;
         }
-
-
+        
         bool Animator::IsStateChanging(void) const
         {
             return m_changeState;
@@ -379,7 +390,7 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "clip", m_clipResource );
         }
 
-        void Animator::invalidateClip(void)
+        void Animator::invalidateClip( )
         {
             auto data = loadResource<resources::AnimationClipData>( m_clipResource );
 
@@ -746,6 +757,7 @@ namespace ursine
                 return;
             }
 
+            // Get rig by name
             auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
 
             if (!rig)
@@ -834,7 +846,7 @@ namespace ursine
             }
         }
 
-    #if defined(URSINE_WITH_EDITOR)
+#if defined(URSINE_WITH_EDITOR)
 
         void Animator::ImportAnimation(void)
         {
@@ -860,7 +872,7 @@ namespace ursine
             } );
         }
 
-    #endif
+#endif
 
         // import animation to the current state
         // if I get animation builder here, how can I put animation to the state?
