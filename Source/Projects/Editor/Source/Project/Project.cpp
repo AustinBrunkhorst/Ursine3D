@@ -15,6 +15,7 @@
 
 #include "Project.h"
 #include "ResourcePipelineConfig.h"
+#include "EditorUIResourceHandlerFactory.h"
 
 #include <WorldSerializer.h>
 #include <WorldData.h>
@@ -22,6 +23,8 @@
 #include <LightComponent.h>
 #include <WorldConfigComponent.h>
 #include <Color.h>
+
+#include <UIConfig.h>
 
 using namespace ursine;
 
@@ -214,6 +217,9 @@ void Project::initializeScene(const resources::ResourceReference &startingWorld)
     m_pipelineManager = new EditorResourcePipelineManager( this );
 
     m_resourcePipeline.WatchResourceDirectory( );
+
+    // create the UI resource factory
+    CefRegisterSchemeHandlerFactory( kUIGameResourceScheme, "", new EditorUIResourceHandlerFactory( ) );
 }
 
 void Project::onSceneWorldChanged(EVENT_HANDLER(Scene))

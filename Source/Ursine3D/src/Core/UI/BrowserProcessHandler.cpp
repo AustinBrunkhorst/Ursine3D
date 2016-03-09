@@ -19,20 +19,13 @@
 
 namespace ursine
 {
-    void BrowserProcessHandler::OnContextInitialized(void)
-    {
-
-    }
+    void BrowserProcessHandler::OnContextInitialized(void) { }
 
     void BrowserProcessHandler::OnBeforeChildProcessLaunch(
-        CefRefPtr<CefCommandLine> cmdLine)
-    {
-            
-    }
+        CefRefPtr<CefCommandLine> cmdLine
+    ) { }
 
     void BrowserProcessHandler::OnRenderProcessThreadCreated(
-        CefRefPtr<CefListValue> extraInfo)
-    {
-
-    }
+        CefRefPtr<CefListValue> extraInfo
+    ) { }
 }

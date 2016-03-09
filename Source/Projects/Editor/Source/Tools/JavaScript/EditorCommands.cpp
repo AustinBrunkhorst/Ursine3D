@@ -159,7 +159,7 @@ namespace editor_commands
     {
         std::string debugURL( "http://localhost:" );
 
-        debugURL += std::to_string( UIManager::REMOTE_DEBUGGING_PORT );
+        debugURL += std::to_string( kUIDebuggingPort );
 
         utils::OpenPath( debugURL );
 

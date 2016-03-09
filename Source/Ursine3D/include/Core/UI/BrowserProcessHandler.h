@@ -19,7 +19,6 @@ namespace ursine
 {
     class BrowserProcessHandler : public CefBrowserProcessHandler
     {
-    private:
         void OnContextInitialized(void) override;
 
         void OnBeforeChildProcessLaunch(

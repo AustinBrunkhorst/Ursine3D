@@ -162,7 +162,7 @@ namespace ursine
                 ) override;
 
                 void processPendingFileActions(void);
-                void processPendingFileAction(const FileWatchAction &action);
+                void processPendingFileAction(const fs::path &resourceFile, const FileWatchAction &action);
 
                 void onResourceAdded(const fs::path &fileName);
                 void onResourceModified(ResourceItem::Handle resource);

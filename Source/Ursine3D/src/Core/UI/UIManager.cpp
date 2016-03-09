@@ -55,7 +55,7 @@ namespace ursine
 
     #if defined(URSINE_WITH_EDITOR)
 
-        settings.remote_debugging_port = REMOTE_DEBUGGING_PORT;
+        settings.remote_debugging_port = kUIDebuggingPort;
 
     #endif
 
@@ -63,9 +63,9 @@ namespace ursine
 
         UICore::Instance = new UICore( );
 
-        URSINE_TODO( "configurable handlers" );
         UAssert( CefInitialize( mainArgs, settings, UICore::Instance, nullptr ),
-            "Unable to initialize CEF." );
+            "Unable to initialize CEF." 
+        );
 
         CefEnableHighDPISupport( );
 
@@ -94,6 +94,11 @@ namespace ursine
         settings.universal_access_from_file_urls = STATE_ENABLED;
 
         return new UIView( window, settings, url );
+    }
+
+    void UIManager::OnRegisterCustomSchemes(CefRefPtr<CefSchemeRegistrar> registrar)
+    {
+        registrar->AddCustomScheme( kUIGameResourceScheme, true, false, false );
     }
 
     void UIManager::onAppUpdate(EVENT_HANDLER(Application))

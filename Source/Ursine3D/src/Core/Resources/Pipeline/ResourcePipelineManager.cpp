@@ -1081,11 +1081,39 @@ namespace ursine
             fs::RecursiveDirectoryIterator it( resource->GetSourceFileName( ) );
             fs::RecursiveDirectoryIterator itEnd;
 
+            std::vector<boost::regex> exclusionExpressions;
+
+            auto *syncConfig = resource->m_metaData.importer.GetMeta( ).GetProperty<ResourceSyncConfig>( );
+
+            if (syncConfig)
+                exclusionExpressions = syncConfig->GetBuiltExclusionExpressions( );
+
+            boost::cmatch match;
+
             for (; it != itEnd; ++it)
             {
-                auto fileTime = last_write_time( *it );
+                auto &directoryItem = *it;
+                
+                if (syncConfig)
+                {
+                    auto isExcluded = false;
+                    auto path = directoryItem.path( ).string( ).c_str( );
 
-                URSINE_TODO( "Respect sync exclusion properties." );
+                    for (auto &expression : exclusionExpressions)
+                    {
+                        if (regex_search( path, match, expression ))
+                        {
+                            isExcluded = true;
+
+                            break;
+                        }
+                    }
+
+                    if (isExcluded)
+                        continue;
+                }
+
+                auto fileTime = last_write_time( directoryItem );
 
                 if (fileTime > buildTime)
                     return true;
@@ -1164,25 +1192,26 @@ namespace ursine
 
         std::lock_guard<std::mutex> lock( m_fileWatchActionMutex );
 
-        m_pendingFileActions[ actionData.absoluteFilePath ] = actionData;
+        auto directoryResource = getDirectoryResource( actionData.absoluteFilePath );
 
-        /*switch(action)
+        // ignore deletions in directory resources -- almost all implementations of 
+        // file editors create temporary files, so we can't use this action
+        // meaningfully - unless it's the ACTUAL directory itself
+        if (directoryResource && 
+            type == fs::Action::Delete && 
+            actionData.absoluteFilePath != directoryResource->m_fileName
+        )
         {
-        case efsw::Actions::Add:
-            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Added" << std::endl;
-            break;
-        case efsw::Actions::Delete:
-            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Delete" << std::endl;
-            break;
-        case efsw::Actions::Modified:
-            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Modified" << std::endl;
-            break;
-        case efsw::Actions::Moved:
-                std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Moved from (" << oldFileName << ")" << std::endl;
-            break;
-        default:
-            std::cout << "Should never happen!" << std::endl;
-        }*/
+            return;
+        }
+
+        // if this file is contained in a directory resource, make sure the action is mapped
+        // to the directory, not the modified subresource itself
+        m_pendingFileActions[
+            directoryResource ? 
+                directoryResource->m_fileName : 
+                actionData.absoluteFilePath
+        ] = actionData;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1201,7 +1230,7 @@ namespace ursine
             }
 
             for (auto &entry : actionsCopy)
-                processPendingFileAction( entry.second );
+                processPendingFileAction( entry.first, entry.second );
 
             // make sure we don't exhaust the CPU
             std::this_thread::sleep_for( milliseconds( 500 ) );
@@ -1210,13 +1239,31 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    void rp::ResourcePipelineManager::processPendingFileAction(const FileWatchAction &action)
+    void rp::ResourcePipelineManager::processPendingFileAction(const fs::path &resourceFile, const FileWatchAction &action)
     {
         auto now = system_clock::now( );
 
         // this guy isn't stale yet, ignore him
         if (now - action.time > kResourceActionStaleDuration)
             return;
+
+        /*switch (action.type)
+        {
+        case efsw::Actions::Add:
+            std::cout << "DIR (" << action.directory << ") FILE (" << action.fileName << ") has event Added" << std::endl;
+            break;
+        case efsw::Actions::Delete:
+            std::cout << "DIR (" << action.directory << ") FILE (" << action.fileName << ") has event Delete" << std::endl;
+            break;
+        case efsw::Actions::Modified:
+            std::cout << "DIR (" << action.directory << ") FILE (" << action.fileName << ") has event Modified" << std::endl;
+            break;
+        case efsw::Actions::Moved:
+            std::cout << "DIR (" << action.directory << ") FILE (" << action.fileName << ") has event Moved from (" << action.oldFileName << ")" << std::endl;
+            break;
+        default:
+            std::cout << "Should never happen!" << std::endl;
+        }*/
 
         switch (action.type)
         {
@@ -1228,16 +1275,14 @@ namespace ursine
         case fs::Actions::Moved:
         case fs::Actions::Modified:
         {
-            URSINE_TODO( "Directory resource modification." );
-
-            auto extension = action.absoluteFilePath.extension( ).string( );
+            auto extension = resourceFile.extension( ).string( );
 
             utils::MakeLowerCase( extension );
 
             // meta file modified
             if (extension == kMetaFileExtension)
             {
-                auto sourceFile = change_extension( action.absoluteFilePath, "" );
+                auto sourceFile = change_extension( resourceFile, "" );
 
                 auto search = m_pathToResource.find( sourceFile );
 
@@ -1254,32 +1299,18 @@ namespace ursine
                 return;
             }
 
-            auto search = m_pathToResource.find( action.absoluteFilePath );
+            auto search = m_pathToResource.find( resourceFile );
 
             // if it doesn't exist, we're assuming it is added
             if (search == m_pathToResource.end( ))
             {
-                auto directoryResource = getDirectoryResource( action.absoluteFilePath );
-
-                // this file is actually part of a resource, so modify the resource it belongs to
-                if (directoryResource != nullptr)
-                {
-                    auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, directoryResource );
-                
-                    if (handler.joinable( ))
-                        handler.detach( );
-                }
-                // add this baby
-                else
-                {
-                    auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, action.absoluteFilePath );
+                auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, resourceFile );
             
-                    if (handler.joinable( ))
-                        handler.detach( );
-                }
+                if (handler.joinable( ))
+                    handler.detach( );
             }
-            // exists, so we'll modify it
-            else
+            // exists, so we'll modify it (if it's actually invalidated)
+            else if (buildIsInvalidated( search->second ))
             {
                 auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, search->second );
                 
@@ -1387,6 +1418,8 @@ namespace ursine
                 resource->GetSourceFileName( ).string( ).c_str( )
             );
         }
+
+        std::cout << "modified: " << resource->GetSourceFileName( ) << std::endl;
 
         Application::PostMainThread( [=]
         {

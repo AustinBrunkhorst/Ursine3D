@@ -20,5 +20,8 @@ namespace ursine
         UI_CMD_BROADCAST
     };
 
-    const auto kNativeBroadcastFunction = "NativeBroadcast";
+    const auto kUIDebuggingPort = 6999;
+    const auto kUINativeBroadcastFunction = "NativeBroadcast";
+
+    const auto kUIGameResourceScheme = "game";
 }

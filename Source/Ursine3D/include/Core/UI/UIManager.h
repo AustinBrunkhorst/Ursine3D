@@ -36,8 +36,6 @@ namespace ursine
         CORE_SYSTEM;
 
     public:
-        static const int REMOTE_DEBUGGING_PORT = 6999;
-
         Meta(Enable, DisableNonDynamic)
         UIManager(void);
 
@@ -46,6 +44,10 @@ namespace ursine
         UIView::Handle CreateView(Window::Handle window, const std::string &url) const;
 
     private:
+        void OnRegisterCustomSchemes(
+            CefRefPtr<CefSchemeRegistrar> registrar
+        ) override;
+
         void onAppUpdate(EVENT_HANDLER(Application));
 
         IMPLEMENT_REFCOUNTING(UIManager);

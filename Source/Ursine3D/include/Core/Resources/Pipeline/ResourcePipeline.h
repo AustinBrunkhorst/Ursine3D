@@ -8,6 +8,7 @@
 #include "FBXFileImporter.h"
 #include "AudioImporter.h"
 #include "JsonImporter.h"
+#include "UIResourceImporter.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Processors
@@ -42,3 +43,6 @@
 
 #include "ArchetypeReader.h"
 #include "ArchetypeData.h"
+
+#include "UIResourceReader.h"
+#include "UIResourceData.h"
