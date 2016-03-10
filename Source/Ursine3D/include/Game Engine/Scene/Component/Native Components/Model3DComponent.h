@@ -185,6 +185,9 @@ namespace ursine
             void invalidateTexture(bool unload = true);
             void invalidateModel(bool unload = true);
 
+            void onTextureReload(void);
+            void OnModelReload(void);
+
         } Meta(Enable, WhiteListMethods, DisplayName( "Model3D" ));
     }
 }

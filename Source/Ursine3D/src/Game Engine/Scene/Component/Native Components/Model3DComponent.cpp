@@ -27,14 +27,19 @@ namespace ursine
 {
     namespace ecs
     {
-        NATIVE_COMPONENT_DEFINITION(Model3D);
+        NATIVE_COMPONENT_DEFINITION( Model3D );
 
         Model3D::Model3D(void)
             : BaseComponent( )
             , m_graphics( GetCoreSystem( graphics::GfxAPI ) )
             , m_model( nullptr )
         {
-            m_base = new RenderableComponentBase( std::bind( &Model3D::updateRenderer, this ) );
+            m_base = new RenderableComponentBase( 
+                std::bind( 
+                    &Model3D::updateRenderer, 
+                    this 
+                ) 
+            );
 
             m_base->SetHandle( m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_MODEL3D ) );
 
@@ -48,7 +53,7 @@ namespace ursine
         {
             m_base->OnRemove( GetOwner( ) );
 
-            m_model->SetDebug(false);
+            m_model->SetDebug( false );
 
            m_graphics->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
 
@@ -63,11 +68,14 @@ namespace ursine
         {
             auto &owner = GetOwner( );
 
-            m_base->OnInitialize(owner);
+            m_base->OnInitialize( owner );
 
             m_model->SetEntityID( GetOwner( )->GetID( ) );
 
             updateRenderer( );
+
+            bindResourceModification( m_textureResource, &Model3D::onTextureReload );
+            bindResourceModification( m_modelResource, &Model3D::OnModelReload );
         }
 
         void Model3D::OnSceneReady(Scene *scene)
@@ -78,7 +86,7 @@ namespace ursine
 
         std::vector<SMat4> &Model3D::GetMatrixPalette(void)
         {
-            return m_model->GetMatrixPalette();
+            return m_model->GetMatrixPalette( );
         }
 
         const resources::ResourceReference& Model3D::GetModel(void) const
@@ -122,64 +130,64 @@ namespace ursine
 
         void Model3D::SetColor(const ursine::Color &color)
         {
-            m_model->SetColor(color);
+            m_model->SetColor( color );
 
-            NOTIFY_COMPONENT_CHANGED("color", color);
+            NOTIFY_COMPONENT_CHANGED( "color", color );
         }
 
         const Color &Model3D::GetColor(void)
         {
-            return m_model->GetColor();
+            return m_model->GetColor( );
         }
 
         float Model3D::GetEmissive(void) const
         {
-            return m_model->GetEmissive();
+            return m_model->GetEmissive( );
         }
 
         void Model3D::SetEmissive(float emissive)
         {
-            m_model->SetEmissive(emissive);
+            m_model->SetEmissive( emissive );
         }
 
         float Model3D::GetSpecularPower(void) const
         {
-            return m_model->GetSpecularPower();
+            return m_model->GetSpecularPower( );
         }
 
         void Model3D::SetSpecularPower(float power)
         {
-            m_model->SetSpecularPower(power);
+            m_model->SetSpecularPower( power );
         }
 
         float Model3D::GetSpecularIntensity(void) const
         {
-            return m_model->GetSpecularIntensity();
+            return m_model->GetSpecularIntensity( );
         }
 
         void Model3D::SetSpecularIntensity(float intensity)
         {
-            m_model->SetSpecularIntensity(intensity);
+            m_model->SetSpecularIntensity( intensity );
         }
 
         void Model3D::SetOverdraw(bool flag)
         {
-            m_model->SetOverdraw(flag);
+            m_model->SetOverdraw( flag );
         }
 
         bool Model3D::GetOverdraw(void) const
         {
-            return m_model->GetOverdraw();
+            return m_model->GetOverdraw( );
         }
 
         void Model3D::SetDebug(bool flag)
         {
-            m_model->SetDebug(flag);
+            m_model->SetDebug( flag );
         }
 
         bool Model3D::GetDebug(void) const
         {
-            return m_model->GetDebug();
+            return m_model->GetDebug( );
         }
 
         void Model3D::SetActive(bool flag)
@@ -194,42 +202,42 @@ namespace ursine
 
         RenderMask Model3D::GetRenderMask(void) const
         {
-            return static_cast<RenderMask>(m_model->GetRenderMask() & 0xFFFFFFFF);
+            return static_cast<RenderMask>( m_model->GetRenderMask() & 0xFFFFFFFF );
         }
 
         void Model3D::SetRenderMask(RenderMask mask)
         {
-            m_model->SetRenderMask(static_cast<unsigned long long>(mask));
+            m_model->SetRenderMask( static_cast<unsigned long long>( mask ) );
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
         {
-            m_model->SetMaterialData(emiss, pow, intensity);
+            m_model->SetMaterialData( emiss, pow, intensity );
         }
 
         void Model3D::GetMaterialData(float &emiss, float &pow, float &intensity)
         {
-            m_model->GetMaterialData(emiss, pow, intensity);
+            m_model->GetMaterialData( emiss, pow, intensity );
         }
 
         void Model3D::SetMeshIndex(const int index)
         {
-            m_model->SetMeshIndex(index);
+            m_model->SetMeshIndex( index );
         }
 
         int Model3D::GetMeshIndex(void) const
         {
-            return m_model->GetMeshIndex();
+            return m_model->GetMeshIndex( );
         }
 
         bool Model3D::GetIsShadowCaster(void) const
         {
-            return m_model->GetShadowCaster();
+            return m_model->GetShadowCaster( );
         }
 
         void Model3D::SetIsShadowCaster(bool castShadows)
         {
-            m_model->SetShaderCaster(castShadows);
+            m_model->SetShaderCaster( castShadows );
         }
 
         void Model3D::updateRenderer(void)
@@ -237,7 +245,7 @@ namespace ursine
             auto trans = GetOwner( )->GetTransform( );
             auto &model = m_graphics->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
 
-            model.SetWorldMatrix(trans->GetLocalToWorldMatrix());
+            model.SetWorldMatrix( trans->GetLocalToWorldMatrix( ) );
         }
 
         void Model3D::invalidateModel(bool unload)
@@ -273,25 +281,37 @@ namespace ursine
             }
             else
             {
-                auto handle = data->GetTextureHandle();
+                auto handle = data->GetTextureHandle( );
 
                 if (unload)
                     m_graphics->ResourceMgr.UnloadTexture( m_model->GetTextureHandle( ) );
 
                 m_graphics->ResourceMgr.LoadTexture( handle );
 
-                m_model->SetTextureHandle(handle);
+                m_model->SetTextureHandle( handle );
             }
+        }
+
+        void Model3D::onTextureReload(void)
+        {
+            if (resourcesAreAvailable( ))
+                invalidateTexture( true );
+        }
+
+        void Model3D::OnModelReload(void)
+        {
+            if (resourcesAreAvailable( ))
+                invalidateTexture( true );
         }
 
         void Model3D::OnSerialize(Json::object &output) const
         {
-            output["meshIndex"] = GetMeshIndex();
+            output["meshIndex"] = GetMeshIndex( );
         }
 
         void Model3D::OnDeserialize(const Json &input)
         {
-            SetMeshIndex(input["meshIndex"].int_value());
+            SetMeshIndex( input["meshIndex"].int_value( ) );
         }
 
 #if defined(URSINE_WITH_EDITOR)
@@ -302,27 +322,27 @@ namespace ursine
 
             Application::PostMainThread( [=]
             {
-                if (!entity->HasComponent<ConvexHullCollider>())
-                    entity->AddComponent<ConvexHullCollider>();
+                if (!entity->HasComponent<ConvexHullCollider>( ))
+                    entity->AddComponent<ConvexHullCollider>( );
 
-                auto convexHull = entity->GetComponent<ConvexHullCollider>();
+                auto convexHull = entity->GetComponent<ConvexHullCollider>( );
 
-                convexHull->GenerateConvexHull(this);
+                convexHull->GenerateConvexHull( this );
             });
         }
 
         void Model3D::GenerateBvhTriangleMeshCollider(void)
         {
-            auto entity = GetOwner();
+            auto entity = GetOwner( );
 
             Application::PostMainThread( [=]
             {
-                if (!entity->HasComponent<BvhTriangleMeshCollider>())
-                    entity->AddComponent<BvhTriangleMeshCollider>();
+                if (!entity->HasComponent<BvhTriangleMeshCollider>( ))
+                    entity->AddComponent<BvhTriangleMeshCollider>( );
 
-                auto bvhTriangleMesh = entity->GetComponent<BvhTriangleMeshCollider>();
+                auto bvhTriangleMesh = entity->GetComponent<BvhTriangleMeshCollider>( );
 
-                bvhTriangleMesh->GenerateBvhTriangleMesh(this);
+                bvhTriangleMesh->GenerateBvhTriangleMesh( this );
             });
 
             // Send notification of collider's limitations
@@ -330,13 +350,13 @@ namespace ursine
 
             config.type = NOTIFY_INFO;
             config.dismissible = true;
-            config.duration = TimeSpan::FromSeconds(15.0f);
-            config.header = "BVH Triangle Mesh Collider Limitations";
+            config.duration = TimeSpan::FromSeconds( 15.0f );
+            config.header =  "BVH Triangle Mesh Collider Limitations";
             config.message = "<ol><li>Performance intensive.<li/>"
-                    "<li>Cannot be Dynamic.<li/>"
-                    "<li>Need Dynamic concave colliders? Use <strong>Convex Decomposition<strong>.<li/><ol/>";
+                             "<li>Cannot be Dynamic.<li/>"
+                             "<li>Need Dynamic concave colliders? Use <strong>Convex Decomposition<strong>.<li/><ol/>";
 
-            EditorPostNotification(config);
+            EditorPostNotification( config );
         }
 
         void Model3D::GenerateConvexDecompCollider(void)
@@ -345,12 +365,12 @@ namespace ursine
 
             Application::PostMainThread( [=]
             {
-                if (!entity->HasComponent<ConvexDecompCollider>())
-                    entity->AddComponent<ConvexDecompCollider>();
+                if (!entity->HasComponent<ConvexDecompCollider>( ))
+                    entity->AddComponent<ConvexDecompCollider>( );
 
-                auto convex = entity->GetComponent<ConvexDecompCollider>();
+                auto convex = entity->GetComponent<ConvexDecompCollider>( );
 
-                convex->GenerateConvexHulls(this);
+                convex->GenerateConvexHulls( this );
             });
         }
 #endif

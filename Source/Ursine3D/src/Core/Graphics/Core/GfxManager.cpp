@@ -746,12 +746,12 @@ namespace ursine
                 {
                     overdrawPass.
                         Set(
-                    {
-                        RENDER_TARGET_DEFERRED_COLOR,
-                        RENDER_TARGET_DEFERRED_NORMAL,
-                            RENDER_TARGET_DEFERRED_SPECPOW
-                    }
-                            ).
+                            {
+                                RENDER_TARGET_SWAPCHAIN,
+                                RENDER_TARGET_DEFERRED_NORMAL,
+                                RENDER_TARGET_DEFERRED_SPECPOW
+                            }
+                        ).
                         Set(SHADER_DEFERRED_DEPTH).
                         Set(DEPTH_STENCIL_OVERDRAW).
                         Set(DEPTH_STATE_DEPTH_NOSTENCIL).
@@ -764,7 +764,7 @@ namespace ursine
 
                         Accepts(RENDERABLE_OVERDRAW).
                         Processes(&modelProcessor).
-                        InitializePass();
+                    InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
