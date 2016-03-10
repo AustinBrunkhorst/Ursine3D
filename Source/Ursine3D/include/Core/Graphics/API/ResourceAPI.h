@@ -85,7 +85,7 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // FONT
             /////////////////////////////////////////////////////////
-            GfxHND CreateBitmapFont(uint8_t *binaryData, size_t binarySize);
+            GfxHND CreateBitmapFont(const uint8_t *binaryData, size_t binarySize);
             void DestroyBitmapFont(GfxHND &fontHandle);
             void RegisterTexture(GfxHND fontHandle, const std::string &fontName, GfxHND textureHandle);
 

@@ -26,7 +26,7 @@ namespace ursine
         {
         }
 
-        GfxHND FontManager::CreateBitmapFont(uint8_t *binaryData, size_t binarySize)
+        GfxHND FontManager::CreateBitmapFont(const uint8_t *binaryData, size_t binarySize)
         {
             GfxHND handle;
             auto *hnd = HND_RSRCE(handle);

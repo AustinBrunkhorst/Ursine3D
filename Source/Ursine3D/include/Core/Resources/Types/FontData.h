@@ -40,6 +40,8 @@ namespace ursine
         private:
             graphics::GfxHND m_fontHandle;
 
+            std::vector<graphics::GfxHND> m_pageTextureHandles;
+
             BinaryData m_fntData;
             TexturePageTable m_pages;
 

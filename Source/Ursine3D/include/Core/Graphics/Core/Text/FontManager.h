@@ -28,7 +28,7 @@ namespace ursine
             void Uninitialize(void);
 
             // create a font, returns the handle to it
-            GfxHND CreateBitmapFont(uint8_t *binaryData, size_t binarySize);
+            GfxHND CreateBitmapFont(const uint8_t *binaryData, size_t binarySize);
 
             void DestroyBitmapFont(GfxHND &fontHandle);
 

@@ -91,7 +91,7 @@ namespace ursine
 
         void SpriteTextProcessor::mapSpriteTextBuffer(_DRAWHND handle)
         {
-            SpriteText spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>(handle.Index_);
+            auto &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>(handle.Index_);
 
             // map text data ////////////////////////////////////////
             SpriteTextBuffer stb;

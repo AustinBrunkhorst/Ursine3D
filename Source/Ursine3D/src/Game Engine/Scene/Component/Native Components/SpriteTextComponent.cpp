@@ -14,29 +14,28 @@
 #include "UrsinePrecompiled.h"
 
 #include "SpriteTextComponent.h"
-#include <Core/CoreSystem.h>
-#include <Core/Graphics/API/GfxAPI.h>
+#include "GfxAPI.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        NATIVE_COMPONENT_DEFINITION(SpriteText);
+        NATIVE_COMPONENT_DEFINITION( SpriteText );
 
         SpriteText::SpriteText(void)
             : BaseComponent( )
             , m_spriteText( nullptr )
             , m_base( nullptr )
         {
-            auto *graphics = GetCoreSystem(graphics::GfxAPI);
+            auto *graphics = GetCoreSystem( graphics::GfxAPI );
 
-            m_base = new RenderableComponentBase(std::bind(&SpriteText::updateRenderer, this));
+            m_base = std::make_shared<RenderableComponentBase>( std::bind( &SpriteText::updateRenderer, this ) );
 
             m_base->SetHandle( graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_SPRITE_TEXT ) );
 
-            // store a pointer to the model
             m_spriteText = &graphics->RenderableMgr.GetSpriteText( m_base->GetHandle( ) );
 
+            m_spriteText->SetFontHandle( 0 );
             m_spriteText->SetRenderMask( 0 );
         }
 
@@ -46,15 +45,13 @@ namespace ursine
 
             m_spriteText->SetDebug( false );
 
-            GetCoreSystem(graphics::GfxAPI)->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
-
-            delete m_base;
+            GetCoreSystem( graphics::GfxAPI )->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
         }
 
         void SpriteText::OnInitialize(void)
         {
             Component::OnInitialize( );
-            
+
             auto &owner = GetOwner( );
 
             m_base->OnInitialize( owner );
@@ -63,6 +60,30 @@ namespace ursine
             m_spriteText->SetEntityID( owner->GetID( ) );
 
             updateRenderer( );
+
+            bindResourceModification( m_font, &SpriteText::invalidateFont );
+        }
+
+        void SpriteText::OnSceneReady(Scene *scene)
+        {
+            invalidateFont( );
+        }
+
+        const resources::ResourceReference &SpriteText::GetFont(void) const
+        {
+            return m_font;
+        }
+
+        void SpriteText::SetFont(const resources::ResourceReference &font)
+        {
+            m_font = font;
+
+            if (!resourcesAreAvailable( ))
+                return;
+
+            invalidateFont( );
+
+            NOTIFY_COMPONENT_CHANGED( "font", m_font );
         }
 
         float SpriteText::GetSize(void) const
@@ -95,22 +116,22 @@ namespace ursine
             m_spriteText->SetHeight( size );
         }
 
-        const SVec3& SpriteText::GetPosition(void) const
+        const SVec3 &SpriteText::GetPosition(void) const
         {
             return m_spriteText->GetPosition( );
         }
 
-        void SpriteText::SetPosition(const SVec3& position)
+        void SpriteText::SetPosition(const SVec3 &position)
         {
             m_spriteText->SetPosition( position );
         }
 
-        const std::string& SpriteText::GetText(void) const
+        const std::string &SpriteText::GetText(void) const
         {
             return m_spriteText->GetText( );
         }
 
-        void SpriteText::SetText(const std::string& text)
+        void SpriteText::SetText(const std::string &text)
         {
             m_spriteText->SetText( text );
         }
@@ -127,7 +148,7 @@ namespace ursine
 
         TextAlignment SpriteText::GetAlignment(void) const
         {
-            return static_cast<TextAlignment>(m_spriteText->GetAlignment( ));
+            return static_cast<TextAlignment>( m_spriteText->GetAlignment( ) );
         }
 
         void SpriteText::SetAlignment(TextAlignment alignment)
@@ -139,6 +160,7 @@ namespace ursine
         {
             return m_spriteText->GetFilter( );
         }
+
         void SpriteText::SetFilter(bool useFilter)
         {
             m_spriteText->SetFilter( useFilter );
@@ -148,10 +170,12 @@ namespace ursine
         {
             return m_spriteText->GetColor( );
         }
+
         void SpriteText::SetColor(const Color &color)
         {
             m_spriteText->SetColor( color );
-            NOTIFY_COMPONENT_CHANGED("textColor", color);
+
+            NOTIFY_COMPONENT_CHANGED( "textColor", color );
         }
 
         void SpriteText::SetOverdraw(bool flag)
@@ -164,15 +188,30 @@ namespace ursine
             return m_spriteText->GetOverdraw( );
         }
 
-        void SpriteText::updateRenderer()
+        void SpriteText::updateRenderer(void)
         {
             auto *transform = GetOwner( )->GetTransform( );
 
             // manually update our width and height
-            m_spriteText->SetWidth( transform->GetWorldScale().X() );
-            m_spriteText->SetHeight( transform->GetWorldScale().Y() );
+            m_spriteText->SetWidth( transform->GetWorldScale( ).X( ) );
+            m_spriteText->SetHeight( transform->GetWorldScale( ).Y( ) );
 
             m_spriteText->SetPosition( transform->GetWorldPosition( ) );
+        }
+
+        void SpriteText::invalidateFont(void)
+        {
+            auto data = loadResource<resources::FontData>( m_font );
+
+            if (data == nullptr)
+            {
+                // default
+                m_spriteText->SetFontHandle( 0 );
+            }
+            else
+            {
+                m_spriteText->SetFontHandle( data->GetFontHandle( ) );
+            }
         }
     }
 }

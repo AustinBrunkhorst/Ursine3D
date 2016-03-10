@@ -24,7 +24,7 @@ namespace ursine
             GetCoreSystem( graphics::GfxAPI )->ResourceMgr.DestroyTexture( m_textureHandle );
         }
 
-        graphics::GfxHND TextureData::GetTextureHandle() const
+        graphics::GfxHND TextureData::GetTextureHandle(void) const
         {
             return m_textureHandle;
         }

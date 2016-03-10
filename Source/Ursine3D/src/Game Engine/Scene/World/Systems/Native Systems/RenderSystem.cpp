@@ -125,7 +125,7 @@ namespace ursine
             }
             else if(component->Is<SpriteText>( ))
             {
-                addRenderable(args->entity, static_cast<SpriteText*>(component)->m_base);
+                addRenderable( args->entity, static_cast<SpriteText*>( component )->m_base.get( ) );
             }
         }
 
@@ -167,7 +167,7 @@ namespace ursine
             else if (component->Is<ParticleSystem>( ))
                 removeRenderable( args->entity, static_cast<ParticleSystem*>( component )->m_base );
             else if (component->Is<SpriteText>( ))
-                removeRenderable( args->entity, static_cast<SpriteText*>( component )->m_base );
+                removeRenderable( args->entity, static_cast<SpriteText*>( component )->m_base.get( ) );
         }
 
         void RenderSystem::onUpdate(EVENT_HANDLER(World))

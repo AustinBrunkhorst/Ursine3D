@@ -132,7 +132,7 @@ namespace ursine
             return m_privates->modelMgr->GeAnimeInfo( handle );
         }
 
-        GfxHND ResourceAPI::CreateBitmapFont(uint8_t *binaryData, size_t binarySize)
+        GfxHND ResourceAPI::CreateBitmapFont(const uint8_t *binaryData, size_t binarySize)
         {
             return m_privates->fontMgr->CreateBitmapFont( binaryData, binarySize );
         }
