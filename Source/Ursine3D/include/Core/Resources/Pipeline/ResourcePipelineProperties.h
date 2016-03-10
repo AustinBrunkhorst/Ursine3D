@@ -48,6 +48,8 @@ public:
     Meta(Disable)
     const std::vector<boost::regex> &GetBuiltExclusionExpressions(void) const;
 
+    Meta(Disable)
+    bool IsExcluded(const std::string &path) const;
 private:
     std::vector<boost::regex> m_exclusionExpressions;
 };

@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include "BinaryData.h"
+
 #include <boost/filesystem.hpp>
 #include <FileWatcher.h>
 
@@ -31,6 +33,8 @@ namespace ursine
 
         bool LoadAllText(const std::string &fileName, std::string &output);
         bool WriteAllText(const std::string &fileName, const std::string &text);
+
+        bool LoadAllBinary(const std::string &fileName, BinaryData &output);
 
         std::string SafeFileName(const std::string &fileName, char replacement);
 

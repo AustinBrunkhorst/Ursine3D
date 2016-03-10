@@ -85,7 +85,7 @@ namespace ursine
 
             void BoneInfo::Read(resources::ResourceReader &input)
             {
-                input.ReadString( name );
+                input.Read( name );
 
                 input.Read( mParentIndex );
 
@@ -100,7 +100,7 @@ namespace ursine
 
             void BoneInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output.WriteString( name );
+                output.Write( name );
 
                 output.Write( mParentIndex );
 

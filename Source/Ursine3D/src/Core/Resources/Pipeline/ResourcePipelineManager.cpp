@@ -1081,37 +1081,15 @@ namespace ursine
             fs::RecursiveDirectoryIterator it( resource->GetSourceFileName( ) );
             fs::RecursiveDirectoryIterator itEnd;
 
-            std::vector<boost::regex> exclusionExpressions;
-
             auto *syncConfig = resource->m_metaData.importer.GetMeta( ).GetProperty<ResourceSyncConfig>( );
-
-            if (syncConfig)
-                exclusionExpressions = syncConfig->GetBuiltExclusionExpressions( );
-
-            boost::cmatch match;
 
             for (; it != itEnd; ++it)
             {
                 auto &directoryItem = *it;
                 
-                if (syncConfig)
-                {
-                    auto isExcluded = false;
-                    auto path = directoryItem.path( ).string( ).c_str( );
-
-                    for (auto &expression : exclusionExpressions)
-                    {
-                        if (regex_search( path, match, expression ))
-                        {
-                            isExcluded = true;
-
-                            break;
-                        }
-                    }
-
-                    if (isExcluded)
-                        continue;
-                }
+                // skip checking this entry if it is explicitly excluded from syncing
+                if (syncConfig && syncConfig->IsExcluded( directoryItem.path( ).string( ) ))
+                    continue;
 
                 auto fileTime = last_write_time( directoryItem );
 

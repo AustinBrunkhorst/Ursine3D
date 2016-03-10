@@ -3,13 +3,21 @@
 #include "UIResourceHandler.h"
 
 #include <cef_runnable.h>
+#include <cef_parser.h>
+
+namespace
+{
+    const auto kStatusOK = 200;
+    const auto kStatusNotFound = 404;
+}
 
 namespace ursine
 {
-    UIResourceHandler::UIResourceHandler(const std::string &scheme, resources::ResourceManager *resources)
-        : m_requestPrefix( scheme +":/" )
-        , m_resources( resources )
-        , m_uiResource( nullptr ) { }
+    UIResourceHandler::UIResourceHandler(const std::string &domain, resources::ResourceManager *resources)
+        : m_requestPrefix( "http://"+ domain + "/" )
+        , m_manager( resources )
+        , m_readOffset( 0 )
+        , m_resourceEntry( nullptr ) { }
 
     bool UIResourceHandler::ProcessRequest(
         CefRefPtr<CefRequest> request,
@@ -23,6 +31,14 @@ namespace ursine
             return false;
 
         fs::path resourcePath = url.substr( m_requestPrefix.size( ) );
+
+        auto extension = resourcePath.extension( ).string( );
+
+        // remove the dot if it exists
+        if (!extension.empty( ) && extension[ 0 ] == '.')
+            extension.erase( extension.begin( ) );
+
+        m_mimeType = CefGetMimeType( extension );
 
         auto it = resourcePath.begin( );
 
@@ -72,7 +88,24 @@ namespace ursine
         CefString &redirectUrl
     )
     {
-        
+        response->SetMimeType( m_mimeType );
+
+        CefResponse::HeaderMap headers;
+
+        headers.emplace( "Access-Control-Allow-Origin", "*" );
+
+        response->SetHeaderMap( headers );
+
+        if (m_resourceEntry)
+        {
+            response->SetStatus( kStatusOK );
+            responseLength = m_resourceEntry->GetSize( );
+        }
+        else
+        {
+            response->SetStatus( kStatusNotFound );
+            responseLength = 0;
+        }
     }
 
     bool UIResourceHandler::ReadResponse(
@@ -82,7 +115,28 @@ namespace ursine
         CefRefPtr<CefCallback> callback
     )
     {
-        return false;
+        auto hasData = false;
+
+        bytesRead = 0;
+
+        auto entrySize = m_resourceEntry->GetSize( );
+
+        if (m_readOffset < entrySize) 
+        {
+            auto transferSize = std::min( bytesToRead, static_cast<int>( entrySize - m_readOffset ));
+
+            auto *bytes = reinterpret_cast<const byte *>( m_resourceEntry->GetData( ) );
+
+            memcpy( dataOut, bytes + m_readOffset, transferSize );
+
+            m_readOffset += transferSize;
+
+            bytesRead = transferSize;
+
+            hasData = true;
+        }
+
+        return hasData;
     }
 
     void UIResourceHandler::Cancel(void)
@@ -96,7 +150,7 @@ namespace ursine
         CefRefPtr<CefCallback> callback
     )
     {
-        auto data = m_resources->LoadReference( guid );
+        auto data = m_manager->LoadReference( guid );
 
         // doesn't exist, or isn't the correct type
         if (!data || data->GetType( ) != typeof( resources::UIResourceData ))
@@ -106,9 +160,20 @@ namespace ursine
             return;
         }
 
-        m_uiResource = static_cast<resources::UIResourceData*>( data.get( ) );
-        m_subResourcePath = path;
+        auto *resource = static_cast<resources::UIResourceData*>( data.get( ) );
 
-        callback->Continue( );
+        if (!resource)
+        {
+            callback->Cancel( );
+
+            return;
+        }
+
+        m_resourceEntry = resource->GetEntry( path );
+
+        if (m_resourceEntry)
+            callback->Continue( );
+        else
+            callback->Cancel( );
     }
 }

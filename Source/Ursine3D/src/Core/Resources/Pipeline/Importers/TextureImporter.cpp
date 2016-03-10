@@ -56,33 +56,26 @@ namespace ursine
 
         auto ddsFile = change_extension( tempDirectory / displayName, "dds" );
 
-        std::ifstream stream( ddsFile.string( ), std::ios::in | std::ios::binary );
+        BinaryData ddsData;
 
-        UAssertCatchable( stream,
+        UAssertCatchable( fs::LoadAllBinary( ddsFile.string( ), ddsData ),
             "Unable to load built DDS file.\nfile: %s",
             ddsFile.string( ).c_str( )
         );
 
-        stream.seekg( 0, std::ios::end );
-
-        auto fileSize = stream.tellg( );
-
-        auto buffer = new char[ fileSize ];
-
-        stream.seekg( 0, std::ios::beg );
-
-        stream.read( buffer, fileSize );
-
         dx::TexMetadata meta;
 
-        auto result = GetMetadataFromDDSMemory( buffer, fileSize, dx::DDS_FLAGS_NONE, meta );
+        auto result = GetMetadataFromDDSMemory( 
+            ddsData.GetData( ), 
+            ddsData.GetSize( ), 
+            dx::DDS_FLAGS_NONE, 
+            meta 
+        );
 
         UAssertCatchable( result == S_OK,
             "Unable to get meta data from built DDS file.\nfile: %s",
             ddsFile.string( ).c_str( )
         );
-
-        stream.close( );
 
         try
         {
@@ -97,13 +90,10 @@ namespace ursine
         m_importedHeight = static_cast<unsigned>( meta.height );
 
         auto data = std::make_shared<TextureData>(
-            buffer,
-            fileSize, 
+            std::move( ddsData ),
             m_importedWidth, 
             m_importedHeight
         );
-
-        delete[] buffer;
 
         return data;
     }

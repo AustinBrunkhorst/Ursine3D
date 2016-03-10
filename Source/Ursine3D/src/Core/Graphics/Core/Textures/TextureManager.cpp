@@ -158,7 +158,7 @@ namespace ursine
             m_deviceContext = nullptr;
         }
 
-        GfxHND TextureManager::CreateTexture(uint8_t * binaryData, size_t binarySize, unsigned width, unsigned height)
+        GfxHND TextureManager::CreateTexture(const uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height)
         {
             // if this texture already exists and we are updating it, release the prior resource, keep old ID
             size_t internalID;
@@ -167,7 +167,7 @@ namespace ursine
             _RESOURCEHND *id = HND_RSRCE(handle);
 
             internalID = m_textureCache.size();
-            m_textureCache.push_back(Texture());
+            m_textureCache.emplace_back( );
 
             // load it up into CPU memory
             InitalizeTexture(
@@ -459,7 +459,7 @@ namespace ursine
             UAssert( result == S_OK, "Failed to load texture (%s)", DXCore::GetDXErrorMessage(result) );
         }
 
-        void TextureManager::InitalizeTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height, Texture &texture) const
+        void TextureManager::InitalizeTexture(const uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height, Texture &texture) const
         {
             texture.m_binaryData = new uint8_t[ binarySize ];
             texture.m_binarySize = binarySize;

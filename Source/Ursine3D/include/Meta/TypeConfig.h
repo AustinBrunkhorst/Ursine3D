@@ -12,7 +12,7 @@
 
 #include <type_traits>
 
-// converts the type name into a meta::Type instance
+// Converts the type name into a meta::Type instance
 #define typeof(expr)                                                  \
 	ursine::meta::Type( 					                          \
 		ursine::meta::TypeInfo<                                       \
@@ -22,6 +22,9 @@
 		>::ID,                                                        \
         ursine::meta_traits::IsArray<expr>::value                     \
 	)                                                                 \
+
+// Converts the resulting type of the given expression to a meta::Type instance
+#define decltypeof(expr) typeof( decltype( expr ) )
 
 namespace ursine
 {

@@ -9,11 +9,11 @@ namespace ursine
 {
     namespace resources
     {
-        TextureData::TextureData(void *bytes, size_t size, unsigned width, unsigned height)
+        TextureData::TextureData(BinaryData data, unsigned width, unsigned height)
         {
             m_textureHandle = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.CreateTexture(
-                reinterpret_cast<uint8_t*>(bytes), 
-                size, 
+                reinterpret_cast<const uint8_t*>( data.GetData( ) ), 
+                data.GetSize( ), 
                 width, 
                 height
             );

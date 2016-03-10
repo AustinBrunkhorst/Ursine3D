@@ -40,7 +40,7 @@ namespace ursine
             
             void AnimInfo::Read(resources::ResourceReader &input)
             {
-                input.ReadString( name );
+                input.Read( name );
                 
                 input.Read( animCount );
 
@@ -48,7 +48,7 @@ namespace ursine
 
                 for (auto &animation : animDataArr)
                 {
-                    input.ReadString( animation.clipname );
+                    input.Read( animation.clipname );
 
                     input.Read( animation.clipCount );
                     input.Read( animation.boneCount );
@@ -82,13 +82,13 @@ namespace ursine
 
             void AnimInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output.WriteString( name );
+                output.Write( name );
 
                 output.Write( animCount );
 
                 for (auto &animation : animDataArr)
                 {
-                    output.WriteString( animation.clipname );
+                    output.Write( animation.clipname );
 
                     output.Write( animation.clipCount );
                     output.Write( animation.boneCount );

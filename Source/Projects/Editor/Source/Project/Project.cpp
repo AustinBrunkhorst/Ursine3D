@@ -219,7 +219,7 @@ void Project::initializeScene(const resources::ResourceReference &startingWorld)
     m_resourcePipeline.WatchResourceDirectory( );
 
     // create the UI resource factory
-    CefRegisterSchemeHandlerFactory( kUIGameResourceScheme, "", new EditorUIResourceHandlerFactory( ) );
+    CefRegisterSchemeHandlerFactory( "http", kUIGameResourceDomain, new EditorUIResourceHandlerFactory( ) );
 }
 
 void Project::onSceneWorldChanged(EVENT_HANDLER(Scene))

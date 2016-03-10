@@ -10,13 +10,15 @@ namespace ursine
     class UIResourceHandler : public CefResourceHandler
     {
     public:
-        UIResourceHandler(const std::string &scheme, resources::ResourceManager *resources);
+        UIResourceHandler(const std::string &domain, resources::ResourceManager *manager);
 
     private:
         std::string m_requestPrefix;
-        resources::ResourceManager *m_resources;
-        resources::UIResourceData *m_uiResource;
-        fs::path m_subResourcePath;
+        std::string m_mimeType;
+        resources::ResourceManager *m_manager;
+
+        uint64 m_readOffset;
+        BinaryData::Handle m_resourceEntry;
 
         bool ProcessRequest(
             CefRefPtr<CefRequest> request,

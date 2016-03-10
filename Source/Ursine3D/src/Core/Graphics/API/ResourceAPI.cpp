@@ -48,7 +48,7 @@ namespace ursine
             m_privates->textureMgr->DestroyDynamicTexture( handle );
         }
 
-        GfxHND ResourceAPI::CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height)
+        GfxHND ResourceAPI::CreateTexture(const uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height)
         {
             return m_privates->textureMgr->CreateTexture( binaryData, binarySize, width, height );
         }

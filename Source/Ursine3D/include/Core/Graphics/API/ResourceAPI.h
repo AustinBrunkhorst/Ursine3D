@@ -46,7 +46,7 @@ namespace ursine
             
             /////////////////////////////////////////////////////////
             // NEW LOADING METHODS
-            GfxHND CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height);
+            GfxHND CreateTexture(const uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height);
             void DestroyTexture(GfxHND &handle);
 
             void LoadTexture(GfxHND handle);

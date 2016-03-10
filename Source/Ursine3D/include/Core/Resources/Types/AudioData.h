@@ -17,30 +17,26 @@ namespace ursine
 
             AudioData(
                 const EventList &events,
-                void *initBytes,
-                size_t initByteSize, 
-                void *bankBytes,
-                size_t bankSize
+                BinaryData initData,
+                BinaryData bankData
             );
+
+            AudioData(const AudioData &rhs);
 
             ~AudioData(void);
 
             const EventList &GetEvents(void) const;
 
-            void *GetInitBytes(void) const;
-            size_t GetInitByteSize(void) const;
-            void *GetBankBytes(void) const;
-            size_t GetBankSize(void) const;
+            const BinaryData &GetInitData(void) const;
+            const BinaryData &GetBankData(void) const;
 
             AkBankID GetInitID(void) const;
             AkBankID GetBankID(void) const;
         private:
             EventList m_events;
 
-            void *m_initBytes;
-            size_t m_initByteSize;
-            void *m_bankBytes;
-            size_t m_bankSize;
+            BinaryData m_initData;
+            BinaryData m_bankData;
 
             AkBankID m_initID;
             AkBankID m_bankID;

@@ -34,7 +34,7 @@ namespace ursine
 
             auto jsonString = json.dump( false );
 
-            output.WriteString( jsonString );
+            output.Write( jsonString );
         }
 
         meta::Type WorldData::GetReaderType(void)
