@@ -23,67 +23,18 @@ namespace ursine
 
 		AudioEmitter::AudioEmitter(void)
 			: BaseComponent( )
-		    , m_loop( false )
-			, m_mute( false )
-		    , m_listeners( ListenerIndex::One )
-		    , m_volume( 100.0f )  { }
+		    , m_listenerMask( ListenerMask::None )  { }
 
-		float AudioEmitter::GetVolume(void) const
+		ListenerMask AudioEmitter::GetListenerMask(void) const
 		{
-			return m_volume;
+			return m_listenerMask;
 		}
 
-		void AudioEmitter::SetVolume(float volume)
+		void AudioEmitter::SetListenerMask(ListenerMask mask)
 		{
-			m_volume = math::Clamp( volume, 0.0f, 100.0f );
+			m_listenerMask = mask;
 
-			NOTIFY_COMPONENT_CHANGED( "Volume", m_volume );
-		}
-
-		bool AudioEmitter::GetMute(void) const
-		{
-			return m_mute;
-		}
-
-		void AudioEmitter::SetMute(bool mute)
-		{
-			m_mute = mute;
-		}
-
-		bool AudioEmitter::GetLoop(void) const
-		{
-			return m_loop;
-		}
-
-		void AudioEmitter::SetLoop(bool loop)
-		{
-			m_loop = loop;
-		}
-
-		std::string AudioEmitter::GetFrontSound(void)
-		{
-			return m_soundsFAF.front( );
-		}
-
-		void AudioEmitter::PopFrontSound(void)
-		{
-			m_soundsFAF.pop( );
-		}
-
-		bool AudioEmitter::SoundsEmpty(void)
-		{
-			return m_soundsFAF.empty( );
-		}
-
-		void AudioEmitter::AddSoundToPlayQueue(const std::string &sound)
-		{
-			if (!m_mute)
-				m_soundsFAF.push( sound );
-		}
-
-		ListenerIndex AudioEmitter::GetListeners(void)
-		{
-			return m_listeners;
+			NOTIFY_COMPONENT_CHANGED( "listenerMask", m_listenerMask );
 		}
 	}
 }

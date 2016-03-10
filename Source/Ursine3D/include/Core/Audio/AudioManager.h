@@ -72,13 +72,6 @@ namespace AK
 
 namespace ursine
 {
-	struct ListenerNode
-	{
-		ListenerNode* next;
-		ListenerIndex listener;
-		bool available;
-	};
-
 	class AudioManager : public core::CoreSystem
 	{
 		CORE_SYSTEM;
@@ -96,19 +89,15 @@ namespace ursine
 		static void PlayGlobalEvent(const std::string &name);
 		static void StopGlobalEvent(const std::string &name);
         static bool IsGlobalEventPlaying(const std::string &name);
-        static void SetGlobalVolume();
-        static void ResetGlobalVolume();
 
-		static void PauseAudio();
+		static void PauseAudio(void);
 
 		static void StopSound(std::string name, AkGameObjectID id);
 
-		static void ResumeAudio();
+		static void ResumeAudio(void);
 
-		void LoadBank(const std::string &bankName, AkBankID &bankID);
 		void LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank);
 
-		void UnloadBank(const std::string &bankName);
 		void UnloadBank(const resources::AudioData &data);
 
 		void RegisterObject(AkGameObjectID obj, int listener);
@@ -118,7 +107,17 @@ namespace ursine
         URSINE_TODO("@Jason you need to implement this.");
 		// void GetEventStrings(const AkBankID);
 
-		ListenerIndex GetListener();
+		ListenerMask IndexToMask(ListenerIndex index);
+
+		ListenerIndex MaskToIndex(ListenerMask mask);
+
+		const int IndexToInt(ListenerIndex index);
+
+		ListenerIndex IntToIndex(int val);
+
+		bool GetListenerAvailablility(ListenerIndex index);
+
+		bool SetListener(ListenerIndex index);
 
 		void FreeListener(ListenerIndex listener);
 
@@ -132,16 +131,16 @@ namespace ursine
 		AkInitSettings m_initSettings;
 		AkPlatformInitSettings m_platSettings;
 
-		ListenerNode* m_head;
+		std::array<bool, 8> m_listeners;
 
 		void onAppUpdate(EVENT_HANDLER(Application));
 
-		void PopulateList();
-
-		void DestroyList();
-
 		void Init(AkInitSettings* in_pSettings, 
 			AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
+
+		void SetGlobalListener(void);
+
+		void InitAllListeners(void);
 
 	} Meta(Enable, WhiteListMethods);
 }

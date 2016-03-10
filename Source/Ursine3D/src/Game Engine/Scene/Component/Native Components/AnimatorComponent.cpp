@@ -127,7 +127,7 @@ namespace ursine
 
         Animator::~Animator(void)
         {
-            m_animlist.clear( );
+            /*m_animlist.clear( );
 
             URSINE_TODO( "Jun! you should clear animation list, rig" );
             auto owner = GetOwner();
@@ -139,7 +139,7 @@ namespace ursine
             for (auto &x : matrixPalette)
             {
                 x = SMat4::Identity();
-            }
+            }*/
         }
 
         void Animator::OnInitialize(void)

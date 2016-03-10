@@ -61,11 +61,6 @@ namespace ursine
     {
         AK::SoundEngine::UnregisterAllGameObj( );
 
-        //UnloadBank( kMainBank );
-        //UnloadBank( kInitBank );
-
-        DestroyList( );
-
         AK::MusicEngine::Term( );
 
         AK::SoundEngine::Term( );
@@ -86,32 +81,11 @@ namespace ursine
 
         Init( &m_initSettings, &m_platSettings, WIDEN( WORLD_AUDIO_BANK_PATH ) );
 
-        PopulateList( );
+        // Init all Listeners
+		InitAllListeners( );
 
-        RegisterObject( AUDIO_GLOBAL_OBJECT_ID, 0x000000FF );
-
-        AkSoundPosition pos;
-        AkListenerPosition lpos;
-        pos.Position.X = pos.Position.Y = pos.Position.Z = 0.0f;
-        lpos.Position = pos.Position;
-        pos.Orientation.X = pos.Orientation.Y = 0.0f;
-        pos.Orientation.Z = -1.0f;
-        lpos.OrientationFront = pos.Orientation;
-        lpos.OrientationTop.X = lpos.OrientationTop.Z = 0.0f;
-        lpos.OrientationTop.Y = 1.0f;
-
-        if (AK::SoundEngine::SetPosition( AUDIO_GLOBAL_OBJECT_ID, pos ) != AK_Success)
-        {
-            UWarning("Wwise: Cannot Set Object 3D Position");
-        }
-
-        if (AK::SoundEngine::SetListenerPosition( lpos, 0x00000001 ) != AK_Success)
-        {
-            UWarning("Wwise: Cannot Set Listener Postion");
-        }
-
-        // Client is responsible for loading/unloading banks, starting and ending
-        // with the Init Bank
+		// Create the global listener
+		SetGlobalListener( );
 
         // Subscribe to update
         Application::Instance->Connect( APP_UPDATE, this, &AudioManager::onAppUpdate );
@@ -138,45 +112,6 @@ namespace ursine
     void AudioManager::ResumeAudio(void)
     {
         AK::SoundEngine::WakeupFromSuspend( );
-    }
-
-    void AudioManager::DestroyList(void)
-    {
-        for (int i = 0; i < 8; ++i)
-        {
-            auto temp = m_head;
-            m_head = m_head->next;
-            delete temp;
-        }
-    }
-
-    void AudioManager::PopulateList(void)
-    {
-        ListenerIndex list[8] = {
-            ListenerIndex::One,
-            ListenerIndex::Two,
-            ListenerIndex::Three,
-            ListenerIndex::Four,
-            ListenerIndex::Five,
-            ListenerIndex::Six,
-            ListenerIndex::Seven,
-            ListenerIndex::Eight
-        };
-
-        auto head = new ListenerNode;
-        head->listener = list[ 0 ];
-        head->available = true;
-        m_head = head;
-        auto temp = head;
-        for (int i = 1; i < 8; ++i)
-        {
-            auto node = new ListenerNode;
-            node->listener = list[ i ];
-            node->available = true;
-            temp->next = node;
-            temp = temp->next;
-        }
-        temp->next = nullptr;
     }
 
     void AudioManager::PlayEvent(const std::string name, AkGameObjectID obj)
@@ -227,16 +162,6 @@ namespace ursine
         }
     }
 
-    void AudioManager::SetGlobalVolume(void)
-    {
-       //AK::SoundEngine::SetRTPCValue(  );
-    }
-
-    void AudioManager::ResetGlobalVolume(void)
-    {
-        //AK::SoundEngine::ResetRTPCValue();
-    }
-
     bool AudioManager::IsGlobalEventPlaying(const std::string &name)
     {
         auto &globalEvents = getCreatedGlobalEvents( );
@@ -265,13 +190,7 @@ namespace ursine
     void AudioManager::onAppUpdate(void *_sender, const ursine::EventArgs *_args)
     {
         // Process bank requests, events, positions, RTPC, etc.
-        UAssert(AK::SoundEngine::RenderAudio() == AK_Success, "Wwise: Cannot Render Audio");
-    }
-
-    void AudioManager::LoadBank(const std::string &bankName, AkBankID &bankID)
-    {
-        UAssert(AK::SoundEngine::LoadBank(bankName.c_str(),
-            AK_DEFAULT_POOL_ID, bankID) == AK_Success, "Wwise: Cannot Load Bank: %s", bankName);
+        UAssert( AK::SoundEngine::RenderAudio( ) == AK_Success, "Wwise: Cannot Render Audio" );
     }
 
     void AudioManager::LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank)
@@ -295,13 +214,6 @@ namespace ursine
         UAssertCatchable( bankResult == AK_Success,
             "Unable to load bank."    
         );
-    }
-
-    void AudioManager::UnloadBank(const std::string &bankName)
-    {
-        URSINE_TODO( "@Jason" );
-       /* UAssert(AK::SoundEngine::UnloadBank(bankName.c_str(),
-            nullptr) == AK_Success, "Wwise: Cannot Unload Bank: %s", bankName.c_str());*/
     }
 
     void AudioManager::UnloadBank(const resources::AudioData &data)
@@ -335,50 +247,101 @@ namespace ursine
         }
     }
 
-    void AudioManager::UnRegisterObject(AkGameObjectID obj)
+	ListenerMask AudioManager::IndexToMask(ListenerIndex index)
+	{
+		return static_cast<ListenerMask>( index );
+	}
+
+	const int AudioManager::IndexToInt(ListenerIndex index)
+	{
+		switch (index)
+		{
+		case ListenerIndex::None:
+		{
+			return -1;
+		}
+		case ListenerIndex::L1:
+		{
+			return 0;
+		}
+		case ListenerIndex::L2:
+		{
+			return 1;
+		}
+		case ListenerIndex::L3:
+		{
+			return 2;
+		}
+		case ListenerIndex::L4:
+		{
+			return 3;
+		}
+		case ListenerIndex::L5:
+		{
+			return 4;
+		}
+		case ListenerIndex::L6:
+		{
+			return 5;
+		}
+		case ListenerIndex::L7:
+		{
+			return 6;
+		}
+		case ListenerIndex::L8:
+		{
+			return 7;
+		}
+		}
+		return -1;
+	}
+
+	ListenerIndex AudioManager::IntToIndex(int val)
+	{
+		return static_cast<ListenerIndex>( val );
+	}
+
+	ListenerIndex AudioManager::MaskToIndex(ListenerMask mask)
+	{
+		return static_cast<ListenerIndex>( mask );
+	}
+
+	bool AudioManager::GetListenerAvailablility(ListenerIndex index)
+    {
+		return m_listeners[ IndexToInt( index ) ];
+    }
+
+	bool AudioManager::SetListener(ListenerIndex index)
+    {
+	    if (m_listeners[ IndexToInt( index ) ])
+	    {
+			return false;
+	    }
+		else
+		{
+			m_listeners[ IndexToInt( index ) ] = true;
+			return true;
+		}
+    }
+
+	void AudioManager::FreeListener(ListenerIndex listener)
+    {
+		if (listener == ListenerIndex::None)
+		{
+			UWarning("Wwise: Cannot Index with Listener::None");
+		}
+	    else if (m_listeners[ IndexToInt( listener ) ])
+	    {
+			m_listeners[ IndexToInt( listener ) ] = false;
+	    }
+    }
+
+	void AudioManager::UnRegisterObject(AkGameObjectID obj)
     {
         if (AK::SoundEngine::UnregisterGameObj( obj ) != AK_Success)
         {
             UWarning("Wwise: Cannot Unregister Game Object");
         }
-    }
-
-    ListenerIndex AudioManager::GetListener(void)
-    {
-        auto temp = m_head;
-        while (temp)
-        {
-            if (temp->available)
-            {
-                temp->available = false;
-                return temp->listener;
-            }
-            temp = temp->next;
-        }
-
-        UAssert(false, "Wwise: Requested Too Many Listeners");
-        return ListenerIndex::None;
-    }
-
-    void AudioManager::FreeListener(ListenerIndex listener)
-    {
-        auto temp = m_head;
-        while (temp)
-        {
-            if (temp->listener == listener)
-            {
-                if (temp->available == true)
-                {
-                    UAssert(false, "Wwise: Trying To Free Unused Listener");
-                    return;
-                }
-                temp->available = true;
-                return;
-            }
-
-            temp = temp->next;
-        }
-        UAssert(false, "Wwise: Could Not Free Listeners [Not Valid Index] ");
     }
 
     void AudioManager::RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param)
@@ -389,7 +352,40 @@ namespace ursine
         }
     }
 
-    void AudioManager::Init(AkInitSettings *in_pSettings, AkPlatformInitSettings *in_pPlatformSettings, const AkOSChar *path)
+	void AudioManager::SetGlobalListener()
+    {
+		// create an object that emits to all listeners
+		RegisterObject(AUDIO_GLOBAL_OBJECT_ID, 0x000000FF);
+
+		// set position of the listener and the emitter to (0,0,0)
+		AkSoundPosition pos;
+		AkListenerPosition lpos;
+		pos.Position.X = pos.Position.Y = pos.Position.Z = 0.0f;
+		lpos.Position = pos.Position;
+		pos.Orientation.X = pos.Orientation.Y = 0.0f;
+		pos.Orientation.Z = -1.0f;
+		lpos.OrientationFront = pos.Orientation;
+		lpos.OrientationTop.X = lpos.OrientationTop.Z = 0.0f;
+		lpos.OrientationTop.Y = 1.0f;
+
+		if (AK::SoundEngine::SetPosition( AUDIO_GLOBAL_OBJECT_ID, pos ) != AK_Success)
+		{
+			UWarning( "Wwise: Cannot Set Object 3D Position" );
+		}
+
+		if (AK::SoundEngine::SetListenerPosition( lpos, 0x00000001 ) != AK_Success)
+		{
+			UWarning( "Wwise: Cannot Set Listener Postion" );
+		}
+    }
+
+	void AudioManager::InitAllListeners()
+    {
+		m_listeners.fill( false );
+		m_listeners[ 0 ] = true;
+    }
+
+	void AudioManager::Init(AkInitSettings *in_pSettings, AkPlatformInitSettings *in_pPlatformSettings, const AkOSChar *path)
     {
         g_lowLevelIO.SetBasePath( path );
 

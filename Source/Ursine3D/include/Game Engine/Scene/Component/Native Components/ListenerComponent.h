@@ -28,20 +28,24 @@ namespace ursine
 			NATIVE_COMPONENT;
 
 		public:
+			EditorField(
+				ListenerIndex listener,
+				GetListenerIndex, 
+				SetListenerIndex
+			);
+
             Meta(Enable)
 			AudioListener(void);
 			~AudioListener(void);
 
-            ursine::Array<ursine::Color> testing;
-
-			ListenerIndex GetListenerIndex(void);
-			void SetListenerIndex(ListenerIndex index);
-
 			void OnInitialize(void) override;
+
+			ListenerIndex GetListenerIndex(void) const;
+			void SetListenerIndex(ListenerIndex index);
 
 		private:
 			 ListenerIndex m_listenerIndex;
 
-		} Meta(Enable, WhiteListMethods, DisplayName( "Audio Listener 3D" ));
+		} Meta(Enable, WhiteListMethods, DisplayName( "AudioListener" ));
 	}
 }

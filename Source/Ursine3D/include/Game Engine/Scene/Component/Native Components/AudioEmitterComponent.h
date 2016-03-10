@@ -16,7 +16,6 @@
 #include "Component.h"
 #include "AudioComponentBase.h"
 #include "ListenerMasks.h"
-#include <queue>
 
 namespace ursine
 {
@@ -29,52 +28,22 @@ namespace ursine
 			NATIVE_COMPONENT;
 
 		public:
-            EditorMeta(InputRange( 0.0f, 100.0f, 1, "{{value}}%" ))
-			EditorField(
-				float Volume,
-				GetVolume,
-				SetVolume
-			);
-
-			EditorField(
-				bool Loop,
-				GetLoop,
-				SetLoop
-			);
-
-			EditorField(
-				bool Mute,
-				GetMute,
-				SetMute
-			);
+			EditorMeta(BitMaskEditor)
+            EditorField(
+				ListenerMask listenerMask,
+                GetListenerMask,
+                SetListenerMask
+            );
 
             Meta(Enable)
 			AudioEmitter(void);
 
-			float GetVolume(void) const;
-			void SetVolume(float volume);
-
-			bool GetLoop(void) const;
-			void SetLoop(bool loop);
-
-			bool GetMute(void) const;
-			void SetMute(bool mute);
-
-			std::string GetFrontSound(void);
-			void PopFrontSound(void);
-			bool SoundsEmpty(void);
-			void AddSoundToPlayQueue(const std::string &sound);
-
-			ListenerIndex GetListeners(void);
+			ListenerMask GetListenerMask(void) const;
+			void SetListenerMask(ListenerMask mask);
 
 		private:
-			bool m_loop;
-			bool m_mute;
-			ListenerIndex m_listeners;
-			float m_volume;
-			
-			// fire and forget
-			std::queue<std::string> m_soundsFAF;
-		} Meta(Enable, WhiteListMethods, DisplayName( "Audio Emitter" ));
+			ListenerMask m_listenerMask;
+
+		} Meta(Enable, WhiteListMethods, DisplayName( "AudioEmitter" ));
 	}
 }
