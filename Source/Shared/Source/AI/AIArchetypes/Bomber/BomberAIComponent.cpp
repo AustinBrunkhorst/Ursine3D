@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** TankAIComponent.cpp
+** BomberAIComponent.cpp
 **
 ** Author:
 ** - Joshua Shlemmer- joshua.shlemmer@digipen.edu
@@ -11,152 +11,123 @@
 
 #include "Precompiled.h"
 
-#include "TankAIComponent.h"
+#include "BomberAIComponent.h"
 
 //#include <FloatCondition.h>
 
 #include <SystemManager.h>
 #include <AI/AIArchetypes/SharedAIStates/WalkState.h>
-#include <AI/AIArchetypes/SharedAIStates/PauseState.h>
-#include <Utilities/StateMachine/Conditions/BoolCondition.h>
-#include <Utilities/StateMachine/Conditions/FloatCondition.h>
-#include "States/TankSlamState.h"
 
 // use this for anything you want to draw in the editor
 //#include <DebugSystem.h>
 
-NATIVE_COMPONENT_DEFINITION( TankAI );
+NATIVE_COMPONENT_DEFINITION( BomberAI );
 
 using namespace ursine;
 using namespace ecs;
 
-TankAI::TankAI(void)
+BomberAI::BomberAI(void)
     :BaseComponent()
 {
 }
 
-TankAI::~TankAI(void)
+BomberAI::~BomberAI(void)
 {
     GetOwner()->GetWorld()->Listener( this )
-        .Off( WORLD_UPDATE, &TankAI::onUpdate );
+        .Off( WORLD_UPDATE, &BomberAI::onUpdate );
 }
 
-float TankAI::GetSlamDelay() const
+float BomberAI::GetExplosionDelay() const
 {
-    return m_slamDelay;
+    return m_explosionDelay;
 }
 
-void TankAI::SetSlamDelay(float delay)
+void BomberAI::SetExplosionDelay(float delay)
 {
-    m_slamDelay = delay;
+    m_explosionDelay = delay;
 }
 
-float TankAI::GetDamage() const
+float BomberAI::GetDamage() const
 {
     return m_damage;
 }
 
-void TankAI::SetDamage(float dmg)
+void BomberAI::SetDamage(float dmg)
 {
     m_damage = dmg;
 }
 
-float TankAI::GetAttackRange() const
+float BomberAI::GetAttackRange() const
 {
     return m_attackRange;
 }
 
-void TankAI::SetAttackRange(float range)
+void BomberAI::SetAttackRange(float range)
 {
     m_attackRange = range;
 }
 
-float TankAI::GetAttackRadius(void) const
+float BomberAI::GetBlastRadius(void) const
 {
-    return m_attackRadius;
+    return m_blastRadius;
 }
 
-void TankAI::SetAttackRadius(float radius)
+void BomberAI::SetBlastRadius(float radius)
 {
-    m_attackRadius = radius;
+    m_blastRadius = radius;
 }
 
-float TankAI::GetCohesionScale() const
+float BomberAI::GetCohesionScale() const
 {
     return m_cohesionScale;
 }
 
-void TankAI::SetCohesionScale(float newScale)
+void BomberAI::SetCohesionScale(float newScale)
 {
     m_cohesionScale = newScale;
 }
 
-float TankAI::GetSeparationScale() const
+float BomberAI::GetSeparationScale() const
 {
     return m_separationScale;
 }
 
-void TankAI::SetSeparationScale(float newScale)
+void BomberAI::SetSeparationScale(float newScale)
 {
     m_separationScale = newScale;
 }
 
-float TankAI::GetBoidScale() const
+float BomberAI::GetBoidScale() const
 {
     return m_boidScale;
 }
 
-void TankAI::SetBoidScale(float newScale)
+void BomberAI::SetBoidScale(float newScale)
 {
     m_boidScale = newScale;
 }
 
-void TankAI::OnInitialize(void)
+void BomberAI::OnInitialize(void)
 {
     GetOwner()->GetWorld()->Listener( this )
-        .On( WORLD_UPDATE, &TankAI::onUpdate );
+        .On( WORLD_UPDATE, &BomberAI::onUpdate );
 
     // set up the state machine
 
     GetOwner()->GetWorld()->Listener(this)
-        .On(WORLD_UPDATE, &TankAI::onUpdate);
+        .On(WORLD_UPDATE, &BomberAI::onUpdate);
 
 
     // initialize the state machine
     m_stateMachine.Initialize(GetOwner());
 
     // set up the state machine
-    auto walkState = m_stateMachine.AddState<sm::WalkState>("TankWalkSTate");
+    INIT_WALKSTATE("BomberWalkState");
 
-    walkState->SetCohesionScale(m_cohesionScale);
-
-    walkState->SetSeparationScale(m_separationScale);
-
-    walkState->SetBoidbehaviorScale(m_boidScale);
-
-    walkState->SetAttackRange(m_attackRange);
-
-     
-    auto pauseState = m_stateMachine.AddState<sm::PauseState>("TankPauseState", m_slamDelay);
-
-    auto slamState = m_stateMachine.AddState<sm::TankSlamState>("TankSlamState", m_damage, m_slamDelay);
-
-    // next connection is to move from walk state to damage state on collision
-    auto trans = walkState->AddTransition(slamState, "WalkStateToDamageState");
-    trans->AddCondition<sm::BoolCondition>("HitPlayer", true);
-
-    slamState->AddTransition(pauseState, "damageStateToWalkState");
-
-    trans = pauseState->AddTransition(walkState, "PauseStateToWalkState");
-    trans->AddCondition<sm::FloatCondition>(
-        "PauseTimer",
-        sm::Comparison::LessThan, 0.0f
-        );
-
-    m_stateMachine.SetInitialState(walkState);
+    // rest of state machine goes here
 }
 
-void TankAI::onUpdate(EVENT_HANDLER(World))
+void BomberAI::onUpdate(EVENT_HANDLER(World))
 {
     // update our state machine
     m_stateMachine.Update();

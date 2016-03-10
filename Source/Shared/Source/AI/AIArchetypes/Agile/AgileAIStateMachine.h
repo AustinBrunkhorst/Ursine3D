@@ -16,19 +16,12 @@ namespace ursine
 {
     namespace sm
     {
-        class AgileAI;
+        //class AgileAI;
 
         class AgileAIStateMachine : public AIStateMachine
         {
         public:
             AgileAIStateMachine();
-
-            //~TankAIStateMachine();
-
-            //void Update(void) override;
-
-        private:
-            //void onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 
         };
     }

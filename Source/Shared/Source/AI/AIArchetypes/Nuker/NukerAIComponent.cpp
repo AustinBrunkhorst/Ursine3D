@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** TankAIComponent.cpp
+** NukerAIComponent.cpp
 **
 ** Author:
 ** - Joshua Shlemmer- joshua.shlemmer@digipen.edu
@@ -11,152 +11,95 @@
 
 #include "Precompiled.h"
 
-#include "TankAIComponent.h"
-
-//#include <FloatCondition.h>
+#include "NukerAIComponent.h"
 
 #include <SystemManager.h>
 #include <AI/AIArchetypes/SharedAIStates/WalkState.h>
-#include <AI/AIArchetypes/SharedAIStates/PauseState.h>
-#include <Utilities/StateMachine/Conditions/BoolCondition.h>
-#include <Utilities/StateMachine/Conditions/FloatCondition.h>
-#include "States/TankSlamState.h"
 
 // use this for anything you want to draw in the editor
 //#include <DebugSystem.h>
 
-NATIVE_COMPONENT_DEFINITION( TankAI );
+NATIVE_COMPONENT_DEFINITION( NukerAI );
 
 using namespace ursine;
 using namespace ecs;
 
-TankAI::TankAI(void)
+NukerAI::NukerAI(void)
     :BaseComponent()
 {
 }
 
-TankAI::~TankAI(void)
+NukerAI::~NukerAI(void)
 {
     GetOwner()->GetWorld()->Listener( this )
-        .Off( WORLD_UPDATE, &TankAI::onUpdate );
+        .Off( WORLD_UPDATE, &NukerAI::onUpdate );
 }
 
-float TankAI::GetSlamDelay() const
-{
-    return m_slamDelay;
-}
-
-void TankAI::SetSlamDelay(float delay)
-{
-    m_slamDelay = delay;
-}
-
-float TankAI::GetDamage() const
+float NukerAI::GetDamage() const
 {
     return m_damage;
 }
 
-void TankAI::SetDamage(float dmg)
+void NukerAI::SetDamage(float dmg)
 {
     m_damage = dmg;
 }
 
-float TankAI::GetAttackRange() const
+float NukerAI::GetAttackRange() const
 {
     return m_attackRange;
 }
 
-void TankAI::SetAttackRange(float range)
+void NukerAI::SetAttackRange(float range)
 {
     m_attackRange = range;
 }
 
-float TankAI::GetAttackRadius(void) const
-{
-    return m_attackRadius;
-}
-
-void TankAI::SetAttackRadius(float radius)
-{
-    m_attackRadius = radius;
-}
-
-float TankAI::GetCohesionScale() const
+float NukerAI::GetCohesionScale() const
 {
     return m_cohesionScale;
 }
 
-void TankAI::SetCohesionScale(float newScale)
+void NukerAI::SetCohesionScale(float newScale)
 {
     m_cohesionScale = newScale;
 }
 
-float TankAI::GetSeparationScale() const
+float NukerAI::GetSeparationScale() const
 {
     return m_separationScale;
 }
 
-void TankAI::SetSeparationScale(float newScale)
+void NukerAI::SetSeparationScale(float newScale)
 {
     m_separationScale = newScale;
 }
 
-float TankAI::GetBoidScale() const
+float NukerAI::GetBoidScale() const
 {
     return m_boidScale;
 }
 
-void TankAI::SetBoidScale(float newScale)
+void NukerAI::SetBoidScale(float newScale)
 {
     m_boidScale = newScale;
 }
 
-void TankAI::OnInitialize(void)
+void NukerAI::OnInitialize(void)
 {
     GetOwner()->GetWorld()->Listener( this )
-        .On( WORLD_UPDATE, &TankAI::onUpdate );
+        .On( WORLD_UPDATE, &NukerAI::onUpdate );
 
     // set up the state machine
-
-    GetOwner()->GetWorld()->Listener(this)
-        .On(WORLD_UPDATE, &TankAI::onUpdate);
-
 
     // initialize the state machine
     m_stateMachine.Initialize(GetOwner());
 
     // set up the state machine
-    auto walkState = m_stateMachine.AddState<sm::WalkState>("TankWalkSTate");
-
-    walkState->SetCohesionScale(m_cohesionScale);
-
-    walkState->SetSeparationScale(m_separationScale);
-
-    walkState->SetBoidbehaviorScale(m_boidScale);
-
-    walkState->SetAttackRange(m_attackRange);
-
-     
-    auto pauseState = m_stateMachine.AddState<sm::PauseState>("TankPauseState", m_slamDelay);
-
-    auto slamState = m_stateMachine.AddState<sm::TankSlamState>("TankSlamState", m_damage, m_slamDelay);
-
-    // next connection is to move from walk state to damage state on collision
-    auto trans = walkState->AddTransition(slamState, "WalkStateToDamageState");
-    trans->AddCondition<sm::BoolCondition>("HitPlayer", true);
-
-    slamState->AddTransition(pauseState, "damageStateToWalkState");
-
-    trans = pauseState->AddTransition(walkState, "PauseStateToWalkState");
-    trans->AddCondition<sm::FloatCondition>(
-        "PauseTimer",
-        sm::Comparison::LessThan, 0.0f
-        );
-
-    m_stateMachine.SetInitialState(walkState);
+    INIT_WALKSTATE("NukerAIWalk");
 }
 
-void TankAI::onUpdate(EVENT_HANDLER(World))
+void NukerAI::onUpdate(EVENT_HANDLER(World))
 {
     // update our state machine
     m_stateMachine.Update();

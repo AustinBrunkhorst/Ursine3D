@@ -25,12 +25,6 @@ class AgileAI : public ursine::ecs::Component
 public:
 
     EditorField(
-        float SlamDelay,
-        GetSlamDelay,
-        SetSlamDelay
-        );
-
-    EditorField(
         float damageOnAttack,
         GetDamage,
         SetDamage
@@ -40,12 +34,6 @@ public:
         float AttackRange,
         GetAttackRange,
         SetAttackRange
-        );
-
-    EditorField(
-        float AttackRadius,
-        GetAttackRadius,
-        SetAttackRadius
         );
 
     EditorField(
@@ -69,17 +57,11 @@ public:
     AgileAI(void);
     ~AgileAI(void);
 
-    float GetSlamDelay(void) const;
-    void SetSlamDelay(float delay);
-
     float GetDamage(void) const;
     void SetDamage(float dmg);
 
     float GetAttackRange(void) const;
     void SetAttackRange(float range);
-
-    float GetAttackRadius(void) const;
-    void SetAttackRadius(float radius);
 
     float GetCohesionScale(void) const;
     void SetCohesionScale(float newScale);
@@ -101,13 +83,9 @@ private:
     Meta(Disable)
         ursine::sm::AgileAIStateMachine m_stateMachine;
 
-    float m_slamDelay;
-
     float m_damage;
 
     float m_attackRange;
-
-    float m_attackRadius;
 
     float m_cohesionScale;
 
@@ -115,4 +93,4 @@ private:
 
     float m_boidScale;
 
-} Meta(Enable, DisplayName("TankAI"), RequiresComponents(typeof(ursine::ecs::AIMovementController)));
+} Meta(Enable, DisplayName("AgileAI"), RequiresComponents(typeof(ursine::ecs::AIMovementController)));

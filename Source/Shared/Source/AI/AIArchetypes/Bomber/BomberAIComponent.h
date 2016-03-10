@@ -2,7 +2,7 @@
 ** Team Bear King
 ** 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** TankAIComponent.h
+** BomberAIComponent.h
 **
 ** Author:
 ** - Joshua Shlemmer - joshua.shlemmer@digipen.edu
@@ -13,12 +13,12 @@
 
 #include <Component.h>
 
-#include "TankAIStateMachine.h"
+#include "BomberAIStateMachine.h"
 
-// VS YOU SUPER NEED DIS DOE SHUT UP ABOUT IT BRO
+// This header is needed. Don't be tricked by VS's lies
 #include "AIMovementControllerComponent.h"
 
-class TankAI : public ursine::ecs::Component
+class BomberAI : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 
@@ -66,11 +66,11 @@ public:
         SetBoidScale
         );
 
-    TankAI(void);
-    ~TankAI(void);
+    BomberAI(void);
+    ~BomberAI(void);
 
-    float GetSlamDelay(void) const;
-    void SetSlamDelay(float delay);
+    float GetExplosionDelay(void) const;
+    void SetExplosionDelay(float delay);
 
     float GetDamage(void) const;
     void SetDamage(float dmg);
@@ -78,8 +78,8 @@ public:
     float GetAttackRange(void) const;
     void SetAttackRange(float range);
 
-    float GetAttackRadius(void) const;
-    void SetAttackRadius(float radius);
+    float GetBlastRadius(void) const;
+    void SetBlastRadius(float radius);
 
     float GetCohesionScale(void) const;
     void SetCohesionScale(float newScale);
@@ -96,18 +96,16 @@ private:
 
     void onUpdate(EVENT_HANDLER(World));
 
-    void onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
-
     Meta(Disable)
-        ursine::sm::TankAIStateMachine m_stateMachine;
+        ursine::sm::BomberAIStateMachine m_stateMachine;
 
-    float m_slamDelay;
+    float m_explosionDelay;
 
     float m_damage;
 
     float m_attackRange;
 
-    float m_attackRadius;
+    float m_blastRadius;
 
     float m_cohesionScale;
 
@@ -115,4 +113,4 @@ private:
 
     float m_boidScale;
 
-} Meta(Enable, DisplayName("TankAI"), RequiresComponents(typeof(ursine::ecs::AIMovementController)));
+} Meta(Enable, DisplayName("BomberAI"), RequiresComponents(typeof(ursine::ecs::AIMovementController)));

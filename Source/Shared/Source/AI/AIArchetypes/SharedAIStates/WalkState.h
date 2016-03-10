@@ -18,6 +18,17 @@
 #include <function.h>
 #include <Game Engine/Scene/Component/Native Components/Physics/GhostComponent.h>
 
+// here is a fancy macro for quickly passing component members to this state
+#define INIT_WALKSTATE(name) do{                                          \
+auto walkState = m_stateMachine.AddState<sm::WalkState>(name);            \
+walkState->SetCohesionScale(m_cohesionScale);                             \
+walkState->SetSeparationScale(m_separationScale);                         \
+walkState->SetBoidbehaviorScale(m_boidScale);                             \
+walkState->SetAttackRange(m_attackRange);                                 \
+m_stateMachine.SetInitialState(walkState);                                \
+}while (0)
+
+
 class AIStateMachine;
 
 namespace ursine

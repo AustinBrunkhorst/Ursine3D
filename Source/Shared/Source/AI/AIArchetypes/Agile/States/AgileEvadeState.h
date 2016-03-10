@@ -2,7 +2,7 @@
 ** Team Bear King
 ** 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** NukerShootState.h
+** TankSlamState.h
 **
 ** Author:
 ** - Joshua Shlemmer - joshua.shlemmer@digipen.edu
@@ -26,10 +26,10 @@ namespace ursine
 {
     namespace sm
     {
-        class NukerShootState : public AIState
+        class AgileEvadeState : public AIState
         {
         public:
-            NukerShootState(const std::string &name);
+            AgileEvadeState(const std::string &name);
 
             bool CanExit(void) override { return m_finished; }
 
@@ -38,6 +38,7 @@ namespace ursine
             void Exit(AIStateMachine *machine) override;
 
         private:
+
             bool m_finished;
         };
 

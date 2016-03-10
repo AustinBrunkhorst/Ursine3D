@@ -2,7 +2,7 @@
 ** Team Bear King
 ** 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** TankAIStateMachine.h
+** NukerAIStateMachine.h
 **
 ** Author:
 ** - Joshua Shlemmer - joshua.shlemmer@digipen.edu
@@ -16,19 +16,12 @@ namespace ursine
 {
     namespace sm
     {
-        class TankAI;
+        class NukerAI;
 
-        class TankAIStateMachine : public AIStateMachine
+        class NukerAIStateMachine : public AIStateMachine
         {
         public:
-            TankAIStateMachine();
-
-            //~TankAIStateMachine();
-
-            //void Update(void) override;
-
-        private:
-            //void onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
+            NukerAIStateMachine();
 
         };
     }
