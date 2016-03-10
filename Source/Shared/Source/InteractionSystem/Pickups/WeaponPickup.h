@@ -37,7 +37,7 @@ public:
     void SetPickupTime(const float time);
 
     EditorField(
-        WeaponType WeaponType,
+        WeaponType weaponType,
         GetWeaponType,
         SetWeaponType
     );
@@ -45,6 +45,8 @@ public:
     WeaponType GetWeaponType(void) const;
     void SetWeaponType(WeaponType weaponType);
 
+    // @Chad, look at the note I left in the cpp.  With that in mind, should this still be here?
+    // If so, change it to an archetype reference.  Look at "SpawnerComponent.h" for an example of how.
     EditorField(
         std::string Weapon,
         GetWeaponToPickup,

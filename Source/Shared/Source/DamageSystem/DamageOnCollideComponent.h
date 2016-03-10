@@ -13,6 +13,8 @@
 
 #include <Component.h>
 
+#include <ArchetypeData.h>
+
 namespace ursine
 {
     namespace physics

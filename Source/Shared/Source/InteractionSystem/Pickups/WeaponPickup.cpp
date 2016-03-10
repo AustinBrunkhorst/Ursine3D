@@ -135,7 +135,8 @@ void WeaponPickup::Interact(const CommandQueue *queue, ecs::EntityHandle &entity
         // swap weapons if the required time for pickup has been met
         if ( *time > m_pickupTime && !GetOwner()->IsDeleting() )
         {
-            // change current weapon
+            // change current weapon 
+            // @Chad, should this function really take an archetype reference from us? or should that be held within the inventory component?
             inventory->SetNewWeapon( m_weaponType, m_weaponToPickup, m_ammo, m_clipCount );
 
             InteractionComplete( );

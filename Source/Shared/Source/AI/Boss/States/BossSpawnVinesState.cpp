@@ -41,14 +41,17 @@ void BossSpawnVinesState::Enter(BossAIStateMachine *machine)
         auto spawnTrans = spawner->GetTransform( );
 
         auto vine = world->CreateEntityFromArchetype(
-            WORLD_ARCHETYPE_PATH + vineArchetypeName, "BossVine" 
+            vineArchetypeName 
         );
 
-        auto trans = vine->GetTransform( );
+        if (vine)
+        {
+            auto trans = vine->GetTransform( );
 
-        trans->SetWorldPosition( spawnTrans->GetWorldPosition( ) );
-        trans->SetWorldRotation( spawnTrans->GetWorldRotation( ) );
+            trans->SetWorldPosition( spawnTrans->GetWorldPosition( ) );
+            trans->SetWorldRotation( spawnTrans->GetWorldRotation( ) );
 
-        boss->AddSpawnedVine( vine );
+            boss->AddSpawnedVine( vine );
+        }
     }
 }

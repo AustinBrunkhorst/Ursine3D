@@ -116,6 +116,7 @@ private:
     ///////////////////
 
     friend class InventorySystem;
+    friend class WeaponPickup;
 
     // current weapon out
     WeaponType m_currWeapon;

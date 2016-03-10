@@ -25,6 +25,7 @@ NATIVE_COMPONENT_DEFINITION( BossAI );
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 BossAI::BossAI(void)
     : BaseComponent( )
@@ -43,12 +44,12 @@ void BossAI::SetSeedshotEntityName(const std::string &entityName)
     m_seedshotEntity = entityName;
 }
 
-const std::string &BossAI::GetVineArchetype(void) const
+const ResourceReference &BossAI::GetVineArchetype(void) const
 {
     return m_vineArchetype;
 }
 
-void BossAI::SetVineArchetype(const std::string &vineArchetype)
+void BossAI::SetVineArchetype(const ResourceReference &vineArchetype)
 {
     m_vineArchetype = vineArchetype;
 }

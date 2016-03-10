@@ -34,7 +34,6 @@ namespace
 Health::Health(void)
     : BaseComponent( )
     , m_health( 100 )
-    , m_objToSpawn( "" )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
 {
@@ -61,17 +60,14 @@ float Health::GetMaxHealth(void) const
     return m_maxHealth;
 }
 
-const std::string& Health::GetArchetypeOnDeath(void) const
+const ursine::resources::ResourceReference &Health::GetArchetypeOnDeath(void) const
 {
     return m_objToSpawn;
 }
 
-void Health::SetArchetypeOnDeath(const std::string& objToSpawn)
+void Health::SetArchetypeOnDeath(const ursine::resources::ResourceReference &objToSpawn)
 {
     m_objToSpawn = objToSpawn;
-
-    if ( m_objToSpawn.find(".uatype") == std::string::npos )
-        m_objToSpawn += ".uatype";
 }
 
 bool Health::GetDeleteOnZeroHealth(void) const
@@ -164,10 +160,11 @@ void Health::sendDamageTextEvent(const ursine::SVec3& contact, float damage, boo
 
 void Health::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
-    if ( m_spawnOnDeath && m_objToSpawn != ".uatype" )
+    if (m_spawnOnDeath)
     {
-        auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + m_objToSpawn );
+        auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( m_objToSpawn );
 
-        obj->GetTransform( )->SetWorldPosition( GetOwner( )->GetTransform( )->GetWorldPosition( ) );
+        if (obj)
+            obj->GetTransform( )->SetWorldPosition( GetOwner( )->GetTransform( )->GetWorldPosition( ) );
     }
 }

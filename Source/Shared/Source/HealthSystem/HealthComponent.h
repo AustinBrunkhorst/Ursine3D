@@ -21,8 +21,8 @@ namespace ursine
     namespace physics
     {
         class Contact;
-    } // physics namespace
-} // ursine namespace
+    }
+}
 
 enum HealthEvents
 {
@@ -53,8 +53,9 @@ public:
         SetHealth
     );
 
-    EditorField(
-        std::string ArchetypeToSpawnOnDeath,
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        archetypeToSpawnOnDeath,
         GetArchetypeOnDeath,
         SetArchetypeOnDeath
     );
@@ -79,8 +80,8 @@ public:
     void SetHealth(const float health);
     float GetMaxHealth(void) const;
 
-    const std::string& GetArchetypeOnDeath(void) const;
-    void SetArchetypeOnDeath(const std::string& objToSpawn);
+    const ursine::resources::ResourceReference &GetArchetypeOnDeath(void) const;
+    void SetArchetypeOnDeath(const ursine::resources::ResourceReference &objToSpawn);
 
     bool GetDeleteOnZeroHealth(void) const;
     void SetDeleteOnZeroHealth(bool flag);
@@ -100,7 +101,7 @@ private:
     float m_health;
     float m_maxHealth;
 
-    std::string m_objToSpawn;
+    ursine::resources::ResourceReference m_objToSpawn;
 
     bool m_deleteOnZero;
     bool m_spawnOnDeath;
