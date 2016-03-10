@@ -93,13 +93,11 @@ namespace ursine
             EntityManager *GetEntityManager(void) const;
             SystemManager *GetSystemManager(void) const;
 
-            Scene *GetOwner(void) const;
-
             template<typename SystemType>
             SystemType *GetEntitySystem(void);
 
-            Screen *GetOwner(void) const;
-            void SetOwner(Screen *owner);
+            Scene *GetOwner(void) const;
+            void SetOwner(Scene *owner);
 
             void MessageUI(const std::string &message, const Json &data);
 

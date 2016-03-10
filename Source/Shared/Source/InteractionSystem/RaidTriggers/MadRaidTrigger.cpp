@@ -29,9 +29,9 @@ namespace
                   float duration = BuffComponent::BUFF_INFINITE)
     {
 
-        switch ( raidEffect )
+        //switch ( raidEffect )
         {
-        default:
+        //default:
             buffComp->AddBuff(raidEffect, modifier, duration);
         }
     }
@@ -124,7 +124,7 @@ void MadRaidTrigger::SetMadSymbol(const std::string& symbol)
 }
 
 
-void MadRaidTrigger::StartInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
+void MadRaidTrigger::StartInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity)
 {
     auto owner = queue->GetOwner( );
     bool isPlayer = owner->HasComponent< PlayerID >( );
@@ -138,11 +138,11 @@ void MadRaidTrigger::StartInteraction(const CommandQueue* queue, ursine::ecs::En
     AddPlayer(owner, owner->GetComponent< PlayerID >( )->GetID( ));
 }
 
-void MadRaidTrigger::Interact(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
+void MadRaidTrigger::Interact(const CommandQueue* queue, ursine::ecs::EntityHandle &entity)
 {
 }
 
-void MadRaidTrigger::StopInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id)
+void MadRaidTrigger::StopInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity)
 {
     auto owner = queue->GetOwner( );
     bool isPlayer = owner->HasComponent< PlayerID >( );
@@ -192,7 +192,7 @@ void MadRaidTrigger::ChangeToSuccessState(void)
 }
 
 
-void MadRaidTrigger::AddPlayer(ursine::ecs::Entity* player, int id)
+void MadRaidTrigger::AddPlayer(const ursine::ecs::EntityHandle &player, int id)
 {
     // activate player
     m_players[ id ].init(player->GetComponent< BuffComponent>( ), m_currEffect, m_dealDamageTime);
@@ -226,7 +226,7 @@ void MadRaidTrigger::ChangeEffect(int id)
 }
 
 
-void MadRaidTrigger::DealDamage(ursine::ecs::Entity* player)
+void MadRaidTrigger::DealDamage(const ursine::ecs::EntityHandle &player)
 {
     // get health component
     if ( player->HasComponent< Health >( ) )

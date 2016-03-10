@@ -128,7 +128,7 @@ void BaseRaidTrigger::SetUISymbol(const std::string& symbol)
 ////////       Protected Methods       ////////
 ///////////////////////////////////////////////
 
-void BaseRaidTrigger::Initialize(ursine::ecs::Entity* owner)
+void BaseRaidTrigger::Initialize(const ursine::ecs::EntityHandle &owner)
 {
     if ( m_archetypeToLoad.size( ) )
     {

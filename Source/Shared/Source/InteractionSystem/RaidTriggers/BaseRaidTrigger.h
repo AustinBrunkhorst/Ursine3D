@@ -86,7 +86,7 @@ public:
     void SetUISymbol(const std::string& symbol);
 
 protected:
-    void Initialize(ursine::ecs::Entity* owner);
+    void Initialize(const ursine::ecs::EntityHandle &owner);
 
     void SetAnimatorColors(const ursine::Color& color);
 
