@@ -143,9 +143,41 @@ float3 CalcPoint(float3 position, Material material)
     float3 finalLightColor = (diffuseColor.rgb + specularValue * material.specIntensity);
 
     // apply dotp, attenuation for distance and angle
-    finalLightColor *= normalScalar * angleAttenuation * distAttenuation;
+    finalLightColor *= normalScalar * angleAttenuation * distAttenuation * intensity;
 
     return finalLightColor;
+
+
+    ///////////////////////////////////////////////////////////////////////
+    //float3 ToLight = lightPosition - position;
+    //float3 ToEye = -position;
+    //float DistToLight = length(ToLight);
+
+    //// Phong diffuse
+    //ToLight /= DistToLight; // Normalize
+    //float NDotL = saturate(dot(ToLight, material.normal));
+    //float3 finalColor = diffuseColor.rgb * NDotL;
+
+    //// Blinn specular
+    //ToEye = normalize(ToEye);
+    //float3 HalfWay = normalize(ToEye + ToLight);
+    //float NDotH = saturate(dot(HalfWay, material.normal));
+    //finalColor += diffuseColor.rgb * pow(NDotH, material.specPow) *
+    //    material.specIntensity;
+
+    //// Cone attenuation
+    //// get the angle from the ray to the pixel and our main direction
+    //float angleInCone = (dot(ToLight, lightDirection));
+
+    //// calculate final attenuation for the angle
+    //float conAtt = (angleInCone - outerAngle) /
+    //    (innerAngle - outerAngle);
+
+    //float Attn = saturate(1.0f - (DistToLight / lightSize));
+
+    //finalColor *= material.diffuseColor.xyz * Attn * conAtt;
+
+    //return finalColor * intensity;
 }
 
 float4 main(DS_OUTPUT In) : SV_TARGET

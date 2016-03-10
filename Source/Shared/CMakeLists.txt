@@ -2,7 +2,7 @@
 ursine_project(Shared
     FOLDER "Shared"
     TYPE LIB
-    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX FileWatcher
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
     PARSE_SOURCE_GROUPS

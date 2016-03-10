@@ -27,8 +27,8 @@ namespace ursine
     UIDirectXRenderer::~UIDirectXRenderer(void)
     {
         //@UI
-        //m_gfxMgr->UIMgr.DestroyUI( m_uiHandle );
-        //m_uiHandle = 0;
+        m_gfxMgr->UIMgr.DestroyUI( m_uiHandle );
+        m_uiHandle = 0;
     }
 
     void UIDirectXRenderer::Draw(GfxHND camera)

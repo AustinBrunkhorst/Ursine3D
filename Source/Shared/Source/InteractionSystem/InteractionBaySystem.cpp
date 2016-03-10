@@ -57,24 +57,20 @@ namespace
 ////  Interaction Bay System  ////
 //////////////////////////////////
 
-InteractionBaySystem::InteractionBaySystem(ursine::ecs::World* world)
+InteractionBaySystem::InteractionBaySystem(World* world)
     : FilterSystem( world, Filter( ).One< InteractionBay >( ) )
 {
 }
 
-void InteractionBaySystem::Enable(ursine::ecs::Entity* entity)
+void InteractionBaySystem::Enable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
     // grab all comps needed
-    m_interactionBays[ uniqueID ] = entity->GetComponent< InteractionBay >( );
+    m_interactionBays[ entity ] = entity->GetComponent<InteractionBay>( );
 }
 
-void InteractionBaySystem::Disable(ursine::ecs::Entity* entity)
+void InteractionBaySystem::Disable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
-    m_interactionBays.erase( uniqueID );
+    m_interactionBays.erase( entity );
 }
 
 void InteractionBaySystem::onUpdate(EVENT_HANDLER(World))
@@ -103,7 +99,7 @@ void InteractionBaySystem::UpdateBay(InteractionBay* bay, const int closestIndex
 {
     Interactable* currInteractable;
     CommandQueue* queue = bay->GetOwner( )->GetComponent<CommandQueue>( );
-    ursine::ecs::EntityUniqueID id = bay->GetOwner( )->GetUniqueID( );
+    auto id = bay->GetOwner( );
 
     if ( !bay->m_prevInteractable && closestIndex == -1 )
         return;

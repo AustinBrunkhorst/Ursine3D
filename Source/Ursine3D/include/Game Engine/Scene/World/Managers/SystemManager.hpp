@@ -78,8 +78,10 @@ namespace ursine
             if (m_initialized)
                 system->OnInitialize( );
 
-            if (m_loaded)
-                system->OnAfterLoad( );
+            auto *scene = m_world->GetOwner( );
+
+            if (scene != nullptr)
+                system->OnSceneReady( scene );
 
             return static_cast<SystemType*>( system );
         }

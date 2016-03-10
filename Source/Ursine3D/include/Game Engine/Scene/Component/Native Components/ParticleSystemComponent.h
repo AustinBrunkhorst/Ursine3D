@@ -19,6 +19,7 @@
 #include "RenderableComponentBase.h"
 #include "RenderMask.h"
 #include "Color.h"
+#include "TextureData.h"
 
 namespace ursine
 {
@@ -50,10 +51,11 @@ namespace ursine
                 SetColor
             );
 
-            EditorField(
-                std::string texture,
-                GetParticleTextureName,
-                SetParticleTextureName
+            EditorResourceField(
+                ursine::resources::TextureData,
+                texture,
+                GetTexture,
+                SetTexture
             );
 
             EditorField(
@@ -80,6 +82,7 @@ namespace ursine
             ~ParticleSystem(void);
 
             void OnInitialize(void) override;
+            void OnSceneReady(Scene *scene) override;
 
             // count
             unsigned GetActiveParticleCount(void) const;
@@ -102,8 +105,8 @@ namespace ursine
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
 
-            const std::string &GetParticleTextureName(void) const;
-            void SetParticleTextureName(const std::string &texture);
+            const resources::ResourceReference &GetTexture(void) const;
+            void SetTexture(const resources::ResourceReference &texture);
 
             SystemSpace GetSystemSpace(void) const;
             void SetSystemSpace(const SystemSpace &space);
@@ -125,12 +128,16 @@ namespace ursine
 
             RenderableComponentBase *m_base;
 
+            resources::ResourceReference m_texture;
+
             // data for this component
             Color m_particleColor;
 
             SystemSpace m_systemSpace;
 
             RenderMode m_renderMode;
+
+            void invalidateTexture(bool unload = true);
 
             // color
         } Meta(Enable, WhiteListMethods, DisplayName( "ParticleSystem" ));

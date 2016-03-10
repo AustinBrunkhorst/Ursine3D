@@ -17,12 +17,12 @@ namespace ursine
         {
         }
 
-        void AIMovementController::SetTargetDirection(const Vec3& dir)
+        void AIMovementController::SetTargetDirection(const SVec3& dir)
         {
             m_targetDir = Vec3( dir.X( ), 0, dir.Z( ) );
         }
 
-        void AIMovementController::SettargetDirection(const Vec2& dir)
+        void AIMovementController::SetTargetDirection(const Vec2& dir)
         {
             m_targetDir = Vec3( dir.X( ), 0, dir.Y( ) );
 
@@ -39,7 +39,10 @@ namespace ursine
         void AIMovementController::Update(void)
         {
             if (!m_enable)
+            {
+                m_rigid->SetVelocity(SVec3::Zero());
                 return;
+            }
             
             m_rigid = static_cast< Handle<Rigidbody> >( GetOwner( )->GetComponent<Rigidbody>( ) );
 
@@ -48,13 +51,18 @@ namespace ursine
 
             auto gravity = Vec3( 0, m_rigid->GetVelocity( ).Y( ), 0 );
 
-            m_rigid->SetVelocity( gravity + m_targetDir * m_speed );
+            m_rigid->SetVelocity( gravity + ( m_targetDir /*+ m_directionModifier*/ ) * m_speed );
 
-            auto lookangle = transform->GetForward( ).Dot( m_targetDir );
+            //auto lookangle = transform->GetForward( ).Dot( m_targetDir );
 
-            auto oldV = m_rigid->GetAngularVelocity( );
+            //auto oldV = m_rigid->GetAngularVelocity( );
 
-            m_rigid->SetAngularVelocity( Vec3( oldV.X( ), lookangle, oldV.Z( ) ) );
+            //m_rigid->SetAngularVelocity( Vec3( oldV.X( ), lookangle, oldV.Z( ) ) );
+        }
+
+        void AIMovementController::AddDirectionModifier(SVec3 mod)
+        {
+            //m_directionModifier = mod;
         }
 
         bool AIMovementController::GetEnable(void) const

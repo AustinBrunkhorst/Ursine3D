@@ -66,6 +66,9 @@
                     if (bounds.bottom > window.innerHeight)
                         this.style.top = (window.innerHeight - bounds.height) + 'px';
 
+                    if (bounds.right > window.innerWidth)
+                        this.style.left = (window.innerWidth - bounds.width) + 'px';
+
                     this.classList.add( 'shown' );
                 }.bind( this ), 0 );
             },

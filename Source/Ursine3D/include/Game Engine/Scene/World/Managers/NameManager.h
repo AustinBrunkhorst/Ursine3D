@@ -27,30 +27,29 @@ namespace ursine
             ~NameManager(void);
 
             // Removes this entity from reference
-            void Remove(Entity *entity);
+            void Remove(EntityID id);
 
             // Gets the first entity with this name
-            Entity *GetEntity(const std::string &name);
+            EntityHandle GetEntity(const std::string &name) const;
 
             // Gets all entities in this group
-            const EntityVector &GetEntities(const std::string &name);
+            EntityHandleVector GetEntities(const std::string &name) const;
 
             // Gets the name of a specific entity
-            const std::string &GetName(const Entity *entity);
-            const std::string &GetName(const EntityUniqueID id);
-            void SetName(Entity *entity, const std::string &name);
+            const std::string &GetName(EntityID id);
+            void SetName(EntityID id, const std::string &name);
 
         private:
             friend class EntitySerializer;
 
             // group of entities mapped to a specifc name
-            std::unordered_map<std::string, EntityVector> m_grouped;
+            std::unordered_map<std::string, EntityIDVector> m_grouped;
 
             // entities mapped to specific names
-            std::unordered_map<EntityUniqueID, std::string> m_names;
+            std::unordered_map<EntityID, std::string> m_names;
 
-            void setName(Entity *entity, const std::string &name);
-            void removeFromGroup(const std::string &name, Entity *entity);
+            void setName(EntityID id, const std::string &name);
+            void removeFromGroup(const std::string &name, EntityID id);
         };
     }
 }

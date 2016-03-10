@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -15,13 +15,11 @@
 
 #include "EditorEntityManager.h"
 
+#include "Editor.h"
+#include "Project.h"
 #include "ComponentUtils.h"
 
 #include <SelectedComponent.h>
-#include "EditorConfig.h"
-
-#include <Editor.h>
-#include <Timer.h>
 
 using namespace ursine;
 
@@ -42,7 +40,7 @@ namespace
     {
         namespace scene
         {
-            const auto Reset = "Reset";
+            const auto WorldChanged = "WorldChanged";
         }
 
         namespace entity
@@ -66,20 +64,30 @@ namespace
 }
 
 EditorEntityManager::EditorEntityManager(Project *project)
-    : m_project( project )
-    , m_world( nullptr )
+    : m_editor( GetCoreSystem( Editor ) )
+    , m_project( project )
+    , m_activeWorld( nullptr )
 {
-
+    m_project->GetScene( ).Listener( this )
+        .On( SCENE_WORLD_CHANGED, &EditorEntityManager::onSceneActiveWorldChanged );
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 EditorEntityManager::~EditorEntityManager(void)
 {
-    clearWorld( m_world );
+    m_project->GetScene( ).Listener( this )
+        .Off( SCENE_WORLD_CHANGED, &EditorEntityManager::onSceneActiveWorldChanged );
+
+    clearWorldEvents( m_activeWorld );
 }
 
-void EditorEntityManager::SetWorld(ecs::World *world)
+///////////////////////////////////////////////////////////////////////////////
+
+void EditorEntityManager::initWorldEvents(ecs::World *world)
 {
-    clearWorld( m_world );
+    if (!world)
+        return;
 
     world->Listener( this )
         .On( ecs::WORLD_ENTITY_ADDED, &EditorEntityManager::onEntityAdded )
@@ -90,23 +98,11 @@ void EditorEntityManager::SetWorld(ecs::World *world)
         .On( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
         .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged )
         .On( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
-
-    m_world = world;
 }
 
-void EditorEntityManager::RelayUIResetWorld(void)
-{
-    Json data;
+///////////////////////////////////////////////////////////////////////////////
 
-    m_project->GetUI( )->Message(
-        UI_CMD_BROADCAST, 
-        channel::SceneManager, 
-        events::scene::Reset,
-        data
-    );
-}
-
-void EditorEntityManager::clearWorld(ecs::World *world)
+void EditorEntityManager::clearWorldEvents(ecs::World *world)
 {
     if (!world)
         return;
@@ -122,15 +118,39 @@ void EditorEntityManager::clearWorld(ecs::World *world)
         .Off( ecs::WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, &EditorEntityManager::onComponentArrayModified );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
+void EditorEntityManager::onSceneActiveWorldChanged(EVENT_HANDLER(Scene))
+{
+    EVENT_ATTRS(Scene, SceneWorldChangedArgs);
+
+    clearWorldEvents( args->oldWorld.get( ) );
+
+    m_activeWorld = sender->GetActiveWorld( );
+
+    Json data;
+
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST,
+        channel::SceneManager,
+        events::scene::WorldChanged,
+        data
+    );
+
+    initWorldEvents( m_activeWorld );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void EditorEntityManager::onEntityAdded(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) }
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) }
     };
 
-    m_project->GetUI( )->Message(
+    m_editor->GetMainWindow( ).GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::entity::Added, 
@@ -138,15 +158,17 @@ void EditorEntityManager::onEntityAdded(EVENT_HANDLER(ecs::World))
     );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void EditorEntityManager::onEntityRemoved(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) }
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) }
     };
 
-    m_project->GetUI( )->Message(
+    m_editor->GetMainWindow( ).GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::entity::Removed, 
@@ -154,16 +176,18 @@ void EditorEntityManager::onEntityRemoved(EVENT_HANDLER(ecs::World))
     );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void EditorEntityManager::onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorEntityNameChangedArgs);
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
         { "name", args->newName },
     };
 
-    m_project->GetUI( )->Message(
+    m_editor->GetMainWindow( ).GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::entity::NameChanged,
@@ -171,29 +195,31 @@ void EditorEntityManager::onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World))
     );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
 {
     EVENT_ATTRS(ecs::Entity, ecs::ParentChangedArgs);
 
     Json oldUniqueID, newUniqueID;
 
-    if (args->oldParent == nullptr)
+    if (!args->oldParent)
         oldUniqueID = nullptr;
     else
-        oldUniqueID = static_cast<int>( args->oldParent->GetUniqueID( ) );
+        oldUniqueID = static_cast<int>( args->oldParent->GetID( ) );
 
-    if (args->newParent == nullptr)
+    if (!args->newParent)
         newUniqueID = nullptr;
     else
-        newUniqueID = static_cast<int>( args->newParent->GetUniqueID( ) );
+        newUniqueID = static_cast<int>( args->newParent->GetID( ) );
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( sender->GetUniqueID( ) ) },
+        { "uniqueID", static_cast<int>( sender->GetID( ) ) },
         { "oldParent", oldUniqueID },
         { "newParent", newUniqueID }
     };
 
-    m_project->GetUI( )->Message(
+    m_editor->GetMainWindow( ).GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::entity::ParentChanged,
@@ -201,25 +227,27 @@ void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
     );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
-    if (args->component == nullptr || args->entity == nullptr)
+    if (args->component == nullptr || !args->entity)
         return;
 
     auto component = 
         meta::Variant( args->component, meta::variant_policy::WrapObject( ) );
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
         { "component", args->component->GetType( ).GetName( ) },
         // note: false is to ensure no serialization hooks are called
         { "value", component.GetType( ).SerializeJson( component, false ) },
         { "buttons", InspectComponentButtons( component ) }
     };
 
-    m_project->GetUI( )->Message(
+    m_editor->GetMainWindow( ).GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::component::Added,
@@ -227,16 +255,18 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
     );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void EditorEntityManager::onComponentRemoved(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
     Json message = Json::object {
-        { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
         { "component", args->component->GetType( ).GetName( ) },
     };
 
-    m_project->GetUI( )->Message(
+    m_editor->GetMainWindow( ).GetUI( )->Message(
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::component::Removed,
@@ -244,31 +274,35 @@ void EditorEntityManager::onComponentRemoved(EVENT_HANDLER(ecs::World))
     );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorComponentChangedArgs);
 
     if (args->entity->HasComponent<ecs::Selected>( ))
     {
-    #if defined(CONFIG_DEBUG)
-        UAssert( args->component->GetType( ).GetField( args->field ).IsValid( ),
+        auto componentType = args->component->GetType( );
+        auto field = componentType.GetField( args->field );
+
+        UAssert( field.IsValid( ),
             "Notifying change of unknown field.\n"
             "Component: %s\n"
             "Field: %s",
-            args->component->GetType( ).GetName( ).c_str( ),
+            componentType.GetName( ).c_str( ),
             args->field.c_str( )
         );
-    #endif
+
+        auto invokeHook = field.GetMeta( ).GetProperty<ForceSerializationHook>( ) != nullptr;
 
         Json message = Json::object {
-            { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
-            { "component", args->component->GetType( ).GetName( ) },
+            { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
+            { "component", componentType.GetName( ) },
             { "field", args->field },
-            // note: false is to ensure no serialization hooks are called
-            { "value", args->value.GetType( ).SerializeJson( args->value, false ) }
+            { "value", args->value.GetType( ).SerializeJson( args->value, invokeHook ) }
         };
 
-        m_project->GetUI( )->Message(
+        m_editor->GetMainWindow( ).GetUI( )->Message(
             UI_CMD_BROADCAST, 
             channel::EntityManager, 
             events::component::Changed,
@@ -276,6 +310,8 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
         );
     }
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
 {
@@ -294,7 +330,7 @@ void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
     #endif
 
         Json::object message = Json::object {
-            { "uniqueID", static_cast<int>( args->entity->GetUniqueID( ) ) },
+            { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
             { "component", args->component->GetType( ).GetName( ) },
             { "field", args->field },
             { "index", static_cast<int>( args->modification.index ) }
@@ -317,7 +353,7 @@ void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
             { AMODIFY_REMOVE, events::component::ArrayRemove }
         };
 
-        m_project->GetUI( )->Message(
+        m_editor->GetMainWindow( ).GetUI( )->Message(
             UI_CMD_BROADCAST, 
             channel::EntityManager, 
             actionToType[ args->modification.action ],

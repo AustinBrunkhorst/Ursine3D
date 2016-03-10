@@ -10,6 +10,8 @@
 
 #include "Notification.h"
 
+#include "ModelResource.h"
+
 namespace ursine
 {
     namespace ecs
@@ -18,7 +20,7 @@ namespace ursine
 
         FBXSceneRootNode::FBXSceneRootNode(void)
             : BaseComponent( )
-            , m_sceneName( "" )
+            , m_modelHandle( 0 )
         #if defined(URSINE_WITH_EDITOR)
             , m_notificationPresent( false )
         #endif
@@ -35,23 +37,32 @@ namespace ursine
         {
         }
 
-        const std::string &FBXSceneRootNode::GetSceneName(void) const
+        const resources::ResourceReference& FBXSceneRootNode::GetModel(void) const
         {
-            return m_sceneName;
+            return m_modelResource;
         }
 
-        void FBXSceneRootNode::SetSceneName(const std::string &map)
+        void FBXSceneRootNode::SetModel(const ursine::resources::ResourceReference &model)
         {
-            m_sceneName = map;
+            m_modelResource = model;
+
+            if (!resourcesAreAvailable())
+                return;
+
+            NOTIFY_COMPONENT_CHANGED("sceneModel", m_modelResource);
         }
 
     #if defined(URSINE_WITH_EDITOR)
 
         void FBXSceneRootNode::importScene(void)
         {
+            invalidateModel();
+
+            auto data = loadResource<ursine::resources::ModelData>( m_modelResource );
+
             auto *gfx = GetCoreSystem( graphics::GfxAPI );
 
-            auto *model = gfx->ResourceMgr.GetModelResource( m_sceneName );
+            auto *model = gfx->ResourceMgr.GetModelResource(data->GetModelHandle( ));
 
             auto *world = GetOwner( )->GetWorld( );
 
@@ -66,13 +77,13 @@ namespace ursine
                 for (auto &x : meshVec)
                 {
                     // Create an entity
-                    auto *newEntity = world->CreateEntity( x->GetName( ) );
+                    auto newEntity = world->CreateEntity( x->GetName( ) );
 
                     // Add model3d
                     auto *modelComp = newEntity->AddComponent<Model3D>( );
 
                     // Set the mesh to this mesh
-                    modelComp->SetModelResourceName( m_sceneName );
+                    modelComp->SetModel( m_modelResource );
 
                     // Set its mesh index
                     modelComp->SetMeshIndex( childIndex++ );
@@ -184,5 +195,22 @@ namespace ursine
         }
 
     #endif
+
+
+        void FBXSceneRootNode::invalidateModel(bool unload)
+        {
+            auto data = loadResource<resources::ModelData>(m_modelResource);
+
+            if (data != nullptr)
+            {
+                auto handle = data->GetModelHandle();
+
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.UnloadModel( m_modelHandle );
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.LoadModel( handle );
+
+                m_modelHandle = handle;
+            }
+        }
+
     }
 }

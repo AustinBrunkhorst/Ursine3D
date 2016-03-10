@@ -1,8 +1,15 @@
 cmake_minimum_required(VERSION 3.0)
 
+set(EDITOR_VERSION "0.0alpha")
+
 add_definitions(
     # building with editor
     -DURSINE_WITH_EDITOR
+    # always output warnings
+    -DURSINE_OUTPUT_WARNINGS=1
+    # always output to console
+    -DURSINE_OUTPUT_CONSOLE=1
+    -DEDITOR_VERSION="${EDITOR_VERSION}"
     # disable exceptions
     -D_HAS_EXCEPTIONS=0
 )
@@ -19,16 +26,16 @@ include_directories(${Shared_INCLUDE_DIRS})
 ursine_project(Editor
     FOLDER "Engine"
     TYPE EXE
-    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX FileWatcher
     COPY_SHADERS "Assets/Shaders/"
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
-    SYM_LINKS "Assets" 
+    SYM_LINKS "Assets" "Resources" "Tools"
     PARSE_SOURCE_GROUPS
     RECURSIVE_INCLUDES
     BUILD_META
     INCLUDE_INSTALLER
-    INSTALLER_VERSION "0.1submission"
+    INSTALLER_VERSION ${EDITOR_VERSION}
     META_HEADER "EditorReflection.h"
     META_MODULE_HEADER "EditorReflectionModule.h"
     META_MODULE_DEPENDS Ursine3D Shared

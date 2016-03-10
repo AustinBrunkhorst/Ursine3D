@@ -20,13 +20,16 @@
 
 #include "Notification.h"
 
+#include "WorldData.h"
+
 namespace ursine
 {
     Scene::Scene(void)
-        : m_playState( PS_EDITOR )
+        : EventDispatcher( this )
+        , m_playState( PS_EDITOR )
         , m_viewport( 0 )
+        , m_activeWorld( nullptr )
     {
-        SetWorld( new ecs::World( ) );
     }
 
     Scene::~Scene(void)
@@ -34,17 +37,38 @@ namespace ursine
 
     }
 
-    ecs::World *Scene::GetWorld(void)
+    ecs::World *Scene::GetActiveWorld(void)
     {
-        return m_world.get( );
+        return m_activeWorld.get( );
     }
 
-    void Scene::SetWorld(ecs::World *world)
+    void Scene::SetActiveWorld(ecs::World::Handle world)
     {
-        m_world = ecs::World::Handle( world );
+        SceneWorldChangedArgs e( m_activeWorld, nullptr );
 
-        // TODO: DON"T KEEP THIS!!!!!
-        m_world->SetOwner( reinterpret_cast<Screen*>( 0xFFFFFF ) );
+        m_activeWorld = world;
+
+        m_activeWorld->setOwner( this );
+
+        Dispatch( SCENE_WORLD_CHANGED, &e );
+    }
+
+    bool Scene::SetActiveWorld(const resources::ResourceReference &reference)
+    {
+        auto *worldData = reference.Load<resources::WorldData>( m_resourceManager, true );
+
+        if (!worldData)
+            return false;
+
+        SceneWorldChangedArgs e( m_activeWorld, &reference );
+
+        m_activeWorld = worldData->GetData( );
+
+        m_activeWorld->setOwner( this );
+
+        Dispatch( SCENE_WORLD_CHANGED, &e );
+
+        return true;
     }
 
     graphics::GfxHND Scene::GetViewport(void) const
@@ -67,44 +91,56 @@ namespace ursine
         m_playState = state;
     }
 
+    resources::ResourceManager &Scene::GetResourceManager(void)
+    {
+        return m_resourceManager;
+    }
+
     void Scene::Step(void) const
     {
-        m_world->Update( );
+        if (m_activeWorld)
+            m_activeWorld->Update( );
     }
 
     void Scene::Update(DeltaTime dt) const
     {
+        if (!m_activeWorld)
+            return;
+
         switch (m_playState)
         {
         case PS_PAUSED:
         case PS_EDITOR:
-            m_world->EditorUpdate( );
+            m_activeWorld->EditorUpdate( );
             break;
         case PS_PLAYING:
-            m_world->Update( );
+            m_activeWorld->Update( );
             break;
         }
     }
 
     void Scene::Render(void) const
     {
+        if (!m_activeWorld)
+            return;
+
         switch (m_playState)
         {
         case PS_PAUSED:
         case PS_EDITOR:
-            m_world->EditorRender( );
+            m_activeWorld->EditorRender( );
             break;
         case PS_PLAYING:
-            m_world->Render( );
+            m_activeWorld->Render( );
             break;
         }
     }
 
     void Scene::LoadConfiguredSystems(void)
     {
-        auto *config = m_world->GetSettings( )->GetComponent<ecs::WorldConfig>( );
+        auto *config = m_activeWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( );
 
-        auto *systemManager = m_world->GetSystemManager( );
+        auto *systemManager = m_activeWorld->GetSystemManager( );
 
         for (auto &system : config->GetSystems( ))
         {
@@ -123,6 +159,8 @@ namespace ursine
                 error.message = "Unknown world play system configured.";
 
                 EditorPostNotification( error );
+
+                continue;
             }
 
             if (systemManager->HasSystem( type ))
@@ -134,6 +172,8 @@ namespace ursine
                 error.message = "World play system <strong class=\"highlight\">" + type.GetName( ) + "</strong> already exists.";
 
                 EditorPostNotification( error );
+
+                continue;
             }
 
             systemManager->AddSystem( type );

@@ -108,4 +108,3 @@ void DamageText::SetStartAlpha(const float alpha)
 {
     m_startAlpha = alpha;
 }
-

@@ -27,6 +27,11 @@
 #include "WorldSerializer.h"
 
 #include "WorldConfigComponent.h"
+#include "WorldData.h"
+
+#include "EntityHandle.h"
+
+#include "ArchetypeData.h"
 
 namespace
 {
@@ -39,8 +44,6 @@ namespace ursine
     {
         World::World(void)
             : EventDispatcher( this )
-            , m_loaded( false )
-            , m_settings( nullptr )
             , m_entityManager( nullptr )
             , m_systemManager( nullptr )
             , m_nameManager( nullptr )
@@ -82,11 +85,9 @@ namespace ursine
             delete m_entityManager;
             
             m_entityManager = nullptr;
-            
-            m_settings = nullptr;
         }
 
-        Entity *World::CreateEntity(const std::string &name)
+        EntityHandle World::CreateEntity(const std::string &name)
         {
             auto entity = m_entityManager->Create( );
 
@@ -95,28 +96,23 @@ namespace ursine
             return entity;
         }
 
-        void World::queueEntityDeletion(Entity *entity)
-        {
-            m_deleted.push_back(entity);
-        }
-
-        Entity *World::CreateEntityFromArchetype(
-            const std::string &filename, 
+        EntityHandle World::CreateEntityFromArchetype(
+            const std::string &fileName, 
             const std::string &name
         )
         {
-            auto cache = m_archetypeCache.find( filename );
+            auto cache = m_archetypeCache.find( fileName );
 
-            Entity *entity;
+            EntityHandle entity;
 
             if (cache == m_archetypeCache.end( ))
             {
                 std::string jsonData;
 
                 UAssert(
-                    fs::LoadText( filename, jsonData ),
+                    fs::LoadAllText( fileName, jsonData ),
                     "Failed to load archetype.\nfile: %s", 
-                    filename.c_str( )
+                    fileName.c_str( )
                 );
 
                 std::string jsonError;
@@ -127,10 +123,10 @@ namespace ursine
                     jsonError.empty( ),
                     "Failed to load archetype.\nJSON error: %s\nfile: %s",
                     jsonError.c_str( ),
-                    filename.c_str( )
+                    fileName.c_str( )
                 );
 
-                m_archetypeCache[ filename ] = data;
+                m_archetypeCache[ fileName ] = data;
 
                 entity = loadArchetype( data );
             }
@@ -145,42 +141,46 @@ namespace ursine
             return entity;
         }
 
-        Entity *World::GetEntity(EntityID id) const
+        EntityHandle World::CreateEntityFromArchetype(const resources::ResourceReference &resource)
         {
-            return m_entityManager->GetEntity( id );
+            UAssert( m_owner != nullptr,
+                "Cannot create archetype without scene."    
+            );
+
+            auto *archetype = resource.Load<resources::ArchetypeData>( 
+                m_owner->GetResourceManager( ) 
+            );
+
+            // if we couldn't load the archetype, return an invalid entity handle
+            return archetype ? archetype->Instantiate( this ) : EntityHandle::Invalid( );
         }
 
-        const std::string& World::GetEntityName(EntityUniqueID id) const
+        EntityHandle World::GetEntity(EntityID id) const
         {
-            return m_nameManager->GetName( id );
+            return m_entityManager->GetEntityByID( id );
         }
 
-        Entity *World::GetEntityFromName(const std::string &name) const
+        EntityHandle World::GetEntityFromName(const std::string &name) const
         {
             return m_nameManager->GetEntity( name );
         }
 
-        Entity *World::GetEntityUnique(EntityUniqueID uniqueID) const
-        {
-            return m_entityManager->GetEntityUnique( uniqueID );
-        }
-
-        EntityVector World::GetRootEntities(void) const
+        EntityHandleVector World::GetRootEntities(void) const
         {
             return m_entityManager->GetRootEntities( );
         }
 
-        const EntityVector &World::GetActiveEntities(void) const
+        EntityHandleVector World::GetActiveEntities(void) const
         {
             return m_entityManager->GetActiveEntities( );
         }
 
-        const EntityVector &World::GetEntitiesFromName(const std::string &name) const
+        EntityHandleVector World::GetEntitiesFromName(const std::string &name) const
         {
             return m_nameManager->GetEntities( name );
         }
 
-        EntityVector World::GetEntitiesFromFilter(const Filter &filter) const
+        EntityHandleVector World::GetEntitiesFromFilter(const Filter &filter) const
         {
             return m_entityManager->GetEntities( filter );
         }
@@ -209,9 +209,14 @@ namespace ursine
             Dispatch( WORLD_EDITOR_RENDER, EventArgs::Empty );
         }
 
-        Entity *World::GetSettings(void) const
+        const EntityHandle &World::GetSettings(void) const
         {
             return m_settings;
+        }
+
+        EntityManager *World::GetEntityManager(void) const
+        {
+            return m_entityManager;
         }
 
         SystemManager *World::GetSystemManager(void) const
@@ -219,38 +224,49 @@ namespace ursine
             return m_systemManager;
         }
 
-        Screen *World::GetOwner(void) const
+        Scene *World::GetOwner(void) const
         {
             return m_owner;
         }
 
-        void World::SetOwner(Screen *owner)
+        void World::setOwner(Scene *owner)
         {
-            m_owner = owner;
-        }
+            UAssert( m_owner == nullptr,
+                "World owner already set."  
+            );
 
-        void World::DispatchLoad(void)
-        {
+            m_owner = owner;
+
             // make sure we have a the world configuration component
             if (!m_settings->HasComponent<WorldConfig>( ) )
                 m_settings->AddComponent<WorldConfig>( );
 
-            if (!m_loaded)
-            {
-                m_systemManager->onAfterLoad( );
-
-                m_loaded = true;
-            }
+            m_entityManager->initializeScene( );
+            m_systemManager->initializeScene( );
         }
 
-        void World::MergeWorld(const std::string &filename)
+        void World::queueEntityDeletion(Entity *entity)
         {
-            WorldSerializer::MergeDeserialize( filename, this );
+            m_deleted.emplace_back( EntityHandle( entity ) );
         }
 
-        void World::deleteEntity(Entity *entity)
+        void World::MergeWorld(
+            resources::ResourceManager &resourceManager,
+            resources::ResourceReference &worldResource
+        )
         {
-            m_nameManager->Remove( entity );
+            auto data = worldResource.Load<resources::WorldData>( resourceManager );
+
+            UAssert( data != nullptr,
+                "Unable to load reference of world to merge."
+            );
+
+            WorldSerializer::MergeDeserialize( data->GetData( ), this );
+        }
+
+        void World::deleteEntity(const EntityHandle &entity)
+        {
+            m_nameManager->Remove( entity->GetID( ) );
             m_entityManager->Remove( entity );
         }
                 
@@ -258,12 +274,12 @@ namespace ursine
         {
             std::lock_guard<std::mutex> lock( m_deletionMutex );
 
-            for (auto *entity : m_deleted)
-                m_entityManager->BeforeRemove( entity );
+            for (auto &entity : m_deleted)
+                m_entityManager->BeforeRemove( entity.Get( ) );
 
             while (m_deleted.size( ))
             {
-                auto entity = m_deleted.back( );
+                auto &entity = m_deleted.back( );
 
                 m_deleted.pop_back( );
 
@@ -271,7 +287,7 @@ namespace ursine
             }
         }
 
-        Entity *World::loadArchetype(const Json &data)
+        EntityHandle World::loadArchetype(const Json &data)
         {
             try
             {
@@ -284,7 +300,7 @@ namespace ursine
                     e.GetError( ).c_str( )
                 );
 
-                return nullptr;
+                return EntityHandle::Invalid( );
             }
         }
 

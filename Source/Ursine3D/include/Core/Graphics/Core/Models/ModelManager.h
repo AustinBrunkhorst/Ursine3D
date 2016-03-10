@@ -11,22 +11,6 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      ModelManager.h
-Module:         Graphics
-Purpose:        Manager for handling all of the models
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include <map>
@@ -34,6 +18,8 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #include "ModelResource.h"
 #include "ModelInfo.h"
+#include "AnimationInfo.h"
+#include "GfxDefines.h"
 
 namespace ursine
 {
@@ -42,23 +28,23 @@ namespace ursine
         class ModelManager
         {
         public:
+            ModelManager(void);
+
             void Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath);
-			void InitializeJdl(std::string fileText);
-			void InitializeModel(std::string fileText);
-            void Uninitialize();
+            void Uninitialize(void);
 
-            void LoadModel(std::string name, std::string fileName);
-			void LoadModel_Fbx(std::string name, std::string fileName);
-			void LoadModel_Jdl(std::string name, std::string fileName); 
-			
-            ID3D11Buffer *GetModelVert(std::string name, unsigned index = 0);
-            unsigned GetModelVertcount(std::string name, unsigned index = 0);
-			unsigned GetModelIndexcount(std::string name, unsigned index = 0);
+            // create/destry model
+            bool CheckModelExistence(const std::string &modelName);
+            GfxHND CreateModel(const ufmt_loader::ModelInfo &modelInfo);
+            void DestroyModel(GfxHND &handle);
 
-            void BindModel(std::string name, unsigned index = 0, bool indexOnly = false);
+            // load/unload model from gpu
+            void LoadModel(GfxHND handle);
+            void UnloadModel(GfxHND handle);
+
+            // bind model to the GPU
             void BindModel(unsigned ID, unsigned index = 0, bool indexOnly = false);
 
-            //manual binding
             template<typename T>
             void BindMesh(ID3D11Buffer *mesh, ID3D11Buffer *indices)
             {
@@ -68,36 +54,46 @@ namespace ursine
                 unsigned int strides = sizeof(T);
                 unsigned int offset = 0;
 
-                m_deviceContext->IASetVertexBuffers(0, 1, &mesh, &strides, &offset);
-                m_deviceContext->IASetIndexBuffer(indices, DXGI_FORMAT_R32_UINT, 0);
+                m_deviceContext->IASetVertexBuffers( 0, 1, &mesh, &strides, &offset );
+                m_deviceContext->IASetIndexBuffer( indices, DXGI_FORMAT_R32_UINT, 0 );
             }
 
-            unsigned GetModelIDByName(std::string name);
-
-            ID3D11Buffer *GetModelVertByID(unsigned ID, unsigned index = 0);
-            unsigned GetModelVertcountByID(unsigned ID, unsigned index = 0);
-
-			unsigned GetModelIndexcountByID(unsigned ID, unsigned index = 0);
-
+            // get for index data
+            unsigned GetModelIndexcountByID(unsigned ID, unsigned index = 0);
             unsigned GetModelMeshCount(unsigned ID);
 
+            // invalidate current state
             void Invalidate();
 
+            // animation stuff
+            bool CheckAnimExistence(const std::string &animeName);
+            GfxHND CreateAnimation(const ufmt_loader::AnimInfo &animeInfo);
+            void DestroyAnimation(GfxHND &handle);
+
+            // getting info
+            ufmt_loader::ModelInfo *GetModelInfo(GfxHND handle);
+            ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
             ModelResource *GetModel(const unsigned ID);
-            ModelResource *GetModel(const std::string &name);
 
         private:
+            void InitializeModel(const ufmt_loader::ModelInfo &modelInfo, ModelResource &modelresource);
+            void loadModelToGPU(ModelResource &model);
+            void unloadModelFromGPU(ModelResource &model);
 
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_deviceContext;
 
-            std::map<std::string, ModelResource *> m_modelArray;
-            std::map<std::string, unsigned> m_s2uTable;
-            std::map<unsigned, ModelResource *> m_u2mTable;
-			std::vector<std::string> m_jdllist;
-
-            unsigned m_modelCount;
+            // model
+            unsigned m_nextModelID;
             unsigned m_currentState;
+
+            std::unordered_map<unsigned, ModelResource> m_modelCache;
+            std::unordered_map<unsigned, ufmt_loader::ModelInfo> m_modelInfoCache;
+
+            // animation
+            unsigned m_nextAnimationID;
+
+            std::unordered_map<unsigned, ufmt_loader::AnimInfo> m_animeInfoCache;
         };
     }
 }

@@ -20,6 +20,9 @@
 #include "PlayerIDComponent.h"
 #include "PlayerSpawnPointComponent.h"
 
+#include <World.h>
+#include <Scene.h>
+#include <ResourceManager.h>
 #include <CameraComponent.h>
 
 using namespace ursine;
@@ -70,20 +73,28 @@ void SpawnPlayersState::Enter(SegmentLogicStateMachine *machine)
     for (auto &spawnPoint : spawnPoints)
     {
         auto point = spawnPoint->GetComponent<PlayerSpawnPoint>( );
-        Entity *player = spawn ? nullptr : players[ index++ ];
+        auto player = spawn ? EntityHandle::Invalid( ) : players[ index++ ];
 
         if (spawn)
         {
-            auto archetype = point->GetPlayerArchetype( );
+            auto archetypeHandle = point->GetPlayerArchetype( );
+            auto world = point->GetOwner( )->GetWorld( );
+            auto &rm = world->GetOwner( )->GetResourceManager( );
 
-            player = world->CreateEntityFromArchetype(
-                WORLD_ARCHETYPE_PATH + archetype + ".uatype", archetype
-            );
+            auto atype = archetypeHandle.Load<resources::ArchetypeData>( rm );
+
+            player = atype->Instantiate( world );
 
             if (player->GetComponent<PlayerID>( )->GetID( ) == 0)
+            {
                 segmentManager->m_player1 = player;
+                player->SetName( "Player1" );
+            }
             else
+            {
                 segmentManager->m_player2 = player;
+                player->SetName( "Player2" );
+            }
         }
 
         if (spawn || m_repositionIfPresent)

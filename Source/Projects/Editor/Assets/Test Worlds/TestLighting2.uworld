@@ -1,0 +1,619 @@
+{
+"entities": [
+{
+"children": [], 
+"components": {
+"Light": {
+".uid": 6, 
+"color": {
+"a": 1, 
+"b": 0, 
+"g": 0, 
+"r": 1
+}, 
+"intensity": 1, 
+"radius": 1000, 
+"renderMask": 0, 
+"spotlightAngles": {
+"x": 0, 
+"y": 30
+}, 
+"type": "Point"
+}, 
+"Transform": {
+".uid": 5, 
+"rotation": {
+"w": 0.97003906965255737, 
+"x": 0.24294881522655487, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 5.8947010040283203, 
+"y": 5.8947010040283203, 
+"z": 10
+}, 
+"translation": {
+"x": 17.350654602050781, 
+"y": 249.8841552734375, 
+"z": -9.2699556350708008
+}
+}
+}, 
+"name": "Global Light"
+}, {
+"children": [], 
+"components": {
+"Camera": {
+".uid": 8, 
+"active": true, 
+"farPlane": 2500, 
+"focusPosition": {
+"x": -157.14225769042969, 
+"y": 249.8841552734375, 
+"z": -9.26995849609375
+}, 
+"fov": 45, 
+"lookZoomFactor": 391, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 0, 
+"renderMode": "Deferred", 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 7, 
+"rotation": {
+"w": 0.56121706962585449, 
+"x": 0.31150811910629272, 
+"y": 0.67045438289642334, 
+"z": -0.37214121222496033
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": -360.73236083984375, 
+"y": 581.7081298828125, 
+"z": 27.129291534423828
+}
+}
+}, 
+"name": "Editor Camera"
+}, {
+"children": [
+{
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 12, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0, 
+"meshIndex": 0, 
+"model": {
+"guid": "0b06c089-019d-4e56-8628-8771d8e7d6cb"
+}, 
+"renderMask": 0, 
+"specularIntensity": 1, 
+"specularPower": 255, 
+"texture": {
+"guid": "00000000-0000-0000-0000-000000000000"
+}
+}, 
+"Transform": {
+".uid": 11, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "polySurface8"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 14, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0, 
+"meshIndex": 1, 
+"model": {
+"guid": "0b06c089-019d-4e56-8628-8771d8e7d6cb"
+}, 
+"renderMask": 0, 
+"specularIntensity": 1, 
+"specularPower": 255, 
+"texture": {
+"guid": "00000000-0000-0000-0000-000000000000"
+}
+}, 
+"Transform": {
+".uid": 13, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "polySurface9"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 16, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0, 
+"meshIndex": 5, 
+"model": {
+"guid": "0b06c089-019d-4e56-8628-8771d8e7d6cb"
+}, 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0, 
+"texture": {
+"guid": "00000000-0000-0000-0000-000000000000"
+}
+}, 
+"Transform": {
+".uid": 15, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pasted__polySurface12"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 18, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.15000000596046448, 
+"meshIndex": 6, 
+"model": {
+"guid": "0b06c089-019d-4e56-8628-8771d8e7d6cb"
+}, 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0, 
+"texture": {
+"guid": "00000000-0000-0000-0000-000000000000"
+}
+}, 
+"Transform": {
+".uid": 17, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder4"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 20, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.15000000596046448, 
+"meshIndex": 7, 
+"model": {
+"guid": "0b06c089-019d-4e56-8628-8771d8e7d6cb"
+}, 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0, 
+"texture": {
+"guid": "00000000-0000-0000-0000-000000000000"
+}
+}, 
+"Transform": {
+".uid": 19, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder5"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 22, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.15000000596046448, 
+"meshIndex": 8, 
+"model": {
+"guid": "0b06c089-019d-4e56-8628-8771d8e7d6cb"
+}, 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0, 
+"texture": {
+"guid": "00000000-0000-0000-0000-000000000000"
+}
+}, 
+"Transform": {
+".uid": 21, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder6"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 24, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.15000000596046448, 
+"meshIndex": 9, 
+"model": {
+"guid": "0b06c089-019d-4e56-8628-8771d8e7d6cb"
+}, 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0, 
+"texture": {
+"guid": "00000000-0000-0000-0000-000000000000"
+}
+}, 
+"Transform": {
+".uid": 23, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder7"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 26, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.15000000596046448, 
+"meshIndex": 10, 
+"model": {
+"guid": "0b06c089-019d-4e56-8628-8771d8e7d6cb"
+}, 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0, 
+"texture": {
+"guid": "00000000-0000-0000-0000-000000000000"
+}
+}, 
+"Transform": {
+".uid": 25, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder8"
+}, {
+"children": [], 
+"components": {
+"Model3D": {
+".uid": 28, 
+"castsShadows": false, 
+"color": {
+"a": 1, 
+"b": 1, 
+"g": 1, 
+"r": 1
+}, 
+"emissive": 0.15000000596046448, 
+"meshIndex": 11, 
+"model": {
+"guid": "0b06c089-019d-4e56-8628-8771d8e7d6cb"
+}, 
+"renderMask": 0, 
+"specularIntensity": 0, 
+"specularPower": 0, 
+"texture": {
+"guid": "00000000-0000-0000-0000-000000000000"
+}
+}, 
+"Transform": {
+".uid": 27, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "pCylinder9"
+}
+], 
+"components": {
+"FBXSceneRootNode": {
+".uid": 10, 
+"sceneModel": {
+"guid": "0b06c089-019d-4e56-8628-8771d8e7d6cb"
+}
+}, 
+"Transform": {
+".uid": 9, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}
+}, 
+"name": "Empty Entity"
+}, {
+"children": [], 
+"components": {
+"Camera": {
+".uid": 30, 
+"active": true, 
+"farPlane": 1000, 
+"focusPosition": {
+"x": 50, 
+"y": 50, 
+"z": 50
+}, 
+"fov": 45, 
+"lookZoomFactor": 1, 
+"nearPlane": 0.10000000149011612, 
+"renderLayer": 0, 
+"renderMask": 1024, 
+"renderMode": "Deferred", 
+"viewportPosition": {
+"x": 0, 
+"y": 0
+}, 
+"viewportSize": {
+"x": 1, 
+"y": 1
+}
+}, 
+"Transform": {
+".uid": 29, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 269.05279541015625, 
+"z": -558.8834228515625
+}
+}
+}, 
+"name": "Camera"
+}
+], 
+"settings": {
+"children": [], 
+"components": {
+"PhysicsSettings": {
+".uid": 3, 
+"enableDebugDraw": true, 
+"gravity": {
+"x": 0, 
+"y": -10, 
+"z": 0
+}, 
+"playmodeDebugDraw": false
+}, 
+"Transform": {
+".uid": 2, 
+"rotation": {
+"w": 1, 
+"x": 0, 
+"y": 0, 
+"z": 0
+}, 
+"scale": {
+"x": 1, 
+"y": 1, 
+"z": 1
+}, 
+"translation": {
+"x": 0, 
+"y": 0, 
+"z": 0
+}
+}, 
+"WorldConfig": {
+".uid": 4, 
+"systems": []
+}
+}, 
+"name": "World Settings"
+}, 
+"v": "0.0"
+}

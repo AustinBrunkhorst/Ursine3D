@@ -16,6 +16,8 @@
 #include <SVec3.h>
 #include "AbstractWeapon.h"
 
+#include <ArchetypeData.h>
+
 namespace ursine
 {
     namespace ecs
@@ -34,7 +36,7 @@ struct WeaponSlotInfo
 
     // loaded weapon archetype
     //   give ease of access
-    ursine::ecs::Entity* m_weaponLoaded;
+    ursine::ecs::EntityHandle m_weaponLoaded;
 
     // weapon archetype that will be loaded when ever this weapon slot is active
     std::string m_weaponToLoad;
@@ -64,7 +66,7 @@ public:
         GetStartWeapon,
         SetStartWeapon
     );
-   
+
     EditorField(
         std::string LastStand,
         GetLastStandWeapon,

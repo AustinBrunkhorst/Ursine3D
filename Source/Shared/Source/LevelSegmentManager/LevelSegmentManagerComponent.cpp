@@ -21,6 +21,7 @@
 #include "ChangeSegmentState.h"
 #include "CombatBowl1IntroCinematicState.h"
 #include "BossRoomTopAnimationState.h"
+#include "TriggerWaitState.h"
 #include "CurrentSegmentCondition.h"
 
 #include "TutorialResourcesComponent.h"
@@ -39,8 +40,8 @@ using namespace ecs;
 LevelSegmentManager::LevelSegmentManager(void)
     : BaseComponent( )
     , m_segment( LevelSegments::Empty )
-    , m_player1( nullptr )
-    , m_player2( nullptr )
+    , m_player1( )
+    , m_player2( )
     , m_enableDebugOutput( false )
 {
 }
@@ -77,17 +78,17 @@ void LevelSegmentManager::SetEnableDebugOutput(bool enable)
     m_enableDebugOutput = enable;
 }
 
-Entity *LevelSegmentManager::GetPlayer1(void)
+const EntityHandle &LevelSegmentManager::GetPlayer1(void)
 {
     return m_player1;
 }
 
-Entity *LevelSegmentManager::GetPlayer2(void)
+const EntityHandle &LevelSegmentManager::GetPlayer2(void)
 {
     return m_player2;
 }
 
-void LevelSegmentManager::OnInitialize(void)
+void LevelSegmentManager::OnSceneReady(Scene *scene)
 {
     // subscribe to update
     GetOwner( )->GetWorld( )->Listener( this )
@@ -118,46 +119,68 @@ void LevelSegmentManager::initTutorialLogic(void)
 
     // Initial state for spawning the level
     auto initState = stateM->AddState<InitializeSegmentState>(
-        resources->worldToMerge, 
+        resources->GetWorldData( ),
         LevelSegments::CB1_SimulationStartCinematic
     );
 
-    // Next state for spawning the players
-    auto playerCreateState = stateM->AddState<SpawnPlayersState>( );
+    auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
+    auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
+    auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
+    auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpens );
 
+    // Next state for spawning the players
     initState->AddTransition( playerCreateState, "Go To Init Players" );
 
     // Make sure the players have their character controller's locked
-    auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
-
     playerCreateState->AddTransition( lockCCState, "Go To Locking Player Controller" );
 
     // After players are spawned tween their viewports
-    auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutUpDown, true );
+    auto introCin = lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
 
-    auto timedTrans = lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
+    introCin->AddCondition<sm::TimerCondition>(TimeSpan::FromSeconds(10.0f));
 
-    timedTrans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 7.0f ) );
+    // Unlock players
+    tweenState->AddTransition( unlockCCState, "Go To Unlocking Player Controller" );
+
+    // Halt the state machine until the players hit the first trigger, so that we can then
+    // Spawn the movmement tutorial prompts
+    //auto waitForTrigger = stateM->AddState<TriggerWaitState>( resources->GetGateTriggerName( ) );
 
     // After the viewports tween out change the level segment
-    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::CB1_SimulationStartCinematic );
-
-    tweenState->AddTransition( changeSegState, "To Combat Bowl 1 Cinematic" );
-
+    unlockCCState->AddTransition( changeSegState, "To Gate Opens" );
+    
     stateM->SetInitialState( initState );
 
     addSegmentLogic( stateM, {
         LevelSegments::Tut_OpeningCinematic,
+        LevelSegments::Tut_GateOpens,
         LevelSegments::Tut_MovementTutorial,
-        LevelSegments::Tut_SoloTriggerTutorial,
+        LevelSegments::Tut_JumpTutorial,
         LevelSegments::Tut_WeaponPickupTutorial,
         LevelSegments::Tut_HipFireTutorial,
         LevelSegments::Tut_AimFireTutorial,
         LevelSegments::Tut_AmmoPickupTutorial,
         LevelSegments::Tut_ShootMovingTargetsTutorial,
+        LevelSegments::Tut_SoloTriggerTutorial,
         LevelSegments::Tut_ReviveTutorial,
-        LevelSegments::Tut_SimultaneousTriggerTutorial,
-        LevelSegments::Tut_SimulationCreationCinematic
+    } );
+
+    auto endingState = std::make_shared<SegmentLogicStateMachine>( "To Combat Bowl", this );
+
+    auto lock = endingState->AddState<LockPlayerCharacterControllerState>( true, false, true, false );
+    auto changeSeg = endingState->AddState<ChangeSegmentState>( LevelSegments::CB1_SimulationStartCinematic );
+    
+    auto trans = lock->AddTransition(
+        changeSeg, "Change To Change"
+    );
+
+    trans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 6.0f ) );
+
+    endingState->SetInitialState( lock );
+
+    addSegmentLogic( endingState, {
+        LevelSegments::Tut_SimultaneousTriggerTutorial
     } );
 }
 
@@ -170,7 +193,7 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
 
     // Initial state for spawning the level
     auto initState = stateM->AddState<InitializeSegmentState>(
-        resources->worldToMerge,
+        resources->GetWorldData( ),
         LevelSegments::Empty
     );
 
@@ -258,7 +281,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
     // initial state for spawning the level
     auto initState = initStateM->AddState<InitializeSegmentState>(
-        resources->worldToMerge,
+        resources->GetWorldData( ),
         LevelSegments::Empty
     );
 

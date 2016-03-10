@@ -110,7 +110,7 @@ namespace ursine
 
     bool RenderProcessHandler::initNativeBroadcaster(CefRefPtr<CefV8Value> global)
     {
-        m_nativeBroadcaster = global->GetValue( kNativeBroadcastFunction );
+        m_nativeBroadcaster = global->GetValue( kUINativeBroadcastFunction );
 
         return m_nativeBroadcaster != nullptr;
     }

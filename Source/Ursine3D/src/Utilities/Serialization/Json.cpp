@@ -35,6 +35,9 @@
 #include "UrsinePrecompiled.h"
 
 #include "Json.h"
+
+#include "UrsineMath.h"
+
 #include <cassert>
 #include <cstdlib>
 #include <cstdio>
@@ -63,7 +66,12 @@ namespace ursine
     static void dump(double value, string &out, bool multiline)
     {
         char buf[32];
+
+        if (!math::IsFiniteNumber( value ))
+            value = 0.0f;
+
         snprintf(buf, sizeof buf, "%.17g", value);
+
         out += buf;
     }
 

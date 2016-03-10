@@ -27,6 +27,7 @@
 #include "DrawingManager.h"
 #include "GfxProfiler.h"
 #include "BitmapFont.h"
+#include "FontManager.h"
 
 #include <atomic>
 
@@ -60,7 +61,7 @@ namespace ursine
 
             void Resize(int width, int height);
 
-            void SetFullscreenState( const bool state );
+            void SetFullscreenState(const bool state);
 
             void Invalidate();
 
@@ -98,6 +99,7 @@ namespace ursine
             ViewportManager *viewportManager;
             GfxUIManager *uiManager;
             DrawingManager *drawingManager;
+            FontManager *fontManager;
             GfxProfiler *gfxProfiler;
 
             GfxInfo *gfxInfo;
@@ -148,8 +150,6 @@ namespace ursine
 
             std::vector<_DRAWHND> m_drawList;
             unsigned m_drawCount;
-
-            
 
             //temp
             std::list<GfxHND> m_viewportList;

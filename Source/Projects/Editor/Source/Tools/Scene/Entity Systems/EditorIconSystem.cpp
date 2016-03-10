@@ -13,23 +13,29 @@
 
 #include "Precompiled.h"
 
+#include "Editor.h"
+
 #include "EditorIconSystem.h"
 #include "EditorIconComponent.h"
 
 #include <LightComponent.h>
 #include <CameraComponent.h>
 
+#include <EditorToolResources.h>
+#include <TextureData.h>
+
 ENTITY_SYSTEM_DEFINITION( EditorIconSystem );
 
 using namespace ursine;
 
-EditorIconSystem::EditorIconSystem(ecs::World* world)
+EditorIconSystem::EditorIconSystem(ecs::World *world)
     : EntitySystem( world )
+    , m_toolResources( GetCoreSystem( Editor )->GetProject( )->GetBuiltInResourceManager( ) )
 {
     
 }
 
-void EditorIconSystem::OnInitialize(void)
+void EditorIconSystem::OnSceneReady(Scene *scene)
 {
     m_world->Listener( this )
         .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd )
@@ -75,22 +81,35 @@ void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
     auto comp = args->component;
     auto entity = args->entity;
 
-    // if the object added was a selected component
-    if (comp->Is<ecs::Light>( ))
-    {
-        if (!entity->HasComponent<EditorIcon>( ))
-            entity->AddComponent<EditorIcon>( );
-        
-        auto light = reinterpret_cast<ecs::Light*>( comp );
+    auto *editorIcon = entity->GetComponent<EditorIcon>( );
 
-        setLightIcon( light->GetLightType( ), entity->GetComponent<EditorIcon>( ) );
+    if (comp->Is<ecs::Camera>( ))
+    {
+        if (!editorIcon)
+            editorIcon = entity->AddComponent<EditorIcon>( );
+
+        resources::ResourceReference iconRef = editor_resources::IconCamera;
+
+        auto *texture = iconRef.Load<resources::TextureData>( m_toolResources );
+
+        UAssert( texture != nullptr,
+            "Unable to load editor camera icon."
+        );
+
+        if(texture != nullptr)
+            editorIcon->SetIcon( texture->GetTextureHandle( ) );
+        else
+            editorIcon->SetIcon( 0 );
+
     }
-    else if (comp->Is<ecs::Camera>( ))
+    else if (comp->Is<ecs::Light>( ))
     {
-        if (!entity->HasComponent<EditorIcon>( ))
-            entity->AddComponent<EditorIcon>( );
+        if (!editorIcon)
+            editorIcon = entity->AddComponent<EditorIcon>( );
 
-        entity->GetComponent<EditorIcon>( )->SetIcon( "CameraIcon" );
+        auto *light = entity->GetComponent<ecs::Light>( );
+
+        setLightIcon( light->GetLightType( ), editorIcon );
     }
 }
 
@@ -100,7 +119,7 @@ void EditorIconSystem::onLightTypeChange(EVENT_HANDLER(ecs::World))
 
     if (args->component->Is<ecs::Light>( ) && args->field == "type")
     {
-        auto type = static_cast<ecs::LightType>( args->value.ToInt( ) );
+        auto type = args->entity->GetComponent<ecs::Light>( )->GetLightType( );
         auto icon = args->entity->GetComponent<EditorIcon>( );
 
         if (!icon)
@@ -110,20 +129,31 @@ void EditorIconSystem::onLightTypeChange(EVENT_HANDLER(ecs::World))
     }
 }
 
-void EditorIconSystem::setLightIcon(ursine::ecs::LightType type, EditorIcon* icon)
+void EditorIconSystem::setLightIcon(ecs::LightType type, EditorIcon *icon)
 {
+    resources::ResourceReference iconResource;
+
     switch (type)
     {
     case ecs::LightType::Directional:
-        icon->SetIcon( "DirectionalLightIcon" );
+        iconResource = editor_resources::IconDirectionalLight;
         break;
 
     case ecs::LightType::Point:
-        icon->SetIcon( "PointLightIcon" );
+        iconResource = editor_resources::IconPointLight;
         break;
 
     case ecs::LightType::Spot:
-        icon->SetIcon( "SpotLightIcon" );
+        iconResource = editor_resources::IconSpotLight;
         break;
     }
+
+    auto *texture = iconResource.Load<resources::TextureData>( m_toolResources );
+
+    UAssert( texture != nullptr,
+        "Unable to load editor icon for light type '%s'.",
+        typeof( ecs::LightType ).GetEnum( ).GetKey( type ).c_str( )
+    );
+
+    icon->SetIcon( texture->GetTextureHandle( ) );
 }

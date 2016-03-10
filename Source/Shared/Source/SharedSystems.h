@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -63,12 +63,6 @@
 #include "AI/WaypointSystem.h"
 
 /////////////////////////////////
-//       Camera Animation      //
-/////////////////////////////////
-
-#include "CameraAnimation/CameraAnimatorSystem.h"
-
-/////////////////////////////////
 //       Entity Animation      //
 /////////////////////////////////
 
@@ -79,12 +73,6 @@
 /////////////////////////////////
 
 #include "SpawnerSystem/SpawnerGroupSystem.h"
-
-/////////////////////////////////
-//       Level Events          //
-/////////////////////////////////
-
-#include "LevelSegmentManager/SegmentLogic/Misc/StartRoomDirectorSystem.h"
 
 /////////////////////////////////
 //       Damage System         //

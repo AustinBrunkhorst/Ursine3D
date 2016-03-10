@@ -16,7 +16,7 @@
 #include "TrailComponent.h"
 #include "ParticleEmitterComponent.h"
 
-ENTITY_SYSTEM_DEFINITION( TrailSystem ) ;
+ENTITY_SYSTEM_DEFINITION( TrailSystem );
 
 using namespace ursine;
 using namespace ursine::ecs;
@@ -41,23 +41,19 @@ TrailSystem::TrailSystem(ursine::ecs::World* world)
 }
 
 
-void TrailSystem::Enable(ursine::ecs::Entity* entity)
+void TrailSystem::Enable(const ursine::ecs::EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
-    m_particleEmitter[ uniqueID ] = entity->GetComponent< ParticleEmitter >( );
+    m_particleEmitter[ entity ] = entity->GetComponent< ParticleEmitter >( );
     
-    m_trails[ uniqueID ] = entity->GetComponent< TrailComponent >( );
+    m_trails[ entity ] = entity->GetComponent< TrailComponent >( );
 
-    m_transforms[ uniqueID ] = entity->GetTransform( );
+    m_transforms[ entity ] = entity->GetTransform( );
 }
 
-void TrailSystem::Disable(ursine::ecs::Entity* entity)
+void TrailSystem::Disable(const EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
-    m_trails.erase( uniqueID );
-    m_transforms.erase( uniqueID );
+    m_trails.erase( entity );
+    m_transforms.erase( entity );
 }
 
 void TrailSystem::onUpdate(EVENT_HANDLER(World))
@@ -68,10 +64,9 @@ void TrailSystem::onUpdate(EVENT_HANDLER(World))
     }
 }
 
-
-void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* const trail)
+void TrailSystem::UpdateTrail(const EntityHandle &entity, TrailComponent *trail)
 {
-    if ( trail->m_distToTravel <= trail->m_distTraveled )
+    if (trail->m_distToTravel <= trail->m_distTraveled)
         trail->GetOwner( )->Delete( );
 
     // Calculate segment vec
@@ -79,10 +74,10 @@ void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* co
     float segDist = segmentVec.Length( );
 
     // grab particle emitter for emitting particles at segments
-    ParticleEmitter* const emitter = m_particleEmitter[ id ];
+    ParticleEmitter* const emitter = m_particleEmitter[ entity ];
 
     // grab transform for modifying position
-    Transform* const transform = m_transforms[ id ];
+    Transform* const transform = m_transforms[ entity ];
 
     ursine::SVec3 pos = transform->GetWorldPosition( );
 
@@ -102,5 +97,4 @@ void TrailSystem::UpdateTrail(ursine::ecs::EntityUniqueID id, TrailComponent* co
             emitter->spawnParticle( );
         }
     }
-
 }

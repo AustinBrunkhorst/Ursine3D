@@ -22,7 +22,7 @@ namespace ursine
         }
 
         // NOTE: this actually can't be const due to weird handle stuff
-        void AIHorde::SetTarget(const Vec3& pos)
+        void AIHorde::SetTarget(const SVec3& pos)
         {
             m_move->SetTargetDirection(pos - GetOwner()->GetTransform()->GetWorldPosition());
         }

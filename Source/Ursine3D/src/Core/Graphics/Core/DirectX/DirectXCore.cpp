@@ -64,67 +64,17 @@ namespace ursine
                 }
 
                 /////////////////////////////////////////////////////////////////
-                // CREATING SWAP CHAIN //////////////////////////////////////////
-                DXGI_SWAP_CHAIN_DESC swapChainDesc;
+                // CREATING DEVICES /////////////////////////////////////////////
+                
                 ID3D11Texture2D *backBufferPtr;
-
                 D3D_FEATURE_LEVEL finalFeatureLevel;
                 D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ] = {
                     D3D_FEATURE_LEVEL_11_0,
                     D3D_FEATURE_LEVEL_10_0
                 };
 
-                //Initialize the swap chain description.
-                ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
-
-                //Set to a single back buffer.
-                swapChainDesc.BufferCount = 1;
-
-                //Set the width and height of the back buffer.
-                swapChainDesc.BufferDesc.Width = width;
-                swapChainDesc.BufferDesc.Height = height;
-
-                //Set regular 32-bit surface for the back buffer.
-                swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-
-                //Set the refresh rate of the back buffer.
-                if (true) //@Matt change this to properly do vsync
-                {
-                    swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
-                    swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
-                }
-                else
-                {
-                    swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
-                    swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
-                }
-
-                //Set the usage of the back buffer.
-                swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-
-                //Set the handle for the window to render to.
-                swapChainDesc.OutputWindow = hWindow;
-
-                //set multisampling
-                swapChainDesc.SampleDesc.Count = gfxInfo->GetSampleCount();
-                swapChainDesc.SampleDesc.Quality = gfxInfo->GetSampleQuality();
-
-                LogMessage("Sample Count: %i", 2, swapChainDesc.SampleDesc.Count);
-                LogMessage("Sample Quality: %i", 2, swapChainDesc.SampleDesc.Quality);
-
-                //set swap chain flags
-                swapChainDesc.Windowed = true; // this is like this for a reason
-                swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-
-                //Set the scan line ordering and scaling to unspecified.
-                swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-                swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-                
-                //Discard the back buffer contents after presenting.
-                swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-
                 ///////////////////////////////////////////////////////////////
-                //Create the swap chain, Direct3D device, and Direct3D device context.
+                //Create the Direct3D device and Direct3D device context.
                 if (debug)
                 {
                      result = D3D11CreateDevice( 
@@ -158,36 +108,6 @@ namespace ursine
                         __uuidof(ID3DUserDefinedAnnotation), 
                         reinterpret_cast<void**>(&m_userAnnotation)
                     );
-                    //UAssert(result == S_OK, "Failed to make annotation interface! (Error '%s')", GetDXErrorMessage(result));
-
-                    // create swapchain /////////////////////////////
-                    IDXGIDevice * pDXGIDevice = nullptr;
-                    result = m_device->QueryInterface( 
-                        __uuidof(IDXGIDevice), 
-                        (void **)&pDXGIDevice 
-                    );
-
-                    IDXGIAdapter * pDXGIAdapter = nullptr;
-                    result = pDXGIDevice->GetAdapter( &pDXGIAdapter );
-
-                    IDXGIFactory * pIDXGIFactory = nullptr;
-                    pDXGIAdapter->GetParent( 
-                        __uuidof(IDXGIFactory), 
-                        (void **)&pIDXGIFactory 
-                    );
-
-                    result = pIDXGIFactory->CreateSwapChain( 
-                        m_device, 
-                        &swapChainDesc, 
-                        &m_swapChain 
-                    );
-
-                    UAssert( result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage( result ) );
-
-                    // END //////////////////////////////////////////
-                    RELEASE_RESOURCE( pIDXGIFactory );
-                    RELEASE_RESOURCE( pDXGIAdapter );
-                    RELEASE_RESOURCE( pDXGIDevice );
                 }
                 else
                 {
@@ -208,43 +128,118 @@ namespace ursine
                     UAssert( result == S_OK, "Failed to make device! (Error '%s')", GetDXErrorMessage( result ) );
 
                     LogMessage( "Feature Level: %i", 2, finalFeatureLevel );
-
-                    // CREATE SWAPCHAIN ////////////////////////////////////////////
-                    IDXGIDevice * pDXGIDevice = nullptr;
-                    result = m_device->QueryInterface( 
-                        __uuidof(IDXGIDevice), 
-                        (void **)&pDXGIDevice 
-                    );
-
-                    IDXGIAdapter * pDXGIAdapter = nullptr;
-                    result = pDXGIDevice->GetAdapter( &pDXGIAdapter );
-
-                    IDXGIFactory * pIDXGIFactory = nullptr;
-                    pDXGIAdapter->GetParent( 
-                        __uuidof(IDXGIFactory), 
-                        (void **)&pIDXGIFactory 
-                    );
-
-                    result = pIDXGIFactory->CreateSwapChain( 
-                        m_device, 
-                        &swapChainDesc, 
-                        &m_swapChain 
-                    );
-
-                    UAssert( result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage( result ) );
-
-                    // END ////////////////////////////////////////////////////////////
-                    RELEASE_RESOURCE( pIDXGIFactory );
-                    RELEASE_RESOURCE( pDXGIAdapter );
-                    RELEASE_RESOURCE( pDXGIDevice );
                 }
+
+                // calculate multisampling levels
+                UINT qualityLevel_1, qualityLevel_4, qualityLevel_8;
+
+                result = m_device->CheckMultisampleQualityLevels(
+                    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                    1,
+                    &qualityLevel_1
+                );
+
+                result = m_device->CheckMultisampleQualityLevels(
+                    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                    4,
+                    &qualityLevel_4
+                );
+
+                result = m_device->CheckMultisampleQualityLevels(
+                    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                    8,
+                    &qualityLevel_8
+                );
+
+                gfxInfo->SetSampleCountAndQuality(1, 0);
+
+                ///////////////////////////////////////////////////////////////
+                // create swapchain ///////////////////////////////////////////
+                IDXGIDevice * pDXGIDevice = nullptr;
+                result = m_device->QueryInterface(
+                    __uuidof(IDXGIDevice),
+                    (void **)&pDXGIDevice
+                );
+
+                IDXGIAdapter * pDXGIAdapter = nullptr;
+                result = pDXGIDevice->GetAdapter(&pDXGIAdapter);
+
+                IDXGIFactory * pIDXGIFactory = nullptr;
+                pDXGIAdapter->GetParent(
+                    __uuidof(IDXGIFactory),
+                    (void **)&pIDXGIFactory
+                    );
+
+                // INITIALIZE DESCRIPTION /////////////////////////////////////
+                //Initialize the swap chain description.
+                DXGI_SWAP_CHAIN_DESC swapChainDesc;
+                ZeroMemory(&swapChainDesc, sizeof(swapChainDesc));
+
+                //Set to a single back buffer.
+                swapChainDesc.BufferCount = 1;
+
+                //Set the width and height of the back buffer.
+                swapChainDesc.BufferDesc.Width = width;
+                swapChainDesc.BufferDesc.Height = height;
+
+                //Set regular 32-bit surface for the back buffer.
+                swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+
+                //Set the refresh rate of the back buffer.
+                if (true) //@Matt change this to properly do vsync
+                {
+                    swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
+                    swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
+                }
+                else
+                {
+                    swapChainDesc.BufferDesc.RefreshRate.Numerator = 0;
+                    swapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
+                }
+
+                //Set the usage of the back buffer.
+                swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+
+                //Set the handle for the window to render to.
+                swapChainDesc.OutputWindow = hWindow;
+
+                //set multisampling
+                swapChainDesc.SampleDesc.Count = gfxInfo->GetSampleCount();
+                swapChainDesc.SampleDesc.Quality = gfxInfo->GetSampleQuality();
+
+                LogMessage("Sample Count: %i", 2, swapChainDesc.SampleDesc.Count);
+                LogMessage("Sample Quality: %i", 2, swapChainDesc.SampleDesc.Quality);
+
+                //set swap chain flags
+                swapChainDesc.Windowed = true; // this is like this for a reason
+                swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
+
+                //Set the scan line ordering and scaling to unspecified.
+                swapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
+                swapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
+
+                //Discard the back buffer contents after presenting.
+                swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
+                
+                // create the swap chain
+                result = pIDXGIFactory->CreateSwapChain(
+                    m_device,
+                    &swapChainDesc,
+                    &m_swapChain
+                );
+
+                UAssert(result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage(result));
+
+                RELEASE_RESOURCE(pIDXGIFactory);
+                RELEASE_RESOURCE(pDXGIAdapter);
+                RELEASE_RESOURCE(pDXGIDevice);
 
                 //set to not fullscreen
                 m_swapChain->SetFullscreenState(fullscreen, nullptr);
 
                 ///////////////////////////////////////////////////////////////
                 // INIT RENDER TARGETS ////////////////////////////////////////
-                m_targetManager->Initialize(m_device, m_deviceContext);
+                m_targetManager->Initialize(m_device, m_deviceContext, gfxInfo);
                 m_targetManager->CreateTargets();
 
                 //Get the pointer to the back buffer.
@@ -275,7 +270,7 @@ namespace ursine
 
                 /////////////////////////////////////////////////////////////////
                 // CREATING DEPTH VIEW //////////////////////////////////////////
-                m_depthStencilManager->Initialize(m_device, m_deviceContext, width, height);
+                m_depthStencilManager->Initialize(m_device, m_deviceContext, width, height, gfxInfo);
 
                 /////////////////////////////////////////////////////////////////
                 // SET MAIN RENDER TARGET ///////////////////////////////////////
@@ -359,7 +354,7 @@ namespace ursine
 
             void DirectXCore::ClearSwapchain(void)
             {
-                float color[ 4 ] = { 0.15f, 0.15f, 0.15f, 1.0f }; 
+                float color[ 4 ] = { 0.01f, 0.01f, 0.01f, 1.0f };
                 m_deviceContext->ClearRenderTargetView(m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView, color);
             }
 
@@ -486,11 +481,10 @@ namespace ursine
                 }
             }
 
-            void DirectXCore::EndDebugEvent()
+            void DirectXCore::EndDebugEvent(void)
             {
                 if (m_userAnnotation != nullptr)
                 {
-
                     m_userAnnotation->EndEvent();
                 }
             }

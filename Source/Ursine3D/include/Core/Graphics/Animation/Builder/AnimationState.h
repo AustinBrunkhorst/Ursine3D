@@ -48,6 +48,8 @@ namespace ursine
         */
         AnimationState(void);
 
+        void OnSceneReady(void);
+
         bool IsLooping(void) const;
         void SetLooping(const bool isLooping);
 
@@ -100,7 +102,7 @@ namespace ursine
 
         const float &GetTransPosition(void) const;
         void SetTransPosition(const float& tPos);
-
+        
         void PlayingAnimation();// const float deltaTime);
 
     private:

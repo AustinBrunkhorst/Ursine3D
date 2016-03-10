@@ -346,12 +346,11 @@ namespace ursine
             }
         }
 
-        void SweptController::addIfKinematic(Entity* entity)
+        void SweptController::addIfKinematic(const EntityHandle &entity)
         {
             auto *rigidbody = entity->GetComponent<Rigidbody>( );
 
-            if (rigidbody && 
-                rigidbody->GetBodyFlag( ) == BodyFlag::Kinematic)
+            if (rigidbody && rigidbody->GetBodyFlag( ) == BodyFlag::Kinematic)
             {
                 auto found = std::find( m_kinematicPending.begin( ), m_kinematicPending.end( ), entity );
 

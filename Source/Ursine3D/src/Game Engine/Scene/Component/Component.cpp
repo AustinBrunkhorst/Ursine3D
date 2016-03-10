@@ -2,22 +2,40 @@
 
 #include "Component.h"
 
+#include "Scene.h"
+
 namespace ursine
 {
     namespace ecs
     {
-        void Component::Initialize(void)
+        Component::~Component(void)
         {
         #if defined(URSINE_WITH_EDITOR)
 
+            m_owner->GetWorld( )->Disconnect( WORLD_EDITOR_RESOURCE_MODIFIED, this, &Component::onResourceModifed );
+
+        #endif
+        }
+
+        bool Component::resourcesAreAvailable(void) const
+        {
+            return m_owner->GetWorld( )->GetOwner( ) != nullptr;
+        }
+
+        void Component::onInitialize(void)
+        {
+#if defined(URSINE_WITH_EDITOR)
             auto type = GetType( );
             auto fields = type.GetFields( );
 
-            auto instance = meta::Variant { this, meta::variant_policy::WrapObject( ) };
+            auto instance = ObjectVariant( this );
 
             for (auto &field : fields)
             {
-                if (field.GetType( ).IsArray( ))
+                auto fieldType = field.GetType( );
+
+                // array types
+                if (fieldType.IsArray( ))
                 {
                     auto fieldInstance = field.GetValue( instance );
 
@@ -27,7 +45,7 @@ namespace ursine
                     {
                         EVENT_ATTRS(meta::Variant, ArrayModificationArgs);
 
-                        auto *owner = GetOwner( );
+                        auto &owner = GetOwner( );
                         
                         if (owner)
                         {
@@ -45,25 +63,37 @@ namespace ursine
                 }
             }
 
-            m_baseInitialized = true;
-
+            m_owner->GetWorld( )->Connect( WORLD_EDITOR_RESOURCE_MODIFIED, this, &Component::onResourceModifed );
         #endif
 
             OnInitialize( );
         }
 
-		template<>
-		Transform *Component::Handle<Transform>::operator->(void)
-		{
-			return m_entity->GetTransform( );
-		}
+        void Component::onSceneReady(Scene *scene)
+        {
+            OnSceneReady( scene );
+        }
 
-		template<>
-		const Transform *Component::Handle<Transform>::operator->(void) const
-		{
-			return m_entity->GetTransform( );
-		}
+        void Component::onResourceModifed(EVENT_HANDLER(World))
+        {
+            EVENT_ATTRS(World, EditorWorldResourceModifiedArgs);
 
-        void Component::OnInitialize(void) { }
+            auto search = m_resourceModificationCallbacks.find( args->resourceGUID );
+
+            if (search != m_resourceModificationCallbacks.end( ))
+                search->second( );
+        }
+
+        template<>
+        Transform *Component::Handle<Transform>::operator->(void)
+        {
+            return m_entity->GetTransform( );
+        }
+
+        template<>
+        const Transform *Component::Handle<Transform>::operator->(void) const
+        {
+            return m_entity->GetTransform( );
+        }
     }
 }

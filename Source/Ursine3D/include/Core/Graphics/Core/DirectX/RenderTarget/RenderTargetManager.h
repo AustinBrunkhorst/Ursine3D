@@ -34,6 +34,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "RenderTargetList.h"
 #include "D3D11Forward.h"
 #include <dxgiformat.h>
+#include "GfxInfo.h"
 
 namespace ursine
 {
@@ -53,7 +54,7 @@ namespace ursine
             class RenderTargetManager
             {
             public:
-                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
+                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext, GfxInfo *gfxInfo);
                 void Uninitialize(void);
                 void InitializeAllRenderTargets(const unsigned width, const unsigned height);
                 void UnInitializeAllRenderTargets(void);
@@ -78,6 +79,8 @@ namespace ursine
 
                 ID3D11Device *m_device;
                 ID3D11DeviceContext *m_deviceContext;
+
+                GfxInfo *m_gfxInfo;
 
                 //the targets
                 std::vector<RenderTarget*> m_renderTargets;

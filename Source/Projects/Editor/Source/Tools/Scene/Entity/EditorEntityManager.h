@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -15,6 +15,7 @@
 
 #include <Scene.h>
 
+class Editor;
 class Project;
 
 class EditorEntityManager
@@ -23,15 +24,23 @@ public:
     EditorEntityManager(Project *project);
     ~EditorEntityManager(void);
 
-    void SetWorld(ursine::ecs::World *world);
-
-    void RelayUIResetWorld(void);
-
 private:
+    Editor *m_editor;
     Project *m_project;
-    ursine::ecs::World *m_world;
+    ursine::ecs::World *m_activeWorld;
 
-    void clearWorld(ursine::ecs::World *world);
+    void initWorldEvents(ursine::ecs::World *world);
+    void clearWorldEvents(ursine::ecs::World *world);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Scene Events
+    ///////////////////////////////////////////////////////////////////////////
+
+    void onSceneActiveWorldChanged(EVENT_HANDLER(ursine::Scene));
+
+    ///////////////////////////////////////////////////////////////////////////
+    // World Events
+    ///////////////////////////////////////////////////////////////////////////
 
     // entity events
     void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));

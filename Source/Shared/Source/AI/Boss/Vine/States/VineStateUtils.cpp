@@ -41,7 +41,7 @@ float VineStateUtils::FindYPosition(VineAI *ai, const SVec3 &aiPosition)
     // iterate through all output and find the closest hit (that isn't the AI)
     for (int i = 0; i < output.entity.size( ); ++i)
     {
-        auto hitEntity = world->GetEntityUnique( output.entity[ i ] );
+        auto hitEntity = world->GetEntity( output.entity[ i ] );
 
         // make sure we're not checking for ourselves, and entities
         // we don't care about

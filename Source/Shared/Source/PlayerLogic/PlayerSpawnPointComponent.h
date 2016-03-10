@@ -14,6 +14,8 @@
 
 #include "LevelSegments.h"
 
+#include <ArchetypeData.h>
+
 class PlayerSpawnPoint : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -22,8 +24,9 @@ public:
 
     PlayerSpawnPoint(void);
 
-    EditorField(
-        std::string playerArchetype,
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        playerArchetype,
         GetPlayerArchetype,
         SetPlayerArchetype
     );
@@ -34,15 +37,15 @@ public:
         SetSpawnSegment
     );
 
-    const std::string &GetPlayerArchetype(void) const;
-    void SetPlayerArchetype(const std::string &archetype);
+    const ursine::resources::ResourceReference &GetPlayerArchetype(void) const;
+    void SetPlayerArchetype(const ursine::resources::ResourceReference &archetype);
 
     LevelSegments GetSpawnSegment(void);
     void SetSpawnSegment(LevelSegments segment);
 
 private:
-    std::string m_archetype;
-
     LevelSegments m_segment;
+
+    ursine::resources::ResourceReference m_archetype;
 
 } Meta(Enable);

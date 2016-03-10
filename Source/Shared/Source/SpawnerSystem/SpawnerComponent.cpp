@@ -79,7 +79,7 @@ void Spawner::onLevelSegmentChange(LevelSegments segment)
     }
 }
 
-Entity *Spawner::spawnEnemy(SpawnerGroup *group, const SVec3 &worldPosition)
+EntityHandle Spawner::spawnEnemy(SpawnerGroup *group, const SVec3 &worldPosition)
 {
     std::string archetypeName;
 

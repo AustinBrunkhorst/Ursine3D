@@ -43,9 +43,11 @@ namespace ursine
                 &m_collisionConfig
             );
 
-            m_dynamicsWorld->setGravity({ 
-                gravity.X( ), gravity.Y( ), gravity.Z( ) 
-            });
+            m_dynamicsWorld->setGravity( {
+                gravity.X( ), 
+                gravity.Y( ), 
+                gravity.Z( )
+            } );
 
             // Needed to enable the use of ghost objects
             m_dynamicsWorld->getBroadphase( )->getOverlappingPairCache( )
@@ -113,7 +115,7 @@ namespace ursine
         #endif
         }
 
-        void Simulation::RemoveBody(Body* body)
+        void Simulation::RemoveBody(Body *body)
         {
         #ifdef BULLET_PHYSICS
 
@@ -144,7 +146,7 @@ namespace ursine
         #endif
         }
 
-        void Simulation::SetGravity(const SVec3& gravity)
+        void Simulation::SetGravity(const SVec3 &gravity)
         {
         #ifdef BULLET_PHYSICS
 
@@ -166,7 +168,7 @@ namespace ursine
         #endif
         }
 
-        bool Simulation::Raycast(const RaycastInput& input, RaycastOutput& output, RaycastType type)
+        bool Simulation::Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type)
         {
             output.entity.clear( );
             output.hit.clear( );
@@ -251,8 +253,8 @@ namespace ursine
         #endif
         }
 
-        bool Simulation::Sweep(ColliderBase* collider, BodyBase *body, const SVec3& velocity, 
-                               float dt, SweepOutput& output, SweepType type, bool sorted)
+        bool Simulation::Sweep(ColliderBase *collider, BodyBase *body, const SVec3 &velocity,
+            float dt, SweepOutput &output, SweepType type, bool sorted)
         {
             // clear output
             output.entity.clear( );
@@ -284,8 +286,8 @@ namespace ursine
                 if (callback.hasHit( ))
                 {
                     output.entity.push_back( callback.m_hitCollisionObject->getUserIndex( ) );
-                    output.hit.push_back(SVec3( callback.m_hitPointWorld ));
-                    output.normal.push_back(SVec3( callback.m_hitNormalWorld ));
+                    output.hit.push_back( SVec3( callback.m_hitPointWorld ) );
+                    output.normal.push_back( SVec3( callback.m_hitNormalWorld ) );
                     output.time.push_back( callback.m_closestHitFraction * dt );
 
                     return true;
@@ -321,10 +323,10 @@ namespace ursine
                                     ++insert;
                             }
 
-                            output.time.insert( output.time.begin( ) + insert,  newtime );
+                            output.time.insert( output.time.begin( ) + insert, newtime );
                             output.entity.insert( output.entity.begin( ) + insert, callback.m_hitCollisionObject[ i ]->getUserIndex( ) );
-                            output.hit.insert(output.hit.begin( ) + insert, SVec3( callback.m_hitPointWorld[ i ] ));
-                            output.normal.insert(output.normal.begin( ) + insert, SVec3( callback.m_hitNormalWorld[ i ] ));
+                            output.hit.insert( output.hit.begin( ) + insert, SVec3( callback.m_hitPointWorld[ i ] ) );
+                            output.normal.insert( output.normal.begin( ) + insert, SVec3( callback.m_hitNormalWorld[ i ] ) );
                         }
                     }
                     else
@@ -332,8 +334,8 @@ namespace ursine
                         for (size_t i = 0; i < size; ++i)
                         {
                             output.entity.push_back( callback.m_hitCollisionObject[ i ]->getUserIndex( ) );
-                            output.hit.push_back(SVec3( callback.m_hitPointWorld[ i ] ));
-                            output.normal.push_back(SVec3( callback.m_hitNormalWorld[ i ] ));
+                            output.hit.push_back( SVec3( callback.m_hitPointWorld[ i ] ) );
+                            output.normal.push_back( SVec3( callback.m_hitNormalWorld[ i ] ) );
                             output.time.push_back( callback.m_hitFraction[ i ] * dt );
                         }
                     }
@@ -347,7 +349,7 @@ namespace ursine
         #endif
         }
 
-        void Simulation::ClearContacts(Rigidbody& rigidbody)
+        void Simulation::ClearContacts(Rigidbody &rigidbody)
         {
         #ifdef BULLET_PHYSICS
 
@@ -376,8 +378,8 @@ namespace ursine
                 auto *objB = static_cast<const BodyBase*>( manifold->getBody1( ) );
 
                 // Get each body's entity pointer
-                ecs::Entity *entityA = getEntityPointer( objA ), 
-                            *entityB = getEntityPointer( objB );
+                auto &entityA = getEntityHandle( objA ),
+                     &entityB = getEntityHandle( objB );
                 
                 bool sendA = contactCallbackEnabled( objA ), 
                      sendB = contactCallbackEnabled( objB );
@@ -419,15 +421,20 @@ namespace ursine
             
             if (body->getInternalType( ) == BT_RIGID_BODY)
                 return static_cast<ecs::Rigidbody*>( body->getUserPointer( ) )->GetEnableContactCallback( );
-
+            
             if (body->getInternalType( ) == BT_GHOST)
                 return static_cast<ecs::Ghost*>( body->getUserPointer( ) )->GetEnableContactCallback( );
             
             return false;
         }
 
-        void Simulation::dispatchContactEvent(const BodyBase* thisBody, const BodyBase* otherBody, 
-                                              ecs::Entity* thisEntity, ecs::Entity* otherEntity, PersistentManifold *manifold)
+        void Simulation::dispatchContactEvent(
+            const BodyBase *thisBody,
+            const BodyBase *otherBody,
+            const ecs::EntityHandle &thisEntity,
+            const ecs::EntityHandle &otherEntity,
+            PersistentManifold *manifold
+        )
         {
             CollisionEventArgs args;
 
@@ -467,14 +474,16 @@ namespace ursine
         #endif
         }
 
-        ecs::Entity *Simulation::getEntityPointer(const BodyBase *body)
+        const ecs::EntityHandle &Simulation::getEntityHandle(const BodyBase *body)
         {
             return static_cast<ecs::Component*>( body->getUserPointer( ) )->GetOwner( );
         }
 
-         void Simulation::calculateContactRelativeVelocity(const BodyBase *thisBody, 
+        void Simulation::calculateContactRelativeVelocity(
+            const BodyBase *thisBody,
                                                           const BodyBase *otherBody, 
-                                                          Contact *contact)
+            Contact *contact
+        )
         {
         #ifdef BULLET_PHYSICS
 

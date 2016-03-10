@@ -16,7 +16,6 @@
 #include <d3d11.h>
 #include "DXErrorHandling.h"
 
-
 namespace ursine
 {
     namespace graphics

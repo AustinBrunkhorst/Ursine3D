@@ -17,6 +17,9 @@
 #include "AnimationBuilder.h"
 #include "Notification.h"
 
+#include "AnimationClipData.h"
+#include "Component.h"
+
 namespace ursine
 {
     AnimationState::AnimationState()
@@ -27,6 +30,26 @@ namespace ursine
         , m_animname("")
         , m_animation(nullptr)
     {}
+
+    void AnimationState::OnSceneReady(void)
+    {
+        Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
+        if (!targetAnimation)
+        {
+#if defined(URSINE_WITH_EDITOR)
+            NotificationConfig error;
+
+            error.type = NOTIFY_ERROR;
+            error.header = "Animation doesn't exist";
+            error.message = "To add animation into the state, animation should exist in the Animation List";
+
+            EditorPostNotification(error);
+#endif
+            return;
+        }
+
+        m_animation = targetAnimation;
+    }
 
     bool AnimationState::IsLooping(void) const
     {
@@ -47,7 +70,7 @@ namespace ursine
     {
         m_name = name;
     }
-
+    
     float AnimationState::GetTimePosition(void) const
     {
         return m_timePos;
@@ -78,7 +101,7 @@ namespace ursine
     {
         return m_animname;
     }
-
+    
     void AnimationState::SetAnimationName(const std::string& name)
     {
         if ("" == name)
@@ -130,9 +153,10 @@ namespace ursine
         m_transPos = tPos;
     }
     
-    void AnimationState::PlayingAnimation()//const float deltaTime)
+    void AnimationState::PlayingAnimation(void)
     {
-        //IncrementTimePosition(deltaTime);
+        if (!m_animation)
+            return;
 
         unsigned keyframeCount1 = m_animation->GetRigKeyFrameCount();
         auto &curr_firstFrame = m_animation->GetKeyframe(0, 0);

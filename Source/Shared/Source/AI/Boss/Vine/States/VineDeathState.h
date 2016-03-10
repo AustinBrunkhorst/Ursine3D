@@ -26,7 +26,7 @@ public:
 
 private:
 
-    ursine::ecs::Entity *owner;
+    ursine::ecs::EntityHandle owner;
 
     void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 

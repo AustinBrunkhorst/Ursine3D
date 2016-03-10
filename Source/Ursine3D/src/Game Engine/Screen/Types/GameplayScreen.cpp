@@ -30,7 +30,8 @@ namespace ursine
 
     void GameplayScreen::OnFocusChanged(bool state)
     {
-        ecs::ScreenFocusArgs args( ecs::WORLD_SCREEN_FOCUS_CHANGED, state );
+        URSINE_TODO( "Move this to scene" );
+        /*ecs::ScreenFocusArgs args( ecs::WORLD_SCREEN_FOCUS_CHANGED, state );
 
         auto *timerManager = GetCoreSystem( TimerManager );
         auto *tweenManager = GetCoreSystem( TweenManager );
@@ -47,7 +48,7 @@ namespace ursine
         }
 
         if (world)
-            world->Dispatch( ecs::WORLD_SCREEN_FOCUS_CHANGED, &args );
+            world->Dispatch( ecs::WORLD_SCREEN_FOCUS_CHANGED, &args );*/
     }
 
     void GameplayScreen::Update(void)

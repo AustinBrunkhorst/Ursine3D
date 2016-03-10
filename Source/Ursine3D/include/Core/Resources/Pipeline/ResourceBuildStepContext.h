@@ -1,0 +1,28 @@
+#pragma once
+
+#include "ResourceItem.h"
+
+namespace ursine
+{
+    namespace resources
+    {
+        namespace pipeline
+        {
+            class ResourcePipelineManager;
+
+            struct ResourceBuildStepContext
+            {
+                ResourcePipelineManager *pipeline;
+                ResourceItem::Handle resource;
+
+                std::vector<fs::path> generatedResources;
+
+                ResourceBuildStepContext(ResourcePipelineManager *pipeline, ResourceItem::Handle resource)
+                    : pipeline( pipeline )
+                    , resource( resource ) { }
+
+                void AddGeneratedResource(const fs::path &resource);
+            };
+        }
+    }
+}

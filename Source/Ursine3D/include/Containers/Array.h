@@ -74,6 +74,8 @@ namespace ursine
 
         T Pop(void);
 
+        void Clear(void);
+
         Reference GetValue(SizeType index);
         ConstReference GetValue(SizeType index) const;
 
@@ -82,6 +84,8 @@ namespace ursine
 
         Iterator Find(const T &value);
         ConstIterator Find(const T &value) const;
+
+        bool Exists(const T &value) const;
 
         SizeType Size(void) const;
 

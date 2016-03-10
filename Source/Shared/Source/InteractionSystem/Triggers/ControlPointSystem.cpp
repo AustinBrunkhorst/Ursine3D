@@ -14,10 +14,10 @@
 #include "SystemIncludes.h"
 #include "ControlPointComponent.h"
 
-ENTITY_SYSTEM_DEFINITION(ControlPointSystem);
+ENTITY_SYSTEM_DEFINITION( ControlPointSystem );
 
-ControlPointSystem::ControlPointSystem(ursine::ecs::World * world) :
-    FilterSystem(world, ursine::ecs::Filter( ).All<ControlPoint>( ))
+ControlPointSystem::ControlPointSystem(ursine::ecs::World *world) 
+    : FilterSystem( world, ursine::ecs::Filter( ).All<ControlPoint>( ) )
 { 
 }
 
@@ -26,7 +26,7 @@ void ControlPointSystem::Begin(void)
     m_dt = ursine::Application::Instance->GetDeltaTime( );
 }
 
-void ControlPointSystem::Process(ursine::ecs::Entity * entity)
+void ControlPointSystem::Process(const ursine::ecs::EntityHandle &entity)
 {
     ControlPoint& cp = *entity->GetComponent<ControlPoint>( );
 

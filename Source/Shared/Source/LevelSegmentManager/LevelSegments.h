@@ -21,13 +21,15 @@ namespace LevelSegments_enum
     {
         // Tutorial
         Tut_OpeningCinematic, // Introduce players?  What about dome
+		Tut_GateOpens,
         Tut_MovementTutorial, // Tell the player to move to a position
-        Tut_SoloTriggerTutorial, // Accumulate trigger pad (particle effects)
+		Tut_JumpTutorial, // Tell the player to jump
         Tut_WeaponPickupTutorial, // How to pickup weapons (weapon pickup + FX + button icon)
         Tut_HipFireTutorial, // Shooting targets
         Tut_AimFireTutorial, // Shooting targets
         Tut_AmmoPickupTutorial, // Ammo pickups
         Tut_ShootMovingTargetsTutorial, // Shooting moving targets
+		Tut_SoloTriggerTutorial, // Accumulate trigger pad (particle effects)
         Tut_ReviveTutorial, // Revive mechanic (kill one player, have other revive the other)
         Tut_SimultaneousTriggerTutorial, // SoloTrigger X 2
         Tut_SimulationCreationCinematic, // Cinematic for simulation begin

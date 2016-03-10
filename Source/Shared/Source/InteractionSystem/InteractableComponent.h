@@ -21,32 +21,37 @@ class CommandQueue;
 
 struct Interactable : ursine::ecs::Component
 {
-    NATIVE_COMPONENT
-public:
+    NATIVE_COMPONENT;
 
+public:
+    Meta(Enable)
     Interactable(void);
 
     // Called when object enters collider
-    void StartInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id);
+    void StartInteraction(const CommandQueue *queue, ursine::ecs::EntityHandle &entity);
     
     // called while object's interaction bay has chosen this object as
     //   its current interactable object
-    void Interact(const CommandQueue* queue, ursine::ecs::EntityUniqueID id);
+    void Interact(const CommandQueue *queue, ursine::ecs::EntityHandle &entity);
 
     // called when object leaves collider
-    void StopInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id);
+    void StopInteraction(const CommandQueue *queue, ursine::ecs::EntityHandle &entity);
 
     // Interaction objects call this for setting up the interactable for use
-    void SetUpInteractable(Interaction* interaction);
+    void SetUpInteractable(Interaction *interaction);
 
 private:
-
     Interaction* m_interaction;
     
     // function pointers for interaction logic
-    void  (Interaction::*m_startFunc)     (const CommandQueue* queue, ursine::ecs::EntityUniqueID id );
-    void  (Interaction::*m_interactFunc)  (const CommandQueue* queue, ursine::ecs::EntityUniqueID id );
-    void  (Interaction::*m_stopFunc)      (const CommandQueue* queue, ursine::ecs::EntityUniqueID id );
+    void (Interaction::*m_startFunc)    (const CommandQueue* queue, ursine::ecs::EntityHandle &entity);
+    void (Interaction::*m_interactFunc) (const CommandQueue* queue, ursine::ecs::EntityHandle &entity);
+    void (Interaction::*m_stopFunc)     (const CommandQueue* queue, ursine::ecs::EntityHandle &entity);
 
-} Meta(Enable, DisplayName("Interactable"), RequiresComponents(typeof(ursine::ecs::BoxCollider)));
+} Meta(
+    Enable,
+    WhiteListMethods,
+    DisplayName( "Interactable" ), 
+    RequiresComponents( typeof( ursine::ecs::BoxCollider ) )
+);
 

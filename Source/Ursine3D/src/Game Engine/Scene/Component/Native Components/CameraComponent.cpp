@@ -45,6 +45,10 @@ namespace ursine
         Camera::Camera(void)
             : BaseComponent( )
             , RenderableComponentBase( std::bind( &Camera::updateRenderer, this ) )
+            #if defined(URSINE_WITH_EDITOR)
+            , lookZoomFactor( 1.0f )
+            , focusPosition( SVec3 { 50.0f } )
+            #endif
             , m_active( true )
             , m_isEditorCamera( false )
             , m_inEditorSelectionMode( false )
@@ -84,7 +88,7 @@ namespace ursine
             cam.SetPosition( trans->GetWorldPosition( ) );
             cam.SetLook( trans->GetForward( ) );
 
-            m_dirty = false;
+            dirty = false;
         }
 
         Vec2 Camera::GetViewportPosition(void) const
@@ -165,9 +169,12 @@ namespace ursine
         {
             return static_cast<ursine::ecs::CameraRenderMode>(m_graphics->CameraMgr.GetCamera(m_handle).GetRenderMode( ));
         }
+
         void Camera::SetRenderMode(ursine::ecs::CameraRenderMode type)
         {
-            m_graphics->CameraMgr.GetCamera(m_handle).SetRenderMode(static_cast<graphics::ViewportRenderMode>(type));
+            m_graphics->CameraMgr.GetCamera( m_handle ).SetRenderMode(
+                static_cast<graphics::ViewportRenderMode>( type )
+            );
         }
 
         int Camera::GetRenderLayer(void) const
@@ -261,6 +268,8 @@ namespace ursine
             return m_graphics->GetMousedOverWorldPosition( m_handle );
         }
 
+        #if defined(URSINE_WITH_EDITOR)
+
         bool Camera::IsEditorCamera(void) const
         {
             return m_isEditorCamera;
@@ -318,5 +327,25 @@ namespace ursine
             if (renderSystem)
                 renderSystem->SortCameraArray( );
         }
+
+        void Camera::OnSerialize(Json::object &output) const
+        {
+            output[ "lookZoomFactor" ] = lookZoomFactor;
+            output[ "focusPosition" ] = meta::Variant( focusPosition ).SerializeJson( );
+        }
+
+        void Camera::OnDeserialize(const Json &input)
+        {
+            auto &zoomObj = input[ "lookZoomFactor" ];
+            auto &focusObj = input[ "focusPosition" ];
+
+            if (zoomObj.is_null( ))
+                lookZoomFactor = static_cast<float>( zoomObj.number_value( ) );
+
+            if (focusObj.is_object( ))
+                focusPosition = typeof( SVec3 ).DeserializeJson( focusObj ).GetValue<SVec3>( );
+        }
+
+        #endif
     }
 }

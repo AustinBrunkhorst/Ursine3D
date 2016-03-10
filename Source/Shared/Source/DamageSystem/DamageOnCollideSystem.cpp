@@ -19,12 +19,7 @@
 ENTITY_SYSTEM_DEFINITION(DamageOnCollideSystem) ;
 
 using namespace ursine;
-using namespace ursine::ecs;
-
-namespace
-{
-} // unnamed namespace
-
+using namespace ecs;
 
 //////////////////////////////////
 ////  DamageOnCollide System  ////
@@ -35,19 +30,14 @@ DamageOnCollideSystem::DamageOnCollideSystem(ursine::ecs::World* world)
 {
 }
 
-
-void DamageOnCollideSystem::Enable(ursine::ecs::Entity* entity)
+void DamageOnCollideSystem::Enable(const ursine::ecs::EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
-    m_damage[ uniqueID ] = entity->GetComponent< DamageOnCollide >( );
+    m_damage[ entity ] = entity->GetComponent< DamageOnCollide >( );
 }
 
-void DamageOnCollideSystem::Disable(ursine::ecs::Entity* entity)
+void DamageOnCollideSystem::Disable(const ursine::ecs::EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
-    m_damage.erase( uniqueID );
+    m_damage.erase( entity );
 }
 
 void DamageOnCollideSystem::onUpdate(EVENT_HANDLER(World))

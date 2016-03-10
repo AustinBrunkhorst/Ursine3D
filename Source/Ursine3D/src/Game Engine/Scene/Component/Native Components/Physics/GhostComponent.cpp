@@ -16,6 +16,9 @@
 #include "GhostComponent.h"
 #include "EntityEvent.h"
 
+#include "CollisionEventArgs.h"
+#include "SweptControllerComponent.h"
+
 namespace ursine
 {
     namespace ecs
@@ -39,9 +42,6 @@ namespace ursine
         {
             GetOwner( )->Listener( this )
                 .On( ENTITY_TRANSFORM_DIRTY, &Ghost::onTransformChange );
-
-            m_ghost.SetUserID( GetOwner( )->GetUniqueID( ) );
-            m_ghost.SetUserPointer( this );
         }
 
         void Ghost::SetOffset(const SVec3 &offset)

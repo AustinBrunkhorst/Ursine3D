@@ -46,6 +46,9 @@ namespace ursine
             template<typename T>
             Variant(T &data);
 
+            template<typename T>
+            Variant(T &data, variant_policy::NoCopy);
+
             // non-const r-value references, excluding other variants and arguments
             template<typename T>
             Variant(T &&data, 

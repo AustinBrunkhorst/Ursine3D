@@ -255,6 +255,12 @@ namespace ursine
     }
 
     template<typename T>
+    void Array<T>::Clear(void)
+    {
+        m_impl.clear( );
+    }
+
+    template<typename T>
     typename Array<T>::Reference Array<T>::GetValue(SizeType index)
     {
         return m_impl[ index ];
@@ -292,6 +298,12 @@ namespace ursine
     typename Array<T>::ConstIterator Array<T>::Find(const T &value) const
     {
         return std::find( m_impl.begin( ), m_impl.end( ), value );
+    }
+
+    template<typename T>
+    bool Array<T>::Exists(const T &value) const
+    {
+        return Find( value ) != end( );
     }
 
     template<typename T>

@@ -68,17 +68,17 @@ class WrapObject : public ursine::meta::MetaProperty { };
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/** @brief Explicitly disables generation of pointers to class types.
+/** @brief Explicitly enables generation of pointers to class types.
  *         Applies to class types.
  */
-class DisablePtrType : public ursine::meta::MetaProperty { };
+class EnablePtrType : public ursine::meta::MetaProperty { };
 
 ///////////////////////////////////////////////////////////////////////////////
 
-/** @brief Explicitly disables generation of constant pointers to class types.
+/** @brief Explicitly enables generation of constant pointers to class types.
  *         Applies to class types.
  */
-class DisableConstPtrType : public ursine::meta::MetaProperty { };
+class EnableConstPtrType : public ursine::meta::MetaProperty { };
 
 ///////////////////////////////////////////////////////////////////////////////
 

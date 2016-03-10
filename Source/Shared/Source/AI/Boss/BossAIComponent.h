@@ -44,9 +44,9 @@ public:
     const std::string &GetVineArchetype(void) const;
     void SetVineArchetype(const std::string &vineArchetype);
 
-    ursine::ecs::Entity *GetSeedshotEntity(void);
+    ursine::ecs::EntityHandle GetSeedshotEntity(void);
 
-    void AddSpawnedVine(ursine::ecs::Entity *vine);
+    void AddSpawnedVine(ursine::ecs::EntityHandle vine);
 
 private:
 

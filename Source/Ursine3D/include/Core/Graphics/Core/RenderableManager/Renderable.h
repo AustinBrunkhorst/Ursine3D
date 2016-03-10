@@ -36,8 +36,8 @@ namespace ursine
         public:
             Renderable(void);
             void Initialize(void);
-            void SetEntityUniqueID(const ecs::EntityUniqueID id);
-            ecs::EntityUniqueID GetEntityUniqueID() const;
+            void SetEntityID(ecs::EntityID id);
+            ecs::EntityID GetEntityID(void) const;
             void SetOverdraw(bool draw);
             bool GetOverdraw() const;
 
@@ -51,7 +51,7 @@ namespace ursine
             void SetActive(const bool isActive);
 
         private:
-            ecs::EntityUniqueID m_entityID;
+            ecs::EntityID m_entityID;
             bool m_active;
             bool m_useOverdraw;
             bool m_useDebugRendering;
@@ -83,28 +83,31 @@ namespace ursine
             void Initialize(void);
 
             const char *GetModelName(void);
-            void SetModel(std::string modelName);
+            void SetModelName(std::string modelName);
 
-            const char *GetMaterialslName(void);
-            void SetMaterial(std::string materialName);
+            GfxHND GetModelHandle(void) const;
+            void SetModelHandle(GfxHND handle);
 
+            GfxHND GetTextureHandle(void);
+            void SetTextureHandle(GfxHND handle);
+
+            void GetMaterialData(float &emiss, float &pow, float &intensity) const;
             void SetMaterialData(float emiss, float pow, float intensity);
-            void GetMaterialData(float &emiss, float &pow, float &intensity);
 
-            void SetEmissive(float emiss);
             float GetEmissive(void) const;
+            void SetEmissive(float emiss);
 
-            void SetSpecularPower(float power);
             float GetSpecularPower(void) const;
+            void SetSpecularPower(float power);
 
-            void SetSpecularIntensity(float intensity);
             float GetSpecularIntensity(void) const;
+            void SetSpecularIntensity(float intensity);
 
-            void SetAnimationTime(const float time);
             float &GetAnimationTime(void);
+            void SetAnimationTime(const float time);
 
-            void SetColor(const Color color);
             const Color &GetColor() const;
+            void SetColor(const Color color);
 
             std::vector<SMat4> &GetMatrixPalette(void);
 
@@ -120,10 +123,11 @@ namespace ursine
             float m_specIntensity;
             Color m_color;
             std::string m_modelResourceName;
-            std::string m_materialTextureName;
+
+            GfxHND m_modelHandle;
+            GfxHND m_textureHandle;
 
             float m_animationTime;
-
             std::vector<SMat4> m_matrixPalette;
 
             // for multimaps
@@ -141,8 +145,10 @@ namespace ursine
             Billboard2D(void);
 
             const char *GetTextureName(void);
-
             void SetTexture(std::string texName);
+
+            GfxHND GetTextureHandle(void) const;
+            void SetTextureHandle(GfxHND handle);
 
             void SetDimensions(float width, float height);
             void GetDimensions(float &width, float &height);
@@ -160,6 +166,7 @@ namespace ursine
             ursine::SVec3 m_position;
             Color m_color;
             std::string m_textureName;
+            GfxHND m_textureHandle;
         };
 
         /////////////////////////////////////////////////////////////
@@ -206,7 +213,7 @@ namespace ursine
             void SetSpotlightAngles(const float inner, const float outer);
 
             void SetSpotlightTransform(const SMat4 &transf);
-            const SMat4 &GetSpotlightTransform(void);
+            const SMat4 &GetSpotlightTransform(void) const;
 
         private:
             LightType m_type;
@@ -257,8 +264,8 @@ namespace ursine
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
 
-            const std::string &GetParticleTexture(void) const;
-            void SetParticleTexture(const std::string &texName);
+            GfxHND GetTextureHandle(void) const;
+            void SetTextureHandle(GfxHND handle);
 
             bool GetAdditive(void) const;
             void SetAdditive(const bool useAdditive);
@@ -272,7 +279,7 @@ namespace ursine
             std::vector<Particle_CPU> m_cpuParticleData;
             SVec3 m_position;
 
-            std::string m_textureName;
+            GfxHND m_textureHandle;
 
             Color m_particleColor;
 
@@ -325,6 +332,9 @@ namespace ursine
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
 
+            GfxHND GetFontHandle(void) const;
+            void SetFontHandle(GfxHND handle);
+
         private:
             float m_size;
 
@@ -342,6 +352,8 @@ namespace ursine
             float m_ppu;
 
             Alignment m_alignment;
+
+            GfxHND m_fontHandle;
         };
     }
 }

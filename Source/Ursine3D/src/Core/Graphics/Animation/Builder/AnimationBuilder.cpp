@@ -44,7 +44,7 @@ namespace ursine
         // get num of bones in this rig
         unsigned boneCount = rig->GetBoneCount();
         // make sure the rig bones match animation bones
-        if ( boneCount != currentAnimation->GetDesiredBoneCount( ) )
+        if (boneCount != currentAnimation->GetDesiredBoneCount())
             return;
 
         // determine the 2 current keyframes to use
@@ -148,15 +148,15 @@ namespace ursine
         auto &offsetMatrices = rig->GetOffsetMatrices();
         for (unsigned x = 0; x < boneCount; ++x)
         {
-            outputMatPal[ x ] = (outputBones[ x ] * offsetMatrices[ x ]);
+            outputMatPal[x] = (outputBones[x] * offsetMatrices[x]);
         }
     }
 
     void AnimationBuilder::InitializeStaticData(void)
     {
-        m_animationData.resize( 128 );
-        m_animationRigData.resize( 128 );
-        m_toParentTransforms.resize( 128 );
+        m_animationData.resize(128);
+        m_animationRigData.resize(128);
+        m_toParentTransforms.resize(128);
         m_toFutParentTransforms.resize(128);
         m_rigCount = 0;
         m_animationCount = 0;
@@ -174,14 +174,14 @@ namespace ursine
 
     Animation *AnimationBuilder::GetAnimationByIndex(const unsigned index)
     {
-        if ( index >= m_animationData.size( ) )
+        if (index >= m_animationData.size())
             return nullptr;
-        return &m_animationData[ index ];
+        return &m_animationData[index];
     }
 
     Animation* AnimationBuilder::GetAnimationByName(const std::string& name)
     {
-        if(m_name2Animation.end() == m_name2Animation.find(name))
+        if (m_name2Animation.end() == m_name2Animation.find(name))
             return nullptr;
         else
             return m_name2Animation[name];
@@ -189,9 +189,9 @@ namespace ursine
 
     AnimationRig *AnimationBuilder::GetAnimationRigByIndex(const unsigned index)
     {
-        if ( index >= m_animationRigData.size( ) )
+        if (index >= m_animationRigData.size())
             return nullptr;
-        return &m_animationRigData[ index ];
+        return &m_animationRigData[index];
     }
 
     AnimationRig* AnimationBuilder::GetAnimationRigByName(const std::string& name)
@@ -264,7 +264,7 @@ namespace ursine
         }
 
         // set values, return
-        m_name2Animation[ name ] = animation;
+        m_name2Animation[name] = animation;
         return animIndex;
     }
 
@@ -274,32 +274,32 @@ namespace ursine
 
         // vector of vectors for storing binary tree
         std::vector<std::vector<unsigned> >hierarchy;
-        hierarchy.resize( boneCount );
+        hierarchy.resize(boneCount);
 
         // 1. Generate binary tree for bone information
-        for ( unsigned x = 0; x < boneCount; ++x )
+        for (unsigned x = 0; x < boneCount; ++x)
         {
             // grab current node
-            auto &node = modelData.mBoneInfoVec[ x ];
-            if ( -1 == node.mParentIndex )
+            auto &node = modelData.mBoneInfoVec[x];
+            if (-1 == node.mParentIndex)
                 continue;
 
             // push index into parent's vector
-            hierarchy[ node.mParentIndex ].push_back( x );
+            hierarchy[node.mParentIndex].push_back(x);
         }
 
         // create a new rig
-        int rigIndex = addAnimationRig( );
+        int rigIndex = addAnimationRig();
 
         // get a pointer to the rig
-        auto rig = GetAnimationRigByIndex( rigIndex );
+        auto rig = GetAnimationRigByIndex(rigIndex);
 
-        rig->SetName( modelData.name );
-        rig->InitializeRig( boneCount );
-        rec_LoadBoneMesh( hierarchy, 0, -1, modelData.mBoneInfoVec, rig );
+        rig->SetName(modelData.name);
+        rig->InitializeRig(boneCount);
+        rec_LoadBoneMesh(hierarchy, 0, -1, modelData.mBoneInfoVec, rig);
 
         // save the data in the maps, return
-        m_name2Rig[ name ] = rig;
+        m_name2Rig[name] = rig;
         return rigIndex;
     }
 
@@ -322,14 +322,14 @@ namespace ursine
             SMat4 &current = finalTransform[x];
             
             // position
-            SVec3 p = (1.0f - lerpPercent) * frame1[x].translation + frame2[ x ].translation * lerpPercent;
+            SVec3 p = (1.0f - lerpPercent) * frame1[x].translation + frame2[x].translation * lerpPercent;
             
             // scale
-            SVec3 s =(1.0f - lerpPercent) * frame1[x].scale + frame2[ x ].scale * lerpPercent;
+            SVec3 s = (1.0f - lerpPercent) * frame1[x].scale + frame2[x].scale * lerpPercent;
             
             // rotation
             SQuat q = frame1[x].rotation.Slerp(frame2[x].rotation, lerpPercent);
-
+            
             auto &bone = rig->GetBone( x );
 
             bone.SetTranslation( p );
@@ -350,7 +350,7 @@ namespace ursine
     )
     {
         // grab bone
-        auto &bone = rigData[ currentIndex ];
+        auto &bone = rigData[currentIndex];
 
         // grab bone data
         auto &boneData = bone;
@@ -362,7 +362,7 @@ namespace ursine
             boneData.boneSpacePosition.z
         );
 
-        auto boneScale = SVec3( 1, 1, 1 );
+        auto boneScale = SVec3(1, 1, 1);
 
         auto boneRot = SQuat(
             boneData.boneSpaceRotation.x,
@@ -379,7 +379,7 @@ namespace ursine
             boneData.bindPosition.z 
         );
 
-        auto bindScale = SVec3( 1, 1, 1 );
+        auto bindScale = SVec3(1, 1, 1);
 
         auto bindRot = SQuat( 
             boneData.bindRotation.x, 
@@ -401,7 +401,7 @@ namespace ursine
         );
 
         // iterate through all existing children
-        for ( auto &x : hierarchy[ currentIndex ] )
+        for (auto &x : hierarchy[currentIndex])
         {
             rec_LoadBoneMesh( 
                 hierarchy, 

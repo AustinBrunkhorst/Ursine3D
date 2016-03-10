@@ -64,5 +64,6 @@
 // Audio
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "AudioConfigComponent.h"
 #include "AudioEmitterComponent.h"
 #include "ListenerComponent.h"

@@ -1,15 +1,28 @@
 package ursine.editor.windows;
 
-import ursine.controls.ItemSelectionPopup;
 import ursine.native.Extern;
 
+import ursine.editor.resources.ResourceItem;
+
+import ursine.controls.ItemSelectionPopup;
+
 class SceneView extends NativeCanvasWindowHandler {
+    private static var m_resourceTypeArchetype = 'ursine::resources::ArchetypeData';
+
+    private static var m_acceptedResourceDrops = [
+        m_resourceTypeArchetype
+    ];
+
     private var m_selector : ItemSelectionPopup = null;
 
     public function new() {
         super( 'SceneView' );
 
         window.heading = "Scene";
+
+        window.container.setAttribute( 'accepts-resource-drop', 'true' );
+        window.container.addEventListener( 'resource-drag', onResourceDrag );
+        window.container.addEventListener( 'resource-drop', onResourceDrop );
 
         onViewportInvalidated( );
 
@@ -65,6 +78,9 @@ class SceneView extends NativeCanvasWindowHandler {
 
         // delay so that the spacebar doesn't effect the input
         haxe.Timer.delay(function() {
+            if (m_selector == null)
+                return;
+
             js.Browser.document.body.appendChild( m_selector );
 
             var bounds = window.container.getBoundingClientRect( );
@@ -77,5 +93,20 @@ class SceneView extends NativeCanvasWindowHandler {
         m_selector = null;
 
         haxe.Timer.delay( window.focus, 1 );
+    }
+
+    private function onResourceDrag(e : js.html.CustomEvent) {
+        var resource : ResourceItem = e.detail.resource;
+
+        e.detail.acceptDrop = m_acceptedResourceDrops.indexOf( resource.type ) != -1;
+    }
+
+    private function onResourceDrop(e : js.html.CustomEvent) {
+        var resource : ResourceItem = e.detail.resource;
+
+        switch (resource.type) {
+        case m_resourceTypeArchetype:
+            Extern.SceneInstantiateArchetype( resource.guid );
+        }
     }
 }

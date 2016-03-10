@@ -25,6 +25,8 @@ namespace ursine
 {
     namespace graphics
     {
+        struct AnimationVertex;
+
         class Mesh
         {
         public:
@@ -64,6 +66,8 @@ namespace ursine
             const SMat4 &GetLocalToParentTransform(void) const;
             void SetLocalToParentTransform(const SMat4 &transform);
 
+            std::vector<AnimationVertex> &GetRawModelData(void);
+
         private:
             // name
             std::string m_name;
@@ -78,6 +82,9 @@ namespace ursine
             // raw mesh data for physics stuff
             std::vector<Vec3> m_rawVertData;
             std::vector<UINT> m_rawIndexData;
+
+            // raw binary data
+            std::vector<AnimationVertex> m_rawModelData;
 
             // material data
             Material m_material;

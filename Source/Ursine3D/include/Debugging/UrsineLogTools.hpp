@@ -21,7 +21,7 @@ namespace ursine
         void Assert(URSINE_FFL_ARGS, URSINE_LOG_FORMATTED)
         {
         #if (URSINE_OUTPUT_CONSOLE)
-            Log(stdout, URSINE_ASSERTION_LOG_HEADER, CC_TEXT_YELLOW, file, function, line, format, args...);
+            Log( stdout, URSINE_ASSERTION_LOG_HEADER, CC_TEXT_YELLOW, file, function, line, format, args... );
         #endif
 
         #if (URSINE_OUTPUT_FILE)
@@ -39,7 +39,7 @@ namespace ursine
         void Warning(URSINE_FFL_ARGS, URSINE_LOG_FORMATTED)
         {
         #if (URSINE_OUTPUT_CONSOLE)
-            Log(stdout, URSINE_WARNING_LOG_HEADER, CC_TEXT_YELLOW, file, function, line, format, args...);
+            Log( stdout, URSINE_WARNING_LOG_HEADER, CC_TEXT_YELLOW, file, function, line, format, args... );
         #endif
 
         #if (URSINE_OUTPUT_FILE)
@@ -55,7 +55,7 @@ namespace ursine
         void Error(URSINE_FFL_ARGS, URSINE_LOG_FORMATTED)
         {
         #if (URSINE_OUTPUT_CONSOLE)
-            Log(stdout, URSINE_ERROR_LOG_HEADER, CC_TEXT_BRIGHT_RED, file, function, line, format, args...);
+            Log( stdout, URSINE_ERROR_LOG_HEADER, CC_TEXT_BRIGHT_RED, file, function, line, format, args... );
         #endif
 
         #if (URSINE_OUTPUT_FILE)
@@ -70,8 +70,13 @@ namespace ursine
         }
 
         template<typename... Args>
-        void Log(FILE *handle, const std::string &title,
-            ConsoleColor title_color, URSINE_FFL_ARGS, URSINE_LOG_FORMATTED)
+        void Log(
+            FILE *handle, 
+            const std::string &title,
+            ConsoleColor titleColor, 
+            URSINE_FFL_ARGS, 
+            URSINE_LOG_FORMATTED
+        )
         {
             std::string dashes( (46 - title.length( )) / 2, '-' );
 
@@ -83,7 +88,7 @@ namespace ursine
 
             fprintf( handle, (dashes + " ").c_str( ) );
 
-            SetConsoleColor( title_color );
+            SetConsoleColor( titleColor );
 
             fprintf( handle, title.c_str( ) );
 

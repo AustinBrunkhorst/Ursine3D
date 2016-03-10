@@ -19,11 +19,12 @@
 #include "UnloadResourceComponent.h"
 
 #include <World.h>
+#include <Scene.h>
 
 using namespace ursine;
 using namespace ecs;
 
-InitializeSegmentState::InitializeSegmentState(const std::string &loadInWorld, LevelSegments unloadSegment)
+InitializeSegmentState::InitializeSegmentState(const resources::ResourceReference &loadInWorld, LevelSegments unloadSegment)
     : SegmentLogicState( "Initialize Segment State" )
     , m_loadInWorld( loadInWorld )
     , m_unloadSegment( unloadSegment )
@@ -40,7 +41,7 @@ void InitializeSegmentState::Enter(SegmentLogicStateMachine *machine)
     world->Listener( this )
         .On( WORLD_ENTITY_ADDED, &InitializeSegmentState::onEntityAdded );
 
-    world->MergeWorld( URSINE_PROJECTS_DIRECTORY + m_loadInWorld );
+    world->MergeWorld( world->GetOwner( )->GetResourceManager( ), m_loadInWorld );
 
     world->Listener( this )
         .Off( WORLD_ENTITY_ADDED, &InitializeSegmentState::onEntityAdded );

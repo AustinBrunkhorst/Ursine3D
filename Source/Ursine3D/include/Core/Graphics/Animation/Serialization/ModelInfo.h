@@ -20,75 +20,39 @@
 
 namespace ursine
 {
-	namespace graphics
-	{
-		namespace ufmt_loader
-		{
-			class ModelInfo : public ISerialize
-			{
-			public:
-				std::string name;
+    namespace graphics
+    {
+        namespace ufmt_loader
+        {
+            class ModelInfo : public ISerialize
+            {
+            public:
+                std::string name;
 
-				// mesh data	 
-				unsigned int	 mmeshCount;
-				std::vector< MeshInfo > mMeshInfoVec;
+                // mesh data	 
+                unsigned int mmeshCount;
+                std::vector<MeshInfo> mMeshInfoVec;
 
-				// material data
-				unsigned int	mmaterialCount;
-				std::vector< MaterialInfo >	mMtrlInfoVec;
+                // material data
+                unsigned int mmaterialCount;
+                std::vector<MaterialInfo> mMtrlInfoVec;
 
-				// skin data
-				unsigned int	mboneCount;
-				std::vector< BoneInfo >	mBoneInfoVec;
+                // skin data
+                unsigned int mboneCount;
+                std::vector<BoneInfo> mBoneInfoVec;
 
-				// level info - hierarchy
-				unsigned int	mmeshlvlCount;
-				unsigned int	mriglvlCount;
-				std::vector< MeshInLvl > mMeshLvVec;
-				std::vector< RigInLvl > mRigLvVec;
+                // level info - hierarchy
+                unsigned int mmeshlvlCount;
+                unsigned int mriglvlCount;
+                std::vector<MeshInLvl> mMeshLvVec;
+                std::vector<RigInLvl> mRigLvVec;
 
-				/** @brief model information constructor
-				*
-				*  this will construct model information object
-				*
-				*  @return nothing
-				*/
-				ModelInfo();
+                ModelInfo(void);
+                ~ModelInfo(void);
 
-				/** @brief model information destructor
-				*
-				*  this will destroy model information object
-				*
-				*  @return nothing
-				*/
-				virtual ~ModelInfo();
-
-				/** @brief model information release function
-				*
-				*  this will release memory of the model information
-				*
-				*  @return nothing
-				*/
-				void ReleaseData();
-
-				/** @brief model information serialize in function
-				*
-				*  this will read model information
-				*
-				*  @param handle of the file
-				*  @return if succeed return true, else return false
-				*/
-				bool SerializeIn(HANDLE hFile);
-
-				/** @brief model information serialize out function
-				*
-				*  this will write model information
-				*
-				*  @param handle of the file
-				*  @return if succeed return true, else return false
-				*/
-				bool SerializeOut(HANDLE hFile);
-			};
-		};
-	};
+                void Read(resources::ResourceReader &input) override;
+                void Write(resources::pipeline::ResourceWriter &output) override;
+            };
+        };
+    };
 };

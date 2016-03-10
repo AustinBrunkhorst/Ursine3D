@@ -25,22 +25,22 @@ namespace ursine
         NATIVE_COMPONENT_DEFINITION(ParticleSystem);
 
         ParticleSystem::ParticleSystem(void)
-            : BaseComponent()
-            , m_particleColor(Color::White)
-            , m_systemSpace(SystemSpace::WorldSpace)
-            , m_renderMode(RenderMode::Additive)
+            : BaseComponent( )
+            , m_particleColor( Color::White )
+            , m_systemSpace( SystemSpace::WorldSpace )
+            , m_renderMode( RenderMode::Additive )
         {
             // store a pointer to the GfxAPI core system
             m_graphics = GetCoreSystem(graphics::GfxAPI);
 
             m_base = new RenderableComponentBase( std::bind( &ParticleSystem::updateRenderer, this ) );
 
-            m_base->SetHandle(m_graphics->RenderableMgr.AddRenderable(graphics::RENDERABLE_PS));
+            m_base->SetHandle(m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_PS) );
 
-			m_base->m_dirty = true;
+            m_base->dirty = true;
 
             // store a pointer to the model
-            m_particleSystem = &m_graphics->RenderableMgr.GetParticleSystem(m_base->GetHandle());
+            m_particleSystem = &m_graphics->RenderableMgr.GetParticleSystem( m_base->GetHandle( ) );
 
             SetRenderMask( RenderMask::Any );
         }
@@ -59,16 +59,21 @@ namespace ursine
             Component::OnInitialize( );
 
             // set the unique id
-            m_particleSystem->SetEntityUniqueID(GetOwner()->GetUniqueID());
+            m_particleSystem->SetEntityID( GetOwner( )->GetID( ) );
 
-			SetRenderMode( m_renderMode );
-			SetSystemSpace( m_systemSpace );
+            SetRenderMode( m_renderMode );
+            SetSystemSpace( m_systemSpace );
+        }
+
+        void ParticleSystem::OnSceneReady(Scene *scene)
+        {
+            invalidateTexture( false );
         }
 
         // count
         unsigned ParticleSystem::GetActiveParticleCount(void) const
         {
-            return m_particleSystem->GetActiveParticleCount();
+            return m_particleSystem->GetActiveParticleCount( );
         }
         unsigned ParticleSystem::GetInactiveParticleCount(void) const
         {
@@ -83,7 +88,7 @@ namespace ursine
 
         graphics::Particle_GPU &ParticleSystem::GetGPUParticle(const int index)
         {
-            return m_particleSystem->GetGPUParticle(index);
+            return m_particleSystem->GetGPUParticle( index );
         }
 
         // cpu vector
@@ -94,7 +99,7 @@ namespace ursine
 
         graphics::Particle_CPU &ParticleSystem::GetCPUParticle(const int index)
         {
-            return m_particleSystem->GetCPUParticle(index);
+            return m_particleSystem->GetCPUParticle( index );
         }
 
         // generate particle, returns index
@@ -106,17 +111,17 @@ namespace ursine
         // destroys a particle, given an index
         void ParticleSystem::DestroyParticle(const int index)
         {
-            m_particleSystem->DestroyParticle(index);
+            m_particleSystem->DestroyParticle( index );
         }
 
         void ParticleSystem::updateRenderer(void)
         {
-            auto trans = GetOwner()->GetTransform();
-            m_particleSystem->SetPosition(trans->GetWorldPosition( ));
+            auto trans = GetOwner( )->GetTransform( );
+            m_particleSystem->SetPosition( trans->GetWorldPosition( ) );
 
-            GetOwner()->Dispatch(ENTITY_PARTICLE_UPDATE, nullptr);
+            GetOwner( )->Dispatch( ENTITY_PARTICLE_UPDATE, nullptr );
 
-			m_base->m_dirty = true;
+            m_base->dirty = true;
         }
 
         const Color &ParticleSystem::GetColor(void) const
@@ -127,18 +132,25 @@ namespace ursine
 
         void ParticleSystem::SetColor(const Color &color)
         {
-            m_particleSystem->SetColor(color);
-            NOTIFY_COMPONENT_CHANGED("color", color);
+            m_particleSystem->SetColor( color );
+            NOTIFY_COMPONENT_CHANGED( "color", color );
         }
 
-        const std::string & ParticleSystem::GetParticleTextureName(void) const
+        const resources::ResourceReference &ParticleSystem::GetTexture(void) const
         {
-            return m_particleSystem->GetParticleTexture();
+            return m_texture;
         }
 
-        void ParticleSystem::SetParticleTextureName(const std::string & texture)
+        void ParticleSystem::SetTexture(const resources::ResourceReference &texture)
         {
-            m_particleSystem->SetParticleTexture(texture);
+            m_texture = texture;
+
+            if (!resourcesAreAvailable( ))
+                return;
+
+            invalidateTexture( );
+
+            NOTIFY_COMPONENT_CHANGED( "texture", m_texture );
         }
 
         SystemSpace ParticleSystem::GetSystemSpace(void) const
@@ -149,10 +161,10 @@ namespace ursine
         {
             m_systemSpace = space;
 
-            if ( m_systemSpace == SystemSpace::WorldSpace )
-                m_particleSystem->SetSystemSpace(true);
+            if (m_systemSpace == SystemSpace::WorldSpace)
+                m_particleSystem->SetSystemSpace( true );
             else
-                m_particleSystem->SetSystemSpace(false);
+                m_particleSystem->SetSystemSpace( false );
         }
 
         RenderMode ParticleSystem::GetRenderMode(void) const
@@ -160,24 +172,45 @@ namespace ursine
             return m_renderMode;
         }
 
-		RenderMask ParticleSystem::GetRenderMask(void) const
+        RenderMask ParticleSystem::GetRenderMask(void) const
         {
             return static_cast<RenderMask>( m_particleSystem->GetRenderMask( ) );
         }
 
         void ParticleSystem::SetRenderMask(RenderMask mask)
         {
-            m_particleSystem->SetRenderMask( static_cast<unsigned long long>( mask ) );
+            m_particleSystem->SetRenderMask( static_cast<unsigned long long>(mask) );
         }
 
         void ParticleSystem::SetRenderMode(const RenderMode &renderMode)
         {
             m_renderMode = renderMode;
 
-            if ( m_renderMode == RenderMode::Additive )
-                m_particleSystem->SetAdditive(true);
+            if (m_renderMode == RenderMode::Additive)
+                m_particleSystem->SetAdditive( true );
             else
-                m_particleSystem->SetAdditive(false);
+                m_particleSystem->SetAdditive( false );
+        }
+
+        void ParticleSystem::invalidateTexture(bool unload)
+        {
+            auto data = loadResource<resources::TextureData>( m_texture );
+
+            if (data == nullptr)
+            {
+                // default
+                m_particleSystem->SetTextureHandle( 0 );
+            }
+            else
+            {
+                auto handle = data->GetTextureHandle( );
+
+                if(unload)
+                    m_graphics->ResourceMgr.UnloadTexture( m_particleSystem->GetTextureHandle( ) );
+                m_graphics->ResourceMgr.LoadTexture( handle );
+
+                m_particleSystem->SetTextureHandle( handle );
+            }
         }
     }
 }

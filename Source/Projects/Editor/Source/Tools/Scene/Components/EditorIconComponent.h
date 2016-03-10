@@ -14,6 +14,7 @@
 #pragma once
 
 #include <Component.h>
+#include "GfxAPIDefines.h"
 
 class EditorIcon : public ursine::ecs::Component
 {
@@ -24,11 +25,12 @@ public:
     ~EditorIcon(void);
 
     void SetIcon(const std::string &text);
+    void SetIcon(ursine::graphics::GfxHND handle);
 
     void OnInitialize(void) override;
 
 private:
-    ursine::ecs::Entity *m_billboard;
+    ursine::ecs::EntityHandle m_billboard;
 
 } Meta(
     Enable, 

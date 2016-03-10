@@ -57,6 +57,27 @@ namespace ursine
 {
     CORE_SYSTEM_DEFINITION( AudioManager );
 
+    AudioManager::~AudioManager(void)
+    {
+        AK::SoundEngine::UnregisterAllGameObj( );
+
+        //UnloadBank( kMainBank );
+        //UnloadBank( kInitBank );
+
+        DestroyList( );
+
+        AK::MusicEngine::Term( );
+
+        AK::SoundEngine::Term( );
+
+        g_lowLevelIO.Term( );
+
+        if (AK::IAkStreamMgr::Get( ))
+            AK::IAkStreamMgr::Get( )->Destroy( );
+
+        AK::MemoryMgr::Term( );
+    }
+
     void AudioManager::OnInitialize(void)
     {
         // Init all things from web page
@@ -92,11 +113,8 @@ namespace ursine
         // Client is responsible for loading/unloading banks, starting and ending
         // with the Init Bank
 
-        // make app
-        auto *app = Application::Instance;
-
         // Subscribe to update
-        app->Connect( APP_UPDATE, this, &AudioManager::onAppUpdate );
+        Application::Instance->Connect( APP_UPDATE, this, &AudioManager::onAppUpdate );
     }
 
     void AudioManager::PauseAudio(void)
@@ -241,23 +259,7 @@ namespace ursine
 
     void AudioManager::OnRemove(void)
     {
-        AK::SoundEngine::UnregisterAllGameObj( );
-
-        UnloadBank( kMainBank );
-        UnloadBank( kInitBank );
-
-        DestroyList( );
-
-        AK::MusicEngine::Term( );
-
-        AK::SoundEngine::Term( );
-
-        g_lowLevelIO.Term( );
-
-        if (AK::IAkStreamMgr::Get( ))
-            AK::IAkStreamMgr::Get( )->Destroy( );
-
-        AK::MemoryMgr::Term( );
+        Application::Instance->Disconnect( APP_UPDATE, this, &AudioManager::onAppUpdate );
     }
 
     void AudioManager::onAppUpdate(void *_sender, const ursine::EventArgs *_args)
@@ -270,6 +272,59 @@ namespace ursine
     {
         UAssert(AK::SoundEngine::LoadBank(bankName.c_str(),
             AK_DEFAULT_POOL_ID, bankID) == AK_Success, "Wwise: Cannot Load Bank: %s", bankName);
+    }
+
+    void AudioManager::LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank)
+    {
+        auto initResult = AK::SoundEngine::LoadBank( 
+            data.GetInitBytes( ), 
+            static_cast<AkUInt32>( data.GetInitByteSize( ) ), 
+            outInit
+        );
+
+        UAssertCatchable( initResult == AK_Success,
+            "Unable to load init bank."    
+        );
+
+        auto bankResult = AK::SoundEngine::LoadBank( 
+            data.GetBankBytes( ), 
+            static_cast<AkUInt32>( data.GetBankSize( ) ), 
+            outBank
+        );
+
+        UAssertCatchable( bankResult == AK_Success,
+            "Unable to load bank."    
+        );
+    }
+
+    void AudioManager::UnloadBank(const std::string &bankName)
+    {
+        URSINE_TODO( "@Jason" );
+       /* UAssert(AK::SoundEngine::UnloadBank(bankName.c_str(),
+            nullptr) == AK_Success, "Wwise: Cannot Unload Bank: %s", bankName.c_str());*/
+    }
+
+    void AudioManager::UnloadBank(const resources::AudioData &data)
+    {
+        auto initResult = AK::SoundEngine::UnloadBank(
+            data.GetInitID( ),
+            data.GetInitBytes( ),
+            nullptr
+        );
+
+        UAssertCatchable( initResult == AK_Success,
+            "Unable to unload init bank."    
+        );
+
+        auto bankResult = AK::SoundEngine::UnloadBank(
+            data.GetBankID( ),
+            data.GetBankBytes( ),
+            nullptr
+        );
+
+        UAssertCatchable( bankResult == AK_Success,
+            "Unable to unload bank."
+        );
     }
 
     void AudioManager::RegisterObject(AkGameObjectID obj, int listener)
@@ -334,13 +389,6 @@ namespace ursine
         }
     }
 
-    void AudioManager::UnloadBank(const std::string &bankName)
-    {
-        URSINE_TODO( "@Jason" );
-       /* UAssert(AK::SoundEngine::UnloadBank(bankName.c_str(),
-            nullptr) == AK_Success, "Wwise: Cannot Unload Bank: %s", bankName.c_str());*/
-    }
-
     void AudioManager::Init(AkInitSettings *in_pSettings, AkPlatformInitSettings *in_pPlatformSettings, const AkOSChar *path)
     {
         g_lowLevelIO.SetBasePath( path );
@@ -380,8 +428,8 @@ namespace ursine
         UAssert(AK::MusicEngine::Init(&musicInit) == AK_Success,
             "Wwise: Cannot Initialize The Music Engine.");
 
-        LoadBank( kInitBank, BankID );
-        LoadBank( kMainBank, MainID );
+        //LoadBank( kInitBank, BankID );
+        //LoadBank( kMainBank, MainID );
     }
 }
 

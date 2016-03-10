@@ -18,13 +18,13 @@
     box-shadow: 0 1px 2px rgba(black, 0.75);
     pointer-events: none;
     opacity: 0;
-    -webkit-transform: translateY(35%);
-    -webkit-transition: opacity 150ms ease, -webkit-transform 150ms ease;
+    -webkit-transform: translateY(15%);
+    -webkit-transition: opacity 125ms ease, -webkit-transform 125ms ease;
 
     &.opened {
       opacity: 1;
       -webkit-transform: translateY(0%);
-      -webkit-transition: opacity 150ms ease, -webkit-transform 150ms ease;
+      -webkit-transition: opacity 125ms ease, -webkit-transform 125ms ease;
     }
   }
 }
