@@ -47,12 +47,6 @@ namespace ursine
 
             EntityHandle CreateEntity(const std::string &name = "Entity");
 
-            // Creates an entity from an archetype file
-            EntityHandle CreateEntityFromArchetype(
-                const std::string &fileName,
-                const std::string &name = "Entity"
-            );
-
             // Creates an entity from an archetype resource
             EntityHandle CreateEntityFromArchetype(
                 const resources::ResourceReference &resource

@@ -130,7 +130,7 @@ namespace ursine
             m_animlist.clear( );
 
             URSINE_TODO( "Jun! you should clear animation list, rig" );
-            auto owner = GetOwner();
+            /*auto owner = GetOwner();
             auto world = owner->GetWorld();
 
             ecs::EntityHandle entity = world->GetEntityFromName( kAnimationListName );
@@ -139,7 +139,7 @@ namespace ursine
             for (auto &x : matrixPalette)
             {
                 x = SMat4::Identity();
-            }
+            }*/
         }
 
         void Animator::OnInitialize(void)

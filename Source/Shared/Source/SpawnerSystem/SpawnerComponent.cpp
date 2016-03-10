@@ -112,15 +112,12 @@ EntityHandle Spawner::spawnEnemy(SpawnerGroup *group, const SVec3 &worldPosition
         }
         default:
 
-            UAssert( false, "What the fuck happened bru %d", m_enemyType );
-
+        UAssert( false, "What the fuck happened bru %d", m_enemyType );
     }
 
     auto world = GetOwner( )->GetWorld( );
 
-    auto entity = world->CreateEntityFromArchetype(
-        WORLD_ARCHETYPE_PATH + std::string( "AI/" ) + archetypeName + ".uatype", archetypeName
-    );
+    auto entity = world->CreateEntityFromArchetype( archetypeName );
 
     entity->GetTransform( )->SetWorldPosition( worldPosition );
 
