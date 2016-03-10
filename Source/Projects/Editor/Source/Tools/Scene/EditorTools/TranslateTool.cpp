@@ -9,6 +9,7 @@
 
 #include "EditorDebugDrawSystems.h"
 #include <DebugSystem.h>
+#include <EditorToolResources.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -22,6 +23,7 @@ TranslateTool::TranslateTool(Editor *editor, World *world)
     , m_axisType( -1 )
     , m_snapping( false )
     , m_local( false )
+    , m_archetype( editor_resources::ArchetypeTranslateTool )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
@@ -174,9 +176,8 @@ void TranslateTool::setDirectionVectors(const SVec3& basisVector, const EntityHa
 
 void TranslateTool::enableAxis(void)
 {
-    m_gizmo = m_world->CreateEntityFromArchetype( 
-        EDITOR_ARCHETYPE_PATH "EditorTools/TranslationGizmo.uatype",
-        "TranslationGizmo" 
+    m_gizmo = m_world->CreateEntityFromArchetype(
+        m_archetype
     );
 
     setEntitySerializationToggle( false, m_gizmo );

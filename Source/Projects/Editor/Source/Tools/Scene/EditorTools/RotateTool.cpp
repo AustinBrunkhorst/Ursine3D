@@ -16,6 +16,7 @@
 #include <CameraComponent.h>
 #include <Model3DComponent.h>
 #include <DebugSystem.h>
+#include <EditorToolResources.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -30,6 +31,7 @@ RotateTool::RotateTool(Editor *editor, World *world)
     , m_snapping( false )
     , m_local( false )
     , m_deleteGizmo( false )
+    , m_archetype( editor_resources::ArchetypeRotateTool )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
@@ -183,9 +185,8 @@ void RotateTool::setDirectionVectors(const SVec3 &basisVector, const EntityHandl
 
 void RotateTool::enableAxis(void)
 {
-    m_gizmo = m_world->CreateEntityFromArchetype( 
-        EDITOR_ARCHETYPE_PATH "EditorTools/RotationGizmo.uatype",
-        "RotationGizmo" 
+    m_gizmo = m_world->CreateEntityFromArchetype(
+        m_archetype
     );
 
     setEntitySerializationToggle( false, m_gizmo );

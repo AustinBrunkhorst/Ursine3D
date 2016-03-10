@@ -42,6 +42,8 @@ private:
     EditorCameraSystem *m_editorCameraSystem;
 
     // visual representation of the 3 axis
+    ursine::resources::ResourceReference m_archetype;
+
     ursine::ecs::EntityHandle m_gizmo;
 
     ursine::ecs::EntityHandle m_selected;
