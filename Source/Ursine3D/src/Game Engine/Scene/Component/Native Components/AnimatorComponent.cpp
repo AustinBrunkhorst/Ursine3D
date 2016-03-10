@@ -21,6 +21,8 @@
 
 #include "Notification.h"
 
+#include "EntityEvent.h"
+
 namespace
 {
     const std::string kAnimationListName = "Animation_List";
@@ -129,16 +131,20 @@ namespace ursine
         {
             m_animlist.clear( );
 
-            URSINE_TODO( "Jun! you should clear animation list, rig" );
             auto owner = GetOwner();
             auto world = owner->GetWorld();
 
+            // Reason of uatype bug : when load archetype, even though there's no model, animator constructed and destroyed.
+            // and couldn't find Model3D Component, but we still call that, and fail.
             ecs::EntityHandle entity = world->GetEntityFromName( kAnimationListName );
-
-            auto &matrixPalette = owner->GetComponent<Model3D>()->GetMatrixPalette();
-            for (auto &x : matrixPalette)
+            ecs::Model3D* model = owner->GetComponent<Model3D>( );
+            if( model )
             {
-                x = SMat4::Identity();
+                auto &matrixPalette = model->GetMatrixPalette();
+                for (auto &x : matrixPalette)
+                {
+                    x = SMat4::Identity();
+                }
             }
         }
 

@@ -1515,6 +1515,7 @@ namespace ursine
                     if (!(*m_Model->mCtrlPoints[meshIdx]).empty())
                     {
                         // currently, just for using 1st control point vec
+
                         newMV.ctrlBlendWeights.x = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingWeight;
                         newMV.ctrlBlendWeights.y = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingWeight;
                         newMV.ctrlBlendWeights.z = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingWeight;
