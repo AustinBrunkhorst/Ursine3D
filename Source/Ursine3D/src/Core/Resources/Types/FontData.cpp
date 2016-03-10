@@ -12,43 +12,36 @@
 ** --------------------------------------------------------------------------*/
 
 #include "UrsinePrecompiled.h"
+
 #include "FontData.h"
-#include "CoreSystem.h"
+#include "FontReader.h"
+
 #include "GfxAPI.h"
 
 namespace ursine
 {
     namespace resources
     {
-        static char magicValues[] = { 'U', 'F', 'T' };
-
-        FontData::FontData(uint8_t *binaryData, size_t binarySize)
-            : m_binarySize( binarySize )
+        FontData::FontData(BinaryData fntData, TexturePageTable &&table)
+            : m_fntData( std::move( fntData ) )
+            , m_pages( std::move( table ) )
         {
-            // read in magic, ensure it's valid
+            /*auto *graphics = GetCoreSystem( graphics::GfxAPI );
 
-            // read in binary for the .fnt file, send to graphics
-            m_fontHandle = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.CreateBitmapFont( nullptr, 0 );
+            m_fontHandle = graphics->ResourceMgr.CreateBitmapFont( nullptr, 0 );
 
-            // load in all textures into textureManager, save each handle
-
-            // register each texture with the font manager
-            GetCoreSystem(graphics::GfxAPI)->ResourceMgr.RegisterTexture( 
-                m_fontHandle, 
-                "NameOfTheFont", 
-                static_cast<GfxHND>(0) 
-            );
-
-            // make a copy
-            m_binaryData = new uint8_t[ binarySize ];
-            memcpy( m_binaryData, binaryData, m_binarySize );
+            graphics->ResourceMgr.RegisterTexture(
+                m_fontHandle,
+                "NameOfTheFont_0.DDS",
+                static_cast<GfxHND>( 0 )
+            );*/
         }
 
-        FontData::~FontData(void)
-        {
-            delete m_binaryData;
-            m_binaryData = nullptr;
-        }
+        FontData::FontData(const FontData &rhs)
+            : m_fntData( BinaryData::Copy( rhs.m_fntData ) )
+            , m_pages( rhs.m_pages ) { }
+
+        FontData::~FontData(void) { }
 
         graphics::GfxHND FontData::GetFontHandle(void) const
         {
@@ -57,24 +50,18 @@ namespace ursine
 
         void FontData::Write(pipeline::ResourceWriter &output)
         {
-            // write magic number
-            output.WriteBytes( magicValues, 3 );
-            
-            // write the size
-            output.Write( m_binarySize );
+            output.Write( m_fntData );
 
-            // write the actual data
-            output.WriteBytes( m_binaryData, m_binarySize );
-
-            // write each texture as:
-                // Name
-                // binary size
-                // binary
+            for (auto &page : m_pages)
+            {
+                output.Write( page.first.string( ) );
+                output.Write( *page.second );
+            }
         }
 
         meta::Type FontData::GetReaderType(void)
         {
-            return typeof( FontData );
+            return typeof( FontReader );
         }
     }
 }

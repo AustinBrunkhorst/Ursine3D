@@ -5,6 +5,7 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "TextureImporter.h"
+#include "FontImporter.h"
 #include "FBXFileImporter.h"
 #include "AudioImporter.h"
 #include "JsonImporter.h"
@@ -28,6 +29,9 @@
 
 #include "ModelData.h"
 #include "ModelReader.h"
+
+#include "FontData.h"
+#include "FontReader.h"
 
 #include "AnimationClipData.h"
 #include "AnimationClipReader.h"

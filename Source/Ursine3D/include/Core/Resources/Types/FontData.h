@@ -12,6 +12,7 @@
 ** --------------------------------------------------------------------------*/
 
 #pragma once
+
 #include "ResourceData.h"
 #include "GfxDefines.h"
 
@@ -24,18 +25,26 @@ namespace ursine
             RESOURCE_DATA;
 
         public:
-            FontData(uint8_t *binaryData, size_t binarySize);
+            typedef std::unordered_map<
+                fs::path,
+                BinaryData::Handle,
+                fs::PathHasher
+            > TexturePageTable;
+
+            FontData(BinaryData fntData, TexturePageTable &&table);
+            FontData(const FontData &rhs);
             ~FontData(void);
 
             graphics::GfxHND GetFontHandle(void) const;
 
         private:
+            graphics::GfxHND m_fontHandle;
+
+            BinaryData m_fntData;
+            TexturePageTable m_pages;
+
             void Write(pipeline::ResourceWriter &output) override;
             meta::Type GetReaderType(void) override;
-
-            graphics::GfxHND m_fontHandle;
-            uint8_t *m_binaryData;
-            size_t m_binarySize;
 
         } Meta(Register);
     }
