@@ -17,6 +17,7 @@
 #include <d3d11.h>
 #include "DXErrorHandling.h"
 #include "InternalResourceByteCode.h"
+#include "FontManager.h"
 
 namespace ursine
 {
@@ -166,9 +167,9 @@ namespace ursine
             std::cout << "CREATE" << std::endl;
 
             GfxHND handle;
-            _RESOURCEHND *id = HND_RSRCE(handle);
+            _RESOURCEHND *id = HND_RSRCE( handle );
 
-            internalID = m_textureCache.size();
+            internalID = m_textureCache.size( );
             m_textureCache.emplace_back( );
 
             // load it up into CPU memory
@@ -178,12 +179,12 @@ namespace ursine
                 width,
                 height,
                 m_textureCache[ internalID ]
-                );
+            );
 
             // initialize handle
             id->ID_ = SANITY_RESOURCE;
             id->Type_ = ID_TEXTURE;
-            id->Index_ = static_cast<unsigned>(internalID);
+            id->Index_ = static_cast<unsigned>( internalID );
 
             return handle;
         }
@@ -266,9 +267,46 @@ namespace ursine
             }
         }
 
+        void TextureManager::LoadFontTextures(GfxHND font, FontManager *manager)
+        {
+            if (font == 0)
+                return;
+
+            auto &bmf = manager->GetBitmapFont( font );
+
+            for(auto &tex : bmf.GetPageData( ))
+            {
+                auto handle = manager->GetTextureHandle(
+                    font, 
+                    tex
+                );
+
+                LoadTexture( handle );
+            }
+        }
+
+        void TextureManager::UnloadFontTextures(GfxHND font, FontManager *manager)
+        {
+            if(font == 0)
+                return;
+
+            auto &bmf = manager->GetBitmapFont( font );
+
+            for(auto &tex : bmf.GetPageData( ))
+            {
+                auto handle = manager->GetTextureHandle(
+                    font, 
+                    tex
+                );
+
+                UnloadTexture( handle );
+            }
+        }
+
+
         void TextureManager::MapTextureByID(const unsigned ID, const unsigned int bufferIndex)
         {
-            if (ID == INTERNAL_MISSING_TEX || ID >= m_textureCache.size() || m_textureCache[ ID ].m_shaderResource == nullptr || 
+            if (ID == INTERNAL_MISSING_TEX || ID > m_textureCache.size() || m_textureCache[ ID ].m_shaderResource == nullptr || 
                 m_textureCache[ ID ].m_shaderResource == nullptr)
             {
                 m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureCache[ INTERNAL_MISSING_TEX ].m_shaderResource);
@@ -276,6 +314,20 @@ namespace ursine
             }
 
             m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureCache[ ID ].m_shaderResource);
+        }
+
+        void TextureManager::MapTextureArrayByIDs(const unsigned bufferIndex, std::initializer_list<unsigned> IDs)
+        {
+            std::vector<ID3D11ShaderResourceView *> textureArray;
+
+            // create this buffer
+            for(auto &x : IDs)
+            {
+                textureArray.push_back(m_textureCache[x].m_shaderResource);
+            }
+
+            // map all of them!
+            m_deviceContext->PSSetShaderResources(static_cast<UINT>(bufferIndex), static_cast<UINT>(textureArray.size( )), textureArray.data( ));
         }
 
         void TextureManager::MapSamplerState(const SAMPLER_STATES type, const unsigned bufferIndex)

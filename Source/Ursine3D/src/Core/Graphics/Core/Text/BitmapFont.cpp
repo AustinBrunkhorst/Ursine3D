@@ -199,6 +199,8 @@ void BitmapFont::ReadPageData(int blockSize)
     // how many bytes will each string be?
     unsigned pageSize = blockSize / m_commonData.pages;
 
+    char tempBuffer[ 128 ];
+
     // for each page
     for (unsigned x = 0; x < m_commonData.pages; ++x)
     {
@@ -208,7 +210,9 @@ void BitmapFont::ReadPageData(int blockSize)
 
         page.resize( pageSize );
 
-        ReadBytes( &page[ 0 ], pageSize );
+        ReadBytes( tempBuffer, pageSize );
+
+        page = std::string(tempBuffer);
     }
 }
 

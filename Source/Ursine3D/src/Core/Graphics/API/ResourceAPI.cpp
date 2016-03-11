@@ -68,6 +68,16 @@ namespace ursine
             m_privates->textureMgr->UnloadTexture( handle );
         }
 
+        void ResourceAPI::LoadFontTextures(GfxHND handle)
+        {
+            m_privates->textureMgr->LoadFontTextures(handle, m_privates->fontMgr);
+        }
+
+        void ResourceAPI::UnloadFontTextures(GfxHND handle)
+        {
+            m_privates->textureMgr->UnloadFontTextures(handle, m_privates->fontMgr);
+        }
+
         void ResourceAPI::GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize)
         {
             m_privates->textureMgr->GetBinaryInformation( handle, dataPtr, binarySize );

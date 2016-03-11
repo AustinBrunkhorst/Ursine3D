@@ -25,6 +25,8 @@ namespace ursine
 {
     namespace graphics
     {
+        class FontManager;
+
         class TextureManager
         {
         public:
@@ -41,8 +43,12 @@ namespace ursine
             void LoadTexture(GfxHND handle);
             void UnloadTexture(GfxHND handle);
 
+            void LoadFontTextures(GfxHND font, FontManager *manager);
+            void UnloadFontTextures(GfxHND font, FontManager *manager);
+
             // mapping stuff
             void MapTextureByID(const unsigned ID, const unsigned int bufferIndex = 0);
+            void MapTextureArrayByIDs(const unsigned int bufferIndex, std::initializer_list<unsigned> IDs);
             void MapSamplerState(const SAMPLER_STATES type, const unsigned bufferIndex = 0);
 
             // dynamic textures for UI and stuff

@@ -51,6 +51,9 @@ namespace ursine
 
             void LoadTexture(GfxHND handle);
             void UnloadTexture(GfxHND handle);
+            
+            void LoadFontTextures(GfxHND handle);
+            void UnloadFontTextures(GfxHND handle);
 
             void GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize);
 

@@ -540,7 +540,7 @@ void Editor::onPipelinePreBuildItemStart(EVENT_HANDLER(rp::ResourcePipelineManag
             { "item", fileName.string( ) },
             { "progress", args->progress }
         } 
-    );
+    ); 
 }
 
 void Editor::onPipelinePreBuildItemPreviewStart(EVENT_HANDLER(rp::ResourcePipelineManager))

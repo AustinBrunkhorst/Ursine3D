@@ -80,6 +80,13 @@ namespace ursine
             else
                 m_manager->textureManager->MapSamplerState( SAMPLER_STATE_NO_FILTERING );
 
+            // map texture //////////////////////////////////////////
+            auto &font = m_manager->fontManager->GetBitmapFont( handle.Material_ );
+            auto texHandle = m_manager->fontManager->GetTextureHandle( spriteText.GetFontHandle( ), font.GetTextureFiles( )[0] );
+
+            unsigned texHND = texHandle & 0xFFFF;
+            m_manager->textureManager->MapTextureByID(texHND);
+
             mapSpriteTextBuffer( handle );
         }
 

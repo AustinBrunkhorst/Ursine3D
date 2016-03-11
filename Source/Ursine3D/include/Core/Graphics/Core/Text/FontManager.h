@@ -36,7 +36,7 @@ namespace ursine
             void RegisterTexture(GfxHND fontHandle, const std::string &fontName, GfxHND textureHandle);
 
             // gets a font
-            const BitmapFont &GetBitmapFont(unsigned index);
+            const BitmapFont &GetBitmapFont(GfxHND index);
 
             // gets a texture handle for a font
             GfxHND GetTextureHandle(GfxHND fontHandle, const std::string &textureName);

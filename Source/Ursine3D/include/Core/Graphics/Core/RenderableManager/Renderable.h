@@ -215,6 +215,9 @@ namespace ursine
             void SetSpotlightTransform(const SMat4 &transf);
             const SMat4 &GetSpotlightTransform(void) const;
 
+            SMat4 GenerateViewSpaceShadowTransform(void) const;
+            SMat4 GenerateViewSpaceShadowProjection(void) const;
+
         private:
             LightType m_type;
             SVec3 m_position;

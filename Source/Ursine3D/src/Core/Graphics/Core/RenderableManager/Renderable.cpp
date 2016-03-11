@@ -424,6 +424,113 @@ namespace ursine
             return m_spotlightTransform;
         }
 
+        SMat4 Light::GenerateViewSpaceShadowTransform() const
+        {
+            SMat4 matrix = SMat4::Identity( );
+
+            SVec3 u, v;
+
+            m_direction.GenerateOrthogonalVectors(u, v);
+
+            SVec3 right = SVec3::Cross(m_direction, u);
+            SVec3 up = SVec3::Cross(m_direction, right);
+            SVec3 dir = m_direction;
+
+            matrix.SetColumn( 
+                0, 
+                SVec4( 
+                    right.X( ), 
+                    right.Y( ), 
+                    right.Z( ), 
+                    0.0f 
+                ) 
+            );
+
+            matrix.SetColumn( 
+                1, 
+                SVec4( 
+                    up.X( ), 
+                    up.Y( ), 
+                    up.Z( ), 
+                    0.0f 
+                ) 
+            );
+
+            matrix.SetColumn( 
+                2, 
+                SVec4( 
+                    dir.X( ), 
+                    dir.Y( ), 
+                    dir.Z( ), 
+                    0.0f 
+                ) 
+            );
+
+            SVec3 p = matrix.TransformPoint( m_position );
+
+            matrix.SetColumn( 
+                3, 
+                SVec4( 
+                    p.X( ), 
+                    p.Y( ), 
+                    p.Z( ), 
+                    1.0f 
+                ) 
+            );
+
+            return matrix;
+        }
+
+        SMat4 Light::GenerateViewSpaceShadowProjection() const
+        {
+            SMat4 matrix;
+
+            float   s = 1.0f / tanf( (m_spotlightAngles.Y( ) * 3.1415f / 180.0f) / 2.0f),
+                    q = m_radius / (m_radius - 0.001f);
+
+            matrix.SetColumn(
+                0, 
+                SVec4(
+                    s, 
+                    0, 
+                    0, 
+                    0
+                )
+            );
+
+            matrix.SetColumn(
+                1, 
+                SVec4(
+                    0, 
+                    s, 
+                    0, 
+                    0
+                )
+            );
+
+            matrix.SetColumn(
+                2, 
+                SVec4(
+                    0, 
+                    0, 
+                    q, 
+                    1
+                )
+            );
+
+            matrix.SetColumn(
+                3, 
+                SVec4(
+                    0, 
+                    0, 
+                    -q * 0.01f, 
+                    0
+                )
+            );
+
+            return matrix;
+        }
+
         /////////////////////////////////////////////////////////////
         // PARTICLE SYSTEM //////////////////////////////////////////
         ParticleSystem::ParticleSystem(void)

@@ -210,7 +210,11 @@ namespace ursine
             }
             else
             {
-                m_spriteText->SetFontHandle( data->GetFontHandle( ) );
+                auto handle = data->GetFontHandle( );
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.UnloadFontTextures( m_spriteText->GetFontHandle( ) );
+                m_spriteText->SetFontHandle( handle );
+                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.LoadFontTextures( handle );
+                
             }
         }
     }
