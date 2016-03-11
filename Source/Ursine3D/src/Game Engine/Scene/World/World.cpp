@@ -184,6 +184,11 @@ namespace ursine
             return m_owner;
         }
 
+        void World::SetOwner(Scene *owner)
+        {
+            setOwner( owner );
+        }
+
         void World::setOwner(Scene *owner)
         {
             UAssert( m_owner == nullptr,

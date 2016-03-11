@@ -108,7 +108,10 @@ public:
     const ursine::resources::ResourceReference &GetMeleeWeapon(void) const;
     void SetMeleeWeapon(const ursine::resources::ResourceReference &archetype);
 
-    void SetNewWeapon(const WeaponType type, int ammo, int clip);
+    void SetNewWeapon(
+        const ursine::resources::ResourceReference &weaponData,
+        const WeaponType type, int ammo, int clip
+    );
 
 private:
     ///////////////////
@@ -116,7 +119,7 @@ private:
     ///////////////////
 
     friend class InventorySystem;
-    friend class WeaponPickup;
+    friend struct WeaponPickup;
 
     // current weapon out
     WeaponType m_currWeapon;

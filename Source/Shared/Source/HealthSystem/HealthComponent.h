@@ -14,6 +14,7 @@
 #pragma once
 
 #include <Component.h>
+#include <ArchetypeData.h>
 #include <RigidbodyComponent.h>
 
 namespace ursine

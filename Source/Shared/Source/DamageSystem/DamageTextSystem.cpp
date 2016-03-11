@@ -33,12 +33,12 @@ namespace
 ////  Base Weapon System  ////
 //////////////////////////////
 
-DamageTextSystem::DamageTextSystem(ursine::ecs::World* world) :
-    EntitySystem( world ),
+DamageTextSystem::DamageTextSystem(ursine::ecs::World* world) 
+    : EntitySystem( world )
     // @Chad, talk to Austin about how to handle this case?  How can we make this work with archetype references?
     // Make this a component instead and stick it on something?
-    m_critText( WORLD_ARCHETYPE_PATH"DamageText/CritText.uatype" ),
-    m_normText( WORLD_ARCHETYPE_PATH"DamageText/NormText.uatype" )
+    /*, m_critText( WORLD_ARCHETYPE_PATH"DamageText/CritText.uatype" )
+    , m_normText( WORLD_ARCHETYPE_PATH"DamageText/NormText.uatype" )*/
 {
 }
 

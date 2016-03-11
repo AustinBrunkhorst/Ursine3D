@@ -137,8 +137,10 @@ void Inventory::SetMeleeWeapon(const ResourceReference &archetype)
     m_inventory[ MELEE_WEAPON ].m_weaponToLoad = archetype;
 }
 
-void Inventory::SetNewWeapon(const WeaponType type, int ammo, int clip)
+void Inventory::SetNewWeapon(const ResourceReference &weaponData, const WeaponType type, int ammo, int clip)
 {
+    // @Chad, set the weapon based on the weaponData
+
     m_inventory[ type ].m_ammoCount = ammo;
     m_inventory[ type ].m_clipCount = clip;
     m_currWeapon = type;

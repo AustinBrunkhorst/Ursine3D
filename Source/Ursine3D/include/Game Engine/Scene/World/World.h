@@ -95,8 +95,6 @@ namespace ursine
 
             void MessageUI(const std::string &message, const Json &data);
 
-            void DispatchLoad(void);
-
             void MergeWorld(
                 resources::ResourceManager &resourceManager, 
                 resources::ResourceReference &worldResource

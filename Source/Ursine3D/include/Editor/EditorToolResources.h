@@ -15,6 +15,8 @@ namespace ursine
         const extern GUID ArchetypeScaleTool;
         const extern GUID ArchetypeRotateTool;
         const extern GUID ArchetypeDuplicateTool;
+
+        const extern GUID ModelTorus;
     }
 }
 

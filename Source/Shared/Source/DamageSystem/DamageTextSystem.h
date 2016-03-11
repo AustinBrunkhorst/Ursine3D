@@ -56,8 +56,8 @@ private:
     void createDamageText(const game::DamageEventArgs* args);
     void deleteDamageText(const ursine::ecs::EntityHandle &textObject);
 
-    std::string m_critText;
-    std::string m_normText;
+    ursine::resources::ResourceReference m_critText;
+    ursine::resources::ResourceReference m_normText;
 
     std::unordered_map<ursine::ecs::EntityHandle, DamageText*> m_damageTexts;
     std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::SpriteText*> m_spriteTexts;

@@ -11,8 +11,8 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#include "Component.h"
-
+#include <Component.h>
+#include <ArchetypeData.h>
 namespace ursine
 {
     namespace ecs
