@@ -19,9 +19,11 @@
 #include <Model3DComponent.h>
 #include <DebugSystem.h>
 #include <EditorToolResources.h>
+#include <ArchetypeData.h>
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 ScaleTool::ScaleTool(Editor *editor, ursine::ecs::World *world)
     : EditorTool( editor, world )
@@ -34,6 +36,7 @@ ScaleTool::ScaleTool(Editor *editor, ursine::ecs::World *world)
     , m_local( false )
     , m_deleteGizmo( false )
     , m_archetype( editor_resources::ArchetypeScaleTool )
+    , m_toolResources( GetCoreSystem( Editor )->GetProject( )->GetBuiltInResourceManager( ) )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
@@ -206,9 +209,10 @@ void ScaleTool::setDirectionVectors(const SVec3& basisVector, const EntityHandle
 
 void ScaleTool::enableAxis(void)
 {
-    m_gizmo = m_world->CreateEntityFromArchetype(
-        m_archetype
-    );
+    m_gizmo = m_archetype.Load<ArchetypeData>( m_toolResources )->Instantiate( m_world );
+
+    if (!m_gizmo)
+        return;
 
     setEntitySerializationToggle( false, m_gizmo );
     

@@ -36,6 +36,8 @@ const ResourceReference &Spawner::GetEnemyArchetype(void) const
 void Spawner::SetEnemyArchetype(const ResourceReference &archetype)
 {
     m_archetype = archetype;
+
+    NOTIFY_COMPONENT_CHANGED("enemyArchetype", m_archetype);
 }
 
 AIArchetype Spawner::GetEnemyType(void) const

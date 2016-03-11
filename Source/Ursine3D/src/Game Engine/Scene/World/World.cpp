@@ -226,7 +226,7 @@ namespace ursine
 
         void World::deleteEntity(const EntityHandle &entity)
         {
-            m_nameManager->Remove( entity->GetID( ) );
+            m_nameManager->Remove( entity.m_id );
             m_entityManager->Remove( entity );
         }
                 

@@ -43,6 +43,7 @@ private:
 
     // visual representation of the 3 axis
     ursine::resources::ResourceReference m_archetype;
+    ursine::resources::ResourceManager &m_toolResources;
 
     ursine::ecs::EntityHandle m_gizmo;
 
