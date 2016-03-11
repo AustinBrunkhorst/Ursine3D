@@ -9,6 +9,8 @@ namespace ursine
         BomberAIStateMachine::BomberAIStateMachine()
         {
             // Condition/SM variables to go here
+            AddBool("HitPlayer", false);
+
         }
     }
 }

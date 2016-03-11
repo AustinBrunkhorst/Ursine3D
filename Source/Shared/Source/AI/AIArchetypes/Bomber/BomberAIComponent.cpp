@@ -17,6 +17,9 @@
 
 #include <SystemManager.h>
 #include <AI/AIArchetypes/SharedAIStates/WalkState.h>
+#include "States/BomberExplodeState.h"
+#include <Utilities/StateMachine/Conditions/FloatCondition.h>
+#include <Utilities/StateMachine/Conditions/BoolCondition.h>
 
 // use this for anything you want to draw in the editor
 //#include <DebugSystem.h>
@@ -112,11 +115,13 @@ void BomberAI::OnInitialize(void)
     GetOwner()->GetWorld()->Listener( this )
         .On( WORLD_UPDATE, &BomberAI::onUpdate );
 
-    // set up the state machine
 
-    GetOwner()->GetWorld()->Listener(this)
-        .On(WORLD_UPDATE, &BomberAI::onUpdate);
+    // 1) Bomber Walks at player
 
+    // 2) once in trigger range, switch to explode state
+
+    // 3) ????
+    // 4) Profit
 
     // initialize the state machine
     m_stateMachine.Initialize(GetOwner());
@@ -125,10 +130,20 @@ void BomberAI::OnInitialize(void)
     INIT_WALKSTATE("BomberWalkState");
 
     // rest of state machine goes here
+    auto explodeState = m_stateMachine.AddState<sm::BomberExplodeState>("BomberExplodeState", walkState, m_damage);
+
+    auto trans = walkState->AddTransition(explodeState, "Walk State to Explode State");
+
+    // by hit player we mean we are in rnge to attack the player
+    trans->AddCondition<sm::BoolCondition>("HitPlayer", true);
+
+    // once we enter the explode state, we remain there until the cold embrace of death
 }
 
 void BomberAI::onUpdate(EVENT_HANDLER(World))
 {
     // update our state machine
     m_stateMachine.Update();
+
+
 }

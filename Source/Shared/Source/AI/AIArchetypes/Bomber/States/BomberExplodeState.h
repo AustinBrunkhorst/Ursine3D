@@ -16,11 +16,14 @@
 #include "AIState.h"
 #include "Entity.h"
 #include "Vec3.h"
+#include "WalkState.h"
+
 
 
 class AIStateMachine;
 
 class EntityAnimator;
+
 
 namespace ursine
 {
@@ -29,7 +32,7 @@ namespace ursine
         class BomberExplodeState : public AIState
         {
         public:
-            BomberExplodeState(const std::string &name, float damage, float downTime);
+            BomberExplodeState(const std::string &name, WalkState *walkState,float damage);
 
             bool CanExit(void) override { return m_finished; }
 
@@ -38,6 +41,8 @@ namespace ursine
             void Exit(AIStateMachine *machine) override;
 
         private:
+            WalkState *m_walk;
+
             bool m_finished;
         };
 
