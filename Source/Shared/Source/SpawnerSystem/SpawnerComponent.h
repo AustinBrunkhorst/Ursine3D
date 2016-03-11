@@ -14,6 +14,7 @@
 #pragma once
 
 #include <Component.h>
+#include <ArchetypeData.h>
 
 #include "AIArchetypes.h"
 #include "LevelSegments.h"
@@ -36,7 +37,17 @@ public:
         "Create New Pattern"
     );
 
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        enemyArchetype,
+        GetEnemyArchetype,
+        SetEnemyArchetype
+    );
+
     Spawner(void);
+
+    const ursine::resources::ResourceReference &GetEnemyArchetype(void) const;
+    void SetEnemyArchetype(const ursine::resources::ResourceReference &archetype);
 
     AIArchetype GetEnemyType(void) const;
 
@@ -46,6 +57,8 @@ public:
     void OnDeserialize(const ursine::Json &input) override;
 
 private:
+
+    ursine::resources::ResourceReference m_archetype;
 
     AIArchetype m_enemyType;
 

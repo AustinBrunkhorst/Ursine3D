@@ -1,5 +1,3 @@
-#pragma once
-
 /* ---------------------------------------------------------------------------
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -11,6 +9,7 @@
 **
 ** -------------------------------------------------------------------------*/
 
+#pragma once
 
 #include <Component.h>
 #include <SVec3.h>
@@ -23,13 +22,12 @@ namespace ursine
     namespace ecs
     {
         class Transform;
-    } // ecs namespace
-
-} // ursine namespace
+    }
+}
 
 struct WeaponSlotInfo
 {
-    WeaponSlotInfo(WeaponType slotType, const std::string& weapon = "");
+    WeaponSlotInfo(WeaponType slotType);
 
     // index into inventory
     WeaponType m_weaponSlotType;
@@ -39,7 +37,7 @@ struct WeaponSlotInfo
     ursine::ecs::EntityHandle m_weaponLoaded;
 
     // weapon archetype that will be loaded when ever this weapon slot is active
-    std::string m_weaponToLoad;
+    ursine::resources::ResourceReference m_weaponToLoad;
 
     // how much ammo was in gun before being deactivated
     int m_ammoCount;
@@ -67,26 +65,30 @@ public:
         SetStartWeapon
     );
 
-    EditorField(
-        std::string LastStand,
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        lastStand,
         GetLastStandWeapon,
         SetLastStandWeapon
     );
-   
-    EditorField(
-        std::string SecondaryWeapon,
+
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        secondaryWeapon,
         GetSecondaryWeapon,
         SetSecondaryWeapon
     );
 
-    EditorField(
-        std::string PrimaryWeapon,
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        primaryWeapon,
         GetPrimaryWeapon,
         SetPrimaryWeapon
     );
 
-    EditorField(
-        std::string MeleeWeapon,
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        meleeWeapon,
         GetMeleeWeapon,
         SetMeleeWeapon
     );
@@ -94,56 +96,53 @@ public:
     WeaponType GetStartWeapon(void) const;
     void SetStartWeapon(const WeaponType slot);
 
-    const std::string& GetLastStandWeapon(void) const;
-    void SetLastStandWeapon(const std::string& archetype);
+    const ursine::resources::ResourceReference &GetLastStandWeapon(void) const;
+    void SetLastStandWeapon(const ursine::resources::ResourceReference &archetype);
 
-    const std::string& GetSecondaryWeapon(void) const;
-    void SetSecondaryWeapon(const std::string& archetype);
+    const ursine::resources::ResourceReference &GetSecondaryWeapon(void) const;
+    void SetSecondaryWeapon(const ursine::resources::ResourceReference &archetype);
 
-    const std::string& GetPrimaryWeapon(void) const;
-    void SetPrimaryWeapon(const std::string& archetype);
+    const ursine::resources::ResourceReference &GetPrimaryWeapon(void) const;
+    void SetPrimaryWeapon(const ursine::resources::ResourceReference &archetype);
 
-    const std::string& GetMeleeWeapon(void) const;
-    void SetMeleeWeapon(const std::string& archetype);
+    const ursine::resources::ResourceReference &GetMeleeWeapon(void) const;
+    void SetMeleeWeapon(const ursine::resources::ResourceReference &archetype);
 
-    void SetNewWeapon(const WeaponType type, const std::string& weaponToLoad, int ammo, int clip);
+    void SetNewWeapon(
+        const ursine::resources::ResourceReference &weaponData,
+        const WeaponType type, int ammo, int clip
+    );
 
-
+private:
     ///////////////////
     ////  Members  ////
     ///////////////////
+
+    friend class InventorySystem;
+    friend struct WeaponPickup;
 
     // current weapon out
     WeaponType m_currWeapon;
 
     // current weapon out
-    Meta(Disable)
     WeaponType m_prevWeapon;
 
     // position of camera
-    Meta(Disable)
     ursine::ecs::Transform* m_cameraHandle;
 
     // position of arm
-    Meta(Disable)
     ursine::ecs::Transform* m_armHandle;
 
     // what archetype to load
-    Meta(Disable)
     WeaponSlotInfo m_inventory[ 5 ];
 
     // was swap key triggered
-    Meta(Disable)
     bool m_swap;
 
-    Meta(Disable)
     bool m_newWeapon;
 
-    Meta(Disable)
     bool m_init;
 
-
-private:
     void TriggerSwapWeapons(EVENT_HANDLER(game::SWAP_COMMAND));
 
 } Meta(Enable, DisplayName("Inventory"));

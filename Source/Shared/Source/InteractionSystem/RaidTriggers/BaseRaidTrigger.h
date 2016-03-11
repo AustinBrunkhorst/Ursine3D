@@ -13,43 +13,45 @@
 
 
 #include <Component.h>
+#include <ArchetypeData.h>
 #include "BaseInteraction.h"
 #include <Entity.h>
 #include "Color.h"
 #include "BuffComponent.h"
 
 
-#define BASE_FIELDS( )                \
-    EditorField(                      \
-        BuffType RaidEffect,          \
-        GetRaidEffect,                \
-        SetRaidEffect                 \
-        );                            \
-                                      \
-    EditorField(                      \
-        std::string ParticleEffect,   \
-        GetEmitter,                   \
-        SetEmitter                    \
-        );                            \
-                                      \
-    EditorField(                      \
-        std::string UISymbol,         \
-        GetUISymbol,                  \
-        SetUISymbol                   \
-        );                            \
-                                      \
-    EditorField(                      \
-        ursine::Color SuccessColor,   \
-        GetSuccessColor,              \
-        SetSuccessColor               \
-        );                            \
-                                      \
-    EditorField(                      \
-        ursine::Color InteractColor,  \
-        GetInteractColor,             \
-        SetInteractColor              \
-        );                            
-
+#define BASE_FIELDS( )                    \
+    EditorField(                          \
+        BuffType RaidEffect,              \
+        GetRaidEffect,                    \
+        SetRaidEffect                     \
+    );                                    \
+                                          \
+    EditorResourceField(                  \
+        ursine::resources::ArchetypeData, \
+        ParticleEffect,                   \
+        GetEmitter,                       \
+        SetEmitter                        \
+    );                                    \
+                                          \
+    EditorResourceField(                  \
+        ursine::resources::ArchetypeData, \
+        UISymbol,                         \
+        GetUISymbol,                      \
+        SetUISymbol                       \
+    );                                    \
+                                          \
+    EditorField(                          \
+        ursine::Color SuccessColor,       \
+        GetSuccessColor,                  \
+        SetSuccessColor                   \
+    );                                    \
+                                          \
+    EditorField(                          \
+        ursine::Color InteractColor,      \
+        GetInteractColor,                 \
+        SetInteractColor                  \
+    );                                    \
 
 class CommandQueue;
 
@@ -59,9 +61,8 @@ namespace ursine
     {
         class ParticleColorAnimator;
         class Entity;
-    } // ecs namespace
-} // ursine namespace
-
+    }
+}
 
 class BaseRaidTrigger : public Interaction
 {
@@ -73,8 +74,10 @@ public:
     const BuffType GetRaidEffect(void) const;
     void SetRaidEffect(const BuffType effect);
 
-    const std::string GetEmitter(void) const;
-    void SetEmitter(std::string archetype);
+    const ursine::resources::ResourceReference &GetEmitter(void) const;
+    void SetEmitter(const ursine::resources::ResourceReference &archetype);
+
+    ursine::ecs::ParticleColorAnimator *GetAnimator(void) const;
 
     const ursine::Color& GetSuccessColor(void) const;
     void SetSuccessColor(const ursine::Color& color);
@@ -82,8 +85,8 @@ public:
     const ursine::Color& GetInteractColor(void) const;
     void SetInteractColor(const ursine::Color& color);
 
-    const std::string& GetUISymbol(void);
-    void SetUISymbol(const std::string& symbol);
+    const ursine::resources::ResourceReference &GetUISymbol(void);
+    void SetUISymbol(const ursine::resources::ResourceReference &symbol);
 
 protected:
     void Initialize(const ursine::ecs::EntityHandle &owner);
@@ -132,10 +135,10 @@ protected:
     ursine::Color m_interactColor;
 
     // UI symbol to give player
-    std::string m_uiSymbol;
+    ursine::resources::ResourceReference m_uiSymbol;
 
     // archetype to load
-    std::string m_archetypeToLoad;
+    ursine::resources::ResourceReference m_archetypeToLoad;
 
     bool m_active;
 

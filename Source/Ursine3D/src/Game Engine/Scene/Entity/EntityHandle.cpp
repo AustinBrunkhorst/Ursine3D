@@ -92,7 +92,12 @@ namespace ursine
             if (!m_manager)
                 return nullptr;
 
-            return m_manager->GetEntity( *this );
+            auto *entity = m_manager->GetEntity( *this );
+
+            if (entity && entity->IsActive( ))
+                return entity;
+
+            return nullptr;
         }
     }
 }

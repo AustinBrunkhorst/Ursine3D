@@ -13,6 +13,10 @@
 
 #include <FilterSystem.h>
 
+#include <Randomizer.h>
+
+#include "AbstractWeapon.h"
+
 namespace ursine
 {
     namespace ecs
@@ -20,18 +24,58 @@ namespace ursine
         class PhysicsSystem;
         class AudioEmitter;
         class Animator;
-    } // ecs namespace
+    }
 
     namespace physics
     {
         struct RaycastOutput;
-    } // physics namespace
-} // ursine namespace
+    }
+}
 
 struct AbstractProjWeapon;
 struct AbstractHitscanWeapon;
 struct HitscanWeapon;
 struct BaseWeapon;
+
+class WeaponSystemUtils
+{
+public:
+    static void GetSpreadValues(
+        ursine::Randomizer& spread, 
+        float accuracy, float& xSpread, float& ySpread
+    );
+
+    static void ConstructRaycast(
+        AbstractWeapon& weapon, 
+        ursine::SVec3& start, ursine::SVec3& end
+    );
+
+    static void ProjectileVelocity(
+        AbstractProjWeapon& weapon, 
+        ursine::ecs::EntityHandle& proj
+    );
+
+    static void ProjectileSetUp(
+        ursine::ecs::EntityHandle& proj, 
+        AbstractProjWeapon& weapon
+    );
+
+    static bool OutofAmmo(AbstractWeapon &weapon);
+
+    static bool ClipFull(AbstractWeapon &weapon);
+
+    static int Reload(AbstractWeapon &weapon);
+
+    static void DecrementFireTimer(float dt, AbstractWeapon &weapon);
+
+    static void DecrementReloadTimer(float dt, AbstractWeapon &weapon);
+
+    static int RemoveRoundsFromClip(AbstractWeapon &weapon);
+
+    static void ReloadWeapon(AbstractWeapon &weapon);
+
+    static void ResetIdleSequence(AbstractWeapon* weapon);
+};
 
 class BaseWeaponSystem
     : public ursine::ecs::FilterSystem

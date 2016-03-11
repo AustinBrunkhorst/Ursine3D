@@ -14,6 +14,13 @@ namespace ursine
         const GUID       IconPointLight = RESOURCE_GUID( "f3901624-b038-44fe-9905-0ce6b7a741d7" );
         const GUID        IconSpotLight = RESOURCE_GUID( "da205a6b-5619-4ef4-aa64-f1cb875ce87e" );
         const GUID           IconCamera = RESOURCE_GUID( "c27e1f32-3890-4c6b-afd4-7a1574dda439" );
+
+        const GUID ArchetypeTranslateTool = RESOURCE_GUID( "25b0a698-7e3d-44a5-a79d-c244d7017f9d" );
+        const GUID ArchetypeScaleTool     = RESOURCE_GUID( "b4879bb4-f351-4570-939f-100ff6349f98" );
+        const GUID ArchetypeRotateTool    = RESOURCE_GUID( "46cbbc00-a136-47f7-a5b1-fe22e2b7f0f3" );
+        const GUID ArchetypeDuplicateTool = RESOURCE_GUID( "4c62a439-36c3-44ac-a876-f0bdd81a2dfc" );
+
+        const GUID ModelTorus = RESOURCE_GUID( "eca0044d-0cbe-4b07-8f16-823e67713b83" );
     }
 }
 

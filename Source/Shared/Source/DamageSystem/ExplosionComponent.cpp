@@ -8,6 +8,8 @@
 
 namespace ursine
 {
+    using namespace resources;
+
     namespace ecs
     {
         NATIVE_COMPONENT_DEFINITION( ExplosionComponent );
@@ -17,7 +19,6 @@ namespace ursine
 
         ExplosionComponent::ExplosionComponent(void)
             : BaseComponent( )
-            , m_effectName( "FX_ExplosionBall.uatype" )
             , m_radius( 2.0f )
             , m_damage( 1.0f )
             , m_damageFalloffAmount( 0.5 )
@@ -62,24 +63,22 @@ namespace ursine
                 }
             }
 
-            auto explosion = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(
-                WORLD_ARCHETYPE_PATH "FX/" + m_effectName,
-                m_effectName + "Explosion"
-            );
+            auto explosion = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( m_effectArchetype );
 
-            explosion->GetTransform( )->SetWorldPosition( ourPosition );
+            if (explosion)
+                explosion->GetTransform( )->SetWorldPosition( ourPosition );
 
             GetOwner( )->Delete( );
         }
 
-        const std::string &ExplosionComponent::GetEffectName(void) const
+        const ResourceReference &ExplosionComponent::GetEffectArchetype(void) const
         {
-            return m_effectName;
+            return m_effectArchetype;
         }
 
-        void ExplosionComponent::SetEffectName(const std::string &name)
+        void ExplosionComponent::SetEffectArchetype(const ResourceReference &archetype)
         {
-            m_effectName = name;
+            m_effectArchetype = archetype;
         }
 
         float ExplosionComponent::GetRadius(void) const

@@ -47,12 +47,6 @@ namespace ursine
 
             EntityHandle CreateEntity(const std::string &name = "Entity");
 
-            // Creates an entity from an archetype file
-            EntityHandle CreateEntityFromArchetype(
-                const std::string &fileName,
-                const std::string &name = "Entity"
-            );
-
             // Creates an entity from an archetype resource
             EntityHandle CreateEntityFromArchetype(
                 const resources::ResourceReference &resource
@@ -100,8 +94,6 @@ namespace ursine
             void SetOwner(Scene *owner);
 
             void MessageUI(const std::string &message, const Json &data);
-
-            void DispatchLoad(void);
 
             void MergeWorld(
                 resources::ResourceManager &resourceManager, 

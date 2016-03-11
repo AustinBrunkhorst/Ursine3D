@@ -21,12 +21,21 @@ NATIVE_COMPONENT_DEFINITION( Spawner );
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 Spawner::Spawner(void)
     : BaseComponent( )
     , m_enemyType( AIArchetype::Fodder )
-    , m_activeEnemies( 0 )
+    , m_activeEnemies( 0 ) { }
+
+const ResourceReference &Spawner::GetEnemyArchetype(void) const
 {
+    return m_archetype;
+}
+
+void Spawner::SetEnemyArchetype(const ResourceReference &archetype)
+{
+    m_archetype = archetype;
 }
 
 AIArchetype Spawner::GetEnemyType(void) const
@@ -81,46 +90,9 @@ void Spawner::onLevelSegmentChange(LevelSegments segment)
 
 EntityHandle Spawner::spawnEnemy(SpawnerGroup *group, const SVec3 &worldPosition)
 {
-    std::string archetypeName;
-
-    switch (m_enemyType)
-    {
-        case AIArchetype::Fodder:
-        {
-            archetypeName = "Fodder";
-            break;
-        }
-        case AIArchetype::Agile:
-        {
-            archetypeName = "Agile";
-            break;
-        }
-        case AIArchetype::Bomber:
-        {
-            archetypeName = "Bomber";
-            break;
-        }
-        case AIArchetype::Tank:
-        {
-            archetypeName = "Tank";
-            break;
-        }
-        case AIArchetype::Nuker:
-        {
-            archetypeName = "Nuker";
-            break;
-        }
-        default:
-
-            UAssert( false, "What the fuck happened bru %d", m_enemyType );
-
-    }
-
     auto world = GetOwner( )->GetWorld( );
 
-    auto entity = world->CreateEntityFromArchetype(
-        WORLD_ARCHETYPE_PATH + std::string( "AI/" ) + archetypeName + ".uatype", archetypeName
-    );
+    auto entity = world->CreateEntityFromArchetype( m_archetype );
 
     entity->GetTransform( )->SetWorldPosition( worldPosition );
 

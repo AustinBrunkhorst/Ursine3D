@@ -13,6 +13,8 @@
 
 #include <Component.h>
 
+#include <ArchetypeData.h>
+
 namespace ursine
 {
     namespace physics
@@ -45,14 +47,16 @@ public:
         SetCritModifier
     );
 
-    EditorField(
-        std::string ArchetypeOnDeath,
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        archetypeOnDeath,
         GetArchetypeOnDeath,
         SetArchetypeOnDeath
     );
 
-    EditorField(
-        std::string ArchetypeOnHit,
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        archetypeOnHit,
         GetArchetypeOnHit,
         SetArchetypeOnHit
     );
@@ -95,11 +99,11 @@ public:
     float GetDamageInterval(void) const;
     void SetDamageInterval(float damageInterval);
 
-    const std::string& GetArchetypeOnDeath(void) const;
-    void SetArchetypeOnDeath(const std::string& objToSpawn);
+    const ursine::resources::ResourceReference &GetArchetypeOnDeath(void) const;
+    void SetArchetypeOnDeath(const ursine::resources::ResourceReference &objToSpawn);
 
-    const std::string& GetArchetypeOnHit(void) const;
-    void SetArchetypeOnHit(const std::string& objToSpawn);
+    const ursine::resources::ResourceReference &GetArchetypeOnHit(void) const;
+    void SetArchetypeOnHit(const ursine::resources::ResourceReference &objToSpawn);
 
     bool GetDeleteOnCollision(void) const;
     void SetDeleteOnCollision(bool state);
@@ -125,11 +129,11 @@ private:
 
     // archetype that will be spawned at the point that the 
     //   object dies
-    std::string m_objToSpawn;
+    ursine::resources::ResourceReference m_objToSpawn;
 
     // archetype that will be spawned at the point that the 
     //   object deals damage to another object
-    std::string m_objToSpawnOnHit;
+    ursine::resources::ResourceReference m_objToSpawnOnHit;
 
     // does projectile die on first collision
     bool m_deleteOnCollision;
@@ -147,13 +151,21 @@ private:
     void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
     void onCollide(EVENT_HANDLER(ursine::ecs::Entity));
 
-    void getSpawnLocation(const ursine::ecs::EntityHandle &other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet);
+    void getSpawnLocation(
+        const ursine::ecs::EntityHandle &other, 
+        ursine::physics::RaycastOutput& rayout, 
+        ursine::SVec3& posToSet
+    );
 
     // spawn particle at collision point and parent to player
     void spawnCollisionParticle(const ursine::ecs::EntityHandle &other, bool crit);
 
     void deleteOnCollision(void);
 
-    void applyDamage(const ursine::ecs::EntityHandle &obj, const ursine::SVec3& contact, float damage, bool crit);
+    void applyDamage(
+        const ursine::ecs::EntityHandle &obj, 
+        const ursine::SVec3& contact, 
+        float damage, bool crit
+    );
 
 } Meta (Enable, DisplayName( "DamageOnCollide" ));

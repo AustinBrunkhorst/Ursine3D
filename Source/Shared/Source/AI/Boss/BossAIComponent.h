@@ -12,6 +12,7 @@
 #pragma once
 
 #include <Component.h>
+#include <ArchetypeData.h>
 
 #include "BossAIStateMachine.h"
 #include "LevelSegmentManagerComponent.h"
@@ -30,8 +31,9 @@ public:
         SetSeedshotEntityName
     );
 
-    EditorField(
-        std::string vineArchetype,
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        vineArchetype,
         GetVineArchetype,
         SetVineArchetype
     );
@@ -41,8 +43,8 @@ public:
     const std::string &GetSeedshotEntityName(void) const;
     void SetSeedshotEntityName(const std::string &entityName);
 
-    const std::string &GetVineArchetype(void) const;
-    void SetVineArchetype(const std::string &vineArchetype);
+    const ursine::resources::ResourceReference &GetVineArchetype(void) const;
+    void SetVineArchetype(const ursine::resources::ResourceReference &vineArchetype);
 
     ursine::ecs::EntityHandle GetSeedshotEntity(void);
 
@@ -61,7 +63,7 @@ private:
 
     std::string m_seedshotEntity;
 
-    std::string m_vineArchetype;
+    ursine::resources::ResourceReference m_vineArchetype;
 
     LevelSegments m_segment;
 

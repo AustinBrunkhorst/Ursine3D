@@ -26,7 +26,6 @@ WeaponPickup::WeaponPickup(void)
     , m_ammo( -1 )
     , m_clipCount( -1 )
     , m_weaponType( PRIMARY_WEAPON )
-    , m_weaponToPickup( "BaseWeapon.uatype" )
     , m_texture( "" ) { }
 
 WeaponPickup::~WeaponPickup(void)
@@ -53,7 +52,6 @@ void WeaponPickup::SetPickupTime(const float time)
     m_pickupTime = time;
 }
 
-
 // Weapon type of pick up
 WeaponType WeaponPickup::GetWeaponType( ) const
 {
@@ -65,22 +63,16 @@ void WeaponPickup::SetWeaponType(WeaponType weapon)
     m_weaponType = weapon;
 }
 
-
 // WeaponToPickup
-const std::string& WeaponPickup::GetWeaponToPickup( ) const
+const ursine::resources::ResourceReference& WeaponPickup::GetWeaponToPickup(void) const
 {
     return m_weaponToPickup;
 }
 
-void WeaponPickup::SetWeaponToPickup(const std::string& weapon)
+void WeaponPickup::SetWeaponToPickup(const ursine::resources::ResourceReference& weapon)
 {
     m_weaponToPickup = weapon;
-
-    // add on extension for archetypes
-    if ( m_weaponToPickup.find(".uatype") == std::string::npos )
-        m_weaponToPickup += ".uatupe";
 }
-
 
 // Texture
 const std::string& WeaponPickup::GetTexture( ) const
@@ -92,7 +84,6 @@ void WeaponPickup::SetTexture(const std::string& texture)
 {
     m_texture = texture;
 }
-
 
 ///////////////////////////////
 ////  Weapon Pickup Logic  ////
@@ -135,8 +126,8 @@ void WeaponPickup::Interact(const CommandQueue *queue, ecs::EntityHandle &entity
         // swap weapons if the required time for pickup has been met
         if ( *time > m_pickupTime && !GetOwner()->IsDeleting() )
         {
-            // change current weapon
-            inventory->SetNewWeapon( m_weaponType, m_weaponToPickup, m_ammo, m_clipCount );
+            // change current weapon 
+            inventory->SetNewWeapon( m_weaponToPickup, m_weaponType, m_ammo, m_clipCount );
 
             InteractionComplete( );
         }
@@ -170,7 +161,8 @@ void WeaponPickup::CheckForAmmo(const ecs::EntityHandle &entity)
 
     WeaponSlotInfo& weaponInfo = inventory->m_inventory[ inventory->m_currWeapon ];
 
-    if ( weaponInfo.m_weaponToLoad == m_weaponToPickup )
+    // @Chad, what to do with this?
+    //if ( weaponInfo.m_weaponToLoad == m_weaponToPickup )
     {
        // if ( weaponInfo.m_weaponLoaded )
     }

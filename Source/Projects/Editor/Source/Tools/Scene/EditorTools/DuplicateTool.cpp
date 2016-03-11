@@ -7,6 +7,7 @@
 #include <SystemManager.h>
 #include <CameraComponent.h>
 #include <Model3DComponent.h>
+#include <EditorToolResources.h>
 
 #include <math.h>
 
@@ -23,6 +24,7 @@ DuplicateTool::DuplicateTool(Editor *editor, World *world)
     , m_deleteGizmo( false )
     , m_altDown( false )
     , m_origin( false )
+    , m_archetype( editor_resources::ArchetypeDuplicateTool )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_drawer = m_world->GetEntitySystem<DebugSystem>( );
@@ -130,8 +132,7 @@ void DuplicateTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
 void DuplicateTool::enableGizmo(void)
 {
     m_gizmo = m_world->CreateEntityFromArchetype(
-        EDITOR_ARCHETYPE_PATH "EditorTools/DuplicateGizmo.uatype",
-        "DuplicateGizmo"        
+        m_archetype
     );
 
     setEntitySerializationToggle( false, m_gizmo );

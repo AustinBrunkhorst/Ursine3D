@@ -28,14 +28,16 @@
         SetDrawDuration                                   \
     );                                                    \
                                                           \
-    EditorField(                                          \
-        std::string ShotParticle,                         \
+    EditorResourceField(                                  \
+        ursine::resources::ArchetypeData,                 \
+        shotParticle,                                     \
         GetShotParticle,                                  \
         SetShotParticle                                   \
     );                                                    \
                                                           \
-    EditorField(                                          \
-        std::string TrailParticle,                        \
+    EditorResourceField(                                  \
+        ursine::resources::ArchetypeData,                 \
+        trailParticle,                                    \
         GetTrailParticle,                                 \
         SetTrailParticle                                  \
     );                                                    \
@@ -64,11 +66,11 @@ struct AbstractHitscanWeapon : AbstractWeapon
     float GetDrawDuration(void) const;
     void SetDrawDuration(const float drawDuration);
 
-    const std::string& GetShotParticle(void) const;
-    void SetShotParticle(const std::string& particleArchetype);
+    const ursine::resources::ResourceReference &GetShotParticle(void) const;
+    void SetShotParticle(const ursine::resources::ResourceReference &particleArchetype);
 
-    const std::string& GetTrailParticle(void) const;
-    void SetTrailParticle(const std::string& particleArchetype);
+    const ursine::resources::ResourceReference &GetTrailParticle(void) const;
+    void SetTrailParticle(const ursine::resources::ResourceReference &particleArchetype);
 
     bool GetAlwaysDraw(void) const;
     void SetAlwaysDraw(const bool always);
@@ -83,10 +85,10 @@ struct AbstractHitscanWeapon : AbstractWeapon
     float m_drawDuration;
 
     // particle to spawn where shot collide
-    std::string m_shotParticle;
+    ursine::resources::ResourceReference m_shotParticle;
 
     // particle to use as trail
-    std::string m_trailParticle;
+    ursine::resources::ResourceReference m_trailParticle;
 
     // draw line
     bool m_alwaysDraw;
