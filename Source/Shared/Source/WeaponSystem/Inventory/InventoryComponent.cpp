@@ -105,6 +105,8 @@ const ResourceReference &Inventory::GetLastStandWeapon(void) const
 void Inventory::SetLastStandWeapon(const ResourceReference &archetype)
 {
     m_inventory[ LAST_STAND ].m_weaponToLoad = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "lastStand", m_inventory[ LAST_STAND ].m_weaponToLoad );
 }
 
 const ResourceReference &Inventory::GetSecondaryWeapon(void) const
@@ -115,6 +117,8 @@ const ResourceReference &Inventory::GetSecondaryWeapon(void) const
 void Inventory::SetSecondaryWeapon(const ResourceReference &archetype)
 {
     m_inventory[ SECONDARY_WEAPON ].m_weaponToLoad = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "secondaryWeapon", m_inventory[ SECONDARY_WEAPON ].m_weaponToLoad );
 }
 
 const ResourceReference &Inventory::GetPrimaryWeapon(void) const
@@ -125,6 +129,8 @@ const ResourceReference &Inventory::GetPrimaryWeapon(void) const
 void Inventory::SetPrimaryWeapon(const ResourceReference &archetype)
 {
     m_inventory[ PRIMARY_WEAPON ].m_weaponToLoad = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "primaryWeapon", m_inventory[ PRIMARY_WEAPON ].m_weaponToLoad );
 }
 
 const ResourceReference &Inventory::GetMeleeWeapon(void) const
@@ -135,6 +141,8 @@ const ResourceReference &Inventory::GetMeleeWeapon(void) const
 void Inventory::SetMeleeWeapon(const ResourceReference &archetype)
 {
     m_inventory[ MELEE_WEAPON ].m_weaponToLoad = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "meleeWeapon", m_inventory[ MELEE_WEAPON ].m_weaponToLoad );
 }
 
 void Inventory::SetNewWeapon(const ResourceReference &weaponData, const WeaponType type, int ammo, int clip)
