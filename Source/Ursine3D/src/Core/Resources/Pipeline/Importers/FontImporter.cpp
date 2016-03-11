@@ -3,6 +3,8 @@
 #include "FontImporter.h"
 #include "FontData.h"
 
+#include "TextureImporter.h"
+
 #include "ResourcePipelineManager.h"
 
 namespace ursine
@@ -11,7 +13,8 @@ namespace ursine
     {
         const auto kFontProcessorTool = "Tools\\FontProcessor.exe";
         const auto kFntExtension = "fnt";
-        const auto kFontTexturePageExtension = ".dds";
+
+        const auto kTextureTempDirectory = "TextureTemp";
 
         fs::path getTempDirectory(const rp::ResourceImportContext &context);
 
@@ -20,6 +23,7 @@ namespace ursine
         void addTexturePage(
             const fs::path &sourcePath,
             const fs::path &entryPath,
+            const fs::path &tempPath,
             resources::FontData::TexturePageTable &table
         );
     }
@@ -61,6 +65,12 @@ namespace ursine
         fs::DirectoryIterator it( tempDirectory );
         fs::DirectoryIterator itEnd;
 
+        auto &textureExtensions = typeof( TextureImporter )
+            .GetMeta( )
+            .GetProperty<ResourceImporterConfig>( )->fileExtensions;
+
+        auto textureTempDirectory = tempDirectory / kTextureTempDirectory;
+
         for (; it != itEnd; ++it)
         {
             auto &entry = it->path( );
@@ -69,13 +79,19 @@ namespace ursine
 
             utils::MakeLowerCase( extension );
 
-            if (extension == kFontTexturePageExtension)
+            // if it's a texture, assume it's a page
+            if (textureExtensions.Exists( extension ))
             {
-                auto relativePath = fs::MakeRelativePath( tempDirectory, entry );
+                auto relativePath = 
+                    fs::MakeRelativePath( tempDirectory, entry );
 
-                addTexturePage( entry, relativePath, table );
+                addTexturePage( 
+                    entry, 
+                    relativePath, 
+                    textureTempDirectory, 
+                    table 
+                );
             }
-                
         }
 
         try
@@ -131,15 +147,13 @@ namespace ursine
         void addTexturePage(
             const fs::path &sourcePath,
             const fs::path &entryPath,
+            const fs::path &tempPath,
             resources::FontData::TexturePageTable &table
         )
         {
             auto data = std::make_shared<BinaryData>( );
 
-            UAssert( fs::LoadAllBinary( sourcePath.string( ), *data ),
-                "Failed to load font texture page.\nfile: %s",
-                sourcePath.string( ).c_str( )
-            );
+            rp::TextureImporter::ConvertToDDS( sourcePath, tempPath, *data );
 
             table.emplace( entryPath, data );
         }

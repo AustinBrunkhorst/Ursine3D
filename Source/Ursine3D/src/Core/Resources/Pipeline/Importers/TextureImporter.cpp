@@ -34,34 +34,47 @@ namespace ursine
         
     }
 
-    resources::ResourceData::Handle rp::TextureImporter::Import(ResourceImportContext &context)
+    void rp::TextureImporter::ConvertToDDS(const fs::path &input, const fs::path &tempDirectory, BinaryData &output)
     {
-        auto tempDirectory = getTempDirectory( context );
-        auto sourceFile = context.resource->GetSourceFileName( );
-        auto displayName = context.resource->GetDisplayName( );
-
         std::vector<std::string> ddsArgs {
             "-nologo",
             "-o \""+ tempDirectory.string( ) +"\"",
             "-ft dds",
-            "\""+ sourceFile.string( ) +"\""
+            "\""+ input.string( ) +"\""
         };
 
         if (!exists( tempDirectory ))
             create_directories( tempDirectory );
 
         UAssertCatchable( runTexureProcessor( ddsArgs ),
-            "Unable to run texture processor for building DDS'."
+            "Unable to run texture processor for building DDS."
         );
 
-        auto ddsFile = change_extension( tempDirectory / displayName, "dds" );
+        auto ddsFile = change_extension( tempDirectory / input.stem( ), "dds" );
 
-        BinaryData ddsData;
-
-        UAssertCatchable( fs::LoadAllBinary( ddsFile.string( ), ddsData ),
+        UAssertCatchable( fs::LoadAllBinary( ddsFile.string( ), output ),
             "Unable to load built DDS file.\nfile: %s",
             ddsFile.string( ).c_str( )
         );
+
+        try
+        {
+            fs::remove( ddsFile );
+        } 
+        catch(...)
+        {
+            // do nothing
+        }
+    }
+
+    resources::ResourceData::Handle rp::TextureImporter::Import(ResourceImportContext &context)
+    {
+        auto tempDirectory = getTempDirectory( context );
+        auto sourceFile = context.resource->GetSourceFileName( );
+        
+        BinaryData ddsData;
+
+        ConvertToDDS( sourceFile, tempDirectory, ddsData );
 
         dx::TexMetadata meta;
 
@@ -74,17 +87,8 @@ namespace ursine
 
         UAssertCatchable( result == S_OK,
             "Unable to get meta data from built DDS file.\nfile: %s",
-            ddsFile.string( ).c_str( )
+            sourceFile.string( ).c_str( )
         );
-
-        try
-        {
-            fs::remove( ddsFile );
-        } 
-        catch(...)
-        {
-            // do nothing
-        }
 
         m_importedWidth = static_cast<unsigned>( meta.width );
         m_importedHeight = static_cast<unsigned>( meta.height );

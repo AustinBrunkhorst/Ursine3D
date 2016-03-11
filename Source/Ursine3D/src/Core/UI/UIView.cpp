@@ -129,9 +129,20 @@ namespace ursine
         const Json &data
     )
     {
-        // noop if the browser is currently loading
+        // queue up messages if it's still loading
         if (m_browser->IsLoading( ))
+        {
+            m_preLoadQueue.emplace_back( );
+
+            auto &queued = m_preLoadQueue.back( );
+
+            queued.command = command;
+            queued.target = target;
+            queued.message = message;
+            queued.data = data;
+
             return;
+        }
 
         auto processMessage = CefProcessMessage::Create( target );
 
@@ -233,6 +244,19 @@ namespace ursine
         int httpStatusCode
     )
     {
+        // dispatch all of the queued messages
+        for (auto &message : m_preLoadQueue)
+        {
+            Message( 
+                message.command, 
+                message.target, 
+                message.message, 
+                message.data 
+            );
+        }
+
+        m_preLoadQueue.clear( );
+
         Dispatch( UI_LOADED, EventArgs::Empty );
     }
 

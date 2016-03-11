@@ -93,7 +93,7 @@ $toolbar-height: 25px;
     .resource {
       display: inline-block;
       max-width: 105px;
-      height: 90px;
+      min-height: 90px;
       margin-bottom: 10px;
       vertical-align: top;
       cursor: pointer;

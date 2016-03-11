@@ -74,6 +74,16 @@ namespace ursine
     private:
         friend class UIManager;
 
+        struct QueuedMessage
+        {
+            UIMessageCommand command;
+            std::string target;
+            std::string message;
+            Json data;
+        };
+
+        std::vector<QueuedMessage> m_preLoadQueue;
+
         CefRect m_viewport;
         Window::Handle m_window;
 
