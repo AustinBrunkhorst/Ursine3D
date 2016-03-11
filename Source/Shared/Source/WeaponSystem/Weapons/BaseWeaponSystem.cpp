@@ -445,7 +445,9 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
 
         // create particle at weapons fire pos and parent to weapon
         auto e = m_world->CreateEntityFromArchetype( weapon.m_fireParticle );
-        weapon.m_firePosHandle->AddChildAlreadyInLocal( e->GetTransform( ) );
+
+        if (e)
+            weapon.m_firePosHandle->AddChildAlreadyInLocal( e->GetTransform( ) );
         
         // number of rounds that were fired
         CreateRaycasts(
@@ -499,9 +501,8 @@ void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursi
     // create shot particle
     e = m_world->CreateEntityFromArchetype( weapon.m_shotParticle );
 
-    UAssert( e, "Error: The archetype is not set." );
-
-    e->GetTransform( )->SetWorldPosition( collisionPoint );
+    if (e)
+        e->GetTransform( )->SetWorldPosition( collisionPoint );
 
     float damage = weapon.m_damageToApply;
     bool crit = false;
@@ -516,10 +517,14 @@ void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursi
 
         // find actual hit position on obj hit
         SpawnCollisionParticle( collisionPoint, raycastVec, objHit );
-        e->GetTransform( )->SetWorldPosition( collisionPoint );
 
-        // parent so that it follows objects and dies with object
-        objHit->GetTransform( )->AddChild( e->GetTransform( ) );
+        if (e)
+        {
+            e->GetTransform( )->SetWorldPosition( collisionPoint );
+
+            // parent so that it follows objects and dies with object
+            objHit->GetTransform( )->AddChild( e->GetTransform( ) );
+        }
     }
 
     // if object has health
@@ -527,16 +532,16 @@ void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursi
     {
         objHit->GetRoot( )->GetComponent< Health >( )->DealDamage(collisionPoint, damage, crit );
 
-        if (!crit)
-        objHit->GetTransform( )->AddChild( e->GetTransform( ) );
+        if (!crit && e)
+            objHit->GetTransform( )->AddChild( e->GetTransform( ) );
     }
-	else if ( objHit->GetComponent<Health>( ) )
-	{
-		objHit->GetComponent< Health >( )->DealDamage(collisionPoint, damage, crit );
+    else if ( objHit->GetComponent<Health>( ) )
+    {
+        objHit->GetComponent< Health >( )->DealDamage(collisionPoint, damage, crit );
 
-		if (!crit)
-			objHit->GetTransform( )->AddChild( e->GetTransform( ) );
-	}
+        if (!crit && e)
+            objHit->GetTransform( )->AddChild( e->GetTransform( ) );
+    }
 
 
     CreateTrail( weapon, collisionPoint );

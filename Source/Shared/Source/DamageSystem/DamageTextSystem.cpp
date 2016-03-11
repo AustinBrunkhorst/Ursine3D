@@ -110,6 +110,9 @@ void DamageTextSystem::createDamageText(const game::DamageEventArgs* args)
         damageText = m_world->CreateEntityFromArchetype( m_normText );
 
     // set postion
+    if (!damageText)
+        return;
+
     auto transform = damageText->GetTransform( );
     transform->SetWorldPosition( args->hitPosition );
 

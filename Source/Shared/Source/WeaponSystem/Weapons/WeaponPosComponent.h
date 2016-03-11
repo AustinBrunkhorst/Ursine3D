@@ -2,10 +2,10 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** FirePos.h
+** WeaponPosComponent.h
 **
 ** Author:
-** - Chad George - chad.george@digipen.edu
+** - Jordan Ellis - J.Ellis@digipen.edu
 **
 ** -------------------------------------------------------------------------*/
 
@@ -13,11 +13,11 @@
 
 #include <Component.h>
 
-class FirePos : public ursine::ecs::Component
+class WeaponPos : public ursine::ecs::Component
 {
-    NATIVE_COMPONENT
+    NATIVE_COMPONENT;
 
 public:
-    FirePos(void);
+    WeaponPos(void);
     
 } Meta(Enable);

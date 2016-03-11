@@ -108,8 +108,8 @@ void InventorySystem::ChangeCurrentWeapon(Inventory* inventory)
 
         LoadWeapon( inventory );
     }
-} 
- 
+}
+
 void InventorySystem::LoadWeapon(Inventory* inventory)
 {
     WeaponSlotInfo& weaponSlot = inventory->m_inventory[ inventory->m_currWeapon ];
@@ -121,7 +121,13 @@ void InventorySystem::LoadWeapon(Inventory* inventory)
     ActivateWeapon( inventory );
 
     // Parent weapon to arm
-    inventory->m_cameraHandle->AddChildAlreadyInLocal( weaponSlot.m_weaponLoaded->GetTransform( ) );
+    auto weaponTrans = weaponSlot.m_weaponLoaded->GetTransform( );
+
+    inventory->m_weaponPosition->AddChild( weaponTrans );
+
+    weaponTrans->SetLocalPosition( SVec3::Zero( ) );
+    weaponTrans->SetLocalScale( SVec3::One( ) );
+    weaponTrans->SetLocalRotation( SQuat::Identity( ) );
 
     inventory->m_newWeapon = false;
 }
@@ -129,7 +135,7 @@ void InventorySystem::LoadWeapon(Inventory* inventory)
 void InventorySystem::ActivateWeapon(Inventory* inventory)
 {
     //create event args
-    game::WeaponActivationEventArgs args( inventory->GetOwner( ), inventory->m_cameraHandle );
+    game::WeaponActivationEventArgs args( inventory->GetOwner( ), inventory->m_weaponPosition );
 
     // set position
     Transform* trans = inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->GetTransform( );

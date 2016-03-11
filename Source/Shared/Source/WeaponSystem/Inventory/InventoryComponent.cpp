@@ -14,6 +14,7 @@
 #include "ComponentIncludes.h"
 #include "CameraComponent.h"
 #include "TransformComponent.h"
+#include "WeaponPosComponent.h"
 
 NATIVE_COMPONENT_DEFINITION( Inventory ) ;
 
@@ -59,10 +60,6 @@ Inventory::~Inventory(void)
 
 void Inventory::OnInitialize(void)
 {
-    // default positions of camera and arm to current position
-    m_cameraHandle = GetOwner( )->GetTransform( );
-    m_armHandle = GetOwner( )->GetTransform( );
-
     GetOwner( )->Listener(this)
         .On(game::SWAP_COMMAND, &Inventory::TriggerSwapWeapons);
 }
@@ -70,19 +67,11 @@ void Inventory::OnInitialize(void)
 void Inventory::Init(void)
 {
     // try to get camera position
-    auto *cam = GetOwner( )->GetComponentInChildren<ecs::Camera>( );
+    auto *weaponPos = GetOwner( )->GetComponentInChildren<WeaponPos>( );
 
-    if ( cam )
+    if (weaponPos)
     {
-        m_cameraHandle = cam->GetOwner( )->GetTransform( );
-
-        // try to get right arm position
-        auto arm = cam->GetOwner( )->GetChildByName( "RightArm" );
-
-        if ( arm )
-        {
-            m_armHandle = arm->GetTransform( );
-        }
+        m_weaponPosition = weaponPos->GetOwner( )->GetTransform( );
     }
 
 }

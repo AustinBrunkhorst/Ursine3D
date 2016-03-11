@@ -128,10 +128,7 @@ private:
     WeaponType m_prevWeapon;
 
     // position of camera
-    ursine::ecs::Transform* m_cameraHandle;
-
-    // position of arm
-    ursine::ecs::Transform* m_armHandle;
+    ursine::ecs::Transform* m_weaponPosition;
 
     // what archetype to load
     WeaponSlotInfo m_inventory[ 5 ];

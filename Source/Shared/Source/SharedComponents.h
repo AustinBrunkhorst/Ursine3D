@@ -69,6 +69,7 @@
 #include "WeaponSystem/Weapons/HitscanWeaponComponent.h"
 #include "WeaponSystem/AmmoPickUpComponent.h"
 #include "WeaponSystem/Weapons/FirePosComponent.h"
+#include "WeaponSystem/Weapons/WeaponPosComponent.h"
 #include "WeaponSystem/Inventory/InventoryComponent.h"
 #include "WeaponSystem/Projectiles/ProjectileComponent.h"
 
