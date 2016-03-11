@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** ScreenState.h
+** UIScreenConfig.h
 **
 ** Author:
 ** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
@@ -13,13 +13,22 @@
 
 #pragma once
 
+#include "UIScreenState.h"
+#include "UrsineTypes.h"
+
 namespace ursine
 {
-    enum ScreenState
+    class UIScreenScreen;
+
+    typedef uint32 UIScreenID;
+
+    struct UIScreenMessageArgs : EventArgs
     {
-        // Active and updating
-        SS_ACTIVE,
-        // Inactive and not updating
-        SS_DELETING
+        const std::string &message;
+        const Json &data;
+
+        UIScreenMessageArgs(const std::string &message, const Json &data)
+            : message( message )
+            , data( data ) { }
     };
 }

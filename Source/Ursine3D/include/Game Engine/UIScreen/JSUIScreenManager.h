@@ -14,31 +14,24 @@
 #pragma once
 
 #include "NativeJSClass.h"
-#include "ScreenManager.h"
+#include "UIScreenManager.h"
 
 #include <mutex>
 
 namespace ursine
 {
-    class JSScreenManager : public NativeJSClass
+    class JSUIScreenManager : public NativeJSClass
     {
         JAVASCRIPT_CLASS;
 
     public:
-        JSConstructor(JSScreenManager);
-
-        JSMethod(setScreen);
-        JSMethod(addOverlay);
-        JSMethod(removeScreen);
-        JSMethod(removeCurrent);
-        JSMethod(messageScreen);
-        JSMethod(getFocusedScreen);
+        JSConstructor(JSUIScreenManager);
 
     private:
-        ScreenManager *m_manager;
+        UIScreenManager *m_manager;
 
         std::mutex m_mutex;
 
-        JSScreenManager(const JSScreenManager &rhs) { }
+        JSUIScreenManager(const JSUIScreenManager &rhs) { }
     } Meta(Enable, DisplayName( "ScreenManager" ));
 }

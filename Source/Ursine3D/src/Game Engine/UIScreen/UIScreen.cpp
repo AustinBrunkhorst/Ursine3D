@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Screen.cpp
+** UIScreen.cpp
 **
 ** Author:
 ** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
@@ -13,9 +13,9 @@
 
 #include "UrsinePrecompiled.h"
 
-#include "Screen.h"
+#include "UIScreen.h"
 
-#include "ScreenManager.h"
+#include "UIScreenManager.h"
 
 namespace
 {
@@ -28,15 +28,16 @@ namespace
 
 namespace ursine
 {
-    Screen::Screen(ScreenManager *manager, bool isOverlay)
+    UIScreen::UIScreen(UIScreenManager *manager, bool isInputBlocking, int priority)
         : EventDispatcher( this )
         , m_manager( manager )
-        , m_isOverlay( isOverlay )
+        , m_isInputBlocking( isInputBlocking )
         , m_isFocused( false )
+        , m_priority( priority )
         , m_state( SS_ACTIVE )
         , m_id( 0 ) { }
 
-    void Screen::MessageUI(const std::string &message, const Json &data) const
+    void UIScreen::Message(const std::string &message, const Json &data) const
     {
         auto eventData = Json::object {
             { "screenID", static_cast<int>( m_id ) },
@@ -52,7 +53,7 @@ namespace ursine
         );
     }
 
-    void Screen::Exit(void) const
+    void UIScreen::Exit(void) const
     {
         auto exitData = Json::object {
             { "screenID", static_cast<int>( m_id ) },
@@ -66,27 +67,27 @@ namespace ursine
         );
     }
 
-    ScreenManager *Screen::GetManager(void) const
+    UIScreenManager *UIScreen::GetManager(void) const
     {
         return m_manager;
     }
 
-    ScreenState Screen::GetState(void) const
+    UIScreenState UIScreen::GetState(void) const
     {
         return m_state;
     }
 
-    ScreenID Screen::GetID(void) const
+    UIScreenID UIScreen::GetID(void) const
     {
         return m_id;
     }
 
-    bool Screen::HasInputFocus(void) const
+    bool UIScreen::HasInputFocus(void) const
     {
         return m_isFocused;
     }
 
-    void Screen::OnEntered(const std::string &name, const Json &data)
+    void UIScreen::OnEntered(const std::string &name, const Json &data)
     {
         auto enteredData = Json::object {
             { "screenName", name },
@@ -100,10 +101,5 @@ namespace ursine
             kMessageEntered, 
             enteredData
         );
-    }
-
-    void Screen::setID(ScreenID id)
-    {
-        m_id = id;
     }
 }

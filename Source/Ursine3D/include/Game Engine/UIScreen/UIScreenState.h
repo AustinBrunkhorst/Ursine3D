@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** OverlayScreen.h
+** UIScreenState.h
 **
 ** Author:
 ** - Austin Brunkhorst - A.Brunkhorst@digipen.edu
@@ -13,22 +13,13 @@
 
 #pragma once
 
-#include "Screen.h"
-
 namespace ursine
 {
-    class OverlayScreen
-        : public Screen
+    enum UIScreenState
     {
-        NATIVE_SCREEN
-
-    public:
-        OverlayScreen(ScreenManager *manager, const std::string &name);
-        virtual ~OverlayScreen(void) { }
-
-        const std::string &GetName(void) const;
-
-    private:
-        std::string m_name;
+        // Active and updating
+        SS_ACTIVE,
+        // Inactive and not updating
+        SS_DELETING
     };
 }
