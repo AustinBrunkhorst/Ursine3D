@@ -10,26 +10,26 @@ namespace ursine
     {
         namespace pipeline
         {
-            class UIResourceImporter : public ResourceImporter
+            class UIProjectImporter : public ResourceImporter
             {
                 RESOURCE_IMPORTER;
 
             public:
-                UIResourceImporter(void);
+                UIProjectImporter(void);
 
             private:
                 ResourceData::Handle Import(ResourceImportContext &context) override;
             } Meta(
                 Enable,
-                DisplayName( "UIResourceImporter" ),
+                DisplayName( "UIProjectImporter" ),
                 ResourceImporterConfig( 
-                    ExtensionList { "ui" },
+                    ExtensionList { "uiproj" },
                     typeof( ursine::rp::PassThroughProcessor )
                 ),
                 ResourceSyncConfig(
                     FileExclusionList {
                         // whitelist non build/preprocess files
-                        SYNC_EXPR_ALL_EXTENSIONS( "js|html|css|png|svg|woff2" )
+                        SYNC_EXPR_EXCLUDE_NOT( "js|html|css|png|svg|woff2" )
                     }
                 )
             );

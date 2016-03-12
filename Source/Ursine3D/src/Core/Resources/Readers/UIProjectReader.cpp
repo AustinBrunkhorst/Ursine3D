@@ -1,17 +1,17 @@
 #include "UrsinePrecompiled.h"
 
-#include "UIResourceReader.h"
-#include "UIResourceData.h"
+#include "UIProjectReader.h"
+#include "UIProjectData.h"
 
 namespace ursine
 {
     namespace resources
     {
-        UIResourceReader::UIResourceReader(void) { }
+        UIProjectReader::UIProjectReader(void) { }
 
-        ResourceData::Handle UIResourceReader::Read(ResourceReader &input)
+        ResourceData::Handle UIProjectReader::Read(ResourceReader &input)
         {
-            UIResourceData::ResourceTable table;
+            UIProjectData::ResourceTable table;
 
             unsigned entryCount;
 
@@ -40,7 +40,7 @@ namespace ursine
                 );
             }
 
-            return std::make_shared<UIResourceData>( std::move( table ) );
+            return std::make_shared<UIProjectData>( std::move( table ) );
         }
     }
 }

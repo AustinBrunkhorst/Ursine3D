@@ -1,7 +1,7 @@
 #pragma once
 
 #include "UIConfig.h"
-#include "UIResourceData.h"
+#include "UIProjectData.h"
 
 #include <cef_scheme.h>
 

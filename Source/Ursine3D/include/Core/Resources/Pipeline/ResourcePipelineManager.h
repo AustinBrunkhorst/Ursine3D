@@ -147,7 +147,7 @@ namespace ursine
                 void rebuildResource(ResourceItem::Handle resource);
 
                 // used when resources fail to build
-                void removeResource(ResourceItem::Handle resource);
+                void removeResource(ResourceItem::Handle resource, bool deleteFiles = false);
 
                 ///////////////////////////////////////////////////////////////
                 // File Watching

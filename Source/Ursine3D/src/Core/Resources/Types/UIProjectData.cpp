@@ -1,16 +1,16 @@
 #include "UrsinePrecompiled.h"
 
-#include "UIResourceData.h"
-#include "UIResourceReader.h"
+#include "UIProjectData.h"
+#include "UIProjectReader.h"
 
 namespace ursine
 {
     namespace resources
     {
-        UIResourceData::UIResourceData(ResourceTable &&table)
+        UIProjectData::UIProjectData(ResourceTable &&table)
             : m_table( std::move( table ) ) { }
 
-        BinaryData::Handle UIResourceData::GetEntry(const fs::path &entryPath) const
+        BinaryData::Handle UIProjectData::GetEntry(const fs::path &entryPath) const
         {
             auto search = m_table.find( entryPath );
 
@@ -20,7 +20,7 @@ namespace ursine
             return search->second;
         }
 
-        void UIResourceData::Write(pipeline::ResourceWriter &output)
+        void UIProjectData::Write(pipeline::ResourceWriter &output)
         {
             output.Write( static_cast<unsigned>( m_table.size( ) ) );
 
@@ -31,9 +31,9 @@ namespace ursine
             }
         }
 
-        meta::Type UIResourceData::GetReaderType(void)
+        meta::Type UIProjectData::GetReaderType(void)
         {
-            return typeof( UIResourceReader );
+            return typeof( UIProjectReader );
         }
     }
 }

@@ -6,18 +6,18 @@ namespace ursine
 {
     namespace resources
     {
-        class UIResourceReader : public ResourceTypeReader
+        class UIProjectReader : public ResourceTypeReader
         {
             RESOURCE_TYPE_READER;
 
         public:
-            UIResourceReader(void);
+            UIProjectReader(void);
 
         private:
             ResourceData::Handle Read(ResourceReader &input) override;
         } Meta(
             Enable,
-            DisplayName( "UIResourceReader" )
+            DisplayName( "UIProjectReader" )
         );
     }
 }

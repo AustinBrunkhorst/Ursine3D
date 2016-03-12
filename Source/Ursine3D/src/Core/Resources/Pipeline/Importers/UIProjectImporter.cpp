@@ -1,7 +1,7 @@
 #include "UrsinePrecompiled.h"
 
-#include "UIResourceImporter.h"
-#include "UIResourceData.h"
+#include "UIProjectImporter.h"
+#include "UIProjectData.h"
 
 namespace ursine
 {
@@ -10,22 +10,22 @@ namespace ursine
         void importEntry(
             const fs::path &sourcePath,
             const fs::path &entryPath, 
-            resources::UIResourceData::ResourceTable &table
+            resources::UIProjectData::ResourceTable &table
         );
     }
 
-    rp::UIResourceImporter::UIResourceImporter(void) { }
+    rp::UIProjectImporter::UIProjectImporter(void) { }
 
-    resources::ResourceData::Handle rp::UIResourceImporter::Import(ResourceImportContext &context)
+    resources::ResourceData::Handle rp::UIProjectImporter::Import(ResourceImportContext &context)
     {
-        UIResourceData::ResourceTable table;
+        UIProjectData::ResourceTable table;
 
         auto directoryFileName = context.resource->GetSourceFileName( );
 
         auto *syncConfig = decltypeof( *this ).GetMeta( ).GetProperty<ResourceSyncConfig>( );
 
         UAssert( syncConfig,
-            "UIResourceImporter must have a ResourceSyncConfig meta property."    
+            "UIProjectImporter must have a ResourceSyncConfig meta property."    
         );
 
         fs::RecursiveDirectoryIterator it( directoryFileName );
@@ -47,7 +47,7 @@ namespace ursine
             importEntry( entry, relativePath, table );
         }
 
-        return std::make_shared<UIResourceData>( std::move( table ) );
+        return std::make_shared<UIProjectData>( std::move( table ) );
     }
 
     namespace
@@ -55,7 +55,7 @@ namespace ursine
         void importEntry(
             const fs::path &sourcePath,
             const fs::path &entryPath,
-            resources::UIResourceData::ResourceTable &table
+            resources::UIProjectData::ResourceTable &table
         )
         {
             auto data = std::make_shared<BinaryData>( );

@@ -6,7 +6,7 @@ namespace ursine
 {
     namespace resources
     {
-        class UIResourceData : public ResourceData
+        class UIProjectData : public ResourceData
         {
             RESOURCE_DATA;
 
@@ -17,7 +17,7 @@ namespace ursine
                 fs::PathHasher
             > ResourceTable;
 
-            UIResourceData(ResourceTable &&table);
+            UIProjectData(ResourceTable &&table);
 
             BinaryData::Handle GetEntry(const fs::path &entryPath) const;
         private:

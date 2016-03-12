@@ -28,7 +28,7 @@ namespace ursine
         );
     }
 
-    resources::pipeline::FontImporter::FontImporter(void)
+    rp::FontImporter::FontImporter(void)
     {
         
     }
@@ -78,6 +78,10 @@ namespace ursine
             auto extension = entry.extension( ).string( );
 
             utils::MakeLowerCase( extension );
+
+            // remove the period from the extension
+            if (!extension.empty( ) && extension[ 0 ] == '.')
+                extension.erase( extension.begin( ) );
 
             // if it's a texture, assume it's a page
             if (textureExtensions.Exists( extension ))

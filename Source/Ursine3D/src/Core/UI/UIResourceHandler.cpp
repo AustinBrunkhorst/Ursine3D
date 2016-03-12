@@ -153,14 +153,14 @@ namespace ursine
         auto data = m_manager->LoadReference( guid );
 
         // doesn't exist, or isn't the correct type
-        if (!data || data->GetType( ) != typeof( resources::UIResourceData ))
+        if (!data || data->GetType( ) != typeof( resources::UIProjectData ))
         {
             callback->Cancel( );
 
             return;
         }
 
-        auto *resource = static_cast<resources::UIResourceData*>( data.get( ) );
+        auto *resource = static_cast<resources::UIProjectData*>( data.get( ) );
 
         if (!resource)
         {

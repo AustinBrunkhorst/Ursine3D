@@ -136,7 +136,7 @@ namespace ursine
 
             // Reason of uatype bug : when load archetype, even though there's no model, animator constructed and destroyed.
             // and couldn't find Model3D Component, but we still call that, and fail.
-            ecs::EntityHandle entity = world->GetEntityFromName( kAnimationListName );
+            //ecs::EntityHandle entity = world->GetEntityFromName( kAnimationListName );
             ecs::Model3D* model = owner->GetComponent<Model3D>( );
             if( model )
             {

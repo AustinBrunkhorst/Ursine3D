@@ -1119,11 +1119,13 @@ namespace ursine
         // watcher implicity
         buildResource( buildContext );
         buildResourcePreview( buildContext );
+
+        InvalidateResourceCache( resource );
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
-    void rp::ResourcePipelineManager::removeResource(ResourceItem::Handle resource)
+    void rp::ResourcePipelineManager::removeResource(ResourceItem::Handle resource, bool deleteFiles /*= false */)
     {
         auto *directoryNode = resource->m_directoryNode;
 
@@ -1144,6 +1146,22 @@ namespace ursine
         m_database.erase( resource->m_guid );
 
         m_pathToResource.erase( resource->m_fileName );
+
+        if (deleteFiles)
+        {
+            try
+            {
+                remove( resource->m_fileName );
+                remove( resource->m_metaFileName );
+                remove( resource->m_buildFileName );
+                remove( resource->m_buildPreviewFileName );
+                remove( resource->m_buildCacheFileName );
+            }
+            catch (...)
+            {
+                URSINE_TODO( "Determine behavior" );
+            }
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
