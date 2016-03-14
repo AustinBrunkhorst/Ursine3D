@@ -199,13 +199,12 @@ namespace ursine
         };
 
         // assign the parent if it exists
-        if (resource->m_parent != nullptr)
-            output[ kCacheKeyParent ] = to_string( resource->m_parent->m_guid );
+        output[ kCacheKeyParent ] = to_string( resource->m_buildCache.parent );
 
         Json::array generatedResources;
 
         for (auto &generated : cache.generatedResources)
-            generatedResources.emplace_back( to_string( generated->m_guid ) );
+            generatedResources.emplace_back( to_string( generated ) );
 
         output[ kCacheKeyGeneratedResources ] = generatedResources;
 
@@ -523,39 +522,11 @@ namespace ursine
         const fs::path &fileName
     )
     {
-        auto &importerTypes = getImporterTypes( );
-        auto extension = fileName.extension( ).string( );
+        auto meta = createDefaultResourceMeta( fileName );
 
-        // remove period from extension
-        if (!extension.empty( ) && extension.front( ) == '.')
-            extension.erase( extension.begin( ) );
-
-        utils::MakeLowerCase( extension );
-
-        meta::Type importerType;
-        meta::Type processorType;
-
-        std::tie( importerType, processorType ) = 
-            detectResourceHandlers( fileName );
-
-        // importer does not exist, ignore it.
-        if (!importerType.IsValid( ))
+        // doesn't have an importer
+        if (!meta.importer.IsValid( ))
             return nullptr;
-
-        UAssertCatchable( importerType.GetDynamicConstructor( ).IsValid( ),
-            "Importer '%s' does not have a default dynamic constructor.",
-            importerType.GetName( ).c_str( )
-        );
-
-        UAssertCatchable( processorType.IsValid( ),
-            "Importer '%s' specified an invalid processor.",
-            importerType.GetName( ).c_str( )
-        );
-
-        UAssertCatchable( processorType.GetDynamicConstructor( ).IsValid( ),
-            "Processor '%s' does not have a default dynamic constructor.",
-            processorType.GetName( ).c_str( )
-        );
 
         ResourceItem::Handle resource;
 
@@ -575,39 +546,7 @@ namespace ursine
             return nullptr;
         }
 
-        resource->m_metaData.importer = importerType;
-        resource->m_metaData.processor = processorType;
-
-        auto &processorMeta = processorType.GetMeta( );
-
-        auto *processorConfig = 
-            processorMeta.GetProperty<ResourceProcessorConfig>( );
-
-        // no config assumes no import options
-        if (processorConfig)
-        {
-            auto optionsType = processorConfig->optionsType;
-
-            if (!optionsType.IsValid( ))
-            {
-                removeResource( resource );
-
-                UAssertCatchable( false,
-                    "Processor '%s' specified invalid options type.",
-                    processorType.GetName( ).c_str( )
-                );
-            }
-
-            auto defaultOptions = optionsType.Create( );
-
-            // serialize with the default options
-            resource->m_metaData.processorOptions = 
-                optionsType.SerializeJson( defaultOptions );
-        }
-        else
-        {
-            resource->m_metaData.processorOptions = Json::object { };
-        }
+        resource->m_metaData = meta;
 
         try
         {
@@ -636,7 +575,7 @@ namespace ursine
         auto resource = std::make_shared<ResourceItem>( this, guid );
 
         resource->m_fileName = fileName;
-        resource->m_metaFileName = change_extension( fileName, kMetaFileExtension );
+        resource->m_metaFileName = getResourceMetaPath( fileName );
         resource->m_buildFileName = getResourceBuildPath( guid );
         resource->m_buildPreviewFileName = getResourceBuildPreviewPath( guid );
         resource->m_buildCacheFileName = getResourceBuildCachePath( guid );
@@ -660,14 +599,28 @@ namespace ursine
         const fs::path &sourceFile
     )
     {
+        auto search = m_pathToResource.find( sourceFile );
+
+        // if the source file already exists, return the respective resource item
+        if (search != m_pathToResource.end( ))
+            return search->second;
+
+        auto meta = createDefaultResourceMeta( sourceFile );
+
         auto generated = allocateResource( sourceFile );
 
-        generated->m_parent = parent;
+        generated->m_metaData = meta;
 
         if (parent)
-            parent->m_buildCache.generatedResources.emplace( generated );
+        {
+            generated->m_buildCache.parent = parent->m_guid;
+
+            parent->m_buildCache.generatedResources.emplace( generated->m_guid );
+        }
 
         insertResource( generated );
+
+        InvalidateResourceMeta( generated );
 
         return generated;
     }
@@ -862,16 +815,9 @@ namespace ursine
         // convert the string values in the json array to the array of GUIDs
         for (auto &obj : generatedResourcesObj.array_items( ))
         {
-            auto guidString = obj.string_value( );
-
-            auto item = GetItem( GUIDStringGenerator( )( guidString ) );
-
-            UAssert( item != nullptr,
-                "Unable to resolve generated resource '%s'.",
-                guidString.c_str( )
+            generatedResources.emplace( 
+                GUIDStringGenerator( )( obj.string_value( ) ) 
             );
-
-            generatedResources.emplace( item );
         }
 
         auto &parentObj = cacheJson[ kCacheKeyParent ];
@@ -879,13 +825,8 @@ namespace ursine
         // attempt to set the parent with the cached GUID
         if (parentObj.is_string( ))
         {
-            resource->m_parent = GetItem(
-                GUIDStringGenerator( )( parentObj.string_value( ) )
-            );
-        }
-        else
-        {
-            resource->m_parent = nullptr;
+            resource->m_buildCache.parent =
+                GUIDStringGenerator( )( parentObj.string_value( ) );
         }
     }
 
@@ -1286,7 +1227,7 @@ namespace ursine
         if (now - action.time > kResourceActionStaleDuration)
             return;
 
-        /*switch (action.type)
+        switch (action.type)
         {
         case efsw::Actions::Add:
             std::cout << "DIR (" << action.directory << ") FILE (" << action.fileName << ") has event Added" << std::endl;
@@ -1302,7 +1243,7 @@ namespace ursine
             break;
         default:
             std::cout << "Should never happen!" << std::endl;
-        }*/
+        }
 
         switch (action.type)
         {
@@ -1503,7 +1444,11 @@ namespace ursine
 
     fs::path rp::ResourcePipelineManager::getResourceMetaPath(const fs::path &fileName) const
     {
-        return change_extension( fileName, kMetaFileExtension );
+        auto metaPath = fileName;
+
+        metaPath.concat( kMetaFileExtension );
+
+        return metaPath;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1603,5 +1548,83 @@ namespace ursine
             handlers.second = importerConfig->defaultProcessor;
 
         return handlers;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    rp::ResourceMetaData rp::ResourcePipelineManager::createDefaultResourceMeta(
+        const fs::path &sourceFile
+    )
+    {
+        ResourceMetaData meta;
+
+        auto extension = sourceFile.extension( ).string( );
+
+        // remove period from extension
+        if (!extension.empty( ) && extension.front( ) == '.')
+            extension.erase( extension.begin( ) );
+
+        utils::MakeLowerCase( extension );
+
+        meta::Type importerType;
+        meta::Type processorType;
+
+        std::tie( importerType, processorType ) = 
+            detectResourceHandlers( sourceFile );
+
+        // importer does not exist, ignore it.
+        if (!importerType.IsValid( ))
+            return meta;
+
+        UAssertCatchable( importerType.GetDynamicConstructor( ).IsValid( ),
+            "Importer '%s' does not have a default dynamic constructor.",
+            importerType.GetName( ).c_str( )
+        );
+
+        UAssertCatchable( processorType.IsValid( ),
+            "Importer '%s' specified an invalid processor.",
+            importerType.GetName( ).c_str( )
+        );
+
+        UAssertCatchable( processorType.GetDynamicConstructor( ).IsValid( ),
+            "Processor '%s' does not have a default dynamic constructor.",
+            processorType.GetName( ).c_str( )
+        );
+
+        meta.importer = importerType;
+        meta.processor = processorType;
+
+        auto &processorMeta = processorType.GetMeta( );
+
+        auto *processorConfig = 
+            processorMeta.GetProperty<ResourceProcessorConfig>( );
+
+        // no config assumes no import options
+        if (processorConfig)
+        {
+            auto optionsType = processorConfig->optionsType;
+
+            UAssertCatchable( optionsType.IsValid( ),
+                "Processor '%s' specified invalid options type.",
+                processorType.GetName( ).c_str( )
+            );
+
+            auto defaultOptionsCtor = optionsType.GetConstructor( );
+
+            UAssertCatchable( defaultOptionsCtor.IsValid( ),
+                "Processor options type '%s' missing default constructor.",
+                optionsType.GetName( ).c_str( )
+            );
+
+            // serialize with the default options
+            meta.processorOptions = 
+                optionsType.SerializeJson( defaultOptionsCtor.Invoke( ) );
+        }
+        else
+        {
+            meta.processorOptions = Json::object { };
+        }
+
+        return meta;
     }
 }

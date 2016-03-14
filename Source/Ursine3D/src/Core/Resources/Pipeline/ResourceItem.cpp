@@ -9,8 +9,11 @@ namespace ursine
         : m_isDirectoryResource( false )
         , m_manager( manager )
         , m_directoryNode( nullptr )
-        , m_parent( nullptr )
-        , m_guid( guid ) { }
+        , m_guid( guid )
+    {
+        // default to NULL
+        m_buildCache.parent = GUIDNullGenerator( )( );
+    }
 
     rp::ResourceItem::~ResourceItem(void) { }
 
@@ -21,7 +24,7 @@ namespace ursine
 
     rp::ResourceItem::Handle rp::ResourceItem::GetParent(void) const
     {
-        return m_parent;
+        return m_manager->GetItem( m_buildCache.parent );
     }
 
     const GUID &rp::ResourceItem::GetGUID(void) const
@@ -42,6 +45,11 @@ namespace ursine
     const fs::path &rp::ResourceItem::GetBuildFileName(void) const
     {
         return m_buildFileName;
+    }
+
+    const fs::path &rp::ResourceItem::GetBuildCacheFileName(void) const
+    {
+        return m_buildCacheFileName;
     }
 
     bool rp::ResourceItem::HasPreview(void) const

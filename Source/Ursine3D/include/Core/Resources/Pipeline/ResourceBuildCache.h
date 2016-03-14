@@ -16,8 +16,12 @@ namespace ursine
                 // Runtime type of the processed resource
                 meta::Type processedType;
 
+                // Resource that generated this resource.
+                // NULL GUID if it doesn't exist
+                GUID parent;
+
                 // Resources that were generated from this resource
-                std::unordered_set<std::shared_ptr<ResourceItem>> generatedResources;
+                std::unordered_set<GUID, GUIDHasher> generatedResources;
             };
         }
     }

@@ -191,6 +191,9 @@ namespace ursine
                 fs::path getResourceBuildCachePath(const GUID &guid) const;
 
                 TypePair detectResourceHandlers(const fs::path &path) const;
+
+                // creates the default meta data for the give source file
+                ResourceMetaData createDefaultResourceMeta(const fs::path &sourceFile);
             };
         }
     }

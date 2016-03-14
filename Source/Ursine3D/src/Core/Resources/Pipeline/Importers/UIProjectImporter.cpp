@@ -82,9 +82,11 @@ namespace ursine
         auto &generated = context.resource->GetBuildCache( ).generatedResources;
 
         // collect all generated UIScreens
-        for (auto &item : generated)
+        for (auto &guid : generated)
         {
-            if (item->GetBuildCache( ).processedType == typeof( UIScreenData ))
+            auto item = context.pipeline->GetItem( guid );
+
+            if (item && item->GetBuildCache( ).processedType == typeof( UIScreenData ))
                 cachedScreens.emplace( item->GetSourceFileName( ) );
         }
 

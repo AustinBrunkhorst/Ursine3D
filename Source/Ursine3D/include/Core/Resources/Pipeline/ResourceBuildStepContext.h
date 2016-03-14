@@ -15,7 +15,7 @@ namespace ursine
                 ResourcePipelineManager *pipeline;
                 ResourceItem::Handle resource;
 
-                ResourceItem::Set generatedResources;
+                ResourceItem::List generatedResources;
 
                 ResourceBuildStepContext(ResourcePipelineManager *pipeline, ResourceItem::Handle resource);
 

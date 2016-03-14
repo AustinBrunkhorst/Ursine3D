@@ -19,7 +19,6 @@ namespace ursine
             public:
                 typedef std::shared_ptr<ResourceItem> Handle;
                 typedef std::vector<Handle> List;
-                typedef std::unordered_set<Handle> Set;
 
                 ResourceItem(ResourcePipelineManager *manager, const GUID &guid);
                 ~ResourceItem(void);
@@ -34,6 +33,7 @@ namespace ursine
 
                 const fs::path &GetSourceFileName(void) const;
                 const fs::path &GetBuildFileName(void) const;
+                const fs::path &GetBuildCacheFileName(void) const;
 
                 bool HasPreview(void) const;
                 const fs::path &GetPreviewFileName(void) const;
@@ -50,8 +50,6 @@ namespace ursine
 
                 ResourcePipelineManager *m_manager;
                 ResourceDirectoryNode *m_directoryNode;
-
-                Handle m_parent;
 
                 fs::path m_fileName;
                 fs::path m_metaFileName;

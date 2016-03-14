@@ -14,7 +14,7 @@ namespace ursine
     {
         auto generated = pipeline->allocateGeneratedResource( resource, sourceFile );
 
-        generatedResources.emplace( generated );
+        generatedResources.emplace_back( generated );
 
         return generated;
     }
