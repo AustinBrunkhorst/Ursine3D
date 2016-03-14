@@ -25,136 +25,58 @@ namespace
 {
     const std::string kAnimationListName = "Animation_List";
     const std::string kRigRootName = "Rig_Root";
+    const std::string kRigName = "RigName";
 }
 
 namespace ursine
 {
     namespace ecs
     {
-        StateBlender::StateBlender(void)
-            : m_currState( "" )
-            , m_futState( "" )
-            , m_ctrnsRate( 1.f )
-            , m_ftrnsRate( 0.f )
-            , m_ctrnsFrm( 0 )
-            , m_ftrnsFrm( 0 )
-        {
-        }
-
-        const std::string &StateBlender::GetcurrState(void) const
-        {
-            return m_currState;
-        }
-
-        void StateBlender::SetcurrState(const std::string &cstate)
-        {
-            m_currState = cstate;
-        }
-
-        const std::string &StateBlender::GetfutState(void) const
-        {
-            return m_futState;
-        }
-
-        void StateBlender::SetfutState(const std::string &fstate)
-        {
-            m_futState = fstate;
-        }
-
-        const float &StateBlender::GetcurrTransPosRatio(void) const
-        {
-            return m_ctrnsRate;
-        }
-
-        void StateBlender::SetcurrTransPosRatio(const float &tPos)
-        {
-            m_ctrnsRate = tPos;
-        }
-
-        const float &StateBlender::GetfutTransPosRatio(void) const
-        {
-            return m_ftrnsRate;
-        }
-
-        void StateBlender::SetfutTransPosRatio(const float &tPos)
-        {
-            m_ftrnsRate = tPos;
-        }
-
-        const unsigned int &StateBlender::GetcurrTransFrm(void) const
-        {
-            return m_ctrnsFrm;
-        }
-
-        void StateBlender::SetcurrTransFrm(const unsigned int &tFrm)
-        {
-            m_ctrnsFrm = tFrm;
-        }
-
-        const unsigned int &StateBlender::GetfutTransFrm(void) const
-        {
-            return m_ftrnsFrm;
-        }
-
-        void StateBlender::SetfutTransFrm(const unsigned int &tFrm)
-        {
-            m_ftrnsFrm = tFrm;
-        }
-
-        const StateBlender *StateBlender::GetStateBlenderByNames(const std::string &currst, const std::string &futst)
-        {
-            if (currst == m_currState && futst == m_futState)
-                return this;
-
-            return nullptr;
-        }
-
         NATIVE_COMPONENT_DEFINITION(Animator);
 
         Animator::Animator( )
             : BaseComponent( )
-            , m_playing(true)
-            , m_debug(false)
-            , m_changeState(false)
-            , m_speedScalar(1.0f)
-            , m_rig("")
-            , m_curStName("")
-            , m_futStName("")
-            , m_animationName("")
-            , m_stateName("")
-        {
-        }
+            , m_playing( true )
+            , m_debug( false )
+            , m_changeState( false )
+            , m_speedScalar( 1.0f )
+            , m_curStName( "" )
+            , m_futStName( "" )
+            , m_stateName( "" ) { }
 
         Animator::~Animator(void)
         {
-            m_animlist.clear( );
+            auto model = GetOwner( )->GetComponent<Model3D>( );
 
-            URSINE_TODO( "Jun! you should clear animation list, rig" );
-            /*auto owner = GetOwner();
-            auto world = owner->GetWorld();
+            if (!model)
+                return;
 
-            ecs::EntityHandle entity = world->GetEntityFromName( kAnimationListName );
-
-            auto &matrixPalette = owner->GetComponent<Model3D>()->GetMatrixPalette();
-            for (auto &x : matrixPalette)
-            {
-                x = SMat4::Identity();
-            }*/
+            // clean up our model's matrices
+            model->clearMatrixPalette( );
         }
 
         void Animator::OnInitialize(void)
         {
             // clean up our model's matrices
-            auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
-            for (auto &x : matrixPalette)
-            {
-                x = SMat4::Identity( );
-            }
+            auto model = GetOwner( )->GetComponent<Model3D>( );
+
+            if (model)
+                model->clearMatrixPalette( );
         }
 
-        void Animator::OnSceneReady(Scene *scene)
+        void Animator::OnSerialize(Json::object &output) const
         {
-            //importAnimation( );
+            output[ kRigName ] = m_rig;
+        }
+
+        void Animator::OnDeserialize(const Json &input)
+        {
+            auto &value = input[ kRigName ];
+
+            if (value.is_null( ))
+                return;
+
+            m_rig = value.string_value( );
         }
 
         void Animator::UpdateAnimation(const float dt)
@@ -165,19 +87,26 @@ namespace ursine
 
             for (auto &x : stArray)
             {
-                if (x.GetName( ) == "")
+                if (x.GetStateName( ) == "")
                     continue;
-                if (x.GetName( ) == m_curStName)
+                if (x.GetStateName( ) == m_curStName)
                     currentState = &x;
-                if (x.GetName( ) == m_futStName)
+                if (x.GetStateName( ) == m_futStName)
                     futureState = &x;
             }
 
             if (!currentState)
                 return;
 
+            if (!currentState->m_loaded)
+                loadStateAnimation( currentState );
+
+            if (futureState && !futureState->m_loaded)
+                loadStateAnimation( futureState );
+
             const Animation *currentAnimation = ( nullptr == currentState ) ? nullptr : currentState->GetAnimation( );
             const Animation *futureAnimation = ( nullptr == futureState ) ? nullptr : futureState->GetAnimation( );
+
             auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
 
             if (nullptr == currentAnimation || nullptr == rig)
@@ -196,13 +125,13 @@ namespace ursine
             else
                 transFactor = 0.0;
 
-            auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->GetMatrixPalette( );
+            auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->getMatrixPalette( );
             std::vector<SMat4> tempVec;
 
             tempVec.resize( 100 );
 
             // blending / playing animation should take place in here
-            UpdateState(currentState, currentAnimation, futureState, futureAnimation, dt, transFactor);
+            UpdateState( currentState, currentAnimation, futureState, futureAnimation, dt, transFactor );
 
             // generate the matrices
             AnimationBuilder::GenerateAnimationData(
@@ -340,22 +269,12 @@ namespace ursine
         {
             m_speedScalar = scalar;
         }
-        
-        const std::string &Animator::GetRig(void) const
-        {
-            return m_rig;
-        }
-
-        void Animator::SetRig(const std::string &rig)
-        {
-            m_rig = rig;
-        }
 
         float Animator::GetAnimationTimePosition(void) const
         {
             for (auto &x : stArray)
             {
-                if (x.GetName( ) == m_curStName)
+                if (x.GetStateName( ) == m_curStName)
                     return x.GetTimePosition( );
             }
             return 0.0f;
@@ -365,7 +284,7 @@ namespace ursine
         {
             for (auto &x : stArray)
             {
-                if (x.GetName( ) == m_curStName)
+                if (x.GetStateName( ) == m_curStName)
                 {
                     x.SetTimePosition( position );
                     return;
@@ -373,58 +292,31 @@ namespace ursine
             }
         }
 
-        const resources::ResourceReference &Animator::GetClip(void) const
+        bool Animator::loadStateAnimation(AnimationState *state) const
         {
-            return m_clipResource;
-        }
-
-        void Animator::SetClip(const resources::ResourceReference &clip)
-        {
-            m_clipResource = clip;
-        
-            if (!resourcesAreAvailable( ))
-                return;
-
-            invalidateClip( );
-
-            NOTIFY_COMPONENT_CHANGED( "clip", m_clipResource );
-        }
-
-        void Animator::invalidateClip( )
-        {
-            auto data = loadResource<resources::AnimationClipData>( m_clipResource );
+            // TODO: Ask Austin
+            auto data = loadResource<resources::AnimationClipData>( state->m_clip );
 
             std::string str;
 
             if (data == nullptr)
+                return false;
+
+            auto handle = data->GetAnimeHandle( );
+            auto info = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( handle );
+
+            state->m_animation = AnimationBuilder::GetAnimationByName( info->name );
+
+            if (state->m_animation == nullptr)
             {
-            #if defined(URSINE_WITH_EDITOR)
+                AnimationBuilder::LoadAnimation( *info );
 
-                NotificationConfig config;
-
-                config.type = NOTIFY_WARNING;
-                config.header = "Warning";
-                config.message = "There is no matching animation clip resource.";
-                config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds( 5.0f );
-
-                m_animationName = "";
-
-            #else
-
-                return;
-
-            #endif
+                state->m_animation = AnimationBuilder::GetAnimationByName( info->name );
             }
-            else
-            {
-                auto handle = data->GetAnimeHandle( );
 
-                m_animationName = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( handle )->name;
+            state->m_loaded = true;
 
-                for (auto &state : stArray)
-                    state.OnSceneReady( );
-            }
+            return true;
         }
 
         const std::string &Animator::GetCurrentState(void) const
@@ -491,7 +383,7 @@ namespace ursine
                 else
                 {
                     // need to check state blender
-                    StateBlender *stb = GetStateBlenderByNames(currSt->GetName( ), futSt->GetName( ));
+                    StateBlender *stb = GetStateBlenderByNames(currSt->GetStateName( ), futSt->GetStateName( ));
 
                     // if user didn't defined state blender, 
                     // then just start blending right now without delay.
@@ -617,8 +509,8 @@ namespace ursine
         }
         
         void Animator::ChangeState(AnimationState *currSt, AnimationState *futSt,
-                                   const float &currloopTimePos, const float &futloopTimePos,
-                                   const float &currNoloopTimePos, const float &futNoloopTimePos)
+                                   float currloopTimePos, float futloopTimePos,
+                                   float currNoloopTimePos, float futNoloopTimePos)
         {
             // if change state is checked, change state as future state
             if (m_changeState)
@@ -650,7 +542,7 @@ namespace ursine
         }
 
         // find the closest animation keyframe of the state, and set a transition position
-        void Animator::GetTransFrmByRatio(AnimationState &state, unsigned int &frameIndex, const float &ratio)
+        void Animator::GetTransFrmByRatio(AnimationState &state, unsigned int &frameIndex, float ratio)
         {
             unsigned keyframeCount = state.GetAnimation( )->GetRigKeyFrameCount( );
             auto &firstFrame = state.GetAnimation( )->GetKeyframe( 0, 0 );
@@ -673,7 +565,7 @@ namespace ursine
         }
 
 
-        StateBlender *Animator::GetStateBlenderByNames(const std::string& currst, const std::string& futst)
+        StateBlender *Animator::GetStateBlenderByNames(const std::string &currst, const std::string &futst)
         {
             NotificationConfig config;
 
@@ -702,22 +594,6 @@ namespace ursine
 
         void Animator::ImportRig(void)
         {
-            // If the name isn't typed in yet
-            if (m_rig.size( ) == 0)
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_INFO;
-                config.header = "Error";
-                config.message = "Please type in the name of the rig.";
-                config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds( 5.0f );
-
-                EditorPostNotification( config );
-
-                return;
-            }
-
             auto owner = GetOwner( );
             auto rigRoot = owner->GetChildByName( kRigRootName );
 
@@ -753,20 +629,19 @@ namespace ursine
 
                 config.buttons = { yes, no };
 
-                EditorPostNotification(config);
+                EditorPostNotification( config );
                 return;
             }
 
-            // Get rig by name
-            auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
+            auto rigName = GetOwner( )->GetComponent<Model3D>( )->GetModelName( );
 
-            if (!rig)
+            if (rigName == "")
             {
                 NotificationConfig config;
 
-                config.type = NOTIFY_INFO;
+                config.type = NOTIFY_ERROR;
                 config.header = "Error";
-                config.message = "The rig name entered is invalid.";
+                config.message = "The Model3D component doesn't have a model.";
                 config.dismissible = true;
                 config.duration = TimeSpan::FromSeconds( 5.0f );
 
@@ -784,6 +659,12 @@ namespace ursine
 
         void Animator::importRig(void)
         {
+            // Get the rig name from the model
+            m_rig = GetOwner( )->GetComponent<Model3D>( )->GetModelName( );
+
+            if (m_rig == "")
+                return;
+
             // Create the "Rig_Root" entity
             auto owner = GetOwner( );
             auto world = owner->GetWorld( );
@@ -810,11 +691,11 @@ namespace ursine
 
             enableDeletionOnEntities( boneEntity );
 
-            parent->AddChildAlreadyInLocal( boneTrans );
+            boneTrans->SetLocalPosition( bone.GetTranslation( ) );
+            boneTrans->SetLocalRotation( bone.GetRotation( ) );
+            boneTrans->SetLocalScale( bone.GetScale( ) );
 
-            boneTrans->SetWorldPosition( bone.GetTranslation( ) );
-            boneTrans->SetWorldRotation( bone.GetRotation( ) );
-            boneTrans->SetWorldScale( bone.GetScale( ) );
+            parent->AddChildAlreadyInLocal( boneTrans );
 
             for (auto &child : bone.GetChildren( ))
             {
@@ -843,112 +724,6 @@ namespace ursine
             for (auto &child : *entity->GetChildren( ))
             {
                 enableDeletionOnEntities( GetOwner( )->GetWorld( )->GetEntity( child ) );
-            }
-        }
-
-#if defined(URSINE_WITH_EDITOR)
-
-        void Animator::ImportAnimation(void)
-        {
-            if (m_animationName.size( ) == 0)
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_INFO;
-                config.header = "Error";
-                config.message = "Please type in the name of the animation.";
-                config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds( 5.0f );
-
-                EditorPostNotification( config );
-
-                return;
-            }
-
-            // main thread operation
-            Application::PostMainThread( [=]
-            {
-                importAnimation( );
-            } );
-        }
-
-#endif
-
-        // import animation to the current state
-        // if I get animation builder here, how can I put animation to the state?
-        void Animator::importAnimation(void)
-        {
-            unsigned animationIndex = 0;
-            auto data = loadResource<resources::AnimationClipData>( m_clipResource );
-
-            // Check if there is same animation already
-            const Animation *checker = AnimationBuilder::GetAnimationByName( m_animationName );
-            if (nullptr == checker)
-            {
-                if (data == nullptr)
-                {
-                    NotificationConfig config;
-
-                    config.type = NOTIFY_WARNING;
-                    config.header = "Warning";
-                    config.message = "There is no matching animation clip resource.";
-                    config.dismissible = true;
-                    config.duration = TimeSpan::FromSeconds( 5.0f );
-
-                    EditorPostNotification( config );
-                }
-                else
-                {
-                    auto handle = data->GetAnimeHandle( );
-
-                    auto *animInfo = GetCoreSystem(graphics::GfxAPI)->ResourceMgr.GetAnimInfo( handle );
-
-                    if (animInfo->IsValid( ))
-                        animationIndex = AnimationBuilder::LoadAnimation( *animInfo, m_animationName );
-                }
-            }
-
-            for (auto &state : stArray)
-                state.OnSceneReady( );
-
-            // Check if the animation is in animlist, push back if not
-            bool bExist = false;
-            for (auto &x : m_animlist)
-            {
-                if (!x)
-                    continue;
-
-                if (m_animationName == x->GetName( ))
-                {
-                    bExist = true;
-                    break;
-                }
-            }
-
-            if (!bExist)
-            {
-               // add to animlist
-                m_animlist.push_back( AnimationBuilder::GetAnimationByName( m_animationName ) );
-
-                // Get the animation list entity.  If it doesn't exist, create it
-                auto owner = GetOwner( );
-                auto world = owner->GetWorld( );
-                auto animList = owner->GetChildByName( kAnimationListName );
-
-                if (!animList)
-                {
-                    animList = world->CreateEntity( kAnimationListName );
-                    owner->GetTransform( )->AddChildAlreadyInLocal( animList->GetTransform( ) );
-                }
-
-                auto alTrans = animList->GetTransform( );
-                auto newEntity = animList->GetChildByName( m_animationName );
-
-                if (!newEntity)
-                {
-                    newEntity = world->CreateEntity( m_animationName );
-                    alTrans->AddChildAlreadyInLocal( newEntity->GetTransform( ) );
-                }
             }
         }
     }

@@ -119,8 +119,6 @@ namespace ursine
             void OnInitialize(void) override;
             void OnSceneReady(Scene *scene) override;
 
-            std::vector<SMat4> &GetMatrixPalette(void);
-
             const resources::ResourceReference &GetModel(void) const;
             void SetModel(const resources::ResourceReference &model);
 
@@ -169,7 +167,11 @@ namespace ursine
             void OnSerialize(Json::object &output) const override;
             void OnDeserialize(const Json &input) override;
 
+            std::string GetModelName(void) const;
+
         private:
+            friend class Animator;
+
             graphics::GfxAPI *m_graphics;
 
             // This model component's model in the renderer
@@ -184,6 +186,10 @@ namespace ursine
 
             void invalidateTexture(bool unload = true);
             void invalidateModel(bool unload = true);
+
+            void clearMatrixPalette(void);
+
+            std::vector<SMat4> &getMatrixPalette(void);
 
         } Meta(Enable, WhiteListMethods, DisplayName( "Model3D" ));
     }

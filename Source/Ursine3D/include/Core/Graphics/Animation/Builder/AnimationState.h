@@ -13,11 +13,17 @@
 ** -------------------------------------------------------------------------*/
 
 #pragma once
+
 #include "Animation.h"
-//this is per-instance data that keeps track of the current state of our animation
+#include "AnimationClipData.h"
 
 namespace ursine
 {
+    namespace ecs
+    {
+        class Animator;
+    }
+
     class AnimationState
     {
     public:
@@ -25,22 +31,24 @@ namespace ursine
             bool loopAnimation,
             IsLooping,
             SetLooping
-            );
+        );
 
         EditorField(
             std::string stateName,
-            GetName,
-            SetName
-            );
+            GetStateName,
+            SetStateName
+        );
 
         // how can I add multiple animations in animation state?
         // how can I use combo box for this?
         // Array<Animation> => no, in this case, we should edit
-        EditorField(
-            std::string animName,
-            GetAnimationName,
-            SetAnimationName
-            );
+        // Get animation as a resource not by name
+        EditorResourceField(
+            ursine::resources::AnimationClipData,
+            clip,
+            GetClip,
+            SetClip
+        );
 
         /** @brief constructor
         *
@@ -48,13 +56,11 @@ namespace ursine
         */
         AnimationState(void);
 
-        void OnSceneReady(void);
-
         bool IsLooping(void) const;
-        void SetLooping(const bool isLooping);
+        void SetLooping(bool isLooping);
 
-        const std::string &GetName(void) const;
-        void SetName(const std::string& name);
+        const std::string &GetStateName(void) const;
+        void SetStateName(const std::string& name);
 
         /** @brief gets the time position of the current animation state
         *
@@ -69,7 +75,7 @@ namespace ursine
         *  @param position where we want to go
         *  @return Void.
         */
-        void SetTimePosition(const float position);
+        void SetTimePosition(float position);
 
         /** @brief Modifies the animation state by a delta
         *
@@ -79,41 +85,41 @@ namespace ursine
         *  @param dt change in animation position
         *  @return Void.
         */
-        void IncrementTimePosition(const float dt);
+        void IncrementTimePosition(float dt);
 
         /** @brief gets the currently running animation
         *
         *  @return pointer to the animation
         */
-        const Animation* GetAnimation(void) const;
+        const Animation *GetAnimation(void) const;
 
-        /** @brief changes the currently running animation
-        *
-        *  @param animation the animation to switch to
-        *  @return Void.
-        */
-        void SetAnimation(Animation* animation);
-
-        const std::string &GetAnimationName(void) const;
-        void SetAnimationName(const std::string& name);
-
-        const Animation *GetAnimationByName(void) const;
-        void SetAnimationByName(const std::string& name);
+        const ursine::resources::ResourceReference &GetClip(void) const;
+        void SetClip(const ursine::resources::ResourceReference &clip);
 
         const float &GetTransPosition(void) const;
-        void SetTransPosition(const float& tPos);
+        void SetTransPosition(float tPos);
         
-        void PlayingAnimation();// const float deltaTime);
+        void PlayingAnimation(void);
 
     private:
-        bool m_looping;
-        std::string m_name;
-        //time position to play animation
-        float m_timePos;
-        std::string m_animname;
+        friend class ecs::Animator;
+
+        std::string m_stateName;
+
+        resources::ResourceReference m_clip;
+
         //current animation
         const Animation *m_animation;
+
+        bool m_looping;
+
+        bool m_loaded;
+
+        //time position to play animation
+        float m_timePos;
+
         //time to start transitioning
         float m_transPos;
+
     } Meta(Enable, EnableArrayType, DisplayName("AnimationState"));
 }

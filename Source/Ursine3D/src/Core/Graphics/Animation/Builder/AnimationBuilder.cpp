@@ -202,7 +202,7 @@ namespace ursine
             return m_name2Rig[name];
     }
 
-    int AnimationBuilder::LoadAnimation(const graphics::ufmt_loader::AnimInfo &info, const std::string &name)
+    int AnimationBuilder::LoadAnimation(const graphics::ufmt_loader::AnimInfo &info)
     {
         unsigned animIndex = addAnimation();
         auto animation = GetAnimationByIndex(animIndex);
@@ -223,7 +223,7 @@ namespace ursine
         animation->SetData(keyCount, boneCount);
 
         // set name - let's use model name
-        animation->SetName(name);
+        animation->SetName(info.name);
 
         // LOAD ANIMATION
         // iterate through all keyframes in this RigKeyframe, iterate through each RigKeyframe,
@@ -264,7 +264,7 @@ namespace ursine
         }
 
         // set values, return
-        m_name2Animation[name] = animation;
+        m_name2Animation[info.name] = animation;
         return animIndex;
     }
 

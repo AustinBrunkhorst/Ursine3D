@@ -76,11 +76,6 @@ namespace ursine
             invalidateTexture( false );
         }
 
-        std::vector<SMat4> &Model3D::GetMatrixPalette(void)
-        {
-            return m_model->GetMatrixPalette();
-        }
-
         const resources::ResourceReference& Model3D::GetModel(void) const
         {
             return m_modelResource;
@@ -240,28 +235,6 @@ namespace ursine
             model.SetWorldMatrix(trans->GetLocalToWorldMatrix());
         }
 
-        void Model3D::invalidateModel(bool unload)
-        {
-            auto data = loadResource<resources::ModelData>( m_modelResource );
-
-            if (data == nullptr)
-            {
-                // default
-                m_model->SetModelHandle( 0 );
-            }
-            else
-            {
-                auto handle = data->GetModelHandle( );
-
-                if (unload)
-                    m_graphics->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
-
-                m_graphics->ResourceMgr.LoadModel( handle );
-
-                m_model->SetModelHandle( handle );
-            }
-        }
-
         void Model3D::invalidateTexture(bool unload)
         {
             auto data = loadResource<resources::TextureData>( m_textureResource );
@@ -284,6 +257,41 @@ namespace ursine
             }
         }
 
+        void Model3D::invalidateModel(bool unload)
+        {
+            auto data = loadResource<resources::ModelData>( m_modelResource );
+
+            if (data == nullptr)
+            {
+                // default
+                m_model->SetModelHandle( 0 );
+            }
+            else
+            {
+                auto handle = data->GetModelHandle( );
+
+                if (unload)
+                    m_graphics->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
+
+                m_graphics->ResourceMgr.LoadModel( handle );
+
+                m_model->SetModelHandle( handle );
+            }
+        }
+
+        void Model3D::clearMatrixPalette(void)
+        {
+            for (auto &x : m_model->GetMatrixPalette( ))
+            {
+                x = SMat4::Identity();
+            }
+        }
+
+        std::vector<SMat4> &Model3D::getMatrixPalette(void)
+        {
+            return m_model->GetMatrixPalette( );
+        }
+
         void Model3D::OnSerialize(Json::object &output) const
         {
             output["meshIndex"] = GetMeshIndex();
@@ -294,7 +302,20 @@ namespace ursine
             SetMeshIndex(input["meshIndex"].int_value());
         }
 
-#if defined(URSINE_WITH_EDITOR)
+        std::string Model3D::GetModelName(void) const
+        {
+            if (!m_model)
+                return "";
+
+            auto info = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetModelInfo( m_model->GetModelHandle( ) );
+
+            if (!info)
+                return "";
+
+            return info->name;
+        }
+
+    #if defined(URSINE_WITH_EDITOR)
 
         void Model3D::GenerateConvexHull(void)
         {
@@ -353,6 +374,6 @@ namespace ursine
                 convex->GenerateConvexHulls(this);
             });
         }
-#endif
+    #endif
     }
 }
