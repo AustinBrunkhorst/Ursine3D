@@ -13,6 +13,7 @@
 #include "DamageOnCollideComponent.h"
 #include "CritSpotComponent.h"
 #include "HealthComponent.h"
+#include "WallComponent.h"
 #include <EntityEvent.h>
 #include <CollisionEventArgs.h>
 #include <stack>
@@ -150,13 +151,15 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
 
     if (!m_deleted)
     {
-        auto root = args->otherEntity->GetRoot( )->GetComponent<Health>( );
-        auto entity = args->otherEntity->GetComponent<Health>( );
+        auto other = args->otherEntity;
+        auto root = other->GetRoot( )->GetComponent<Health>( );
+        auto entity = other->GetComponent<Health>( );
 
-        if (!root && !entity)
+        if (!(root || entity || other->HasComponent<Wall>( )))
             return;
 
-        if (m_damageTimeMap.find( root->GetOwner( ) ) != m_damageTimeMap.end( ))
+        if (m_damageTimeMap.find( other->GetRoot( ) ) != m_damageTimeMap.end( ) ||
+            m_damageTimeMap.find( other ) != m_damageTimeMap.end( ))
             return;
 
         // Make sure we can deal damage to this health type
@@ -170,12 +173,12 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
         bool crit = false;
 
         // does object have crit
-        if (args->otherEntity->HasComponent<CritSpot>( ))
+        if (other->HasComponent<CritSpot>( ))
         {
             crit = true;
             damage *= m_critModifier;
 
-            auto critComp = args->otherEntity->GetComponent<CritSpot>( );
+            auto critComp = other->GetComponent<CritSpot>( );
 
             // add other object to damage interval map
             //   if not deleting due to collision
@@ -184,11 +187,11 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
         }
 
         if (root)
-            applyDamage(root->GetOwner( ), args->contacts.front( ).point, damage, crit);
-        else
-            applyDamage(entity->GetOwner( ), args->contacts.front( ).point, damage, crit );
+            applyDamage( root->GetOwner( ), args->contacts.front( ).point, damage, crit );
+        else if (entity)
+            applyDamage( entity->GetOwner( ), args->contacts.front( ).point, damage, crit );
 
-        spawnCollisionParticle(args->otherEntity, crit);
+        spawnCollisionParticle( other, crit );
     }
 
     deleteOnCollision( );

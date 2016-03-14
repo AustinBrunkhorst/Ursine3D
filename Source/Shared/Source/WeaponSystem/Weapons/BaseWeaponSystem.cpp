@@ -28,6 +28,7 @@
 #include "AudioEmitterComponent.h"
 #include "TrailComponent.h"
 #include "CritspotComponent.h"
+#include "WallComponent.h"
 #include <Core/Audio/AudioManager.h>
 
 
@@ -504,6 +505,9 @@ bool HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursi
         return false;
 
     if (objHealth && !objHealth->CanDamage( &weapon ))
+        return false;
+
+    if (!(objHealth || rootHealth || objHit->HasComponent<Wall>( )))
         return false;
 
     // where did rayact collide at
