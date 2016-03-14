@@ -24,7 +24,8 @@ namespace ursine
 
     UIScreenManager::~UIScreenManager(void)
     {
-        
+        for (auto *screen : m_screens)
+            delete screen;
     }
 
     UIView::Handle UIScreenManager::GetUI(void) const
@@ -38,13 +39,36 @@ namespace ursine
     }
 
     UIScreen *UIScreenManager::CreateScreen(
-        const std::string &screenName,
+        const std::string &name,
         bool isInputBlocking,
         int priority
     )
     {
-        // @@@TODO:
-        return nullptr;
+        auto search = m_nameToScreen.find( name );
+
+        UAssert( search == m_nameToScreen.end( ),
+            "Screen '%s' already exists.",
+            name.c_str( )
+        );
+
+        auto id = m_nextID++;
+
+        auto *screen = new UIScreen(
+            this, 
+            id, 
+            name, 
+            isInputBlocking, 
+            priority 
+        );
+
+        m_nameToScreen[ name ] = screen;
+        m_idToScreen[ id ] = screen;
+
+        utils::InsertionSort( m_screens, compareScreens );
+
+        invalidateScreenFocus( );
+
+        return screen;
     }
 
     UIScreen *UIScreenManager::GetScreen(UIScreenID id)
@@ -63,18 +87,17 @@ namespace ursine
 
     void UIScreenManager::RemoveScreen(UIScreen *screen)
     {
-        // doesn't exist or already deleting
-        if (!screen || screen->m_state == SS_DELETING)
-            return;
-
-        screen->m_state = SS_DELETING;
-
-        screen->m_isFocused = false;
-
-        m_removalQueue.push_back( screen );
-
         m_nameToScreen.erase( screen->m_name );
         m_idToScreen.erase( screen->m_id );
+
+        auto search = find( m_screens.begin( ), m_screens.end( ), screen );
+
+        if (search != m_screens.end( ))
+            m_screens.erase( search );
+
+        delete screen;
+
+        invalidateScreenFocus( );
     }
 
     void UIScreenManager::MessageScreen(UIScreen *screen, const std::string &message, const Json &data)
@@ -85,5 +108,26 @@ namespace ursine
         UIScreenMessageArgs args( message, data );
 
         screen->Dispatch( message, &args );
+    }
+
+    bool UIScreenManager::compareScreens(const UIScreen *a, const UIScreen *b)
+    {
+        return b->m_id < a->m_id;
+    }
+
+    void UIScreenManager::invalidateScreenFocus(void)
+    {
+        auto hasFocus = true;
+
+        // the first input blocking screen blocks focus to the rest
+        // of the screens - because they're sorted, the higher priority
+        // screens will be set to focus first
+        for (auto *screen : m_screens)
+        {
+            screen->m_isFocused = hasFocus;
+
+            if (hasFocus && screen->m_isInputBlocking)
+                hasFocus = false;
+        }
     }
 }

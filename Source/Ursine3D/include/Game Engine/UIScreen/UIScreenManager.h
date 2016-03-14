@@ -31,15 +31,15 @@ namespace ursine
         void SetUI(const UIView::Handle &ui);
 
         UIScreen *CreateScreen(
-            const std::string &screenName, 
+            const std::string &name, 
             bool isInputBlocking = true, 
             int priority = 0
         );
 
-        // Gets a screen with the given id. nullptr if invalid ID (doesn't exist)
+        // Attempts to get the screen
         UIScreen *GetScreen(UIScreenID id);
 
-        // Attempts to get the first screen with the given name
+        // Attempts to get the screen with the given name
         UIScreen *GetScreen(const std::string &screenName);
 
         // Removes a screen based on an instance
@@ -59,10 +59,14 @@ namespace ursine
         std::unordered_map<std::string, UIScreen*> m_nameToScreen;
         std::unordered_map<UIScreenID, UIScreen*> m_idToScreen;
 
-        // current screens
+        // current screens sorted based on priority
         std::vector<UIScreen*> m_screens;
 
-        // queue of screens to be removed
-        std::vector<UIScreen*> m_removalQueue;
+        // descending order of ids
+        static bool compareScreens(const UIScreen *a, const UIScreen *b);
+
+        // assigns focus to all of the screens after priority has been changed
+        // throughout all screens
+        void invalidateScreenFocus(void);
     } Meta(Register, EnablePtrType);
 }

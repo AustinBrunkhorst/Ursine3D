@@ -19,13 +19,9 @@ namespace ursine
 {
     class UIScreenManager;
 
-    class UIScreen
-        : public meta::Object
-        , public EventDispatcher<std::string>
+    class UIScreen : public EventDispatcher<std::string>
     {
     public:
-        UIScreen(UIScreenManager *manager, bool isInputBlocking, int priority);
-
         void Message(const std::string &message, const Json &data) const;
 
         // Request to exit this screen
@@ -39,15 +35,21 @@ namespace ursine
         // Gets the instance ID of this screen
         UIScreenID GetID(void) const;
 
+        const std::string &GetName(void) const;
+
         // Determines if this screen has input focus
         bool HasInputFocus(void) const;
 
-    protected:
-        // Called when this screen becomes the "current" screen in the screen manager
-        void OnEntered(const std::string &name, const Json &data);
-
     private:
         friend class UIScreenManager;
+
+        UIScreen(
+            UIScreenManager *manager,
+            UIScreenID id,
+            const std::string &name, 
+            bool isInputBlocking, 
+            int priority
+        );
 
         UIScreenManager *m_manager;
 

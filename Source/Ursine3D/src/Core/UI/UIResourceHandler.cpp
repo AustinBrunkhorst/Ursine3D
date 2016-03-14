@@ -2,6 +2,8 @@
 
 #include "UIResourceHandler.h"
 
+#include "BuiltInResourceConfig.h"
+
 #include <cef_runnable.h>
 #include <cef_parser.h>
 
@@ -32,13 +34,21 @@ namespace ursine
 
         fs::path resourcePath = url.substr( m_requestPrefix.size( ) );
 
+        std::cout << "LOAD: " << resourcePath << std::endl;
+
         auto extension = resourcePath.extension( ).string( );
 
         // remove the dot if it exists
         if (!extension.empty( ) && extension[ 0 ] == '.')
             extension.erase( extension.begin( ) );
 
-        m_mimeType = CefGetMimeType( extension );
+        utils::MakeLowerCase( extension );
+
+        // makes sure our ui layouts are treated as HTML
+        if (extension == rp::kResourceTypeUIScreenExtension)
+            m_mimeType = "text/html";
+        else
+            m_mimeType = CefGetMimeType( extension );
 
         auto it = resourcePath.begin( );
 

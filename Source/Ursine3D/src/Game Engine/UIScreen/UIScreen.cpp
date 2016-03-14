@@ -28,14 +28,21 @@ namespace
 
 namespace ursine
 {
-    UIScreen::UIScreen(UIScreenManager *manager, bool isInputBlocking, int priority)
+    UIScreen::UIScreen(
+        UIScreenManager *manager,
+        UIScreenID id,
+        const std::string &name,
+        bool isInputBlocking, 
+        int priority
+    )
         : EventDispatcher( this )
         , m_manager( manager )
         , m_isInputBlocking( isInputBlocking )
         , m_isFocused( false )
         , m_priority( priority )
         , m_state( SS_ACTIVE )
-        , m_id( 0 ) { }
+        , m_id( id )
+        , m_name( name ) { }
 
     void UIScreen::Message(const std::string &message, const Json &data) const
     {
@@ -50,20 +57,6 @@ namespace ursine
             kChannelScreenManager,
             kMessageEvent, 
             eventData
-        );
-    }
-
-    void UIScreen::Exit(void) const
-    {
-        auto exitData = Json::object {
-            { "screenID", static_cast<int>( m_id ) },
-        };
-
-        m_manager->GetUI( )->Message( 
-            UI_CMD_BROADCAST, 
-            kChannelScreenManager,
-            kMessageExited, 
-            exitData
         );
     }
 
@@ -82,24 +75,13 @@ namespace ursine
         return m_id;
     }
 
+    const std::string &UIScreen::GetName(void) const
+    {
+        return m_name;
+    }
+
     bool UIScreen::HasInputFocus(void) const
     {
         return m_isFocused;
-    }
-
-    void UIScreen::OnEntered(const std::string &name, const Json &data)
-    {
-        auto enteredData = Json::object {
-            { "screenName", name },
-            { "screenID", static_cast<int>( m_id ) },
-            { "data", data }
-        };
-
-        m_manager->GetUI( )->Message(
-            UI_CMD_BROADCAST, 
-            kChannelScreenManager,
-            kMessageEntered, 
-            enteredData
-        );
     }
 }

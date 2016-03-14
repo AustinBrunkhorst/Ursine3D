@@ -234,14 +234,14 @@ $toolbar-height: 25px;
           color: $color-accent;
           text-shadow: 0 1px 2px rgba(black, 0.75);
 
-          @include icon-regular( $icon-regular-font, 54px );
+          @include icon-regular( $icon-regular-font, 50px );
 
           &:after {
             display: none;
           }
         }
 
-        &[resource-type*="UIResourceData"] {
+        &[resource-type*="UIProjectData"] {
           color: $color-accent;
           text-shadow: 0 1px 2px rgba(black, 0.75);
 
