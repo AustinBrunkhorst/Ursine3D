@@ -19,6 +19,7 @@ namespace ursine
             public:
                 typedef std::shared_ptr<ResourceItem> Handle;
                 typedef std::vector<Handle> List;
+                typedef std::unordered_set<Handle> Set;
 
                 ResourceItem(ResourcePipelineManager *manager, const GUID &guid);
                 ~ResourceItem(void);
@@ -39,6 +40,8 @@ namespace ursine
 
                 std::string GetDisplayName(void) const;
                 std::string GetRelativePathDisplayName(void) const;
+
+                const ResourceBuildCache &GetBuildCache(void) const;
 
             private:
                 friend class ResourcePipelineManager;
@@ -64,3 +67,5 @@ namespace ursine
         }
     }
 }
+
+#include "ResourceItem.hpp"

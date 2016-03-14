@@ -3,6 +3,13 @@
 #include "UIProjectImporter.h"
 #include "UIProjectData.h"
 
+#include "UIScreenData.h"
+
+#include "ResourcePipelineManager.h"
+#include "BuiltInResourceConfig.h"
+
+#include <unordered_set>
+
 namespace ursine
 {
     namespace
@@ -11,6 +18,11 @@ namespace ursine
             const fs::path &sourcePath,
             const fs::path &entryPath, 
             resources::UIProjectData::ResourceTable &table
+        );
+
+        fs::path generateScreenResource(
+            rp::ResourceItem::Handle parent,
+            const fs::path &sourcePath
         );
     }
 
@@ -30,6 +42,19 @@ namespace ursine
 
         fs::RecursiveDirectoryIterator it( directoryFileName );
         fs::RecursiveDirectoryIterator itEnd;
+        
+        // cached screens that were generated
+        fs::PathSet cachedScreens;
+
+        // screens found in the project
+        fs::PathSet projectScreens;
+
+        // screens that were added and need to be generated
+        fs::PathSet addedScreens;
+
+        // screens that existed in the build cache, but 
+        // are no longer in the project
+        fs::PathSet removedScreens;
 
         for (; it != itEnd; ++it)
         {
@@ -45,6 +70,50 @@ namespace ursine
             );
 
             importEntry( entry, relativePath, table );
+
+            auto extension = entry.extension( ).string( ).substr( 1 );
+
+            utils::MakeLowerCase( extension );
+
+            if (extension == kResourceTypeUIScreenExtension)
+                projectScreens.emplace( entry );
+        }
+
+        auto &generated = context.resource->GetBuildCache( ).generatedResources;
+
+        // collect all generated UIScreens
+        for (auto &item : generated)
+        {
+            if (item->GetBuildCache( ).processedType == typeof( UIScreenData ))
+                cachedScreens.emplace( item->GetSourceFileName( ) );
+        }
+
+        // collect added screens and acknowledge existing ones
+        for (auto &screen : projectScreens)
+        {
+            // exists in the cache, so remove it --
+            // the screens remaining in "cachedScreens"
+            // are assumed to be removed after this loop
+            if (cachedScreens.count( screen ))
+                cachedScreens.erase( screen );
+            else
+                addedScreens.emplace( screen );
+        }
+
+        // build the generated screen resources
+        for (auto &screen : addedScreens)
+        {
+            context.AllocateGeneratedResource( 
+                generateScreenResource( context.resource, screen ) 
+            );
+        }
+
+        // remove cached screens that don't exist anymore
+        for (auto &screen : cachedScreens)
+        {
+            context.pipeline->RemoveItem( 
+                context.pipeline->GetItem( screen ) 
+            );
         }
 
         return std::make_shared<UIProjectData>( std::move( table ) );
@@ -66,6 +135,37 @@ namespace ursine
             );
 
             table.emplace( entryPath, data );
+        }
+
+        fs::path generateScreenResource(
+            rp::ResourceItem::Handle parent,
+            const fs::path &sourcePath
+        )
+        {
+            auto screenName = sourcePath.stem( );
+            auto parentDirectory = parent->GetSourceFileName( );
+
+            auto outputFile = change_extension( 
+                parentDirectory.parent_path( ) / screenName,
+                rp::kResourceTypeUIScreenExtension 
+            );
+
+            auto relativePath = fs::MakeRelativePath(
+                parentDirectory,
+                sourcePath
+            );
+
+            Json screenData = Json::object {
+                { "parent", to_string( parent->GetGUID( ) ) },
+                { "path", relativePath.string( ) }
+            };
+
+            UAssertCatchable( fs::WriteAllText( outputFile.string( ), screenData.dump( true ) ),
+                "Unable to generate screen resource.\nfile: %s",
+                outputFile.string( ).c_str( )
+            );
+
+            return outputFile;
         }
     }
 }

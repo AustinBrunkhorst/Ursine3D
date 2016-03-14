@@ -41,11 +41,16 @@ namespace ursine
                 void InvalidateResourceCache(ResourceItem::Handle resource);
 
                 ResourceItem::Handle GetItem(const GUID &guid) const;
+                ResourceItem::Handle GetItem(const fs::path &sourceFile) const;
                 ResourceItem::List GetItemsByType(const meta::Type &type) const;
+
+                void RemoveItem(ResourceItem::Handle item);
 
                 // Creates a unique file name in the configured temporary directory
                 fs::path CreateTemporaryFileName(void) const;
             private:
+                friend struct ResourceBuildStepContext;
+
                 struct FileWatchAction
                 {
                     fs::Action type;
@@ -60,7 +65,7 @@ namespace ursine
                 ResourcePipelineConfig m_config;
 
                 std::unordered_map<GUID, ResourceItem::Handle, GUIDHasher> m_database;
-                std::unordered_map<fs::path, ResourceItem::Handle, fs::PathHasher> m_pathToResource;
+                fs::PathMap<ResourceItem::Handle> m_pathToResource;
 
                 ResourceDirectoryNode *m_rootDirectory;
 
@@ -70,7 +75,7 @@ namespace ursine
                 fs::FileWatcher m_fileWatcher;
                 fs::WatchID m_resourceDirectoryWatch;
 
-                std::unordered_map<fs::path, FileWatchAction, fs::PathHasher> m_pendingFileActions;
+                fs::PathMap<FileWatchAction> m_pendingFileActions;
 
                 mutable std::mutex m_buildMutex;
                 mutable std::mutex m_databaseMutex;
@@ -91,28 +96,29 @@ namespace ursine
 
                 // determines how to handle a resource
                 ResourceItem::Handle registerResource(
-                    const fs::path &fileName, 
-                    bool isGenerated = false
+                    const fs::path &fileName
                 );
 
                 // imports an existing resource (with existing meta file)
                 ResourceItem::Handle addExistingResource(
-                    const fs::path &fileName, 
-                    const fs::path &metaFileName,
-                    bool isGenerated = false
+                    const fs::path &fileName
                 );
 
                 // imports a resource with default options and writes the meta file
                 ResourceItem::Handle addDefaultResource(
-                    const fs::path &fileName, 
-                    const fs::path &metaFileName
+                    const fs::path &fileName
                 );
 
                 // creates a resource in the database
                 ResourceItem::Handle allocateResource(
                     const fs::path &fileName,
-                    const fs::path &metaFileName,
                     const GUID &guid = GUIDGenerator( )( )
+                );
+
+                // allocates a resource that is expected to be generated
+                ResourceItem::Handle allocateGeneratedResource(
+                    ResourceItem::Handle parent,
+                    const fs::path &sourceFile
                 );
 
                 // inserts this resource into the directory tree
@@ -136,7 +142,7 @@ namespace ursine
                 void buildResource(ResourceBuildContext &context);
 
                 void addGeneratedResources(
-                    ResourceBuildContext &context, 
+                    ResourceBuildContext &context,
                     std::list<ResourceBuildContext> &outGenerated
                 );
 
@@ -172,14 +178,17 @@ namespace ursine
                 // Utilities
                 ///////////////////////////////////////////////////////////////
 
+                // gets the path to the meta file for this resource file
+                fs::path getResourceMetaPath(const fs::path &fileName) const;
+
                 // attempts to find a directory resource that contains this filename.
                 // nullptr if it doesn't exist
                 ResourceItem::Handle getDirectoryResource(const fs::path &fileName) const;
 
                 // gets build file name for this resource
-                fs::path getResourceBuildFile(const GUID &guid) const;
-                fs::path getResourceBuildPreviewFile(const GUID &guid) const;
-                fs::path getResourceBuildCacheFile(const GUID &guid) const;
+                fs::path getResourceBuildPath(const GUID &guid) const;
+                fs::path getResourceBuildPreviewPath(const GUID &guid) const;
+                fs::path getResourceBuildCachePath(const GUID &guid) const;
 
                 TypePair detectResourceHandlers(const fs::path &path) const;
             };

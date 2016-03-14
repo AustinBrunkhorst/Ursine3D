@@ -31,6 +31,7 @@ namespace ursine
 
         // cache file serialization is handled explicitly
         const auto kCacheKeyHasPreview = "hasPreview";
+        const auto kCacheKeyParent = "parent";
         const auto kCacheKeyProcessedType = "processedType";
         const auto kCacheKeyGeneratedResources = "generatedResources";
 
@@ -197,10 +198,14 @@ namespace ursine
             { kCacheKeyProcessedType, cache.processedType.GetName( ) },
         };
 
+        // assign the parent if it exists
+        if (resource->m_parent != nullptr)
+            output[ kCacheKeyParent ] = to_string( resource->m_parent->m_guid );
+
         Json::array generatedResources;
 
         for (auto &generated : cache.generatedResources)
-            generatedResources.emplace_back( to_string( generated ) );
+            generatedResources.emplace_back( to_string( generated->m_guid ) );
 
         output[ kCacheKeyGeneratedResources ] = generatedResources;
 
@@ -219,10 +224,16 @@ namespace ursine
     {
         auto search = m_database.find( guid );
 
-        if (search == m_database.end( ))
-            return nullptr;
+        return search == m_database.end( ) ? nullptr : search->second;
+    }
 
-        return search->second;
+    ///////////////////////////////////////////////////////////////////////////
+
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(const fs::path &sourceFile) const
+    {
+        auto search = m_pathToResource.find( sourceFile );
+
+        return search == m_pathToResource.end( ) ? nullptr : search->second;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -238,6 +249,20 @@ namespace ursine
         }
 
         return matched;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::RemoveItem(ResourceItem::Handle item)
+    {
+        ResourceChangeArgs e;
+
+        e.type = RP_RESOURCE_REMOVED;
+        e.resource = item;
+
+        Dispatch( e.type, &e );
+
+        removeResource( item, true );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -350,32 +375,31 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    rp::ResourceItem::Handle rp::ResourcePipelineManager::registerResource(const fs::path &fileName, bool isGenerated /*= false */)
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::registerResource(
+        const fs::path &fileName
+    )
     {
         // ignore meta files
         if (fileName.extension( ) == kMetaFileExtension)
             return nullptr;
-
-        auto metaFileName = fileName;
-
-        // add the meta extension IN ADDITION to the existing extension
-        metaFileName.concat( kMetaFileExtension );
+        
+        auto metaFileName = getResourceMetaPath( fileName );
 
         // this resource is already configured
         if (exists( metaFileName ))
-            return addExistingResource( fileName, metaFileName, isGenerated );
+            return addExistingResource( fileName );
 
-        return addDefaultResource( fileName, metaFileName );
+        return addDefaultResource( fileName );
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::addExistingResource(
-        const fs::path &fileName, 
-        const fs::path &metaFileName,
-        bool isGenerated /*= false */
+        const fs::path &fileName
     )
     {
+        auto metaFileName = getResourceMetaPath( fileName );
+
         std::string metaDataError;
         std::string metaDataString;
 
@@ -411,16 +435,6 @@ namespace ursine
                 "Unable to parse GUID in meta file."    
             );
         }
-
-        if (isGenerated)
-        {
-            auto search = m_database.find( guid );
-
-            // if this item is generated and we've already registered it
-            // use it rather than creating a collision with GUIDs
-            if (search != m_database.end( ))
-                return search->second;
-        }
                 
         auto importerName = metaDataJson[ kMetaKeyImporter ].string_value( );
         auto importerType = meta::Type::GetFromName( importerName );
@@ -452,7 +466,7 @@ namespace ursine
 
         try
         {
-            resource = allocateResource( fileName, metaFileName, guid );
+            resource = allocateResource( fileName, guid );
         }
         catch (AssertionException &e)
         {
@@ -506,8 +520,7 @@ namespace ursine
     ///////////////////////////////////////////////////////////////////////////
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::addDefaultResource(
-        const fs::path &fileName, 
-        const fs::path &metaFileName
+        const fs::path &fileName
     )
     {
         auto &importerTypes = getImporterTypes( );
@@ -522,7 +535,8 @@ namespace ursine
         meta::Type importerType;
         meta::Type processorType;
 
-        std::tie( importerType, processorType ) = detectResourceHandlers( fileName );
+        std::tie( importerType, processorType ) = 
+            detectResourceHandlers( fileName );
 
         // importer does not exist, ignore it.
         if (!importerType.IsValid( ))
@@ -547,7 +561,7 @@ namespace ursine
 
         try
         {
-            resource = allocateResource( fileName, metaFileName );
+            resource = allocateResource( fileName );
         }
         catch (AssertionException &e)
         {
@@ -566,7 +580,8 @@ namespace ursine
 
         auto &processorMeta = processorType.GetMeta( );
 
-        auto *processorConfig = processorMeta.GetProperty<ResourceProcessorConfig>( );
+        auto *processorConfig = 
+            processorMeta.GetProperty<ResourceProcessorConfig>( );
 
         // no config assumes no import options
         if (processorConfig)
@@ -615,17 +630,16 @@ namespace ursine
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::allocateResource(
         const fs::path &fileName,
-        const fs::path &metaFileName,
         const GUID &guid /*= GUIDGenerator( )( )*/
     )
     {
         auto resource = std::make_shared<ResourceItem>( this, guid );
 
         resource->m_fileName = fileName;
-        resource->m_metaFileName = metaFileName;
-        resource->m_buildFileName = getResourceBuildFile( guid );
-        resource->m_buildPreviewFileName = getResourceBuildPreviewFile( guid );
-        resource->m_buildCacheFileName = getResourceBuildCacheFile( guid );
+        resource->m_metaFileName = change_extension( fileName, kMetaFileExtension );
+        resource->m_buildFileName = getResourceBuildPath( guid );
+        resource->m_buildPreviewFileName = getResourceBuildPreviewPath( guid );
+        resource->m_buildCacheFileName = getResourceBuildCachePath( guid );
 
         auto insertion = m_database.insert( { resource->m_guid, resource } );
 
@@ -637,6 +651,25 @@ namespace ursine
         m_pathToResource[ fileName ] = resource;
 
         return resource;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::allocateGeneratedResource(
+        ResourceItem::Handle parent, 
+        const fs::path &sourceFile
+    )
+    {
+        auto generated = allocateResource( sourceFile );
+
+        generated->m_parent = parent;
+
+        if (parent)
+            parent->m_buildCache.generatedResources.emplace( generated );
+
+        insertResource( generated );
+
+        return generated;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -773,7 +806,7 @@ namespace ursine
 
     void rp::ResourcePipelineManager::loadResourceBuildCache(ResourceItem::Handle resource)
     {
-        auto cacheFileName = getResourceBuildCacheFile( resource->m_guid );
+        auto cacheFileName = getResourceBuildCachePath( resource->m_guid );
 
         // it's ok that the cache file doesn't exist - it just means this resource is 
         // invalidated and we'll write the cache during build
@@ -829,9 +862,30 @@ namespace ursine
         // convert the string values in the json array to the array of GUIDs
         for (auto &obj : generatedResourcesObj.array_items( ))
         {
-            generatedResources.emplace_back(
-                GUIDStringGenerator( )( obj.string_value( ) )
+            auto guidString = obj.string_value( );
+
+            auto item = GetItem( GUIDStringGenerator( )( guidString ) );
+
+            UAssert( item != nullptr,
+                "Unable to resolve generated resource '%s'.",
+                guidString.c_str( )
             );
+
+            generatedResources.emplace( item );
+        }
+
+        auto &parentObj = cacheJson[ kCacheKeyParent ];
+
+        // attempt to set the parent with the cached GUID
+        if (parentObj.is_string( ))
+        {
+            resource->m_parent = GetItem(
+                GUIDStringGenerator( )( parentObj.string_value( ) )
+            );
+        }
+        else
+        {
+            resource->m_parent = nullptr;
         }
     }
 
@@ -887,9 +941,18 @@ namespace ursine
             }
             catch (AssertionException &e)
             {
-                UWarning( "Error building resource.\nresource: %s\nerror: %s", 
+                UWarning( 
+                    "Error building resource.\n"
+                    "resource: %s\n"
+                    "error: %s\n"
+                    "from: %s\n"
+                    "in: %s\n"
+                    "on line: %i", 
                     buildContext.resource->GetSourceFileName( ).string( ).c_str( ),
-                    e.GetErrorMessage( ).c_str( )
+                    e.GetErrorMessage( ).c_str( ),
+                    e.GetFunction( ).c_str( ),
+                    e.GetFile( ).c_str( ),
+                    e.GetLine( )
                 );
 
                 buildEvent.error = e;
@@ -937,9 +1000,18 @@ namespace ursine
             }
             catch (AssertionException &e)
             {
-                UWarning( "Error building resource preview.\nresource: %s\nerror: %s", 
+                UWarning( 
+                    "Error building resource preview.\n"
+                    "resource: %s\n"
+                    "error: %s\n"
+                    "from: %s\n"
+                    "in: %s\n"
+                    "on line: %i", 
                     previewContext.resource->GetSourceFileName( ).string( ).c_str( ),
-                    e.GetErrorMessage( ).c_str( )
+                    e.GetErrorMessage( ).c_str( ),
+                    e.GetFunction( ).c_str( ),
+                    e.GetFile( ).c_str( ),
+                    e.GetLine( )
                 );
 
                 buildEvent.error = e;
@@ -1000,44 +1072,15 @@ namespace ursine
         std::list<ResourceBuildContext> &outGenerated
     )
     {
-        // collect generated resources in all passes
-        std::vector<fs::path> allGenerated;
-
         auto &genImport = context.importContext.generatedResources;
 
-        allGenerated.insert( 
-            allGenerated.end( ), 
-            genImport.begin( ), 
-            genImport.end( ) 
-        );
+        for (auto &generated : genImport)
+            outGenerated.emplace_back( this, generated );
 
         auto &genProcess = context.processorContext.generatedResources;
 
-        allGenerated.insert( 
-            allGenerated.end( ), 
-            genProcess.begin( ), 
-            genProcess.end( ) 
-        );
-
-        for (auto &path : allGenerated)
-        {
-            auto resource = registerResource( path, true );
-
-            // don't care about this this resource
-            if (!resource)
-                continue;
-
-            resource->m_parent = context.resource;
-
-            insertResource( resource );
-
-            // add this generated resource to the input resource
-            context.resource->m_buildCache.generatedResources.emplace_back( 
-                resource->GetGUID( )
-            );
-
-            outGenerated.emplace_back( this, resource );
-        }
+        for (auto &generated : genProcess)
+            outGenerated.emplace_back( this, generated );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1115,10 +1158,10 @@ namespace ursine
     {
         ResourceBuildContext buildContext( this, resource );
 
-        // we don't care about generated resources because they will handled by the file
-        // watcher implicity
         buildResource( buildContext );
         buildResourcePreview( buildContext );
+
+        URSINE_TODO( "Make generated resources better" );
 
         InvalidateResourceCache( resource );
     }
@@ -1358,9 +1401,18 @@ namespace ursine
         {
             URSINE_UNUSED( e );
 
-            UWarning( "Unable to add resource.\nresource: %s\nerror: %s", 
+            UWarning( 
+                "Error adding resource.\n"
+                "resource: %s\n"
+                "error: %s\n"
+                "from: %s\n"
+                "in: %s\n"
+                "on line: %i", 
                 fileName.string( ).c_str( ),
-                e.GetErrorMessage( ).c_str( )
+                e.GetErrorMessage( ).c_str( ),
+                e.GetFunction( ).c_str( ),
+                e.GetFile( ).c_str( ),
+                e.GetLine( )
             );
 
             return;
@@ -1401,9 +1453,18 @@ namespace ursine
         {
             URSINE_UNUSED( e );
 
-            UWarning( "Unable to rebuild resource.\nresource: %s\nerror: %s", 
+            UWarning( 
+                "Error rebuilding resource.\n"
+                "resource: %s\n"
+                "error: %s\n"
+                "from: %s\n"
+                "in: %s\n"
+                "on line: %i", 
                 resource->GetSourceFileName( ).string( ).c_str( ),
-                e.GetErrorMessage( ).c_str( )
+                e.GetErrorMessage( ).c_str( ),
+                e.GetFunction( ).c_str( ),
+                e.GetFile( ).c_str( ),
+                e.GetLine( )
             );
 
             return;
@@ -1435,6 +1496,16 @@ namespace ursine
         
     }
 
+    
+    ///////////////////////////////////////////////////////////////////////////
+    // Utilities
+    ///////////////////////////////////////////////////////////////////////////
+
+    fs::path rp::ResourcePipelineManager::getResourceMetaPath(const fs::path &fileName) const
+    {
+        return change_extension( fileName, kMetaFileExtension );
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::getDirectoryResource(const fs::path &fileName) const
@@ -1458,41 +1529,43 @@ namespace ursine
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Utilities
-    ///////////////////////////////////////////////////////////////////////////
 
-    fs::path rp::ResourcePipelineManager::getResourceBuildFile(const GUID &guid) const
+    fs::path rp::ResourcePipelineManager::getResourceBuildPath(const GUID &guid) const
     {
-        auto file = m_config.buildDirectory / to_string( guid );
-
-        return file.replace_extension( kResourceFormatExtension );
+        return change_extension( 
+            m_config.buildDirectory / to_string( guid ),
+            kResourceFormatExtension 
+        );
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
-    fs::path rp::ResourcePipelineManager::getResourceBuildPreviewFile(const GUID &guid) const
+    fs::path rp::ResourcePipelineManager::getResourceBuildPreviewPath(const GUID &guid) const
     {
-        auto file = m_config.buildDirectory / to_string( guid );
-
-        return file.replace_extension( kPreviewFileExtension );
+        return change_extension( 
+            m_config.buildDirectory / to_string( guid ),
+            kPreviewFileExtension 
+        );
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
-    fs::path rp::ResourcePipelineManager::getResourceBuildCacheFile(const GUID &guid) const
+    fs::path rp::ResourcePipelineManager::getResourceBuildCachePath(const GUID &guid) const
     {
-        auto file = m_config.buildDirectory / to_string( guid );
-
-        return file.replace_extension( kCacheFileExtension );
+        return change_extension( 
+            m_config.buildDirectory / to_string( guid ),
+            kCacheFileExtension 
+        );
     }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     rp::TypePair rp::ResourcePipelineManager::detectResourceHandlers(const fs::path &path) const
     {
         auto &importerTypes = getImporterTypes( );
         auto extension = path.extension( ).string( );
 
-        // remove period from extension
-        if (!extension.empty( ) && extension.front( ) == '.')
+        if (!extension.empty( ) && extension[ 0 ] == '.')
             extension.erase( extension.begin( ) );
 
         utils::MakeLowerCase( extension );

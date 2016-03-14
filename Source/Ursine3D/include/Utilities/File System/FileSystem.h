@@ -18,6 +18,8 @@
 #include <boost/filesystem.hpp>
 #include <FileWatcher.h>
 
+#include <unordered_set>
+
 namespace ursine
 {
     namespace fs
@@ -25,8 +27,12 @@ namespace ursine
         using namespace boost::filesystem;
         using namespace efsw;
         
-        typedef std::vector<path> FileList;
         typedef boost::hash<path> PathHasher;
+        typedef std::vector<path> PathList;
+        typedef std::unordered_set<path, PathHasher> PathSet;
+
+        template<typename T>
+        using PathMap = std::unordered_map<path, T, PathHasher>;
 
         typedef directory_iterator DirectoryIterator;
         typedef recursive_directory_iterator RecursiveDirectoryIterator;

@@ -2,10 +2,20 @@
 
 #include "ResourceBuildStepContext.h"
 
+#include "ResourcePipelineManager.h"
+
 namespace ursine
 {
-    void rp::ResourceBuildStepContext::AddGeneratedResource(const fs::path &resource)
+    rp::ResourceBuildStepContext::ResourceBuildStepContext(ResourcePipelineManager *pipeline, ResourceItem::Handle resource)
+        : pipeline( pipeline )
+        , resource( resource ) { }
+
+    rp::ResourceItem::Handle rp::ResourceBuildStepContext::AllocateGeneratedResource(const fs::path &sourceFile)
     {
-        generatedResources.emplace_back( resource );
+        auto generated = pipeline->allocateGeneratedResource( resource, sourceFile );
+
+        generatedResources.emplace( generated );
+
+        return generated;
     }
 }

@@ -6,6 +6,8 @@ namespace ursine
     {
         namespace pipeline
         {
+            class ResourceItem;
+
             struct ResourceBuildCache
             {
                 // Determines if this asset built a preview
@@ -15,7 +17,7 @@ namespace ursine
                 meta::Type processedType;
 
                 // Resources that were generated from this resource
-                std::vector<GUID> generatedResources;
+                std::unordered_set<std::shared_ptr<ResourceItem>> generatedResources;
             };
         }
     }

@@ -34,6 +34,10 @@ namespace ursine
 
         Json WorldSerializer::Serialize(World *world)
         {
+            UAssertCatchable( world != nullptr,
+                "input was null."    
+            );
+
             Json::object data;
 
             data[ kKeyVersion ] = kVersion;

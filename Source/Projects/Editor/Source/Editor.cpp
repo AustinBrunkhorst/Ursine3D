@@ -38,7 +38,7 @@ namespace
     const auto kEntryPointSplash = "Splash.html";
     const auto kEntryPointEditor = "Editor.html";
 
-    const auto kDefaultPreferencesFile = "Assets/Config/DefaultEditor.prefs";
+    const auto kDefaultPreferencesFile = "Resources/Config/DefaultEditor.prefs";
     const auto kPreferencesFile = "Editor.prefs";
     
     const auto kWindowLocationCentered = Vec2 { -1, -1 };
@@ -210,7 +210,9 @@ void Editor::OnInitialize(void)
 
 void Editor::OnRemove(void)
 {
-    writePreferences( );
+    // only write the preferences if we were in the editor
+    if (m_startupConfig.updateHandler == &Editor::onEditorUpdate)
+        writePreferences( );
 
     Application::Instance->Disconnect(
         APP_UPDATE,

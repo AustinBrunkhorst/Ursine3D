@@ -6,7 +6,6 @@
     <option name="hxmlPath" value="$MODULE_DIR$/Source/Editor.hxml" />
     <option name="mainClass" value="Editor" />
     <option name="outputFileName" value="Editor.js" />
-    <option name="outputFolder" value="$TMP$/UrsineEditor" />
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$PROJECT_DIR$/Build" />

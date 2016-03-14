@@ -68,4 +68,9 @@ namespace ursine
 
         return change_extension( relative, "" ).string( );
     }
+
+    const rp::ResourceBuildCache &rp::ResourceItem::GetBuildCache(void) const
+    {
+        return m_buildCache;
+    }
 }

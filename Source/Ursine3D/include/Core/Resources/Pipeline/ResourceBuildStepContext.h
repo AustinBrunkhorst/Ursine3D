@@ -15,13 +15,11 @@ namespace ursine
                 ResourcePipelineManager *pipeline;
                 ResourceItem::Handle resource;
 
-                std::vector<fs::path> generatedResources;
+                ResourceItem::Set generatedResources;
 
-                ResourceBuildStepContext(ResourcePipelineManager *pipeline, ResourceItem::Handle resource)
-                    : pipeline( pipeline )
-                    , resource( resource ) { }
+                ResourceBuildStepContext(ResourcePipelineManager *pipeline, ResourceItem::Handle resource);
 
-                void AddGeneratedResource(const fs::path &resource);
+                ResourceItem::Handle AllocateGeneratedResource(const fs::path &sourceFile);
             };
         }
     }
