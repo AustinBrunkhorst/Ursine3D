@@ -34,7 +34,8 @@ DamageOnCollide::DamageOnCollide(void)
     , m_deleteOnCollision( true )
     , m_deleted ( false )
     , m_spawnOnHit( false )
-    , m_spawnOnDeath( false ) { }
+    , m_spawnOnDeath( false )
+    , m_type( DAMAGE_ENEMY ) { }
 
 DamageOnCollide::~DamageOnCollide(void)
 {
@@ -50,6 +51,16 @@ void DamageOnCollide::OnInitialize(void)
     GetOwner( )->Listener( this )
         .On( ENTITY_REMOVED, &DamageOnCollide::onDeath )
         .On( ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
+}
+
+DamageType DamageOnCollide::GetDamageType(void) const
+{
+    return m_type;
+}
+
+void DamageOnCollide::SetDamageType(DamageType type)
+{
+    m_type = type;
 }
 
 float DamageOnCollide::GetDamageToApply(void) const
@@ -146,6 +157,13 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
             return;
 
         if (m_damageTimeMap.find( root->GetOwner( ) ) != m_damageTimeMap.end( ))
+            return;
+
+        // Make sure we can deal damage to this health type
+        if (root && !root->CanDamage( this ))
+            return;
+
+        if (entity && !entity->CanDamage( this ))
             return;
 
         float damage = m_damageToApply;

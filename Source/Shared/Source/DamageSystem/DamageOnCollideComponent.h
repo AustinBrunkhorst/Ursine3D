@@ -15,6 +15,8 @@
 
 #include <ArchetypeData.h>
 
+#include "HealthComponent.h"
+
 namespace ursine
 {
     namespace physics
@@ -23,8 +25,14 @@ namespace ursine
     } // physics namespace
 } // ursine namespace
 
-class Health;
 struct CritSpot;
+
+enum DamageType
+{
+    DAMAGE_ENEMY = ENEMY_HEALTH,
+    DAMAGE_PLAYER = PLAYER_HEALTH,
+    DAMAGE_ALL
+} Meta(Enable);
 
 class DamageOnCollide : public ursine::ecs::Component
 {
@@ -32,9 +40,12 @@ class DamageOnCollide : public ursine::ecs::Component
 
 public:
 
-    ////////////////////////////////////////////////////////////////////
-    // Expose data to editor
-    ////////////////////////////////////////////////////////////////////
+    EditorField(
+        DamageType damageType,
+        GetDamageType,
+        SetDamageType
+    );
+
     EditorField(
         float DamageToApply,
         GetDamageToApply,
@@ -90,6 +101,9 @@ public:
 
     void OnInitialize(void) override;
 
+    DamageType GetDamageType(void) const;
+    void SetDamageType(DamageType type);
+
     float GetDamageToApply(void) const;
     void SetDamageToApply(float damage);
 
@@ -117,6 +131,9 @@ public:
     void DecrementDamageIntervalTimes(float dt);
 
 private:
+    // The type of damage that is being dealth (player, enemy, all)
+    DamageType m_type;
+
     // damage to apply when triggered
     float m_damageToApply;
 

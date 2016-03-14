@@ -18,6 +18,8 @@
 #include "AudioEmitterComponent.h"
 #include "PlayerIdComponent.h"
 #include "CollisionEventArgs.h"
+#include "DamageOnCollideComponent.h"
+#include "AbstractWeapon.h"
 
 NATIVE_COMPONENT_DEFINITION( Health );
 
@@ -36,13 +38,22 @@ Health::Health(void)
     , m_health( 100 )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
-{
-}
+    , m_type( ENEMY_HEALTH ) { }
 
 Health::~Health(void)
 {
     GetOwner( )->Listener(this)
         .Off( ursine::ecs::ENTITY_REMOVED, &Health::OnDeath );
+}
+
+HealthType Health::GetHealthType(void) const
+{
+    return m_type;
+}
+
+void Health::SetHealthType(HealthType type)
+{
+    m_type = type;
 }
 
 float Health::GetHealth(void) const
@@ -139,6 +150,20 @@ void Health::DealDamage(const ursine::SVec3& contactPoint, float damage, bool cr
     DealDamage(damage);
 
     sendDamageTextEvent(contactPoint, damage, crit);
+}
+
+bool Health::CanDamage(DamageOnCollide *damage) const
+{
+    auto type = damage->GetDamageType( );
+
+    return type == DAMAGE_ALL || type == m_type;
+}
+
+bool Health::CanDamage(AbstractWeapon *weapon) const
+{
+    auto type = weapon->GetDamageType( );
+
+    return type == DAMAGE_ALL || type == m_type;
 }
 
 void Health::OnInitialize(void)
