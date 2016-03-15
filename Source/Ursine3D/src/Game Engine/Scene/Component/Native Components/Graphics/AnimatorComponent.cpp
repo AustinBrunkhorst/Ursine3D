@@ -17,8 +17,8 @@
 #include "AnimatorComponent.h"
 #include "Notification.h"
 #include "AnimationInfo.h"
-#include <Model3DComponent.h>
-
+#include "Model3DComponent.h"
+#include "EntityEvent.h"
 #include "Notification.h"
 
 namespace
@@ -42,7 +42,9 @@ namespace ursine
             , m_speedScalar( 1.0f )
             , m_curStName( "" )
             , m_futStName( "" )
-            , m_stateName( "" ) { }
+            , m_stateName( "" )
+            , m_blending( false )
+            , m_enableBoneManipulation( false ) { }
 
         Animator::~Animator(void)
         {
@@ -62,6 +64,20 @@ namespace ursine
 
             if (model)
                 model->clearMatrixPalette( );
+        }
+
+        void Animator::OnSceneReady(Scene *scene)
+        {
+            m_rigRoot = GetOwner( )->GetChildByName( kRigRootName );
+
+            if (m_rigRoot)
+            {
+                auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
+
+                UAssert( rig, "Error: Why is this null?" );
+
+                setBoneTransformPointers( m_rigRoot->GetTransform( )->GetChild( 0 ).Get( ), rig->GetBone( 0 ) );
+            }
         }
 
         void Animator::OnSerialize(Json::object &output) const
@@ -95,6 +111,15 @@ namespace ursine
                     futureState = &x;
             }
 
+            // If the current state doesn't exist and the future state does, just set the future state to current
+            if (!currentState && futureState)
+            {
+                currentState = futureState;
+                futureState = nullptr;
+                m_curStName = m_futStName;
+                m_futStName = "";
+            }
+
             if (!currentState)
                 return;
 
@@ -116,7 +141,8 @@ namespace ursine
                 return;
 
             // default transition time takes 1 sec this will be used as interpolation factor
-            static float transFactor = 0.0;
+            float transFactor = 0.0;
+
             if (nullptr != futureAnimation)
             {
                 if (futureAnimation->GetDesiredBoneCount( ) != rig->GetBoneCount( ))
@@ -140,14 +166,28 @@ namespace ursine
                 rig,
                 matrixPalette,
                 tempVec,
-                ( float )transFactor
+                transFactor
             );
 
-            if (!m_rigRoot)
-                return;
+            if (m_enableBoneManipulation)
+            {
+                GetOwner( )->Dispatch( ENTITY_ANIMATION_BONE_MANIPULATION_VALID, nullptr );
 
-            // Update the rig transforms
-            updateRigTransforms( m_rigRoot->GetTransform( )->GetChild( 0 ), rig->GetBone( 0 ) );
+                // Set the matrix pallet from the rig
+                auto boneCount = rig->GetBoneCount( );
+                auto &offsetMatrices = rig->GetOffsetMatrices( );
+                auto parentTrans = GetOwner( )->GetTransform( )->GetWorldToLocalMatrix( );
+
+                for (uint i = 0; i < boneCount; ++i)
+                {
+                    auto bone = rig->GetBone( i );
+
+                    matrixPalette[ i ] = 
+                        parentTrans * 
+                        bone->m_transform->GetLocalToWorldMatrix( ) *
+                        offsetMatrices[ i ];
+                }
+            }
 
             ////////////////////////////////////////////////////////////////
             // TEMPORARY DEBUG STUFF
@@ -258,6 +298,16 @@ namespace ursine
         void Animator::SetDebug(const bool useDebug)
         {
             m_debug = useDebug;
+        }
+
+        bool Animator::GetEnableBoneManipulation(void) const
+        {
+            return m_enableBoneManipulation;
+        }
+
+        void Animator::SetEnableBoneManipulation(bool flag)
+        {
+            m_enableBoneManipulation = flag;
         }
 
         float Animator::GetTimeScalar(void) const
@@ -390,9 +440,9 @@ namespace ursine
                     // (or then play as default state blender which is currTimePos = 1.0f, futTimePos = 0.0f)
                     if (nullptr == stb)
                     {
-                        futSt->IncrementTimePosition(dt  *m_speedScalar);
+                        futSt->IncrementTimePosition(dt * m_speedScalar);
                         
-                        transFactor += dt  *m_speedScalar;
+                        transFactor += dt * m_speedScalar;
                         if (transFactor > 1.0f)
                             transFactor = 1.0f;
 
@@ -430,8 +480,7 @@ namespace ursine
                         // so we just check it by index.
                         unsigned index1 = 0, index2 = 0;
 
-                        static bool bBlending = false;
-                        if (false == bBlending)
+                        if (false == m_blending)
                         {
                             for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
                             {
@@ -456,12 +505,12 @@ namespace ursine
                                 // Set future state's timeposition to chosen frame
                                 futSt->SetTimePosition( futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length );
                                 // confirm start blending
-                                bBlending = true;
+                                m_blending = true;
                             }
                         }
                     
                         // if the blending is started
-                        if (bBlending)
+                        if (m_blending)
                         {
                             // if blending is true, start transitioning from this state to that state
                             futSt->IncrementTimePosition(dt  *m_speedScalar);
@@ -480,7 +529,7 @@ namespace ursine
                     
                             if (futSt->GetTimePosition( ) > fut_lastFrame.length)
                             {
-                                bBlending = false;
+                                m_blending = false;
 
                                 ChangeState( currSt, futSt
                                     , curr_firstFrame.length
@@ -682,25 +731,31 @@ namespace ursine
             createBoneEntities( m_rigRoot->GetTransform( ), rig->GetBone( 0 ) );
         }
 
-        void Animator::createBoneEntities(Transform *parent, const AnimationBone &bone)
+        void Animator::createBoneEntities(Transform *parent, AnimationBone *bone)
         {
             auto world = GetOwner( )->GetWorld( );
 
-            auto boneEntity = world->CreateEntity( bone.GetName( ) );
+            auto boneEntity = world->CreateEntity( bone->GetName( ) );
             auto boneTrans = boneEntity->GetTransform( );
 
-            enableDeletionOnEntities( boneEntity );
+            enableDeletionOnEntities( boneEntity, false );
 
-            boneTrans->SetLocalPosition( bone.GetTranslation( ) );
-            boneTrans->SetLocalRotation( bone.GetRotation( ) );
-            boneTrans->SetLocalScale( bone.GetScale( ) );
+            bone->m_transform = boneTrans;
 
             parent->AddChildAlreadyInLocal( boneTrans );
 
-            for (auto &child : bone.GetChildren( ))
+            for (auto &child : bone->GetChildren( ))
             {
-                createBoneEntities( boneTrans, *child );
+                createBoneEntities( boneTrans, child );
             }
+        }
+
+        void Animator::setBoneTransformPointers(Transform *transform, AnimationBone *bone)
+        {
+            bone->m_transform = transform;
+
+            for (uint i = 0, n = bone->GetChildCount( ); i < n; ++i)
+                setBoneTransformPointers( transform->GetChild( i ).Get( ), bone->GetChild( i ) );
         }
 
         void Animator::updateRigTransforms(ursine::ecs::Component::Handle<Transform> boneTrans, const AnimationBone &boneData)
@@ -716,14 +771,14 @@ namespace ursine
                 updateRigTransforms( boneTrans->GetChild( i ), *children[ i ] );
         }
 
-        void Animator::enableDeletionOnEntities(const ursine::ecs::EntityHandle &entity)
+        void Animator::enableDeletionOnEntities(const EntityHandle &entity, bool flag)
         {
-            entity->EnableDeletion( true );
-            entity->EnableHierarchyChange( true );
+            entity->EnableDeletion( flag );
+            entity->EnableHierarchyChange( flag );
 
             for (auto &child : *entity->GetChildren( ))
             {
-                enableDeletionOnEntities( GetOwner( )->GetWorld( )->GetEntity( child ) );
+                enableDeletionOnEntities( GetOwner( )->GetWorld( )->GetEntity( child ), flag );
             }
         }
     }

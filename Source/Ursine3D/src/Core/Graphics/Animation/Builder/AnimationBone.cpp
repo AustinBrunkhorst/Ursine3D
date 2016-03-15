@@ -18,9 +18,9 @@ namespace ursine
 {
     AnimationBone::AnimationBone(void)
         : m_name("undefined")
-        , m_translation(SVec3())
+        /*, m_translation(SVec3())
         , m_scale(SVec3())
-        , m_rotation(SQuat())
+        , m_rotation(SQuat())*/
         , m_boneID(-1)
         , m_parentID(-1)
         , m_parent(nullptr) { }
@@ -36,9 +36,6 @@ namespace ursine
         )
     {
         m_name = name;
-        m_translation = trans;
-        m_scale = scale;
-        m_rotation = rotation;
         m_boneID = boneID;
         m_parentID = parentID;
         m_parent = parent;
@@ -52,7 +49,7 @@ namespace ursine
         return m_parent == nullptr;
     }
 
-    void AnimationBone::AddChild(const AnimationBone *child)
+    void AnimationBone::AddChild(AnimationBone *child)
     {
         m_children.push_back(child);
     }
@@ -69,32 +66,32 @@ namespace ursine
 
     const SVec3 &AnimationBone::GetTranslation(void) const
     {
-        return m_translation;
+        return m_transform->GetLocalPosition( );
     }
 
     void AnimationBone::SetTranslation(const SVec3 &trans)
     {
-        m_translation = trans;
+        m_transform->SetLocalPosition( trans );
     }
 
     const SVec3 &AnimationBone::GetScale(void) const
     {
-        return m_scale;
+        return m_transform->GetLocalScale( );
     }
 
     void AnimationBone::SetScale(const SVec3 &scale)
     {
-        m_scale = scale;
+        m_transform->SetLocalScale( scale );
     }
 
     const SQuat &AnimationBone::GetRotation(void) const
     {
-        return m_rotation;
+        return m_transform->GetLocalRotation( );
     }
 
     void AnimationBone::SetRotation(const SQuat &rot)
     {
-        m_rotation = rot;
+        m_transform->SetLocalRotation( rot );
     }
 
     unsigned AnimationBone::GetBoneID(void) const
@@ -107,12 +104,12 @@ namespace ursine
         return m_parentID;
     }
 
-    const AnimationBone *AnimationBone::GetParent(void) const
+    AnimationBone *AnimationBone::GetParent(void) const
     {
         return m_parent;
     }
 
-    const AnimationBone *AnimationBone::GetChild(const unsigned childID) const
+    AnimationBone *AnimationBone::GetChild(unsigned childID) const
     {
         return m_children[childID];
     }
@@ -122,7 +119,7 @@ namespace ursine
         return static_cast<unsigned>(m_children.size());
     }
 
-    const std::vector<const AnimationBone *> &AnimationBone::GetChildren(void) const
+    const std::vector<AnimationBone *> &AnimationBone::GetChildren(void) const
     {
         return m_children;
     }

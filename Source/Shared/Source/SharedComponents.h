@@ -139,6 +139,7 @@
 
 #include "FX/AnimateParticleResetComponent.h"
 #include "FX/PlayClipOnAnimationFinishComponent.h"
+#include "FX/FaceBoneTowardsOrigin.h"
 
 /////////////////////////////////
 //             Misc            //

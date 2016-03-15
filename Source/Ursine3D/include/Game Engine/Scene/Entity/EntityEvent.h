@@ -50,6 +50,14 @@ namespace ursine
             ENTITY_COLLISION_PERSISTED,
 
             ///////////////////////////////////////////////////////////////////
+            // Animation
+            ///////////////////////////////////////////////////////////////////
+
+            // This event is sent when animation bone manipulation is allowed
+            // through editing the bone's transform component
+            ENTITY_ANIMATION_BONE_MANIPULATION_VALID,
+
+            ///////////////////////////////////////////////////////////////////
             // Particle Systems
             ///////////////////////////////////////////////////////////////////
             // Commands all particle modifiers to operate on the set of 

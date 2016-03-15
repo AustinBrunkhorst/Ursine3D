@@ -30,7 +30,7 @@ namespace ursine
         const AnimationState *currentState,
         const AnimationState *futureState,
         AnimationRig* rig, 
-        std::vector<SMat4>& outputMatPal,
+        std::vector<SMat4> &outputMatPal,
         std::vector<SMat4> &outputBones,
         const float &transFactor
     )
@@ -55,8 +55,9 @@ namespace ursine
             const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
             const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
         
-            // check if the current keyframe set holds the time value between them
-            if (f1[0].length <= time && time < f2[0].length)
+            // check if the current keyframe set holds the time value between them ||
+            // we've reached the end of what we can find and we need to set things to the last available frame
+            if ((f1[0].length <= time && time < f2[0].length) || x + 1 == frameCount - 1)
             {
                 // if it did, interpolate the two keyframes, save values, break out
                 interpolateRigKeyFrames(
@@ -66,15 +67,11 @@ namespace ursine
                     boneCount,
                     m_toParentTransforms,
                     rig
-                    );
+                );
                 // kick out, we're done
                 break;
             }
         }
-
-        //std::vector < AnimationKeyframe > f1;
-        //std::vector < AnimationKeyframe > f2;
-        //currentState->GetFrameByTime(f1, f2, time);
 
         // for the future animation
         // get the future running animation
@@ -132,6 +129,7 @@ namespace ursine
         for (unsigned x = 1; x < boneCount; ++x)
         {
             SMat4 toParent;
+
             // get the toParent transform
             if (!futAnimation)
                 toParent = m_toParentTransforms[x];
@@ -146,6 +144,7 @@ namespace ursine
 
         // multiply by bone offset transform to get final transform
         auto &offsetMatrices = rig->GetOffsetMatrices();
+
         for (unsigned x = 0; x < boneCount; ++x)
         {
             outputMatPal[x] = (outputBones[x] * offsetMatrices[x]);
@@ -330,11 +329,11 @@ namespace ursine
             // rotation
             SQuat q = frame1[x].rotation.Slerp(frame2[x].rotation, lerpPercent);
             
-            auto &bone = rig->GetBone( x );
+            auto bone = rig->GetBone( x );
 
-            bone.SetTranslation( p );
-            bone.SetRotation( q );
-            bone.SetScale( s );
+            bone->SetTranslation( p );
+            bone->SetRotation( q );
+            bone->SetScale( s );
 
             // construct matrix for this matrix
             current = SMat4(p, q, s);

@@ -17,11 +17,17 @@
 
 #include "SVec3.h"
 #include "SQuat.h"
+#include "TransformComponent.h"
 
 //this is information relating to the underlying bone structure of an animation
 
 namespace ursine
 {
+    namespace ecs
+    {
+        class Animator;
+    }
+
     class AnimationBone
     {
 
@@ -49,13 +55,13 @@ namespace ursine
             const unsigned boneID,
             const unsigned parentID,
             AnimationBone *parent
-            );
+        );
 
         // is the current bone the root bone?
         bool IsRoot(void) const;
 
         // add a child to this bone
-        void AddChild(const AnimationBone *child);
+        void AddChild(AnimationBone *child);
 
         // gettors and setters //////////////////////////////////////
 
@@ -74,24 +80,24 @@ namespace ursine
         unsigned GetBoneID(void) const;
         unsigned GetParentID(void) const;
 
-        const AnimationBone *GetParent(void) const;
+        AnimationBone *GetParent(void) const;
 
-        const AnimationBone *GetChild(const unsigned childID) const;
+        AnimationBone *GetChild(unsigned childID) const;
         unsigned GetChildCount(void) const;
 
-        const std::vector<const AnimationBone *> &GetChildren(void) const;
+        const std::vector<AnimationBone *> &GetChildren(void) const;
 
     private:
+        friend class ecs::Animator;
+
         std::string m_name;
 
-        SVec3 m_translation;
-        SVec3 m_scale;
-        SQuat m_rotation;
+        ecs::Transform *m_transform;
 
         unsigned m_boneID;
         unsigned m_parentID;
 
         AnimationBone *m_parent;
-        std::vector<const AnimationBone *> m_children;
+        std::vector<AnimationBone *> m_children;
     };
 }

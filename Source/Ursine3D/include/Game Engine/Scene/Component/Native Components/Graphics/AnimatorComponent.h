@@ -29,8 +29,6 @@ namespace ursine
 {
     namespace ecs
     {
-        class Animator;
-
         class Animator : public Component
         {
             NATIVE_COMPONENT;
@@ -65,7 +63,13 @@ namespace ursine
                 IsDebug,
                 SetDebug
             );
-            
+
+            EditorField(
+                bool enableBoneManipulation,
+                GetEnableBoneManipulation,
+                SetEnableBoneManipulation
+            );
+
             EditorField(
                 float timeScalar,
                 GetTimeScalar,
@@ -78,6 +82,8 @@ namespace ursine
 
             void OnInitialize(void) override;
 
+            void OnSceneReady(Scene *scene) override;
+
             void OnSerialize(Json::object &output) const override;
             void OnDeserialize(const Json &input) override;
 
@@ -87,6 +93,9 @@ namespace ursine
             void Debugging(const AnimationRig& _rig, const std::vector<SMat4>& vec);
 
             // getter / setter //////////////////////////////////////
+            const std::string &GetCurrentState(void) const;
+            void SetCurrentState(const std::string &state);
+
             bool IsPlaying(void) const;
             void SetPlaying(const bool isPlaying);
 
@@ -95,15 +104,15 @@ namespace ursine
 
             bool IsDebug(void) const;
             void SetDebug(const bool useDebug);
-            
+
+            bool GetEnableBoneManipulation(void) const;
+            void SetEnableBoneManipulation(bool flag);
+
             float GetTimeScalar(void) const;
             void SetTimeScalar(const float scalar);
 
             float GetAnimationTimePosition(void) const;
             void SetAnimationTimePosition(const float position);
-
-            const std::string &GetCurrentState(void) const;
-            void SetCurrentState(const std::string &state);
 
             // Array of animation states
             ursine::Array<ursine::AnimationState> stArray;
@@ -126,9 +135,12 @@ namespace ursine
             // => when load model, don't just load these, but should also load the animation if it doesn't exist
 
         private:
+            bool m_enableBoneManipulation;
             bool m_playing;
             bool m_debug;
             bool m_changeState;
+            bool m_blending;
+
             float m_speedScalar;
 
             EntityHandle m_rigRoot;
@@ -139,14 +151,18 @@ namespace ursine
             std::string m_stateName;
 
             static void recursClearChildren(const std::vector<Handle<Transform>> &children);
+            
             void clearChildren(void);
-            void createBoneEntities(Transform *parent, const AnimationBone &bone);
+
+            void createBoneEntities(Transform *parent, AnimationBone *bone);
+
+            void setBoneTransformPointers(Transform *transform, AnimationBone *bone);
 
             void importRig(void);
 
             void updateRigTransforms(Component::Handle<Transform> boneTrans, const AnimationBone &boneData);
 
-            void enableDeletionOnEntities(const EntityHandle &entity);
+            void enableDeletionOnEntities(const EntityHandle &entity, bool flag);
 
             bool loadStateAnimation(AnimationState *state) const;
 
