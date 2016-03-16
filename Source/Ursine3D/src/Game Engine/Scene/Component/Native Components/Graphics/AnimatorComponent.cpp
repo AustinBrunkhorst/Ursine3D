@@ -147,36 +147,38 @@ namespace ursine
             // this will be applied to all animations that state has
             // const Animation *m_animation; will be changed as std::vector<Animation*>
             /////////////////////////////////////////////////////
-            unsigned keyframeCount1 = currAni->GetRigKeyFrameCount();
-            auto &curr_firstFrame = currAni->GetKeyframe(0, 0);
-            auto &curr_lastFrame = currAni->GetKeyframe(keyframeCount1 - 1, 0);
+            unsigned keyframeCount1 = currAni->GetRigKeyFrameCount( );
+            auto &curr_firstFrame = currAni->GetKeyframe( 0, 0 );
+            auto &curr_lastFrame = currAni->GetKeyframe( keyframeCount1 - 1, 0 );
 
             // need to check state blender
-            StateBlender *stb = getStateBlenderByNames(currSt->GetStateName( ), futSt->GetStateName( ));
+            StateBlender *stb = getStateBlenderByNames( currSt->GetStateName( ), futSt->GetStateName( ) );
 
             // if user didn't defined state blender, 
             // then just start blending right now without delay.
             // (or then play as default state blender which is currTimePos = 1.0f, futTimePos = 0.0f)
             if (nullptr == stb)
             {
-                futSt->IncrementTimePosition(dt * m_speedScalar);
+                futSt->IncrementTimePosition( dt * m_speedScalar );
                         
                 transFactor += dt * m_speedScalar;
                 if (transFactor > 1.0f)
                     transFactor = 1.0f;
 
                 unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
-                auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
-                auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
+                auto &fut_firstFrame = futAni->GetKeyframe( 0, 0 );
+                auto &fut_lastFrame = futAni->GetKeyframe( keyframeCount2 - 1, 0 );
                     
                 // if the future state reaches at its last frame
                 if (futSt->GetTimePosition( ) > fut_lastFrame.length)
                 {
-                    changeState(currSt, futSt
-                        , curr_firstFrame.length 
-                        , fut_firstFrame.length
-                        , curr_lastFrame.length
-                        , fut_lastFrame.length );
+                    changeState(
+                        currSt, futSt,
+                        curr_firstFrame.length,
+                        fut_firstFrame.length,
+                        curr_lastFrame.length,
+                        fut_lastFrame.length 
+                    );
 
                     transFactor = 0.0f;
                 }
@@ -186,14 +188,14 @@ namespace ursine
                 bool bCurrEnd = false;
                 if (currSt->GetTimePosition( ) > curr_lastFrame.length)
                 {
-                    currSt->SetTimePosition(curr_lastFrame.length);
+                    currSt->SetTimePosition( curr_lastFrame.length );
                     bCurrEnd = true;
                 }
-                    
+
                 // To check if current state is reached at the same frame as state blender's
                 unsigned int curFrameIndex = 0;
-                getTransFrmByRatio(*currSt, curFrameIndex, stb->GetcurrTransPosRatio( ));
-                stb->SetcurrTransFrm(curFrameIndex);
+                getTransFrmByRatio( *currSt, curFrameIndex, stb->GetcurrTransPosRatio( ) );
+                stb->SetcurrTransFrm( curFrameIndex );
                     
                 // Can't check actual frame's length since that keyframe could be dummy value.
                 // so we just check it by index.
@@ -204,8 +206,8 @@ namespace ursine
                     for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
                     {
                         // get the two current keyframes
-                        const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes(x);
-                        const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes(x + 1);
+                        const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes( x );
+                        const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes( x + 1 );
                     
                         // check if the current keyframe set holds the time value between them
                         if (f1[0].length <= currSt->GetTimePosition( ) && currSt->GetTimePosition( ) < f2[0].length)
@@ -232,7 +234,7 @@ namespace ursine
                 if (m_blending)
                 {
                     // if blending is true, start transitioning from this state to that state
-                    futSt->IncrementTimePosition(dt  *m_speedScalar);
+                    futSt->IncrementTimePosition( dt  *m_speedScalar );
 
                     transFactor += dt  *m_speedScalar;
                     if (transFactor > 1.0f)
@@ -243,18 +245,20 @@ namespace ursine
                     // const Animation *m_animation; will be changed as std::vector<Animation*>
                     /////////////////////////////////////////////////////
                     unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
-                    auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
-                    auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
+                    auto &fut_firstFrame = futAni->GetKeyframe( 0, 0 );
+                    auto &fut_lastFrame = futAni->GetKeyframe( keyframeCount2 - 1, 0 );
                     
                     if (futSt->GetTimePosition( ) > fut_lastFrame.length)
                     {
                         m_blending = false;
 
-                        changeState( currSt, futSt
-                            , curr_firstFrame.length
-                            , futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length
-                            , curr_lastFrame.length
-                            , fut_lastFrame.length );
+                        changeState( 
+                            currSt, futSt,
+                            curr_firstFrame.length,
+                            futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length,
+                            curr_lastFrame.length,
+                            fut_lastFrame.length 
+                        );
 
                         transFactor = 0.0f;
                     }
@@ -263,9 +267,9 @@ namespace ursine
                 else
                 {
                     // if current state reached at the end
-                    if ( bCurrEnd )
+                    if (bCurrEnd)
                     {
-                        if ( currSt->IsLooping( ) )
+                        if (currSt->IsLooping( ))
                             currSt->SetTimePosition( curr_firstFrame.length );
                         else
                             currSt->SetTimePosition( curr_lastFrame.length );
@@ -273,7 +277,7 @@ namespace ursine
                 }
             }
         }
-        
+
         void Animator::changeState(AnimationState *currSt, AnimationState *futSt,
                                    float currloopTimePos, float futloopTimePos,
                                    float currNoloopTimePos, float futNoloopTimePos)

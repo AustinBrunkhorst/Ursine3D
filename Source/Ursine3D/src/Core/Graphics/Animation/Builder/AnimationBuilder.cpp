@@ -328,7 +328,7 @@ namespace ursine
     {
         // get the percentage between current frame and next frame
         auto denom = frame2[0].length - frame1[0].length;
-        float lerpPercent = denom == 0.0f ? 1.0f : time - frame1[0].length / denom;
+        float lerpPercent = denom == 0.0f ? 1.0f : (time - frame1[0].length) / denom;
 
         // for each one, interpolate between frame1[x] and frame2[x] with time, save result in finalTransform[x]
         for (unsigned x = 0; x < boneCount; ++x)

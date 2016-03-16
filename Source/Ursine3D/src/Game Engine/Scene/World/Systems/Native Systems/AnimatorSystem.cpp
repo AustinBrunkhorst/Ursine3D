@@ -219,9 +219,6 @@ namespace ursine
                 animator->m_transFactor
             );
 
-            if (animator->m_transFactor != 0.0f)
-                std::cout << animator->m_transFactor << std::endl;
-
             // generate the matrices
             AnimationBuilder::GenerateAnimationData(
                 currentState,

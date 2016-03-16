@@ -104,7 +104,7 @@ namespace ursine
         auto &curr_firstFrame = m_animation->GetKeyframe( 0, 0 );
         auto &curr_lastFrame = m_animation->GetKeyframe( keyframeCount1 - 1, 0 );
 
-        if (GetTimePosition( ) >= curr_lastFrame.length)
+        if (GetTimePosition( ) > curr_lastFrame.length)
         {
             if (IsLooping( ))
                 SetTimePosition( curr_firstFrame.length );
