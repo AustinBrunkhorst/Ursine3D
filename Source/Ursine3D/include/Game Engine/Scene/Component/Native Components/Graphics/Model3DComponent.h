@@ -170,7 +170,7 @@ namespace ursine
             std::string GetModelName(void) const;
 
         private:
-            friend class Animator;
+            friend class AnimatorSystem;
 
             graphics::GfxAPI *m_graphics;
 

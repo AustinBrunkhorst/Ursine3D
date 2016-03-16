@@ -18,12 +18,10 @@ namespace ursine
 {
     AnimationBone::AnimationBone(void)
         : m_name("undefined")
-        /*, m_translation(SVec3())
-        , m_scale(SVec3())
-        , m_rotation(SQuat())*/
         , m_boneID(-1)
         , m_parentID(-1)
-        , m_parent(nullptr) { }
+        , m_parent(nullptr)
+        , m_transform(nullptr) { }
 
     void AnimationBone::InitializeBone(
         const std::string &name,

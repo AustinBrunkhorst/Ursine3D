@@ -47,6 +47,8 @@ namespace ursine
         if (boneCount != currentAnimation->GetDesiredBoneCount())
             return;
 
+        bool found = false;
+
         // determine the 2 current keyframes to use
         // we assume that all frames exist, and that they were baked across all total keyframes
         for (unsigned x = 0; x < frameCount - 1; ++x)
@@ -55,9 +57,8 @@ namespace ursine
             const std::vector<AnimationKeyframe> &f1 = currentAnimation->GetKeyframes(x);
             const std::vector<AnimationKeyframe> &f2 = currentAnimation->GetKeyframes(x + 1);
         
-            // check if the current keyframe set holds the time value between them ||
-            // we've reached the end of what we can find and we need to set things to the last available frame
-            if ((f1[0].length <= time && time < f2[0].length) || x + 1 == frameCount - 1)
+            // check if the current keyframe set holds the time value between them
+            if (f1[0].length <= time && time < f2[0].length)
             {
                 // if it did, interpolate the two keyframes, save values, break out
                 interpolateRigKeyFrames(
@@ -68,9 +69,23 @@ namespace ursine
                     m_toParentTransforms,
                     rig
                 );
+                found = true;
                 // kick out, we're done
                 break;
             }
+        }
+
+        if (!found)
+        {
+            auto &f1 = currentAnimation->GetKeyframes( frameCount - 1 );
+            interpolateRigKeyFrames(
+                f1,
+                f1,
+                time,
+                boneCount,
+                m_toParentTransforms,
+                rig
+            );
         }
 
         // for the future animation
@@ -312,7 +327,8 @@ namespace ursine
         )
     {
         // get the percentage between current frame and next frame
-        float lerpPercent = (time - frame1[0].length) / (frame2[0].length - frame1[0].length);
+        auto denom = frame2[0].length - frame1[0].length;
+        float lerpPercent = denom == 0.0f ? 1.0f : time - frame1[0].length / denom;
 
         // for each one, interpolate between frame1[x] and frame2[x] with time, save result in finalTransform[x]
         for (unsigned x = 0; x < boneCount; ++x)

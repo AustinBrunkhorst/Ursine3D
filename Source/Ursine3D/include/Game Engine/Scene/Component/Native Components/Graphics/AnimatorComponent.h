@@ -53,12 +53,6 @@ namespace ursine
             );
 
             EditorField(
-                bool changeState,
-                IsStateChanging,
-                SetStateChanging
-            );
-
-            EditorField(
                 bool renderDebug,
                 IsDebug,
                 SetDebug
@@ -78,70 +72,45 @@ namespace ursine
 
             Meta(Enable)
             Animator(void);
-            ~Animator(void);
-
-            void OnInitialize(void) override;
 
             void OnSceneReady(Scene *scene) override;
 
             void OnSerialize(Json::object &output) const override;
             void OnDeserialize(const Json &input) override;
 
-            // stick this in a system
-            void UpdateAnimation(const float dt);
-
-            void Debugging(const AnimationRig& _rig, const std::vector<SMat4>& vec);
-
             // getter / setter //////////////////////////////////////
             const std::string &GetCurrentState(void) const;
             void SetCurrentState(const std::string &state);
 
             bool IsPlaying(void) const;
-            void SetPlaying(const bool isPlaying);
-
-            bool IsStateChanging(void) const;
-            void SetStateChanging(const bool stateChange);
+            void SetPlaying(bool isPlaying);
 
             bool IsDebug(void) const;
-            void SetDebug(const bool useDebug);
+            void SetDebug(bool useDebug);
 
             bool GetEnableBoneManipulation(void) const;
             void SetEnableBoneManipulation(bool flag);
 
             float GetTimeScalar(void) const;
-            void SetTimeScalar(const float scalar);
-
-            float GetAnimationTimePosition(void) const;
-            void SetAnimationTimePosition(const float position);
+            void SetTimeScalar(float scalar);
 
             // Array of animation states
             ursine::Array<ursine::AnimationState> stArray;
             // Array of state blender
             ursine::Array<ursine::StateBlender> stBlender;
 
-            void UpdateState(AnimationState *currSt, const Animation *currAni,
-                AnimationState *futSt, const Animation *futAni, const float& dt, float& transFactor);
-
-            void ChangeState(AnimationState *currSt, AnimationState *futSt,
-                             float currloopTimePos, float futloopTimePos, 
-                             float currNoloopTimePos, float futNoloopTimePos);
-
-            void GetTransFrmByRatio(AnimationState &state, unsigned int &frameIndex, float ratio);
-
-            StateBlender *GetStateBlenderByNames(const std::string &currst, const std::string &futst);
-
-            // save and load
-            // => save both Arrays
-            // => when load model, don't just load these, but should also load the animation if it doesn't exist
-
         private:
+            friend class AnimatorSystem;
+
             bool m_enableBoneManipulation;
             bool m_playing;
             bool m_debug;
-            bool m_changeState;
             bool m_blending;
 
             float m_speedScalar;
+
+            // default transition time takes 1 sec this will be used as interpolation factor
+            float m_transFactor;
 
             EntityHandle m_rigRoot;
             std::string m_rig;
@@ -150,6 +119,21 @@ namespace ursine
             std::string m_futStName;
             std::string m_stateName;
 
+            void updateState(AnimationState *currSt, const Animation *currAni,
+                             AnimationState *futSt, const Animation *futAni, 
+                             float dt, float &transFactor);
+
+            void changeState(AnimationState *currSt, AnimationState *futSt,
+                             float currloopTimePos, float futloopTimePos, 
+                             float currNoloopTimePos, float futNoloopTimePos);
+
+            float getAnimationTimePosition(void) const;
+            void setAnimationTimePosition(float position);
+
+            void getTransFrmByRatio(AnimationState &state, unsigned int &frameIndex, float ratio);
+
+            StateBlender *getStateBlenderByNames(const std::string &currst, const std::string &futst);
+
             static void recursClearChildren(const std::vector<Handle<Transform>> &children);
             
             void clearChildren(void);
@@ -157,6 +141,8 @@ namespace ursine
             void createBoneEntities(Transform *parent, AnimationBone *bone);
 
             void setBoneTransformPointers(Transform *transform, AnimationBone *bone);
+
+            void getRigRootEntity(void);
 
             void importRig(void);
 

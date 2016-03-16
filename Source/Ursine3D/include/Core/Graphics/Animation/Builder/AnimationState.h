@@ -22,6 +22,7 @@ namespace ursine
     namespace ecs
     {
         class Animator;
+        class AnimatorSystem;
     }
 
     class AnimationState
@@ -103,6 +104,7 @@ namespace ursine
 
     private:
         friend class ecs::Animator;
+        friend class ecs::AnimatorSystem;
 
         std::string m_stateName;
 

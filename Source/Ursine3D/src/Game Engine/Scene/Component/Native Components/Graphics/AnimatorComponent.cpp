@@ -38,46 +38,17 @@ namespace ursine
             : BaseComponent( )
             , m_playing( true )
             , m_debug( false )
-            , m_changeState( false )
             , m_speedScalar( 1.0f )
+            , m_transFactor( 0.0f )
             , m_curStName( "" )
             , m_futStName( "" )
             , m_stateName( "" )
             , m_blending( false )
             , m_enableBoneManipulation( false ) { }
 
-        Animator::~Animator(void)
-        {
-            auto model = GetOwner( )->GetComponent<Model3D>( );
-
-            if (!model)
-                return;
-
-            // clean up our model's matrices
-            model->clearMatrixPalette( );
-        }
-
-        void Animator::OnInitialize(void)
-        {
-            // clean up our model's matrices
-            auto model = GetOwner( )->GetComponent<Model3D>( );
-
-            if (model)
-                model->clearMatrixPalette( );
-        }
-
         void Animator::OnSceneReady(Scene *scene)
         {
-            m_rigRoot = GetOwner( )->GetChildByName( kRigRootName );
-
-            if (m_rigRoot)
-            {
-                auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
-
-                UAssert( rig, "Error: Why is this null?" );
-
-                setBoneTransformPointers( m_rigRoot->GetTransform( )->GetChild( 0 ).Get( ), rig->GetBone( 0 ) );
-            }
+            getRigRootEntity( );
         }
 
         void Animator::OnSerialize(Json::object &output) const
@@ -93,280 +64,6 @@ namespace ursine
                 return;
 
             m_rig = value.string_value( );
-        }
-
-        void Animator::UpdateAnimation(const float dt)
-        {
-            // grab what we need
-            AnimationState *currentState = nullptr;
-            AnimationState *futureState = nullptr;
-
-            for (auto &x : stArray)
-            {
-                if (x.GetStateName( ) == "")
-                    continue;
-                if (x.GetStateName( ) == m_curStName)
-                    currentState = &x;
-                if (x.GetStateName( ) == m_futStName)
-                    futureState = &x;
-            }
-
-            // If the current state doesn't exist and the future state does, just set the future state to current
-            if (!currentState && futureState)
-            {
-                currentState = futureState;
-                futureState = nullptr;
-                m_curStName = m_futStName;
-                m_futStName = "";
-            }
-
-            if (!currentState)
-                return;
-
-            if (!currentState->m_loaded)
-                loadStateAnimation( currentState );
-
-            if (futureState && !futureState->m_loaded)
-                loadStateAnimation( futureState );
-
-            const Animation *currentAnimation = ( nullptr == currentState ) ? nullptr : currentState->GetAnimation( );
-            const Animation *futureAnimation = ( nullptr == futureState ) ? nullptr : futureState->GetAnimation( );
-
-            auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
-
-            if (nullptr == currentAnimation || nullptr == rig)
-                return;
-
-            if (currentAnimation->GetDesiredBoneCount( ) != rig->GetBoneCount( ))
-                return;
-
-            // default transition time takes 1 sec this will be used as interpolation factor
-            float transFactor = 0.0;
-
-            if (nullptr != futureAnimation)
-            {
-                if (futureAnimation->GetDesiredBoneCount( ) != rig->GetBoneCount( ))
-                    return;
-            }
-            else
-                transFactor = 0.0;
-
-            auto &matrixPalette = GetOwner( )->GetComponent<Model3D>( )->getMatrixPalette( );
-            std::vector<SMat4> tempVec;
-
-            tempVec.resize( 100 );
-
-            // blending / playing animation should take place in here
-            UpdateState( currentState, currentAnimation, futureState, futureAnimation, dt, transFactor );
-
-            // generate the matrices
-            AnimationBuilder::GenerateAnimationData(
-                currentState,
-                futureState,
-                rig,
-                matrixPalette,
-                tempVec,
-                transFactor
-            );
-
-            if (m_enableBoneManipulation)
-            {
-                GetOwner( )->Dispatch( ENTITY_ANIMATION_BONE_MANIPULATION_VALID, nullptr );
-
-                // Set the matrix pallet from the rig
-                auto boneCount = rig->GetBoneCount( );
-                auto &offsetMatrices = rig->GetOffsetMatrices( );
-                auto parentTrans = GetOwner( )->GetTransform( )->GetWorldToLocalMatrix( );
-
-                for (uint i = 0; i < boneCount; ++i)
-                {
-                    auto bone = rig->GetBone( i );
-
-                    matrixPalette[ i ] = 
-                        parentTrans * 
-                        bone->m_transform->GetLocalToWorldMatrix( ) *
-                        offsetMatrices[ i ];
-                }
-            }
-
-            ////////////////////////////////////////////////////////////////
-            // TEMPORARY DEBUG STUFF
-            // render the debug data
-            if (m_debug)
-                Debugging(*rig, tempVec);
-        }
-
-        void Animator::Debugging(const AnimationRig& _rig, const std::vector<SMat4>& vec)
-        {
-            auto *graphics = GetCoreSystem(graphics::GfxAPI);
-
-            URSINE_TODO("Remove this when we implement proper animation clips and stuf")
-            std::vector<SVec3> bonePoints;
-
-            bonePoints.resize( 100 );
-
-            auto &hierarchy = _rig.GetHierarchyTable( );
-            auto &worldTransform = GetOwner( )->GetTransform( )->GetLocalToWorldMatrix( );
-
-            int maxNodeDistance = 0;
-
-            size_t boneCount = hierarchy.size( );
-
-            // calculate max distance for colors, calculate bone position
-            for (size_t x = 0; x < boneCount; ++x)
-            {
-                // distance
-                int distance = 0;
-                int walker = hierarchy[x];
-
-                while (walker != -1)
-                {
-                    walker = hierarchy[walker];
-                    distance++;
-                }
-
-                if (distance > maxNodeDistance) maxNodeDistance = distance;
-
-                // bone values
-                bonePoints[x] = worldTransform.TransformPoint(vec[x].TransformPoint(SVec3(0, 0, 0)));
-            }
-
-            // render points
-            graphics->DrawingMgr.SetOverdraw(true);
-
-            for (unsigned x = 0; x < boneCount; ++x)
-            {
-                int distance = 0;
-                int walker = hierarchy[x];
-
-                while (walker != -1)
-                {
-                    walker = hierarchy[walker];
-                    distance++;
-                }
-
-                float interp = (float)distance / (float)maxNodeDistance;
-                //draw points
-
-                graphics->DrawingMgr.SetColor(Color(1  *interp, (1.f - interp), 0, 1));
-
-                if (distance == 0)
-                    graphics->DrawingMgr.SetColor(0, 0, 1, 1);
-
-                graphics->DrawingMgr.SetSize(10);
-                SVec3 &p = bonePoints[x];
-                graphics->DrawingMgr.DrawPoint(p);
-            }
-
-            // render lines
-            for (size_t x = boneCount - 1; x >= 1; --x)
-            {
-                SVec3 &p1 = bonePoints[x];
-                SVec3 &p2 = bonePoints[hierarchy[x]];
-
-                graphics->DrawingMgr.DrawLine(p1, p2);
-            }
-
-            graphics->DrawingMgr.SetOverdraw(false);
-        }
-
-        bool Animator::IsPlaying(void) const
-        {
-            return m_playing;
-        }
-
-        void Animator::SetPlaying(const bool isPlaying)
-        {
-            m_playing = isPlaying;
-        }
-        
-        bool Animator::IsStateChanging(void) const
-        {
-            return m_changeState;
-        }
-
-        void Animator::SetStateChanging(const bool stateChange)
-        {
-            m_changeState = stateChange;
-        }
-
-        bool Animator::IsDebug(void) const
-        {
-            return m_debug;
-        }
-
-        void Animator::SetDebug(const bool useDebug)
-        {
-            m_debug = useDebug;
-        }
-
-        bool Animator::GetEnableBoneManipulation(void) const
-        {
-            return m_enableBoneManipulation;
-        }
-
-        void Animator::SetEnableBoneManipulation(bool flag)
-        {
-            m_enableBoneManipulation = flag;
-        }
-
-        float Animator::GetTimeScalar(void) const
-        {
-            return m_speedScalar;
-        }
-
-        void Animator::SetTimeScalar(const float scalar)
-        {
-            m_speedScalar = scalar;
-        }
-
-        float Animator::GetAnimationTimePosition(void) const
-        {
-            for (auto &x : stArray)
-            {
-                if (x.GetStateName( ) == m_curStName)
-                    return x.GetTimePosition( );
-            }
-            return 0.0f;
-        }
-
-        void Animator::SetAnimationTimePosition(const float position)
-        {
-            for (auto &x : stArray)
-            {
-                if (x.GetStateName( ) == m_curStName)
-                {
-                    x.SetTimePosition( position );
-                    return;
-                }
-            }
-        }
-
-        bool Animator::loadStateAnimation(AnimationState *state) const
-        {
-            // TODO: Ask Austin
-            auto data = loadResource<resources::AnimationClipData>( state->m_clip );
-
-            std::string str;
-
-            if (data == nullptr)
-                return false;
-
-            auto handle = data->GetAnimeHandle( );
-            auto info = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( handle );
-
-            state->m_animation = AnimationBuilder::GetAnimationByName( info->name );
-
-            if (state->m_animation == nullptr)
-            {
-                AnimationBuilder::LoadAnimation( *info );
-
-                state->m_animation = AnimationBuilder::GetAnimationByName( info->name );
-            }
-
-            state->m_loaded = true;
-
-            return true;
         }
 
         const std::string &Animator::GetCurrentState(void) const
@@ -386,190 +83,209 @@ namespace ursine
                 m_futStName = state;
         }
 
-        void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
+        bool Animator::IsPlaying(void) const
         {
-            for (auto &child : children)
-            {
-                recursClearChildren(child->GetChildren( ));
-
-                child->GetOwner( )->Delete( );
-            }
+            return m_playing;
         }
 
-        void Animator::clearChildren(void)
+        void Animator::SetPlaying(bool isPlaying)
         {
-            recursClearChildren(GetOwner( )->GetTransform( )->GetChildren( ));
+            m_playing = isPlaying;
         }
 
-        void Animator::UpdateState(AnimationState* currSt, const Animation* currAni,
+        bool Animator::IsDebug(void) const
+        {
+            return m_debug;
+        }
+
+        void Animator::SetDebug(bool useDebug)
+        {
+            m_debug = useDebug;
+        }
+
+        bool Animator::GetEnableBoneManipulation(void) const
+        {
+            return m_enableBoneManipulation;
+        }
+
+        void Animator::SetEnableBoneManipulation(bool flag)
+        {
+            m_enableBoneManipulation = flag;
+        }
+
+        float Animator::GetTimeScalar(void) const
+        {
+            return m_speedScalar;
+        }
+
+        void Animator::SetTimeScalar(float scalar)
+        {
+            m_speedScalar = scalar;
+        }
+
+        void Animator::updateState(AnimationState* currSt, const Animation* currAni,
                                    AnimationState* futSt, const Animation* futAni, 
-                                   const float& dt, float& transFactor)
+                                   float dt, float &transFactor)
         {
-            if (m_playing)
+            // Increment the current state's time marker
+            currSt->IncrementTimePosition( dt * m_speedScalar );
+
+            bool bFut = futSt && futAni;
+
+            // if there is no future state or future animation, then loop current animation again and again
+            if (!bFut)
             {
-                currSt->IncrementTimePosition(dt  *m_speedScalar);
+                currSt->PlayingAnimation( );
+                transFactor = 0.0f;
 
-                /////////////////////////////////////////////////////
-                // this will be applied to all animations that state has
-                // const Animation *m_animation; will be changed as std::vector<Animation*>
-                /////////////////////////////////////////////////////
-                unsigned keyframeCount1 = currAni->GetRigKeyFrameCount( );
-                auto &curr_firstFrame = currAni->GetKeyframe(0, 0);
-                auto &curr_lastFrame = currAni->GetKeyframe(keyframeCount1 - 1, 0);
+                return;
+            }
 
-                bool bFut = false;
-                if (futSt)
+            // if there is future state and animation
+
+            /////////////////////////////////////////////////////
+            // this will be applied to all animations that state has
+            // const Animation *m_animation; will be changed as std::vector<Animation*>
+            /////////////////////////////////////////////////////
+            unsigned keyframeCount1 = currAni->GetRigKeyFrameCount();
+            auto &curr_firstFrame = currAni->GetKeyframe(0, 0);
+            auto &curr_lastFrame = currAni->GetKeyframe(keyframeCount1 - 1, 0);
+
+            // need to check state blender
+            StateBlender *stb = getStateBlenderByNames(currSt->GetStateName( ), futSt->GetStateName( ));
+
+            // if user didn't defined state blender, 
+            // then just start blending right now without delay.
+            // (or then play as default state blender which is currTimePos = 1.0f, futTimePos = 0.0f)
+            if (nullptr == stb)
+            {
+                futSt->IncrementTimePosition(dt * m_speedScalar);
+                        
+                transFactor += dt * m_speedScalar;
+                if (transFactor > 1.0f)
+                    transFactor = 1.0f;
+
+                unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
+                auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
+                auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
+                    
+                // if the future state reaches at its last frame
+                if (futSt->GetTimePosition( ) > fut_lastFrame.length)
                 {
-                    if (futAni)
-                        bFut = true;
-                }
+                    changeState(currSt, futSt
+                        , curr_firstFrame.length 
+                        , fut_firstFrame.length
+                        , curr_lastFrame.length
+                        , fut_lastFrame.length );
 
-                // if there is no future state or future animation, then loop current animation again and again
-                if (!bFut)
-                {
-                    currSt->PlayingAnimation( );// dt  *m_speedScalar);
+                    transFactor = 0.0f;
                 }
-                // if there is future state and animation
+            }
+            else
+            {
+                bool bCurrEnd = false;
+                if (currSt->GetTimePosition( ) > curr_lastFrame.length)
+                {
+                    currSt->SetTimePosition(curr_lastFrame.length);
+                    bCurrEnd = true;
+                }
+                    
+                // To check if current state is reached at the same frame as state blender's
+                unsigned int curFrameIndex = 0;
+                getTransFrmByRatio(*currSt, curFrameIndex, stb->GetcurrTransPosRatio( ));
+                stb->SetcurrTransFrm(curFrameIndex);
+                    
+                // Can't check actual frame's length since that keyframe could be dummy value.
+                // so we just check it by index.
+                unsigned index1 = 0, index2 = 0;
+
+                if (false == m_blending)
+                {
+                    for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
+                    {
+                        // get the two current keyframes
+                        const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes(x);
+                        const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes(x + 1);
+                    
+                        // check if the current keyframe set holds the time value between them
+                        if (f1[0].length <= currSt->GetTimePosition( ) && currSt->GetTimePosition( ) < f2[0].length)
+                            break;
+
+                        ++index1;
+                    }
+
+                    index2 = stb->GetcurrTransFrm( );
+                    if (index1 >= index2)
+                    {
+                        // Set Trans Frame by Transition Position - fut
+                        unsigned int futFrameIndex = 0;
+                        getTransFrmByRatio( *futSt, futFrameIndex, stb->GetfutTransPosRatio( ) );
+                        stb->SetfutTransFrm( futFrameIndex );
+                        // Set future state's timeposition to chosen frame
+                        futSt->SetTimePosition( futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length );
+                        // confirm start blending
+                        m_blending = true;
+                    }
+                }
+                    
+                // if the blending is started
+                if (m_blending)
+                {
+                    // if blending is true, start transitioning from this state to that state
+                    futSt->IncrementTimePosition(dt  *m_speedScalar);
+
+                    transFactor += dt  *m_speedScalar;
+                    if (transFactor > 1.0f)
+                        transFactor = 1.0f;
+                    
+                    /////////////////////////////////////////////////////
+                    // this will be applied to all animations that state has
+                    // const Animation *m_animation; will be changed as std::vector<Animation*>
+                    /////////////////////////////////////////////////////
+                    unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
+                    auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
+                    auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
+                    
+                    if (futSt->GetTimePosition( ) > fut_lastFrame.length)
+                    {
+                        m_blending = false;
+
+                        changeState( currSt, futSt
+                            , curr_firstFrame.length
+                            , futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length
+                            , curr_lastFrame.length
+                            , fut_lastFrame.length );
+
+                        transFactor = 0.0f;
+                    }
+                }
+                // if the blending didn't started
                 else
                 {
-                    // need to check state blender
-                    StateBlender *stb = GetStateBlenderByNames(currSt->GetStateName( ), futSt->GetStateName( ));
-
-                    // if user didn't defined state blender, 
-                    // then just start blending right now without delay.
-                    // (or then play as default state blender which is currTimePos = 1.0f, futTimePos = 0.0f)
-                    if (nullptr == stb)
+                    // if current state reached at the end
+                    if ( bCurrEnd )
                     {
-                        futSt->IncrementTimePosition(dt * m_speedScalar);
-                        
-                        transFactor += dt * m_speedScalar;
-                        if (transFactor > 1.0f)
-                            transFactor = 1.0f;
-
-                        unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
-                        auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
-                        auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
-                    
-                        // if the future state reaches at its last frame
-                        if (futSt->GetTimePosition( ) > fut_lastFrame.length)
-                        {
-                            ChangeState(currSt, futSt
-                                , curr_firstFrame.length 
-                                , fut_firstFrame.length
-                                , curr_lastFrame.length
-                                , fut_lastFrame.length );
-
-                            transFactor = 0.0f;
-                        }
-                    }
-                    else
-                    {
-                        bool bCurrEnd = false;
-                        if (currSt->GetTimePosition( ) > curr_lastFrame.length)
-                        {
-                            currSt->SetTimePosition(curr_lastFrame.length);
-                            bCurrEnd = true;
-                        }
-                    
-                        // To check if current state is reached at the same frame as state blender's
-                        unsigned int curFrameIndex = 0;
-                        GetTransFrmByRatio(*currSt, curFrameIndex, stb->GetcurrTransPosRatio( ));
-                        stb->SetcurrTransFrm(curFrameIndex);
-                    
-                        // Can't check actual frame's length since that keyframe could be dummy value.
-                        // so we just check it by index.
-                        unsigned index1 = 0, index2 = 0;
-
-                        if (false == m_blending)
-                        {
-                            for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
-                            {
-                                // get the two current keyframes
-                                const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes(x);
-                                const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes(x + 1);
-                    
-                                // check if the current keyframe set holds the time value between them
-                                if (f1[0].length <= currSt->GetTimePosition( ) && currSt->GetTimePosition( ) < f2[0].length)
-                                    break;
-
-                                ++index1;
-                            }
-
-                            index2 = stb->GetcurrTransFrm( );
-                            if (index1 == index2)
-                            {
-                                // Set Trans Frame by Transition Position - fut
-                                unsigned int futFrameIndex = 0;
-                                GetTransFrmByRatio( *futSt, futFrameIndex, stb->GetfutTransPosRatio( ) );
-                                stb->SetfutTransFrm( futFrameIndex );
-                                // Set future state's timeposition to chosen frame
-                                futSt->SetTimePosition( futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length );
-                                // confirm start blending
-                                m_blending = true;
-                            }
-                        }
-                    
-                        // if the blending is started
-                        if (m_blending)
-                        {
-                            // if blending is true, start transitioning from this state to that state
-                            futSt->IncrementTimePosition(dt  *m_speedScalar);
-
-                            transFactor += dt  *m_speedScalar;
-                            if (transFactor > 1.0f)
-                                transFactor = 1.0f;
-                    
-                            /////////////////////////////////////////////////////
-                            // this will be applied to all animations that state has
-                            // const Animation *m_animation; will be changed as std::vector<Animation*>
-                            /////////////////////////////////////////////////////
-                            unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
-                            auto &fut_firstFrame = futAni->GetKeyframe(0, 0);
-                            auto &fut_lastFrame = futAni->GetKeyframe(keyframeCount2 - 1, 0);
-                    
-                            if (futSt->GetTimePosition( ) > fut_lastFrame.length)
-                            {
-                                m_blending = false;
-
-                                ChangeState( currSt, futSt
-                                    , curr_firstFrame.length
-                                    , futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length
-                                    , curr_lastFrame.length
-                                    , fut_lastFrame.length );
-
-                                transFactor = 0.0f;
-                            }
-                        }
-                        // if the blending didn't started
+                        if ( currSt->IsLooping( ) )
+                            currSt->SetTimePosition( curr_firstFrame.length );
                         else
-                        {
-                            // if current state reached at the end
-                            if ( bCurrEnd )
-                            {
-                                if ( currSt->IsLooping( ) )
-                                    currSt->SetTimePosition( curr_firstFrame.length );
-                                else
-                                    currSt->SetTimePosition( curr_lastFrame.length );
-                            }
-                        }
+                            currSt->SetTimePosition( curr_lastFrame.length );
                     }
                 }
             }
         }
         
-        void Animator::ChangeState(AnimationState *currSt, AnimationState *futSt,
+        void Animator::changeState(AnimationState *currSt, AnimationState *futSt,
                                    float currloopTimePos, float futloopTimePos,
                                    float currNoloopTimePos, float futNoloopTimePos)
         {
             // if change state is checked, change state as future state
-            if (m_changeState)
+            if (futSt && m_futStName != "")
             {
                 m_curStName = m_futStName;
                 m_futStName = "";
 
-                NOTIFY_COMPONENT_CHANGED("currentState", m_curStName);
-                currSt = futSt;
-                futSt = nullptr;
+                if (currSt)
+                    currSt->SetTimePosition( 0 );
             }
             // if not, then it means state will not be changed.
             else
@@ -590,8 +306,30 @@ namespace ursine
             }
         }
 
+        float Animator::getAnimationTimePosition(void) const
+        {
+            for (auto &x : stArray)
+            {
+                if (x.GetStateName( ) == m_curStName)
+                    return x.GetTimePosition( );
+            }
+            return 0.0f;
+        }
+
+        void Animator::setAnimationTimePosition(float position)
+        {
+            for (auto &x : stArray)
+            {
+                if (x.GetStateName( ) == m_curStName)
+                {
+                    x.SetTimePosition( position );
+                    return;
+                }
+            }
+        }
+
         // find the closest animation keyframe of the state, and set a transition position
-        void Animator::GetTransFrmByRatio(AnimationState &state, unsigned int &frameIndex, float ratio)
+        void Animator::getTransFrmByRatio(AnimationState &state, unsigned int &frameIndex, float ratio)
         {
             unsigned keyframeCount = state.GetAnimation( )->GetRigKeyFrameCount( );
             auto &firstFrame = state.GetAnimation( )->GetKeyframe( 0, 0 );
@@ -614,16 +352,8 @@ namespace ursine
         }
 
 
-        StateBlender *Animator::GetStateBlenderByNames(const std::string &currst, const std::string &futst)
+        StateBlender *Animator::getStateBlenderByNames(const std::string &currst, const std::string &futst)
         {
-            NotificationConfig config;
-
-            config.type = NOTIFY_WARNING;
-            config.header = "Warning";
-            config.message = "There is no matching State Blender in the list";
-            config.dismissible = true;
-            config.duration = TimeSpan::FromSeconds( 5.0f );
-
             if (currst == "" || futst == "")
             {
                 return nullptr;
@@ -635,8 +365,46 @@ namespace ursine
                     return &(x);
             }
 
-            //EditorPostNotification(config);
             return nullptr;
+        }
+
+        bool Animator::loadStateAnimation(AnimationState *state) const
+        {
+            auto data = loadResource<resources::AnimationClipData>( state->m_clip );
+            
+            if (data == nullptr)
+                return false;
+
+            auto handle = data->GetAnimeHandle( );
+            auto info = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetAnimInfo( handle );
+
+            state->m_animation = AnimationBuilder::GetAnimationByName( info->name );
+
+            if (state->m_animation == nullptr)
+            {
+                AnimationBuilder::LoadAnimation( *info );
+
+                state->m_animation = AnimationBuilder::GetAnimationByName( info->name );
+            }
+
+            state->m_loaded = true;
+
+            return true;
+        }
+
+        void Animator::recursClearChildren(const std::vector< Handle<Transform> > &children)
+        {
+            for (auto &child : children)
+            {
+                recursClearChildren(child->GetChildren( ));
+
+                child->GetOwner( )->Delete( );
+            }
+        }
+
+        void Animator::clearChildren(void)
+        {
+            recursClearChildren(GetOwner( )->GetTransform( )->GetChildren( ));
         }
 
 #if defined(URSINE_WITH_EDITOR)
@@ -756,6 +524,18 @@ namespace ursine
 
             for (uint i = 0, n = bone->GetChildCount( ); i < n; ++i)
                 setBoneTransformPointers( transform->GetChild( i ).Get( ), bone->GetChild( i ) );
+        }
+
+        void Animator::getRigRootEntity(void)
+        {
+            m_rigRoot = GetOwner( )->GetChildByName( kRigRootName );
+
+            if (m_rigRoot)
+            {
+                auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
+
+                setBoneTransformPointers( m_rigRoot->GetTransform( )->GetChild( 0 ).Get( ), rig->GetBone( 0 ) );
+            }
         }
 
         void Animator::updateRigTransforms(ursine::ecs::Component::Handle<Transform> boneTrans, const AnimationBone &boneData)
