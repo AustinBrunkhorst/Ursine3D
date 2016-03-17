@@ -95,10 +95,10 @@ namespace ursine
         m_transPos = tPos;
     }
 
-    void AnimationState::PlayingAnimation(void)
+    bool AnimationState::PlayingAnimation(void)
     {
         if (!m_animation)
-            return;
+            return false;
 
         unsigned keyframeCount1 = m_animation->GetRigKeyFrameCount( );
         auto &curr_firstFrame = m_animation->GetKeyframe( 0, 0 );
@@ -109,7 +109,12 @@ namespace ursine
             if (IsLooping( ))
                 SetTimePosition( curr_firstFrame.length );
             else
+            {
                 SetTimePosition( curr_lastFrame.length );
+                return true;
+            }
         }
+
+        return false;
     }
 }

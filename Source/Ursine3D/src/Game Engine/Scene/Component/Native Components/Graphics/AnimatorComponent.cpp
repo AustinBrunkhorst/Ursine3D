@@ -44,6 +44,7 @@ namespace ursine
             , m_futStName( "" )
             , m_stateName( "" )
             , m_blending( false )
+            , m_finishEventSent( false )
             , m_enableBoneManipulation( false ) { }
 
         void Animator::OnSceneReady(Scene *scene)
@@ -81,6 +82,8 @@ namespace ursine
             }
             else
                 m_futStName = state;
+
+            m_finishEventSent = false;
         }
 
         bool Animator::IsPlaying(void) const
@@ -135,7 +138,13 @@ namespace ursine
             // if there is no future state or future animation, then loop current animation again and again
             if (!bFut)
             {
-                currSt->PlayingAnimation( );
+                if (currSt->PlayingAnimation( ) && !m_finishEventSent)
+                {
+                    GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
+
+                    m_finishEventSent = true;
+                }
+
                 transFactor = 0.0f;
 
                 return;

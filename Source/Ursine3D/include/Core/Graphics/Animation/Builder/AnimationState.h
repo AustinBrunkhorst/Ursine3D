@@ -100,7 +100,8 @@ namespace ursine
         const float &GetTransPosition(void) const;
         void SetTransPosition(float tPos);
         
-        void PlayingAnimation(void);
+        // Returns whether or not an animation has finished animating (only for non looping)
+        bool PlayingAnimation(void);
 
     private:
         friend class ecs::Animator;

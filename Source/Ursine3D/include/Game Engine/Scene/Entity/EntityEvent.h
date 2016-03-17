@@ -53,6 +53,9 @@ namespace ursine
             // Animation
             ///////////////////////////////////////////////////////////////////
 
+            // This event is sent when a non-looping animation finishes
+            ENTITY_ANIMATION_FINISH,
+
             // This event is sent when animation bone manipulation is allowed
             // through editing the bone's transform component
             ENTITY_ANIMATION_BONE_MANIPULATION_VALID,

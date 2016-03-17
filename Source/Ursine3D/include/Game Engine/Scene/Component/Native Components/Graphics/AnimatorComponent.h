@@ -105,6 +105,7 @@ namespace ursine
             bool m_enableBoneManipulation;
             bool m_playing;
             bool m_debug;
+            bool m_finishEventSent;
             bool m_blending;
 
             float m_speedScalar;
