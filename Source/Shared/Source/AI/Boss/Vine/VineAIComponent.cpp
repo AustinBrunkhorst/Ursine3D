@@ -189,7 +189,7 @@ void VineAI::SetColliderSize(const SVec3 &colliderSize)
     m_colliderSize = colliderSize;
 }
 
-EntityAnimator *VineAI::GetAnimator(void)
+Animator *VineAI::GetAnimator(void)
 {
     return m_animator;
 }
@@ -247,7 +247,7 @@ void VineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
     GetOwner( )->Listener( this )
         .Off( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 
-    m_animator = GetOwner( )->GetComponentInChildren<EntityAnimator>( );
+    m_animator = GetOwner( )->GetComponentInChildren<Animator>( );
 
     m_homeLocation = GetOwner( )->GetTransform( )->GetWorldPosition( );
 

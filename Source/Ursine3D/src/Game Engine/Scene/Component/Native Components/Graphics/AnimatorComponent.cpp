@@ -49,7 +49,7 @@ namespace ursine
 
         void Animator::OnSceneReady(Scene *scene)
         {
-            getRigRootEntity( );
+            setRigTransformPointers( );
         }
 
         void Animator::OnSerialize(Json::object &output) const
@@ -539,9 +539,10 @@ namespace ursine
                 setBoneTransformPointers( transform->GetChild( i ).Get( ), bone->GetChild( i ) );
         }
 
-        void Animator::getRigRootEntity(void)
+        void Animator::setRigTransformPointers(void)
         {
-            m_rigRoot = GetOwner( )->GetChildByName( kRigRootName );
+            if (!m_rigRoot)
+                m_rigRoot = GetOwner( )->GetChildByName( kRigRootName );
 
             if (m_rigRoot)
             {

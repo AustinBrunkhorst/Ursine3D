@@ -22,8 +22,8 @@ namespace ursine
     namespace physics
     {
         struct RaycastOutput;
-    } // physics namespace
-} // ursine namespace
+    }
+}
 
 struct CritSpot;
 
@@ -96,6 +96,12 @@ public:
         SetSpawnOnHit
     );
 
+    EditorField(
+        bool listenToChildren,
+        GetListenToChildren,
+        SetListenToChildren
+    );
+
     DamageOnCollide(void);
     ~DamageOnCollide(void);
 
@@ -127,6 +133,9 @@ public:
 
     bool GetSpawnOnHit(void) const;
     void SetSpawnOnHit(bool state);
+
+    bool GetListenToChildren(void) const;
+    void SetListenToChildren(bool flag);
 
     void DecrementDamageIntervalTimes(float dt);
 
@@ -162,11 +171,15 @@ private:
     bool m_spawnOnHit;
     bool m_spawnOnDeath;
 
+    bool m_listenToChildren;
+    bool m_serialized;
+
     // map of all objects hit
     std::unordered_map<ursine::ecs::EntityHandle, float> m_damageTimeMap;
 
     void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
     void onCollide(EVENT_HANDLER(ursine::ecs::Entity));
+    void onHierarchySerialized(EVENT_HANDLER(ursine::ecs::Entity));
 
     void getSpawnLocation(
         const ursine::ecs::EntityHandle &other, 
@@ -183,6 +196,11 @@ private:
         const ursine::ecs::EntityHandle &obj, 
         const ursine::SVec3& contact, 
         float damage, bool crit
+    );
+
+    void connectToChildrenCollisionEvents(
+        bool connect, 
+        const std::vector<ursine::ecs::EntityID> *children
     );
 
 } Meta (Enable, DisplayName( "DamageOnCollide" ));

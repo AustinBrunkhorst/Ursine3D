@@ -14,8 +14,7 @@
 #pragma once
 
 #include "VineAIState.h"
-
-class EntityAnimator;
+#include "VineAIComponent.h"
 
 class VineWhipState : public VineAIState
 {
@@ -46,7 +45,7 @@ private:
     ursine::SQuat m_endOrientation;
     float m_swingTimer;
 
-    void playAnimation(EntityAnimator *animator, const std::string &clip);
+    void playAnimation(ursine::ecs::Animator *animator, const std::string &clip);
 
-    void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
+    void onAnimationFinished(EVENT_HANDLER(ursine::ecs::Entity));
 };

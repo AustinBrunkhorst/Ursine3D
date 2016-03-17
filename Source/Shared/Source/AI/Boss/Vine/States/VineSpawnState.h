@@ -15,8 +15,6 @@
 
 #include "VineAIState.h"
 
-class EntityAnimator;
-
 class VineSpawnState : public VineAIState
 {
 public:
@@ -29,5 +27,5 @@ public:
 private:
     bool m_finished;
 
-    void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
+    void onAnimationFinished(EVENT_HANDLER(Entity));
 };

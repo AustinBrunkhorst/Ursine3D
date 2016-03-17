@@ -20,6 +20,7 @@
 #include <SVec3.h>
 #include <PhysicsSystem.h>
 #include <SweptControllerComponent.h>
+#include <PlayerIDComponent.h>
 
 NATIVE_COMPONENT_DEFINITION( DamageOnCollide );
 
@@ -36,6 +37,8 @@ DamageOnCollide::DamageOnCollide(void)
     , m_deleted ( false )
     , m_spawnOnHit( false )
     , m_spawnOnDeath( false )
+    , m_listenToChildren( false )
+    , m_serialized( false ) 
     , m_type( DAMAGE_ENEMY ) { }
 
 DamageOnCollide::~DamageOnCollide(void)
@@ -44,6 +47,9 @@ DamageOnCollide::~DamageOnCollide(void)
         .Off( ENTITY_REMOVED, &DamageOnCollide::onDeath )
         .Off( ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
 
+    if (m_listenToChildren)
+        connectToChildrenCollisionEvents( false, GetOwner( )->GetChildren( ) );
+
     m_damageTimeMap.clear( );
 }
 
@@ -51,7 +57,21 @@ void DamageOnCollide::OnInitialize(void)
 {
     GetOwner( )->Listener( this )
         .On( ENTITY_REMOVED, &DamageOnCollide::onDeath )
-        .On( ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
+        .On( ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide )
+        .On( ENTITY_HIERARCHY_SERIALIZED, &DamageOnCollide::onHierarchySerialized );
+}
+
+void DamageOnCollide::onHierarchySerialized(EVENT_HANDLER(Entity))
+{
+    EVENT_ATTRS(Entity, EntityEventArgs);
+
+    m_serialized = true;
+
+    if (m_listenToChildren)
+        connectToChildrenCollisionEvents( true, GetOwner( )->GetChildren( ) );
+
+    sender->Listener( this )
+        .Off( ENTITY_HIERARCHY_SERIALIZED, &DamageOnCollide::onHierarchySerialized );
 }
 
 DamageType DamageOnCollide::GetDamageType(void) const
@@ -145,6 +165,22 @@ void DamageOnCollide::SetSpawnOnHit(bool state)
     m_spawnOnHit = state;
 }
 
+bool DamageOnCollide::GetListenToChildren(void) const
+{
+    return m_listenToChildren;
+}
+
+void DamageOnCollide::SetListenToChildren(bool flag)
+{
+    if (m_listenToChildren == flag)
+        return;
+
+    if (m_serialized)
+        connectToChildrenCollisionEvents( flag, GetOwner( )->GetChildren( ) );
+
+    m_listenToChildren = flag;
+}
+
 void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
 {
     EVENT_ATTRS(Entity, physics::CollisionEventArgs);
@@ -155,7 +191,8 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
         auto root = other->GetRoot( )->GetComponent<Health>( );
         auto entity = other->GetComponent<Health>( );
 
-        if (!(root || entity || other->HasComponent<Wall>( )))
+        // If we have no interest in anything that's goin on (no health or wall components)
+        if (!root && !entity && !other->HasComponent<Wall>( ))
             return;
 
         if (m_damageTimeMap.find( other->GetRoot( ) ) != m_damageTimeMap.end( ) ||
@@ -337,5 +374,31 @@ void DamageOnCollide::spawnCollisionParticle(const EntityHandle &other, bool cri
             // parent so that it follows objects and dies with object
             other->GetTransform( )->AddChild(obj->GetTransform( ));
         }
+    }
+}
+
+void DamageOnCollide::connectToChildrenCollisionEvents(bool connect, const std::vector<EntityID> *children)
+{
+    if (children == nullptr)
+        return;
+
+    auto world = GetOwner( )->GetWorld( );
+
+    if (world == nullptr)
+        return;
+
+    for (auto &child : *children)
+    {
+        auto entity = world->GetEntity( child );
+
+        if (!entity || entity->IsDeleting( ))
+            continue;
+
+        if (connect)
+            entity->Listener( this ).On( ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
+        else
+            entity->Listener( this ).Off( ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
+
+        connectToChildrenCollisionEvents( connect, entity->GetChildren( ) );
     }
 }

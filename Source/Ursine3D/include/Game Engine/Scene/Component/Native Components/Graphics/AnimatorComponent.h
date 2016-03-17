@@ -143,7 +143,7 @@ namespace ursine
 
             void setBoneTransformPointers(Transform *transform, AnimationBone *bone);
 
-            void getRigRootEntity(void);
+            void setRigTransformPointers(void);
 
             void importRig(void);
 

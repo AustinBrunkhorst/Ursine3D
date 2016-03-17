@@ -137,12 +137,6 @@ namespace ursine
 
         void AnimatorSystem::updateAnimator(Animator *animator, float dt)
         {
-            // If the rig root entity has yet to be set
-            if (!animator->m_rigRoot)
-            {
-                animator->getRigRootEntity( );
-            }
-
             if (!animator->m_playing)
                 return;
 
@@ -190,6 +184,10 @@ namespace ursine
             // If anything we need is null, opt out.
             if (nullptr == currentAnimation || nullptr == rig)
                 return;
+
+            // Set the rig's transform pointers 
+            // (this is needed because a rig is instanced, and the transform pointers need to be set)
+            animator->setRigTransformPointers( );
 
             // If the bone count of the animation doesn't match the rig's bone count, nope out
             if (currentAnimation->GetDesiredBoneCount( ) != rig->GetBoneCount( ))
