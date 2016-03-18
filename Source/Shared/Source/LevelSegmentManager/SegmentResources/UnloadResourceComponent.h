@@ -32,7 +32,6 @@ public:
     );
 
     UnloadResource(void);
-
     UnloadResource(LevelSegmentManager *manager, LevelSegments unloadSegment);
 
     LevelSegments GetUnloadSegment(void) const;
@@ -43,4 +42,4 @@ private:
     LevelSegments m_unloadSegment;
 
     void onSegmentChange(EVENT_HANDLER(LevelSegmentManager));
-} Meta(Enable, HiddenInSelector);
+} Meta(Enable);

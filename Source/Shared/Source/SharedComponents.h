@@ -115,7 +115,6 @@
 
 #include "EntityAnimation/EntityAnimatorComponent.h"
 #include "EntityAnimation/EntityAnimatorGroupComponent.h"
-#include "EntityAnimation/EntityAnimatorFocusPointComponent.h"
 #include "EntityAnimation/EntityAnimatorFocusModifierComponent.h"
 
 /////////////////////////////////
@@ -147,6 +146,7 @@
 
 #include "Misc/AnimateTutorialTextComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
+#include "LevelSegmentManager/SegmentLogic/Misc/ChangeSegmentOnAnimatorFinishComponent.h"
 #include "Misc/DeathTriggerGroupComponent.h"
 
 /////////////////////////////////

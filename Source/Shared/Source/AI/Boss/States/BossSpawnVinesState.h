@@ -13,11 +13,17 @@
 
 #include "BossAIState.h"
 
+#include "LevelSegments.h"
+
 class BossSpawnVinesState : public BossAIState
 {
 public:
-    BossSpawnVinesState(void);
+    BossSpawnVinesState(LevelSegments spawnSegment);
 
     void Enter(BossAIStateMachine *machine) override;
+
+private:
+
+    LevelSegments m_spawnSegment;
 
 };

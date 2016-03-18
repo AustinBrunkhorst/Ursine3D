@@ -23,8 +23,9 @@
 using namespace ursine;
 using namespace ecs;
 
-BossSpawnVinesState::BossSpawnVinesState(void)
+BossSpawnVinesState::BossSpawnVinesState(LevelSegments spawnSegment)
     : BossAIState( "Spawn Vines" )
+    , m_spawnSegment( spawnSegment )
 {
 }
 
@@ -34,10 +35,13 @@ void BossSpawnVinesState::Enter(BossAIStateMachine *machine)
     auto world = boss->GetOwner( )->GetWorld( );
 
     auto spawners = world->GetEntitiesFromFilter( Filter( ).All<VineSpawner>( ) );
+    auto vineArchetypeName = boss->GetVineArchetype( );
 
     for (auto &spawner : spawners)
     {
-        auto vineArchetypeName = boss->GetVineArchetype( );
+        if (spawner->GetComponent<VineSpawner>( )->GetSpawnSegment( ) != m_spawnSegment)
+            continue;
+
         auto spawnTrans = spawner->GetTransform( );
 
         auto vine = world->CreateEntityFromArchetype(

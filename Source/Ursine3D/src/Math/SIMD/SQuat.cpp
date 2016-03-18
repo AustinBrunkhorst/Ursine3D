@@ -107,8 +107,7 @@ namespace ursine
         if (d < 0.0f)
             d = Dot( -other );
 
-        // TODO: UAssert(scalar != 0.0f)
-
+        UAssert(scalar != 0.0f, "One of the quaternions is invalid.");
 
         return math::RadiansToDegrees( acos( d / scalar ) ) * 2.0f;
     }

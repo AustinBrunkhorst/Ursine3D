@@ -63,6 +63,24 @@ namespace ursine
             dispatchAndSetDirty( true, true, true );
         }
 
+        void Transform::OnSerialize(Json::object &output) const
+        {
+            auto itr = output.find( "rotation" );
+
+            if (itr != output.end( ))
+            {
+                auto rotation = output[ "rotation" ];
+
+                if (rotation[ "x" ].number_value( ) == 0.0 &&
+                    rotation[ "y" ].number_value( ) == 0.0 &&
+                    rotation[ "z" ].number_value( ) == 0.0 &&
+                    rotation[ "w" ].number_value( ) == 0.0)
+                {
+                    const_cast<Json&>( rotation[ "w" ] ) = 1.0;
+                }
+            }
+        }
+
         void Transform::SetLocalPosition(const SVec3 &position)
         {
             auto oldPosition = m_localPosition;
@@ -216,7 +234,7 @@ namespace ursine
             SQuat current = GetWorldRotation( );
             auto angle = abs( current.GetAngle( destination ) );
 
-            if (angle == 0.0f)
+            if (angle == 0.0f || !math::IsFiniteNumber( angle ))
                 return;
 
             if (delta >= angle)

@@ -13,6 +13,8 @@
 
 #include <Component.h>
 
+#include "LevelSegments.h"
+
 class VineSpawner : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -20,5 +22,18 @@ class VineSpawner : public ursine::ecs::Component
 public:
 
     VineSpawner(void);
+
+    EditorField(
+        LevelSegments spawnSegment,
+        GetSpawnSegment,
+        SetSpawnSegment
+    );
+
+    LevelSegments GetSpawnSegment(void) const;
+    void SetSpawnSegment(LevelSegments segment);
+
+private:
+
+    LevelSegments m_spawnSegment;
 
 } Meta(Enable);
