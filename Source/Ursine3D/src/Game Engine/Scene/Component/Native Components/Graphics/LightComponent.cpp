@@ -30,9 +30,9 @@ namespace ursine
         {
             auto *graphics = GetCoreSystem( graphics::GfxAPI );
 
-			m_base = new RenderableComponentBase([=] {
-				updateRenderer( );
-			});
+            m_base = new RenderableComponentBase([=] {
+                updateRenderer( );
+            });
 
             m_base->SetHandle( graphics->
                 RenderableMgr.AddRenderable( graphics::RENDERABLE_LIGHT ) );
@@ -52,7 +52,7 @@ namespace ursine
             GetCoreSystem( graphics::GfxAPI )
                 ->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
 
-			delete m_base;
+            delete m_base;
         }
 
         void Light::OnInitialize(void)

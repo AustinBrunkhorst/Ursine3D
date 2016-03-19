@@ -19,13 +19,18 @@
 #include "VineSpawnerComponent.h"
 
 #include <World.h>
+#include <Application.h>
 
 using namespace ursine;
 using namespace ecs;
 
-BossSpawnVinesState::BossSpawnVinesState(LevelSegments spawnSegment)
+BossSpawnVinesState::BossSpawnVinesState(LevelSegments spawnSegment, float delay)
     : BossAIState( "Spawn Vines" )
     , m_spawnSegment( spawnSegment )
+    , m_delay( delay )
+    , m_delayTimer( 0.0f )
+    , m_finished( false )
+    , m_index( 0 )
 {
 }
 
@@ -35,27 +40,64 @@ void BossSpawnVinesState::Enter(BossAIStateMachine *machine)
     auto world = boss->GetOwner( )->GetWorld( );
 
     auto spawners = world->GetEntitiesFromFilter( Filter( ).All<VineSpawner>( ) );
-    auto vineArchetypeName = boss->GetVineArchetype( );
 
     for (auto &spawner : spawners)
     {
         if (spawner->GetComponent<VineSpawner>( )->GetSpawnSegment( ) != m_spawnSegment)
             continue;
 
-        auto spawnTrans = spawner->GetTransform( );
+        m_spawners.push_back( spawner );
+    }
 
-        auto vine = world->CreateEntityFromArchetype(
-            vineArchetypeName 
-        );
+    if (m_spawners.size( ) == 0)
+        m_finished = true;
+}
 
-        if (vine)
+void BossSpawnVinesState::Update(BossAIStateMachine *machine)
+{
+    if (m_finished)
+        return;
+
+    float dt = Application::Instance->GetDeltaTime( );
+
+    m_delayTimer -= dt;
+
+    // Check to see if we can spawn now
+    if (m_delayTimer <= 0.0f)
+    {
+        auto boss = machine->GetBoss( );
+        auto world = boss->GetOwner( )->GetWorld( );
+        auto vineArchetype = boss->GetVineArchetype( );
+        auto &spawner = m_spawners[ m_index ];
+
+        // If the spawner is still a thing
+        if (spawner)
         {
-            auto trans = vine->GetTransform( );
+            // Get the transform
+            auto spawnTrans = spawner->GetTransform( );
 
-            trans->SetWorldPosition( spawnTrans->GetWorldPosition( ) );
-            trans->SetWorldRotation( spawnTrans->GetWorldRotation( ) );
+            // Create the vine entity
+            auto vine = world->CreateEntityFromArchetype( vineArchetype );
 
-            boss->AddSpawnedVine( vine );
+            if (vine)
+            {
+                auto trans = vine->GetTransform( );
+
+                trans->SetWorldPosition( spawnTrans->GetWorldPosition( ) );
+                trans->SetWorldRotation( spawnTrans->GetWorldRotation( ) );
+
+                boss->AddSpawnedVine( vine );
+            }
+
+            // Reset the timer
+            m_delayTimer = m_delay;
         }
+
+        // Increment the index
+        ++m_index;
+
+        // Check to see if we're done
+        if (m_index >= m_spawners.size( ))
+            m_finished = true;
     }
 }

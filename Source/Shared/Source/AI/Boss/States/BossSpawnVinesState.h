@@ -18,12 +18,21 @@
 class BossSpawnVinesState : public BossAIState
 {
 public:
-    BossSpawnVinesState(LevelSegments spawnSegment);
+    BossSpawnVinesState(LevelSegments spawnSegment, float delay = 0.0f);
+
+    bool CanExit(void) override { return m_finished; }
 
     void Enter(BossAIStateMachine *machine) override;
+    void Update(BossAIStateMachine *machine) override;
 
 private:
 
     LevelSegments m_spawnSegment;
+    float m_delay;
+    float m_delayTimer;
 
+    bool m_finished;
+
+    std::vector<ursine::ecs::EntityHandle> m_spawners;
+    int m_index;
 };
