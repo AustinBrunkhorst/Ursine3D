@@ -55,6 +55,14 @@ namespace ursine
 
         ~UIView(void);
 
+        static void Message(
+            CefRefPtr<CefBrowser> browser,
+            UIMessageCommand command,
+            const std::string &target,
+            const std::string &message,
+            const Json &data
+        );
+
         CefRefPtr<CefBrowser> GetBrowser(void) const;
 
         void Close(void);

@@ -17,10 +17,35 @@
 
 #include "UIScreen.h"
 
+namespace
+{
+    namespace channel
+    {
+        const auto ScreenManager = "ScreenManager";
+    }
+
+    namespace events
+    {
+        namespace manager
+        {
+            const auto ScreensCleared = "ScreensCleared";
+        }
+
+        namespace screen
+        {
+            const auto Added = "ScreenAdded";
+            const auto Messaged = "ScreenMessaged";
+            const auto Exited = "ScreenExited";
+            const auto Removed = "ScreenRemoved";
+        }
+    }
+}
+
 namespace ursine
 {
     UIScreenManager::UIScreenManager(void)
-        : m_nextID( 0 ) { }
+        : m_ui( nullptr )
+        , m_nextID( 0 ) { }
 
     UIScreenManager::~UIScreenManager(void)
     {
@@ -39,36 +64,43 @@ namespace ursine
     }
 
     UIScreen *UIScreenManager::CreateScreen(
-        const std::string &name,
-        bool isInputBlocking,
-        int priority
+        const fs::path &path, 
+        const UIScreenConfig &config /*= { }*/,
+        const Json &initData /*= { }*/
     )
     {
-        auto search = m_nameToScreen.find( name );
+        auto *screen = allocateScreen( path, config );
 
-        UAssert( search == m_nameToScreen.end( ),
-            "Screen '%s' already exists.",
-            name.c_str( )
-        );
+        auto data = Json::object {
+            { "path", path.string( ) },
+            { "id", static_cast<int>( screen->m_id ) },
+            { "priority", screen->m_priority },
+            { "initData", initData }
+        };
 
-        auto id = m_nextID++;
-
-        auto *screen = new UIScreen(
-            this, 
-            id, 
-            name, 
-            isInputBlocking, 
-            priority 
-        );
-
-        m_nameToScreen[ name ] = screen;
-        m_idToScreen[ id ] = screen;
-
-        utils::InsertionSort( m_screens, compareScreens );
-
-        invalidateScreenFocus( );
+        messageUI( events::screen::Added, data );
 
         return screen;
+    }
+
+    UIScreen *UIScreenManager::CreateScreen(
+        const resources::UIScreenData *resource,
+        const UIScreenConfig &config /*= { }*/,
+        const Json &initData /*= { }*/
+    )
+    {
+        if (!resource)
+            return nullptr;
+
+        return CreateScreen( resource->GetQualifiedPath( ), config, initData );
+    }
+
+    UIScreen *UIScreenManager::CreateScreenRemote(
+        const fs::path &path, 
+        const UIScreenConfig &config
+    )
+    {
+        return allocateScreen( path, config );
     }
 
     UIScreen *UIScreenManager::GetScreen(UIScreenID id)
@@ -78,16 +110,26 @@ namespace ursine
         return screen == m_idToScreen.end( ) ? nullptr : screen->second;
     }
 
-    UIScreen *UIScreenManager::GetScreen(const std::string &screenName)
+    UIScreen *UIScreenManager::GetScreen(const fs::path &path)
     {
-        auto search = m_nameToScreen.find( screenName );
+        auto search = m_pathToScreen.find( path );
 
-        return search == m_nameToScreen.end( ) ? nullptr : search->second;
+        return search == m_pathToScreen.end( ) ? nullptr : search->second;
+    }
+
+    void UIScreenManager::ExitScreen(const UIScreen *screen, const Json &exitData)
+    {
+        auto data = Json::object {
+            { "id", static_cast<int>( screen->m_id ) },
+            { "data", exitData }
+        };
+
+        messageUI( events::screen::Exited, data );
     }
 
     void UIScreenManager::RemoveScreen(UIScreen *screen)
     {
-        m_nameToScreen.erase( screen->m_name );
+        m_pathToScreen.erase( screen->m_path );
         m_idToScreen.erase( screen->m_id );
 
         auto search = find( m_screens.begin( ), m_screens.end( ), screen );
@@ -98,9 +140,19 @@ namespace ursine
         delete screen;
 
         invalidateScreenFocus( );
+
+        auto data = Json::object {
+            { "id", static_cast<int>( screen->m_id ) },
+        };
+
+        messageUI( events::screen::Removed, data );
     }
 
-    void UIScreenManager::MessageScreen(UIScreen *screen, const std::string &message, const Json &data)
+    void UIScreenManager::MessageScreenNative(
+        const UIScreen *screen, 
+        const std::string &message, 
+        const Json &data
+    ) const
     {
         if (!screen)
             return;
@@ -110,9 +162,61 @@ namespace ursine
         screen->Dispatch( message, &args );
     }
 
+    void UIScreenManager::MessageScreenRemote(
+        const UIScreen *screen, 
+        const std::string &message, 
+        const Json &data
+    ) const
+    {
+        if (!screen)
+            return;
+
+        auto messageData = Json::object {
+            { "id", static_cast<int>( screen->m_id ) },
+            { "message", message },
+            { "data", data }
+        };
+
+        messageUI( events::screen::Messaged, messageData );
+    }
+
+    void UIScreenManager::ClearScreens(void)
+    {
+        m_pathToScreen.clear( );
+        m_idToScreen.clear( );
+
+        for (auto *screen : m_screens)
+            delete screen;
+
+        m_screens.clear( );
+
+        messageUI( events::manager::ScreensCleared, { } );
+    }
+
     bool UIScreenManager::compareScreens(const UIScreen *a, const UIScreen *b)
     {
         return b->m_id < a->m_id;
+    }
+
+    UIScreen *UIScreenManager::allocateScreen(const fs::path &path, const UIScreenConfig &config)
+    {
+        auto id = m_nextID++;
+
+        auto *screen = new UIScreen(
+            this, 
+            id, 
+            path, 
+            config
+        );
+
+        m_pathToScreen[ path ] = screen;
+        m_idToScreen[ id ] = screen;
+
+        utils::InsertionSort( m_screens, compareScreens );
+
+        invalidateScreenFocus( );
+
+        return screen;
     }
 
     void UIScreenManager::invalidateScreenFocus(void)
@@ -129,5 +233,19 @@ namespace ursine
             if (hasFocus && screen->m_isInputBlocking)
                 hasFocus = false;
         }
+    }
+
+    void UIScreenManager::messageUI(const std::string &message, const Json &data) const
+    {
+        UAssert( m_ui,
+            "UI was null."
+        );
+
+        m_ui->Message( 
+            UI_CMD_BROADCAST,
+            channel::ScreenManager,
+            message, 
+            data 
+        );
     }
 }

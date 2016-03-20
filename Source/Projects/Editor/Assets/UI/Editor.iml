@@ -6,6 +6,7 @@
     <option name="hxmlPath" value="$MODULE_DIR$/Source/Editor.hxml" />
     <option name="mainClass" value="Editor" />
     <option name="outputFileName" value="Editor.js" />
+    <option name="outputFolder" value="$PROJECT_DIR$/Build" />
   </component>
   <component name="NewModuleRootManager" inherit-compiler-output="false">
     <output url="file://$PROJECT_DIR$/Build" />
@@ -15,5 +16,17 @@
     </content>
     <orderEntry type="jdk" jdkName="Haxe 3.2.1" jdkType="Haxe toolkit" />
     <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Ursine3D" level="application" />
+    <orderEntry type="module-library">
+      <library name="haxelib|ursine-api">
+        <CLASSES>
+          <root url="C:\HaxeToolkit\haxe\lib\ursine-api/1,0,0/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="C:\HaxeToolkit\haxe\lib\ursine-api/1,0,0/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

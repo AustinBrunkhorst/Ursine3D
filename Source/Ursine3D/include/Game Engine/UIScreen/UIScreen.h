@@ -25,7 +25,7 @@ namespace ursine
         void Message(const std::string &message, const Json &data) const;
 
         // Request to exit this screen
-        void Exit(void) const;
+        void Exit(const Json &data = { }) const;
 
         UIScreenManager *GetManager(void) const;
 
@@ -35,7 +35,7 @@ namespace ursine
         // Gets the instance ID of this screen
         UIScreenID GetID(void) const;
 
-        const std::string &GetName(void) const;
+        const fs::path &GetPath(void) const;
 
         // Determines if this screen has input focus
         bool HasInputFocus(void) const;
@@ -46,9 +46,8 @@ namespace ursine
         UIScreen(
             UIScreenManager *manager,
             UIScreenID id,
-            const std::string &name, 
-            bool isInputBlocking, 
-            int priority
+            const fs::path &path,
+            const UIScreenConfig &config
         );
 
         UIScreenManager *m_manager;
@@ -69,7 +68,7 @@ namespace ursine
         // instance ID of the screen
         UIScreenID m_id;
 
-        // name of the screen
-        std::string m_name;
+        // qualifed path to the screen
+        fs::path m_path;
     } Meta(Disable);
 }

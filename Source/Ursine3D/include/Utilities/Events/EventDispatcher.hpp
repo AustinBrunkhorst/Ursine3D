@@ -55,13 +55,13 @@ namespace ursine
         typename Handler::template StaticDelegate<Args> delegate
     )
     {
-        auto handlers = m_events.find( event );
+        auto search = m_events.find( event );
 
         // this event doesn't have handlers
-        if (handlers == m_events.end( ))
+        if (search == m_events.end( ))
             return;
 
-        auto &vector = handlers->second;
+        auto &handlers = search->second;
 
         auto handlerType = Handler( delegate );
 
@@ -71,13 +71,13 @@ namespace ursine
         };
 
         auto handler = std::find_if(
-            vector.begin( ),
-            vector.end( ),
+            handlers.begin( ),
+            handlers.end( ),
             isHandler
         );
 
-        if (handler != vector.end( ))
-            vector.erase( handler );
+        if (handler != handlers.end( ))
+            handlers.erase( handler );
     }
 
     template<typename Key, typename Handler>
@@ -88,13 +88,13 @@ namespace ursine
         typename Handler::template ClassDelegate<Class, Args> delegate
     )
     {
-        auto handlers = m_events.find( event );
+        auto search = m_events.find( event );
 
         // this event doesn't have handlers
-        if (handlers == m_events.end( ))
+        if (search == m_events.end( ))
             return;
 
-        auto &vector = handlers->second;
+        auto &handlers = search->second;
 
         auto handlerType = Handler::Handler( context, delegate );
 
@@ -104,20 +104,20 @@ namespace ursine
         };
 
         auto handler = std::find_if( 
-            vector.begin( ), 
-            vector.end( ), 
+            handlers.begin( ), 
+            handlers.end( ), 
             isHandler 
         );
 
-        if (handler != vector.end( ))
-            vector.erase( handler );
+        if (handler != handlers.end( ))
+            handlers.erase( handler );
     }
 
     template<typename Key, typename Handler>
-    void EventDispatcher<Key, Handler>::Dispatch(
+    inline void EventDispatcher<Key, Handler>::Dispatch(
         const Key &event,
         const EventArgs *args
-    )
+    ) const
     {
         Dispatch( event, m_defaultSender, args );
     }
@@ -127,19 +127,23 @@ namespace ursine
         const Key &event,
         void *sender,
         const EventArgs *args
-    )
+    ) const
     {
+        auto search = m_events.find( event );
+
         // this event doesn't have a handler
-        if (m_events.find( event ) == m_events.end( ))
+        if (search == m_events.end( ))
             return;
 
-        auto handlers = m_events[ event ];
+        auto &handlers = search->second;
 
-        for (auto it = handlers.begin( ); it != handlers.end( );)
+        decltype( handlers.size( ) ) i = 0;
+
+        while (i < handlers.size( ))
         {
-            (*it).handler( sender, args );
+            handlers[ i ].handler( sender, args );
 
-            ++it;
+            ++i;
         }
     }
 

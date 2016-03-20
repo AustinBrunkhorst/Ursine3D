@@ -77,6 +77,27 @@ namespace ursine
         
     }
 
+    void UIView::Message(
+        CefRefPtr<CefBrowser> browser, 
+        UIMessageCommand command, 
+        const std::string &target, 
+        const std::string &message, 
+        const Json &data
+    )
+    {
+        auto processMessage = CefProcessMessage::Create( target );
+
+        auto args = processMessage->GetArgumentList( );
+
+        args->SetSize( 3 );
+
+        args->SetInt( 0, command );
+        args->SetString( 1, message );
+        args->SetString( 2, data.dump( ) );
+
+        browser->SendProcessMessage( PID_RENDERER, processMessage );
+    }
+
     CefRefPtr<CefBrowser> UIView::GetBrowser(void) const
     {
         return m_browser;
@@ -144,17 +165,7 @@ namespace ursine
             return;
         }
 
-        auto processMessage = CefProcessMessage::Create( target );
-
-        auto args = processMessage->GetArgumentList( );
-
-        args->SetSize( 3 );
-
-        args->SetInt( 0, command );
-        args->SetString( 1, message );
-        args->SetString( 2, data.dump( ) );
-
-        m_browser->SendProcessMessage( PID_RENDERER, processMessage );
+        Message( m_browser, command, target, message, data );
     }
 
     CefRefPtr<CefRenderHandler> UIView::GetRenderHandler(void)

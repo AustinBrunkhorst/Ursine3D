@@ -14,6 +14,7 @@
 #pragma once
 
 #include "UIScreenConfig.h"
+#include "UIScreenData.h"
 
 #include "UIView.h"
 
@@ -30,23 +31,55 @@ namespace ursine
         UIView::Handle GetUI(void) const;
         void SetUI(const UIView::Handle &ui);
 
+        // Creates a screen based on the given path
         UIScreen *CreateScreen(
-            const std::string &name, 
-            bool isInputBlocking = true, 
-            int priority = 0
+            const fs::path &path,
+            const UIScreenConfig &config = { },
+            const Json &initData = { }
+        );
+
+        // Creates a screen based on a resource
+        UIScreen *CreateScreen(
+            const resources::UIScreenData *resource,
+            const UIScreenConfig &config = { },
+            const Json &initData = { }
+        );
+
+        // Creates a screen remotely, i.e. assumes that the scripting
+        // side already knows about it
+        UIScreen *CreateScreenRemote(
+            const fs::path &path,
+            const UIScreenConfig &config = { }
         );
 
         // Attempts to get the screen
         UIScreen *GetScreen(UIScreenID id);
 
-        // Attempts to get the screen with the given name
-        UIScreen *GetScreen(const std::string &screenName);
+        // Attempts to get the screen with the given path
+        UIScreen *GetScreen(const fs::path &path);
 
-        // Removes a screen based on an instance
+        // Requests that the screen be removed
+        void ExitScreen(const UIScreen *screen, const Json &exitData);
+
+        // Removes a screen
         void RemoveScreen(UIScreen *screen);
 
-        // Messages a screen with the given message name and data
-        void MessageScreen(UIScreen *screen, const std::string &message, const Json &data);
+        // Dispatches an event to the native screen events
+        void MessageScreenNative(
+            const UIScreen *screen, 
+            const std::string &message, 
+            const Json &data
+        ) const;
+
+        // Dispatches an event to the scripting side of things
+        void MessageScreenRemote(
+            const UIScreen *screen, 
+            const std::string &message, 
+            const Json &data
+        ) const;
+
+        // Removes all screens
+        void ClearScreens(void);
 
     private:
         friend class UIScreen;
@@ -56,17 +89,27 @@ namespace ursine
         // next ID assigned to a screen
         UIScreenID m_nextID;
 
-        std::unordered_map<std::string, UIScreen*> m_nameToScreen;
+        fs::PathMap<UIScreen*> m_pathToScreen;
         std::unordered_map<UIScreenID, UIScreen*> m_idToScreen;
 
         // current screens sorted based on priority
         std::vector<UIScreen*> m_screens;
 
+        // disable assignment
+        UIScreenManager &operator=(const UIScreenManager &rhs) = delete;
+
         // descending order of ids
         static bool compareScreens(const UIScreen *a, const UIScreen *b);
+
+        UIScreen *allocateScreen(
+            const fs::path &path, 
+            const UIScreenConfig &config
+        );
 
         // assigns focus to all of the screens after priority has been changed
         // throughout all screens
         void invalidateScreenFocus(void);
+
+        void messageUI(const std::string &message, const Json &data) const;
     } Meta(Register, EnablePtrType);
 }

@@ -14,7 +14,10 @@
 #pragma once
 
 #include "World.h"
+
+#include "UIScreenManager.h"
 #include "ResourceManager.h"
+
 #include "GFXAPIDefines.h"
 
 #include "SceneEvent.h"
@@ -36,7 +39,7 @@ namespace ursine
         Scene(void);
         ~Scene(void);
 
-        ecs::World *GetActiveWorld(void);
+        ecs::World *GetActiveWorld(void) const;
 
         void SetActiveWorld(ecs::World::Handle world);
         bool SetActiveWorld(const resources::ResourceReference &reference);
@@ -47,6 +50,7 @@ namespace ursine
         ScenePlayState GetPlayState(void) const;
         void SetPlayState(ScenePlayState state);
 
+        UIScreenManager &GetScreenManager(void);
         resources::ResourceManager &GetResourceManager(void);
 
         void Step(void) const;
@@ -55,7 +59,6 @@ namespace ursine
         void Render(void) const;
 
         void LoadConfiguredSystems(void);
-
     private:
         Scene(const Scene &rhs) = delete;
         Scene &operator=(const Scene &rhs) = delete;
@@ -66,6 +69,7 @@ namespace ursine
 
         ecs::World::Handle m_activeWorld;
 
+        UIScreenManager m_screenManager;
         resources::ResourceManager m_resourceManager;
     };
 }

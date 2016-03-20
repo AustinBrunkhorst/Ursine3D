@@ -14,6 +14,7 @@
 #include "Precompiled.h"
 
 #include "Project.h"
+
 #include "ResourcePipelineConfig.h"
 #include "EditorUIResourceHandlerFactory.h"
 

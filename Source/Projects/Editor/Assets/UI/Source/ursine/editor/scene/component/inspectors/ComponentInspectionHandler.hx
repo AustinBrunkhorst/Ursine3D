@@ -1,6 +1,6 @@
 package ursine.editor.scene.component.inspectors;
 
-import ursine.utils.EventManager;
+import ursine.api.events.EventManager;
 import ursine.controls.Button;
 import ursine.controls.inspection.ComponentInspector;
 import ursine.editor.scene.entity.Entity;

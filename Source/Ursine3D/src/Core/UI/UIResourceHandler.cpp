@@ -64,13 +64,17 @@ namespace ursine
         }
         catch (...)
         {
+            UWarning( 
+                "Failed to parse GUID from UI Resource path '%s'.", 
+                it->string( ).c_str( ) 
+            );
+
             // invalid GUID
             return false;
         }
 
         // skip over GUID
         ++it;
-
 
         fs::path subResourcePath;
 
@@ -103,6 +107,9 @@ namespace ursine
         CefResponse::HeaderMap headers;
 
         headers.emplace( "Access-Control-Allow-Origin", "*" );
+
+        // always cache for as long as possible
+        headers.emplace( "Cache-Control", "max-age=290304000, public" );
 
         response->SetHeaderMap( headers );
 

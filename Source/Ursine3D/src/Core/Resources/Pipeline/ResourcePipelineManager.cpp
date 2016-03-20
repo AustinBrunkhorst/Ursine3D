@@ -1111,6 +1111,12 @@ namespace ursine
 
     void rp::ResourcePipelineManager::removeResource(ResourceItem::Handle resource, bool deleteFiles /*= false */)
     {
+        auto parent = resource->GetParent( );
+
+        // remove this from its parent generated resources
+        if (parent)
+            parent->m_buildCache.generatedResources.erase( resource->m_guid );
+
         auto *directoryNode = resource->m_directoryNode;
 
         // has it been inserted yet?

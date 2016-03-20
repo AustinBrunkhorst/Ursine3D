@@ -18,8 +18,8 @@
 namespace ursine
 {
     JSConstructor(JSUIScreenManager::JSUIScreenManager)
-        : m_manager( nullptr )
-    {
-        
-    }
+        : m_manager( JSGetGlobalScreenManager( ) ) { }
+
+    JSUIScreenManager::JSUIScreenManager(const JSUIScreenManager &rhs)
+        : m_manager( rhs.m_manager ) { }
 }

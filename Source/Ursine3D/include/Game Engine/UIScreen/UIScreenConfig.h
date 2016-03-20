@@ -18,9 +18,19 @@
 
 namespace ursine
 {
-    class UIScreenScreen;
+    class UIScreen;
 
     typedef uint32 UIScreenID;
+
+    struct UIScreenConfig
+    {
+        bool inputBlocking;
+        int priority;
+
+        UIScreenConfig(bool inputBlocking = true, int priority = 0)
+            : inputBlocking( inputBlocking )
+            , priority( priority ) { }
+    };
 
     struct UIScreenMessageArgs : EventArgs
     {

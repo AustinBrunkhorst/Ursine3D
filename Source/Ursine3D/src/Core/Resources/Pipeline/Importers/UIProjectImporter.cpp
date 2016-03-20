@@ -21,7 +21,7 @@ namespace ursine
         );
 
         fs::path generateScreenResource(
-            rp::ResourceItem::Handle parent,
+            rp::ResourceItem::Handle project,
             const fs::path &sourcePath
         );
     }
@@ -86,7 +86,7 @@ namespace ursine
         {
             auto item = context.pipeline->GetItem( guid );
 
-            if (item && item->GetBuildCache( ).processedType == typeof( UIScreenData ))
+            if (item)
                 cachedScreens.emplace( item->GetSourceFileName( ) );
         }
 
@@ -140,12 +140,12 @@ namespace ursine
         }
 
         fs::path generateScreenResource(
-            rp::ResourceItem::Handle parent,
+            rp::ResourceItem::Handle project,
             const fs::path &sourcePath
         )
         {
             auto screenName = sourcePath.stem( );
-            auto parentDirectory = parent->GetSourceFileName( );
+            auto parentDirectory = project->GetSourceFileName( );
 
             auto outputFile = change_extension( 
                 parentDirectory.parent_path( ) / screenName,
@@ -158,7 +158,7 @@ namespace ursine
             );
 
             Json screenData = Json::object {
-                { "parent", to_string( parent->GetGUID( ) ) },
+                { "project", to_string( project->GetGUID( ) ) },
                 { "path", relativePath.string( ) }
             };
 

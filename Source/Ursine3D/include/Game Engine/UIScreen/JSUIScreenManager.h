@@ -32,6 +32,9 @@ namespace ursine
 
         std::mutex m_mutex;
 
-        JSUIScreenManager(const JSUIScreenManager &rhs) { }
-    } Meta(Enable, DisplayName( "ScreenManager" ));
+        JSUIScreenManager(const JSUIScreenManager &rhs);
+    } Meta(Enable, DisplayName( "NativeScreenManager" ));
+
+    // This must be implmented in order to construct the UI level screen manager
+    extern UIScreenManager *JSGetGlobalScreenManager(void);
 }

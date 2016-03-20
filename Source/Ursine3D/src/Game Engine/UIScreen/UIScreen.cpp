@@ -17,47 +17,31 @@
 
 #include "UIScreenManager.h"
 
-namespace
-{
-    const auto kChannelScreenManager = "ScreenManager";
-
-    const auto kMessageEvent = "Event";
-    const auto kMessageEntered = "Entered";
-    const auto kMessageExited = "Exited";
-}
-
 namespace ursine
 {
     UIScreen::UIScreen(
         UIScreenManager *manager,
         UIScreenID id,
-        const std::string &name,
-        bool isInputBlocking, 
-        int priority
+        const fs::path &path,
+        const UIScreenConfig &config
     )
         : EventDispatcher( this )
         , m_manager( manager )
-        , m_isInputBlocking( isInputBlocking )
+        , m_isInputBlocking( config.inputBlocking )
         , m_isFocused( false )
-        , m_priority( priority )
+        , m_priority( config.priority )
         , m_state( SS_ACTIVE )
         , m_id( id )
-        , m_name( name ) { }
+        , m_path( path ) { }
 
     void UIScreen::Message(const std::string &message, const Json &data) const
     {
-        auto eventData = Json::object {
-            { "screenID", static_cast<int>( m_id ) },
-            { "event", message },
-            { "data", data }
-        };
+        m_manager->MessageScreenRemote( this, message, data );
+    }
 
-        m_manager->GetUI( )->Message( 
-            UI_CMD_BROADCAST, 
-            kChannelScreenManager,
-            kMessageEvent, 
-            eventData
-        );
+    void UIScreen::Exit(const Json &data /*= { }*/) const
+    {
+        m_manager->ExitScreen( this, data );
     }
 
     UIScreenManager *UIScreen::GetManager(void) const
@@ -75,9 +59,9 @@ namespace ursine
         return m_id;
     }
 
-    const std::string &UIScreen::GetName(void) const
+    const fs::path &UIScreen::GetPath(void) const
     {
-        return m_name;
+        return m_path;
     }
 
     bool UIScreen::HasInputFocus(void) const

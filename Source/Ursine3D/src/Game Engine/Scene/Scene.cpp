@@ -21,6 +21,7 @@
 #include "Notification.h"
 
 #include "WorldData.h"
+#include "UIScreenData.h"
 
 namespace ursine
 {
@@ -37,7 +38,7 @@ namespace ursine
 
     }
 
-    ecs::World *Scene::GetActiveWorld(void)
+    ecs::World *Scene::GetActiveWorld(void) const
     {
         return m_activeWorld.get( );
     }
@@ -89,6 +90,11 @@ namespace ursine
     void Scene::SetPlayState(ScenePlayState state)
     {
         m_playState = state;
+    }
+
+    UIScreenManager &Scene::GetScreenManager(void)
+    {
+        return m_screenManager;
     }
 
     resources::ResourceManager &Scene::GetResourceManager(void)

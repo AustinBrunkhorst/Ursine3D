@@ -25,8 +25,6 @@
 
 using namespace ursine;
 
-namespace rp = resources::pipeline;
-
 namespace
 {
     const auto kWindowTitle = "Ursine3D Editor";
@@ -44,6 +42,14 @@ namespace
     const auto kWindowLocationCentered = Vec2 { -1, -1 };
 
     const auto kProjectExtension = "ursineproj";
+}
+
+namespace ursine
+{
+    UIScreenManager *JSGetGlobalScreenManager(void)
+    {
+        return &GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetScreenManager( );
+    }
 }
 
 CORE_SYSTEM_DEFINITION( Editor );
@@ -470,6 +476,8 @@ void Editor::exitSplashScreen(void)
         lastWorldGUID = GUIDStringGenerator( )( m_preferences.lastOpenWorld );
 
     auto &resourceManager = m_project->GetScene( ).GetResourceManager( );
+
+    m_project->GetScene( ).GetScreenManager( ).SetUI( m_mainWindow.m_ui );
 
     m_project->initializeScene(
         resourceManager.CreateReference( lastWorldGUID )

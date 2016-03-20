@@ -1,9 +1,9 @@
 package ursine.editor.windows;
 
 import ursine.native.Extern;
-
+import ursine.api.input.KeyboardKey;
+import ursine.editor.scene.ui.ScreenManager;
 import ursine.editor.resources.ResourceItem;
-
 import ursine.controls.ItemSelectionPopup;
 
 class SceneView extends NativeCanvasWindowHandler {
@@ -13,30 +13,37 @@ class SceneView extends NativeCanvasWindowHandler {
         m_resourceTypeArchetype
     ];
 
+    private var m_screenManager : ScreenManager;
     private var m_selector : ItemSelectionPopup = null;
 
     public function new() {
         super( 'SceneView' );
 
+        m_screenManager = new ScreenManager( window.container );
+
         window.heading = "Scene";
 
+        window.container.classList.add( 'scene-view-window' );
         window.container.setAttribute( 'accepts-resource-drop', 'true' );
         window.container.addEventListener( 'resource-drag', onResourceDrag );
         window.container.addEventListener( 'resource-drop', onResourceDrop );
 
         onViewportInvalidated( );
 
+        window.addEventListener( 'resize', onWindowResize );
         window.addEventListener( 'keydown', onWindowKeyDown );
+    }
+
+    private function onWindowResize(e : js.html.CustomEvent) {
+        m_screenManager.invalidateScreenViewport( );
     }
 
     private function onWindowKeyDown(e : js.html.KeyboardEvent) {
         switch (e.keyCode) {
-            // delete
-            case 46: {
+            case KeyboardKey.DELETE: {
                 SceneOutline.instance.deleteSelectedEntities( );
             }
-            // space
-            case 32: {
+            case KeyboardKey.SPACE: {
                 openEditorCommands( );
             }
         }
@@ -61,7 +68,7 @@ class SceneView extends NativeCanvasWindowHandler {
         } );
 
         m_selector.filterInput.addEventListener( 'keydown', function(e) {
-            if (e.keyCode == 32 && m_selector.currentFilter.length == 0) {
+            if (e.keyCode == KeyboardKey.SPACE && m_selector.currentFilter.length == 0) {
                 m_selector.close( );
 
                 e.preventDefault( );
@@ -77,7 +84,7 @@ class SceneView extends NativeCanvasWindowHandler {
         m_selector.addEventListener( 'closed', clearCommandSelector );
 
         // delay so that the spacebar doesn't effect the input
-        haxe.Timer.delay(function() {
+        haxe.Timer.delay( function() {
             if (m_selector == null)
                 return;
 
