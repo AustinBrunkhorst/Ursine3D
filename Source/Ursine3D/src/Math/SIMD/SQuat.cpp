@@ -339,6 +339,11 @@ namespace ursine
         );
     }
 
+    SQuat SQuat::operator*(float rhs) const
+    {
+        return SQuat( m_x * rhs, m_y * rhs, m_z * rhs, m_w * rhs );
+    }
+
     SVec3 SQuat::operator*(const SVec3 &rhs) const
     {
         return Rotate( rhs );

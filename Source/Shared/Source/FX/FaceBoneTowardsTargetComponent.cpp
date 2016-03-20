@@ -84,8 +84,32 @@ void FaceBoneTowardsTarget::onAnimationManipulation(EVENT_HANDLER(Entity))
     auto trans = GetOwner( )->GetTransform( );
 
     // get direction from position to target.
+    auto pos = trans->GetWorldPosition( );
+    auto dir = SVec3::Normalize( m_targetPosition - pos );
 
-    // get the angle to the target
+    // Get the angle from our forward vector to the target direction
+    auto worldForward = trans->GetWorldRotation( ).Rotate( m_localForward );
+
+    auto rotation = SQuat( worldForward, dir );
+
+    auto angle = abs(rotation.GetAngle( ));
+
+    // If the angle is within our field of view
+    if (angle <= m_maxViewAngle)
+    {
+        // Set our transforms new orientation
+        trans->SetWorldRotation( rotation * trans->GetWorldRotation( ) );
+    }
+    else
+    {
+        // Get an orientation that's on the cusp of our view cone
+        float t = m_maxViewAngle / angle;
+
+        rotation = SQuat( angle * t, SVec3::Cross( worldForward, dir ) );
+
+        // Now rotate and set the transform's world orientation
+        trans->SetWorldRotation( rotation * trans->GetWorldRotation( ) );
+    }
 }
 
 #if defined(URSINE_WITH_EDITOR)
