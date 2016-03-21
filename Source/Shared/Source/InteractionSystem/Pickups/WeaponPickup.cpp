@@ -15,10 +15,18 @@
 #include "CommandQueueComponent.h"
 #include "InventoryComponent.h"
 #include "InteractableComponent.h"
+#include "PlayerIdComponent.h"
 
 NATIVE_COMPONENT_DEFINITION( WeaponPickup );
 
 using namespace ursine;
+
+
+namespace gameUIEvents
+{
+    const auto UI_HealthComponentStats = "UI_HealthComponentStats";
+}
+
 
 WeaponPickup::WeaponPickup(void) 
     : BaseComponent( )
@@ -26,7 +34,7 @@ WeaponPickup::WeaponPickup(void)
     , m_ammo( -1 )
     , m_clipCount( -1 )
     , m_weaponType( PRIMARY_WEAPON )
-    , m_texture( "" ) { }
+{ }
 
 WeaponPickup::~WeaponPickup(void)
 {
@@ -75,12 +83,12 @@ void WeaponPickup::SetWeaponToPickup(const ursine::resources::ResourceReference&
 }
 
 // Texture
-const std::string& WeaponPickup::GetTexture( ) const
+const ursine::resources::ResourceReference& WeaponPickup::GetTexture(void) const
 {
     return m_texture;
 }
 
-void WeaponPickup::SetTexture(const std::string& texture)
+void WeaponPickup::SetTexture(const ursine::resources::ResourceReference& texture)
 {
     m_texture = texture;
 }
@@ -95,23 +103,36 @@ void WeaponPickup::SetAmmoInfo(const int ammo, const int clip)
     m_clipCount = clip;
 }
 
-void WeaponPickup::StartInteraction(const CommandQueue *queue, ursine::ecs::EntityHandle &entity)
+void WeaponPickup::StartInteraction(ursine::ecs::EntityHandle &entity)
 {
-    // get invetory
-    m_inventories[ entity ] = queue->GetOwner( )->GetComponent<Inventory>( );
+    if ( !entity->HasComponent<PlayerID>( ) )
+        return;
 
-    //if ( CheckForAmmo( id ) )
-    //    return;
+    // get invetory
+    m_inventories[ entity ] = entity->GetComponent<Inventory>( );
+
+    // get command queue
+    m_queues[ entity ] = entity->GetComponent<CommandQueue>( );
 
     // start time
     m_times[ entity ] = ursine::Application::Instance->GetDeltaTime( );
+
+    // display pickup message
+    URSINE_TODO("Figure out json issue")
+    //ursine::Json message = ursine::Json::object{
+    //    { "playerID", entity->GetComponent< PlayerID >( )->GetID( ) },
+    //    { "PickUpTexture", m_texture }
+    //};
+    //
+    //GetOwner( )->GetWorld( )->MessageUI(gameUIEvents::UI_HealthComponentStats, message);
 }
 
-void WeaponPickup::Interact(const CommandQueue *queue, ecs::EntityHandle &entity)
+void WeaponPickup::Interact(ecs::EntityHandle &entity)
 {
-    Inventory* inventory = &*m_inventories[ entity ];
+    Inventory* inventory = m_inventories[ entity ];
+    CommandQueue* queue = m_queues[ entity ];
 
-    if ( inventory == nullptr )
+    if ( inventory == nullptr || queue == nullptr )
         return;
 
     // check reload time
@@ -140,7 +161,7 @@ void WeaponPickup::Interact(const CommandQueue *queue, ecs::EntityHandle &entity
     }
 }
 
-void WeaponPickup::StopInteraction(const CommandQueue *queue, ecs::EntityHandle &entity)
+void WeaponPickup::StopInteraction(ecs::EntityHandle &entity)
 {
     m_times.erase( entity );
     m_inventories.erase( entity );

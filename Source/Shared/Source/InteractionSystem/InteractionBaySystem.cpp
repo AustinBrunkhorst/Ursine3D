@@ -98,7 +98,6 @@ void InteractionBaySystem::onUpdate(EVENT_HANDLER(World))
 void InteractionBaySystem::UpdateBay(InteractionBay* bay, const int closestIndex)
 {
     Interactable* currInteractable;
-    CommandQueue* queue = bay->GetOwner( )->GetComponent<CommandQueue>( );
     auto id = bay->GetOwner( );
 
     if ( !bay->m_prevInteractable && closestIndex == -1 )
@@ -106,7 +105,7 @@ void InteractionBaySystem::UpdateBay(InteractionBay* bay, const int closestIndex
 
     if ( closestIndex == -1 )
     {
-        bay->m_prevInteractable->StopInteraction(queue, id);
+        bay->m_prevInteractable->StopInteraction( id );
         bay->m_prevInteractable = nullptr;
         return;
     }
@@ -119,17 +118,17 @@ void InteractionBaySystem::UpdateBay(InteractionBay* bay, const int closestIndex
     {
         // end old interaction
         if ( bay->m_prevInteractable )
-            bay->m_prevInteractable->StopInteraction( queue, id );
+            bay->m_prevInteractable->StopInteraction( id );
 
         // Start new interaction
-        currInteractable->StartInteraction( queue, id );
+        currInteractable->StartInteraction( id );
 
         // update previous
         bay->m_prevInteractable = currInteractable;
     }
     
     // perform interaction with interactable
-    currInteractable->Interact( queue, id );
+    currInteractable->Interact( id );
 
     bay->Clear( );
 }

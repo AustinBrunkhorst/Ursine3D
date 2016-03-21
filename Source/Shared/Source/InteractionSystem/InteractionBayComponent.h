@@ -14,7 +14,7 @@
 
 #include <Component.h>
 #include <vector>
-
+#include <queue>
 
 namespace ursine
 {
@@ -29,12 +29,22 @@ struct Interactable;
 
 struct InteractionBay : ursine::ecs::Component
 {
-    NATIVE_COMPONENT
+private:
+    NATIVE_COMPONENT;
+
+    bool Compare(std::pair<float, Interactable*>& lhs, std::pair<float, Interactable*>& rhs)
+    {
+        return lhs.first < rhs.first;
+    }
+
 public:
     Meta(Disable)
     typedef std::vector<Interactable*> InteractVec;
     Meta(Disable)
-    typedef std::vector<ursine::ecs::Transform*> TransVec;
+    typedef std::priority_queue<std::pair<float, Interactable*>,
+                                std::vector<std::pair<float, Interactable*>>,
+                                std::
+                               > InteractQueue;
 
     Meta(Enable)
     InteractionBay(void);
@@ -48,9 +58,7 @@ public:
     void Clear(void);
 
     Meta(Disable)
-    InteractionBay::InteractVec m_interactables;
-    Meta(Disable)
-    InteractionBay::TransVec m_transforms;
+    InteractionBay::InteractQueue m_distances;
 
     Meta(Disable)
     Interactable* m_prevInteractable;

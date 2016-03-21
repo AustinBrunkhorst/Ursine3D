@@ -56,7 +56,7 @@ void InteractionBay::OnCollision(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PER
 void InteractionBay::Clear(void)
 {
     m_interactables.clear( );
-    m_transforms.clear( );
+    m_distances.clear( );
 }
 
 

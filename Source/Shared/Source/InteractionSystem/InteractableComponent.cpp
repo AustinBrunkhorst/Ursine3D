@@ -26,19 +26,19 @@ Interactable::Interactable(void)
 {
 }
 
-void Interactable::StartInteraction(const CommandQueue *queue, ecs::EntityHandle &entity)
+void Interactable::StartInteraction(ecs::EntityHandle &entity)
 {
-    (m_interaction->*m_startFunc)( queue, entity );
+    (m_interaction->*m_startFunc)( entity );
 }
 
-void Interactable::Interact(const CommandQueue *queue, ecs::EntityHandle &entity)
+void Interactable::Interact(ecs::EntityHandle &entity)
 {
-    (m_interaction->*m_interactFunc)( queue, entity );
+    (m_interaction->*m_interactFunc)( entity );
 }
 
-void Interactable::StopInteraction(const CommandQueue *queue, ecs::EntityHandle &entity)
+void Interactable::StopInteraction(ecs::EntityHandle &entity)
 {
-    (m_interaction->*m_stopFunc)( queue, entity );
+    (m_interaction->*m_stopFunc)( entity );
 }
 
 void Interactable::SetUpInteractable(Interaction *interaction)
