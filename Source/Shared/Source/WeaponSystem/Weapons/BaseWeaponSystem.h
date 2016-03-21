@@ -123,7 +123,7 @@ private:
     void FireHitscanWeapon(AbstractHitscanWeapon &weapon, const ursine::ecs::EntityHandle &handle);
 
     void CreateRaycasts(AbstractHitscanWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired);
-    void RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursine::physics::RaycastOutput& rayout, AbstractHitscanWeapon& weapon);
+    bool RaycastClosestHitLogic(ursine::SVec3& raycastVec, ursine::physics::RaycastOutput& rayout, AbstractHitscanWeapon& weapon);
 
     void GetSpawnLocation(const ursine::ecs::EntityHandle &other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet);
     void SpawnCollisionParticle(ursine::SVec3& collisionPoint, ursine::SVec3& normalizeRaycastVec, const ursine::ecs::EntityHandle &other);

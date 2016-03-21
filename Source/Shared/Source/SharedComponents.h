@@ -108,9 +108,6 @@
 #include "LevelSegmentManager/SegmentResources/TutorialResourcesComponent.h"
 #include "LevelSegmentManager/SegmentResources/CombatBowl1ResourcesComponent.h"
 #include "LevelSegmentManager/SegmentResources/BossRoomResourcesComponent.h"
-#include "LevelSegmentManager/SegmentLogic/Misc/SegmentChangeTriggerComponent.h"
-#include "LevelSegmentManager/SegmentLogic/Misc/VisibilityTriggerComponent.h"
-
 
 /////////////////////////////////
 //       Entity Animation      //
@@ -118,7 +115,6 @@
 
 #include "EntityAnimation/EntityAnimatorComponent.h"
 #include "EntityAnimation/EntityAnimatorGroupComponent.h"
-#include "EntityAnimation/EntityAnimatorFocusPointComponent.h"
 #include "EntityAnimation/EntityAnimatorFocusModifierComponent.h"
 
 /////////////////////////////////
@@ -141,6 +137,8 @@
 /////////////////////////////////
 
 #include "FX/AnimateParticleResetComponent.h"
+#include "FX/PlayClipOnAnimationFinishComponent.h"
+#include "FX/FaceBoneTowardsTargetComponent.h"
 
 /////////////////////////////////
 //             Misc            //
@@ -148,6 +146,7 @@
 
 #include "Misc/AnimateTutorialTextComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
+#include "LevelSegmentManager/SegmentLogic/Misc/ChangeSegmentOnAnimatorFinishComponent.h"
 #include "Misc/DeathTriggerGroupComponent.h"
 
 /////////////////////////////////
@@ -155,3 +154,11 @@
 /////////////////////////////////
 
 #include "Physics/ApplyImpulseOnHitComponent.h"
+
+/////////////////////////////////
+//         Triggers            //
+/////////////////////////////////
+
+#include "Triggers/SegmentChangeTriggerComponent.h"
+#include "Triggers/VisibilityTriggerComponent.h"
+#include "Triggers/AnimateEntityOnTriggerComponent.h"

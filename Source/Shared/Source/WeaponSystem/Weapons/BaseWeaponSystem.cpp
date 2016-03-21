@@ -28,6 +28,7 @@
 #include "AudioEmitterComponent.h"
 #include "TrailComponent.h"
 #include "CritspotComponent.h"
+#include "WallComponent.h"
 #include <Core/Audio/AudioManager.h>
 
 
@@ -113,6 +114,7 @@ void WeaponSystemUtils::ProjectileSetUp(EntityHandle& proj, AbstractProjWeapon& 
     damageComp.SetCritModifier( weapon.GetCritModifier( ) );
     damageComp.SetDamageInterval( weapon.GetDamageInterval( ) );
     damageComp.SetDeleteOnCollision( weapon.GetDeleteOnCollision( ) );
+    damageComp.SetDamageType( weapon.GetDamageType( ) );
 
     proj->GetTransform( )->SetWorldPosition( weapon.m_firePosHandle->GetWorldPosition( ) );
 
@@ -476,7 +478,8 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon &weapon, Transfor
             {
                     auto delta = rayin.end - rayin.start;
 
-                    RaycastClosestHitLogic( delta, rayout, weapon );
+                    if (!RaycastClosestHitLogic( delta, rayout, weapon ))
+                        CreateTrail( weapon, rayin.end );
                 break;
             }
             default:
@@ -488,12 +491,24 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon &weapon, Transfor
     }
 }
 
-void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursine::physics::RaycastOutput &rayout, AbstractHitscanWeapon &weapon)
+bool HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursine::physics::RaycastOutput &rayout, AbstractHitscanWeapon &weapon)
 {
     EntityHandle e;
 
     // get first object hit w/ health and apply damage
     auto objHit = m_world->GetEntity( rayout.entity.front( ) );
+
+    auto rootHealth = objHit->GetRoot( )->GetComponent<Health>( );
+    auto objHealth = objHit->GetComponent<Health>( );
+
+    if (rootHealth && !rootHealth->CanDamage( &weapon ))
+        return false;
+
+    if (objHealth && !objHealth->CanDamage( &weapon ))
+        return false;
+
+    if (!(objHealth || rootHealth || objHit->HasComponent<Wall>( )))
+        return false;
 
     // where did rayact collide at
     ursine::SVec3 &collisionPoint = rayout.hit[ 0 ];
@@ -545,6 +560,8 @@ void HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursi
 
 
     CreateTrail( weapon, collisionPoint );
+
+    return true;
 }
 
 

@@ -39,6 +39,7 @@ AbstractWeapon::AbstractWeapon(void)
     , m_semiAutomatic( false )
     , m_triggerPulled( false )
     , m_active( true )
+    , m_damageType( DAMAGE_ENEMY )
 {   
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
@@ -105,6 +106,16 @@ int AbstractWeapon::CanFire(void) const
 ///////////////////////////////
 
 //// Damage
+DamageType AbstractWeapon::GetDamageType(void) const
+{
+    return m_damageType;
+}
+
+void AbstractWeapon::SetDamageType(DamageType type)
+{
+    m_damageType = type;
+}
+
 float AbstractWeapon::GetDamageToApply(void) const
 {
     return m_damageToApply;

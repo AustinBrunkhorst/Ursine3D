@@ -27,6 +27,8 @@ ApplyImpulseOnHit::ApplyImpulseOnHit(void)
     : BaseComponent( )
     , m_impulse( 0.0f )
     , m_effectSweptController( true )
+    , m_listenToChildren( false )
+    , m_serialized( false )
 {
 }
 
@@ -34,6 +36,9 @@ ApplyImpulseOnHit::~ApplyImpulseOnHit(void)
 {
     GetOwner( )->Listener( this )
         .Off( ENTITY_COLLISION_PERSISTED, &ApplyImpulseOnHit::onCollision );
+
+    if (m_listenToChildren)
+        connectToChildrenCollisionEvents( false, GetOwner( )->GetChildren( ) );
 }
 
 bool ApplyImpulseOnHit::GetEffectSweptController(void) const
@@ -82,10 +87,42 @@ void ApplyImpulseOnHit::SetWorldDirectionInfluence(const SVec3& direction)
     NOTIFY_COMPONENT_CHANGED( "worldDirectionInfluence", m_worldDirection );
 }
 
+bool ApplyImpulseOnHit::GetListenToChildren(void) const
+{
+    return m_listenToChildren;
+}
+
+void ApplyImpulseOnHit::SetListenToChildren(bool flag)
+{
+    if (m_listenToChildren == flag)
+        return;
+
+    if (m_serialized)
+        connectToChildrenCollisionEvents( flag, GetOwner( )->GetChildren( ) );
+
+    m_listenToChildren = flag;
+
+    NOTIFY_COMPONENT_CHANGED( "listenToChildren", m_listenToChildren );
+}
+
 void ApplyImpulseOnHit::OnInitialize(void)
 {
     GetOwner( )->Listener( this )
-        .On( ENTITY_COLLISION_PERSISTED, &ApplyImpulseOnHit::onCollision );
+        .On( ENTITY_COLLISION_PERSISTED, &ApplyImpulseOnHit::onCollision )
+        .On( ENTITY_HIERARCHY_SERIALIZED, &ApplyImpulseOnHit::onHierarchySerialized );
+}
+
+void ApplyImpulseOnHit::onHierarchySerialized(EVENT_HANDLER(Entity))
+{
+    EVENT_ATTRS(Entity, EntityEventArgs);
+
+    m_serialized = true;
+
+    if (m_listenToChildren)
+        connectToChildrenCollisionEvents( true, GetOwner( )->GetChildren( ) );
+
+    sender->Listener( this )
+        .Off( ENTITY_HIERARCHY_SERIALIZED, &ApplyImpulseOnHit::onHierarchySerialized );
 }
 
 void ApplyImpulseOnHit::onCollision(EVENT_HANDLER(Entity))
@@ -111,3 +148,30 @@ void ApplyImpulseOnHit::onCollision(EVENT_HANDLER(Entity))
         body->AddImpulse( dir * m_impulse );
     }
 }
+
+void ApplyImpulseOnHit::connectToChildrenCollisionEvents(bool connect, const std::vector<EntityID> *children)
+{
+    if (children == nullptr)
+        return;
+
+    auto world = GetOwner( )->GetWorld( );
+
+    if (world == nullptr)
+        return;
+
+    for (auto &child : *children)
+    {
+        auto entity = world->GetEntity( child );
+
+        if (!entity || entity->IsDeleting( ))
+            continue;
+
+        if (connect)
+            entity->Listener( this ).On( ENTITY_COLLISION_PERSISTED, &ApplyImpulseOnHit::onCollision );
+        else
+            entity->Listener( this ).Off( ENTITY_COLLISION_PERSISTED, &ApplyImpulseOnHit::onCollision );
+
+        connectToChildrenCollisionEvents( connect, entity->GetChildren( ) );
+    }
+}
+

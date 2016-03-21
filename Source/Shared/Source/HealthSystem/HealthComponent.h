@@ -25,6 +25,9 @@ namespace ursine
     }
 }
 
+class DamageOnCollide;
+struct AbstractWeapon;
+
 enum HealthEvents
 {
     HEALTH_DAMAGE_TAKEN,
@@ -41,6 +44,12 @@ struct HealthEventArgs : ursine::EventArgs
         , percentage( percentage ) { }
 };
 
+enum HealthType
+{
+    ENEMY_HEALTH,
+    PLAYER_HEALTH
+} Meta(Enable);
+
 class Health 
     : public ursine::ecs::Component
     , public ursine::EventDispatcher<HealthEvents>
@@ -48,6 +57,12 @@ class Health
     NATIVE_COMPONENT;
 
 public:
+    EditorField(
+        HealthType healthType,
+        GetHealthType,
+        SetHealthType
+    );
+
     EditorField(
         float EntityHealth,
         GetHealth,
@@ -77,6 +92,9 @@ public:
     Health(void);
     ~Health(void);
 
+    HealthType GetHealthType(void) const;
+    void SetHealthType(HealthType type);
+
     float GetHealth(void) const;
     void SetHealth(const float health);
     float GetMaxHealth(void) const;
@@ -93,11 +111,16 @@ public:
     void DealDamage(const float damage);
     void DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit);
 
+    bool CanDamage(DamageOnCollide *damage) const;
+    bool CanDamage(AbstractWeapon *weapon) const;
+
 private:
     void OnInitialize(void) override;
     void sendDamageTextEvent(const ursine::SVec3& contact, float damage, bool crit);
 
     void OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
+
+    HealthType m_type;
 
     float m_health;
     float m_maxHealth;

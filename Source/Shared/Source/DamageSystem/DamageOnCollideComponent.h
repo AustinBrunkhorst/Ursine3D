@@ -15,16 +15,24 @@
 
 #include <ArchetypeData.h>
 
+#include "HealthComponent.h"
+
 namespace ursine
 {
     namespace physics
     {
         struct RaycastOutput;
-    } // physics namespace
-} // ursine namespace
+    }
+}
 
-class Health;
 struct CritSpot;
+
+enum DamageType
+{
+    DAMAGE_ENEMY = ENEMY_HEALTH,
+    DAMAGE_PLAYER = PLAYER_HEALTH,
+    DAMAGE_ALL
+} Meta(Enable);
 
 class DamageOnCollide : public ursine::ecs::Component
 {
@@ -32,9 +40,12 @@ class DamageOnCollide : public ursine::ecs::Component
 
 public:
 
-    ////////////////////////////////////////////////////////////////////
-    // Expose data to editor
-    ////////////////////////////////////////////////////////////////////
+    EditorField(
+        DamageType damageType,
+        GetDamageType,
+        SetDamageType
+    );
+
     EditorField(
         float DamageToApply,
         GetDamageToApply,
@@ -85,10 +96,19 @@ public:
         SetSpawnOnHit
     );
 
+    EditorField(
+        bool listenToChildren,
+        GetListenToChildren,
+        SetListenToChildren
+    );
+
     DamageOnCollide(void);
     ~DamageOnCollide(void);
 
     void OnInitialize(void) override;
+
+    DamageType GetDamageType(void) const;
+    void SetDamageType(DamageType type);
 
     float GetDamageToApply(void) const;
     void SetDamageToApply(float damage);
@@ -114,9 +134,15 @@ public:
     bool GetSpawnOnHit(void) const;
     void SetSpawnOnHit(bool state);
 
+    bool GetListenToChildren(void) const;
+    void SetListenToChildren(bool flag);
+
     void DecrementDamageIntervalTimes(float dt);
 
 private:
+    // The type of damage that is being dealth (player, enemy, all)
+    DamageType m_type;
+
     // damage to apply when triggered
     float m_damageToApply;
 
@@ -145,11 +171,15 @@ private:
     bool m_spawnOnHit;
     bool m_spawnOnDeath;
 
+    bool m_listenToChildren;
+    bool m_serialized;
+
     // map of all objects hit
     std::unordered_map<ursine::ecs::EntityHandle, float> m_damageTimeMap;
 
     void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
     void onCollide(EVENT_HANDLER(ursine::ecs::Entity));
+    void onHierarchySerialized(EVENT_HANDLER(ursine::ecs::Entity));
 
     void getSpawnLocation(
         const ursine::ecs::EntityHandle &other, 
@@ -166,6 +196,11 @@ private:
         const ursine::ecs::EntityHandle &obj, 
         const ursine::SVec3& contact, 
         float damage, bool crit
+    );
+
+    void connectToChildrenCollisionEvents(
+        bool connect, 
+        const std::vector<ursine::ecs::EntityID> *children
     );
 
 } Meta (Enable, DisplayName( "DamageOnCollide" ));

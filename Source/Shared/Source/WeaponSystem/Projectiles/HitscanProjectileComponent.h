@@ -26,9 +26,6 @@ public:
 
     void OnInitialize(void) override;
 
-   
-
-
 } Meta(Enable, DisplayName("HitscanProjectile"));
 
 

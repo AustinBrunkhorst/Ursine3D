@@ -15,7 +15,7 @@
 
 #include "VineAIStateMachine.h"
 
-#include "EntityAnimatorComponent.h"
+#include "AnimatorComponent.h"
 
 class VineAI : public ursine::ecs::Component
 {
@@ -157,7 +157,7 @@ public:
     const ursine::SVec3 &GetColliderSize(void) const;
     void SetColliderSize(const ursine::SVec3 &colliderSize);
 
-    EntityAnimator *GetAnimator(void);
+    ursine::ecs::Animator *GetAnimator(void);
 
     ursine::ecs::EntityHandle GetTarget(void);
     void SetTarget(ursine::ecs::EntityHandle target);
@@ -199,7 +199,7 @@ private:
 
     VineAIStateMachine m_stateMachine;
 
-    EntityAnimator *m_animator;
+    ursine::ecs::Animator *m_animator;
 
     ursine::ecs::EntityHandle m_target;
 

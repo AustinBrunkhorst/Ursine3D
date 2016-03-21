@@ -17,8 +17,11 @@
 
 #include "VineAIStateMachine.h"
 #include "VineAIComponent.h"
-#include "EntityAnimatorComponent.h"
-#include "EventArgs.h"
+#include "AnimatorComponent.h"
+#include "EntityEvent.h"
+
+using namespace ursine;
+using namespace ecs;
 
 VineSpawnState::VineSpawnState(void)
     : VineAIState( "Spawn" )
@@ -30,19 +33,19 @@ void VineSpawnState::Enter(VineAIStateMachine *machine)
 {
     auto animator = machine->GetAI( )->GetAnimator( );
 
-    animator->Listener( this )
-        .On( EntityAnimatorEvent::FinishedAnimating, &VineSpawnState::onAnimationFinished );
+    animator->GetOwner( )->Listener( this )
+        .On( ENTITY_ANIMATION_FINISH, &VineSpawnState::onAnimationFinished );
 
-    animator->Play( "Uproot" );
+    animator->SetPlaying( true );
+    animator->SetCurrentState( "Spike_Up" );
 }
 
-void VineSpawnState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
+void VineSpawnState::onAnimationFinished(EVENT_HANDLER(Entity))
 {
-    EVENT_ATTRS(EntityAnimator, ursine::EventArgs);
+    EVENT_ATTRS(Entity, ursine::EventArgs);
 
     m_finished = true;
 
     sender->Listener( this )
-        .Off( EntityAnimatorEvent::FinishedAnimating, &VineSpawnState::onAnimationFinished );
+        .Off( ENTITY_ANIMATION_FINISH, &VineSpawnState::onAnimationFinished );
 }
-

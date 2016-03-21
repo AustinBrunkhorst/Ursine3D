@@ -19,8 +19,10 @@
 #include "VineAIComponent.h"
 
 #include <Application.h>
+#include <EntityEvent.h>
 
 using namespace ursine;
+using namespace ecs;
 
 VineWhipState::VineWhipState(void)
     : VineAIState( "Whip State" )
@@ -56,7 +58,7 @@ void VineWhipState::Update(VineAIStateMachine *machine)
             // tell the animator to whip in
             if (!m_animating)
             {
-                playAnimation( animator, "WhipIn" );
+                playAnimation( animator, "Swipe_In" );
 
                 auto aiTrans = ai->GetOwner( )->GetTransform( );
 
@@ -111,7 +113,7 @@ void VineWhipState::Update(VineAIStateMachine *machine)
             // when that finishes, whip out
             if (!m_animating)
             {
-                playAnimation( animator, "WhipOut" );
+                playAnimation( animator, "Whip_Out" );
                 m_swingTimer = 0.0f;
             }
             else
@@ -138,25 +140,28 @@ void VineWhipState::Exit(VineAIStateMachine *machine)
     );
 }
 
-void VineWhipState::playAnimation(EntityAnimator *animator, const std::string &clip)
+void VineWhipState::playAnimation(Animator *animator, const std::string &clip)
 {
-    animator->Play( clip );
+    animator->SetCurrentState( clip );
 
     m_animating = true;
 
-    animator->Listener( this )
-        .On( EntityAnimatorEvent::FinishedAnimating, &VineWhipState::onAnimationFinished );
+    animator->GetOwner( )->Listener( this )
+        .On( ENTITY_ANIMATION_FINISH, &VineWhipState::onAnimationFinished );
 }
 
-void VineWhipState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
+void VineWhipState::onAnimationFinished(EVENT_HANDLER(Entity))
 {
-    EVENT_ATTRS(EntityAnimator, ursine::ecs::EntityEventArgs);
+    EVENT_ATTRS(Entity, ursine::ecs::EntityEventArgs);
 
     switch (m_state)
     {
         case WhipState::In:
         {
             m_state = WhipState::Rotate;
+
+            sender->GetComponent<Animator>( )->SetCurrentState( "Whip_Idle" );
+
             break;
         }
         case WhipState::Out:
@@ -170,5 +175,5 @@ void VineWhipState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
     m_swingTimer = 0.0f;
 
     sender->Listener( this )
-        .Off( EntityAnimatorEvent::FinishedAnimating, &VineWhipState::onAnimationFinished );
+        .Off( ENTITY_ANIMATION_FINISH, &VineWhipState::onAnimationFinished );
 }

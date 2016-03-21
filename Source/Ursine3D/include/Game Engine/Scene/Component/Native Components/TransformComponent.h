@@ -71,6 +71,8 @@ namespace ursine
 
             void OnInitialize(void) override;
 
+            void OnSerialize(Json::object &output) const override;
+
             ////////////////////////////////////////////////////////////////////
             // Position
             ////////////////////////////////////////////////////////////////////

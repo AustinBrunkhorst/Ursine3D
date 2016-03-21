@@ -100,7 +100,7 @@ public:
         SetSpawnDirection
     );
 
-    Meta(InputRange(0.0f, 180.0f, 0.1f))
+    Meta(InputRange(0.0f, 180.0f, 0.1f, "{{value.toFixed( 2 )}} deg"))
     EditorField(
         float spawnAngleVariance,
         GetSpawnAngleVariance,

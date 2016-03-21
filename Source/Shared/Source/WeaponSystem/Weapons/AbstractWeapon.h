@@ -12,6 +12,7 @@
 #pragma once
 
 #include "Randomizer.h"
+#include "DamageOnCollideComponent.h"
 
 #include <ArchetypeData.h>
 
@@ -34,6 +35,12 @@
 #define AMMO_USED true
 
 #define AbstractWeaponFields( )           \
+    EditorField(                          \
+        DamageType damageType,            \
+        GetDamageType,                    \
+        SetDamageType                     \
+    );                                    \
+                                          \
     EditorField(                          \
         float Damage,                     \
         GetDamageToApply,                 \
@@ -192,7 +199,6 @@ public:
         int& saveAmmo, int& saveClip
     );
 
-
     /////////////////////////////
     ////  Weapon Fire Logic  ////
     /////////////////////////////
@@ -203,6 +209,9 @@ public:
     ///////////////////////////////
     ////  Gettors and Settors  ////
     ///////////////////////////////
+    DamageType GetDamageType(void) const;
+    void SetDamageType(DamageType type);
+
     float GetDamageToApply(void) const;
     void  SetDamageToApply(float damage);
 
@@ -268,6 +277,9 @@ protected:
 
     // who is my owner
     ursine::ecs::EntityHandle m_owner;
+
+    // The type of damage being dealt
+    DamageType m_damageType;
 
     // damage to apply when triggered
     float m_damageToApply;

@@ -97,10 +97,10 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
-        auto spawnVines = sm->AddState<BossSpawnVinesState>( );
-        auto seedShot = sm->AddState<BossSeedshotState>( );
+        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 4.0f );
+        /*auto seedShot = sm->AddState<BossSeedshotState>( );
 
-        spawnVines->AddTransition( seedShot, "To Seedshot" );
+        spawnVines->AddTransition( seedShot, "To Seedshot" );*/
 
         sm->SetInitialState( spawnVines );
 
@@ -114,7 +114,10 @@ void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
     // has to be done this way due to inheritance
     game::WeaponActivationEventArgs args( GetOwner( ) );
 
-    GetSeedshotEntity( )->Dispatch( game::ACTIVATE_WEAPON, &args );
+    auto seedshotEntity = GetSeedshotEntity( );
+
+    if (seedshotEntity)
+        seedshotEntity->Dispatch( game::ACTIVATE_WEAPON, &args );
 }
 
 
