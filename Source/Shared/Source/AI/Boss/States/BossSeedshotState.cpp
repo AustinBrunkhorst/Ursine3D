@@ -33,7 +33,7 @@ BossSeedshotState::BossSeedshotState(void)
 
 void BossSeedshotState::Update(BossAIStateMachine *machine)
 {
-    auto dt = Application::Instance->GetDeltaTime( );
+    /*auto dt = Application::Instance->GetDeltaTime( );
 
     m_timer += dt;
 
@@ -49,5 +49,5 @@ void BossSeedshotState::Update(BossAIStateMachine *machine)
         m_timer = 0.0f;
 
         m_on = !m_on;
-    }
+    }*/
 }

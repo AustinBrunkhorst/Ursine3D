@@ -67,6 +67,8 @@ void LevelSegmentManager::SetCurrentSegment(LevelSegments segment)
     args.segment = segment;
 
     Dispatch( LevelSegmentManagerEvents::SegmentChanged, &args );
+
+    NOTIFY_COMPONENT_CHANGED( "currentSegment", m_segment );
 }
 
 bool LevelSegmentManager::GetEnableDebugOutput(void) const
@@ -355,6 +357,9 @@ void LevelSegmentManager::onUpdate(EVENT_HANDLER(World))
 {
     if (m_segment == LevelSegments::Empty)
         return;
+
+    // TODO: Remove this, using it to try and find a weird bug.
+    // std::cout << (m_segment == LevelSegments::BossRoom_Introduction ? "Intro" : m_segment == LevelSegments::BossRoom_Phase1 ? "Phase1" : "Other") << std::endl;
 
     // Update all state machines
     for (auto &logic : m_segmentLogic[ m_segment ])

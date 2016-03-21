@@ -130,4 +130,8 @@ private:
     bool m_deleteOnZero;
     bool m_spawnOnDeath;
 
+    // A flag letting us know if we're dead or not.
+    // This solves the problem of dealing damage after it's already dead.
+    bool m_dead;
+
 } Meta(Enable, WhiteListMethods, DisplayName( "Health" ));

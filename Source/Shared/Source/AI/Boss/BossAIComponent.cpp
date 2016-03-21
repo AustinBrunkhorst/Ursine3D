@@ -18,6 +18,7 @@
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
+#include "IntCondition.h"
 
 #include "EntityEvent.h"
 
@@ -27,11 +28,27 @@ using namespace ursine;
 using namespace ecs;
 using namespace resources;
 
+namespace
+{
+    const int kPhaseNumber = 5;
+}
+
 BossAI::BossAI(void)
     : BaseComponent( )
     , m_segment( LevelSegments::Empty )
     , m_vineCount( 0 )
+    , m_turnSpeed( 90.0f )
 {
+}
+
+float BossAI::GetSeedshotTurnSpeed(void) const
+{
+    return m_turnSpeed;
+}
+
+void BossAI::SetSeedshotTurnSpeed(float turnSpeed)
+{
+    m_turnSpeed = turnSpeed;
 }
 
 const std::string &BossAI::GetSeedshotEntityName(void) const
@@ -67,6 +84,8 @@ void BossAI::AddSpawnedVine(EntityHandle vine)
         .On( HEALTH_ZERO, &BossAI::onVineDeath );
 
     ++m_vineCount;
+
+    updateVineCount( );
 }
 
 void BossAI::OnInitialize(void)
@@ -98,9 +117,13 @@ void BossAI::OnInitialize(void)
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 4.0f );
-        /*auto seedShot = sm->AddState<BossSeedshotState>( );
+        auto seedShot = sm->AddState<BossSeedshotState>( );
 
-        spawnVines->AddTransition( seedShot, "To Seedshot" );*/
+        auto seedshotTrans = spawnVines->AddTransition( seedShot, "To Seedshot" );
+
+        seedshotTrans->AddCondition<sm::IntCondition>( 
+            BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
+        );
 
         sm->SetInitialState( spawnVines );
 
@@ -119,7 +142,6 @@ void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
     if (seedshotEntity)
         seedshotEntity->Dispatch( game::ACTIVATE_WEAPON, &args );
 }
-
 
 void BossAI::onUpdate(EVENT_HANDLER(World))
 {
@@ -163,4 +185,17 @@ void BossAI::onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager))
 void BossAI::onVineDeath(EVENT_HANDLER(Health))
 {
     --m_vineCount;
+
+    updateVineCount( );
+}
+
+void BossAI::updateVineCount(void)
+{
+    for (int i = 0; i < kPhaseNumber; ++i)
+    {
+        for (auto &machine : m_bossLogic[ i ])
+        {
+            machine->SetInt( BossAIStateMachine::VineCount, m_vineCount );
+        }
+    }
 }

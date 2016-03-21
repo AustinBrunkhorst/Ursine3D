@@ -38,6 +38,7 @@ Health::Health(void)
     , m_health( 100 )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
+    , m_dead( false )
     , m_type( ENEMY_HEALTH ) { }
 
 Health::~Health(void)
@@ -102,6 +103,9 @@ void Health::SetSpawnOnDeath(const bool state)
 
 void Health::DealDamage(const float damage)
 {
+    if (m_dead)
+        return;
+
     auto owner = GetOwner( );
 
     // early out if we've already "died"
@@ -115,7 +119,9 @@ void Health::DealDamage(const float damage)
         Dispatch( HEALTH_ZERO, ursine::EventArgs::Empty );
 
         if (m_deleteOnZero)
-        GetOwner( )->Delete( );
+            GetOwner( )->Delete( );
+
+        m_dead = true;
     }
     else
     {
@@ -136,12 +142,6 @@ void Health::DealDamage(const float damage)
             GetOwner( )->GetWorld( )->MessageUI( gameUIEvents::UI_HealthComponentStats, message );
         }
     }
-
-    URSINE_TODO("Fix sound hack for health");
-    ursine::ecs::AudioEmitter* emitter = owner->GetComponent<ursine::ecs::AudioEmitter>( );
-
-    //if ( emitter )
-       // emitter->AddSoundToPlayQueue(kTakeDamage);
 }
 
 
