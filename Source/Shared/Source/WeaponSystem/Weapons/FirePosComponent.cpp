@@ -9,24 +9,11 @@
 **
 ** -------------------------------------------------------------------------*/
 
-#include <Precompiled.h>
+#include "Precompiled.h"
 #include "FirePosComponent.h"
 #include "ComponentIncludes.h"
 
 NATIVE_COMPONENT_DEFINITION( FirePos ) ;
 
-using namespace ursine;
-
-
-FirePos::FirePos(void) :
-    BaseComponent( )
-{
-}
-
-FirePos::~FirePos(void)
-{
-    //GetOwner( )->Listener( this )
-    //     .Off( game::FIRE_END, &BaseWeapon::TriggerReleased ); 
-}
-
-
+FirePos::FirePos(void)
+    : BaseComponent( ) { }

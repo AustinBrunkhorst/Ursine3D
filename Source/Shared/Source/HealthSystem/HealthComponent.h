@@ -14,6 +14,7 @@
 #pragma once
 
 #include <Component.h>
+#include <ArchetypeData.h>
 #include <RigidbodyComponent.h>
 
 namespace ursine
@@ -21,8 +22,11 @@ namespace ursine
     namespace physics
     {
         class Contact;
-    } // physics namespace
-} // ursine namespace
+    }
+}
+
+class DamageOnCollide;
+struct AbstractWeapon;
 
 enum HealthEvents
 {
@@ -40,6 +44,12 @@ struct HealthEventArgs : ursine::EventArgs
         , percentage( percentage ) { }
 };
 
+enum HealthType
+{
+    ENEMY_HEALTH,
+    PLAYER_HEALTH
+} Meta(Enable);
+
 class Health 
     : public ursine::ecs::Component
     , public ursine::EventDispatcher<HealthEvents>
@@ -48,13 +58,20 @@ class Health
 
 public:
     EditorField(
+        HealthType healthType,
+        GetHealthType,
+        SetHealthType
+    );
+
+    EditorField(
         float EntityHealth,
         GetHealth,
         SetHealth
     );
 
-    EditorField(
-        std::string ArchetypeToSpawnOnDeath,
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        archetypeToSpawnOnDeath,
         GetArchetypeOnDeath,
         SetArchetypeOnDeath
     );
@@ -75,12 +92,15 @@ public:
     Health(void);
     ~Health(void);
 
+    HealthType GetHealthType(void) const;
+    void SetHealthType(HealthType type);
+
     float GetHealth(void) const;
     void SetHealth(const float health);
     float GetMaxHealth(void) const;
 
-    const std::string& GetArchetypeOnDeath(void) const;
-    void SetArchetypeOnDeath(const std::string& objToSpawn);
+    const ursine::resources::ResourceReference &GetArchetypeOnDeath(void) const;
+    void SetArchetypeOnDeath(const ursine::resources::ResourceReference &objToSpawn);
 
     bool GetDeleteOnZeroHealth(void) const;
     void SetDeleteOnZeroHealth(bool flag);
@@ -91,16 +111,21 @@ public:
     void DealDamage(const float damage);
     void DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit);
 
+    bool CanDamage(DamageOnCollide *damage) const;
+    bool CanDamage(AbstractWeapon *weapon) const;
+
 private:
     void OnInitialize(void) override;
     void sendDamageTextEvent(const ursine::SVec3& contact, float damage, bool crit);
 
     void OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
 
+    HealthType m_type;
+
     float m_health;
     float m_maxHealth;
 
-    std::string m_objToSpawn;
+    ursine::resources::ResourceReference m_objToSpawn;
 
     bool m_deleteOnZero;
     bool m_spawnOnDeath;

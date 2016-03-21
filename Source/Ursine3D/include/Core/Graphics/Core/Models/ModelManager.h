@@ -75,6 +75,9 @@ namespace ursine
             ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
             ModelResource *GetModel(const unsigned ID);
 
+            // getting model info by name
+            ufmt_loader::ModelInfo *GetModelInfoByName(const std::string &name);
+
         private:
             void InitializeModel(const ufmt_loader::ModelInfo &modelInfo, ModelResource &modelresource);
             void loadModelToGPU(ModelResource &model);
@@ -89,6 +92,8 @@ namespace ursine
 
             std::unordered_map<unsigned, ModelResource> m_modelCache;
             std::unordered_map<unsigned, ufmt_loader::ModelInfo> m_modelInfoCache;
+
+            std::unordered_map<std::string, ufmt_loader::ModelInfo*> m_modelInfoTable;
 
             // animation
             unsigned m_nextAnimationID;

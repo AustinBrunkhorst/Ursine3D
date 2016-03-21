@@ -18,6 +18,8 @@
 #include "AudioEmitterComponent.h"
 #include "PlayerIdComponent.h"
 #include "CollisionEventArgs.h"
+#include "DamageOnCollideComponent.h"
+#include "AbstractWeapon.h"
 
 NATIVE_COMPONENT_DEFINITION( Health );
 
@@ -34,16 +36,24 @@ namespace
 Health::Health(void)
     : BaseComponent( )
     , m_health( 100 )
-    , m_objToSpawn( "" )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
-{
-}
+    , m_type( ENEMY_HEALTH ) { }
 
 Health::~Health(void)
 {
     GetOwner( )->Listener(this)
         .Off( ursine::ecs::ENTITY_REMOVED, &Health::OnDeath );
+}
+
+HealthType Health::GetHealthType(void) const
+{
+    return m_type;
+}
+
+void Health::SetHealthType(HealthType type)
+{
+    m_type = type;
 }
 
 float Health::GetHealth(void) const
@@ -61,17 +71,14 @@ float Health::GetMaxHealth(void) const
     return m_maxHealth;
 }
 
-const std::string& Health::GetArchetypeOnDeath(void) const
+const ursine::resources::ResourceReference &Health::GetArchetypeOnDeath(void) const
 {
     return m_objToSpawn;
 }
 
-void Health::SetArchetypeOnDeath(const std::string& objToSpawn)
+void Health::SetArchetypeOnDeath(const ursine::resources::ResourceReference &objToSpawn)
 {
     m_objToSpawn = objToSpawn;
-
-    if ( m_objToSpawn.find(".uatype") == std::string::npos )
-        m_objToSpawn += ".uatype";
 }
 
 bool Health::GetDeleteOnZeroHealth(void) const
@@ -145,6 +152,20 @@ void Health::DealDamage(const ursine::SVec3& contactPoint, float damage, bool cr
     sendDamageTextEvent(contactPoint, damage, crit);
 }
 
+bool Health::CanDamage(DamageOnCollide *damage) const
+{
+    auto type = damage->GetDamageType( );
+
+    return type == DAMAGE_ALL || type == m_type;
+}
+
+bool Health::CanDamage(AbstractWeapon *weapon) const
+{
+    auto type = weapon->GetDamageType( );
+
+    return type == DAMAGE_ALL || type == m_type;
+}
+
 void Health::OnInitialize(void)
 {
     m_maxHealth = m_health;
@@ -164,10 +185,11 @@ void Health::sendDamageTextEvent(const ursine::SVec3& contact, float damage, boo
 
 void Health::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
-    if ( m_spawnOnDeath && m_objToSpawn != ".uatype" )
+    if (m_spawnOnDeath)
     {
-        auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + m_objToSpawn );
+        auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( m_objToSpawn );
 
-        obj->GetTransform( )->SetWorldPosition( GetOwner( )->GetTransform( )->GetWorldPosition( ) );
+        if (obj)
+            obj->GetTransform( )->SetWorldPosition( GetOwner( )->GetTransform( )->GetWorldPosition( ) );
     }
 }

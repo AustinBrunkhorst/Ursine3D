@@ -25,6 +25,7 @@ NATIVE_COMPONENT_DEFINITION( BossAI );
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 BossAI::BossAI(void)
     : BaseComponent( )
@@ -43,12 +44,12 @@ void BossAI::SetSeedshotEntityName(const std::string &entityName)
     m_seedshotEntity = entityName;
 }
 
-const std::string &BossAI::GetVineArchetype(void) const
+const ResourceReference &BossAI::GetVineArchetype(void) const
 {
     return m_vineArchetype;
 }
 
-void BossAI::SetVineArchetype(const std::string &vineArchetype)
+void BossAI::SetVineArchetype(const ResourceReference &vineArchetype)
 {
     m_vineArchetype = vineArchetype;
 }
@@ -96,10 +97,10 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
-        auto spawnVines = sm->AddState<BossSpawnVinesState>( );
-        auto seedShot = sm->AddState<BossSeedshotState>( );
+        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 4.0f );
+        /*auto seedShot = sm->AddState<BossSeedshotState>( );
 
-        spawnVines->AddTransition( seedShot, "To Seedshot" );
+        spawnVines->AddTransition( seedShot, "To Seedshot" );*/
 
         sm->SetInitialState( spawnVines );
 
@@ -113,7 +114,10 @@ void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
     // has to be done this way due to inheritance
     game::WeaponActivationEventArgs args( GetOwner( ) );
 
-    GetSeedshotEntity( )->Dispatch( game::ACTIVATE_WEAPON, &args );
+    auto seedshotEntity = GetSeedshotEntity( );
+
+    if (seedshotEntity)
+        seedshotEntity->Dispatch( game::ACTIVATE_WEAPON, &args );
 }
 
 

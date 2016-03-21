@@ -19,6 +19,9 @@
 
 NATIVE_COMPONENT_DEFINITION( UnloadResource )
 
+using namespace ursine;
+using namespace ecs;
+
 UnloadResource::UnloadResource(void)
     : BaseComponent( )
 {
@@ -28,8 +31,11 @@ UnloadResource::UnloadResource(LevelSegmentManager *manager, LevelSegments unloa
     : BaseComponent( )
     , m_unloadSegment( unloadSegment )
 {
-    manager->Listener( this )
-        .On( LevelSegmentManagerEvents::SegmentChanged, &UnloadResource::onSegmentChange );
+    if (manager->GetCurrentSegment( ) >= m_unloadSegment)
+        GetOwner( )->Delete( );
+    else
+        manager->Listener( this )
+            .On( LevelSegmentManagerEvents::SegmentChanged, &UnloadResource::onSegmentChange );
 }
 
 LevelSegments UnloadResource::GetUnloadSegment(void) const

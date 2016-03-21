@@ -130,7 +130,7 @@ namespace ursine
             {
                 gGraphics->StartFrame( );
 
-				flushTasks( );
+                flushTasks( );
 
                 Dispatch( APP_UPDATE, this, EventArgs::Empty );
 
@@ -186,26 +186,26 @@ namespace ursine
         return m_platformEvents;
     }
 
-	void Application::PostMainThread(Task task)
-	{
-		std::lock_guard<std::mutex> lock( Instance->m_mutex );
-
-		Instance->m_tasks.push_back( task );
-	}
-
-	void Application::flushTasks(void)
+    void Application::PostMainThread(Task task)
     {
-		decltype( m_tasks ) copy;
+        std::lock_guard<std::mutex> lock( Instance->m_mutex );
 
-		// lock the vector
-		{
-			std::lock_guard<std::mutex> lock( m_mutex );
+        Instance->m_tasks.push_back( task );
+    }
+
+    void Application::flushTasks(void)
+    {
+        decltype( m_tasks ) copy;
+
+        // lock the vector
+        {
+            std::lock_guard<std::mutex> lock( m_mutex );
 
             copy = std::move( m_tasks );
-		}
+        }
 
-		// iterate through all tasks and execute them
-		for (auto &callback : copy)
-			callback( );
+        // iterate through all tasks and execute them
+        for (auto &callback : copy)
+            callback( );
     }
 }

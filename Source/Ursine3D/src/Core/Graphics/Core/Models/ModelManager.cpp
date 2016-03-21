@@ -264,6 +264,9 @@ namespace ursine
 
             m_modelInfoCache.emplace( internalID, modelInfo );
 
+            // set in lookup table
+            m_modelInfoTable.emplace( modelInfo.name, &m_modelInfoCache[ internalID ] );
+
             /////////////////////////////////////////////////////////
             // GENERATING BONE DATA /////////////////////////////////
             /////////////////////////////////////////////////////////
@@ -508,6 +511,15 @@ namespace ursine
         ModelResource *ModelManager::GetModel(const unsigned ID)
         {
             return &m_modelCache[ ID ];
+        }
+
+        ufmt_loader::ModelInfo* ModelManager::GetModelInfoByName(const std::string& name)
+        {
+            auto modelInfo = m_modelInfoTable.find( name );
+
+            UAssert( modelInfo != m_modelInfoTable.end( ), "Failed to find model info with name '%s'!", name.c_str( ) );
+
+            return modelInfo->second;
         }
 
         // private methods

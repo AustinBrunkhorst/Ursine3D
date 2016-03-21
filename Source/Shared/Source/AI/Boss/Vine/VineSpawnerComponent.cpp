@@ -17,5 +17,16 @@ NATIVE_COMPONENT_DEFINITION( VineSpawner );
 
 VineSpawner::VineSpawner(void)
     : BaseComponent( )
+    , m_spawnSegment( LevelSegments::Empty )
 {
+}
+
+LevelSegments VineSpawner::GetSpawnSegment(void) const
+{
+    return m_spawnSegment;
+}
+
+void VineSpawner::SetSpawnSegment(LevelSegments segment)
+{
+    m_spawnSegment = segment;
 }

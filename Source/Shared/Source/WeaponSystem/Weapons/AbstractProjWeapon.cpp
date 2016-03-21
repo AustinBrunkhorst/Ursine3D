@@ -1,28 +1,22 @@
+/* ---------------------------------------------------------------------------
+** Team Bear King
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+**
+** AbstractComponent.cpp
+**
+** Author:
+** - Chad George - chad.george@digipen.edu
+**
+** -------------------------------------------------------------------------*/
 
 #include <Precompiled.h>
 #include "AbstractProjWeapon.h"
 
-
 using namespace ursine;
 
-namespace
-{
-    // Helper to check if the archetype to shoot needs to have .uatype appended to it
-    void CheckArchetypeToShoot(std::string& archetype)
-    {
-        if (archetype.find( ".uatype" ) == std::string::npos)
-            archetype += ".uatype";
-    }
-
-}; // unamed namespace
-
-
-AbstractProjWeapon::AbstractProjWeapon(void) :
-    AbstractWeapon( ),
-    m_projSpeed( 10.0f ),
-    m_archetypeToShoot( "BaseBullet.uatype" )
-{
-}
+AbstractProjWeapon::AbstractProjWeapon(void) 
+    : AbstractWeapon( )
+    , m_projSpeed( 10.0f ) { }
 
 // projectile speed  get/set
 float AbstractProjWeapon::GetProjSpeed(void) const
@@ -35,16 +29,13 @@ void AbstractProjWeapon::SetProjSpeed(const float speed)
     m_projSpeed = speed;
 }
 
-
 // Archetype To Shoot
-const std::string& AbstractProjWeapon::GetArchetypeToShoot(void) const
+const resources::ResourceReference &AbstractProjWeapon::GetArchetypeToShoot(void) const
 {
     return m_archetypeToShoot;
 }
 
-void AbstractProjWeapon::SetArchetypeToShoot(const std::string& archetype)
+void AbstractProjWeapon::SetArchetypeToShoot(const resources::ResourceReference &archetype)
 {
     m_archetypeToShoot = archetype;
-
-    CheckArchetypeToShoot( m_archetypeToShoot );
 }

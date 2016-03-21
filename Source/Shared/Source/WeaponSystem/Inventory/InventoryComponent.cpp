@@ -14,72 +14,41 @@
 #include "ComponentIncludes.h"
 #include "CameraComponent.h"
 #include "TransformComponent.h"
+#include "WeaponPosComponent.h"
 
 NATIVE_COMPONENT_DEFINITION( Inventory ) ;
 
 using namespace ursine;
-
-namespace
-{
-    // sets the archetype that is desired to load
-    bool SetWeaponSlot(WeaponSlotInfo& weaponSlot, const std::string& weaponToLoad)
-    {
-        bool isValid = false;
-
-        // update weapon to load
-        if ( weaponToLoad != "" )
-        {
-            weaponSlot.m_weaponToLoad = weaponToLoad;
-
-            // add on extension for archetypes
-            if ( weaponToLoad.find(".uatype") == std::string::npos )
-            {
-                weaponSlot.m_weaponToLoad += ".uatupe";
-                isValid = true;
-            }
-        }
-
-        return isValid;
-    }
-
-} // unnamed namespace
-
+using namespace resources;
 
   //////////////////////////////////
   ////  WeaponSlotInfo Members  ////
   //////////////////////////////////
 
-WeaponSlotInfo::WeaponSlotInfo(WeaponType index, const std::string& weapon) :
-    m_weaponSlotType( index ),
-    m_weaponLoaded( ),
-    m_weaponToLoad( weapon ),
-    m_ammoCount( -1 ),
-    m_clipCount( -1 )
-{
-    SetWeaponSlot( *this, weapon );
-}
-
-
-
+WeaponSlotInfo::WeaponSlotInfo(WeaponType index) 
+    : m_weaponSlotType( index )
+    , m_weaponLoaded( )
+    , m_ammoCount( -1 )
+    , m_clipCount( -1 ) { }
 
 /////////////////////////////
 ////  Inventory Members  ////
 /////////////////////////////
 
-Inventory::Inventory(void) :
-    BaseComponent( ), 
-    m_currWeapon( LAST_STAND ),
-    m_prevWeapon(LAST_STAND),
-    m_inventory { 
-                    WeaponSlotInfo( LAST_STAND, "HitscanWeapon.uatype"),
-                    WeaponSlotInfo( SECONDARY_WEAPON ),
-                    WeaponSlotInfo( PRIMARY_WEAPON ),
-                    WeaponSlotInfo( MELEE_WEAPON ),
-                    WeaponSlotInfo( GOD_WEAPON )
-                },
-    m_swap( false ),
-    m_newWeapon( true ),
-    m_init( false )
+Inventory::Inventory(void) 
+    : BaseComponent( )
+    , m_currWeapon( LAST_STAND )
+    , m_prevWeapon( LAST_STAND )
+    , m_inventory { 
+          WeaponSlotInfo( LAST_STAND ),
+          WeaponSlotInfo( SECONDARY_WEAPON ),
+          WeaponSlotInfo( PRIMARY_WEAPON ),
+          WeaponSlotInfo( MELEE_WEAPON ),
+          WeaponSlotInfo( GOD_WEAPON )
+      }
+    , m_swap( false )
+    , m_newWeapon( true )
+    , m_init( false )
 {
 }
 
@@ -91,10 +60,6 @@ Inventory::~Inventory(void)
 
 void Inventory::OnInitialize(void)
 {
-    // default positions of camera and arm to current position
-    m_cameraHandle = GetOwner( )->GetTransform( );
-    m_armHandle = GetOwner( )->GetTransform( );
-
     GetOwner( )->Listener(this)
         .On(game::SWAP_COMMAND, &Inventory::TriggerSwapWeapons);
 }
@@ -102,19 +67,11 @@ void Inventory::OnInitialize(void)
 void Inventory::Init(void)
 {
     // try to get camera position
-    auto *cam = GetOwner( )->GetComponentInChildren<ecs::Camera>( );
+    auto *weaponPos = GetOwner( )->GetComponentInChildren<WeaponPos>( );
 
-    if ( cam )
+    if (weaponPos)
     {
-        m_cameraHandle = cam->GetOwner( )->GetTransform( );
-
-        // try to get right arm position
-        auto arm = cam->GetOwner( )->GetChildByName( "RightArm" );
-
-        if ( arm )
-        {
-            m_armHandle = arm->GetTransform( );
-        }
+        m_weaponPosition = weaponPos->GetOwner( )->GetTransform( );
     }
 
 }
@@ -129,53 +86,58 @@ void Inventory::SetStartWeapon(const WeaponType slot)
     m_currWeapon = slot;
 }
 
-const std::string& Inventory::GetLastStandWeapon( ) const
+const ResourceReference &Inventory::GetLastStandWeapon(void) const
 {
     return m_inventory[ LAST_STAND ].m_weaponToLoad;
 }
 
-void Inventory::SetLastStandWeapon(const std::string& archetype)
+void Inventory::SetLastStandWeapon(const ResourceReference &archetype)
 {
-    if ( SetWeaponSlot( m_inventory[ LAST_STAND ], archetype ) )
-        m_newWeapon = true;
+    m_inventory[ LAST_STAND ].m_weaponToLoad = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "lastStand", m_inventory[ LAST_STAND ].m_weaponToLoad );
 }
 
-const std::string& Inventory::GetSecondaryWeapon( ) const
+const ResourceReference &Inventory::GetSecondaryWeapon(void) const
 {
     return m_inventory[ SECONDARY_WEAPON ].m_weaponToLoad;
 }
 
-void Inventory::SetSecondaryWeapon(const std::string& archetype)
+void Inventory::SetSecondaryWeapon(const ResourceReference &archetype)
 {
-    if ( SetWeaponSlot(m_inventory[ SECONDARY_WEAPON ], archetype) )
-        m_newWeapon = true;
+    m_inventory[ SECONDARY_WEAPON ].m_weaponToLoad = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "secondaryWeapon", m_inventory[ SECONDARY_WEAPON ].m_weaponToLoad );
 }
 
-const std::string& Inventory::GetPrimaryWeapon( ) const
+const ResourceReference &Inventory::GetPrimaryWeapon(void) const
 {
     return m_inventory[ PRIMARY_WEAPON ].m_weaponToLoad;
 }
 
-void Inventory::SetPrimaryWeapon(const std::string& archetype)
+void Inventory::SetPrimaryWeapon(const ResourceReference &archetype)
 {
-    if ( SetWeaponSlot(m_inventory[ PRIMARY_WEAPON ], archetype) )
-        m_newWeapon = true;
+    m_inventory[ PRIMARY_WEAPON ].m_weaponToLoad = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "primaryWeapon", m_inventory[ PRIMARY_WEAPON ].m_weaponToLoad );
 }
 
-const std::string& Inventory::GetMeleeWeapon( ) const
+const ResourceReference &Inventory::GetMeleeWeapon(void) const
 {
     return m_inventory[ MELEE_WEAPON ].m_weaponToLoad;
 }
 
-void Inventory::SetMeleeWeapon(const std::string& archetype)
+void Inventory::SetMeleeWeapon(const ResourceReference &archetype)
 {
-    if ( SetWeaponSlot( m_inventory[ MELEE_WEAPON ], archetype ) )
-        m_newWeapon = true;
+    m_inventory[ MELEE_WEAPON ].m_weaponToLoad = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "meleeWeapon", m_inventory[ MELEE_WEAPON ].m_weaponToLoad );
 }
 
-void Inventory::SetNewWeapon(const WeaponType type, const std::string& weaponToLoad, int ammo, int clip)
+void Inventory::SetNewWeapon(const ResourceReference &weaponData, const WeaponType type, int ammo, int clip)
 {
-    m_inventory[ type ].m_weaponToLoad = weaponToLoad;
+    // @Chad, set the weapon based on the weaponData
+
     m_inventory[ type ].m_ammoCount = ammo;
     m_inventory[ type ].m_clipCount = clip;
     m_currWeapon = type;
@@ -187,10 +149,6 @@ void Inventory::TriggerSwapWeapons(void* _sender, const ursine::EventArgs* _args
 {
     m_swap = true;
 }
-
-
-
-
 
 //
 ///////////////////////////////

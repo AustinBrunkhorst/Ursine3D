@@ -30,7 +30,8 @@ EditorIcon::EditorIcon(void)
 
 EditorIcon::~EditorIcon(void)
 {
-    m_billboard->Delete( );
+    if (m_billboard)
+        m_billboard->Delete( );
 }
 
 void EditorIcon::SetIcon(const std::string &text)

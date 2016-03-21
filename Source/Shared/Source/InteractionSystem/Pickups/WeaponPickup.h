@@ -12,6 +12,8 @@
 ** -------------------------------------------------------------------------*/
 
 #include <Component.h>
+#include <ArchetypeData.h>
+
 #include "BaseInteraction.h"
 #include "AbstractWeapon.h"
 
@@ -37,7 +39,7 @@ public:
     void SetPickupTime(const float time);
 
     EditorField(
-        WeaponType WeaponType,
+        WeaponType weaponType,
         GetWeaponType,
         SetWeaponType
     );
@@ -45,14 +47,15 @@ public:
     WeaponType GetWeaponType(void) const;
     void SetWeaponType(WeaponType weaponType);
 
-    EditorField(
-        std::string Weapon,
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        Weapon,
         GetWeaponToPickup,
         SetWeaponToPickup
     );
 
-    const std::string& GetWeaponToPickup(void) const;
-    void SetWeaponToPickup(const std::string& weapon);
+    const ursine::resources::ResourceReference& GetWeaponToPickup(void) const;
+    void SetWeaponToPickup(const ursine::resources::ResourceReference& weapon);
 
     EditorField(
         std::string Texture,
@@ -93,7 +96,7 @@ private:
     std::unordered_map<ursine::ecs::EntityHandle, Inventory*> m_inventories;
 
     // Weapon the will be picked up on completed interaction
-    std::string m_weaponToPickup;
+    ursine::resources::ResourceReference m_weaponToPickup;
 
     // Texture to display to object
     std::string m_texture;

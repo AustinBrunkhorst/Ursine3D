@@ -39,5 +39,3 @@ void HitscanWeapon::RemoveMySelf(void)
 {
     GetOwner( )->Delete( );
 }
-
-

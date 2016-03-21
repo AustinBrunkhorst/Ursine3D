@@ -356,8 +356,8 @@ namespace ursine
             temp = temp->next;
         }
 
-        UAssert(false, "Wwise: Requested Too Many Listeners");
-        return ListenerIndex::None;
+        //UAssert(false, "Wwise: Requested Too Many Listeners");
+        return m_head->listener;
     }
 
     void AudioManager::FreeListener(ListenerIndex listener)

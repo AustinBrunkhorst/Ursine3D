@@ -36,6 +36,7 @@ public:
     void SetWorldData(const ursine::resources::ResourceReference &world);
 
     std::string bossTopEntityName;
+    std::string bossDoorEntityName;
 
 private:
     ursine::resources::ResourceReference m_worldToMerge;

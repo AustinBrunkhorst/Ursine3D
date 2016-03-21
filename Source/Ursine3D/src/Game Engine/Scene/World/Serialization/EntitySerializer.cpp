@@ -69,6 +69,7 @@ namespace ursine
         {
             Json::object data;
 
+            data[ kKeyEntityName ] = entity->GetName( );
             data[ kKeyArchetypeVersion ] = kSerializationVersion;
             data[ kKeyEntityComponents ] = serializeComponents( entity );
             data[ kKeyEntityChildren ] = serializeChildren( entity );
