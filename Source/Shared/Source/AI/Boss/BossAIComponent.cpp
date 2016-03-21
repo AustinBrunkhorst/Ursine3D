@@ -49,6 +49,8 @@ float BossAI::GetSeedshotTurnSpeed(void) const
 void BossAI::SetSeedshotTurnSpeed(float turnSpeed)
 {
     m_turnSpeed = turnSpeed;
+
+    NOTIFY_COMPONENT_CHANGED( "seedshotTurnSpeed", m_turnSpeed );
 }
 
 const std::string &BossAI::GetSeedshotEntityName(void) const
@@ -59,6 +61,8 @@ const std::string &BossAI::GetSeedshotEntityName(void) const
 void BossAI::SetSeedshotEntityName(const std::string &entityName)
 {
     m_seedshotEntity = entityName;
+
+    NOTIFY_COMPONENT_CHANGED( "seedshotEntity", m_seedshotEntity );
 }
 
 const ResourceReference &BossAI::GetVineArchetype(void) const
@@ -69,6 +73,8 @@ const ResourceReference &BossAI::GetVineArchetype(void) const
 void BossAI::SetVineArchetype(const ResourceReference &vineArchetype)
 {
     m_vineArchetype = vineArchetype;
+
+    NOTIFY_COMPONENT_CHANGED( "vineArchetype", m_vineArchetype );
 }
 
 EntityHandle BossAI::GetSeedshotEntity(void)
