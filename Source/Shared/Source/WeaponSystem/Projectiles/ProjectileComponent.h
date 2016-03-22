@@ -20,7 +20,7 @@ public:
         float Speed,
         GetSpeed,
         SetSpeed
-        );
+    );
 
     Projectile( void );
     ~Projectile( void );

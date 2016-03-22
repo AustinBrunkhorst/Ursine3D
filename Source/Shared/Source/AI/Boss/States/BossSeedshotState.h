@@ -29,6 +29,10 @@ public:
 
 private:
 
+    float m_timer;
+
+    bool m_on;
+
     ursine::ecs::EntityHandle m_target;
 
     FaceBoneTowardsTarget *m_boneTargetComponent;

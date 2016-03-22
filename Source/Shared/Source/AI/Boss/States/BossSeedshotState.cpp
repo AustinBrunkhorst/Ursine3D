@@ -20,6 +20,7 @@
 
 #include "FaceBoneTowardsTargetComponent.h"
 #include "PlayerIDComponent.h"
+#include "GameEvents.h"
 
 #include <AnimatorComponent.h>
 #include <World.h>
@@ -30,6 +31,8 @@ using namespace ecs;
 BossSeedshotState::BossSeedshotState(void)
     : BossAIState( "Seedshot" )
     , m_boneTargetComponent( nullptr )
+    , m_timer( 0.0f )
+    , m_on( false )
 {
 }
 
@@ -48,23 +51,20 @@ void BossSeedshotState::Enter(BossAIStateMachine *machine)
 
 void BossSeedshotState::Update(BossAIStateMachine *machine)
 {
-    /*auto dt = Application::Instance->GetDeltaTime( );
+    auto dt = Application::Instance->GetDeltaTime( );
 
     m_timer += dt;
 
     if (m_timer >= 2.0f)
     {
-        auto bossEntity = machine->GetBoss( )->GetOwner( );
+        auto boss = machine->GetBoss( )->GetOwner( );
 
-        if (!m_on)
-            bossEntity->Dispatch( game::FIRE_START, EventArgs::Empty );
-        else
-            bossEntity->Dispatch( game::FIRE_END, EventArgs::Empty );
+        boss->Dispatch( m_on ? game::FIRE_END : game::FIRE_START, EventArgs::Empty );
 
         m_timer = 0.0f;
 
         m_on = !m_on;
-    }*/
+    }
 
     auto boss = machine->GetBoss( );
 
@@ -90,6 +90,10 @@ void BossSeedshotState::Exit(BossAIStateMachine *machine)
 
     if (animator)
         animator->SetEnableBoneManipulation( false );
+
+    auto bossEntity = machine->GetBoss( )->GetOwner( );
+
+    bossEntity->Dispatch( game::FIRE_END, EventArgs::Empty );
 }
 
 void BossSeedshotState::findTarget(BossAI *boss)

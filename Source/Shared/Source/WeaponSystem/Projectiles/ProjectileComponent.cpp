@@ -56,5 +56,3 @@ void Projectile::Update( const float dt )
         GetOwner( )->Delete( );
     }
 }
-
-

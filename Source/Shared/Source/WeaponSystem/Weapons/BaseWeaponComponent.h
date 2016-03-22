@@ -14,6 +14,7 @@
 
 #include "AbstractProjWeapon.h"
 #include <Component.h>
+#include <AudioEmitterComponent.h>
 
 struct BaseWeapon : ursine::ecs::Component, AbstractProjWeapon
 {
@@ -31,4 +32,8 @@ public:
 protected:
     void RemoveMySelf(void) override;
 
-} Meta(Enable , DisplayName("ProjectileWeapon"));
+} Meta(
+    Enable, 
+    DisplayName("ProjectileWeapon"), 
+    RequiresComponents(typeof(ursine::ecs::AudioEmitter))
+);
