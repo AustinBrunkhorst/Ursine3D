@@ -34,12 +34,16 @@ public:
     UnloadResource(void);
     UnloadResource(LevelSegmentManager *manager, LevelSegments unloadSegment);
 
+    void OnSceneReady(ursine::Scene *scene) override;
+
     LevelSegments GetUnloadSegment(void) const;
     void SetUnloadSegment(LevelSegments segment);
 
 private:
 
     LevelSegments m_unloadSegment;
+
+    LevelSegmentManager *m_manager;
 
     void onSegmentChange(EVENT_HANDLER(LevelSegmentManager));
 } Meta(Enable);

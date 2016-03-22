@@ -113,6 +113,8 @@ void BossAI::OnInitialize(void)
 
         lm->Listener( this )
             .On( LevelSegmentManagerEvents::SegmentChanged, &BossAI::onLevelSegmentChanged );
+
+        m_segment = lm->GetCurrentSegment( );
     }
 
     // Boss Phase I
@@ -123,17 +125,28 @@ void BossAI::OnInitialize(void)
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 4.0f );
-        auto seedShot = sm->AddState<BossSeedshotState>( );
+        /*auto seedShot = sm->AddState<BossSeedshotState>( );
 
         auto seedshotTrans = spawnVines->AddTransition( seedShot, "To Seedshot" );
 
         seedshotTrans->AddCondition<sm::IntCondition>( 
             BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
         );
-
+        */
         sm->SetInitialState( spawnVines );
 
         m_bossLogic[ 0 ].push_back( sm );
+    }
+
+    // TESTING: seedshot
+    {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        auto seedshot = sm->AddState<BossSeedshotState>( );
+
+        sm->SetInitialState( seedshot );
+
+        m_bossLogic[ 1 ].push_back( sm );
     }
 }
 
