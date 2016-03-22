@@ -120,13 +120,19 @@ namespace ursine
             std::string m_futStName;
             std::string m_stateName;
 
-            void updateState(AnimationState *currSt, const Animation *currAni,
-                             AnimationState *futSt, const Animation *futAni, 
+            void updateState(AnimationState **currSt, const Animation **currAni,
+                             AnimationState **futSt, const Animation **futAni, 
                              float dt, float &transFactor);
 
-            void changeState(AnimationState *currSt, AnimationState *futSt,
+            void animationLoop(AnimationState **currSt, const Animation **currAni,
+                                AnimationState **futSt, const Animation **futAni,
+                                float dt, float &transFactor,
+                                StateBlender *stateBlender);
+
+            void changeState(AnimationState **currSt, AnimationState **futSt,
                              float currloopTimePos, float futloopTimePos, 
-                             float currNoloopTimePos, float futNoloopTimePos);
+                             float currNoloopTimePos, float futNoloopTimePos,
+                             float &transFactor);
 
             float getAnimationTimePosition(void) const;
             void setAnimationTimePosition(float position);
