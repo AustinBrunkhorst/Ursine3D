@@ -36,7 +36,7 @@ ENTITY_SYSTEM_DEFINITION( BaseWeaponSystem );
 ENTITY_SYSTEM_DEFINITION( HitscanWeaponSystem );
 
 using namespace ursine;
-using namespace ursine::ecs;
+using namespace ecs;
 
 #define EXTRA_DIST 30.0f
 
@@ -44,7 +44,7 @@ namespace
 {
     const std::string kFireGun = "FIRE_GUN_HAND";
     const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
-    const ursine::Randomizer random;
+    const Randomizer random;
 }
 
 // Apply spread / accuracy to shooting
@@ -61,7 +61,7 @@ void WeaponSystemUtils::ConstructRaycast(AbstractWeapon& weapon, SVec3& start, S
     GetSpreadValues( weapon.m_spread, weapon.m_accuracy, x_spread, y_spread );
 
     // Get spray vecs
-    ursine::SVec3 spray = weapon.m_camHandle->GetUp( ) * y_spread + weapon.m_camHandle->GetRight( ) * x_spread;
+    SVec3 spray = weapon.m_camHandle->GetUp( ) * y_spread + weapon.m_camHandle->GetRight( ) * x_spread;
 
     start = weapon.m_firePosHandle->GetWorldPosition( );
     end = weapon.m_camHandle->GetWorldPosition( ) + weapon.m_camHandle->GetForward( ) * ( weapon.m_maxRange + EXTRA_DIST ) + spray;
@@ -70,7 +70,7 @@ void WeaponSystemUtils::ConstructRaycast(AbstractWeapon& weapon, SVec3& start, S
 // Give projectiles velocity with spread
 void WeaponSystemUtils::ProjectileVelocity(AbstractProjWeapon& weapon, EntityHandle& proj)
 {
-    ursine::SVec3 start, end;  
+    SVec3 start, end;  
 
     ConstructRaycast( weapon, start, end );
 
@@ -97,10 +97,14 @@ void WeaponSystemUtils::ProjectileSetUp(EntityHandle& proj, AbstractProjWeapon& 
     }
 
     // add rigidbody component if not found
-    if (!proj->HasComponent<ursine::ecs::Rigidbody>( ))
+    if (!proj->HasComponent<Rigidbody>( ))
     {
-        proj->AddComponent<ursine::ecs::Rigidbody>( );
+        proj->AddComponent<Rigidbody>( );
     }
+
+    auto body = proj->GetComponent<Rigidbody>( );
+
+    body->SetBodyFlag( BodyFlag::Dynamic );
 
     Projectile &projComp = *proj->GetComponent<Projectile>( );
     // set proj speed
@@ -230,7 +234,8 @@ void WeaponSystemUtils::ResetIdleSequence(AbstractWeapon* weapon)
 //////////////////////////////
 ////  Base Weapon System  ////
 //////////////////////////////
-BaseWeaponSystem::BaseWeaponSystem( ursine::ecs::World *world ) 
+
+BaseWeaponSystem::BaseWeaponSystem(World *world) 
     : FilterSystem( world, Filter( ).One< BaseWeapon >( ).All< AudioEmitter >( ) )
 {
 }
@@ -261,13 +266,11 @@ void BaseWeaponSystem::onUpdate(EVENT_HANDLER(World))
     EvaluateProjectileWeapons( dt );
 }
 
-void BaseWeaponSystem::EvaluateProjectileWeapons(const float dt)
+void BaseWeaponSystem::EvaluateProjectileWeapons(float dt)
 {
     for (auto it : m_weapons)
     {
         AbstractProjWeapon* weapon = it.second;
-
-        //weapon->m_animatorHandle->UpdateAnimation(dt);
 
         // skip if not active
         if (!weapon->m_active)
@@ -316,7 +319,9 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
 
         // create particle at weapons fire pos and parent to weapon
         auto e = m_world->CreateEntityFromArchetype( weapon.m_fireParticle );
-        weapon.m_firePosHandle->AddChildAlreadyInLocal(e->GetTransform( ));
+
+        if (e)
+            weapon.m_firePosHandle->AddChildAlreadyInLocal(e->GetTransform( ));
 
 
         // number of rounds that were fired
@@ -327,7 +332,7 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
     }
 }
 
-void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs::Transform& trans, const int projectilesFired)
+void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, Transform& trans, int projectilesFired)
 {
     // make sure projectile was fired
     if ( !projectilesFired )
@@ -354,7 +359,6 @@ void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs
         WeaponSystemUtils::ProjectileVelocity( weapon, cloneProj );
     }
 }
-
 
 /////////////////////////////////
 ////  Hitscan Weapon System  ////
@@ -491,7 +495,7 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon &weapon, Transfor
     }
 }
 
-bool HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursine::physics::RaycastOutput &rayout, AbstractHitscanWeapon &weapon)
+bool HitscanWeaponSystem::RaycastClosestHitLogic(SVec3 &raycastVec, physics::RaycastOutput &rayout, AbstractHitscanWeapon &weapon)
 {
     EntityHandle e;
 
@@ -511,7 +515,7 @@ bool HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursi
         return false;
 
     // where did rayact collide at
-    ursine::SVec3 &collisionPoint = rayout.hit[ 0 ];
+    SVec3 &collisionPoint = rayout.hit[ 0 ];
 
     // create shot particle
     e = m_world->CreateEntityFromArchetype( weapon.m_shotParticle );
@@ -564,8 +568,7 @@ bool HitscanWeaponSystem::RaycastClosestHitLogic(ursine::SVec3 &raycastVec, ursi
     return true;
 }
 
-
-void HitscanWeaponSystem::CreateTrail(AbstractHitscanWeapon &weapon, ursine::SVec3 &trailEnd)
+void HitscanWeaponSystem::CreateTrail(AbstractHitscanWeapon &weapon, SVec3 &trailEnd)
 {
     // create trial for raycast
     auto e = m_world->CreateEntityFromArchetype( weapon.m_trailParticle );
@@ -583,8 +586,7 @@ void HitscanWeaponSystem::CreateTrail(AbstractHitscanWeapon &weapon, ursine::SVe
     }
 }
 
-
-void HitscanWeaponSystem::GetSpawnLocation(const EntityHandle &other, ursine::physics::RaycastOutput &rayout, ursine::SVec3 &posToSet)
+void HitscanWeaponSystem::GetSpawnLocation(const EntityHandle &other, physics::RaycastOutput &rayout, ursine::SVec3 &posToSet)
 {
     EntityHandle entity;
     size_t size = rayout.entity.size( );
@@ -601,11 +603,10 @@ void HitscanWeaponSystem::GetSpawnLocation(const EntityHandle &other, ursine::ph
     }
 }
 
-
-void HitscanWeaponSystem::SpawnCollisionParticle(ursine::SVec3 &collisionPoint, ursine::SVec3 &raycastVec, const EntityHandle &other)
+void HitscanWeaponSystem::SpawnCollisionParticle(SVec3 &collisionPoint, SVec3 &raycastVec, const EntityHandle &other)
 {
-    ursine::physics::RaycastInput rayin; // input for raycast check
-    ursine::physics::RaycastOutput rayout; // output from raycast check
+    physics::RaycastInput rayin; // input for raycast check
+    physics::RaycastOutput rayout; // output from raycast check
 
     raycastVec.Normalize( );
 
@@ -614,7 +615,7 @@ void HitscanWeaponSystem::SpawnCollisionParticle(ursine::SVec3 &collisionPoint, 
     rayin.end = rayin.start + (EXTRA_DIST * raycastVec);
 
     // get ray to edge of other object
-    m_physicsSystem->Raycast( rayin, rayout, ursine::physics::RAYCAST_ALL_HITS, false, 1.0f, false );
+    m_physicsSystem->Raycast( rayin, rayout, physics::RAYCAST_ALL_HITS, false, 1.0f, false );
 
     GetSpawnLocation( other->GetRoot( ), rayout, collisionPoint );
 }

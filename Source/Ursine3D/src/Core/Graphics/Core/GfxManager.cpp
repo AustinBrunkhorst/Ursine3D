@@ -1410,7 +1410,10 @@ namespace ursine
             int overdraw = (tempID >> 15) & 0x1;
 
             if (index > MAX_RENDERABLES)
+            {
+                m_currentID = -1;
                 return;
+            }
 
             unsigned w, h;
             gfxInfo->GetDimensions(w, h);

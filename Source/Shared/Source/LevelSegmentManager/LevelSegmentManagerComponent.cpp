@@ -67,6 +67,8 @@ void LevelSegmentManager::SetCurrentSegment(LevelSegments segment)
     args.segment = segment;
 
     Dispatch( LevelSegmentManagerEvents::SegmentChanged, &args );
+
+    NOTIFY_COMPONENT_CHANGED( "currentSegment", m_segment );
 }
 
 bool LevelSegmentManager::GetEnableDebugOutput(void) const
@@ -310,7 +312,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
     // Setup logic for the introduction cinematic
     auto cinematicStateM = std::make_shared<SegmentLogicStateMachine>( "Boss Cinematic", this );
 
-    auto createPlayers = initStateM->AddState<SpawnPlayersState>( true, false );
+    auto createPlayers = initStateM->AddState<SpawnPlayersState>( false, false );
     auto lockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
     auto unlockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
     auto repositionAndClose = cinematicStateM->AddState<RepositionPlayersAndCloseDoorState>( );
@@ -355,6 +357,9 @@ void LevelSegmentManager::onUpdate(EVENT_HANDLER(World))
 {
     if (m_segment == LevelSegments::Empty)
         return;
+
+    // TODO: Remove this, using it to try and find a weird bug.
+    // std::cout << (m_segment == LevelSegments::BossRoom_Introduction ? "Intro" : m_segment == LevelSegments::BossRoom_Phase1 ? "Phase1" : "Other") << std::endl;
 
     // Update all state machines
     for (auto &logic : m_segmentLogic[ m_segment ])

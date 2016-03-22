@@ -18,17 +18,35 @@
 #include "BossAIStateMachine.h"
 #include "BossAIComponent.h"
 
+#include "FaceBoneTowardsTargetComponent.h"
+#include "PlayerIDComponent.h"
 #include "GameEvents.h"
 
-#include <Application.h>
+#include <AnimatorComponent.h>
+#include <World.h>
 
 using namespace ursine;
+using namespace ecs;
 
 BossSeedshotState::BossSeedshotState(void)
     : BossAIState( "Seedshot" )
+    , m_boneTargetComponent( nullptr )
     , m_timer( 0.0f )
     , m_on( false )
 {
+}
+
+void BossSeedshotState::Enter(BossAIStateMachine *machine)
+{
+    auto boss = machine->GetBoss( )->GetOwner( );
+
+    // find the bone target finder component
+    m_boneTargetComponent = boss->GetComponentInChildren<FaceBoneTowardsTarget>( );
+
+    auto animator = boss->GetComponentInChildren<Animator>( );
+
+    if (animator)
+        animator->SetEnableBoneManipulation( true );
 }
 
 void BossSeedshotState::Update(BossAIStateMachine *machine)
@@ -39,15 +57,70 @@ void BossSeedshotState::Update(BossAIStateMachine *machine)
 
     if (m_timer >= 2.0f)
     {
-        auto bossEntity = machine->GetBoss( )->GetOwner( );
+        auto boss = machine->GetBoss( )->GetOwner( );
 
-        if (!m_on)
-            bossEntity->Dispatch( game::FIRE_START, EventArgs::Empty );
-        else
-            bossEntity->Dispatch( game::FIRE_END, EventArgs::Empty );
+        boss->Dispatch( m_on ? game::FIRE_END : game::FIRE_START, EventArgs::Empty );
 
         m_timer = 0.0f;
 
         m_on = !m_on;
     }
+
+    auto boss = machine->GetBoss( );
+
+    // Find our target if we don't have one
+    if (!m_target)
+        findTarget( boss );
+
+    rotateTowardsTarget( boss );
+
+    if (m_target && m_boneTargetComponent)
+    {
+        // face the bone towards the target
+        m_boneTargetComponent->SetTargetPosition(
+            m_target->GetTransform( )->GetWorldPosition( )
+        );
+    }
+}
+
+void BossSeedshotState::Exit(BossAIStateMachine *machine)
+{
+    auto boss = machine->GetBoss( )->GetOwner( );
+    auto animator = boss->GetComponentInChildren<Animator>( );
+
+    if (animator)
+        animator->SetEnableBoneManipulation( false );
+
+    auto bossEntity = machine->GetBoss( )->GetOwner( );
+
+    bossEntity->Dispatch( game::FIRE_END, EventArgs::Empty );
+}
+
+void BossSeedshotState::findTarget(BossAI *boss)
+{
+    auto world = boss->GetOwner( )->GetWorld( );
+
+    // for now just pick one by random
+    auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+
+    if (players.size( ) > 1)
+        m_target = players[ rand( ) % 2 ];
+    else
+        m_target = players[ 0 ];
+}
+
+void BossSeedshotState::rotateTowardsTarget(BossAI *boss)
+{
+    if (!m_target)
+        return;
+
+    auto bossTrans = boss->GetOwner( )->GetTransform( );
+    auto targetTrans = m_target->GetTransform( );
+
+    auto targetPos = targetTrans->GetWorldPosition( );
+    auto bossPos = bossTrans->GetWorldPosition( );
+
+    targetPos.Y( ) = bossPos.Y( );
+
+    bossTrans->LookAt( targetPos, boss->GetSeedshotTurnSpeed( ) );
 }

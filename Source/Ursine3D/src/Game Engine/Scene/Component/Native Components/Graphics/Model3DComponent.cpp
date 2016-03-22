@@ -42,6 +42,8 @@ namespace ursine
             m_model = &m_graphics->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
 
             m_model->SetRenderMask( 0 );
+
+            clearMatrixPalette( );
         }
 
         Model3D::~Model3D(void)

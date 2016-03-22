@@ -25,6 +25,13 @@ class BossAI : public ursine::ecs::Component
 
 public:
 
+    EditorMeta(InputRange(0.0f, 720.0f, 0.5f, "{{value.toFixed( 2 )}} deg/sec"))
+    EditorField(
+        float seedshotTurnSpeed,
+        GetSeedshotTurnSpeed,
+        SetSeedshotTurnSpeed
+    );
+
     EditorField(
         std::string seedshotEntity,
         GetSeedshotEntityName,
@@ -39,6 +46,9 @@ public:
     );
 
     BossAI(void);
+
+    float GetSeedshotTurnSpeed(void) const;
+    void SetSeedshotTurnSpeed(float turnSpeed);
 
     const std::string &GetSeedshotEntityName(void) const;
     void SetSeedshotEntityName(const std::string &entityName);
@@ -60,6 +70,10 @@ private:
     void onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager));
 
     void onVineDeath(EVENT_HANDLER(Health));
+
+    void updateVineCount(void);
+
+    float m_turnSpeed;
 
     std::string m_seedshotEntity;
 
