@@ -44,7 +44,8 @@ FaceBoneTowardsTarget::~FaceBoneTowardsTarget(void)
     if (world)
     {
         world->Listener( this )
-            .Off( WORLD_UPDATE, &FaceBoneTowardsTarget::onUpdate );
+            .Off( WORLD_UPDATE, &FaceBoneTowardsTarget::onUpdate )
+            .Off( WORLD_EDITOR_UPDATE, &FaceBoneTowardsTarget::onUpdate );
     }
 }
 
@@ -53,7 +54,8 @@ void FaceBoneTowardsTarget::OnSceneReady(Scene *scene)
     auto world = GetOwner( )->GetWorld( );
 
     world->Listener( this )
-        .On( WORLD_UPDATE, &FaceBoneTowardsTarget::onUpdate );
+        .On( WORLD_UPDATE, &FaceBoneTowardsTarget::onUpdate )
+        .On( WORLD_EDITOR_UPDATE, &FaceBoneTowardsTarget::onUpdate );
 }
 
 void FaceBoneTowardsTarget::SetTargetPosition(const SVec3 &worldPosition)
