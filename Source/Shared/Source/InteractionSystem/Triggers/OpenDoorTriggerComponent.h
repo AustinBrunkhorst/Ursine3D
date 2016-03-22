@@ -33,9 +33,9 @@ protected:
 
 private:
     // interaction logic
-    void StartInteraction(ursine::ecs::EntityHandle &entity) override;
-    void Interact(ursine::ecs::EntityHandle &entity) override;
-    void StopInteraction(ursine::ecs::EntityHandle &entity) override;
+    void StartInteraction(const ursine::ecs::EntityHandle &entity) override;
+    void Interact(const ursine::ecs::EntityHandle &entity) override;
+    void StopInteraction(const ursine::ecs::EntityHandle &entity) override;
 
     void OnAreaClear(EVENT_HANDLER(game::AREA_CLEAR));
 

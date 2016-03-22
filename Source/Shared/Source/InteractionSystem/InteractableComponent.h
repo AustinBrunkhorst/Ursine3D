@@ -28,25 +28,37 @@ public:
     Interactable(void);
 
     // Called when object enters collider
-    void StartInteraction(ursine::ecs::EntityHandle &entity);
+    void StartInteraction(const ursine::ecs::EntityHandle &entity);
     
     // called while object's interaction bay has chosen this object as
     //   its current interactable object
-    void Interact(ursine::ecs::EntityHandle &entity);
+    void Interact(const ursine::ecs::EntityHandle &entity);
 
     // called when object leaves collider
-    void StopInteraction(ursine::ecs::EntityHandle &entity);
+    void StopInteraction(const ursine::ecs::EntityHandle &entity);
+
+
+    enum InteractType
+    {
+        CONTINUE,
+        NOT_SET = CONTINUE,
+        END
+    };
 
     // Interaction objects call this for setting up the interactable for use
-    void SetUpInteractable(Interaction *interaction);
+    void SetUpInteractable(Interaction *interaction, InteractType type);
+
+    InteractType GetInteractType(void) const;
 
 private:
     Interaction* m_interaction;
     
     // function pointers for interaction logic
-    void (Interaction::*m_startFunc)    (ursine::ecs::EntityHandle &entity);
-    void (Interaction::*m_interactFunc) (ursine::ecs::EntityHandle &entity);
-    void (Interaction::*m_stopFunc)     (ursine::ecs::EntityHandle &entity);
+    void (Interaction::*m_startFunc)    (const ursine::ecs::EntityHandle &entity);
+    void (Interaction::*m_interactFunc) (const ursine::ecs::EntityHandle &entity);
+    void (Interaction::*m_stopFunc)     (const ursine::ecs::EntityHandle &entity);
+
+    InteractType m_type;
 
 } Meta(
     Enable,

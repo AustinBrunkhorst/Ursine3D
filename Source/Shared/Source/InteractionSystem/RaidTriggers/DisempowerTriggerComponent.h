@@ -41,5 +41,5 @@ protected:
 
     bool m_empowerActive;
 
-} Meta(Enable, DisplayName("DisempowerTrigger"));
+} Meta( Enable, DisplayName( "DisempowerTrigger" ), RequiresComponents( typeof( Interactable ) ) );
 

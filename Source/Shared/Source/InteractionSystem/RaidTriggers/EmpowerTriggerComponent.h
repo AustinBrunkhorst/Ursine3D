@@ -44,5 +44,5 @@ protected:
     bool m_playerActive;
 
 
-} Meta(Enable, DisplayName("EmpowerTrigger"), RequiresComponents(typeof(Interactable)));
+} Meta( Enable, DisplayName( "EmpowerTrigger" ), RequiresComponents( typeof( Interactable ) ) );
 

@@ -24,34 +24,6 @@ ENTITY_SYSTEM_DEFINITION( InteractionBaySystem ) ;
 using namespace ursine;
 using namespace ursine::ecs;
 
-namespace
-{
-    // find the closest interactable to interaction bay
-    int SortBayInteractables(Transform* trans, const InteractionBay::TransVec interactables)
-    {
-        float minDist = FLT_MAX;
-        float distSquared;
-        int closestIndex = -1;
-        int index = 0;
-
-        for ( auto it : interactables )
-        {
-            distSquared = trans->GetWorldPosition( ).DistanceSquared( (*it).GetWorldPosition( ) );
-
-            if ( distSquared < minDist )
-            {
-                minDist = distSquared;
-                closestIndex = index;
-            }
-
-            ++index;
-        }
-
-        return closestIndex;
-    }
-
-} // unnamed namespace
-
 
 //////////////////////////////////
 ////  Interaction Bay System  ////
@@ -79,58 +51,88 @@ void InteractionBaySystem::onUpdate(EVENT_HANDLER(World))
 
     InteractionBay* bay;
 
-    int closestIndex = 0;
-
     for ( auto it : m_interactionBays )
     {
         // grab current Interaction bay
         bay = it.second;
 
-        // find closest interactable index to bay
-        closestIndex = SortBayInteractables( bay->GetOwner( )->GetTransform( ), bay->m_transforms );
-
-        // update le bay and its interaction
-        UpdateBay( bay, closestIndex );
+        UpdateBay( bay );
     }
-
 }
 
-void InteractionBaySystem::UpdateBay(InteractionBay* bay, const int closestIndex)
+void InteractionBaySystem::UpdateBay(InteractionBay* bay)
 {
-    Interactable* currInteractable;
-    auto id = bay->GetOwner( );
+    PrevIter prevIt = bay->m_prevInteractables.begin( );
+    PrevIter prevEnd = bay->m_prevInteractables.end( );
 
-    if ( !bay->m_prevInteractable && closestIndex == -1 )
-        return;
+    EntityHandle bayOwner = bay->GetOwner( );
 
-    if ( closestIndex == -1 )
+    // loop through all interactables in bay
+    while ( !bay->m_interactQueue.empty( ) )
     {
-        bay->m_prevInteractable->StopInteraction( id );
-        bay->m_prevInteractable = nullptr;
-        return;
+        if ( InteractUpdate( bay, bay->m_interactQueue.top( ), prevIt, prevEnd ) )
+            break;
+
+        bay->m_interactQueue.pop( );
     }
 
-    // get new current interactable
-    currInteractable = bay->m_interactables[ closestIndex ];
-
-    // was a new interactable found
-    if ( bay->m_prevInteractable != currInteractable )
-    {
-        // end old interaction
-        if ( bay->m_prevInteractable )
-            bay->m_prevInteractable->StopInteraction( id );
-
-        // Start new interaction
-        currInteractable->StartInteraction( id );
-
-        // update previous
-        bay->m_prevInteractable = currInteractable;
-    }
-    
-    // perform interaction with interactable
-    currInteractable->Interact( id );
+    // left over prev interactables that a no longer being interacted with
+    for ( ; prevIt != prevEnd; ++prevIt )
+        prevIt->second->StopInteraction( bayOwner );
 
     bay->Clear( );
 }
+
+bool InteractionBaySystem::InteractUpdate(InteractionBay* bay, const InteractInfo& currInteractInfo, PrevIter& prevIt, PrevIter& prevEnd)
+{
+    PrevIter temp;
+
+    EntityHandle bayOwner = bay->GetOwner( );
+
+    // if prev and curr not == then an inconsistency was found
+    // loop until consistency restored or curr is new interaction
+    while ( *prevIt != currInteractInfo && prevIt != prevEnd )
+    {
+        // new interactable found
+        if ( currInteractInfo < *prevIt )
+        {
+            // start interction
+            currInteractInfo.second->StartInteraction( bayOwner );
+
+            // add to prev of bay
+            bay->m_prevInteractables.insert( prevIt, currInteractInfo );
+
+            // kick out of loop since new consistencey found
+            break;
+        }
+
+        // no longer interacting w/ prev obj
+        prevIt->second->StopInteraction( bayOwner );
+
+        // no longer should be in prev
+        bay->m_prevInteractables.erase( prevIt++ );
+    }
+
+    // new interactable found
+    if ( prevIt == prevEnd )
+    {
+        // start interaction
+        currInteractInfo.second->StartInteraction(bayOwner);
+
+        // add to prev of bay
+        bay->m_prevInteractables.push_back(currInteractInfo);
+    }
+
+    // curr is the prev so increment for next interaction in bay
+    else if ( *prevIt == currInteractInfo )
+        ++prevIt;
+
+    // perform interaction with interactable
+    currInteractInfo.second->Interact( bayOwner );
+
+    // will end if interact type is end
+    return currInteractInfo.second->GetInteractType( ) == Interactable::END;
+}
+
 
 

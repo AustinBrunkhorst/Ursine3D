@@ -49,8 +49,7 @@ public:
     void SetWeaponType(WeaponType weaponType);
 
     EditorResourceField(
-        ursine::resources::ArchetypeData,
-        Weapon,
+        ursine::resources::ArchetypeData, Weapon,
         GetWeaponToPickup,
         SetWeaponToPickup
     );
@@ -59,7 +58,7 @@ public:
     void SetWeaponToPickup(const ursine::resources::ResourceReference& weapon);
 
     EditorField(
-        std::string Texture,
+        ursine::resources::ResourceReference Texture,
         GetTexture,
         SetTexture
     );
@@ -71,9 +70,9 @@ public:
 
 private:
     // interaction logic
-    void StartInteraction(ursine::ecs::EntityHandle &entity) override;
-    void Interact(ursine::ecs::EntityHandle &entity) override;
-    void StopInteraction(ursine::ecs::EntityHandle &entity) override;
+    void StartInteraction(const ursine::ecs::EntityHandle &entity) override;
+    void Interact(const ursine::ecs::EntityHandle &entity) override;
+    void StopInteraction(const ursine::ecs::EntityHandle &entity) override;
     void InteractionComplete(void);
     void CheckForAmmo(const ursine::ecs::EntityHandle &entity);
 

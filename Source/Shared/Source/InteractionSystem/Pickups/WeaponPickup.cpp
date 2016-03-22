@@ -42,7 +42,7 @@ WeaponPickup::~WeaponPickup(void)
 
 void WeaponPickup::OnInitialize(void)
 {
-    GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this);
+    GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable( this, Interactable::END );
 }
 
 ///////////////////////////////
@@ -103,7 +103,7 @@ void WeaponPickup::SetAmmoInfo(const int ammo, const int clip)
     m_clipCount = clip;
 }
 
-void WeaponPickup::StartInteraction(ursine::ecs::EntityHandle &entity)
+void WeaponPickup::StartInteraction(const ursine::ecs::EntityHandle &entity)
 {
     if ( !entity->HasComponent<PlayerID>( ) )
         return;
@@ -127,7 +127,7 @@ void WeaponPickup::StartInteraction(ursine::ecs::EntityHandle &entity)
     //GetOwner( )->GetWorld( )->MessageUI(gameUIEvents::UI_HealthComponentStats, message);
 }
 
-void WeaponPickup::Interact(ecs::EntityHandle &entity)
+void WeaponPickup::Interact(const ecs::EntityHandle &entity)
 {
     Inventory* inventory = m_inventories[ entity ];
     CommandQueue* queue = m_queues[ entity ];
@@ -161,7 +161,7 @@ void WeaponPickup::Interact(ecs::EntityHandle &entity)
     }
 }
 
-void WeaponPickup::StopInteraction(ecs::EntityHandle &entity)
+void WeaponPickup::StopInteraction(const ecs::EntityHandle &entity)
 {
     m_times.erase( entity );
     m_inventories.erase( entity );

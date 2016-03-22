@@ -12,13 +12,14 @@
 
 #include <FilterSystem.h>
 #include <Component.h>
+#include "InteractionBayComponent.h"
 
 //////////////////////
 ////  Predefines  ////
 //////////////////////
 
 struct InteractionBay;
-
+struct Interactable;
 //////////////////////
 //////////////////////
 
@@ -37,8 +38,14 @@ protected:
     void Disable(const ursine::ecs::EntityHandle &entity) override;
 
 private:
+
+    typedef InteractionBay::PrevIter PrevIter;
+    typedef InteractionBayUtils::InteractInfo InteractInfo;
+
     // update current bay
-    void UpdateBay(InteractionBay* bay, const int closestIndex);
+    void UpdateBay(InteractionBay* bay);
+    bool InteractUpdate(InteractionBay* bay, const InteractInfo& currInteractable, PrevIter& prevIt, PrevIter& prevEnd);
 
     std::unordered_map<ursine::ecs::EntityHandle, InteractionBay*> m_interactionBays;
+
 } Meta(Enable, AutoAddEntitySystem);

@@ -21,9 +21,26 @@ NATIVE_COMPONENT_DEFINITION( InteractionBay ) ;
 using namespace ursine;
 
 
+namespace InteractionBayUtils
+{
+    bool Compare(const InteractInfo& lhs, const InteractInfo& rhs)
+    {
+        Interactable::InteractType type = lhs.second->GetInteractType( );
+
+        if ( type == rhs.second->GetInteractType( ) )
+            return lhs.first < rhs.first;
+
+        if ( type == Interactable::CONTINUE )
+            return true;
+
+        return false;
+    }
+} // InteractionBayUtils namespace
+
+
 InteractionBay::InteractionBay(void) :
     BaseComponent( ),
-    m_prevInteractable(nullptr)
+    m_interactQueue( InteractionBayUtils::Compare )
 {
 }
 
@@ -47,16 +64,16 @@ void InteractionBay::OnCollision(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PER
 
     if ( args->otherEntity->HasComponent<Interactable>( ) )
     {
-        m_interactables.push_back( args->otherEntity->GetComponent<Interactable>( ) );
-        m_transforms.push_back( args->otherEntity->GetTransform( ) );
+        float distSqu = args->otherEntity->GetTransform( )->GetWorldPosition( ).DistanceSquared( GetOwner( )->GetTransform( )->GetWorldPosition( ) );
+
+        m_interactQueue.push( std::make_pair( distSqu, args->otherEntity->GetComponent< Interactable >( ) ) );
     }
 
 }
 
 void InteractionBay::Clear(void)
 {
-    m_interactables.clear( );
-    m_distances.clear( );
+    m_interactQueue = InteractQueue( InteractionBayUtils::Compare );
 }
 
 

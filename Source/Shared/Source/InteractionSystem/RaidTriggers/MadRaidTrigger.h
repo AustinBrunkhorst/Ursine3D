@@ -98,9 +98,9 @@ public:
 
 protected:
     // interaction logic
-    void StartInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity) override;
-    void Interact(const CommandQueue* queue, ursine::ecs::EntityHandle &entity) override;
-    void StopInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity) override;
+    void StartInteraction(const ursine::ecs::EntityHandle &entity) override;
+    void Interact(const ursine::ecs::EntityHandle &entity) override;
+    void StopInteraction(const ursine::ecs::EntityHandle &entity) override;
 
     virtual void ChildStartInteractionLogic(void) = 0;
     virtual void ChildStopInteractionLogic(void) = 0;
