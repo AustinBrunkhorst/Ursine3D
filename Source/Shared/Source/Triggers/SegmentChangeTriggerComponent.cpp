@@ -128,7 +128,7 @@ void SegmentChangeTrigger::onCollision(EVENT_HANDLER(ursine::ecs::Entity))
             levelSegmentManagers.size( ),
             "Error: This component requires there to be"
             " a level segment manager in order to switch the segment"
-            );
+        );
 
         // get [0] element
         auto stateMachine = levelSegmentManagers[ 0 ]->GetComponent<LevelSegmentManager>( );
