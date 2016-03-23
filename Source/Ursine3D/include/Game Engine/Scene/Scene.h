@@ -20,19 +20,13 @@
 
 #include "GFXAPIDefines.h"
 
+#include "ScenePlayState.h"
 #include "SceneEvent.h"
 
 #include "DeltaTime.h"
 
 namespace ursine
 {
-    enum ScenePlayState
-    {
-        PS_EDITOR,
-        PS_PLAYING,
-        PS_PAUSED
-    };
-
     class Scene : public EventDispatcher<SceneEventType>
     {
     public:

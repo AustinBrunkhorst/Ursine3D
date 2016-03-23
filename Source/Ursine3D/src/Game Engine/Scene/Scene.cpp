@@ -21,7 +21,6 @@
 #include "Notification.h"
 
 #include "WorldData.h"
-#include "UIScreenData.h"
 
 namespace ursine
 {
@@ -29,14 +28,9 @@ namespace ursine
         : EventDispatcher( this )
         , m_playState( PS_EDITOR )
         , m_viewport( 0 )
-        , m_activeWorld( nullptr )
-    {
-    }
+        , m_activeWorld( nullptr ) { }
 
-    Scene::~Scene(void)
-    {
-
-    }
+    Scene::~Scene(void) { }
 
     ecs::World *Scene::GetActiveWorld(void) const
     {
@@ -89,7 +83,14 @@ namespace ursine
 
     void Scene::SetPlayState(ScenePlayState state)
     {
+        if (state == m_playState)
+            return;
+
+        ScenePlayStateChangedArgs e( m_playState, state );
+
         m_playState = state;
+
+        Dispatch( SCENE_PLAYSTATE_CHANGED, &e );
     }
 
     UIScreenManager &Scene::GetScreenManager(void)

@@ -70,6 +70,8 @@ namespace ursine
                 ResourceDirectoryNode *m_rootDirectory;
 
                 std::thread m_buildWorkerThread;
+
+                bool m_isProcessingFileActions;
                 std::thread m_fileActionProcessorThread;
 
                 fs::FileWatcher m_fileWatcher;

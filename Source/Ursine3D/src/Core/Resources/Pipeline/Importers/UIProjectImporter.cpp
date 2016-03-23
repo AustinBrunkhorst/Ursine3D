@@ -43,18 +43,7 @@ namespace ursine
         fs::RecursiveDirectoryIterator it( directoryFileName );
         fs::RecursiveDirectoryIterator itEnd;
         
-        // cached screens that were generated
-        fs::PathSet cachedScreens;
-
-        // screens found in the project
-        fs::PathSet projectScreens;
-
-        // screens that were added and need to be generated
-        fs::PathSet addedScreens;
-
-        // screens that existed in the build cache, but 
-        // are no longer in the project
-        fs::PathSet removedScreens;
+        fs::PathSet screens;
 
         for (; it != itEnd; ++it)
         {
@@ -76,45 +65,14 @@ namespace ursine
             utils::MakeLowerCase( extension );
 
             if (extension == kResourceTypeUIScreenExtension)
-                projectScreens.emplace( entry );
-        }
-
-        auto &generated = context.resource->GetBuildCache( ).generatedResources;
-
-        // collect all generated UIScreens
-        for (auto &guid : generated)
-        {
-            auto item = context.pipeline->GetItem( guid );
-
-            if (item)
-                cachedScreens.emplace( item->GetSourceFileName( ) );
-        }
-
-        // collect added screens and acknowledge existing ones
-        for (auto &screen : projectScreens)
-        {
-            // exists in the cache, so remove it --
-            // the screens remaining in "cachedScreens"
-            // are assumed to be removed after this loop
-            if (cachedScreens.count( screen ))
-                cachedScreens.erase( screen );
-            else
-                addedScreens.emplace( screen );
+                screens.emplace( entry );
         }
 
         // build the generated screen resources
-        for (auto &screen : addedScreens)
+        for (auto &screen : screens)
         {
             context.AllocateGeneratedResource( 
-                generateScreenResource( context.resource, screen ) 
-            );
-        }
-
-        // remove cached screens that don't exist anymore
-        for (auto &screen : cachedScreens)
-        {
-            context.pipeline->RemoveItem( 
-                context.pipeline->GetItem( screen ) 
+                generateScreenResource( context.resource, screen )
             );
         }
 

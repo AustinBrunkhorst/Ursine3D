@@ -645,7 +645,7 @@ ursine_api_ui_Screen.prototype = {
 		var aspectContainer = this.m_container.querySelector(".aspect-ratio-container");
 		if(aspectContainer == null) return;
 		var host = this.getHost();
-		aspectContainer.style.zoom = Math.min(host.clientWidth / ursine_api_ui_Screen.m_baseScreenWidth,host.clientHeight / ursine_api_ui_Screen.m_baseScreenHeight);
+		aspectContainer.style.zoom = Math.min(host.clientWidth / 1280,host.clientHeight / 720);
 	}
 	,__class__: ursine_api_ui_Screen
 };
@@ -653,11 +653,13 @@ var ursine_editor_Editor = function() {
 	ursine_editor_Editor.instance = this;
 	this.mainMenu = new MainMenuControl();
 	this.broadcastManager = new ursine_editor_NativeBroadcastManager();
+	this.broadcastManager.getChannel("SceneManager").on("PlayStateChanged",$bind(this,this.onScenePlayStateChanged));
 	this.componentDatabase = new ursine_editor_scene_component_ComponentDatabase(GetNativeComponentDatabase());
 	this.m_notificationManager = new ursine_editor_NativeNotificationManager(this.broadcastManager);
 	this.buildMenus();
 	window.document.querySelector("#header-toolbar").appendChild(this.mainMenu);
 	this.initSimulationPlayback();
+	this.onScenePlayStateChanged();
 };
 $hxClasses["ursine.editor.Editor"] = ursine_editor_Editor;
 ursine_editor_Editor.__name__ = ["ursine","editor","Editor"];
@@ -729,28 +731,39 @@ ursine_editor_Editor.prototype = {
 		return parent;
 	}
 	,initSimulationPlayback: function() {
-		var toolsContainer = window.document.querySelector("#simulation-tools");
-		var btnPlay = window.document.querySelector("#simulation-play");
-		var btnToggle = window.document.querySelector("#simulation-toggle");
-		var btnStep = window.document.querySelector("#simulation-step");
-		var btnStop = window.document.querySelector("#simulation-stop");
-		btnPlay.addEventListener("click",function() {
-			toolsContainer.classList.add("running");
-			ScenePlayStart();
+		this.m_toolsContainer = window.document.querySelector("#simulation-tools");
+		this.m_btnPlay = window.document.querySelector("#simulation-play");
+		this.m_btnToggle = window.document.querySelector("#simulation-toggle");
+		this.m_btnStep = window.document.querySelector("#simulation-step");
+		this.m_btnStop = window.document.querySelector("#simulation-stop");
+		this.m_btnPlay.addEventListener("click",function() {
+			ursine_native_Extern.SceneSetPlayState(0);
 		});
-		btnToggle.addEventListener("click",function() {
-			var playing = !toolsContainer.classList.contains("paused");
-			toolsContainer.classList.toggle("paused",playing);
-			SceneSetPlayState(playing);
+		this.m_btnToggle.addEventListener("click",function() {
+			var currentState = SceneGetPlayState();
+			ursine_native_Extern.SceneSetPlayState(currentState == 0?1:0);
 		});
-		btnStep.addEventListener("click",function() {
-			if(btnStep.classList.contains("disabled")) return;
+		this.m_btnStep.addEventListener("click",function() {
 			SceneStep();
 		});
-		btnStop.addEventListener("click",function() {
-			toolsContainer.classList.remove("running","paused");
-			ScenePlayStop();
+		this.m_btnStop.addEventListener("click",function() {
+			ursine_native_Extern.SceneSetPlayState(2);
 		});
+	}
+	,onScenePlayStateChanged: function() {
+		var state = SceneGetPlayState();
+		switch(state) {
+		case 0:
+			this.m_toolsContainer.classList.add("running");
+			this.m_toolsContainer.classList.remove("paused");
+			break;
+		case 1:
+			this.m_toolsContainer.classList.add("running","paused");
+			break;
+		case 2:
+			this.m_toolsContainer.classList.remove("running","paused");
+			break;
+		}
 	}
 	,__class__: ursine_editor_Editor
 };
@@ -854,7 +867,7 @@ ursine_editor_NativeNotificationManager.prototype = {
 					f(a1);
 				};
 			})(function(index) {
-				ursine_NotificationButtonCallback(id, buttonID);
+				ursine_native_Extern.NotificationButtonCallback(id,index);
 			},i));
 			notification.buttons.appendChild(element);
 			++i;
@@ -946,7 +959,7 @@ var ursine_editor_menus_HelpMenu = function() { };
 $hxClasses["ursine.editor.menus.HelpMenu"] = ursine_editor_menus_HelpMenu;
 ursine_editor_menus_HelpMenu.__name__ = ["ursine","editor","menus","HelpMenu"];
 ursine_editor_menus_HelpMenu.doOpenGettingStarted = function() {
-	ProcessOpen(path, relative);
+	ursine_native_Extern.ProcessOpen("Assets/UI/Resources/Documentation/html/index.html",true);
 };
 ursine_editor_menus_HelpMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_HelpMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -1741,7 +1754,7 @@ var ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector =
 	this.m_displayText.classList.add("resource-reference");
 	this.m_displayText.setAttribute("accepts-resource-drop","true");
 	this.m_displayText.addEventListener("click",function(e) {
-		var resources = ProjectGetResourcesByType(type);
+		var resources = ursine_native_Extern.ProjectGetResourcesByType(_g.m_resourceType);
 		var selector = new ResourceReferenceSelectionPopupControl(resources);
 		selector.addEventListener("resource-selected",$bind(_g,_g.onResourceSelected));
 		window.document.body.appendChild(selector);
@@ -1757,7 +1770,7 @@ ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.__nam
 ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
 ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
 	updateValue: function(value) {
-		var resource = ProjectGetResource(guid);
+		var resource = ursine_native_Extern.ProjectGetResource(value.guid);
 		var valid = resource != null;
 		if(valid) this.m_displayText.innerText = resource.displayName; else this.m_displayText.innerText = "";
 		this.m_displayText.classList.toggle("invalid",!valid);
@@ -2012,6 +2025,13 @@ ursine_editor_scene_entity_Entity.prototype = {
 	}
 	,__class__: ursine_editor_scene_entity_Entity
 };
+var ursine_editor_scene_ui_ScreenLayoutCache = function() {
+};
+$hxClasses["ursine.editor.scene.ui.ScreenLayoutCache"] = ursine_editor_scene_ui_ScreenLayoutCache;
+ursine_editor_scene_ui_ScreenLayoutCache.__name__ = ["ursine","editor","scene","ui","ScreenLayoutCache"];
+ursine_editor_scene_ui_ScreenLayoutCache.prototype = {
+	__class__: ursine_editor_scene_ui_ScreenLayoutCache
+};
 var ursine_editor_scene_ui_ScreenManager = $hx_exports.ScreenManager = function(container) {
 	ursine_editor_scene_ui_ScreenManager.instance = this;
 	this.m_nativeManager = new NativeScreenManager();
@@ -2020,17 +2040,25 @@ var ursine_editor_scene_ui_ScreenManager = $hx_exports.ScreenManager = function(
 	this.m_container = _this.createElement("div");
 	this.m_container.classList.add("screen-manager");
 	container.appendChild(this.m_container);
-	this.m_screenTypeCache = new haxe_ds_StringMap();
 	this.m_projectCache = new haxe_ds_StringMap();
-	this.m_screenQueue = new haxe_ds_StringMap();
-	ursine_editor_Editor.instance.broadcastManager.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited));
-	ursine_editor_Editor.instance.broadcastManager.getChannel("GamepadManager").on("GamepadButtonDown",$bind(this,this.onGamepadBtnDown)).on("GamepadButtonUp",$bind(this,this.onGamepadBtnUp)).on("GamepadConnected",$bind(this,this.onGamepadConnected)).on("GamepadDisconnected",$bind(this,this.onGamepadDisconnected));
-	ursine_editor_Editor.instance.broadcastManager.getChannel("KeyboardManager").on("KeyboardKeyDown",$bind(this,this.onKeyDown)).on("KeyboardKeyUp",$bind(this,this.onKeyUp));
+	this.m_screenLoadQueue = new haxe_ds_StringMap();
+	this.m_screenLayoutCache = new haxe_ds_StringMap();
+	this.m_screenTypeCache = new haxe_ds_StringMap();
+	var bm = ursine_editor_Editor.instance.broadcastManager;
+	bm.getChannel("SceneManager").on("PlayStateChanged",$bind(this,this.onScenePlayStateChanged));
+	bm.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited));
+	bm.getChannel("GamepadManager").on("GamepadButtonDown",$bind(this,this.onGamepadBtnDown)).on("GamepadButtonUp",$bind(this,this.onGamepadBtnUp)).on("GamepadConnected",$bind(this,this.onGamepadConnected)).on("GamepadDisconnected",$bind(this,this.onGamepadDisconnected));
+	bm.getChannel("KeyboardManager").on("KeyboardKeyDown",$bind(this,this.onKeyDown)).on("KeyboardKeyUp",$bind(this,this.onKeyUp));
+	this.onScenePlayStateChanged();
 };
 $hxClasses["ursine.editor.scene.ui.ScreenManager"] = ursine_editor_scene_ui_ScreenManager;
 ursine_editor_scene_ui_ScreenManager.__name__ = ["ursine","editor","scene","ui","ScreenManager"];
 ursine_editor_scene_ui_ScreenManager.prototype = {
-	invalidateScreenViewport: function() {
+	clearScreens: function() {
+		this.m_container.innerHTML = "";
+		this.m_screens = new haxe_ds_IntMap();
+	}
+	,invalidateScreenViewport: function() {
 		var $it0 = this.m_screens.iterator();
 		while( $it0.hasNext() ) {
 			var screen = $it0.next();
@@ -2067,14 +2095,14 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 		});
 		script.addEventListener("error",function() {
 			_g.m_projectCache.remove(guid);
-			_g.m_screenQueue.remove(guid);
+			_g.m_screenLoadQueue.remove(guid);
 			head.removeChild(script);
 			throw new js__$Boot_HaxeError("UI Project \"" + guid + "\" is missing \"" + "UIProject.js" + "\" in the root.");
 		});
 		head.appendChild(script);
 	}
 	,initQueuedScreens: function(guid) {
-		var queued = this.m_screenQueue.get(guid);
+		var queued = this.m_screenLoadQueue.get(guid);
 		if(queued != null) {
 			var _g = 0;
 			while(_g < queued.length) {
@@ -2082,11 +2110,11 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 				++_g;
 				callback();
 			}
-			this.m_screenQueue.remove(guid);
+			this.m_screenLoadQueue.remove(guid);
 		}
 	}
 	,queueScreen: function(guid,callback) {
-		if(this.m_screenQueue.exists(guid)) this.m_screenQueue.get(guid).push(callback); else this.m_screenQueue.set(guid,[callback]);
+		if(this.m_screenLoadQueue.exists(guid)) this.m_screenLoadQueue.get(guid).push(callback); else this.m_screenLoadQueue.set(guid,[callback]);
 	}
 	,createScreen: function(path,id,priority,data) {
 		var guid = this.getProjectGUID(path);
@@ -2108,52 +2136,74 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 			break;
 		}
 	}
+	,cacheScreenLayout: function(qualifiedPath,link) {
+		var layout = new ursine_editor_scene_ui_ScreenLayoutCache();
+		layout.template = link["import"].querySelector("template");
+		if(layout.template == null) throw new js__$Boot_HaxeError("Screen layout \"" + qualifiedPath + "\" missing <template>");
+		var styleSheets = link["import"].querySelectorAll("link[rel=\"stylesheet\"]");
+		if(styleSheets != null) {
+			var styleContainer;
+			var _this = window.document;
+			styleContainer = _this.createElement("style");
+			var _g = 0;
+			while(_g < styleSheets.length) {
+				var node = styleSheets[_g];
+				++_g;
+				var sheet = node;
+				styleContainer.innerHTML += "@import url(" + sheet.href + ");";
+			}
+			layout.template.content.appendChild(styleContainer);
+		}
+		var meta = link["import"].querySelector("meta");
+		if(meta == null || !meta.hasAttribute("data-screen-logic")) throw new js__$Boot_HaxeError("Screen layout \"" + qualifiedPath + "\" missing meta." + "data-screen-logic");
+		var handler = meta.getAttribute("data-screen-logic");
+		layout.logicHandlerType = this.m_screenTypeCache.get(handler);
+		if(layout.logicHandlerType == null) throw new js__$Boot_HaxeError("Unknown screen logic handler type \"" + handler + "\" in \"" + qualifiedPath + "\".");
+		{
+			this.m_screenLayoutCache.set(qualifiedPath,layout);
+			layout;
+		}
+	}
 	,onScreenElementReady: function(qualifiedPath,id,priority,data) {
 		var _g = this;
-		var head = window.document.querySelector("head");
-		var link;
-		var _this = window.document;
-		link = _this.createElement("link");
-		link.rel = "import";
-		link.href = qualifiedPath;
-		link.addEventListener("load",function() {
-			var template = link["import"].querySelector("template");
-			if(template == null) throw new js__$Boot_HaxeError("Screen layout \"" + qualifiedPath + "\" missing <template>");
-			var styleSheets = link["import"].querySelectorAll("link[rel=\"stylesheet\"]");
-			if(styleSheets != null) {
-				var styleContainer;
-				var _this1 = window.document;
-				styleContainer = _this1.createElement("style");
-				var _g1 = 0;
-				while(_g1 < styleSheets.length) {
-					var node = styleSheets[_g1];
-					++_g1;
-					var sheet = node;
-					styleContainer.innerHTML += "@import url(" + sheet.href + ");";
+		var cached = this.m_screenLayoutCache.get(qualifiedPath);
+		if(cached == null) {
+			var head = window.document.querySelector("head");
+			var link;
+			var _this = window.document;
+			link = _this.createElement("link");
+			link.rel = "import";
+			link.href = qualifiedPath;
+			link.addEventListener("load",function() {
+				try {
+					_g.cacheScreenLayout(qualifiedPath,link);
+				} catch( e ) {
+					if (e instanceof js__$Boot_HaxeError) e = e.val;
+					if( js_Boot.__instanceof(e,String) ) {
+						head.removeChild(link);
+						throw new js__$Boot_HaxeError("Unable to construct screen. error: " + e);
+					} else throw(e);
 				}
-				template.content.appendChild(styleContainer);
-			}
-			var container;
-			var _this2 = window.document;
-			container = _this2.createElement("div");
-			container.classList.add("screen");
-			if(priority == null) container.style.zIndex = "null"; else container.style.zIndex = "" + priority;
-			var element = container.createShadowRoot();
-			element.appendChild(window.document.importNode(template.content,true));
-			_g.m_container.appendChild(container);
-			var meta = link["import"].querySelector("meta");
-			if(meta == null || !meta.hasAttribute("data-screen-logic")) throw new js__$Boot_HaxeError("Screen layout \"" + qualifiedPath + "\" missing meta." + "data-screen-logic");
-			var handler = meta.getAttribute("data-screen-logic");
-			var type = _g.m_screenTypeCache.get(handler);
-			if(type == null) throw new js__$Boot_HaxeError("Unknown screen logic handler type \"" + handler + "\" in \"" + qualifiedPath + "\".");
-			var value = Type.createInstance(type,[id,element,data]);
-			_g.m_screens.h[id] = value;
-		});
-		link.addEventListener("error",function() {
-			throw new js__$Boot_HaxeError("Failed to load screen layout " + qualifiedPath);
-			head.removeChild(link);
-		});
-		head.appendChild(link);
+				_g.onScreenLayoutReady(_g.m_screenLayoutCache.get(qualifiedPath),id,priority,data);
+			});
+			link.addEventListener("error",function() {
+				head.removeChild(link);
+				throw new js__$Boot_HaxeError("Failed to load screen layout " + qualifiedPath);
+			});
+			head.appendChild(link);
+		} else this.onScreenLayoutReady(cached,id,priority,data);
+	}
+	,onScreenLayoutReady: function(layout,id,priority,data) {
+		var container;
+		var _this = window.document;
+		container = _this.createElement("div");
+		container.classList.add("screen");
+		if(priority == null) container.style.zIndex = "null"; else container.style.zIndex = "" + priority;
+		var element = container.createShadowRoot();
+		element.appendChild(window.document.importNode(layout.template.content,true));
+		this.m_container.appendChild(container);
+		var value = Type.createInstance(layout.logicHandlerType,[id,element,data]);
+		this.m_screens.h[id] = value;
 	}
 	,getProjectGUID: function(path) {
 		return haxe_io_Path.normalize(path).split("/")[0];
@@ -2171,6 +2221,21 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 		while( $it0.hasNext() ) {
 			var screen = $it0.next();
 			if(this.m_nativeManager.screenHasFocus(screen.getID())) callback(screen);
+		}
+	}
+	,onScenePlayStateChanged: function() {
+		var state = SceneGetPlayState();
+		switch(state) {
+		case 0:
+			this.m_container.classList.add("running");
+			break;
+		case 1:
+			this.m_container.classList.remove("running");
+			break;
+		case 2:
+			this.m_container.classList.remove("running");
+			this.clearScreens();
+			break;
 		}
 	}
 	,onScreenAdded: function(e) {
@@ -2394,7 +2459,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		v;
 	}
 	,onWindowResized: function() {
-		this.window.classList.toggle("small-width",this.window.container.offsetWidth < ursine_editor_windows_EntityInspector.m_smallWindowWidth);
+		this.window.classList.toggle("small-width",this.window.container.offsetWidth < 245);
 	}
 	,initWindow: function() {
 		this.window.classList.add("entity-inspector-window");
@@ -2464,7 +2529,7 @@ ursine_editor_windows_ProjectBrowser.prototype = $extend(ursine_editor_WindowHan
 	}
 	,uworld_DblClickHandler: function(e) {
 		var resource = e.detail.resource;
-		SceneSetActiveWorld(guid);
+		ursine_native_Extern.SceneSetActiveWorld(resource.guid);
 	}
 	,__class__: ursine_editor_windows_ProjectBrowser
 });
@@ -2791,16 +2856,38 @@ ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWi
 	,onResourceDrop: function(e) {
 		var resource = e.detail.resource;
 		var _g = resource.type;
-		var m_resourceTypeArchetype = _g;
-		SceneInstantiateArchetype(guid);
+		switch(_g) {
+		case "ursine::resources::ArchetypeData":
+			ursine_native_Extern.SceneInstantiateArchetype(resource.guid);
+			break;
+		}
 	}
 	,__class__: ursine_editor_windows_SceneView
 });
 var ursine_native_Extern = function() { };
 $hxClasses["ursine.native.Extern"] = ursine_native_Extern;
 ursine_native_Extern.__name__ = ["ursine","native","Extern"];
+ursine_native_Extern.ProcessOpen = function(path,relative) {
+	if(relative == null) relative = false;
+	return ProcessOpen(path, relative);
+};
+ursine_native_Extern.ProjectGetResourcesByType = function(type) {
+	return ProjectGetResourcesByType(type);
+};
 ursine_native_Extern.ProjectGetResource = function(guid) {
 	return ProjectGetResource(guid);
+};
+ursine_native_Extern.SceneSetActiveWorld = function(guid) {
+	return SceneSetActiveWorld(guid);
+};
+ursine_native_Extern.SceneInstantiateArchetype = function(guid) {
+	return SceneInstantiateArchetype(guid);
+};
+ursine_native_Extern.SceneSetPlayState = function(state) {
+	return SceneSetPlayState(state);
+};
+ursine_native_Extern.NotificationButtonCallback = function(id,buttonID) {
+	return ursine_NotificationButtonCallback(id, buttonID);
 };
 ursine_native_Extern.NotificationCloseCallback = function(id) {
 	return ursine_NotificationCloseCallback(id);
@@ -2840,8 +2927,6 @@ var Class = $hxClasses.Class = { __name__ : ["Class"]};
 var Enum = { };
 var __map_reserved = {}
 js_Boot.__toStr = {}.toString;
-ursine_api_ui_Screen.m_baseScreenWidth = 1280;
-ursine_api_ui_Screen.m_baseScreenHeight = 720;
 ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mouseover","mouseout"];
 ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
@@ -2866,8 +2951,6 @@ ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.__met
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__meta__ = { obj : { fieldInspector : ["std::string"]}};
 ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.__meta__ = { obj : { fieldInspector : ["UNKNOWN"]}};
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Vec2","ursine::Vec3","ursine::SVec3","ursine::Vec4","ursine::SVec4","ursine::SQuat"]}};
-ursine_editor_windows_EntityInspector.m_smallWindowWidth = 245;
-ursine_editor_windows_SceneView.m_resourceTypeArchetype = "ursine::resources::ArchetypeData";
-ursine_editor_windows_SceneView.m_acceptedResourceDrops = [ursine_editor_windows_SceneView.m_resourceTypeArchetype];
+ursine_editor_windows_SceneView.m_acceptedResourceDrops = ["ursine::resources::ArchetypeData"];
 EditorMain.main();
 })(typeof window != "undefined" ? window : exports, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

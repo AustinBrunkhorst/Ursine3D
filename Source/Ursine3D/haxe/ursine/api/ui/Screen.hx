@@ -8,8 +8,8 @@ typedef ScreenID = UInt;
 class Screen implements IEventContainer {
     public var events : EventManager;
 
-    private static var m_baseScreenWidth : Int = 1280;
-    private static var m_baseScreenHeight : Int = 720;
+    private static inline var m_baseScreenWidth : Int = 1280;
+    private static inline var m_baseScreenHeight : Int = 720;
 
     private var m_id : ScreenID;
     private var m_container : js.html.ShadowRoot;

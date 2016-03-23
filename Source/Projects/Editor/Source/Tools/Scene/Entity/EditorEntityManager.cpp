@@ -27,17 +27,11 @@ namespace
 {
     namespace channel
     {
-        const auto SceneManager = "SceneManager";
         const auto EntityManager = "EntityManager";
     }
 
     namespace events
     {
-        namespace scene
-        {
-            const auto WorldChanged = "WorldChanged";
-        }
-
         namespace entity
         {
             const auto Added = "EntityAdded";
@@ -122,15 +116,6 @@ void EditorEntityManager::onSceneActiveWorldChanged(EVENT_HANDLER(Scene))
     clearWorldEvents( args->oldWorld.get( ) );
 
     m_activeWorld = sender->GetActiveWorld( );
-
-    Json data;
-
-    m_editor->GetMainWindow( ).GetUI( )->Message(
-        UI_CMD_BROADCAST,
-        channel::SceneManager,
-        events::scene::WorldChanged,
-        data
-    );
 
     initWorldEvents( m_activeWorld );
 }

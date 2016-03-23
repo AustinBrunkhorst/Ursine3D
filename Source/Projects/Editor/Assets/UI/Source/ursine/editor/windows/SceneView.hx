@@ -7,7 +7,7 @@ import ursine.editor.resources.ResourceItem;
 import ursine.controls.ItemSelectionPopup;
 
 class SceneView extends NativeCanvasWindowHandler {
-    private static var m_resourceTypeArchetype = 'ursine::resources::ArchetypeData';
+    private static inline var m_resourceTypeArchetype = 'ursine::resources::ArchetypeData';
 
     private static var m_acceptedResourceDrops = [
         m_resourceTypeArchetype

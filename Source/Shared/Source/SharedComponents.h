@@ -146,3 +146,9 @@
 /////////////////////////////////
 
 #include "Physics/ApplyImpulseOnHitComponent.h"
+
+/////////////////////////////////
+//           UI                //
+/////////////////////////////////
+
+#include "UI/UIScreensConfigComponent.h"

@@ -55,6 +55,7 @@ namespace ursine
     rp::ResourcePipelineManager::ResourcePipelineManager(void)
         : EventDispatcher( this )
         , m_rootDirectory( new ResourceDirectoryNode( nullptr ) )
+        , m_isProcessingFileActions( false )
         , m_resourceDirectoryWatch( -1 )
     {
         
@@ -62,6 +63,8 @@ namespace ursine
 
     rp::ResourcePipelineManager::~ResourcePipelineManager(void)
     {
+        StopWatchingResourceDirectory( );
+
         delete m_rootDirectory;
 
         m_rootDirectory = nullptr;
@@ -129,6 +132,8 @@ namespace ursine
 
         m_fileWatcher.watch( );
 
+        m_isProcessingFileActions = true;
+
         m_fileActionProcessorThread = std::thread(
             &ResourcePipelineManager::processPendingFileActions,
             this 
@@ -144,6 +149,8 @@ namespace ursine
     {
         if (!IsWatchingResourceDirectory( ))
             return;
+
+        m_isProcessingFileActions = false;
 
         m_fileWatcher.removeWatch( m_resourceDirectoryWatch );
     }
@@ -1204,7 +1211,7 @@ namespace ursine
 
     void rp::ResourcePipelineManager::processPendingFileActions(void)
     {
-        while (true)
+        while (m_isProcessingFileActions)
         {
             decltype( m_pendingFileActions ) actionsCopy;
 

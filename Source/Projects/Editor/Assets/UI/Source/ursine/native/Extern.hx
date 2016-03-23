@@ -1,7 +1,9 @@
 package ursine.native;
 
+import ursine.editor.scene.ScenePlayState;
+
 class Extern {
-    public static inline function ProcessOpen(path, relative: Bool = false) {
+    public static function ProcessOpen(path, relative: Bool = false) {
         return untyped __js__( "ProcessOpen(path, relative)" );
     }
 
@@ -21,11 +23,11 @@ class Extern {
         return untyped __js__( "ProjectGetResourceTree()" );
     }
 
-    public static inline function ProjectGetResourcesByType(type : String) {
+    public static function ProjectGetResourcesByType(type : String) {
         return untyped __js__( "ProjectGetResourcesByType(type)" );
     }
 
-    public static inline function ProjectGetResource(guid : String) {
+    public static function ProjectGetResource(guid : String) {
         return untyped __js__( "ProjectGetResource(guid)" );
     }
 
@@ -45,11 +47,11 @@ class Extern {
         return untyped __js__( "SceneSaveWorldAs()" );
     }
 
-    public static inline function SceneSetActiveWorld(guid : String) {
+    public static function SceneSetActiveWorld(guid : String) {
         return untyped __js__( "SceneSetActiveWorld(guid)" );
     }
 
-    public static inline function SceneInstantiateArchetype(guid : String) {
+    public static function SceneInstantiateArchetype(guid : String) {
         return untyped __js__( "SceneInstantiateArchetype(guid)" );
     }
 
@@ -69,31 +71,27 @@ class Extern {
         return untyped __js__( "SceneSave()" );
     }
 
-    public static inline function ScenePlayStart() {
-        return untyped __js__( "ScenePlayStart()" );
+    public static inline function SceneGetPlayState() : ScenePlayState {
+        return untyped __js__( "SceneGetPlayState()" );
     }
 
-    public static inline function SceneSetPlayState(playing : Bool) {
-        return untyped __js__( "SceneSetPlayState(playing)" );
+    public static function SceneSetPlayState(state : ScenePlayState) {
+        return untyped __js__( "SceneSetPlayState(state)" );
     }
 
     public static inline function SceneStep() {
         return untyped __js__( "SceneStep()" );
     }
 
-    public static inline function ScenePlayStop() {
-        return untyped __js__( "ScenePlayStop()" );
-    }
-
     public static inline function SceneGetEntitySystems() {
         return untyped __js__( "SceneGetEntitySystems()" );
     }
 
-    public static inline function NotificationButtonCallback(id : UInt, buttonID : UInt) {
+    public static function NotificationButtonCallback(id : UInt, buttonID : UInt) {
         return untyped __js__( "ursine_NotificationButtonCallback(id, buttonID)" );
     }
 
-    public static inline function NotificationCloseCallback(id : UInt) {
+    public static function NotificationCloseCallback(id : UInt) {
         return untyped __js__( "ursine_NotificationCloseCallback(id)" );
     }
 

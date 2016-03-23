@@ -18,6 +18,7 @@
 #include <ResourcePipelineManager.h>
 #include <Scene.h>
 
+#include "EditorSceneManager.h"
 #include "EditorEntityManager.h"
 #include "EditorResourcePipelineManager.h"
 
@@ -33,9 +34,6 @@ public:
     ursine::resources::ResourceManager &GetBuiltInResourceManager(void);
 
     ursine::Scene &GetScene(void);
-
-    ursine::ScenePlayState GetPlayState(void) const;
-    void SetPlayState(ursine::ScenePlayState state);
 
     void SetEmptyScene(void);
 
@@ -54,6 +52,7 @@ private:
     void initializeScene(const ursine::resources::ResourceReference &startingWorld);
 
     void onSceneWorldChanged(EVENT_HANDLER(ursine::Scene));
+    void onScenePlayStateChanged(EVENT_HANDLER(ursine::Scene));
 
     void onResourceModified(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
 
@@ -65,6 +64,7 @@ private:
     ursine::Scene m_scene;
     ursine::Json m_worldCache;
 
+    EditorSceneManager *m_sceneManager;
     EditorEntityManager *m_entityManager;
     EditorResourcePipelineManager *m_pipelineManager;
 
