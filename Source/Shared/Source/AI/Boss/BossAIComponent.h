@@ -68,6 +68,30 @@ public:
         SetPollinateprojectileCount
     );
 
+    EditorField(
+        float pollinateGravity,
+        GetPollinateGravity,
+        SetPollinateGravity
+    );
+
+    EditorField(
+        float pollinateSpreadDistance,
+        GetPollinateSpreadDistance,
+        SetPollinateSpreadDistance
+    );
+
+    EditorField(
+        float pollinateSpreadTime,
+        GetPollinateSpreadTime,
+        SetPollinateSpreadTime
+    );
+
+    EditorField(
+        float pollinateProjectileLifeTime,
+        GetPollinateProjectileLifeTime,
+        SetPollinateProjectileLifeTime
+    );
+
     EditorResourceField(
         ursine::resources::ArchetypeData,
         pollinateArchetype,
@@ -101,6 +125,18 @@ public:
 
     int GetPollinateProjectileCount(void) const;
     void SetPollinateprojectileCount(int count);
+
+    float GetPollinateGravity(void) const;
+    void SetPollinateGravity(float gravity);
+
+    float GetPollinateSpreadDistance(void) const;
+    void SetPollinateSpreadDistance(float distance);
+
+    float GetPollinateSpreadTime(void) const;
+    void SetPollinateSpreadTime(float time);
+
+    float GetPollinateProjectileLifeTime(void) const;
+    void SetPollinateProjectileLifeTime(float lifetime);
 
     const ursine::resources::ResourceReference &GetPollinateArchetype(void) const;
     void SetPollinateArchetype(const ursine::resources::ResourceReference &pollinateArchetype);
@@ -140,6 +176,14 @@ private:
     float m_maxPollinateSpreadAngle;
 
     int m_pollinateProjectileCount;
+
+    float m_pollinateGravity;
+
+    float m_pollinateSpreadDistance;
+
+    float m_pollinateSpreadTime;
+
+    float m_pollinateProjectileLifeTime;
 
     ursine::resources::ResourceReference m_pollinateArchetype;
 

@@ -15,6 +15,7 @@
 
 #include "BossSeedshotState.h"
 #include "BossSpawnVinesState.h"
+#include "BossPollinateState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -41,10 +42,12 @@ BossAI::BossAI(void)
     , m_vineCount( 0 )
     , m_turnSpeed( 90.0f )
     , m_maxPollinateSpreadAngle( 30.0f )
-    , m_pollinateProjectileCount( 0 )
     , m_pollinateLocalForward( 0.0f, 0.0f, 1.0f )
-{
-}
+    , m_pollinateProjectileCount( 0 )
+    , m_pollinateGravity( 10.0f )
+    , m_pollinateSpreadDistance( 30.0f )
+    , m_pollinateSpreadTime( 2.0f )
+    , m_pollinateProjectileLifeTime( 15.0f ) { }
 
 const std::string &BossAI::GetSeedshotEntityName(void) const
 {
@@ -118,6 +121,54 @@ void BossAI::SetPollinateprojectileCount(int count)
     m_pollinateProjectileCount = count;
 
     NOTIFY_COMPONENT_CHANGED( "pollinateProjectileCount", m_pollinateProjectileCount );
+}
+
+float BossAI::GetPollinateGravity(void) const
+{
+    return m_pollinateGravity;
+}
+
+void BossAI::SetPollinateGravity(float gravity)
+{
+    m_pollinateGravity = gravity;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateGravity", m_pollinateGravity );
+}
+
+float BossAI::GetPollinateSpreadDistance(void) const
+{
+    return m_pollinateSpreadDistance;
+}
+
+void BossAI::SetPollinateSpreadDistance(float distance)
+{
+    m_pollinateSpreadDistance = distance;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateSpreadDistance", m_pollinateSpreadDistance );
+}
+
+float BossAI::GetPollinateSpreadTime(void) const
+{
+    return m_pollinateSpreadTime;
+}
+
+void BossAI::SetPollinateSpreadTime(float time)
+{
+    m_pollinateSpreadTime = time;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateSpreadTime", m_pollinateSpreadTime );
+}
+
+float BossAI::GetPollinateProjectileLifeTime(void) const
+{
+    return m_pollinateProjectileLifeTime;
+}
+
+void BossAI::SetPollinateProjectileLifeTime(float lifeTime)
+{
+    m_pollinateProjectileLifeTime = lifeTime;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateProjectileLifeTime", m_pollinateProjectileLifeTime );
 }
 
 const ResourceReference &BossAI::GetPollinateArchetype(void) const
@@ -219,6 +270,17 @@ void BossAI::OnInitialize(void)
         sm->SetInitialState( seedshot );
 
         m_bossLogic[ 1 ].push_back( sm );
+    }
+
+    // TESTING: Pollinate
+    {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        auto pollinate = sm->AddState<BossPollinateState>( );
+
+        sm->SetInitialState( pollinate );
+
+        m_bossLogic[ 2 ].push_back( sm );
     }
 }
 

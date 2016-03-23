@@ -15,6 +15,7 @@
 
 #include "BossPollinateState.h"
 #include "BossAIComponent.h"
+#include "PollinateProjectileComponent.h"
 
 #include <AnimatorComponent.h>
 #include <EntityEvent.h>
@@ -123,12 +124,32 @@ void BossPollinateState::spewPollin(void)
             pollinateTrans->GetWorldPosition( )
         );
 
+        // The projectile must have this component
+        UAssert(
+            projectile->HasComponent<PollinateProjectile>( ),
+            "Error: The pollinate projectile must of have the \"PollinateProjectile\" component."
+        );
+
+        auto pollinate = projectile->GetComponent<PollinateProjectile>( );
+
         // Set it's direction of influence (u rotated by Q(worldNormal, theta))
-        auto dir = SQuat( theta, worldForward ) * u;
+        auto dir = SQuat( theta, worldForward ).Rotate( u );
+
+        pollinate->SetDirection( dir );
+
+        // Set the gravity
+        pollinate->SetGravity( m_boss->GetPollinateGravity( ) );
+
+        // Set the distance
+        pollinate->SetSpreadDistance( m_boss->GetPollinateSpreadDistance( ) );
 
         // Set the time it takes to get there
-        // Set the gravity
+        pollinate->SetSpreadTime( m_boss->GetPollinateSpreadTime( ) );
+
         // Set the lifetime
+        pollinate->SetLifeTime( m_boss->GetPollinateProjectileLifeTime( ) );
+
+        pollinate->InitializeComponents( );
 
         theta += step;
     }
