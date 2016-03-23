@@ -12,4 +12,3 @@ ursine_project(Shared
     META_MODULE_HEADER "SharedReflectionModule.h"
     PCH_NAME "Precompiled"
 )
- 
