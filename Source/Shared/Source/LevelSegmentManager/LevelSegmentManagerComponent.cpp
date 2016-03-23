@@ -312,7 +312,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
     // Setup logic for the introduction cinematic
     auto cinematicStateM = std::make_shared<SegmentLogicStateMachine>( "Boss Cinematic", this );
 
-    auto createPlayers = initStateM->AddState<SpawnPlayersState>( true, false );
+    auto createPlayers = initStateM->AddState<SpawnPlayersState>( false, false );
     auto lockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
     auto unlockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
     auto repositionAndClose = cinematicStateM->AddState<RepositionPlayersAndCloseDoorState>( );

@@ -263,17 +263,6 @@ void AbstractWeapon::SetFireParticle(const ursine::resources::ResourceReference&
     m_fireParticle = archetype;
 }
 
-// weapon name
-const std::string& AbstractWeapon::GetName(void) const
-{
-    return m_name;
-}
-
-void AbstractWeapon::SetName(const std::string& name)
-{
-    m_name = name;
-}
-
 // semi automatic
 bool AbstractWeapon::GetSemiAutomatic(void) const
 {
@@ -418,17 +407,9 @@ void AbstractWeapon::DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON))
     DeactivateWeapon( args->whoToConnect, args->m_ammo, args->m_clip );
 }
 
-void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED))
+void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(game::PICKUP_AMMO))
 {
-    EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
+    EVENT_ATTRS( ursine::ecs::Entity, game::AmmoPickupEventArgs );
 
-    if (args->otherEntity->HasComponent<AmmoPickup>( ))
-    {
-        AmmoPickup &pickup = *args->otherEntity->GetComponent<AmmoPickup>( );
-
-        if (AddAmmo( args->otherEntity->GetComponent<AmmoPickup>( )->m_count ))
-        {
-            args->otherEntity->Delete( );
-        }
-    }
+    AddAmmo( args->m_ammo );
 }

@@ -248,9 +248,16 @@ namespace ursine
             // search for desired child
             for (auto childID : *children)
             {
+                auto entity = m_world->m_entityManager->GetEntityByID( childID );
+
                 // check if names are same
                 if (name == m_world->m_nameManager->GetName( childID ))
-                    return m_world->m_entityManager->GetEntityByID( childID );
+                    return entity;
+
+                auto foundChild = entity->GetChildByName( name );
+
+                if (foundChild)
+                    return foundChild;
             }
 
             return EntityHandle::Invalid( );

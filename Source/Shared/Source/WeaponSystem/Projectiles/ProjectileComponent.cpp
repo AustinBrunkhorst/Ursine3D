@@ -12,6 +12,7 @@
 #include <Precompiled.h>
 #include "ProjectileComponent.h"
 #include "GameEvents.h"
+#include "Application.h"
 
 NATIVE_COMPONENT_DEFINITION( Projectile );
 
@@ -20,6 +21,8 @@ Projectile::Projectile( void )
     : BaseComponent( )
     , m_speed( 10 )
     , m_lifeTime( 0 )
+    , m_movementVec( ursine::SVec3( ) )
+    , m_transform( nullptr )
 {
 }
 
@@ -52,6 +55,9 @@ void Projectile::Update( const float dt )
     {
         GetOwner( )->Delete( );
     }
+
+    m_transform->SetWorldPosition( m_transform->GetWorldPosition( ) + 
+        m_movementVec * ursine::Application::Instance->GetDeltaTime( ) );
 }
 
 void Projectile::OnInit(EVENT_HANDLER(ursine::ecs::Entity))
@@ -60,8 +66,9 @@ void Projectile::OnInit(EVENT_HANDLER(ursine::ecs::Entity))
 
     CalculateLifeTime(args->m_range);
 
-    GetOwner( )->GetComponent<ursine::ecs::Rigidbody>( )
-        ->SetVelocity(args->m_forwardVec * m_speed);
+    m_movementVec = args->m_forwardVec * m_speed;
+
+    m_transform = GetOwner( )->GetTransform( );
 }
 
 // calculate lifetime of projectile
@@ -75,5 +82,3 @@ void Projectile::CalculateLifeTime(float range)
 
     m_lifeTime = range / m_speed;
 }
-
-

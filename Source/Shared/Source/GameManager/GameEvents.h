@@ -33,6 +33,7 @@ namespace game
         DETACH_WEAPON,
         DEACTIVATE_WEAPON,
         PROJECTILE_INIT,
+        PICKUP_AMMO,
 
 
         /////////////////////////////
@@ -89,16 +90,23 @@ namespace game
 
     };
 
-
-    struct WeaponDeactivationEventArgs : ursine::EventArgs
+    struct AmmoPickupEventArgs : ursine::EventArgs
     {
         int m_ammo;
+
+        AmmoPickupEventArgs(const int ammo)
+            : m_ammo( ammo )
+        { }
+    };
+
+    struct WeaponDeactivationEventArgs : AmmoPickupEventArgs
+    {
         int m_clip;
 
         ursine::ecs::EntityHandle whoToConnect;
 
         WeaponDeactivationEventArgs(const ursine::ecs::EntityHandle &who, int ammo = 1, int clip = -1)
-            : m_ammo( ammo )
+            : AmmoPickupEventArgs( ammo )
             , m_clip( clip )
             , whoToConnect( who ) 
         { }

@@ -109,14 +109,37 @@ void WeaponPickup::SetAmmoInfo(const int ammo, const int clip)
 
 void WeaponPickup::StartInteraction(const ursine::ecs::EntityHandle &entity)
 {
-    if ( !entity->HasComponent<PlayerID>( ) )
+    // return if not player or object deleting
+    if ( GetOwner( )->IsDeleting( ) || !entity->HasComponent<PlayerID>( ) )
         return;
 
     if ( entity->HasComponent<Inventory>( ) )
     {
         auto inventory = entity->GetComponent<Inventory>( );
+        auto weaponSlot = inventory->m_inventory[ inventory->m_currWeapon ];
+        
+        // is weapon a weapon in inventory the same as pickup weapon
+        for ( int i = 0; i < WeaponType::GOD_WEAPON + 1; ++i )
+        {
+            // weapons not the same
+            if ( !( m_weaponToPickup == weaponSlot.m_weaponToLoad ) )
+                continue;
 
-        if ( m_weaponToPickup == inventory->m_inventory[ inventory->m_currWeapon ].m_weaponToLoad )
+            // add ammo to weapon in inventory
+            weaponSlot.m_ammoCount += m_ammo;
+
+            // if weapon is active, add ammo directly
+            if ( i == inventory->m_currWeapon )
+            {
+                // have object pick up ammo since weapons the same
+                game::AmmoPickupEventArgs args(m_ammo);
+                weaponSlot.m_weaponLoaded->Dispatch(game::PICKUP_AMMO, &args);
+            }
+
+            InteractionComplete( );
+
+            return;
+        }
     }
 
     // get invetory
@@ -143,7 +166,7 @@ void WeaponPickup::Interact(const ecs::EntityHandle &entity)
     Inventory* inventory = m_inventories[ entity ];
     CommandQueue* queue = m_queues[ entity ];
 
-    if ( inventory == nullptr || queue == nullptr )
+    if ( inventory == nullptr || queue == nullptr || GetOwner( )->IsDeleting( ) )
         return;
 
     // check reload time
@@ -156,7 +179,7 @@ void WeaponPickup::Interact(const ecs::EntityHandle &entity)
         *time += ursine::Application::Instance->GetDeltaTime( );
 
         // swap weapons if the required time for pickup has been met
-        if ( *time > m_pickupTime && !GetOwner()->IsDeleting() )
+        if ( *time > m_pickupTime )
         {
             // change current weapon 
             inventory->SetNewWeapon( m_weaponToPickup, m_weaponType, m_ammo, m_clipCount );

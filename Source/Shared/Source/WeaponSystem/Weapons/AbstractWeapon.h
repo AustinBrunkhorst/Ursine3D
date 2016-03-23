@@ -36,12 +36,6 @@
 
 #define AbstractWeaponFields( )            \
     EditorField(                           \
-        std::string Name,                  \
-        GetName,                           \
-        SetName                            \
-    );                                     \
-                                           \
-    EditorField(                           \
         bool SemiAutomatic,                \
         GetSemiAutomatic,                  \
         SetSemiAutomatic                   \
@@ -63,6 +57,12 @@
         float RecoilAngle,                 \
         GetRecoilAngle,                    \
         SetRecoilAngle                     \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float Range,                       \
+        GetMaxRange,                       \
+        SetMaxRange                        \
     );                                     \
                                            \
     EditorField(                           \
@@ -219,9 +219,6 @@ public:
     const ursine::resources::ResourceReference &GetFireParticle(void) const;
     void SetFireParticle(const ursine::resources::ResourceReference &archetype);
 
-    const std::string& GetName(void) const;
-    void SetName(const std::string& name);
-
     bool GetSemiAutomatic(void) const;
     void SetSemiAutomatic(bool semi);
 
@@ -291,9 +288,6 @@ protected:
     // Particle to spawn at tip of gun when shot
     ursine::resources::ResourceReference m_fireParticle;
 
-    // name of weapon
-    std::string m_name;
-
     // is weapon a semi-automatic
     bool m_semiAutomatic;
 
@@ -315,7 +309,7 @@ protected:
     void DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON));
     void DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON));
 
-    void PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
+    void PickUpAmmo(EVENT_HANDLER(ursine::ecs::PICKUP_AMMO));
 
     //***************************************//
     //  MUST IMPLEMENT, so base class can    //

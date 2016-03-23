@@ -77,6 +77,41 @@ namespace ursine
 
                     return true;
                 }
+
+                bool IsValidWeights()
+                {
+                    if ((0.0f == ctrlBlendWeights.x)
+                        && (0.0f == ctrlBlendWeights.y)
+                        && (0.0f == ctrlBlendWeights.z)
+                        && (0.0f == ctrlBlendWeights.w))
+                        return false;
+
+                    return true;
+                }
+
+                bool IsValidControls()
+                {
+                    if ((0 == ctrlIndices.x)
+                        && (0 == ctrlIndices.y)
+                        && (0 == ctrlIndices.z)
+                        && (0 == ctrlIndices.w))
+                        return false;
+
+                    return true;
+                }
+
+                bool CheckSum()
+                {
+                    float sum = ctrlBlendWeights.x + ctrlBlendWeights.y + ctrlBlendWeights.z + ctrlBlendWeights.w;
+
+                    if (sum > 1.0f)
+                        return false;
+
+                    if (!IsEqualEpsilon(1.0f, sum))
+                        return false;
+
+                    return true;
+                }
             };
 
             class MeshInfo : public ISerialize
@@ -98,7 +133,7 @@ namespace ursine
 
                 virtual bool SerializeIn(HANDLE hFile);
                 virtual bool SerializeOut(HANDLE hFile);
-                
+
                 void Read(resources::ResourceReader &input) override;
                 void Write(resources::pipeline::ResourceWriter &output) override;
             };

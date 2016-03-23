@@ -55,11 +55,15 @@ public:
 
 private:
 
+    bool m_subscribed;
+
     float m_maxViewAngle;
 
     ursine::SVec3 m_localForward;
 
     ursine::SVec3 m_targetPosition;
+
+    void onUpdate(EVENT_HANDLER(ursine::ecs::Entity));
 
     void onAnimationManipulation(EVENT_HANDLER(ursine::ecs::Entity));
 

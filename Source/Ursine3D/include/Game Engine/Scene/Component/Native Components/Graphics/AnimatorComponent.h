@@ -24,11 +24,22 @@
 #include "TransformComponent.h"
 #include "AnimationClipData.h"
 #include "StateBlender.h"
+#include "AnimationEvent.h"
 
 namespace ursine
 {
     namespace ecs
     {
+        struct AnimatorStateEventArgs : public EventArgs
+        {
+            std::string state;
+            std::string message;
+
+            AnimatorStateEventArgs(AnimationEvent &stEvent)
+                : state( stEvent.GetStateName( ) )
+                , message( stEvent.GetEventMessage( ) ) { }
+        };
+
         class Animator : public Component
         {
             NATIVE_COMPONENT;
@@ -96,8 +107,12 @@ namespace ursine
 
             // Array of animation states
             ursine::Array<ursine::AnimationState> stArray;
+
             // Array of state blender
             ursine::Array<ursine::StateBlender> stBlender;
+
+            // Array of state events
+            ursine::Array<ursine::AnimationEvent> stEvents;
 
         private:
             friend class AnimatorSystem;
@@ -120,13 +135,19 @@ namespace ursine
             std::string m_futStName;
             std::string m_stateName;
 
-            void updateState(AnimationState *currSt, const Animation *currAni,
-                             AnimationState *futSt, const Animation *futAni, 
+            void updateState(AnimationState **currSt, const Animation **currAni,
+                             AnimationState **futSt, const Animation **futAni, 
                              float dt, float &transFactor);
 
-            void changeState(AnimationState *currSt, AnimationState *futSt,
+            void animationLoop(AnimationState **currSt, const Animation **currAni,
+                                AnimationState **futSt, const Animation **futAni,
+                                float dt, float &transFactor,
+                                StateBlender *stateBlender);
+
+            void changeState(AnimationState **currSt, AnimationState **futSt,
                              float currloopTimePos, float futloopTimePos, 
-                             float currNoloopTimePos, float futNoloopTimePos);
+                             float currNoloopTimePos, float futNoloopTimePos,
+                             float &transFactor);
 
             float getAnimationTimePosition(void) const;
             void setAnimationTimePosition(float position);
@@ -152,6 +173,10 @@ namespace ursine
             void enableDeletionOnEntities(const EntityHandle &entity, bool flag);
 
             bool loadStateAnimation(AnimationState *state) const;
+
+            void sendAvailableEvents(const std::string &currentState, float currentRatio);
+
+            void resetSentFlagInEvents(const std::string &currentState);
 
             // try make state can get animation by EditorResourceField
 

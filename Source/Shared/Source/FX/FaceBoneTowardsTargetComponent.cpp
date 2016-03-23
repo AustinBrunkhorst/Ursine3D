@@ -28,7 +28,8 @@ using namespace ecs;
 FaceBoneTowardsTarget::FaceBoneTowardsTarget(void)
     : BaseComponent( )
     , m_maxViewAngle( 30.0f )
-    , m_localForward( 0.0f, 0.0f, 1.0f ) { }
+    , m_localForward( 0.0f, 0.0f, 1.0f )
+    , m_subscribed( false ) { }
 
 FaceBoneTowardsTarget::~FaceBoneTowardsTarget(void)
 {
@@ -37,15 +38,24 @@ FaceBoneTowardsTarget::~FaceBoneTowardsTarget(void)
     if (animator.size( ))
         animator[ 0 ]->GetOwner( )->Listener( this )
             .Off( ENTITY_ANIMATION_BONE_MANIPULATION_VALID, &FaceBoneTowardsTarget::onAnimationManipulation );
+
+    auto world = GetOwner( )->GetWorld( );
+
+    if (world)
+    {
+        world->Listener( this )
+            .Off( WORLD_UPDATE, &FaceBoneTowardsTarget::onUpdate )
+            .Off( WORLD_EDITOR_UPDATE, &FaceBoneTowardsTarget::onUpdate );
+    }
 }
 
 void FaceBoneTowardsTarget::OnSceneReady(Scene *scene)
 {
-    auto animator = GetOwner( )->GetComponentsInParents<Animator>( );
-    
-    if (animator.size( ))
-        animator[ 0 ]->GetOwner( )->Listener( this )
-            .On( ENTITY_ANIMATION_BONE_MANIPULATION_VALID, &FaceBoneTowardsTarget::onAnimationManipulation );
+    auto world = GetOwner( )->GetWorld( );
+
+    world->Listener( this )
+        .On( WORLD_UPDATE, &FaceBoneTowardsTarget::onUpdate )
+        .On( WORLD_EDITOR_UPDATE, &FaceBoneTowardsTarget::onUpdate );
 }
 
 void FaceBoneTowardsTarget::SetTargetPosition(const SVec3 &worldPosition)
@@ -77,6 +87,29 @@ void FaceBoneTowardsTarget::SetMaxViewAngle(float degrees)
     m_maxViewAngle = degrees;
 
     NOTIFY_COMPONENT_CHANGED( "maxViewAngle", m_maxViewAngle );
+}
+
+void FaceBoneTowardsTarget::onUpdate(EVENT_HANDLER(Entity))
+{
+    if (!m_subscribed)
+    {
+        auto animator = GetOwner( )->GetComponentsInParents<Animator>( );
+    
+        if (animator.size( ))
+        {
+            animator[ 0 ]->GetOwner( )->Listener( this )
+                .On( ENTITY_ANIMATION_BONE_MANIPULATION_VALID, &FaceBoneTowardsTarget::onAnimationManipulation );
+
+            m_subscribed = true;
+        }
+    }
+    else
+    {
+        auto world = GetOwner( )->GetWorld( );
+
+        world->Listener( this )
+            .Off( WORLD_UPDATE, &FaceBoneTowardsTarget::onUpdate );
+    }
 }
 
 void FaceBoneTowardsTarget::onAnimationManipulation(EVENT_HANDLER(Entity))

@@ -22,7 +22,7 @@ public:
         float Speed,
         GetSpeed,
         SetSpeed
-        );
+    );
 
     Projectile(void);
     ~Projectile(void);
@@ -39,8 +39,11 @@ private:
 
     void CalculateLifeTime(float range);
 
-    float m_range;
     float m_speed;
     float m_lifeTime;
+
+    ursine::SVec3 m_movementVec;
+
+    ursine::ecs::Transform* m_transform;
 
 } Meta( Enable, DisplayName( "Projectile" ), RequiresComponents( typeof( ursine::ecs::Rigidbody ) ) );

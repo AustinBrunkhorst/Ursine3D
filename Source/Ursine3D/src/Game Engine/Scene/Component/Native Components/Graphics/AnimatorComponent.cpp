@@ -81,8 +81,15 @@ namespace ursine
                 NOTIFY_COMPONENT_CHANGED( "currentState", m_curStName );
             }
             else
+            {
                 m_futStName = state;
 
+                if (m_futStName != m_curStName)
+                {
+                    // reset the future state's animation event's flags
+                    resetSentFlagInEvents( m_futStName );
+                }
+            }
             m_finishEventSent = false;
         }
 
@@ -126,197 +133,189 @@ namespace ursine
             m_speedScalar = scalar;
         }
 
-        void Animator::updateState(AnimationState* currSt, const Animation* currAni,
-                                   AnimationState* futSt, const Animation* futAni, 
-                                   float dt, float &transFactor)
+        void Animator::updateState(AnimationState **currSt, const Animation **currAni,
+                                    AnimationState **futSt, const Animation **futAni,
+                                    float dt, float &transFactor)
         {
             // Increment the current state's time marker
-            currSt->IncrementTimePosition( dt * m_speedScalar );
-
-            bool bFut = futSt && futAni;
+            (*currSt)->IncrementTimePosition( dt * m_speedScalar );
+                        
+            bool bFut = (*futSt) && (*futAni);
 
             // if there is no future state or future animation, then loop current animation again and again
             if (!bFut)
-            {
-                if (currSt->PlayingAnimation( ) && !m_finishEventSent)
+            {                
+                if ((*currSt)->PlayingAnimation() && !m_finishEventSent)
                 {
-                    GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
+                    if (!(*currSt)->IsLooping( ))
+                    {
+                        GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
+                
+                        m_finishEventSent = true;
+                
+                        transFactor = 0.0f;
+                    }
 
-                    m_finishEventSent = true;
+                    // reset "sent" flag on the state's events
+                    resetSentFlagInEvents( (*currSt)->GetStateName( ) );
                 }
-
-                transFactor = 0.0f;
 
                 return;
             }
 
-            // if there is future state and animation
-
-            /////////////////////////////////////////////////////
-            // this will be applied to all animations that state has
-            // const Animation *m_animation; will be changed as std::vector<Animation*>
-            /////////////////////////////////////////////////////
-            unsigned keyframeCount1 = currAni->GetRigKeyFrameCount( );
-            auto &curr_firstFrame = currAni->GetKeyframe( 0, 0 );
-            auto &curr_lastFrame = currAni->GetKeyframe( keyframeCount1 - 1, 0 );
-
             // need to check state blender
-            StateBlender *stb = getStateBlenderByNames( currSt->GetStateName( ), futSt->GetStateName( ) );
-
+            StateBlender *stb = getStateBlenderByNames( (*currSt)->GetStateName( ), (*futSt)->GetStateName( ) );
+            
             // if user didn't defined state blender, 
-            // then just start blending right now without delay.
-            // (or then play as default state blender which is currTimePos = 1.0f, futTimePos = 0.0f)
-            if (nullptr == stb)
+            // else play as default currTimePos = 1.0f, futTimePos = 0.0f
+            animationLoop(currSt, currAni, futSt, futAni, dt, transFactor, stb);
+        }
+
+        void Animator::animationLoop(AnimationState **currSt, const Animation **currAni,
+                                    AnimationState **futSt, const Animation **futAni,
+                                    float dt, float &transFactor,
+                                    StateBlender *stateBlender)
+        {
+            unsigned keyframeCount1 = (*currAni)->GetRigKeyFrameCount();
+            auto &curr_firstFrame = (*currAni)->GetKeyframe(0, 0);
+            auto &curr_lastFrame = (*currAni)->GetKeyframe(keyframeCount1 - 1, 0);
+
+            bool bCurrEnd = false;
+
+            if ((*currSt)->GetTimePosition() > curr_lastFrame.length)
             {
-                futSt->IncrementTimePosition( dt * m_speedScalar );
-                        
-                transFactor += dt * m_speedScalar;
-                if (transFactor > 1.0f)
-                    transFactor = 1.0f;
-
-                unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
-                auto &fut_firstFrame = futAni->GetKeyframe( 0, 0 );
-                auto &fut_lastFrame = futAni->GetKeyframe( keyframeCount2 - 1, 0 );
-                    
-                // if the future state reaches at its last frame
-                if (futSt->GetTimePosition( ) > fut_lastFrame.length)
-                {
-                    changeState(
-                        currSt, futSt,
-                        curr_firstFrame.length,
-                        fut_firstFrame.length,
-                        curr_lastFrame.length,
-                        fut_lastFrame.length 
-                    );
-
-                    transFactor = 0.0f;
-                }
+                (*currSt)->SetTimePosition(curr_lastFrame.length);
+                bCurrEnd = true;
             }
-            else
-            {
-                bool bCurrEnd = false;
-                if (currSt->GetTimePosition( ) > curr_lastFrame.length)
-                {
-                    currSt->SetTimePosition( curr_lastFrame.length );
-                    bCurrEnd = true;
-                }
+            
+            unsigned keyframeCount2 = (*futAni)->GetRigKeyFrameCount();
+            auto &fut_firstFrame = (*futAni)->GetKeyframe(0, 0);
+            auto &fut_lastFrame = (*futAni)->GetKeyframe(keyframeCount2 - 1, 0);
 
+            // if there is stateblender, it's little bit complicate
+            if (stateBlender)
+            {
                 // To check if current state is reached at the same frame as state blender's
                 unsigned int curFrameIndex = 0;
-                getTransFrmByRatio( *currSt, curFrameIndex, stb->GetcurrTransPosRatio( ) );
-                stb->SetcurrTransFrm( curFrameIndex );
+                getTransFrmByRatio( *(*currSt), curFrameIndex, stateBlender->GetcurrTransPosRatio( ) );
+                stateBlender->SetcurrTransFrm( curFrameIndex );
                     
                 // Can't check actual frame's length since that keyframe could be dummy value.
                 // so we just check it by index.
                 unsigned index1 = 0, index2 = 0;
 
-                if (false == m_blending)
+                // Check the frame to approve start blending
+                if (!m_blending)
                 {
                     for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
                     {
                         // get the two current keyframes
-                        const std::vector<AnimationKeyframe> &f1 = currAni->GetKeyframes( x );
-                        const std::vector<AnimationKeyframe> &f2 = currAni->GetKeyframes( x + 1 );
+                        const std::vector<AnimationKeyframe> &f1 = (*currAni)->GetKeyframes( x );
+                        const std::vector<AnimationKeyframe> &f2 = (*currAni)->GetKeyframes( x + 1 );
                     
                         // check if the current keyframe set holds the time value between them
-                        if (f1[0].length <= currSt->GetTimePosition( ) && currSt->GetTimePosition( ) < f2[0].length)
+                        if (f1[0].length <= (*currSt)->GetTimePosition( ) && (*currSt)->GetTimePosition( ) < f2[0].length)
                             break;
-
+                
                         ++index1;
                     }
-
-                    index2 = stb->GetcurrTransFrm( );
+                
+                    index2 = stateBlender->GetcurrTransFrm( );
                     if (index1 >= index2)
                     {
                         // Set Trans Frame by Transition Position - fut
                         unsigned int futFrameIndex = 0;
-                        getTransFrmByRatio( *futSt, futFrameIndex, stb->GetfutTransPosRatio( ) );
-                        stb->SetfutTransFrm( futFrameIndex );
+                        getTransFrmByRatio( *(*futSt), futFrameIndex, stateBlender->GetfutTransPosRatio( ) );
+                        stateBlender->SetfutTransFrm( futFrameIndex );
+
                         // Set future state's timeposition to chosen frame
-                        futSt->SetTimePosition( futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length );
-                        // confirm start blending
+                        (*futSt)->SetTimePosition( (*futAni)->GetKeyframe(stateBlender->GetfutTransFrm( ), 0 ).length );
+
+                        // approve blending
                         m_blending = true;
                     }
                 }
-                    
-                // if the blending is started
-                if (m_blending)
+            }
+            // if there is no stateblender, future state animation will start at the end of the current state animation
+            else
+            {
+                if (!m_blending && bCurrEnd)
                 {
-                    // if blending is true, start transitioning from this state to that state
-                    futSt->IncrementTimePosition( dt  *m_speedScalar );
+                    (*futSt)->SetTimePosition(fut_firstFrame.length);
 
-                    transFactor += dt  *m_speedScalar;
-                    if (transFactor > 1.0f)
-                        transFactor = 1.0f;
-                    
-                    /////////////////////////////////////////////////////
-                    // this will be applied to all animations that state has
-                    // const Animation *m_animation; will be changed as std::vector<Animation*>
-                    /////////////////////////////////////////////////////
-                    unsigned keyframeCount2 = futAni->GetRigKeyFrameCount( );
-                    auto &fut_firstFrame = futAni->GetKeyframe( 0, 0 );
-                    auto &fut_lastFrame = futAni->GetKeyframe( keyframeCount2 - 1, 0 );
-                    
-                    if (futSt->GetTimePosition( ) > fut_lastFrame.length)
-                    {
-                        m_blending = false;
+                    // approve blending
+                    m_blending = true;
+                }
+            }
 
-                        changeState( 
-                            currSt, futSt,
+            // if the blending is started
+            if (m_blending)
+            {
+                // if blending is true, start transitioning from this state to that state
+                (*futSt)->IncrementTimePosition(dt  *m_speedScalar);
+                transFactor += dt  *m_speedScalar;
+                if (transFactor > 1.0f)
+                    transFactor = 1.0f;
+
+                if (stateBlender)
+                {                    
+                    if ((*futSt)->GetTimePosition( ) > fut_lastFrame.length)
+                    {                    
+                        changeState(currSt, futSt,
                             curr_firstFrame.length,
-                            futAni->GetKeyframe( stb->GetfutTransFrm( ), 0 ).length,
+                            (*futAni)->GetKeyframe( stateBlender->GetfutTransFrm( ), 0 ).length,
                             curr_lastFrame.length,
-                            fut_lastFrame.length 
+                            fut_lastFrame.length,
+                            transFactor
                         );
-
-                        transFactor = 0.0f;
                     }
                 }
-                // if the blending didn't started
                 else
                 {
-                    // if current state reached at the end
-                    if (bCurrEnd)
+                    if ((*futSt)->GetTimePosition() > fut_lastFrame.length)
                     {
-                        if (currSt->IsLooping( ))
-                            currSt->SetTimePosition( curr_firstFrame.length );
-                        else
-                            currSt->SetTimePosition( curr_lastFrame.length );
+                        changeState(currSt, futSt,
+                            curr_firstFrame.length, 
+                            fut_firstFrame.length,
+                            curr_lastFrame.length, 
+                            fut_lastFrame.length,
+                            transFactor
+                            );
                     }
+                }
+            }
+            // if the blending didn't started
+            else
+            {
+                // if current state reached at the end
+                if (bCurrEnd)
+                {
+                    if ((*currSt)->IsLooping())
+                        (*currSt)->SetTimePosition(curr_firstFrame.length);
+                    else
+                        (*currSt)->SetTimePosition(curr_lastFrame.length);
                 }
             }
         }
 
-        void Animator::changeState(AnimationState *currSt, AnimationState *futSt,
+        void Animator::changeState(AnimationState **currSt, AnimationState **futSt,
                                    float currloopTimePos, float futloopTimePos,
-                                   float currNoloopTimePos, float futNoloopTimePos)
+                                   float currNoloopTimePos, float futNoloopTimePos,
+                                   float &transFactor)
         {
-            // if change state is checked, change state as future state
-            if (futSt && m_futStName != "")
-            {
-                m_curStName = m_futStName;
-                m_futStName = "";
+            if (!currSt || !(*(currSt)) || !futSt || !(*(futSt)) )
+                return;
 
-                if (currSt)
-                    currSt->SetTimePosition( 0 );
-            }
-            // if not, then it means state will not be changed.
-            else
-            {
-                // if curr state checked looping, then start the whole animation(from curr to fut)
-                // all over again.
-                if (currSt->IsLooping( ))
-                {
-                    currSt->SetTimePosition(currloopTimePos);
-                    futSt->SetTimePosition(futloopTimePos);
-                }
-                // else just stop there.
-                else
-                {
-                    currSt->SetTimePosition(currNoloopTimePos);
-                    futSt->SetTimePosition(futNoloopTimePos);
-                }
-            }
+            m_curStName = m_futStName;
+            m_futStName = "";
+
+            (*currSt)->SetTimePosition(currloopTimePos);
+            (*currSt) = (*futSt);
+            (*futSt) = nullptr;
+
+            transFactor = 0.0f;
+
+            m_blending = false;
         }
 
         float Animator::getAnimationTimePosition(void) const
@@ -573,6 +572,49 @@ namespace ursine
             for (auto &child : *entity->GetChildren( ))
             {
                 enableDeletionOnEntities( GetOwner( )->GetWorld( )->GetEntity( child ), flag );
+            }
+        }
+
+        void Animator::sendAvailableEvents(const std::string &currentState, float currentRatio)
+        {
+            if (currentState == "")
+                return;
+
+            for (auto &stEvent : stEvents)
+            {
+                if (stEvent.GetStateName( ) != currentState)
+                    continue;
+
+                if (stEvent.m_sent)
+                    continue;
+
+                if (stEvent.GetRatio( ) <= currentRatio)
+                {
+                    // send the event
+                    AnimatorStateEventArgs args( stEvent );
+
+                    GetOwner( )->Dispatch( ENTITY_ANIMATION_STATE_EVENT, &args );
+
+                    if (m_debug)
+                        std::cout << "Sending Message: " << args.message << std::endl;
+
+                    // set the "sent" flag
+                    stEvent.m_sent = true;
+                }
+            }
+        }
+
+        void Animator::resetSentFlagInEvents(const std::string &currentState)
+        {
+            if (currentState == "")
+                return;
+
+            for (auto &stEvent : stEvents)
+            {
+                if (stEvent.GetStateName( ) != currentState)
+                    continue;
+
+                stEvent.m_sent = false;
             }
         }
     }
