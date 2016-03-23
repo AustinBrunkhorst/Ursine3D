@@ -81,8 +81,15 @@ namespace ursine
                 NOTIFY_COMPONENT_CHANGED( "currentState", m_curStName );
             }
             else
+            {
                 m_futStName = state;
 
+                if (m_futStName != m_curStName)
+                {
+                    // reset the future state's animation event's flags
+                    resetSentFlagInEvents( m_futStName );
+                }
+            }
             m_finishEventSent = false;
         }
 
@@ -140,11 +147,17 @@ namespace ursine
             {                
                 if ((*currSt)->PlayingAnimation() && !m_finishEventSent)
                 {
-                    GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
+                    if (!(*currSt)->IsLooping( ))
+                    {
+                        GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
                 
-                    m_finishEventSent = true;
+                        m_finishEventSent = true;
                 
-                    transFactor = 0.0f;
+                        transFactor = 0.0f;
+                    }
+
+                    // reset "sent" flag on the state's events
+                    resetSentFlagInEvents( (*currSt)->GetStateName( ) );
                 }
 
                 return;
@@ -559,6 +572,49 @@ namespace ursine
             for (auto &child : *entity->GetChildren( ))
             {
                 enableDeletionOnEntities( GetOwner( )->GetWorld( )->GetEntity( child ), flag );
+            }
+        }
+
+        void Animator::sendAvailableEvents(const std::string &currentState, float currentRatio)
+        {
+            if (currentState == "")
+                return;
+
+            for (auto &stEvent : stEvents)
+            {
+                if (stEvent.GetStateName( ) != currentState)
+                    continue;
+
+                if (stEvent.m_sent)
+                    continue;
+
+                if (stEvent.GetRatio( ) <= currentRatio)
+                {
+                    // send the event
+                    AnimatorStateEventArgs args( stEvent );
+
+                    GetOwner( )->Dispatch( ENTITY_ANIMATION_STATE_EVENT, &args );
+
+                    if (m_debug)
+                        std::cout << "Sending Message: " << args.message << std::endl;
+
+                    // set the "sent" flag
+                    stEvent.m_sent = true;
+                }
+            }
+        }
+
+        void Animator::resetSentFlagInEvents(const std::string &currentState)
+        {
+            if (currentState == "")
+                return;
+
+            for (auto &stEvent : stEvents)
+            {
+                if (stEvent.GetStateName( ) != currentState)
+                    continue;
+
+                stEvent.m_sent = false;
             }
         }
     }
