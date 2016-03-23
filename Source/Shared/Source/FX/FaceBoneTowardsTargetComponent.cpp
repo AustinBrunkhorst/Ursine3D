@@ -162,33 +162,7 @@ void FaceBoneTowardsTarget::visualizeFOV(void)
     // The position of the center focal point
     auto focus = trans->ToWorld( m_localForward * FocalLength );
 
-    // The direction from the base to the focal point
-    auto dir = focus - position;
-
-    // The orthogonal vectors
-    SVec3 u, v;
-
-    dir.GenerateOrthogonalVectors( u, v );
-
-    // The radius of the focal ring
-    float radius = FocalLength * sinf( math::DegreesToRadians( m_maxViewAngle ) );
-
-    if (m_maxViewAngle > 45.0f)
-    {
-        float angle = m_maxViewAngle - 45.0f;
-        float t = angle / 45.0f;
-
-        focus -= dir * t;
-    }
-
-    // render the circle
-    drawer->DrawCircle( focus, dir, radius, Color::Gold, 5.0f, true );
-
-    // render the lines
-    drawer->DrawLine( position, focus + u * radius, Color::Gold, 5.0f, true );
-    drawer->DrawLine( position, focus - u * radius, Color::Gold, 5.0f, true );
-    drawer->DrawLine( position, focus + v * radius, Color::Gold, 5.0f, true );
-    drawer->DrawLine( position, focus - v * radius, Color::Gold, 5.0f, true );
+    drawer->DrawCone( position, focus, FocalLength, m_maxViewAngle );
 }
 
 #endif

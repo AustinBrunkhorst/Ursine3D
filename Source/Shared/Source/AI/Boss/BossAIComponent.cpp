@@ -20,7 +20,9 @@
 #include "GameEvents.h"
 #include "IntCondition.h"
 
-#include "EntityEvent.h"
+#include <EntityEvent.h>
+#include <DebugSystem.h>
+#include <SystemManager.h>
 
 NATIVE_COMPONENT_DEFINITION( BossAI );
 
@@ -38,7 +40,22 @@ BossAI::BossAI(void)
     , m_segment( LevelSegments::Empty )
     , m_vineCount( 0 )
     , m_turnSpeed( 90.0f )
+    , m_maxPollinateSpreadAngle( 30.0f )
+    , m_pollinateProjectileCount( 0 )
+    , m_pollinateLocalForward( 0.0f, 0.0f, 1.0f )
 {
+}
+
+const std::string &BossAI::GetSeedshotEntityName(void) const
+{
+    return m_seedshotEntity;
+}
+
+void BossAI::SetSeedshotEntityName(const std::string &entityName)
+{
+    m_seedshotEntity = entityName;
+
+    NOTIFY_COMPONENT_CHANGED( "seedshotEntity", m_seedshotEntity );
 }
 
 float BossAI::GetSeedshotTurnSpeed(void) const
@@ -53,16 +70,66 @@ void BossAI::SetSeedshotTurnSpeed(float turnSpeed)
     NOTIFY_COMPONENT_CHANGED( "seedshotTurnSpeed", m_turnSpeed );
 }
 
-const std::string &BossAI::GetSeedshotEntityName(void) const
+const std::string &BossAI::GetPollinateEntityName(void) const
 {
-    return m_seedshotEntity;
+    return m_pollinateEntity;
 }
 
-void BossAI::SetSeedshotEntityName(const std::string &entityName)
+void BossAI::SetPollinateEntityName(const std::string &entityname)
 {
-    m_seedshotEntity = entityName;
+    m_pollinateEntity = entityname;
 
-    NOTIFY_COMPONENT_CHANGED( "seedshotEntity", m_seedshotEntity );
+    NOTIFY_COMPONENT_CHANGED( "pollinateEntity", m_pollinateEntity );
+}
+
+const SVec3 &BossAI::GetPollinateLocalForward(void) const
+{
+    return m_pollinateLocalForward;
+}
+
+void BossAI::SetPollinateLocalForward(const SVec3 &localForward)
+{
+    m_pollinateLocalForward = localForward;
+
+    m_pollinateLocalForward.Normalize( );
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateLocalForward", m_pollinateLocalForward );
+}
+
+float BossAI::GetMaxPollinateSpreadAngle(void) const
+{
+    return m_maxPollinateSpreadAngle;
+}
+
+void BossAI::SetMaxPollinateSpreadAngle(float angle)
+{
+    m_maxPollinateSpreadAngle = angle;
+
+    NOTIFY_COMPONENT_CHANGED( "maxPollinateSpreadAngle", m_maxPollinateSpreadAngle );
+}
+
+int BossAI::GetPollinateProjectileCount(void) const
+{
+    return m_pollinateProjectileCount;
+}
+
+void BossAI::SetPollinateprojectileCount(int count)
+{
+    m_pollinateProjectileCount = count;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateProjectileCount", m_pollinateProjectileCount );
+}
+
+const ResourceReference &BossAI::GetPollinateArchetype(void) const
+{
+    return m_pollinateArchetype;
+}
+
+void BossAI::SetPollinateArchetype(const ResourceReference &pollinateArchetype)
+{
+    m_pollinateArchetype = pollinateArchetype;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateArchetype", m_pollinateArchetype );
 }
 
 const ResourceReference &BossAI::GetVineArchetype(void) const
@@ -80,6 +147,11 @@ void BossAI::SetVineArchetype(const ResourceReference &vineArchetype)
 EntityHandle BossAI::GetSeedshotEntity(void)
 {
     return GetOwner( )->GetChildByName( m_seedshotEntity );
+}
+
+EntityHandle BossAI::GetPollinateEntity(void)
+{
+    return GetOwner( )->GetChildByName( m_pollinateEntity );
 }
 
 void BossAI::AddSpawnedVine(EntityHandle vine)
@@ -218,3 +290,30 @@ void BossAI::updateVineCount(void)
         }
     }
 }
+
+#if defined(URSINE_WITH_EDITOR)
+
+void BossAI::visualizePollinateSpread(void)
+{
+    static float FocalLength = 25.0f;
+
+    auto world = GetOwner( )->GetWorld( );
+    auto drawer = world->GetEntitySystem<DebugSystem>( );
+
+    auto pollinateEntity = GetPollinateEntity( );
+
+    if (!pollinateEntity)
+        return;
+
+    auto trans = pollinateEntity->GetTransform( );
+
+    // The position of the bone
+    auto position = trans->GetWorldPosition( );
+
+    // The position of the center focal point
+    auto focus = trans->ToWorld( m_pollinateLocalForward * FocalLength );
+
+    drawer->DrawCone( position, focus, FocalLength, m_maxPollinateSpreadAngle );
+}
+
+#endif
