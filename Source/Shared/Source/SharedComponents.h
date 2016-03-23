@@ -91,6 +91,7 @@
 #include "EnemyDeathComponent.h"
 
 #include "BossAIComponent.h"
+#include "Boss/Components/PollinateProjectileComponent.h"
 #include "VineAIComponent.h"
 #include "VineSpawnerComponent.h"
 
