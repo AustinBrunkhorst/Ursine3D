@@ -41,8 +41,6 @@ EmpowerTrigger::~EmpowerTrigger(void)
 
 void EmpowerTrigger::OnInitialize(void)
 {
-    BaseRaidTrigger::Initialize( GetOwner( ) );
-
     // want to be updated
     GetOwner( )->GetWorld( )->Listener(this)
         .On(ursine::ecs::WORLD_UPDATE, &EmpowerTrigger::onUpdate);
@@ -54,6 +52,11 @@ void EmpowerTrigger::OnInitialize(void)
         .On( game::DISEMPOWER_UNACTIVE, &EmpowerTrigger::OnDisempowerUnactive);
 
     GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this, Interactable::CONTINUE);
+}
+
+void EmpowerTrigger::OnSceneReady(ursine::Scene* scene)
+{
+    BaseRaidTrigger::Initialize( GetOwner( ) );
 }
 
 

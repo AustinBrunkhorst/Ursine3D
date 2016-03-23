@@ -29,6 +29,7 @@ public:
 
 protected:
     void OnInitialize(void) override;
+    void OnSceneReady(ursine::Scene* scene) override;
 
     // interaction logic
     void ChildStartInteractionLogic(void) override;

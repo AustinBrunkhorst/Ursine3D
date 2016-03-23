@@ -54,6 +54,12 @@ void DisempowerTrigger::OnInitialize(void)
     GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this, Interactable::CONTINUE);
 }
 
+void DisempowerTrigger::OnSceneReady(ursine::Scene* scene)
+{
+    BaseRaidTrigger::Initialize(GetOwner( ));
+}
+
+
 
 void DisempowerTrigger::ChildStartInteractionLogic( )
 {

@@ -15,10 +15,7 @@
 #include "AbstractHitScanWeapon.h"
 #include "BaseWeaponComponent.h"
 #include "HitscanWeaponComponent.h"
-#include "DamageOnCollideComponent.h"
-#include "ProjectileComponent.h"
 #include "HealthComponent.h"
-#include <RigidbodyComponent.h>
 #include <TransformComponent.h>
 #include <World.h>
 #include <SystemConfig.h>
@@ -30,6 +27,7 @@
 #include "CritspotComponent.h"
 #include "WallComponent.h"
 #include <Core/Audio/AudioManager.h>
+#include "GameEvents.h"
 
 
 ENTITY_SYSTEM_DEFINITION( BaseWeaponSystem );
@@ -70,53 +68,23 @@ void WeaponSystemUtils::ConstructRaycast(AbstractWeapon& weapon, SVec3& start, S
 // Give projectiles velocity with spread
 void WeaponSystemUtils::ProjectileVelocity(AbstractProjWeapon& weapon, EntityHandle& proj)
 {
-    ursine::SVec3 start, end;  
+    ursine::SVec3 start, end;
 
-    ConstructRaycast( weapon, start, end );
+    ConstructRaycast(weapon, start, end);
 
     start = end - start;
     start.Normalize( );
 
     // give projectile velocity and position
-    proj->GetComponent<Rigidbody>( )
-        ->SetVelocity( start * proj->GetComponent<Projectile>( )->GetSpeed( ) );
+    game::ProjectileInitEventArgs args(start, weapon.m_maxRange);
+
+    proj->Dispatch( game::PROJECTILE_INIT, &args );
 }
 
 void WeaponSystemUtils::ProjectileSetUp(EntityHandle& proj, AbstractProjWeapon& weapon)
 {
-    // add projectile component if not found
-    if (!proj->HasComponent<Projectile>( ))
-    {
-        proj->AddComponent<Projectile>( );
-    }
-
-    // add damage on collide component if not found
-    if (!proj->HasComponent<DamageOnCollide>( ))
-    {
-        proj->AddComponent<DamageOnCollide>( );
-    }
-
-    // add rigidbody component if not found
-    if (!proj->HasComponent<ursine::ecs::Rigidbody>( ))
-    {
-        proj->AddComponent<ursine::ecs::Rigidbody>( );
-    }
-
-    Projectile &projComp = *proj->GetComponent<Projectile>( );
-    // set proj speed
-    projComp.SetSpeed( weapon.GetProjSpeed( ) );
-    // calc the lifet of proj base on weapons range
-    projComp.CalculateLifeTime( weapon.GetMaxRange( ) );
-
-    // set proj damage stats
-    DamageOnCollide &damageComp = *proj->GetComponent<DamageOnCollide>( );
-    damageComp.SetDamageToApply( weapon.GetDamageToApply( ) );
-    damageComp.SetCritModifier( weapon.GetCritModifier( ) );
-    damageComp.SetDamageInterval( weapon.GetDamageInterval( ) );
-    damageComp.SetDeleteOnCollision( weapon.GetDeleteOnCollision( ) );
-    damageComp.SetDamageType( weapon.GetDamageType( ) );
-
     proj->GetTransform( )->SetWorldPosition( weapon.m_firePosHandle->GetWorldPosition( ) );
+
 
     ProjectileVelocity( weapon, proj );
 }
@@ -337,6 +305,8 @@ void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, ursine::ecs
     auto proj = m_world->CreateEntityFromArchetype( 
         weapon.GetArchetypeToShoot( )
     );
+
+    UAssert(proj, "No archtype was set to be shot by weapon.");
 
     // set up projectile stats based on gun
     WeaponSystemUtils::ProjectileSetUp( proj, weapon );

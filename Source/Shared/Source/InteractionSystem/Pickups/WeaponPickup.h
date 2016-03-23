@@ -16,6 +16,8 @@
 
 #include "BaseInteraction.h"
 #include "AbstractWeapon.h"
+#include "GhostComponent.h"
+#include "TextureData.h"
 
 struct Inventory;
 class CommandQueue;
@@ -57,8 +59,9 @@ public:
     const ursine::resources::ResourceReference& GetWeaponToPickup(void) const;
     void SetWeaponToPickup(const ursine::resources::ResourceReference& weapon);
 
-    EditorField(
-        ursine::resources::ResourceReference Texture,
+    EditorResourceField(
+        ursine::resources::TextureData,
+        Texture,
         GetTexture,
         SetTexture
     );
@@ -108,6 +111,6 @@ private:
 } Meta(
     Enable, 
     DisplayName( "WeaponPickup" ), 
-    RequiresComponents( typeof( Interactable ) )
+    RequiresComponents( typeof( Interactable ), typeof( ursine::ecs::Ghost) )
 );
 

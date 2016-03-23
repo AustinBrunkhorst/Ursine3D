@@ -48,8 +48,7 @@ MadRaidTrigger::MadRaidTrigger(void) :
     m_damage( 10.0f ),
     m_modifier( 1.0f ),
     m_madTimer( 0.0f ),
-    m_triggerType( EMPOWER ),
-    m_madSymbol( "MadTriggerSymbol" )
+    m_triggerType( EMPOWER )
 { }
 
 MadRaidTrigger::~MadRaidTrigger(void)
@@ -113,12 +112,12 @@ void MadRaidTrigger::SetModifier(const float modifier)
 }
 
 
-const std::string& MadRaidTrigger::GetMadSymbol(void) const
+const ursine::resources::ResourceReference& MadRaidTrigger::GetMadSymbol(void) const
 {
     return m_madSymbol;
 }
 
-void MadRaidTrigger::SetMadSymbol(const std::string& symbol)
+void MadRaidTrigger::SetMadSymbol(const ursine::resources::ResourceReference& symbol)
 {
     m_madSymbol = symbol;
 }

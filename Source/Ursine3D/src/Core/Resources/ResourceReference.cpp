@@ -31,6 +31,11 @@ namespace ursine
             return *this;
         }
 
+        bool ResourceReference::operator==(const ResourceReference &rhs)
+        {
+            return m_resourceGUID == rhs.GetGUID( );
+        }
+
         const GUID &ResourceReference::GetGUID(void) const
         {
             return m_resourceGUID;

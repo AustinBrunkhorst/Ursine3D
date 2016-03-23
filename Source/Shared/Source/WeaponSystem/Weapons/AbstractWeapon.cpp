@@ -18,10 +18,6 @@ using namespace ursine;
 
 AbstractWeapon::AbstractWeapon(void) 
     : m_owner( )
-    , m_damageToApply( 1.0f )
-    , m_critModifier( 1.0f )
-    , m_damageInterval( 1.0f )
-    , m_deleteOnCollision( false )
     , m_fireRate( 0.2f )
     , m_fireTimer( 0.0f )
     , m_reloadTime( 0.0f )
@@ -39,7 +35,6 @@ AbstractWeapon::AbstractWeapon(void)
     , m_semiAutomatic( false )
     , m_triggerPulled( false )
     , m_active( true )
-    , m_damageType( DAMAGE_ENEMY )
 {   
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
@@ -105,57 +100,6 @@ int AbstractWeapon::CanFire(void) const
 ////  Gettors and Settors  ////
 ///////////////////////////////
 
-//// Damage
-DamageType AbstractWeapon::GetDamageType(void) const
-{
-    return m_damageType;
-}
-
-void AbstractWeapon::SetDamageType(DamageType type)
-{
-    m_damageType = type;
-}
-
-float AbstractWeapon::GetDamageToApply(void) const
-{
-    return m_damageToApply;
-}
-
-void AbstractWeapon::SetDamageToApply(float damage)
-{
-    m_damageToApply = damage;
-}
-
-float AbstractWeapon::GetCritModifier(void) const
-{
-    return m_critModifier;
-}
-
-void AbstractWeapon::SetCritModifier(float modifier)
-{
-    m_critModifier = modifier;
-}
-
-float AbstractWeapon::GetDamageInterval(void) const
-{
-    return m_damageInterval;
-}
-
-void AbstractWeapon::SetDamageInterval(float damageInterval)
-{
-    m_damageInterval = damageInterval;
-}
-
-bool AbstractWeapon::GetDeleteOnCollision(void) const
-{
-    return m_deleteOnCollision;
-}
-
-void AbstractWeapon::SetDeleteOnCollision(bool state)
-{
-    m_deleteOnCollision = state;
-}
-
 // Fire Rate
 float AbstractWeapon::GetFireRate(void) const
 {
@@ -167,6 +111,7 @@ void AbstractWeapon::SetFireRate(float rate)
     m_fireRate = rate;
 }
 
+// Reload time
 float AbstractWeapon::GetReloadTime(void) const
 {
     return m_reloadTime;
@@ -307,6 +252,7 @@ void AbstractWeapon::SetWeaponType(WeaponType type)
     m_weaponType = type;
 }
 
+// particle to use when firing on muzzle area
 const ursine::resources::ResourceReference& AbstractWeapon::GetFireParticle(void) const
 {
     return m_fireParticle;
@@ -317,6 +263,18 @@ void AbstractWeapon::SetFireParticle(const ursine::resources::ResourceReference&
     m_fireParticle = archetype;
 }
 
+// weapon name
+const std::string& AbstractWeapon::GetName(void) const
+{
+    return m_name;
+}
+
+void AbstractWeapon::SetName(const std::string& name)
+{
+    m_name = name;
+}
+
+// semi automatic
 bool AbstractWeapon::GetSemiAutomatic(void) const
 {
     return m_semiAutomatic;

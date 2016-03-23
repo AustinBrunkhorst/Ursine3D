@@ -54,7 +54,7 @@
         );                          \
                                     \
     EditorField(                    \
-        std::string MadSymbol,      \
+        ursine::resources::ResourceReference MadSymbol,      \
         GetMadSymbol,               \
         SetMadSymbol                \
         );       
@@ -93,8 +93,8 @@ public:
     const float GetModifier(void) const;
     void SetModifier(const float modifier);
 
-    const std::string& GetMadSymbol(void) const;
-    void SetMadSymbol(const std::string& symbol);
+    const ursine::resources::ResourceReference& GetMadSymbol(void) const;
+    void SetMadSymbol(const ursine::resources::ResourceReference& symbol);
 
 protected:
     // interaction logic
@@ -144,7 +144,7 @@ protected:
     TriggerType m_triggerType;
 
     // UI symbol to give player
-    std::string m_madSymbol;
+    ursine::resources::ResourceReference m_madSymbol;
 
 
 } Meta(Disable);

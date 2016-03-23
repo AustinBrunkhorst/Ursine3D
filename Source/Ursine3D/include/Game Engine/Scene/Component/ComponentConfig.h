@@ -64,7 +64,7 @@
             ursine::ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, __owner, this, displayName, value \
         };                                                                                        \
         __owner->GetWorld( )->Dispatch( __e.type, &__e );                                         \
-    }                                                                                             \
+    }                                                                                                
 
 #else
 

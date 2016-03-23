@@ -32,6 +32,7 @@ namespace game
         ACTIVATE_WEAPON,
         DETACH_WEAPON,
         DEACTIVATE_WEAPON,
+        PROJECTILE_INIT,
 
 
         /////////////////////////////
@@ -99,7 +100,8 @@ namespace game
         WeaponDeactivationEventArgs(const ursine::ecs::EntityHandle &who, int ammo = 1, int clip = -1)
             : m_ammo( ammo )
             , m_clip( clip )
-            , whoToConnect( who ) { }
+            , whoToConnect( who ) 
+        { }
     };
 
     struct WeaponActivationEventArgs : WeaponDeactivationEventArgs
@@ -108,6 +110,20 @@ namespace game
 
         WeaponActivationEventArgs(const ursine::ecs::EntityHandle &who, ursine::ecs::Transform* camHandle = nullptr, int ammo = -1, int clip = -1)
             : WeaponDeactivationEventArgs(who, ammo, clip)
-            , m_camHandle(camHandle) { }
+            , m_camHandle(camHandle) 
+        { }
+    };
+    
+
+    // projectile event args
+    struct ProjectileInitEventArgs : ursine::EventArgs
+    {
+        ursine::SVec3 m_forwardVec;
+        float m_range;
+
+        ProjectileInitEventArgs(const ursine::SVec3 forward, float range)
+            : m_forwardVec( forward )
+            , m_range( range )
+        { }
     };
 }

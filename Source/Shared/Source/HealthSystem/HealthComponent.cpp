@@ -19,7 +19,7 @@
 #include "PlayerIdComponent.h"
 #include "CollisionEventArgs.h"
 #include "DamageOnCollideComponent.h"
-#include "AbstractWeapon.h"
+#include "AbstractHitscanWeapon.h"
 
 NATIVE_COMPONENT_DEFINITION( Health );
 
@@ -159,7 +159,7 @@ bool Health::CanDamage(DamageOnCollide *damage) const
     return type == DAMAGE_ALL || type == m_type;
 }
 
-bool Health::CanDamage(AbstractWeapon *weapon) const
+bool Health::CanDamage(AbstractHitscanWeapon *weapon) const
 {
     auto type = weapon->GetDamageType( );
 

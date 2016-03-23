@@ -80,6 +80,8 @@ const ursine::resources::ResourceReference& WeaponPickup::GetWeaponToPickup(void
 void WeaponPickup::SetWeaponToPickup(const ursine::resources::ResourceReference& weapon)
 {
     m_weaponToPickup = weapon;
+
+    NOTIFY_COMPONENT_CHANGED("Weapon", m_weaponToPickup);
 }
 
 // Texture
@@ -91,6 +93,8 @@ const ursine::resources::ResourceReference& WeaponPickup::GetTexture(void) const
 void WeaponPickup::SetTexture(const ursine::resources::ResourceReference& texture)
 {
     m_texture = texture;
+
+    NOTIFY_COMPONENT_CHANGED("Texture", m_texture);
 }
 
 ///////////////////////////////
@@ -107,6 +111,13 @@ void WeaponPickup::StartInteraction(const ursine::ecs::EntityHandle &entity)
 {
     if ( !entity->HasComponent<PlayerID>( ) )
         return;
+
+    if ( entity->HasComponent<Inventory>( ) )
+    {
+        auto inventory = entity->GetComponent<Inventory>( );
+
+        if ( m_weaponToPickup == inventory->m_inventory[ inventory->m_currWeapon ].m_weaponToLoad )
+    }
 
     // get invetory
     m_inventories[ entity ] = entity->GetComponent<Inventory>( );
