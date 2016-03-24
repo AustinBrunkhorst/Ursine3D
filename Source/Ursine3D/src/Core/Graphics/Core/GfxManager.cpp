@@ -166,10 +166,6 @@ namespace ursine
 
             m_ready = true;
 
-            // load the font
-            std::string textPath = "Assets/Bitmap Fonts/MainFont.fnt";
-            m_font.Load(textPath);
-
             //textureManager->CreateTexture("Font", "Assets/Bitmap Fonts/"  + m_font.GetTextureFiles()[ 0 ], 512, 512);
 
             // TEST SHIT

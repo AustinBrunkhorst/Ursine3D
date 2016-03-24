@@ -105,8 +105,6 @@ namespace ursine
 
             GfxInfo *gfxInfo;
 
-            BitmapFont m_font;
-
             //thred stuff
         private:
             struct threadData

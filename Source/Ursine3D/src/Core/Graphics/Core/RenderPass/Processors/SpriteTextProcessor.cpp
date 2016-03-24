@@ -101,11 +101,6 @@ namespace ursine
                 spriteText.GetWidth( ) * spriteText.GetSize( ),
                 spriteText.GetHeight( ) * spriteText.GetSize( )
             );
-            stb.textureDimensions = DirectX::XMFLOAT2(
-                m_manager->m_font.GetCommonData( ).textureDimensions.scaleW,
-                m_manager->m_font.GetCommonData( ).textureDimensions.scaleH
-            );
-
             /////////////////////////////////////////////////////////
             // mapping glyph data
             Vec2 cursor = Vec2(0, 0);   // "cursor" for text positions
@@ -116,6 +111,11 @@ namespace ursine
             auto &characterData = font.GetCharacterData( );
             auto &commonData = font.GetCommonData( );
             auto &infoData = font.GetInfoData( );
+
+            stb.textureDimensions = DirectX::XMFLOAT2(
+                commonData.textureDimensions.scaleW,
+                commonData.textureDimensions.scaleH
+            );
 
             // map the texture
             auto texHandle = m_manager->fontManager->GetTextureHandle( spriteText.GetFontHandle( ), font.GetPageData( )[0] );
