@@ -39,6 +39,8 @@ private:
 
     float m_time;
 
+    float m_emitionRate;
+
     void onAnimationCompleted(EVENT_HANDLER(EntityAnimator));
 
 } Meta(

@@ -23,7 +23,8 @@ using namespace ecs;
 
 SludgeshotProjectile::SludgeshotProjectile(void)
     : BaseComponent( )
-    , m_time( 0.0f ) { }
+    , m_time( 0.0f )
+    , m_emitionRate( 0.0f ) { }
 
 SludgeshotProjectile::~SludgeshotProjectile(void)
 {
@@ -58,7 +59,9 @@ void SludgeshotProjectile::InitializeComponents(void)
 
     UAssert( emitter, "Error: A child entity must have a ParticleEmitter component." );
 
-    // TODO: Make sure this emitter doesn't do anything on spawn
+    m_emitionRate = emitter->GetEmitRate( );
+
+    emitter->SetEmitRate( 0 );
 
     // Setup the animator
     auto animator = owner->GetComponent<EntityAnimator>( );
@@ -119,6 +122,7 @@ void SludgeshotProjectile::onAnimationCompleted(EVENT_HANDLER(EntityAnimator))
 
     auto childEmitter = owner->GetComponentInChildren<ParticleEmitter>( );
 
+    childEmitter->SetEmitRate( m_emitionRate );
     childEmitter->ResetSpawnCount( );
 
     auto damageDealer = owner->GetComponent<DamageOnCollide>( );
