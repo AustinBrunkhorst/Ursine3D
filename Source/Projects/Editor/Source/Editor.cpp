@@ -50,6 +50,11 @@ namespace ursine
     {
         return &GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetScreenManager( );
     }
+
+    CefRefPtr<CefBrowser> JSGetGlobalBrowser(void)
+    {
+        return GetCoreSystem( Editor )->GetMainWindow( ).GetUI( )->GetBrowser( );
+    }
 }
 
 CORE_SYSTEM_DEFINITION( Editor );

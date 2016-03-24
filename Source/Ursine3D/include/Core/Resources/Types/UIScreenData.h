@@ -11,6 +11,7 @@ namespace ursine
             RESOURCE_DATA;
 
         public:
+            UIScreenData(const Json &data);
             UIScreenData(const GUID &project, const fs::path &path);
 
             const GUID &GetProject(void) const;

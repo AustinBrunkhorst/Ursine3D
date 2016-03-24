@@ -15,6 +15,8 @@
 
 #include "JSUIScreenManager.h"
 
+#include "UIScreen.h"
+
 namespace ursine
 {
     JSConstructor(JSUIScreenManager::JSUIScreenManager)
@@ -22,4 +24,50 @@ namespace ursine
 
     JSUIScreenManager::JSUIScreenManager(const JSUIScreenManager &rhs)
         : m_manager( rhs.m_manager ) { }
+
+    JSMethod(JSUIScreenManager::createScreen)
+    {
+        if (arguments.size( ) != 3)
+            JSThrow( "Invalid arguments.", nullptr );
+
+        auto path = arguments[ 0 ]->GetStringValue( ).ToString( );
+        auto inputBlocking = arguments[ 1 ]->GetBoolValue( );
+        auto priority = arguments[ 2 ]->GetIntValue( );
+
+        auto screen = m_manager->CreateScreenRemote(
+            path,
+            { inputBlocking, priority }
+        );
+
+        return CefV8Value::CreateUInt( screen->GetID( ) );
+    }
+
+    JSMethod(JSUIScreenManager::removeScreen)
+    {
+        if (arguments.size( ) != 1)
+            JSThrow( "Invalid arguments.", nullptr );
+
+        auto id = static_cast<UIScreenID>( arguments[ 0 ]->GetUIntValue( ) );
+
+        auto screen = m_manager->GetScreen( id );
+
+        if (!screen)
+            return CefV8Value::CreateBool( false );
+
+        m_manager->RemoveScreen( screen );
+
+        return CefV8Value::CreateBool( true );
+    }
+
+    JSMethod(JSUIScreenManager::screenHasFocus)
+    {
+        if (arguments.size( ) != 1)
+            JSThrow( "Invalid arguments.", nullptr );
+
+        auto id = static_cast<UIScreenID>( arguments[ 0 ]->GetUIntValue( ) );
+
+        auto screen = m_manager->GetScreen( id );
+
+        return CefV8Value::CreateBool( screen ? screen->HasInputFocus( ) : false );
+    }
 }

@@ -15,12 +15,15 @@
 
 #include "ProjectConfig.h"
 
-#include <ResourcePipelineManager.h>
-#include <Scene.h>
+#include "EditorGameContext.h"
 
 #include "EditorSceneManager.h"
 #include "EditorEntityManager.h"
+
 #include "EditorResourcePipelineManager.h"
+
+#include <ResourcePipelineManager.h>
+#include <Scene.h>
 
 class Project
 {
@@ -64,6 +67,7 @@ private:
     ursine::Scene m_scene;
     ursine::Json m_worldCache;
 
+    EditorGameContext *m_gameContext;
     EditorSceneManager *m_sceneManager;
     EditorEntityManager *m_entityManager;
     EditorResourcePipelineManager *m_pipelineManager;

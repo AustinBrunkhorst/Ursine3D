@@ -27,6 +27,11 @@ namespace ursine
     public:
         JSConstructor(JSUIScreenManager);
 
+        JSMethod(createScreen);
+        JSMethod(removeScreen);
+
+        JSMethod(screenHasFocus);
+
     private:
         UIScreenManager *m_manager;
 

@@ -1,4 +1,4 @@
-(function ($hx_exports, $global) { "use strict";
+(function ($global) { "use strict";
 var $hxClasses = {};
 function $extend(from, fields) {
 	function Inherit() {} Inherit.prototype = from; var proto = new Inherit();
@@ -246,6 +246,9 @@ haxe_Timer.delay = function(f,time_ms) {
 		f();
 	};
 	return t;
+};
+haxe_Timer.stamp = function() {
+	return new Date().getTime() / 1000;
 };
 haxe_Timer.prototype = {
 	stop: function() {
@@ -627,6 +630,96 @@ ursine_api_events_EventManager.prototype = {
 var ursine_api_events_IEventContainer = function() { };
 $hxClasses["ursine.api.events.IEventContainer"] = ursine_api_events_IEventContainer;
 ursine_api_events_IEventContainer.__name__ = ["ursine","api","events","IEventContainer"];
+var ursine_api_timers_Timer = function() { };
+$hxClasses["ursine.api.timers.Timer"] = ursine_api_timers_Timer;
+ursine_api_timers_Timer.__name__ = ["ursine","api","timers","Timer"];
+ursine_api_timers_Timer.prototype = {
+	pause: function(fromGroup) {
+		if(fromGroup == null) fromGroup = false;
+		if(this.m_paused) return;
+		this.m_handle.stop();
+		this.m_lastPaused = haxe_Timer.stamp();
+		this.m_remainingDuration = this.m_duration - (this.m_lastPaused - this.m_lastResumed);
+		this.m_paused = true;
+		this.m_pausedFromGroup = fromGroup;
+	}
+	,resume: function() {
+		if(!this.m_paused) return;
+		this.m_handle = new haxe_Timer(this.m_remainingDuration);
+		this.m_handle.run = $bind(this,this.tickFromPause);
+		this.m_paused = false;
+	}
+	,cancel: function() {
+		this.m_handle.stop();
+		this.m_cancelled = true;
+	}
+	,tickFromPause: function() {
+		this.onTimerComplete();
+		this.m_handle.stop();
+		this.m_handle = new haxe_Timer(this.m_duration);
+		this.m_handle.run = $bind(this,this.tickFromRepeat);
+	}
+	,tickFromRepeat: function() {
+		this.onTimerComplete();
+	}
+	,onTimerComplete: function() {
+		if(this.m_repeatCallback) this.m_repeatCallback();
+		if(this.m_repeat == -1) return;
+		if(--this.m_repeat <= 0) {
+			if(this.m_completeCallback) this.m_completeCallback();
+			this.cancel();
+		}
+	}
+	,__class__: ursine_api_timers_Timer
+};
+var ursine_api_timers_TimerManager = function() { };
+$hxClasses["ursine.api.timers.TimerManager"] = ursine_api_timers_TimerManager;
+ursine_api_timers_TimerManager.__name__ = ["ursine","api","timers","TimerManager"];
+ursine_api_timers_TimerManager.prototype = {
+	pause: function(group,force) {
+		if(force == null) force = false;
+		var container = this.m_groups.h[group];
+		if(container == null) return;
+		container.paused = true;
+		var _g = 0;
+		var _g1 = container.timers;
+		while(_g < _g1.length) {
+			var timer = _g1[_g];
+			++_g;
+			timer.pause(!force);
+		}
+	}
+	,resume: function(group,force) {
+		if(force == null) force = false;
+		var container = this.m_groups.h[group];
+		if(container == null) return;
+		container.paused = false;
+		var _g = 0;
+		var _g1 = container.timers;
+		while(_g < _g1.length) {
+			var timer = _g1[_g];
+			++_g;
+			if(force || timer.m_pausedFromGroup) timer.resume();
+		}
+	}
+	,pauseAll: function(force) {
+		if(force == null) force = false;
+		var $it0 = this.m_groups.keys();
+		while( $it0.hasNext() ) {
+			var group = $it0.next();
+			this.pause(group,force);
+		}
+	}
+	,resumeAll: function(force) {
+		if(force == null) force = false;
+		var $it0 = this.m_groups.keys();
+		while( $it0.hasNext() ) {
+			var group = $it0.next();
+			this.resume(group,force);
+		}
+	}
+	,__class__: ursine_api_timers_TimerManager
+};
 var ursine_api_ui_Screen = function() { };
 $hxClasses["ursine.api.ui.Screen"] = ursine_api_ui_Screen;
 ursine_api_ui_Screen.__name__ = ["ursine","api","ui","Screen"];
@@ -639,7 +732,42 @@ ursine_api_ui_Screen.prototype = {
 		return this.m_container.host;
 	}
 	,exit: function() {
-		this.events.trigger(".exit",null);
+		this.m_owner.removeScreen(this);
+	}
+	,pause: function() {
+		if(this.m_paused) return;
+		this.timers.pauseAll();
+		var elements = this.m_container.querySelectorAll("*");
+		var _g = 0;
+		while(_g < elements.length) {
+			var item = elements[_g];
+			++_g;
+			var element = item;
+			var state = element.style.animationPlayState;
+			if(state == "") {
+				var style = window.getComputedStyle(element);
+				state = style.getPropertyValue("animationPlayState");
+			}
+			if(state == "" || state == "running") {
+				element.setAttribute("__ap","true");
+				element.style.animationPlayState = "paused";
+			}
+		}
+		this.m_paused = true;
+	}
+	,resume: function() {
+		if(!this.m_paused) return;
+		this.timers.resumeAll();
+		var elements = this.m_container.querySelectorAll("[" + "__ap" + "]");
+		var _g = 0;
+		while(_g < elements.length) {
+			var item = elements[_g];
+			++_g;
+			var element = item;
+			element.removeAttribute("__ap");
+			element.style.animationPlayState = "running";
+		}
+		this.m_paused = false;
 	}
 	,invalidateViewport: function() {
 		var aspectContainer = this.m_container.querySelector(".aspect-ratio-container");
@@ -648,6 +776,12 @@ ursine_api_ui_Screen.prototype = {
 		aspectContainer.style.zoom = Math.min(host.clientWidth / 1280,host.clientHeight / 720);
 	}
 	,__class__: ursine_api_ui_Screen
+};
+var ursine_api_ui_ScreenManager = function() { };
+$hxClasses["ursine.api.ui.ScreenManager"] = ursine_api_ui_ScreenManager;
+ursine_api_ui_ScreenManager.__name__ = ["ursine","api","ui","ScreenManager"];
+ursine_api_ui_ScreenManager.prototype = {
+	__class__: ursine_api_ui_ScreenManager
 };
 var ursine_editor_Editor = function() {
 	ursine_editor_Editor.instance = this;
@@ -2032,29 +2166,54 @@ ursine_editor_scene_ui_ScreenLayoutCache.__name__ = ["ursine","editor","scene","
 ursine_editor_scene_ui_ScreenLayoutCache.prototype = {
 	__class__: ursine_editor_scene_ui_ScreenLayoutCache
 };
-var ursine_editor_scene_ui_ScreenManager = $hx_exports.ScreenManager = function(container) {
-	ursine_editor_scene_ui_ScreenManager.instance = this;
+var ursine_editor_scene_ui_EditorScreenManager = function(container) {
+	ursine_editor_scene_ui_EditorScreenManager.instance = this;
 	this.m_nativeManager = new NativeScreenManager();
 	this.m_screens = new haxe_ds_IntMap();
 	var _this = window.document;
 	this.m_container = _this.createElement("div");
 	this.m_container.classList.add("screen-manager");
 	container.appendChild(this.m_container);
-	this.m_projectCache = new haxe_ds_StringMap();
+	this.m_projectCacheState = new haxe_ds_StringMap();
+	this.m_projectScriptCache = new haxe_ds_StringMap();
 	this.m_screenLoadQueue = new haxe_ds_StringMap();
 	this.m_screenLayoutCache = new haxe_ds_StringMap();
 	this.m_screenTypeCache = new haxe_ds_StringMap();
+	this.m_lastPlayState = 2;
+	var kbManager = new NativeKeyboardManager();
+	var gpManager = new NativeGamepadManager();
 	var bm = ursine_editor_Editor.instance.broadcastManager;
+	bm.getChannel("ResourcePipeline").on("ResourceModified",$bind(this,this.onResourceModified));
 	bm.getChannel("SceneManager").on("PlayStateChanged",$bind(this,this.onScenePlayStateChanged));
-	bm.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited));
+	bm.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited)).on("ScreensCleared",$bind(this,this.onScreensCleared));
 	bm.getChannel("GamepadManager").on("GamepadButtonDown",$bind(this,this.onGamepadBtnDown)).on("GamepadButtonUp",$bind(this,this.onGamepadBtnUp)).on("GamepadConnected",$bind(this,this.onGamepadConnected)).on("GamepadDisconnected",$bind(this,this.onGamepadDisconnected));
 	bm.getChannel("KeyboardManager").on("KeyboardKeyDown",$bind(this,this.onKeyDown)).on("KeyboardKeyUp",$bind(this,this.onKeyUp));
 	this.onScenePlayStateChanged();
 };
-$hxClasses["ursine.editor.scene.ui.ScreenManager"] = ursine_editor_scene_ui_ScreenManager;
-ursine_editor_scene_ui_ScreenManager.__name__ = ["ursine","editor","scene","ui","ScreenManager"];
-ursine_editor_scene_ui_ScreenManager.prototype = {
-	clearScreens: function() {
+$hxClasses["ursine.editor.scene.ui.EditorScreenManager"] = ursine_editor_scene_ui_EditorScreenManager;
+ursine_editor_scene_ui_EditorScreenManager.__name__ = ["ursine","editor","scene","ui","EditorScreenManager"];
+ursine_editor_scene_ui_EditorScreenManager.__interfaces__ = [ursine_api_ui_ScreenManager];
+ursine_editor_scene_ui_EditorScreenManager.prototype = {
+	getScreen: function(id) {
+		return this.m_screens.h[id];
+	}
+	,removeScreen: function(screen) {
+		var id = screen.getID();
+		this.m_nativeManager.removeScreen(id);
+		this.m_container.removeChild(screen.getHost());
+		this.m_screens.remove(id);
+	}
+	,addScreen: function(path,initData,inputBlocking,priority) {
+		if(priority == null) priority = 0;
+		if(inputBlocking == null) inputBlocking = true;
+		var id = this.m_nativeManager.createScreen(path,inputBlocking,priority);
+		this.createScreen(path,id,priority,inputBlocking);
+		return id;
+	}
+	,hasInputFocus: function(screen) {
+		return this.hasFocus() && this.m_nativeManager.screenHasFocus(screen.getID());
+	}
+	,clearScreens: function() {
 		this.m_container.innerHTML = "";
 		this.m_screens = new haxe_ds_IntMap();
 	}
@@ -2079,26 +2238,31 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 	,initProjectConfig: function(guid) {
 		var _g = this;
 		var v = 0;
-		this.m_projectCache.set(guid,v);
+		this.m_projectCacheState.set(guid,v);
 		v;
-		var head = window.document.querySelector("head");
+		var head = window.document.head;
 		var script;
 		var _this = window.document;
 		script = _this.createElement("script");
 		script.src = this.createQualfiedResourcePath("" + guid + "/" + "UIProject.js");
 		script.addEventListener("load",function() {
 			var v1 = 1;
-			_g.m_projectCache.set(guid,v1);
+			_g.m_projectCacheState.set(guid,v1);
 			v1;
 			_g.invalidateScreenTypeCache();
 			_g.initQueuedScreens(guid);
 		});
 		script.addEventListener("error",function() {
-			_g.m_projectCache.remove(guid);
+			_g.m_projectCacheState.remove(guid);
+			_g.m_projectScriptCache.remove(guid);
 			_g.m_screenLoadQueue.remove(guid);
 			head.removeChild(script);
 			throw new js__$Boot_HaxeError("UI Project \"" + guid + "\" is missing \"" + "UIProject.js" + "\" in the root.");
 		});
+		{
+			this.m_projectScriptCache.set(guid,script);
+			script;
+		}
 		head.appendChild(script);
 	}
 	,initQueuedScreens: function(guid) {
@@ -2118,12 +2282,12 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 	}
 	,createScreen: function(path,id,priority,data) {
 		var guid = this.getProjectGUID(path);
-		var readyCallback = (function(f,a1,id1,a2,a3) {
+		var readyCallback = (function(f,a1,a2,id1,a3,a4) {
 			return function() {
-				f(a1,id1,a2,a3);
+				f(a1,a2,id1,a3,a4);
 			};
-		})($bind(this,this.onScreenElementReady),this.createQualfiedResourcePath(path),id,priority,data);
-		var _g = this.m_projectCache.get(guid);
+		})($bind(this,this.onScreenElementReady),guid,this.createQualfiedResourcePath(path),id,priority,data);
+		var _g = this.m_projectCacheState.get(guid);
 		if(_g == null) {
 			this.queueScreen(guid,readyCallback);
 			this.initProjectConfig(guid);
@@ -2138,6 +2302,7 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 	}
 	,cacheScreenLayout: function(qualifiedPath,link) {
 		var layout = new ursine_editor_scene_ui_ScreenLayoutCache();
+		layout.link = link;
 		layout.template = link["import"].querySelector("template");
 		if(layout.template == null) throw new js__$Boot_HaxeError("Screen layout \"" + qualifiedPath + "\" missing <template>");
 		var styleSheets = link["import"].querySelectorAll("link[rel=\"stylesheet\"]");
@@ -2164,16 +2329,21 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 			layout;
 		}
 	}
-	,onScreenElementReady: function(qualifiedPath,id,priority,data) {
+	,onScreenElementReady: function(project,qualifiedPath,id,priority,data) {
 		var _g = this;
 		var cached = this.m_screenLayoutCache.get(qualifiedPath);
+		var readyCallback = (function(f,a1,id1,a3,a4) {
+			return function(a2) {
+				f(a1,a2,id1,a3,a4);
+			};
+		})($bind(this,this.onScreenLayoutReady),project,id,priority,data);
 		if(cached == null) {
-			var head = window.document.querySelector("head");
+			var head = window.document.head;
 			var link;
 			var _this = window.document;
 			link = _this.createElement("link");
 			link.rel = "import";
-			link.href = qualifiedPath;
+			link.href = "" + qualifiedPath + "?t=" + new Date().getTime();
 			link.addEventListener("load",function() {
 				try {
 					_g.cacheScreenLayout(qualifiedPath,link);
@@ -2184,16 +2354,16 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 						throw new js__$Boot_HaxeError("Unable to construct screen. error: " + e);
 					} else throw(e);
 				}
-				_g.onScreenLayoutReady(_g.m_screenLayoutCache.get(qualifiedPath),id,priority,data);
+				readyCallback(_g.m_screenLayoutCache.get(qualifiedPath));
 			});
 			link.addEventListener("error",function() {
 				head.removeChild(link);
 				throw new js__$Boot_HaxeError("Failed to load screen layout " + qualifiedPath);
 			});
 			head.appendChild(link);
-		} else this.onScreenLayoutReady(cached,id,priority,data);
+		} else readyCallback(cached);
 	}
-	,onScreenLayoutReady: function(layout,id,priority,data) {
+	,onScreenLayoutReady: function(project,layout,id,priority,data) {
 		var container;
 		var _this = window.document;
 		container = _this.createElement("div");
@@ -2202,16 +2372,46 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 		var element = container.createShadowRoot();
 		element.appendChild(window.document.importNode(layout.template.content,true));
 		this.m_container.appendChild(container);
-		var value = Type.createInstance(layout.logicHandlerType,[id,element,data]);
+		var config = { project : project, owner : this, id : id, container : element, data : data};
+		var value = Type.createInstance(layout.logicHandlerType,[config]);
 		this.m_screens.h[id] = value;
 	}
 	,getProjectGUID: function(path) {
 		return haxe_io_Path.normalize(path).split("/")[0];
 	}
+	,invalidateProjectCache: function(projectGUID) {
+		if(!this.m_projectCacheState.exists(projectGUID)) return;
+		this.m_projectCacheState.remove(projectGUID);
+		var head = window.document.head;
+		var scriptCache = this.m_projectScriptCache.get(projectGUID);
+		if(scriptCache != null && head.contains(scriptCache)) {
+			head.removeChild(scriptCache);
+			this.m_projectScriptCache.remove(projectGUID);
+		}
+		var removalQueue = [];
+		var $it0 = this.m_screenLayoutCache.keys();
+		while( $it0.hasNext() ) {
+			var qualifiedPath = $it0.next();
+			var path = StringTools.replace(qualifiedPath,"http://game" + "/","");
+			var guid = this.getProjectGUID(path);
+			if(guid != projectGUID) continue;
+			var cached = this.m_screenLayoutCache.get(qualifiedPath);
+			if(cached != null && head.contains(cached.link)) head.removeChild(cached.link);
+			removalQueue.push(qualifiedPath);
+		}
+		var _g = 0;
+		while(_g < removalQueue.length) {
+			var removed = removalQueue[_g];
+			++_g;
+			this.m_screenLayoutCache.remove(removed);
+		}
+	}
 	,createQualfiedResourcePath: function(path) {
-		return "" + "http://game" + "/" + path;
+		return haxe_io_Path.normalize("" + "http://game" + "/" + path);
 	}
 	,hasFocus: function() {
+		var playState = SceneGetPlayState();
+		if(playState != 0) return false;
 		var focused = window.document.activeElement;
 		return focused != null && this.m_container == focused || focused.contains(this.m_container);
 	}
@@ -2223,20 +2423,40 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 			if(this.m_nativeManager.screenHasFocus(screen.getID())) callback(screen);
 		}
 	}
+	,pauseScreens: function() {
+		var $it0 = this.m_screens.iterator();
+		while( $it0.hasNext() ) {
+			var screen = $it0.next();
+			screen.pause();
+		}
+	}
+	,resumeScreens: function() {
+		var $it0 = this.m_screens.iterator();
+		while( $it0.hasNext() ) {
+			var screen = $it0.next();
+			screen.resume();
+		}
+	}
+	,onResourceModified: function(e) {
+		this.invalidateProjectCache(e.guid);
+	}
 	,onScenePlayStateChanged: function() {
 		var state = SceneGetPlayState();
+		if(state == this.m_lastPlayState) return;
 		switch(state) {
 		case 0:
 			this.m_container.classList.add("running");
+			if(this.m_lastPlayState != 2) this.resumeScreens();
 			break;
 		case 1:
 			this.m_container.classList.remove("running");
+			this.pauseScreens();
 			break;
 		case 2:
 			this.m_container.classList.remove("running");
-			this.clearScreens();
 			break;
 		}
+		this.m_lastPlayState = state;
 	}
 	,onScreenAdded: function(e) {
 		this.createScreen(e.path,e.id,e.priority,e.initData);
@@ -2246,6 +2466,9 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 		var key = e.id;
 		screen = this.m_screens.h[key];
 		if(screen != null) screen.events.trigger(e.message,e.data);
+	}
+	,onScreensCleared: function() {
+		this.clearScreens();
 	}
 	,onScreenExited: function(e) {
 		var screen;
@@ -2283,7 +2506,7 @@ ursine_editor_scene_ui_ScreenManager.prototype = {
 			screen.events.trigger("KeyboardKeyUp",e);
 		});
 	}
-	,__class__: ursine_editor_scene_ui_ScreenManager
+	,__class__: ursine_editor_scene_ui_EditorScreenManager
 };
 var ursine_editor_windows_EntityInspector = function() {
 	this.m_inspectedEntity = null;
@@ -2789,9 +3012,9 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 var ursine_editor_windows_SceneView = function() {
 	this.m_selector = null;
 	ursine_editor_NativeCanvasWindowHandler.call(this,"SceneView");
-	this.m_screenManager = new ursine_editor_scene_ui_ScreenManager(this.window.container);
+	this.m_screenManager = new ursine_editor_scene_ui_EditorScreenManager(this.window.container);
 	this.window.heading = "Scene";
-	this.window.container.classList.add("scene-view-window");
+	this.window.container.classList.add("scene-view-window","no-background");
 	this.window.container.setAttribute("accepts-resource-drop","true");
 	this.window.container.addEventListener("resource-drag",$bind(this,this.onResourceDrag));
 	this.window.container.addEventListener("resource-drop",$bind(this,this.onResourceDrop));
@@ -2807,6 +3030,8 @@ ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWi
 		this.m_screenManager.invalidateScreenViewport();
 	}
 	,onWindowKeyDown: function(e) {
+		var state = SceneGetPlayState();
+		if(state == 0) return true;
 		var _g = e.keyCode;
 		switch(_g) {
 		case 46:
@@ -2917,6 +3142,8 @@ String.prototype.__class__ = $hxClasses.String = String;
 String.__name__ = ["String"];
 $hxClasses.Array = Array;
 Array.__name__ = ["Array"];
+Date.prototype.__class__ = $hxClasses.Date = Date;
+Date.__name__ = ["Date"];
 var Int = $hxClasses.Int = { __name__ : ["Int"]};
 var Dynamic = $hxClasses.Dynamic = { __name__ : ["Dynamic"]};
 var Float = $hxClasses.Float = Number;
@@ -2953,4 +3180,4 @@ ursine_editor_scene_component_inspectors_fields_UnknownTypeInspector.__meta__ = 
 ursine_editor_scene_component_inspectors_fields_VectorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Vec2","ursine::Vec3","ursine::SVec3","ursine::Vec4","ursine::SVec4","ursine::SQuat"]}};
 ursine_editor_windows_SceneView.m_acceptedResourceDrops = ["ursine::resources::ArchetypeData"];
 EditorMain.main();
-})(typeof window != "undefined" ? window : exports, typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);
+})(typeof window != "undefined" ? window : typeof global != "undefined" ? global : typeof self != "undefined" ? self : this);

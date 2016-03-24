@@ -212,7 +212,7 @@ namespace ursine
         m_pathToScreen[ path ] = screen;
         m_idToScreen[ id ] = screen;
 
-        utils::InsertionSort( m_screens, compareScreens );
+        utils::InsertionSort( m_screens, screen, compareScreens );
 
         invalidateScreenFocus( );
 

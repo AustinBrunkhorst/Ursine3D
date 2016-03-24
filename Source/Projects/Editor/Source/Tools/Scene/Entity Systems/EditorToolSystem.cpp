@@ -121,6 +121,13 @@ void EditorToolSystem::OnRemove(void)
         .Off( ecs::WorldEventType::WORLD_ENTITY_COMPONENT_REMOVED, &EditorToolSystem::onSelectedRemoved );
 }
 
+bool EditorToolSystem::isEditing(void) const
+{
+    auto *scene = m_world->GetOwner( );
+
+    return scene && scene->GetPlayState( ) != PS_PLAYING;
+}
+
 void EditorToolSystem::onUpdate(EVENT_HANDLER(ursine::ecs::World))
 {
     m_currentTool->OnUpdate( m_keyboardManager, m_mouseManager );
@@ -134,7 +141,7 @@ void EditorToolSystem::onMouseDown(EVENT_HANDLER(ursine:MouseManager))
     EVENT_ATTRS(ursine::MouseManager, MouseButtonArgs);
 
     // must have focus or mouse focus
-    if (!(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))
+    if (!isEditing( ) || !(m_editorCameraSystem->HasFocus( ) && m_editorCameraSystem->HasMouseFocus( )))
         return;
     
     m_currentTool->OnMouseDown( *args );
@@ -161,7 +168,7 @@ void EditorToolSystem::onMouseMove(EVENT_HANDLER(ursine:MouseManager))
     EVENT_ATTRS(ursine::MouseManager, MouseMoveArgs);
 
     // must have focus or mouse focus
-    if (!(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
+    if (!isEditing( ) || !(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
         return;
 
     // We always update the select tool
@@ -176,7 +183,7 @@ void EditorToolSystem::onMouseScroll(EVENT_HANDLER(ursine::MouseManager))
     EVENT_ATTRS(ursine::MouseManager, MouseScrollArgs);
 
     // must have focus or mouse focus
-    if (!(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
+    if (!isEditing( ) || !(m_editorCameraSystem->HasFocus( ) || m_editorCameraSystem->HasMouseFocus( )))
         return;
 
     m_currentTool->OnMouseScroll( *args );
@@ -185,6 +192,9 @@ void EditorToolSystem::onMouseScroll(EVENT_HANDLER(ursine::MouseManager))
 void EditorToolSystem::onKeyDown(EVENT_HANDLER(ursine::KeyboardManager))
 {
     EVENT_ATTRS(ursine::KeyboardManager, KeyboardKeyArgs);
+
+    if (!isEditing( ))
+        return;
 
     // Check to see if the key pressed is a selection key for one of our tools
     if ((m_editorCameraSystem->HasMouseFocus( ) || m_editorCameraSystem->HasFocus( ))

@@ -26,11 +26,22 @@ namespace ursine
 {
     Scene::Scene(void)
         : EventDispatcher( this )
+        , m_gameContext( nullptr )
         , m_playState( PS_EDITOR )
         , m_viewport( 0 )
         , m_activeWorld( nullptr ) { }
 
     Scene::~Scene(void) { }
+
+    GameContext *Scene::GetGameContext(void)
+    {
+        return m_gameContext;
+    }
+
+    void Scene::SetGameContext(GameContext *context)
+    {
+        m_gameContext = context;
+    }
 
     ecs::World *Scene::GetActiveWorld(void) const
     {

@@ -13,7 +13,7 @@ abstract GamepadEventType(String) {
 
 extern class GamepadButtonEvent {
     var index : GamepadIndex;
-    var button : GamepadButton;
+    var button : GamepadButtonType;
     var pressed : Bool;
     var triggered : Bool;
 }
@@ -32,9 +32,9 @@ extern class GamepadManager {
     function numConnected() : Int;
     function isConnected(gamepad : GamepadIndex) : Bool;
 
-    function isButtonDown(gamepad : GamepadIndex, button : GamepadButton) : Bool;
-    function isButtonUp(gamepad : GamepadIndex, button : GamepadButton) : Bool;
+    function isButtonDown(gamepad : GamepadIndex, button : GamepadButtonType) : Bool;
+    function isButtonUp(gamepad : GamepadIndex, button : GamepadButtonType) : Bool;
 
-    function isButtonTriggeredDown(gamepad : GamepadIndex, button : GamepadButton) : Bool;
-    function isButtonTriggeredUp(gamepad : GamepadIndex, button : GamepadButton) : Bool;
+    function isButtonTriggeredDown(gamepad : GamepadIndex, button : GamepadButtonType) : Bool;
+    function isButtonTriggeredUp(gamepad : GamepadIndex, button : GamepadButtonType) : Bool;
 }

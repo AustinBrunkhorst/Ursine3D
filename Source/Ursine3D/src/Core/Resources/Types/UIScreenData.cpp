@@ -1,13 +1,26 @@
 #include "UrsinePrecompiled.h"
 
 #include "UIScreenData.h"
-
-#include "JsonReader.h"
+#include "UIScreenReader.h"
 
 namespace ursine
 {
     namespace resources
     {
+        UIScreenData::UIScreenData(const Json &data)
+        {
+            auto &projectData = data[ "project" ];
+            auto &pathData = data[ "path" ];
+
+            UAssertCatchable( projectData.is_string( ) && pathData.is_string( ),
+                "Invalid JSON screen structure."    
+            );
+
+            m_project = GUIDStringGenerator( )( projectData.string_value( ) );
+            m_path = pathData.string_value( );
+            m_name = m_path.stem( ).string( );
+        }
+
         UIScreenData::UIScreenData(const GUID &project, const fs::path &path)
             : m_project( project )
             , m_path( path )
@@ -45,7 +58,7 @@ namespace ursine
 
         meta::Type UIScreenData::GetReaderType(void)
         {
-            return typeof( JsonReader );
+            return typeof( UIScreenReader );
         }
     }
 }

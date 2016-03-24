@@ -2,10 +2,13 @@ package ursine.editor.scene.ui;
 
 import ursine.native.Extern;
 
+import ursine.editor.resources.ResourceItem;
+
 import ursine.api.ui.Screen;
 import ursine.api.ui.ScreenManager;
 import ursine.api.input.GamepadManager;
 import ursine.api.input.KeyboardManager;
+import ursine.api.timers.TimerManager;
 
 import js.html.LinkElement;
 
@@ -16,15 +19,18 @@ abstract ConfigReadyState(Int) {
 }
 
 class ScreenLayoutCache {
+    public var link : LinkElement;
     public var template : js.html.TemplateElement;
     public var logicHandlerType : Dynamic;
 
     public function new() { }
 }
 
-@:expose( "ScreenManager" )
-class ScreenManager {
+class EditorScreenManager implements ursine.api.ui.ScreenManager {
     public static var instance : ScreenManager;
+
+    // native type for UI project resources
+    private static inline var m_uiProjectResourceType = 'ursine::resources::UIProjectData';
 
     // HTML attribute that declares what class is used for the screen logic
     private static inline var m_screenLogicMetaAttribute = 'data-screen-logic';
@@ -40,11 +46,14 @@ class ScreenManager {
 
     private var m_container : js.html.DOMElement;
 
-    private var m_projectCache : Map<String, ConfigReadyState>;
+    private var m_projectCacheState : Map<String, ConfigReadyState>;
+    private var m_projectScriptCache : Map<String, js.html.ScriptElement>;
 
     private var m_screenLoadQueue : Map<String, Array<Dynamic>>;
     private var m_screenLayoutCache : Map<String, ScreenLayoutCache>;
     private var m_screenTypeCache : Map<String, Class<Dynamic>>;
+
+    private var m_lastPlayState : ScenePlayState;
 
     public function new(container : js.html.DOMElement) {
         instance = this;
@@ -59,13 +68,22 @@ class ScreenManager {
             container.appendChild( m_container );
         }
 
-        m_projectCache = new Map<String, ConfigReadyState>( );
+        m_projectCacheState = new Map<String, ConfigReadyState>( );
+        m_projectScriptCache = new Map<String, js.html.ScriptElement>( );
 
         m_screenLoadQueue = new Map<String, Array<Dynamic>>( );
         m_screenLayoutCache = new Map<String, ScreenLayoutCache>( );
         m_screenTypeCache = new Map<String, Class<Dynamic>>( );
 
+        m_lastPlayState = ScenePlayState.InEditor;
+
+        var kbManager = new KeyboardManager( );
+        var gpManager = new GamepadManager( );
+
         var bm = Editor.instance.broadcastManager;
+
+        bm.getChannel( 'ResourcePipeline' )
+            .on( 'ResourceModified', onResourceModified );
 
         bm.getChannel( 'SceneManager' )
             .on( 'PlayStateChanged', onScenePlayStateChanged );
@@ -73,7 +91,8 @@ class ScreenManager {
         bm.getChannel( 'ScreenManager' )
             .on( 'ScreenAdded', onScreenAdded )
             .on( 'ScreenMessaged', onScreenMessaged )
-            .on( 'ScreenExited', onScreenExited );
+            .on( 'ScreenExited', onScreenExited )
+            .on( 'ScreensCleared', onScreensCleared );
 
         bm.getChannel( 'GamepadManager' )
             .on( GamepadEventType.ButtonDown, onGamepadBtnDown )
@@ -92,7 +111,7 @@ class ScreenManager {
         return m_screens[ id ];
     }
 
-    public function removeScreen(screen : Screen) {
+    public function removeScreen(screen : Screen) : Void {
         var id = screen.getID( );
 
         m_nativeManager.removeScreen( id );
@@ -102,8 +121,16 @@ class ScreenManager {
         m_screens.remove( id );
     }
 
-    public function addScreen(path : String, data : Dynamic, inputBlocking : Bool, priority : Int) {
-        var id = m_nativeManager.createScreen( path, data, inputBlocking, priority );
+    public function addScreen(path : String, initData : Dynamic, inputBlocking : Bool = true, priority : Int = 0) : ScreenID {
+        var id = m_nativeManager.createScreen( path, inputBlocking, priority );
+
+        createScreen( path, id, priority, inputBlocking );
+
+        return id;
+    }
+
+    public function hasInputFocus(screen : Screen) : Bool {
+        return hasFocus( ) && m_nativeManager.screenHasFocus( screen.getID( ) );
     }
 
     public function clearScreens() {
@@ -127,16 +154,16 @@ class ScreenManager {
     }
 
     private function initProjectConfig(guid : String) {
-        m_projectCache[ guid ] = ConfigReadyState.Loading;
+        m_projectCacheState[ guid ] = ConfigReadyState.Loading;
 
-        var head = js.Browser.document.querySelector( 'head' );
+        var head = js.Browser.document.head;
 
         var script = js.Browser.document.createScriptElement( );
 
         script.src = createQualfiedResourcePath( '${guid}/${m_projectConfigScript}' );
 
         script.addEventListener( 'load', function() {
-            m_projectCache[ guid ] = ConfigReadyState.Loaded;
+            m_projectCacheState[ guid ] = ConfigReadyState.Loaded;
 
             invalidateScreenTypeCache( );
 
@@ -144,13 +171,16 @@ class ScreenManager {
         } );
 
         script.addEventListener( 'error', function() {
-            m_projectCache.remove( guid );
+            m_projectCacheState.remove( guid );
+            m_projectScriptCache.remove( guid );
             m_screenLoadQueue.remove( guid );
 
             head.removeChild( script );
 
             throw 'UI Project "${guid}" is missing "${m_projectConfigScript}" in the root.';
         } );
+
+        m_projectScriptCache[ guid ] = script;
 
         head.appendChild( script );
     }
@@ -178,13 +208,14 @@ class ScreenManager {
         var guid = getProjectGUID( path );
 
         var readyCallback = onScreenElementReady.bind(
+            guid,
             createQualfiedResourcePath( path ),
             id,
             priority,
             data
         );
 
-        switch (m_projectCache[ guid ]) {
+        switch (m_projectCacheState[ guid ]) {
             // not loaded
             case null: {
                 queueScreen( guid, readyCallback );
@@ -206,6 +237,7 @@ class ScreenManager {
     private function cacheScreenLayout(qualifiedPath : String, link : LinkElement) {
         var layout = new ScreenLayoutCache( );
 
+        layout.link = link;
         layout.template = cast link.import_.querySelector( 'template' );
 
         if (layout.template == null)
@@ -240,15 +272,19 @@ class ScreenManager {
         m_screenLayoutCache[ qualifiedPath ] = layout;
     }
 
-    private function onScreenElementReady(qualifiedPath : String, id : ScreenID, priority : Int, data : Dynamic) {
+    private function onScreenElementReady(project : String, qualifiedPath : String, id : ScreenID, priority : Int, data : Dynamic) {
         var cached = m_screenLayoutCache[ qualifiedPath ];
 
+        var readyCallback = onScreenLayoutReady.bind( project, _, id, priority, data );
+
         if (cached == null) {
-            var head = js.Browser.document.querySelector( 'head' );
+            var head = js.Browser.document.head;
             var link = js.Browser.document.createLinkElement( );
 
             link.rel = 'import';
-            link.href = qualifiedPath;
+
+            // to ensure no cache
+            link.href = '${qualifiedPath}?t=${Date.now( ).getTime( )}';
 
             link.addEventListener( 'load', function() {
                 try {
@@ -259,7 +295,7 @@ class ScreenManager {
                     throw 'Unable to construct screen. error: ${e}';
                 }
 
-                onScreenLayoutReady( m_screenLayoutCache[ qualifiedPath ], id, priority, data );
+                readyCallback( m_screenLayoutCache[ qualifiedPath ] );
             } );
 
             link.addEventListener( 'error', function() {
@@ -270,11 +306,11 @@ class ScreenManager {
 
             head.appendChild( link );
         } else {
-            onScreenLayoutReady( cached, id, priority, data );
+            readyCallback( cached );
         }
     }
 
-    private function onScreenLayoutReady(layout : ScreenLayoutCache, id : ScreenID, priority : Int, data : Dynamic) {
+    private function onScreenLayoutReady(project : String, layout : ScreenLayoutCache, id : ScreenID, priority : Int, data : Dynamic) {
         var container = js.Browser.document.createDivElement( );
 
         container.classList.add( 'screen' );
@@ -286,9 +322,17 @@ class ScreenManager {
 
         m_container.appendChild( container );
 
+        var config : ScreenConfig = {
+            project: project,
+            owner: this,
+            id: id,
+            container: element,
+            data: data
+        };
+
         m_screens.set(
             id,
-            Type.createInstance( layout.logicHandlerType, [ id, element, data ] )
+            Type.createInstance( layout.logicHandlerType, [ config ] )
         );
     }
 
@@ -296,11 +340,55 @@ class ScreenManager {
         return haxe.io.Path.normalize( path ).split( '/' )[ 0 ];
     }
 
+    private function invalidateProjectCache(projectGUID : String) {
+        if (!m_projectCacheState.exists( projectGUID ))
+            return;
+
+        m_projectCacheState.remove( projectGUID );
+
+        var head = js.Browser.document.head;
+
+        var scriptCache = m_projectScriptCache[ projectGUID ];
+
+        if (scriptCache != null && head.contains( scriptCache )) {
+            head.removeChild( scriptCache );
+
+            m_projectScriptCache.remove( projectGUID );
+        }
+
+        var removalQueue = new Array<String>( );
+
+        for (qualifiedPath in m_screenLayoutCache.keys( )) {
+            var path = StringTools.replace( qualifiedPath, m_uiResourcePrefix +'/', '' );
+
+            var guid = getProjectGUID( path );
+
+            if (guid != projectGUID)
+                continue;
+
+            var cached : ScreenLayoutCache = m_screenLayoutCache[ qualifiedPath ];
+
+            if (cached != null && head.contains( cached.link )) {
+                head.removeChild( cached.link );
+            }
+
+            removalQueue.push( qualifiedPath );
+        }
+
+        for (removed in removalQueue)
+            m_screenLayoutCache.remove( removed );
+    }
+
     private function createQualfiedResourcePath(path : String) {
-        return '${m_uiResourcePrefix}/${path}';
+        return haxe.io.Path.normalize( '${m_uiResourcePrefix}/${path}' );
     }
 
     private function hasFocus() {
+        var playState = Extern.SceneGetPlayState( );
+
+        if (playState != ScenePlayState.Playing)
+            return false;
+
         var focused = js.Browser.document.activeElement;
 
         return focused != null && m_container == focused || focused.contains( m_container );
@@ -317,24 +405,48 @@ class ScreenManager {
         }
     }
 
+    private function pauseScreens() {
+        for (screen in m_screens)
+            screen.pause( );
+    }
+
+    private function resumeScreens() {
+        for (screen in m_screens)
+            screen.resume( );
+    }
+
+    private function onResourceModified(e : Dynamic) {
+        // reloads the cache for all resources belonging to a project
+        invalidateProjectCache( e.guid );
+    }
+
     private function onScenePlayStateChanged() {
         var state = Extern.SceneGetPlayState( );
+
+        // nothing changed
+        if (state == m_lastPlayState)
+            return;
 
         switch (state) {
             case ScenePlayState.Playing: {
                 m_container.classList.add( 'running' );
+
+                if (m_lastPlayState != ScenePlayState.InEditor)
+                    resumeScreens( );
             }
 
             case ScenePlayState.Paused: {
                 m_container.classList.remove( 'running' );
+
+                pauseScreens( );
             }
 
             case ScenePlayState.InEditor: {
                 m_container.classList.remove( 'running' );
-
-                clearScreens( );
             }
         }
+
+        m_lastPlayState = state;
     }
 
     private function onScreenAdded(e : Dynamic) {
@@ -346,6 +458,10 @@ class ScreenManager {
 
         if (screen != null)
             screen.events.trigger( e.message, e.data );
+    }
+
+    private function onScreensCleared() {
+        clearScreens( );
     }
 
     private function onScreenExited(e : Dynamic) {

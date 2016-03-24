@@ -1,6 +1,8 @@
 package ursine.api.input;
 
-abstract GamepadButton(Int) {
+typedef GamepadButtonType = Int;
+
+abstract GamepadButton(GamepadButtonType) {
     public static inline var INVALID           = -1;
     public static inline var A                 = 0;
     public static inline var B                 = 1;

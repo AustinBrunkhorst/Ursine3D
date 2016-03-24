@@ -55,8 +55,9 @@ class UIScreensConfig : public ursine::ecs::Component
 public:
     UIScreensConfig(void);
 
-    DECLARE_SCREEN( Pause );
+    DECLARE_SCREEN( Splash );
     DECLARE_SCREEN( MainMenu );
+    DECLARE_SCREEN( Pause );
     DECLARE_SCREEN( Credits );
 
 private:

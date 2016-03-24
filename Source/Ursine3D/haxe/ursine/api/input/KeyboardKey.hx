@@ -1,6 +1,8 @@
 package ursine.api.input;
 
-abstract KeyboardKey(Int) {
+typedef KeyboardKeyType = Int;
+
+abstract KeyboardKey(KeyboardKeyType) {
     public static inline var BACK = 0x08;
     public static inline var TAB = 0x09;
     public static inline var CLEAR = 0x0C;

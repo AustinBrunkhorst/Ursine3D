@@ -29,7 +29,7 @@ namespace ursine
                 ResourceSyncConfig(
                     FileExclusionList {
                         // whitelist non build/preprocess files
-                        SYNC_EXPR_EXCLUDE_NOT( "ui|js|html|css|png|svg|woff2" )
+                        SYNC_EXPR_EXCLUDE_NOT( "ui|js|html|css|png|svg|svgz|woff2" )
                     }
                 )
             );

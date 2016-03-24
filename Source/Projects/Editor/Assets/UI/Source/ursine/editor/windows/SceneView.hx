@@ -1,9 +1,13 @@
 package ursine.editor.windows;
 
 import ursine.native.Extern;
+
 import ursine.api.input.KeyboardKey;
-import ursine.editor.scene.ui.ScreenManager;
+
+import ursine.editor.scene.ScenePlayState;
+import ursine.editor.scene.ui.EditorScreenManager;
 import ursine.editor.resources.ResourceItem;
+
 import ursine.controls.ItemSelectionPopup;
 
 class SceneView extends NativeCanvasWindowHandler {
@@ -13,17 +17,17 @@ class SceneView extends NativeCanvasWindowHandler {
         m_resourceTypeArchetype
     ];
 
-    private var m_screenManager : ScreenManager;
+    private var m_screenManager : EditorScreenManager;
     private var m_selector : ItemSelectionPopup = null;
 
     public function new() {
         super( 'SceneView' );
 
-        m_screenManager = new ScreenManager( window.container );
+        m_screenManager = new EditorScreenManager( window.container );
 
         window.heading = "Scene";
 
-        window.container.classList.add( 'scene-view-window' );
+        window.container.classList.add( 'scene-view-window', 'no-background' );
         window.container.setAttribute( 'accepts-resource-drop', 'true' );
         window.container.addEventListener( 'resource-drag', onResourceDrag );
         window.container.addEventListener( 'resource-drop', onResourceDrop );
@@ -39,10 +43,17 @@ class SceneView extends NativeCanvasWindowHandler {
     }
 
     private function onWindowKeyDown(e : js.html.KeyboardEvent) {
+        var state = Extern.SceneGetPlayState( );
+
+        // ignore in play mode
+        if (state == ScenePlayState.Playing)
+            return true;
+
         switch (e.keyCode) {
             case KeyboardKey.DELETE: {
                 SceneOutline.instance.deleteSelectedEntities( );
             }
+
             case KeyboardKey.SPACE: {
                 openEditorCommands( );
             }

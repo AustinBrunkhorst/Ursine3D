@@ -18,13 +18,12 @@
 
 namespace ursine
 {
-    NativeJSClass::NativeJSClass(void)
-        : m_browser( CefV8Context::GetEnteredContext( )->GetBrowser( ) ) { }
+    NativeJSClass::NativeJSClass(void) { }
 
     void NativeJSClass::messageBrowser(const std::string &channel, const std::string &message, const Json &data) const
     {
         UIView::Message(
-            m_browser,
+            JSGetGlobalBrowser( ),
             UI_CMD_BROADCAST, 
             channel, 
             message, 

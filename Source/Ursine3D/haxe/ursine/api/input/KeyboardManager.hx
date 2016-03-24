@@ -8,7 +8,7 @@ abstract KeyboardEventType(String) {
 }
 
 extern class KeyboardKeyEvent {
-    var key : KeyboardKey;
+    var key : KeyboardKeyType;
     var pressed : Bool;
     var triggered : Bool;
 }
@@ -19,9 +19,9 @@ extern class KeyboardManager {
 
     function new() : Void;
 
-    function isKeyDown(key : KeyboardKey) : Bool;
-    function isKeyUp(key : KeyboardKey) : Bool;
+    function isKeyDown(key : KeyboardKeyType) : Bool;
+    function isKeyUp(key : KeyboardKeyType) : Bool;
 
-    function isKeyTriggeredDown(key : KeyboardKey) : Bool;
-    function isKeyTriggeredUp(key : KeyboardKey) : Bool;
+    function isKeyTriggeredDown(key : KeyboardKeyType) : Bool;
+    function isKeyTriggeredUp(key : KeyboardKeyType) : Bool;
 }

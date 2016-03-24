@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include "GameContext.h"
+
 #include "World.h"
 
 #include "UIScreenManager.h"
@@ -32,6 +34,9 @@ namespace ursine
     public:
         Scene(void);
         ~Scene(void);
+
+        GameContext *GetGameContext(void);
+        void SetGameContext(GameContext *context);
 
         ecs::World *GetActiveWorld(void) const;
 
@@ -56,6 +61,8 @@ namespace ursine
     private:
         Scene(const Scene &rhs) = delete;
         Scene &operator=(const Scene &rhs) = delete;
+
+        GameContext *m_gameContext;
 
         ScenePlayState m_playState;
 

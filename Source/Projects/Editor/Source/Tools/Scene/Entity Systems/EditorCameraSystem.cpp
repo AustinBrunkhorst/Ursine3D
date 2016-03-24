@@ -183,11 +183,6 @@ void EditorCameraSystem::updateCameraKeys(float dt)
 
     float speed = 15;
 
-    if (keyboardMgr->IsTriggeredDown( KEY_P ))
-    {
-        auto screen = m_world->GetOwner( )->GetScreenManager( ).CreateScreen( "35d65a9b-a3a9-495b-b27f-e53753927ff9/layout/MainMenuScreen.ui" );
-    }
-
     // focus with f
     if (keyboardMgr->IsTriggeredDown( KEY_F ))
     {

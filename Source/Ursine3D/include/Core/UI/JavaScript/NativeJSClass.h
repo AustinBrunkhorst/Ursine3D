@@ -34,8 +34,8 @@ namespace ursine
         NativeJSClass(void);
 
         void messageBrowser(const std::string &channel, const std::string &message, const Json &data) const;
-
-    private:
-        CefRefPtr<CefBrowser> m_browser;
     } Meta(Enable, WhiteListMethods);
+
+    URSINE_TODO( "Find a better solution to this." );
+    extern CefRefPtr<CefBrowser> JSGetGlobalBrowser(void);
 }

@@ -11,6 +11,7 @@ namespace
 {
     const auto kStatusOK = 200;
     const auto kStatusNotFound = 404;
+    const auto kURLQueryDelimiter = '?';
 }
 
 namespace ursine
@@ -31,6 +32,12 @@ namespace ursine
         // require the URL to start with the prefix
         if (url.find( m_requestPrefix ) != 0)
             return false;
+
+        auto queryDelimiter = url.find_last_of( kURLQueryDelimiter );
+
+        // remove queries if applicable
+        if (queryDelimiter != std::string::npos)
+            url = url.substr( 0, queryDelimiter );
 
         fs::path resourcePath = url.substr( m_requestPrefix.size( ) );
 
@@ -108,8 +115,18 @@ namespace ursine
 
         headers.emplace( "Access-Control-Allow-Origin", "*" );
 
+        
+    #if defined(URSINE_WITH_EDITOR)
+
+        // disable cache in editor mode
+        headers.emplace( "Cache-Control", "no-cache, no-store" );
+
+    #else
+
         // always cache for as long as possible
         headers.emplace( "Cache-Control", "max-age=290304000, public" );
+
+    #endif
 
         response->SetHeaderMap( headers );
 

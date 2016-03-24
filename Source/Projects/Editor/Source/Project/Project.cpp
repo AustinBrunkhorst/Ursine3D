@@ -38,7 +38,8 @@ namespace
 }
 
 Project::Project(void)
-    : m_sceneManager( nullptr )
+    : m_gameContext( nullptr )
+    , m_sceneManager( nullptr )
     , m_entityManager( nullptr )
     , m_pipelineManager( nullptr )
     , m_lastOpenedWorld( GUIDNullGenerator( )( ) )
@@ -62,6 +63,7 @@ Project::~Project(void)
     m_resourcePipeline.Listener( this )
         .Off( rp::RP_RESOURCE_MODIFIED, &Project::onResourceModified );
 
+    delete m_gameContext;
     delete m_sceneManager;
     delete m_entityManager;
     delete m_pipelineManager;
@@ -165,6 +167,10 @@ void Project::initialize(const ProjectConfig &config)
 
 void Project::initializeScene(const resources::ResourceReference &startingWorld)
 {
+    m_gameContext = new EditorGameContext( this );
+
+    m_scene.SetGameContext( m_gameContext );
+
     m_sceneManager = new EditorSceneManager( this );
     m_entityManager = new EditorEntityManager( this );
 
@@ -226,8 +232,10 @@ void Project::onScenePlayStateChanged(EVENT_HANDLER(Scene))
 
         m_scene.LoadConfiguredSystems( );
     }
-    else if ((newState == PS_PLAYING || newState == PS_PAUSED) && newState == PS_EDITOR)
+    else if ((oldState == PS_PLAYING || oldState == PS_PAUSED) && newState == PS_EDITOR)
     {
+        m_scene.GetScreenManager( ).ClearScreens( );
+
         auto *cachedWorld = ecs::WorldSerializer::Deserialize( m_worldCache );
 
         m_scene.SetActiveWorld( ecs::World::Handle( cachedWorld ) );
