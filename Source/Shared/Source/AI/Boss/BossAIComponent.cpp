@@ -34,6 +34,25 @@ using namespace resources;
 namespace
 {
     const int kPhaseNumber = 5;
+
+    int GetSegmentIndex(LevelSegments segment)
+    {
+        switch (segment)
+        {
+        case LevelSegments::BossRoom_Phase1:
+            return 0;
+        case LevelSegments::BossRoom_Phase2:
+            return 1;
+        case LevelSegments::BossRoom_Phase3:
+            return 2;
+        case LevelSegments::BossRoom_Phase4:
+            return 3;
+        case LevelSegments::BossRoom_Phase5:
+            return 4;
+        }
+
+        return -1;
+    }
 }
 
 BossAI::BossAI(void)
@@ -298,26 +317,7 @@ void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
 
 void BossAI::onUpdate(EVENT_HANDLER(World))
 {
-    int index = -1;
-
-    switch (m_segment)
-    {
-        case LevelSegments::BossRoom_Phase1:
-            index = 0;
-            break;
-        case LevelSegments::BossRoom_Phase2:
-            index = 1;
-            break;
-        case LevelSegments::BossRoom_Phase3:
-            index = 2;
-            break;
-        case LevelSegments::BossRoom_Phase4:
-            index = 3;
-            break;
-        case LevelSegments::BossRoom_Phase5:
-            index = 4;
-            break;
-    }
+    int index = GetSegmentIndex( m_segment );
 
     if (index == -1)
         return;
@@ -331,6 +331,20 @@ void BossAI::onUpdate(EVENT_HANDLER(World))
 void BossAI::onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager))
 {
     EVENT_ATTRS(LevelSegmentManager, LevelSegmentChangeArgs);
+
+    if (args->segment == m_segment)
+        return;
+
+    // If the previous state is within our range
+    if (m_segment <= LevelSegments::BossRoom_Phase5 &&
+        m_segment >= LevelSegments::BossRoom_Phase1)
+    {
+        // exit this state
+        auto index = GetSegmentIndex( m_segment );
+
+        for (auto &machine : m_bossLogic[ index ])
+            machine->Exit( );
+    }
 
     m_segment = args->segment;
 }
