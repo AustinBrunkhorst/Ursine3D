@@ -16,6 +16,7 @@
 #include "BossSeedshotState.h"
 #include "BossSpawnVinesState.h"
 #include "BossPollinateState.h"
+#include "BossSludgeshotState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -60,6 +61,7 @@ BossAI::BossAI(void)
     , m_segment( LevelSegments::Empty )
     , m_vineCount( 0 )
     , m_turnSpeed( 90.0f )
+    , m_sludgeshotAnimationTime( 5.0f )
     , m_maxPollinateSpreadAngle( 30.0f )
     , m_pollinateLocalForward( 0.0f, 0.0f, 1.0f )
     , m_pollinateProjectileCount( 0 )
@@ -90,6 +92,42 @@ void BossAI::SetSeedshotTurnSpeed(float turnSpeed)
     m_turnSpeed = turnSpeed;
 
     NOTIFY_COMPONENT_CHANGED( "seedshotTurnSpeed", m_turnSpeed );
+}
+
+const std::string &BossAI::GetSludgeshotEntityName(void) const
+{
+    return m_sludgeshotEntity;
+}
+
+void BossAI::SetSludgeshotEntityName(const std::string &name)
+{
+    m_sludgeshotEntity = name;
+
+    NOTIFY_COMPONENT_CHANGED( "sludgeshotEntity", m_sludgeshotEntity );
+}
+
+float BossAI::GetSludgeshotAnimationTime(void) const
+{
+    return m_sludgeshotAnimationTime;
+}
+
+void BossAI::SetSludgeshotAnimationTime(float time)
+{
+    m_sludgeshotAnimationTime = time;
+
+    NOTIFY_COMPONENT_CHANGED( "sludgeshotAnimationTime", m_sludgeshotAnimationTime );
+}
+
+const ResourceReference &BossAI::GetSludgeshotArchetype(void) const
+{
+    return m_sludgeshotArchetype;
+}
+
+void BossAI::SetSludgeshotArchetype(const ResourceReference &archetype)
+{
+    m_sludgeshotArchetype = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "sludgeshotArchetype", m_sludgeshotArchetype );
 }
 
 const std::string &BossAI::GetPollinateEntityName(void) const
@@ -219,6 +257,11 @@ EntityHandle BossAI::GetSeedshotEntity(void)
     return GetOwner( )->GetChildByName( m_seedshotEntity );
 }
 
+EntityHandle BossAI::GetSludgeshotEntity(void)
+{
+    return GetOwner( )->GetChildByName( m_sludgeshotEntity );
+}
+
 EntityHandle BossAI::GetPollinateEntity(void)
 {
     return GetOwner( )->GetChildByName( m_pollinateEntity );
@@ -300,6 +343,17 @@ void BossAI::OnInitialize(void)
         sm->SetInitialState( pollinate );
 
         m_bossLogic[ 2 ].push_back( sm );
+    }
+
+    // TESTING: Sludgeshot
+    {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        auto sludgeshot = sm->AddState<BossSludgeshotState>( );
+
+        sm->SetInitialState( sludgeshot );
+
+        m_bossLogic[ 3 ].push_back( sm );
     }
 }
 

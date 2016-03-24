@@ -121,7 +121,7 @@ void BossPollinateState::spewPollin(void)
 
         // Set the spawn position
         projectile->GetTransform( )->SetWorldPosition(
-            pollinateTrans->GetWorldPosition( )
+            pollinatePosition
         );
 
         // The projectile must have this component
