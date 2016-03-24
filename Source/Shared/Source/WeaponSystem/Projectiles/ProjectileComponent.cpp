@@ -14,19 +14,20 @@
 #include "GameEvents.h"
 #include "Application.h"
 
-NATIVE_COMPONENT_DEFINITION( Projectile );
+NATIVE_COMPONENT_DEFINITION(Projectile);
 
+using namespace ursine;
+using namespace ecs;
 
-Projectile::Projectile( void )
+Projectile::Projectile(void)
     : BaseComponent( )
+    , m_faceTowardsPath( false )
     , m_speed( 10 )
     , m_lifeTime( 0 )
     , m_movementVec( ursine::SVec3( ) )
-    , m_transform( nullptr )
-{
-}
+    , m_transform( nullptr ) { }
 
-Projectile::~Projectile( void )
+Projectile::~Projectile(void)
 {
 }
 
@@ -36,18 +37,29 @@ void Projectile::OnInitialize(void)
         .On( game::PROJECTILE_INIT, &Projectile::OnInit );
 }
 
-// projectile speed
-float Projectile::GetSpeed( void ) const
+float Projectile::GetSpeed(void) const
 {
     return m_speed;
 }
 
-void Projectile::SetSpeed( const float speed )
+void Projectile::SetSpeed(float speed)
 {
     m_speed = speed;
 }
 
-void Projectile::Update( const float dt )
+bool Projectile::GetFaceTowardsPath(void) const
+{
+    return m_faceTowardsPath;
+}
+
+void Projectile::SetFaceTowardsPath(bool flag)
+{
+    m_faceTowardsPath = flag;
+
+    NOTIFY_COMPONENT_CHANGED( "faceTowardsPath", m_faceTowardsPath );
+}
+
+void Projectile::Update(float dt)
 {
     m_lifeTime -= dt;
 
@@ -56,8 +68,10 @@ void Projectile::Update( const float dt )
         GetOwner( )->Delete( );
     }
 
-    m_transform->SetWorldPosition( m_transform->GetWorldPosition( ) + 
-        m_movementVec * ursine::Application::Instance->GetDeltaTime( ) );
+    auto oldPosition = m_transform->GetWorldPosition( );
+    auto newPosition = oldPosition + m_movementVec * Application::Instance->GetDeltaTime( );
+
+    m_transform->SetWorldPosition( newPosition );
 }
 
 void Projectile::OnInit(EVENT_HANDLER(ursine::ecs::Entity))
@@ -69,6 +83,9 @@ void Projectile::OnInit(EVENT_HANDLER(ursine::ecs::Entity))
     m_movementVec = args->m_forwardVec * m_speed;
 
     m_transform = GetOwner( )->GetTransform( );
+
+    if (m_faceTowardsPath)
+        m_transform->SetWorldRotation( SQuat::LookAt( m_movementVec ) );
 }
 
 // calculate lifetime of projectile
