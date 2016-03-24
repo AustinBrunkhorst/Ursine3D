@@ -122,7 +122,8 @@ namespace ursine
                             boneCount,
                             m_toFutParentTransforms,
                             rig
-                            );
+                        );
+
                         // kick out, we're done
                         break;
                     }

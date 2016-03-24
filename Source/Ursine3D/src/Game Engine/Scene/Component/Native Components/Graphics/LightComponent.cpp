@@ -177,10 +177,10 @@ namespace ursine
             //get inner/outer angles
             float outer = light.GetSpotlightAngles().Y() * 3.1415f / 180.f;
 
-            SVec3 scale = trans->GetWorldScale();
+            SVec3 scale = trans->GetLocalScale();
             scale.SetX(tanf(outer / 2.f) * scale.Z() * 2.2f); //arbitrary scalar to prevent artifacts from exact sizing
             scale.SetY(tanf(outer / 2.f) * scale.Z() * 2.2f);
-            trans->SetWorldScale(scale);
+            trans->SetLocalScale(scale);
 
             // get size for spotlight, if needed
             if ( m_light->GetType() == graphics::Light::LIGHT_SPOTLIGHT )
