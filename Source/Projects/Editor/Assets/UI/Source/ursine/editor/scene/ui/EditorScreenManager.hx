@@ -54,6 +54,7 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
     private var m_screenTypeCache : Map<String, Class<Dynamic>>;
 
     private var m_lastPlayState : ScenePlayState;
+    private var m_stepTimer : haxe.Timer;
 
     public function new(container : js.html.DOMElement) {
         instance = this;
@@ -76,6 +77,7 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
         m_screenTypeCache = new Map<String, Class<Dynamic>>( );
 
         m_lastPlayState = ScenePlayState.InEditor;
+        m_stepTimer = null;
 
         var kbManager = new KeyboardManager( );
         var gpManager = new GamepadManager( );
@@ -86,7 +88,8 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
             .on( 'ResourceModified', onResourceModified );
 
         bm.getChannel( 'SceneManager' )
-            .on( 'PlayStateChanged', onScenePlayStateChanged );
+            .on( 'PlayStateChanged', onScenePlayStateChanged )
+            .on( 'FrameStepped', onSceneFrameStepped );
 
         bm.getChannel( 'ScreenManager' )
             .on( 'ScreenAdded', onScreenAdded )
@@ -330,10 +333,13 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
             data: data
         };
 
-        m_screens.set(
-            id,
-            Type.createInstance( layout.logicHandlerType, [ config ] )
-        );
+        var screen : Screen = Type.createInstance( layout.logicHandlerType, [ config ] );
+
+        // make sure it's paused if we're currently paused
+        if (Extern.SceneGetPlayState( ) == ScenePlayState.Paused)
+            screen.pause( );
+
+        m_screens.set( id, screen );
     }
 
     private function getProjectGUID(path : String) {
@@ -391,7 +397,7 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
 
         var focused = js.Browser.document.activeElement;
 
-        return focused != null && m_container == focused || focused.contains( m_container );
+        return focused != null && (m_container == focused || focused.contains( m_container ));
     }
 
     private function forEachFocusedScreen(callback : Dynamic) {
@@ -427,6 +433,9 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
         if (state == m_lastPlayState)
             return;
 
+        if (m_stepTimer != null)
+            m_stepTimer.stop( );
+
         switch (state) {
             case ScenePlayState.Playing: {
                 m_container.classList.add( 'running' );
@@ -447,6 +456,16 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
         }
 
         m_lastPlayState = state;
+    }
+
+    private function onSceneFrameStepped(e : Dynamic) {
+        // ignore when we're not paused
+        if (Extern.SceneGetPlayState( ) != ScenePlayState.Paused)
+            return;
+
+        resumeScreens( );
+
+        m_stepTimer = haxe.Timer.delay( pauseScreens, cast Math.max( e.dt, 30 ) );
     }
 
     private function onScreenAdded(e : Dynamic) {

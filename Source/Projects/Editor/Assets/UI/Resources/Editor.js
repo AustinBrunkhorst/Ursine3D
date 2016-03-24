@@ -247,9 +247,6 @@ haxe_Timer.delay = function(f,time_ms) {
 	};
 	return t;
 };
-haxe_Timer.stamp = function() {
-	return new Date().getTime() / 1000;
-};
 haxe_Timer.prototype = {
 	stop: function() {
 		if(this.id == null) return;
@@ -636,18 +633,19 @@ ursine_api_timers_Timer.__name__ = ["ursine","api","timers","Timer"];
 ursine_api_timers_Timer.prototype = {
 	pause: function(fromGroup) {
 		if(fromGroup == null) fromGroup = false;
-		if(this.m_paused) return;
+		if(this.m_cancelled || this.m_paused) return;
 		this.m_handle.stop();
-		this.m_lastPaused = haxe_Timer.stamp();
-		this.m_remainingDuration = this.m_duration - (this.m_lastPaused - this.m_lastResumed);
+		this.m_lastPaused = new Date().getTime();
+		this.m_remainingDuration -= this.m_lastPaused - this.m_lastResumed;
 		this.m_paused = true;
 		this.m_pausedFromGroup = fromGroup;
 	}
 	,resume: function() {
-		if(!this.m_paused) return;
+		if(this.m_cancelled || !this.m_paused) return;
+		this.m_paused = false;
 		this.m_handle = new haxe_Timer(this.m_remainingDuration);
 		this.m_handle.run = $bind(this,this.tickFromPause);
-		this.m_paused = false;
+		this.m_lastResumed = new Date().getTime();
 	}
 	,cancel: function() {
 		this.m_handle.stop();
@@ -1013,7 +1011,7 @@ var ursine_editor_menus_DebugMenu = function() { };
 $hxClasses["ursine.editor.menus.DebugMenu"] = ursine_editor_menus_DebugMenu;
 ursine_editor_menus_DebugMenu.__name__ = ["ursine","editor","menus","DebugMenu"];
 ursine_editor_menus_DebugMenu.doEditorReload = function() {
-	window.location.reload(true);
+	editor_commands_ReloadEditorUI();
 };
 ursine_editor_menus_DebugMenu.doEditorDebugTools = function() {
 	editor_commands_InspectEditorUI();
@@ -2180,11 +2178,12 @@ var ursine_editor_scene_ui_EditorScreenManager = function(container) {
 	this.m_screenLayoutCache = new haxe_ds_StringMap();
 	this.m_screenTypeCache = new haxe_ds_StringMap();
 	this.m_lastPlayState = 2;
+	this.m_stepTimer = null;
 	var kbManager = new NativeKeyboardManager();
 	var gpManager = new NativeGamepadManager();
 	var bm = ursine_editor_Editor.instance.broadcastManager;
 	bm.getChannel("ResourcePipeline").on("ResourceModified",$bind(this,this.onResourceModified));
-	bm.getChannel("SceneManager").on("PlayStateChanged",$bind(this,this.onScenePlayStateChanged));
+	bm.getChannel("SceneManager").on("PlayStateChanged",$bind(this,this.onScenePlayStateChanged)).on("FrameStepped",$bind(this,this.onSceneFrameStepped));
 	bm.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited)).on("ScreensCleared",$bind(this,this.onScreensCleared));
 	bm.getChannel("GamepadManager").on("GamepadButtonDown",$bind(this,this.onGamepadBtnDown)).on("GamepadButtonUp",$bind(this,this.onGamepadBtnUp)).on("GamepadConnected",$bind(this,this.onGamepadConnected)).on("GamepadDisconnected",$bind(this,this.onGamepadDisconnected));
 	bm.getChannel("KeyboardManager").on("KeyboardKeyDown",$bind(this,this.onKeyDown)).on("KeyboardKeyUp",$bind(this,this.onKeyUp));
@@ -2373,8 +2372,9 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 		element.appendChild(window.document.importNode(layout.template.content,true));
 		this.m_container.appendChild(container);
 		var config = { project : project, owner : this, id : id, container : element, data : data};
-		var value = Type.createInstance(layout.logicHandlerType,[config]);
-		this.m_screens.h[id] = value;
+		var screen = Type.createInstance(layout.logicHandlerType,[config]);
+		if(SceneGetPlayState() == 1) screen.pause();
+		this.m_screens.h[id] = screen;
 	}
 	,getProjectGUID: function(path) {
 		return haxe_io_Path.normalize(path).split("/")[0];
@@ -2413,7 +2413,7 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 		var playState = SceneGetPlayState();
 		if(playState != 0) return false;
 		var focused = window.document.activeElement;
-		return focused != null && this.m_container == focused || focused.contains(this.m_container);
+		return focused != null && (this.m_container == focused || focused.contains(this.m_container));
 	}
 	,forEachFocusedScreen: function(callback) {
 		if(!this.hasFocus()) return;
@@ -2443,6 +2443,7 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 	,onScenePlayStateChanged: function() {
 		var state = SceneGetPlayState();
 		if(state == this.m_lastPlayState) return;
+		if(this.m_stepTimer != null) this.m_stepTimer.stop();
 		switch(state) {
 		case 0:
 			this.m_container.classList.add("running");
@@ -2457,6 +2458,11 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 			break;
 		}
 		this.m_lastPlayState = state;
+	}
+	,onSceneFrameStepped: function(e) {
+		if(SceneGetPlayState() != 1) return;
+		this.resumeScreens();
+		this.m_stepTimer = haxe_Timer.delay($bind(this,this.pauseScreens),Math.max(e.dt,30));
 	}
 	,onScreenAdded: function(e) {
 		this.createScreen(e.path,e.id,e.priority,e.initData);

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ScenePlayState.h"
+#include "DeltaTime.h"
 
 namespace ursine
 {
@@ -10,7 +11,10 @@ namespace ursine
         SCENE_WORLD_CHANGED,
 
         // The current playstate has changed
-        SCENE_PLAYSTATE_CHANGED
+        SCENE_PLAYSTATE_CHANGED,
+
+        // the scene explicitly stepped a frame while paused
+        SCENE_FRAME_STEPPED
     };
 
     struct SceneWorldChangedArgs : EventArgs
@@ -34,5 +38,13 @@ namespace ursine
         ScenePlayStateChangedArgs(ScenePlayState oldState, ScenePlayState newState)
             : oldState( oldState )
             , newState( newState ) { }
+    };
+
+    struct SceneFrameSteppedArgs : EventArgs
+    {
+        DeltaTime dt;
+
+        SceneFrameSteppedArgs(DeltaTime dt)
+            : dt( dt ) { }
     };
 }

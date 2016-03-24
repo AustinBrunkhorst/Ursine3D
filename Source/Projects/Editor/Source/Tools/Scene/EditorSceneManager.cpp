@@ -20,6 +20,7 @@ namespace
         {
             const auto WorldChanged = "WorldChanged";
             const auto PlayStateChanged = "PlayStateChanged";
+            const auto FrameStepped = "FrameStepped";
         }
     }
 }
@@ -30,14 +31,16 @@ EditorSceneManager::EditorSceneManager(Project *project)
 {
      m_project->GetScene( ).Listener( this )
         .On( SCENE_WORLD_CHANGED, &EditorSceneManager::onSceneActiveWorldChanged )
-        .On( SCENE_PLAYSTATE_CHANGED, &EditorSceneManager::onScenePlayStateChanged );
+        .On( SCENE_PLAYSTATE_CHANGED, &EditorSceneManager::onScenePlayStateChanged )
+        .On( SCENE_FRAME_STEPPED, &EditorSceneManager::onSceneFrameStepped );
 }
 
 EditorSceneManager::~EditorSceneManager(void)
 {
     m_project->GetScene( ).Listener( this )
         .Off( SCENE_WORLD_CHANGED, &EditorSceneManager::onSceneActiveWorldChanged )
-        .Off( SCENE_PLAYSTATE_CHANGED, &EditorSceneManager::onScenePlayStateChanged );
+        .Off( SCENE_PLAYSTATE_CHANGED, &EditorSceneManager::onScenePlayStateChanged )
+        .Off( SCENE_FRAME_STEPPED, &EditorSceneManager::onSceneFrameStepped );
 }
 
 void EditorSceneManager::onSceneActiveWorldChanged(EVENT_HANDLER(Scene))
@@ -64,6 +67,22 @@ void EditorSceneManager::onScenePlayStateChanged(EVENT_HANDLER(Scene))
         UI_CMD_BROADCAST,
         channel::SceneManager,
         events::scene::PlayStateChanged,
+        data
+    );
+}
+
+void EditorSceneManager::onSceneFrameStepped(EVENT_HANDLER(Scene))
+{
+    EVENT_ATTRS(Scene, SceneFrameSteppedArgs);
+
+    auto data = Json::object {
+        { "dt", static_cast<int>( args->dt * TimeSpan::MillisPerSecond ) }
+    };
+
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST,
+        channel::SceneManager,
+        events::scene::FrameStepped,
         data
     );
 }

@@ -118,6 +118,10 @@ namespace ursine
     {
         if (m_activeWorld)
             m_activeWorld->Update( );
+
+        SceneFrameSteppedArgs e( Application::Instance->GetDeltaTime( ) );
+
+        Dispatch( SCENE_FRAME_STEPPED, &e );
     }
 
     void Scene::Update(DeltaTime dt) const

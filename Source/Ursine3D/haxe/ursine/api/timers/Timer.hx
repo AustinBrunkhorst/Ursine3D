@@ -34,13 +34,14 @@ class Timer {
 
     private function new(duration : Int) {
         m_duration = duration;
+        m_remainingDuration = duration;
 
         m_paused = false;
         m_cancelled = false;
 
         m_pausedFromGroup = false;
 
-        m_lastResumed = m_lastPaused = haxe.Timer.stamp( );
+        m_lastResumed = m_lastPaused = Date.now( ).getTime( );
 
         m_repeat = 0;
         m_repeatCallback = null;
@@ -55,25 +56,28 @@ class Timer {
     }
 
     public function pause(fromGroup : Bool = false) {
-        if (m_paused)
+        if (m_cancelled || m_paused)
             return;
 
         m_handle.stop( );
-        m_lastPaused = haxe.Timer.stamp( );
-        m_remainingDuration = m_duration - (m_lastPaused - m_lastResumed);
+        m_lastPaused = Date.now( ).getTime( );
+
+        m_remainingDuration -= (m_lastPaused - m_lastResumed);
 
         m_paused = true;
         m_pausedFromGroup = fromGroup;
     }
 
     public function resume() {
-        if (!m_paused)
+        if (m_cancelled || !m_paused)
             return;
+
+        m_paused = false;
 
         m_handle = new haxe.Timer( cast m_remainingDuration );
         m_handle.run = tickFromPause;
 
-        m_paused = false;
+        m_lastResumed = Date.now( ).getTime( );
     }
 
     public function isCanceled() {
@@ -108,7 +112,7 @@ class Timer {
         if (m_paused) {
             return m_lastPaused - m_lastResumed;
         } else {
-            return haxe.Timer.stamp( ) - m_lastResumed;
+            return Date.now( ).getTime( ) - m_lastResumed;
         }
     }
 

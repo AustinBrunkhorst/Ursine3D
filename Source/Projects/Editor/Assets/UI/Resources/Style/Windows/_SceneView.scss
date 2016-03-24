@@ -12,12 +12,13 @@
     right: 0;
     top: 0;
     bottom: 0;
-    opacity: 0;
+    opacity: 0.5;
     pointer-events: none;
+    transition: opacity 200ms ease;
 
     &.running {
       opacity: 1;
-      pointer-events: default;
+      pointer-events: all;
     }
 
     > .screen {

@@ -34,4 +34,5 @@ private:
 
     void onSceneActiveWorldChanged(EVENT_HANDLER(ursine::Scene));
     void onScenePlayStateChanged(EVENT_HANDLER(ursine::Scene));
+    void onSceneFrameStepped(EVENT_HANDLER(ursine::Scene));
 };
