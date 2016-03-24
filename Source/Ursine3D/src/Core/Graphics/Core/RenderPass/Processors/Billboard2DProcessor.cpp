@@ -29,14 +29,14 @@ namespace ursine
         {
             UAssert(handle.Type_ == m_renderableType, "GfxEntityProcessor attempted to proces invalid type!");
 
-            Billboard2D billboard = m_manager->renderableManager->GetRenderableByID<Billboard2D>(handle.Index_);
+            Billboard2D &billboard = m_manager->renderableManager->GetRenderableByID<Billboard2D>( handle.Index_ );
 
             // if inactive
-            if ( !billboard.GetActive( ) )
+            if (!billboard.GetActive( ))
                 return true;
 
             // if culed by camera mask
-            if ( currentCamera.CheckMask( billboard.GetRenderMask( ) ) )
+            if (currentCamera.CheckMask( billboard.GetRenderMask( ) ))
                 return true;
 
             // return false as in DO NOT CULL ME
@@ -45,7 +45,7 @@ namespace ursine
 
         void Billboard2DProcessor::prepOperation(_DRAWHND handle, SMat4 &view, SMat4 &proj, Camera &currentCamera)
         {
-            Billboard2D billboard = m_manager->renderableManager->GetRenderableByID<Billboard2D>( handle.Index_ );
+            Billboard2D &billboard = m_manager->renderableManager->GetRenderableByID<Billboard2D>( handle.Index_ );
 
             // SPRITE DATA //////////////////////////////////////////
             BillboardSpriteBuffer bsb;

@@ -38,6 +38,7 @@ namespace ursine
         class GfxManager
         {
             friend class RenderPass;
+            friend class ShadowPass;
             friend class GlobalShaderResource;
 
             //public methods

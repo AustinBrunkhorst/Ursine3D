@@ -29,7 +29,7 @@ namespace ursine
         {
             UAssert(handle.Type_ == m_renderableType, "GfxEntityProcessor attempted to proces invalid type!");
 
-            SpriteText spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
             // if inactive
             if (!spriteText.GetActive())
@@ -51,7 +51,7 @@ namespace ursine
 
         void SpriteTextProcessor::prepOperation(_DRAWHND handle, SMat4 &view, SMat4 &proj, Camera &currentCamera)
         {
-            SpriteText spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
             // map color data ///////////////////////////////////////
             PointGeometryBuffer pgb;
@@ -85,13 +85,13 @@ namespace ursine
 
         void SpriteTextProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
-            SpriteText spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
             m_manager->shaderManager->Render( 6 * static_cast<unsigned>( spriteText.GetText( ).length( ) ) );
         }
 
         void SpriteTextProcessor::mapSpriteTextBuffer(_DRAWHND handle)
         {
-            SpriteText spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>(handle.Index_);
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
             // map text data ////////////////////////////////////////
             SpriteTextBuffer stb;

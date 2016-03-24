@@ -46,9 +46,11 @@ VS_OUTPUT main(VS_INPUT input)
     indices[ 3 ] = input.BIdx.w;
 
     float3 pos = float3(0.f, 0.f, 0.f);
+    float3 norm = input.Nor;
     for (int i = 0; i < 4; ++i)
     {
         pos += weights[ i ] * mul(float4(input.Pos.xyz, 1.0f), matPal[ indices[ i ] ]).xyz;
+        norm += weights[ i ] * mul(float4(input.Nor.xyz, 0.0f), matPal[ indices[ i ] ]).xyz;
     }
 
     output.Pos = mul(float4(pos.xyz, 1.f), World);
