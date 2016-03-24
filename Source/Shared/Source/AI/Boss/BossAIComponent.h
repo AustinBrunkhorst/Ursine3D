@@ -44,6 +44,25 @@ public:
     );
 
     EditorField(
+        std::string sludgeshotEntity,
+        GetSludgeshotEntityName,
+        SetSludgeshotEntityName
+    );
+
+    EditorField(
+        float sludgeshotAnimationTime,
+        GetSludgeshotAnimationTime,
+        SetSludgeshotAnimationTime
+    );
+
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        sludgeshotArchetype,
+        GetSludgeshotArchetype,
+        SetSludgeshotArchetype
+    );
+
+    EditorField(
         std::string pollinateEntity,
         GetPollinateEntityName,
         SetPollinateEntityName
@@ -114,6 +133,15 @@ public:
     float GetSeedshotTurnSpeed(void) const;
     void SetSeedshotTurnSpeed(float turnSpeed);
 
+    const std::string &GetSludgeshotEntityName(void) const;
+    void SetSludgeshotEntityName(const std::string &entityName);
+
+    float GetSludgeshotAnimationTime(void) const;
+    void SetSludgeshotAnimationTime(float time);
+
+    const ursine::resources::ResourceReference &GetSludgeshotArchetype(void) const;
+    void SetSludgeshotArchetype(const ursine::resources::ResourceReference &sludgeArchetype);
+
     const std::string &GetPollinateEntityName(void) const;
     void SetPollinateEntityName(const std::string &entityname);
 
@@ -146,6 +174,8 @@ public:
 
     ursine::ecs::EntityHandle GetSeedshotEntity(void);
 
+    ursine::ecs::EntityHandle GetSludgeshotEntity(void);
+
     ursine::ecs::EntityHandle GetPollinateEntity(void);
 
     void AddSpawnedVine(ursine::ecs::EntityHandle vine);
@@ -167,6 +197,13 @@ private:
     float m_turnSpeed;
 
     std::string m_seedshotEntity;
+
+    // Sludgeshot variables
+    float m_sludgeshotAnimationTime;
+
+    std::string m_sludgeshotEntity;
+
+    ursine::resources::ResourceReference m_sludgeshotArchetype;
 
     // Pollinate variables
     std::string m_pollinateEntity;
