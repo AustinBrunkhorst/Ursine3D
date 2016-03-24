@@ -29,7 +29,7 @@ namespace ursine
         {
             UAssert(handle.Type_ == m_renderableType, "GfxEntityProcessor attempted to proces invalid type!");
 
-            ParticleSystem particleSystem = m_manager->renderableManager->GetRenderableByID<ParticleSystem>(handle.Index_);
+            ParticleSystem &particleSystem = m_manager->renderableManager->GetRenderableByID<ParticleSystem>( handle.Index_ );
 
             // if inactive
             if (!particleSystem.GetActive())
@@ -45,7 +45,7 @@ namespace ursine
 
         void ParticleSystemProcessor::prepOperation(_DRAWHND handle, SMat4 &view, SMat4 &proj, Camera &currentCamera)
         {
-            ParticleSystem particleSystem = m_manager->renderableManager->GetRenderableByID<ParticleSystem>( handle.Index_ );
+            ParticleSystem &particleSystem = m_manager->renderableManager->GetRenderableByID<ParticleSystem>( handle.Index_ );
 
             // SET BLEND MODE ///////////////////////////////////////
             if (particleSystem.GetAdditive( ))
@@ -80,7 +80,7 @@ namespace ursine
 
         void ParticleSystemProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
-            ParticleSystem particleSystem = m_manager->renderableManager->GetRenderableByID<ParticleSystem>(handle.Index_);
+            ParticleSystem &particleSystem = m_manager->renderableManager->GetRenderableByID<ParticleSystem>( handle.Index_ );
             
             if (particleSystem.GetActiveParticleCount() > 0)
             {

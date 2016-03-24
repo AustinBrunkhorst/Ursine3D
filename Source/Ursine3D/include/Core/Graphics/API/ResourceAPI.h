@@ -75,6 +75,8 @@ namespace ursine
 
             // get a model info
             ufmt_loader::ModelInfo *GetModelInfo(const GfxHND &handle);
+            ufmt_loader::ModelInfo *GetModelInfoNByName(const std::string &name);
+
 
             /////////////////////////////////////////////////////////
             // Animation

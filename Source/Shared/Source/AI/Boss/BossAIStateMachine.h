@@ -22,9 +22,14 @@ class BossAIStateMachine : public ursine::sm::StateMachine
 public:
     typedef std::shared_ptr<BossAIStateMachine> Handle;
 
+    // Global variables for the boss
+    static const std::string VineCount;
+
     BossAIStateMachine(BossAI *boss);
 
     void Update(void) override;
+
+    void Exit(void);
 
     BossAI *GetBoss(void);
 

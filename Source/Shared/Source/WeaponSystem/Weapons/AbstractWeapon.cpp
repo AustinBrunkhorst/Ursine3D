@@ -16,50 +16,25 @@ using namespace ursine;
 
 #define ARBITRARY_NUM 100.0f
 
-namespace
-{
-    float clamp(float min, float max, float val)
-    {
-        return ( min > val ) ? min : ( ( max < val ) ? max : val );
-    }
-
-    // Helper to check if the archetype to shoot needs to have .uatype appended to it
-    void CheckArchetypeToShoot(std::string& archetype)
-    {
-        if ( archetype.find(".uatype") == std::string::npos )
-            archetype += ".uatype";
-
-        if ( archetype.find("FX/") == std::string::npos )
-            archetype = "FX/" + archetype;
-    }
-
-}
-
-
-AbstractWeapon::AbstractWeapon(void) :
-    m_owner( ),
-    m_damageToApply(1.0f),
-    m_critModifier(1.0f),
-    m_damageInterval(1.0f),
-    m_deleteOnCollision(false),
-    m_fireRate(0.2f),
-    m_fireTimer(0.0f),
-    m_reloadTime(0.0f),
-    m_reloadTimer(0.0f),
-    m_recoilAngle(10),
-    m_maxRange(10.0f),
-    m_accuracy( 1.0f ),
-    m_spread( -1.0f, 1.0f ),
-    m_maxAmmoCount(0),
-    m_clipSize(0),
-    m_projFireCount(1),
-    m_weaponType(PRIMARY_WEAPON),
-    m_camHandle(nullptr),
-    m_firePosHandle(nullptr),
-    m_fireParticle( "FX/FX_WeaponShoot_1.uatype" ),
-    m_semiAutomatic(false),
-    m_triggerPulled(false),
-    m_active(true)
+AbstractWeapon::AbstractWeapon(void) 
+    : m_owner( )
+    , m_fireRate( 0.2f )
+    , m_fireTimer( 0.0f )
+    , m_reloadTime( 0.0f )
+    , m_reloadTimer( 0.0f )
+    , m_recoilAngle( 10 )
+    , m_maxRange( 10.0f )
+    , m_accuracy( 1.0f )
+    , m_spread( -1.0f, 1.0f )
+    , m_maxAmmoCount( 0 )
+    , m_clipSize( 0 )
+    , m_projFireCount( 1 )
+    , m_weaponType( PRIMARY_WEAPON )
+    , m_camHandle( nullptr )
+    , m_firePosHandle( nullptr )
+    , m_semiAutomatic( false )
+    , m_triggerPulled( false )
+    , m_active( true )
 {   
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
@@ -121,52 +96,9 @@ int AbstractWeapon::CanFire(void) const
     return CAN_FIRE;
 }
 
-
 ///////////////////////////////
 ////  Gettors and Settors  ////
 ///////////////////////////////
-
-//// Damage
-float AbstractWeapon::GetDamageToApply(void) const
-{
-    return m_damageToApply;
-}
-
-void AbstractWeapon::SetDamageToApply(const float damage)
-{
-    m_damageToApply = damage;
-}
-
-float AbstractWeapon::GetCritModifier(void) const
-{
-    return m_critModifier;
-}
-
-void AbstractWeapon::SetCritModifier(const float modifier)
-{
-    m_critModifier = modifier;
-}
-
-float AbstractWeapon::GetDamageInterval(void) const
-{
-    return m_damageInterval;
-}
-
-void AbstractWeapon::SetDamageInterval(const float damageInterval)
-{
-    m_damageInterval = damageInterval;
-}
-
-bool AbstractWeapon::GetDeleteOnCollision(void) const
-{
-    return m_deleteOnCollision;
-}
-
-void AbstractWeapon::SetDeleteOnCollision(const bool state)
-{
-    m_deleteOnCollision = state;
-}
-
 
 // Fire Rate
 float AbstractWeapon::GetFireRate(void) const
@@ -174,21 +106,21 @@ float AbstractWeapon::GetFireRate(void) const
     return m_fireRate;
 }
 
-void AbstractWeapon::SetFireRate(const float rate)
+void AbstractWeapon::SetFireRate(float rate)
 {
     m_fireRate = rate;
 }
 
+// Reload time
 float AbstractWeapon::GetReloadTime(void) const
 {
     return m_reloadTime;
 }
 
-void AbstractWeapon::SetReloadTime(const float time)
+void AbstractWeapon::SetReloadTime(float time)
 {
     m_reloadTime = time;
 }
-
 
 // Recoil Angle
 float AbstractWeapon::GetRecoilAngle(void) const
@@ -196,11 +128,10 @@ float AbstractWeapon::GetRecoilAngle(void) const
     return m_recoilAngle;
 }
 
-void AbstractWeapon::SetRecoilAngle(const float angle)
+void AbstractWeapon::SetRecoilAngle(float angle)
 {
     m_recoilAngle = angle;
 }
-
 
 // Max Range
 float AbstractWeapon::GetMaxRange(void) const
@@ -208,11 +139,10 @@ float AbstractWeapon::GetMaxRange(void) const
     return m_maxRange;
 }
 
-void AbstractWeapon::SetMaxRange(const float range)
+void AbstractWeapon::SetMaxRange(float range)
 {
     m_maxRange = range;
 }
-
 
 // accuracy
 float AbstractWeapon::GetAccuracy(void) const
@@ -220,11 +150,10 @@ float AbstractWeapon::GetAccuracy(void) const
     return m_accuracy;
 }
 
-void AbstractWeapon::SetAccuracy(const float accuracy)
+void AbstractWeapon::SetAccuracy(float accuracy)
 {
-    m_accuracy = clamp(0.0f, 1.0f, accuracy);
+    m_accuracy = math::Clamp( 0.0f, 1.0f, accuracy );
 }
-
 
 // Spread moefoe
 float AbstractWeapon::GetSpreadFactor(void) const
@@ -232,7 +161,7 @@ float AbstractWeapon::GetSpreadFactor(void) const
     return m_spread.GetMax( );
 }
 
-void AbstractWeapon::SetSpreadFactor(const float spread)
+void AbstractWeapon::SetSpreadFactor(float spread)
 {
     m_spread.SetMax(spread);
     m_spread.SetMin(-spread);
@@ -244,11 +173,10 @@ int AbstractWeapon::GetAmmoCount(void) const
     return m_ammoCount;
 }
 
-void AbstractWeapon::SetAmmoCount(const int ammo)
+void AbstractWeapon::SetAmmoCount(int ammo)
 {
     m_ammoCount = ammo;
 }
-
 
 // Max Ammo Count
 int AbstractWeapon::GetMaxAmmoCount(void) const
@@ -256,7 +184,7 @@ int AbstractWeapon::GetMaxAmmoCount(void) const
     return m_maxAmmoCount;
 }
 
-void AbstractWeapon::SetMaxAmmoCount(const int maxAmmo)
+void AbstractWeapon::SetMaxAmmoCount(int maxAmmo)
 {
     m_maxAmmoCount = maxAmmo;
 
@@ -270,18 +198,16 @@ void AbstractWeapon::SetMaxAmmoCount(const int maxAmmo)
         m_ammoCount = m_maxAmmoCount;
 }
 
-
 // Clip Count
 int AbstractWeapon::GetClipCount(void) const
 {
     return m_clipCount;
 }
 
-void AbstractWeapon::SetClipCount(const int count)
+void AbstractWeapon::SetClipCount(int count)
 {
     m_clipCount = count;
 }
-
 
 // Clip Size
 int AbstractWeapon::GetClipSize(void) const
@@ -289,7 +215,7 @@ int AbstractWeapon::GetClipSize(void) const
     return m_clipSize;
 }
 
-void AbstractWeapon::SetClipSize(const int size)
+void AbstractWeapon::SetClipSize(int size)
 {
     m_clipSize = size;
 
@@ -304,50 +230,46 @@ void AbstractWeapon::SetClipSize(const int size)
 
 }
 
-
 // Projectile fire count
-int AbstractWeapon::GetProjFireCount( ) const
+int AbstractWeapon::GetProjFireCount(void) const
 {
     return m_projFireCount;
 }
 
-void AbstractWeapon::SetProjFireCount(const int count)
+void AbstractWeapon::SetProjFireCount(int count)
 {
     m_projFireCount = count;
 }
 
-
-
 // weapon type
-WeaponType AbstractWeapon::GetWeaponType( ) const
+WeaponType AbstractWeapon::GetWeaponType(void) const
 {
     return m_weaponType;
 }
 
-void AbstractWeapon::SetWeaponType(const WeaponType type)
+void AbstractWeapon::SetWeaponType(WeaponType type)
 {
     m_weaponType = type;
 }
 
-
-const std::string& AbstractWeapon::GetFireParticle( ) const
+// particle to use when firing on muzzle area
+const ursine::resources::ResourceReference& AbstractWeapon::GetFireParticle(void) const
 {
     return m_fireParticle;
 }
 
-void AbstractWeapon::SetFireParticle(const std::string& archetype)
+void AbstractWeapon::SetFireParticle(const ursine::resources::ResourceReference& archetype)
 {
     m_fireParticle = archetype;
-
-    CheckArchetypeToShoot(m_fireParticle);
 }
 
+// semi automatic
 bool AbstractWeapon::GetSemiAutomatic(void) const
 {
     return m_semiAutomatic;
 }
 
-void AbstractWeapon::SetSemiAutomatic(const bool semi)
+void AbstractWeapon::SetSemiAutomatic(bool semi)
 {
     m_semiAutomatic = semi;
 
@@ -355,10 +277,8 @@ void AbstractWeapon::SetSemiAutomatic(const bool semi)
         m_fireRate = ARBITRARY_NUM;
 }
 
-
-
 // Add ammo
-bool AbstractWeapon::AddAmmo(const int ammo)
+bool AbstractWeapon::AddAmmo(int ammo)
 {
     if ( m_ammoCount == m_maxAmmoCount )
         return MAX_AMMO;
@@ -371,46 +291,43 @@ bool AbstractWeapon::AddAmmo(const int ammo)
     return AMMO_USED;
 }
 
-
-
 // Trigger Pulled
 bool AbstractWeapon::GetTriggerPulled(void) const
 {
     return m_triggerPulled;
 }
 
-void AbstractWeapon::TriggerPulled( EVENT_HANDLER( game::FIRE_START ) )
+void AbstractWeapon::TriggerPulled(EVENT_HANDLER(game::FIRE_START))
 {
     m_triggerPulled = true;
 }
 
-void AbstractWeapon::TriggerReleased( EVENT_HANDLER( game::FIRE_END ) )
+void AbstractWeapon::TriggerReleased( EVENT_HANDLER(game::FIRE_END))
 {
     m_triggerPulled = false;
 
     // reset fire timer to be able to shoot again
-    if ( m_semiAutomatic )
+    if (m_semiAutomatic)
         m_fireTimer = 0.0f;
 }
 
-
-void AbstractWeapon::ActivateWeapon(const ursine::ecs::EntityHandle &owner, const ursine::ecs::EntityHandle &whoToConnect, ursine::ecs::Transform* camHandle, int ammo, int clip)
+void AbstractWeapon::ActivateWeapon(const ecs::EntityHandle &owner, const ecs::EntityHandle &whoToConnect, ecs::Transform* camHandle, int ammo, int clip)
 {
     // connect to parent's fire event
-    whoToConnect->Listener(this)
-        .On(game::FIRE_START, &AbstractWeapon::TriggerPulled)
-        .On(game::FIRE_END, &AbstractWeapon::TriggerReleased);
+    whoToConnect->Listener( this )
+        .On( game::FIRE_START, &AbstractWeapon::TriggerPulled )
+        .On( game::FIRE_END, &AbstractWeapon::TriggerReleased );
 
     // Gun is being reloaded from inventory (swapped in) so update
     //   ammo and clip to previous values before swapped out
-    if ( ammo != -1 )
+    if (ammo != -1)
     {
         SetAmmoCount( ammo );
         SetClipCount( clip );
     }
 
     // Grab camera handle for shooting
-    if ( m_camHandle )
+    if (m_camHandle)
         m_camHandle = camHandle;
     else
         m_camHandle = owner->GetTransform( );
@@ -419,33 +336,33 @@ void AbstractWeapon::ActivateWeapon(const ursine::ecs::EntityHandle &owner, cons
     FirePos* firePos = owner->GetComponentInChildren<FirePos>( );
 
     // if the fire position was a child then grab transform for shooting
-    if ( firePos )
+    if (firePos)
         m_firePosHandle = firePos->GetOwner( )->GetTransform( );
     else
         m_firePosHandle = owner->GetTransform( );
 
     // Grab animator of weapon's child model
-    m_animatorHandle = owner->GetComponentInChildren<ursine::ecs::Animator>( );
+    m_animatorHandle = owner->GetComponentInChildren<ecs::Animator>( );
 }
 
-void AbstractWeapon::DetachWeapon(const ursine::ecs::EntityHandle &owner, const ursine::ecs::EntityHandle &whoToDisconnect)
+void AbstractWeapon::DetachWeapon(const ecs::EntityHandle &owner, const ecs::EntityHandle &whoToDisconnect)
 {
     // disconnect from parent's fire event
-    whoToDisconnect->Listener(this)
-        .Off(game::FIRE_START, &AbstractWeapon::TriggerPulled)
-        .Off(game::FIRE_END, &AbstractWeapon::TriggerReleased);
+    whoToDisconnect->Listener( this )
+        .Off( game::FIRE_START, &AbstractWeapon::TriggerPulled )
+        .Off( game::FIRE_END, &AbstractWeapon::TriggerReleased );
 
     // unattach from parent
     owner->GetTransform( )->DetachFromParent( );
 
     // give rigidbody so fall to the ground
-    ursine::ecs::Rigidbody* body = owner->AddComponent<ursine::ecs::Rigidbody>( );
+    ecs::Rigidbody* body = owner->AddComponent<ecs::Rigidbody>( );
 
     // give body an impulse to simulate throwing
-    body->AddImpulse( owner->GetTransform( )->GetForward( ) * 3 + ursine::SVec3(0.0f, 3.0f, 0.0f) );
+    body->AddImpulse( owner->GetTransform( )->GetForward( ) * 3 + SVec3(0.0f, 3.0f, 0.0f) );
 
     // need dat collision for floor
-    owner->AddComponent<ursine::ecs::BoxCollider>( );
+    owner->AddComponent<ecs::BoxCollider>( );
 
     // need dat interactability
     owner->AddComponent<Interactable>( );
@@ -461,9 +378,9 @@ void AbstractWeapon::DetachWeapon(const ursine::ecs::EntityHandle &owner, const 
 void AbstractWeapon::DeactivateWeapon(const ursine::ecs::EntityHandle &whoToDisconnect, int& saveAmmo, int& saveClip)
 {
     // disconnect from parent's fire event
-    whoToDisconnect->Listener(this)
-        .Off(game::FIRE_START, &AbstractWeapon::TriggerPulled)
-        .Off(game::FIRE_END, &AbstractWeapon::TriggerReleased);
+    whoToDisconnect->Listener( this )
+        .Off( game::FIRE_START, &AbstractWeapon::TriggerPulled )
+        .Off( game::FIRE_END, &AbstractWeapon::TriggerReleased );
 
     saveAmmo = m_ammoCount;
     saveClip = m_clipCount;
@@ -473,40 +390,26 @@ void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
 {
     EVENT_ATTRS(ursine::ecs::Entity, game::WeaponActivationEventArgs);
 
-    ActivateWeapon(sender, args->whoToConnect, args->m_camHandle, args->m_ammo, args->m_clip);
+    ActivateWeapon( sender, args->whoToConnect, args->m_camHandle, args->m_ammo, args->m_clip );
 }
 
 void AbstractWeapon::DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON))
 {
     EVENT_ATTRS(ursine::ecs::Entity, game::WeaponDeactivationEventArgs);
 
-    DetachWeapon(sender, args->whoToConnect);
+    DetachWeapon( sender, args->whoToConnect );
 }
 
 void AbstractWeapon::DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON))
 {
     game::WeaponDeactivationEventArgs* args = static_cast<game::WeaponDeactivationEventArgs*>( const_cast<ursine::EventArgs*>( _args ) );
 
-    DeactivateWeapon(args->whoToConnect, args->m_ammo, args->m_clip);
+    DeactivateWeapon( args->whoToConnect, args->m_ammo, args->m_clip );
 }
 
-
-
-void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED))
+void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(game::PICKUP_AMMO))
 {
-    EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
+    EVENT_ATTRS( ursine::ecs::Entity, game::AmmoPickupEventArgs );
 
-    if ( args->otherEntity->HasComponent<AmmoPickup>( ) )
-    {
-        AmmoPickup& pickup = *args->otherEntity->GetComponent<AmmoPickup>( );
-
-        if ( AddAmmo( args->otherEntity->GetComponent<AmmoPickup>( )->m_count ) )
-        {
-            args->otherEntity->Delete( );
-        }
-    }
+    AddAmmo( args->m_ammo );
 }
-
-
-
-

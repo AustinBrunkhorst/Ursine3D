@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -217,6 +217,9 @@ namespace ursine
 
             SMat4 GenerateViewSpaceShadowTransform(void) const;
             SMat4 GenerateViewSpaceShadowProjection(void) const;
+
+            SMat4 GenerateShadowView(void) const;
+            SMat4 GenerateShadowProjection(void) const;
 
         private:
             LightType m_type;

@@ -36,6 +36,7 @@
 // special passes
 #include "LineRendererPass.h"
 #include "PointRendererPass.h"
+#include "ShadowPass.h"
 
 static int tempID = -1;
 static HWND wHND = 0;
@@ -55,20 +56,20 @@ namespace ursine
         {
             /////////////////////////////////////////////////////////////////
             // ALLOCATE MANAGERS ////////////////////////////////////////////
-            dxCore = new DXCore::DirectXCore;
-            gfxInfo = new GfxInfo;
-            shaderManager = new DXCore::ShaderManager;
-            bufferManager = new DXCore::ShaderBufferManager;
-            layoutManager = new DXCore::InputLayoutManager;
-            modelManager = new ModelManager;
-            renderableManager = new RenderableManager;
-            cameraManager = new CameraManager;
-            textureManager = new TextureManager;
-            viewportManager = new ViewportManager;
-            uiManager = new GfxUIManager;
-            drawingManager = new DrawingManager;
-            fontManager = new FontManager;
-            gfxProfiler = new GfxProfiler;
+            dxCore              = new DXCore::DirectXCore;
+            gfxInfo             = new GfxInfo;
+            shaderManager       = new DXCore::ShaderManager;
+            bufferManager       = new DXCore::ShaderBufferManager;
+            layoutManager       = new DXCore::InputLayoutManager;
+            modelManager        = new ModelManager;
+            renderableManager   = new RenderableManager;
+            cameraManager       = new CameraManager;
+            textureManager      = new TextureManager;
+            viewportManager     = new ViewportManager;
+            uiManager           = new GfxUIManager;
+            drawingManager      = new DrawingManager;
+            fontManager         = new FontManager;
+            gfxProfiler         = new GfxProfiler;
 
             /////////////////////////////////////////////////////////////////
             // INITIALIZING /////////////////////////////////////////////////
@@ -349,18 +350,22 @@ namespace ursine
 
             m_rendering = true;
 
-            dxCore->StartDebugEvent("FrameStart");
+            dxCore->StartDebugEvent( "FrameStart" );
 
-            dxCore->ClearSwapchain();
-            dxCore->ClearTargetBuffers();
-            dxCore->ClearDebugBuffer();
-            gfxProfiler->BeginFrame();
+            dxCore->ClearSwapchain( );
+            dxCore->ClearTargetBuffers( );
+            dxCore->ClearDebugBuffer( );
+            gfxProfiler->BeginFrame( );
 
             //cache state of all graphics objects
             renderableManager->CacheFrame();
 
             float colorArray[4] = { 0,0,0,1 };
-            dxCore->GetDeviceContext()->ClearRenderTargetView(dxCore->GetRenderTargetMgr()->GetRenderTarget(RENDER_TARGET_DEFERRED_SPECPOW)->RenderTargetView, colorArray);
+            dxCore->GetDeviceContext()->ClearRenderTargetView( 
+                dxCore->GetRenderTargetMgr()->GetRenderTarget(
+                    RENDER_TARGET_DEFERRED_SPECPOW )->RenderTargetView, 
+                    colorArray 
+            );
         }
 
         void GfxManager::BeginScene()
@@ -370,11 +375,11 @@ namespace ursine
             m_sceneActive = true;
 
             //clear draw call list
-            memset(reinterpret_cast<unsigned long long*>(&m_drawList[0]), 0, sizeof(unsigned long long) * m_drawCount * 2);
+            memset( reinterpret_cast<unsigned long long*>(&m_drawList[0]), 0, sizeof(unsigned long long) * m_drawCount * 2 );
             m_drawCount = 0;
 
             //clear debug buffer
-            dxCore->ClearDebugBuffer();
+            dxCore->ClearDebugBuffer( );
         }
 
         void GfxManager::RenderScene(float dt, GfxHND camera)
@@ -383,21 +388,21 @@ namespace ursine
             UAssert(m_sceneActive == true, "Attempted to render a scene without beginning one!");
 
             // get viewport
-            _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>(&camera);
+            _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>( &camera );
             UAssert(camHND->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
 
             Camera &cam = cameraManager->GetCamera(camera);
 
-            dxCore->StartDebugEvent("CameraRenderScene");
+            dxCore->StartDebugEvent( "CameraRenderScene" );
 
             //get game vp dimensions
-            Viewport &gameVP = viewportManager->GetViewport(m_GameViewport);
-            D3D11_VIEWPORT gvp = gameVP.GetViewportData();
+            Viewport &gameVP = viewportManager->GetViewport( m_GameViewport );
+            D3D11_VIEWPORT gvp = gameVP.GetViewportData( );
 
             //set directx viewport
             float w, h, x, y;
-            cam.GetViewportPosition(x, y);
-            cam.GetDimensions(w, h);
+            cam.GetViewportPosition( x, y );
+            cam.GetDimensions( w, h );
 
             w *= gvp.Width;
             h *= gvp.Height;
@@ -413,39 +418,87 @@ namespace ursine
             vpData.MinDepth = 0;
             vpData.MaxDepth = 1;
 
-            dxCore->GetDeviceContext()->RSSetViewports(1, &vpData);
+            dxCore->GetDeviceContext()->RSSetViewports( 
+                1, 
+                &vpData 
+            );
 
             // clear it
-            dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
-            dxCore->GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-            dxCore->SetDepthState(DEPTH_STATE_NODEPTH_NOSTENCIL);
-            dxCore->SetRenderTarget(RENDER_TARGET_SWAPCHAIN, DEPTH_STENCIL_COUNT);
-            dxCore->SetBlendState(BLEND_STATE_DEFAULT);
+            dxCore->SetRasterState( RASTER_STATE_SOLID_BACKCULL );
+            dxCore->GetDeviceContext()->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+            dxCore->SetDepthState( DEPTH_STATE_NODEPTH_NOSTENCIL );
+            dxCore->SetRenderTarget( RENDER_TARGET_SWAPCHAIN, DEPTH_STENCIL_COUNT );
+            dxCore->SetBlendState( BLEND_STATE_DEFAULT );
 
-            modelManager->BindModel(INTERNAL_QUAD);
-            shaderManager->BindShader(SHADER_PRIMITIVE);
-            layoutManager->SetInputLayout(SHADER_PRIMITIVE);
-            textureManager->MapSamplerState(SAMPLER_STATE_WRAP_TEX);
-            textureManager->MapTextureByID(INTERNAL_BLANK_TEX);
+            modelManager->BindModel( INTERNAL_QUAD );
+            shaderManager->BindShader( SHADER_PRIMITIVE );
+            layoutManager->SetInputLayout( SHADER_PRIMITIVE );
+            textureManager->MapSamplerState( SAMPLER_STATE_WRAP_TEX );
+            textureManager->MapTextureByID( INTERNAL_BLANK_TEX );
 
-            bufferManager->MapCameraBuffer(SMat4::Identity(), SMat4::Identity());
-            bufferManager->MapTransformBuffer(SMat4(-2, 2, 1));
+            bufferManager->MapCameraBuffer( 
+                SMat4::Identity( ), 
+                SMat4::Identity( )
+            );
+            bufferManager->MapTransformBuffer( SMat4(-2, 2, 1) );
 
             PrimitiveColorBuffer pcb;
             //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
-            pcb.color = cam.GetClearColor( ).ToVector4( ).ToD3D( );
-            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(&pcb, SHADERTYPE_PIXEL);
+            pcb.color = DirectX::XMFLOAT4( 
+                0.0f, 
+                0.0f, 
+                0.0f, 
+                1.0f 
+            );
+            bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(
+                &pcb, 
+                SHADERTYPE_PIXEL
+            );
 
-            shaderManager->Render(modelManager->GetModelIndexcountByID(INTERNAL_QUAD));
+            shaderManager->Render( modelManager->GetModelIndexcountByID( INTERNAL_QUAD ) );
 
 
             /////////////////////////////////////////////////////////////////
-            if (cam.GetRenderMode() == VIEWPORT_RENDER_DEFERRED)
-                RenderScene_Deferred(dt, camera);
+            if (cam.GetRenderMode( ) == VIEWPORT_RENDER_DEFERRED)
+                RenderScene_Deferred( dt, camera );
             else
-                RenderScene_Forward(dt, camera);
+                RenderScene_Forward( dt, camera );
 
-            dxCore->EndDebugEvent();
+            dxCore->EndDebugEvent( );
+            return;
+            //close thread handle if needed
+            if (m_threadHandle != nullptr)
+                CloseHandle(m_threadHandle);
+
+            return;
+            /*
+            auto *data = new threadData;
+            data->gfx = this;
+            data->dt = dt;
+            data->forward = viewportManager->GetRenderMode( viewport ) == VIEWPORT_RENDER_FORWARD;
+            data->viewport = viewport;
+
+            m_threadHandle = CreateThread( nullptr, 0, renderBootstrap, data, 0, &m_threadID );*/
+        }
+
+        DWORD GfxManager::renderBootstrap(LPVOID lpParam)
+        {
+            auto *data = reinterpret_cast<threadData*>(lpParam);
+
+            if (data->forward == true)
+            {
+                data->gfx->RenderScene_Forward(data->dt, data->viewport);
+            }
+            else
+            {
+                data->gfx->RenderScene_Deferred(data->dt, data->viewport);
+            }
+
+            data->gfx->EndScene();
+
+            delete lpParam;
+
+            return 0;
         }
 
         void GfxManager::RenderScene_Deferred(float dt, GfxHND camera)
@@ -467,10 +520,7 @@ namespace ursine
 
             //set directx viewport
             float w, h;
-            currentCamera.GetDimensions(
-                w, 
-                h
-            );
+            currentCamera.GetDimensions( w, h );
 
             w *= gvp.Width;
             h *= gvp.Height;
@@ -479,15 +529,15 @@ namespace ursine
                 w, 
                 h 
             );
-            currentCamera.SetScreenPosition(
+            currentCamera.SetScreenPosition( 
                 gvp.TopLeftX, 
-                gvp.TopLeftY
+                gvp.TopLeftY 
             );
 
             // sort the handles
-            std::sort( 
-                m_drawList.begin( ), 
-                m_drawList.begin( ) + m_drawCount, 
+            std::sort(
+                m_drawList.begin(), 
+                m_drawList.begin() + m_drawCount, 
                 sort
             );
 
@@ -496,6 +546,7 @@ namespace ursine
 
             // define the passes
             RenderPass          deferredPass( "DeferredPass" );
+            ShadowPass          shadowPass;
             RenderPass          spotlightPass( "SpotlightPass" );
             RenderPass          pointlightPass( "PointLightPass" );
             RenderPass          directionalLightPass( "DirectionalLightPass" );
@@ -510,13 +561,14 @@ namespace ursine
             RenderPass          textPass( "SpriteTextPass" );
 
             // create processors
-            auto modelProcessor = Model3DProcessor( );
-            auto slProcessor = SpotLightProcessor( );
-            auto plProcessor = PointLightProcessor( );
-            auto dlProcessor = DirectionalLightProcessor( );
-            auto particleProcessor = ParticleSystemProcessor( );
+            auto modelProcessor     = Model3DProcessor( );
+            auto shadowProcessor    = Model3DProcessor( false );
+            auto slProcessor        = SpotLightProcessor( );
+            auto plProcessor        = PointLightProcessor( );
+            auto dlProcessor        = DirectionalLightProcessor( );
+            auto particleProcessor  = ParticleSystemProcessor( );
             auto billboardPorcessor = Billboard2DProcessor( );
-            auto textProcessor = SpriteTextProcessor( );
+            auto textProcessor      = SpriteTextProcessor( );
 
             // CREATE GLOBALS
             GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBuffer( SHADERTYPE_VERTEX );
@@ -535,6 +587,7 @@ namespace ursine
             GlobalGPUResource   specPowRT( SHADER_SLOT_3, RESOURCE_INPUT_RT );
             GlobalGPUResource   debugInput( SHADER_SLOT_0, RESOURCE_INPUT_RT );
             GlobalGPUResource   lightmapRT( SHADER_SLOT_1, RESOURCE_INPUT_RT );
+            GlobalGPUResource   shadowmapDepth( SHADER_SLOT_4, RESOURCE_INPUT_DEPTH );
 
             // other resources
             GlobalGPUResource   spriteModel( SHADER_SLOT_0, RESOURCE_MODEL );
@@ -542,6 +595,7 @@ namespace ursine
             GlobalGPUResource   lightSphereModel( SHADER_SLOT_0, RESOURCE_MODEL );
             GlobalGPUResource   fullscreenModel( SHADER_SLOT_0, RESOURCE_MODEL );
             GlobalGPUResource   particleModel( SHADER_SLOT_0, RESOURCE_MODEL );
+            GlobalGPUResource   fontTexture( SHADER_SLOT_0, RESOURCE_TEXTURE );
 
             /////////////////////////////////////////////////////////
             // DEFINING PIPELINE
@@ -572,6 +626,25 @@ namespace ursine
                     InitializePass( );
                 }
 
+                 /////////////////////////////////////////////////////////
+                // SHADOW PASS
+                {
+                    shadowPass.
+                        Set( { } ).
+                        Set( SHADER_SHADOW_PASS  ).
+                        Set( DEPTH_STENCIL_SHADOWMAP ).
+                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
+                        Set( RASTER_STATE_SHADOW_RENDER ).
+                        Set( BLEND_STATE_COUNT ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &invProjection ).
+
+                        Accepts( RENDERABLE_LIGHT ).
+                        Processes( &shadowProcessor ).
+                    InitializePass( );
+                }
+
                 /////////////////////////////////////////////////////////
                 // SPOTLIGHT PASS
                 {
@@ -580,7 +653,8 @@ namespace ursine
                         Set( SHADER_SPOT_LIGHT ).
                         Set( DEPTH_STENCIL_COUNT ).
                         Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( SAMPLER_STATE_WRAP_TEX, 0).
+                        Set( SAMPLER_STATE_SHADOW, 1).
                         Set( RASTER_STATE_SOLID_BACKCULL ).
                         Set( BLEND_STATE_ADDITIVE ).
                         Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
@@ -588,15 +662,16 @@ namespace ursine
                         AddResource( &viewBuffer ).
                         AddResource( &invProjection ).
                         AddResource( &lightConeModel ).
-
+                                     
                         AddResource( &depthInput ).
                         AddResource( &diffuseRT ).
                         AddResource( &normalRT ).
                         AddResource( &specPowRT ).
+                        AddResource( &shadowmapDepth ).
 
                         Accepts( RENDERABLE_LIGHT ).
                         Processes( &slProcessor ).
-                    InitializePass( );
+                    InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
@@ -674,7 +749,7 @@ namespace ursine
                         AddResource( &diffuseRT ).
                         AddResource( &normalRT ).
                         AddResource( &specPowRT ).
-                                     
+
                         IsFullscreenPass( true ).
                     InitializePass( );
                 }
@@ -723,9 +798,9 @@ namespace ursine
                 // OVERDRAW PASS
                 {
                     overdrawPass.
-                        Set(
+                        Set( 
                             {
-                                RENDER_TARGET_SWAPCHAIN,
+                                RENDER_TARGET_DEFERRED_COLOR,
                                 RENDER_TARGET_DEFERRED_NORMAL,
                                 RENDER_TARGET_DEFERRED_SPECPOW
                             }
@@ -760,6 +835,7 @@ namespace ursine
 
                         AddResource( &identityTransform ).
                         AddResource( &viewBuffer ).
+
 
                         IsFullscreenPass( true ).
                     InitializePass( );
@@ -812,7 +888,7 @@ namespace ursine
                 // BILLBOARD PASS
                 {
                     billboardPass.
-                        Set(
+                        Set( 
                             {
                                 RENDER_TARGET_SWAPCHAIN,
                                 RENDER_TARGET_DEFERRED_NORMAL,
@@ -841,7 +917,7 @@ namespace ursine
                 // SPRITE TEXT PASS
                 {
                     textPass.
-                        Set(
+                        Set( 
                             {
                                 RENDER_TARGET_SWAPCHAIN,
                                 RENDER_TARGET_DEFERRED_NORMAL,
@@ -853,16 +929,13 @@ namespace ursine
                         Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_NOCULL ).
-#if defined(URSINE_WITH_EDITOR)
                         Set( BLEND_STATE_COUNT ).
-#else
-                        Set( BLEND_STATE_DEFAULT ).
-#endif
                         Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
 
                         AddResource( &viewBuffer ).
                         AddResource( &particleModel ).
                         AddResource( &invView ).
+                        AddResource( &fontTexture ).
 
                         Accepts( RENDERABLE_SPRITE_TEXT ).
                         Processes( &textProcessor ).
@@ -875,6 +948,7 @@ namespace ursine
             // CREATE PIPELINE
             DeferredPipeline.
                 AddPrePass( &deferredPass ).
+                AddPrePass( &shadowPass ).
                 AddPrePass( &spotlightPass ).
                 AddPrePass( &pointlightPass ).
                 AddPrePass( &directionalLightPass ).
@@ -887,7 +961,7 @@ namespace ursine
                 AddPrePass( &particlePass ).
                 AddPrePass( &billboardPass ).
                 AddPrePass( &textPass ).
-            InitializePass();
+            InitializePass( );
 
             /////////////////////////////////////////////////////////
             // UPDATE RESOURCES
@@ -899,73 +973,77 @@ namespace ursine
 
             // viewBuffer(SHADERTYPE_VERTEX);
             // viewBufferGeom(SHADERTYPE_GEOMETRY);
-            cb.view = SMat4::Transpose(currentCamera.GetViewMatrix()).ToD3D();
-            cb.projection = SMat4::Transpose(currentCamera.GetProjMatrix()).ToD3D();
-            viewBuffer.Update(cb);
-            viewBufferGeom.Update(cb);
+            cb.view = SMat4::Transpose( currentCamera.GetViewMatrix( ) ).ToD3D( );
+            cb.projection = SMat4::Transpose( currentCamera.GetProjMatrix( ) ).ToD3D( );
+            viewBuffer.Update( cb );
+            viewBufferGeom.Update( cb );
 
             // viewIdentity(SHADERTYPE_VERTEX);
-            cb.view = SMat4::Identity().ToD3D();
-            cb.projection = SMat4::Identity().ToD3D();
-            viewIdentity.Update(cb);
+            cb.view = SMat4::Identity( ).ToD3D( );
+            cb.projection = SMat4::Identity( ).ToD3D( );
+            viewIdentity.Update( cb );
 
             // spriteGeomBuff(SHADERTYPE_GEOMETRY);
-            pgb.cameraPosition = SVec4(currentCamera.GetPosition(), 1).ToD3D();
-            pgb.cameraUp = SVec4(currentCamera.GetUp(), 0).ToD3D();
-            spriteGeomBuff.Update(pgb);
+            pgb.cameraPosition = SVec4( currentCamera.GetPosition(), 1 ).ToD3D( );
+            pgb.cameraUp = SVec4( currentCamera.GetUp( ), 0 ).ToD3D( );
+            spriteGeomBuff.Update( pgb );
 
             // identityTransform(SHADERTYPE_VERTEX);
-            tb.transform = SMat4::Identity().ToD3D();
-            identityTransform.Update(tb);
+            tb.transform = SMat4::Identity( ).ToD3D( );
+            identityTransform.Update( tb );
 
             // fullscreenTransform(SHADERTYPE_VERTEX);
-            tb.transform = SMat4(-2, 2, 1).ToD3D();
-            fullscreenTransform.Update(tb);
+            tb.transform = SMat4( -2, 2, 1 ).ToD3D( );
+            fullscreenTransform.Update( tb );
 
             // invView( SHADERTYPE_VERTEX );
-            SMat4 temp = currentCamera.GetViewMatrix();
-            temp.Transpose();
-            temp.Inverse();
-            ivb.invView = temp.ToD3D();
-            invView.Update(ivb, SHADER_SLOT_4);
+            SMat4 temp = currentCamera.GetViewMatrix( );
+            temp.Transpose( );
+            temp.Inverse( );
+            ivb.invView = temp.ToD3D( );
+            currentCamera.GetPlanes(ivb.nearPlane, ivb.farPlane);
+            invView.Update( ivb, SHADER_SLOT_4 );
 
             // invProjection( SHADERTYPE_PIXEL );
-            temp = currentCamera.GetProjMatrix();
-            temp.Transpose();
-            temp.Inverse();
-            ivb.invView = temp.ToD3D();
-            currentCamera.GetPlanes(ivb.nearPlane, ivb.farPlane);
-            invProjection.Update(ivb);
+            temp = currentCamera.GetProjMatrix( );
+            temp.Transpose( );
+            temp.Inverse( );
+            ivb.invView = temp.ToD3D( );
+            currentCamera.GetPlanes( ivb.nearPlane, ivb.farPlane );
+            invProjection.Update( ivb );
 
             // TARGET INPUTS //////////////////
             // input RTs
             // depthInput(SHADER_SLOT_0, RESOURCE_INPUT_DEPTH);
-            depthInput.Update(DEPTH_STENCIL_MAIN);
+            depthInput.Update( DEPTH_STENCIL_MAIN );
 
             // diffuseRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
-            diffuseRT.Update(RENDER_TARGET_DEFERRED_COLOR);
+            diffuseRT.Update( RENDER_TARGET_DEFERRED_COLOR );
 
             // normalRT(SHADER_SLOT_2, RESOURCE_INPUT_RT);
-            normalRT.Update(RENDER_TARGET_DEFERRED_NORMAL);
+            normalRT.Update( RENDER_TARGET_DEFERRED_NORMAL );
 
             // specPowRT(SHADER_SLOT_3, RESOURCE_INPUT_RT);
-            specPowRT.Update(RENDER_TARGET_DEFERRED_SPECPOW);
+            specPowRT.Update( RENDER_TARGET_DEFERRED_SPECPOW );
             // debugInput(SHADER_SLOT_0, RESOURCE_INPUT_RT);
-            debugInput.Update(RENDER_TARGET_DEBUG);
+            debugInput.Update( RENDER_TARGET_DEBUG );
 
             // lightmapRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
-            lightmapRT.Update(RENDER_TARGET_LIGHTMAP);
+            lightmapRT.Update( RENDER_TARGET_LIGHTMAP );
+
+            shadowmapDepth.Update( DEPTH_STENCIL_SHADOWMAP );
 
             // TEXTURES AND MODELS /////////////
-            lightConeModel.Update(INTERNAL_CONE);
-            lightSphereModel.Update(INTERNAL_SPHERE);
-            fullscreenModel.Update(INTERNAL_QUAD);
-            spriteModel.Update(INTERNAL_QUAD);
-            particleModel.Update(INTERNAL_POINT_INDICES);
+            lightConeModel.Update( INTERNAL_CONE );
+            lightSphereModel.Update( INTERNAL_SPHERE );
+            fullscreenModel.Update( INTERNAL_QUAD );
+            spriteModel.Update( INTERNAL_QUAD );
+            particleModel.Update( INTERNAL_POINT_INDICES );
+            fontTexture.Update( 0 );
 
             /////////////////////////////////////////////////////////
             // RENDER
-            DeferredPipeline.Execute(currentCamera);
+            DeferredPipeline.Execute( currentCamera );
 
             return;
         }
@@ -1389,7 +1467,10 @@ namespace ursine
             int overdraw = (tempID >> 15) & 0x1;
 
             if (index > MAX_RENDERABLES)
+            {
+                m_currentID = -1;
                 return;
+            }
 
             unsigned w, h;
             gfxInfo->GetDimensions(w, h);

@@ -36,7 +36,7 @@ namespace ursine
             : Condition( "" )
             , m_manager( manager )
             , m_startSegment( startSegment )
-            , m_range( true )
+            , m_range( false )
         {
         }
 

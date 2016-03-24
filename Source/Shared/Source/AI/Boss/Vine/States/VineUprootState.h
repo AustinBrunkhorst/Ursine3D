@@ -14,9 +14,7 @@
 #pragma once
 
 #include "VineAIState.h"
-
-class EntityAnimator;
-class VineAI;
+#include "VineAIComponent.h"
 
 class VineUprootState : public VineAIState
 {
@@ -47,7 +45,7 @@ private:
 
     ursine::SVec3 m_originalDimensions;
 
-    void playAnimation(EntityAnimator *animator, const std::string &clip);
+    void playAnimation(ursine::ecs::Animator *animator, const std::string &clip);
 
-    void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
+    void onAnimationFinished(EVENT_HANDLER(ursine::ecs::Entity));
 };

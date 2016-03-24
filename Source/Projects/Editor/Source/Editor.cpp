@@ -413,13 +413,13 @@ void Editor::initializeProject(const std::string &fileName)
     }
     catch (...)
     {
-        UError( "Unable to resolve project file name." );
-    }
+        UError( "Unable to resolve project file name." ); 
+    } 
 
     std::string projectJsonText;
 
     UAssert( fs::LoadAllText( projectFileName.string( ), projectJsonText ),
-        "Unable to open project file."
+        "Unable to open project file." 
     );
 
     std::string projectJsonError;
@@ -467,7 +467,7 @@ void Editor::exitSplashScreen(void)
     if (m_preferences.windowLocation == kWindowLocationCentered)
         window->SetLocationCentered( );
     else
-        window->SetLocation( m_preferences.windowLocation );
+        window->SetLocation( m_preferences.windowLocation ); 
 
     m_mainWindow.m_ui->GetBrowser( )->GetMainFrame( )->LoadURL( 
         kEntryPointDir + kEntryPointEditor 

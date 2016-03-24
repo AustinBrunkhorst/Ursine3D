@@ -12,6 +12,7 @@
 ** -------------------------------------------------------------------------*/
 
 #pragma once
+
 #include <vector>
 
 #include "AnimationRig.h"
@@ -63,7 +64,7 @@ namespace ursine
         *  @param info the animation info
         *  @return index of new resource.
         */
-        static int LoadAnimation(const graphics::ufmt_loader::AnimInfo &info, const std::string &name);
+        static int LoadAnimation(const graphics::ufmt_loader::AnimInfo &info);
 
         /** @brief loads a rig into builder
         *

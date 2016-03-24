@@ -13,36 +13,42 @@
 #include "DamageOnCollideComponent.h"
 #include "CritSpotComponent.h"
 #include "HealthComponent.h"
+#include "WallComponent.h"
 #include <EntityEvent.h>
 #include <CollisionEventArgs.h>
 #include <stack>
 #include <SVec3.h>
 #include <PhysicsSystem.h>
 #include <SweptControllerComponent.h>
+#include <PlayerIDComponent.h>
 
 NATIVE_COMPONENT_DEFINITION( DamageOnCollide );
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
-DamageOnCollide::DamageOnCollide( void )
+DamageOnCollide::DamageOnCollide(void)
     : BaseComponent( )
     , m_damageToApply( 1.0f )
     , m_critModifier( 2.0f )
     , m_damageInterval( 0.5f )
-    , m_objToSpawn("")
     , m_deleteOnCollision( true )
     , m_deleted ( false )
     , m_spawnOnHit( false )
     , m_spawnOnDeath( false )
-{
-}
+    , m_listenToChildren( false )
+    , m_serialized( false ) 
+    , m_type( DAMAGE_ENEMY ) { }
 
 DamageOnCollide::~DamageOnCollide(void)
 {
     GetOwner( )->Listener(this)
-        .Off( ursine::ecs::ENTITY_REMOVED, &DamageOnCollide::onDeath )
-        .Off( ursine::ecs::ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
+        .Off( ENTITY_REMOVED, &DamageOnCollide::onDeath )
+        .Off( ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
+
+    if (m_listenToChildren)
+        connectToChildrenCollisionEvents( false, GetOwner( )->GetChildren( ) );
 
     m_damageTimeMap.clear( );
 }
@@ -50,8 +56,32 @@ DamageOnCollide::~DamageOnCollide(void)
 void DamageOnCollide::OnInitialize(void)
 {
     GetOwner( )->Listener( this )
-        .On( ursine::ecs::ENTITY_REMOVED, &DamageOnCollide::onDeath )
-        .On( ursine::ecs::ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
+        .On( ENTITY_REMOVED, &DamageOnCollide::onDeath )
+        .On( ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide )
+        .On( ENTITY_HIERARCHY_SERIALIZED, &DamageOnCollide::onHierarchySerialized );
+}
+
+void DamageOnCollide::onHierarchySerialized(EVENT_HANDLER(Entity))
+{
+    EVENT_ATTRS(Entity, EntityEventArgs);
+
+    m_serialized = true;
+
+    if (m_listenToChildren)
+        connectToChildrenCollisionEvents( true, GetOwner( )->GetChildren( ) );
+
+    sender->Listener( this )
+        .Off( ENTITY_HIERARCHY_SERIALIZED, &DamageOnCollide::onHierarchySerialized );
+}
+
+DamageType DamageOnCollide::GetDamageType(void) const
+{
+    return m_type;
+}
+
+void DamageOnCollide::SetDamageType(DamageType type)
+{
+    m_type = type;
 }
 
 float DamageOnCollide::GetDamageToApply(void) const
@@ -87,32 +117,25 @@ void DamageOnCollide::SetDamageInterval(float damageInterval)
     m_damageInterval = damageInterval;
 }
 
-const std::string &DamageOnCollide::GetArchetypeOnDeath(void) const
+const ResourceReference &DamageOnCollide::GetArchetypeOnDeath(void) const
 {
     return m_objToSpawn;
 }
 
-void DamageOnCollide::SetArchetypeOnDeath(const std::string &objToSpawn)
+void DamageOnCollide::SetArchetypeOnDeath(const ResourceReference &objToSpawn)
 {
     m_objToSpawn = objToSpawn;
-
-    if (m_objToSpawn.find(".uatype") == std::string::npos)
-        m_objToSpawn += ".uatype";
 }
 
-const std::string &DamageOnCollide::GetArchetypeOnHit(void) const
+const ResourceReference &DamageOnCollide::GetArchetypeOnHit(void) const
 {
     return m_objToSpawnOnHit;
 }
 
-void DamageOnCollide::SetArchetypeOnHit(const std::string &objToSpawn)
+void DamageOnCollide::SetArchetypeOnHit(const ResourceReference &objToSpawn)
 {
     m_objToSpawnOnHit = objToSpawn;
-
-    if (m_objToSpawnOnHit.find(".uatype") == std::string::npos)
-        m_objToSpawnOnHit += ".uatype";
 }
-
 
 bool DamageOnCollide::GetDeleteOnCollision(void) const
 {
@@ -123,7 +146,6 @@ void DamageOnCollide::SetDeleteOnCollision(bool state)
 {
     m_deleteOnCollision = state;
 }
-
 
 bool DamageOnCollide::GetSpawnOnDeath(void) const
 {
@@ -143,31 +165,57 @@ void DamageOnCollide::SetSpawnOnHit(bool state)
     m_spawnOnHit = state;
 }
 
+bool DamageOnCollide::GetListenToChildren(void) const
+{
+    return m_listenToChildren;
+}
+
+void DamageOnCollide::SetListenToChildren(bool flag)
+{
+    if (m_listenToChildren == flag)
+        return;
+
+    if (m_serialized)
+        connectToChildrenCollisionEvents( flag, GetOwner( )->GetChildren( ) );
+
+    m_listenToChildren = flag;
+}
+
 void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
 {
     EVENT_ATTRS(Entity, physics::CollisionEventArgs);
 
     if (!m_deleted)
     {
-        auto root = args->otherEntity->GetRoot( )->GetComponent<Health>( );
-        auto entity = args->otherEntity->GetComponent<Health>( );
+        auto other = args->otherEntity;
+        auto root = other->GetRoot( )->GetComponent<Health>( );
+        auto entity = other->GetComponent<Health>( );
 
-        if (!root && !entity)
+        // If we have no interest in anything that's goin on (no health or wall components)
+        if (!root && !entity && !other->HasComponent<Wall>( ))
             return;
 
-        if (m_damageTimeMap.find( root->GetOwner( ) ) != m_damageTimeMap.end( ))
+        if (m_damageTimeMap.find( other->GetRoot( ) ) != m_damageTimeMap.end( ) ||
+            m_damageTimeMap.find( other ) != m_damageTimeMap.end( ))
+            return;
+
+        // Make sure we can deal damage to this health type
+        if (root && !root->CanDamage( this ))
+            return;
+
+        if (entity && !entity->CanDamage( this ))
             return;
 
         float damage = m_damageToApply;
         bool crit = false;
 
         // does object have crit
-        if (args->otherEntity->HasComponent<CritSpot>( ))
+        if (other->HasComponent<CritSpot>( ))
         {
             crit = true;
             damage *= m_critModifier;
 
-            auto critComp = args->otherEntity->GetComponent<CritSpot>( );
+            auto critComp = other->GetComponent<CritSpot>( );
 
             // add other object to damage interval map
             //   if not deleting due to collision
@@ -176,16 +224,15 @@ void DamageOnCollide::onCollide(EVENT_HANDLER(ursine::ecs::Entity))
         }
 
         if (root)
-            applyDamage(root->GetOwner( ), args->contacts.front( ).point, damage, crit);
-        else
-            applyDamage(entity->GetOwner( ), args->contacts.front( ).point, damage, crit );
+            applyDamage( root->GetOwner( ), args->contacts.front( ).point, damage, crit );
+        else if (entity)
+            applyDamage( entity->GetOwner( ), args->contacts.front( ).point, damage, crit );
 
-        spawnCollisionParticle(args->otherEntity, crit);
+        spawnCollisionParticle( other, crit );
     }
 
     deleteOnCollision( );
 }
-
 
 void DamageOnCollide::applyDamage(const EntityHandle &obj, const SVec3& contact, float damage, bool crit)
 {
@@ -231,7 +278,6 @@ void DamageOnCollide::DecrementDamageIntervalTimes(float dt)
 
 }
 
-
 void DamageOnCollide::deleteOnCollision(void)
 {
     // delete this projectile if delete on collision flag is set
@@ -242,19 +288,21 @@ void DamageOnCollide::deleteOnCollision(void)
     }
 }
 
-
 void DamageOnCollide::onDeath(EVENT_HANDLER(ursine::ecs::Entity))
 {
-    if (m_spawnOnDeath && m_objToSpawn != ".uatype")
+    if (m_spawnOnDeath)
     {
-        auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawn);
+        auto obj = GetOwner( )->GetWorld( )
+            ->CreateEntityFromArchetype( m_objToSpawn );
 
-        obj->GetTransform( )->SetWorldPosition(GetOwner( )->GetTransform( )->GetWorldPosition( ));
+        if (obj)
+            obj->GetTransform( )->SetWorldPosition(
+                GetOwner( )->GetTransform( )->GetWorldPosition( )
+            );
     }
 }
 
-
-void DamageOnCollide::getSpawnLocation(const ursine::ecs::EntityHandle &other, ursine::physics::RaycastOutput& rayout, ursine::SVec3& posToSet)
+void DamageOnCollide::getSpawnLocation(const EntityHandle &other, physics::RaycastOutput& rayout, ursine::SVec3& posToSet)
 {
     EntityHandle entity;
     size_t size = rayout.entity.size( );
@@ -272,8 +320,7 @@ void DamageOnCollide::getSpawnLocation(const ursine::ecs::EntityHandle &other, u
     }
 }
 
-
-void DamageOnCollide::spawnCollisionParticle(const ursine::ecs::EntityHandle &other, bool crit)
+void DamageOnCollide::spawnCollisionParticle(const EntityHandle &other, bool crit)
 {
     if (m_spawnOnHit)
     {
@@ -316,10 +363,12 @@ void DamageOnCollide::spawnCollisionParticle(const ursine::ecs::EntityHandle &ot
             getSpawnLocation(other->GetRoot( ), rayout, pos);
         }
 
-        if (m_objToSpawnOnHit != ".uatype")
+        // create particle
+        auto obj = GetOwner( )->GetWorld( )
+            ->CreateEntityFromArchetype( m_objToSpawnOnHit );
+
+        if (obj)
         {
-            // create particle
-            auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_objToSpawnOnHit);
             obj->GetTransform( )->SetWorldPosition( pos );
 
             // parent so that it follows objects and dies with object
@@ -328,3 +377,28 @@ void DamageOnCollide::spawnCollisionParticle(const ursine::ecs::EntityHandle &ot
     }
 }
 
+void DamageOnCollide::connectToChildrenCollisionEvents(bool connect, const std::vector<EntityID> *children)
+{
+    if (children == nullptr)
+        return;
+
+    auto world = GetOwner( )->GetWorld( );
+
+    if (world == nullptr)
+        return;
+
+    for (auto &child : *children)
+    {
+        auto entity = world->GetEntity( child );
+
+        if (!entity || entity->IsDeleting( ))
+            continue;
+
+        if (connect)
+            entity->Listener( this ).On( ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
+        else
+            entity->Listener( this ).Off( ENTITY_COLLISION_PERSISTED, &DamageOnCollide::onCollide );
+
+        connectToChildrenCollisionEvents( connect, entity->GetChildren( ) );
+    }
+}

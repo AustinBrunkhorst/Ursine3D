@@ -122,6 +122,11 @@ namespace ursine
             return m_privates->modelMgr->GetModelInfo( handle );
         }
 
+        ufmt_loader::ModelInfo* ResourceAPI::GetModelInfoNByName(const std::string& name)
+        {
+            return m_privates->modelMgr->GetModelInfoByName( name );
+        }
+
         bool ResourceAPI::CheckAnimExistence(const std::string &animeName)
         {
             return m_privates->modelMgr->CheckAnimExistence(animeName);

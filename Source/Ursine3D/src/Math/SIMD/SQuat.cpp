@@ -107,8 +107,7 @@ namespace ursine
         if (d < 0.0f)
             d = Dot( -other );
 
-        // TODO: UAssert(scalar != 0.0f)
-
+        UAssert(scalar != 0.0f, "One of the quaternions is invalid.");
 
         return math::RadiansToDegrees( acos( d / scalar ) ) * 2.0f;
     }
@@ -338,6 +337,11 @@ namespace ursine
             m_w * rhs.Z( ) + m_z * rhs.W( ) + m_x * rhs.Y( ) - m_y * rhs.X( ),
             m_w * rhs.W( ) - m_x * rhs.X( ) - m_y * rhs.Y( ) - m_z * rhs.Z( )
         );
+    }
+
+    SQuat SQuat::operator*(float rhs) const
+    {
+        return SQuat( m_x * rhs, m_y * rhs, m_z * rhs, m_w * rhs );
     }
 
     SVec3 SQuat::operator*(const SVec3 &rhs) const

@@ -77,17 +77,13 @@ namespace ursine
 
             RenderableMap m_renderableMap;
 
-            std::vector<Component::Handle<Animator>> m_animators;
-
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));
 
-            void onUpdate(EVENT_HANDLER(World));
             void onRender(EVENT_HANDLER(World));
 
         #if defined(URSINE_WITH_EDITOR)
 
-            void onEditorUpdate(EVENT_HANDLER(World));
             void onEditorRender(EVENT_HANDLER(World));
 
         #endif

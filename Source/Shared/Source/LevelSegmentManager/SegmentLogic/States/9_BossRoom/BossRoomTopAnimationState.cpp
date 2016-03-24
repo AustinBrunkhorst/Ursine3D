@@ -41,6 +41,8 @@ void BossRoomTopAnimationState::Enter(SegmentLogicStateMachine *machine)
     anim->Listener( this )
         .On( EntityAnimatorEvent::FinishedAnimating, &BossRoomTopAnimationState::onAnimationFinish );
 
+    anim->Play( "Open" );
+
     m_animator = anim;
 }
 

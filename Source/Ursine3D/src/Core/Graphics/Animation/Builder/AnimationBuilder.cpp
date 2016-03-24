@@ -30,7 +30,7 @@ namespace ursine
         const AnimationState *currentState,
         const AnimationState *futureState,
         AnimationRig* rig, 
-        std::vector<SMat4>& outputMatPal,
+        std::vector<SMat4> &outputMatPal,
         std::vector<SMat4> &outputBones,
         const float &transFactor
     )
@@ -46,6 +46,8 @@ namespace ursine
         // make sure the rig bones match animation bones
         if (boneCount != currentAnimation->GetDesiredBoneCount())
             return;
+
+        bool found = false;
 
         // determine the 2 current keyframes to use
         // we assume that all frames exist, and that they were baked across all total keyframes
@@ -66,15 +68,25 @@ namespace ursine
                     boneCount,
                     m_toParentTransforms,
                     rig
-                    );
+                );
+                found = true;
                 // kick out, we're done
                 break;
             }
         }
 
-        //std::vector < AnimationKeyframe > f1;
-        //std::vector < AnimationKeyframe > f2;
-        //currentState->GetFrameByTime(f1, f2, time);
+        if (!found)
+        {
+            auto &f1 = currentAnimation->GetKeyframes( frameCount - 1 );
+            interpolateRigKeyFrames(
+                f1,
+                f1,
+                time,
+                boneCount,
+                m_toParentTransforms,
+                rig
+            );
+        }
 
         // for the future animation
         // get the future running animation
@@ -110,7 +122,8 @@ namespace ursine
                             boneCount,
                             m_toFutParentTransforms,
                             rig
-                            );
+                        );
+
                         // kick out, we're done
                         break;
                     }
@@ -132,6 +145,7 @@ namespace ursine
         for (unsigned x = 1; x < boneCount; ++x)
         {
             SMat4 toParent;
+
             // get the toParent transform
             if (!futAnimation)
                 toParent = m_toParentTransforms[x];
@@ -146,6 +160,7 @@ namespace ursine
 
         // multiply by bone offset transform to get final transform
         auto &offsetMatrices = rig->GetOffsetMatrices();
+
         for (unsigned x = 0; x < boneCount; ++x)
         {
             outputMatPal[x] = (outputBones[x] * offsetMatrices[x]);
@@ -202,7 +217,7 @@ namespace ursine
             return m_name2Rig[name];
     }
 
-    int AnimationBuilder::LoadAnimation(const graphics::ufmt_loader::AnimInfo &info, const std::string &name)
+    int AnimationBuilder::LoadAnimation(const graphics::ufmt_loader::AnimInfo &info)
     {
         unsigned animIndex = addAnimation();
         auto animation = GetAnimationByIndex(animIndex);
@@ -223,7 +238,7 @@ namespace ursine
         animation->SetData(keyCount, boneCount);
 
         // set name - let's use model name
-        animation->SetName(name);
+        animation->SetName(info.name);
 
         // LOAD ANIMATION
         // iterate through all keyframes in this RigKeyframe, iterate through each RigKeyframe,
@@ -264,7 +279,7 @@ namespace ursine
         }
 
         // set values, return
-        m_name2Animation[name] = animation;
+        m_name2Animation[info.name] = animation;
         return animIndex;
     }
 
@@ -313,7 +328,8 @@ namespace ursine
         )
     {
         // get the percentage between current frame and next frame
-        float lerpPercent = (time - frame1[0].length) / (frame2[0].length - frame1[0].length);
+        auto denom = frame2[0].length - frame1[0].length;
+        float lerpPercent = denom == 0.0f ? 1.0f : (time - frame1[0].length) / denom;
 
         // for each one, interpolate between frame1[x] and frame2[x] with time, save result in finalTransform[x]
         for (unsigned x = 0; x < boneCount; ++x)
@@ -330,11 +346,11 @@ namespace ursine
             // rotation
             SQuat q = frame1[x].rotation.Slerp(frame2[x].rotation, lerpPercent);
             
-            auto &bone = rig->GetBone( x );
+            auto bone = rig->GetBone( x );
 
-            bone.SetTranslation( p );
-            bone.SetRotation( q );
-            bone.SetScale( s );
+            bone->SetTranslation( p );
+            bone->SetRotation( q );
+            bone->SetScale( s );
 
             // construct matrix for this matrix
             current = SMat4(p, q, s);

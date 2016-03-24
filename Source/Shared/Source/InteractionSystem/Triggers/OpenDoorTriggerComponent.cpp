@@ -36,25 +36,25 @@ void OpenDoorTrigger::OnInitialize(void)
         .On( game::AREA_CLEAR, &OpenDoorTrigger::OnAreaClear );
 }
 
-void OpenDoorTrigger::StartInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity)
+void OpenDoorTrigger::StartInteraction(const ursine::ecs::EntityHandle &entity)
 {
-    if ( queue->GetOwner( )->HasComponent<PlayerID>( ) && m_clear )
+    if ( entity->HasComponent<PlayerID>( ) && m_clear )
     {
         GetOwner( )->GetWorld( )->Dispatch(game::OPEN_DOOR, ursine::ecs::EntityEventArgs::Empty );
         GetOwner( )->Delete( );
     }
 }
 
-void OpenDoorTrigger::Interact(const CommandQueue* queue, ursine::ecs::EntityHandle &entity)
+void OpenDoorTrigger::Interact(const ursine::ecs::EntityHandle &entity)
 {
-    if ( queue->GetOwner( )->HasComponent<PlayerID>( ) && m_clear )
+    if ( entity->HasComponent<PlayerID>( ) && m_clear )
     {
         GetOwner( )->GetWorld( )->Dispatch(game::OPEN_DOOR, ursine::ecs::EntityEventArgs::Empty);
         GetOwner( )->Delete( );
     }
 }
 
-void OpenDoorTrigger::StopInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity)
+void OpenDoorTrigger::StopInteraction(const ursine::ecs::EntityHandle &entity)
 {
 }
 

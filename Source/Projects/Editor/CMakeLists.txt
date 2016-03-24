@@ -20,7 +20,7 @@ set(GLOBAL_META_DEFINES "URSINE_WITH_EDITOR")
 include(GlobalConfig)
 
 add_subdirectory(../../Shared "${CMAKE_CURRENT_BINARY_DIR}/Shared")
-
+ 
 include_directories(${Shared_INCLUDE_DIRS})
 
 ursine_project(Editor

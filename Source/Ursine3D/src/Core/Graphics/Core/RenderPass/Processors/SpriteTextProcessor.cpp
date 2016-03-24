@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+** ? 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SpriteTextProcessor.cpp
 **
@@ -29,7 +29,7 @@ namespace ursine
         {
             UAssert(handle.Type_ == m_renderableType, "GfxEntityProcessor attempted to proces invalid type!");
 
-            auto &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
             // if inactive
             if (!spriteText.GetActive())
@@ -51,7 +51,7 @@ namespace ursine
 
         void SpriteTextProcessor::prepOperation(_DRAWHND handle, SMat4 &view, SMat4 &proj, Camera &currentCamera)
         {
-            auto &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
             // map color data ///////////////////////////////////////
             PointGeometryBuffer pgb;
@@ -80,25 +80,18 @@ namespace ursine
             else
                 m_manager->textureManager->MapSamplerState( SAMPLER_STATE_NO_FILTERING );
 
-            // map texture //////////////////////////////////////////
-            auto &font = m_manager->fontManager->GetBitmapFont( handle.Material_ );
-            auto texHandle = m_manager->fontManager->GetTextureHandle( spriteText.GetFontHandle( ), font.GetTextureFiles( )[0] );
-
-            unsigned texHND = texHandle & 0xFFFF;
-            m_manager->textureManager->MapTextureByID(texHND);
-
             mapSpriteTextBuffer( handle );
         }
 
         void SpriteTextProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
-            auto &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
             m_manager->shaderManager->Render( 6 * static_cast<unsigned>( spriteText.GetText( ).length( ) ) );
         }
 
         void SpriteTextProcessor::mapSpriteTextBuffer(_DRAWHND handle)
         {
-            auto &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>(handle.Index_);
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
             // map text data ////////////////////////////////////////
             SpriteTextBuffer stb;

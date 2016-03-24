@@ -17,7 +17,10 @@
 
 #include "VineAIStateMachine.h"
 #include "VineAIComponent.h"
-#include "EntityAnimatorComponent.h"
+#include <EntityEvent.h>
+
+using namespace ursine;
+using namespace ecs;
 
 VineDeathState::VineDeathState(void)
     : VineAIState( "Death" )
@@ -31,13 +34,13 @@ void VineDeathState::Enter(VineAIStateMachine *machine)
 
     owner = ai->GetOwner( );
 
-    animator->Play( "Burrow" );
+    animator->SetCurrentState( "Spike_Down" );
 
-    animator->Listener( this )
-        .On( EntityAnimatorEvent::FinishedAnimating, &VineDeathState::onAnimationFinished );
+    animator->GetOwner( )->Listener( this )
+        .On( ENTITY_ANIMATION_FINISH, &VineDeathState::onAnimationFinished );
 }
 
-void VineDeathState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
+void VineDeathState::onAnimationFinished(EVENT_HANDLER(Entity))
 {
     owner->Delete( );
 }

@@ -61,6 +61,9 @@ void SpawnPlayersState::Enter(SegmentLogicStateMachine *machine)
         {
             auto newSpawn = spawnPoints[ i ]->GetComponent<PlayerSpawnPoint>( );
 
+            if (newSpawn->GetSpawnSegment( ) > cur)
+                continue;
+
             if (newSpawn->GetSpawnSegment( ) > spawnPoint1->GetSpawnSegment( ))
                 spawnPoint1 = newSpawn;
             else if (newSpawn->GetSpawnSegment( ) > spawnPoint2->GetSpawnSegment( ))

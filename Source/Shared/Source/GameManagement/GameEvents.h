@@ -32,6 +32,8 @@ namespace game
         ACTIVATE_WEAPON,
         DETACH_WEAPON,
         DEACTIVATE_WEAPON,
+        PROJECTILE_INIT,
+        PICKUP_AMMO,
 
 
         /////////////////////////////
@@ -39,6 +41,15 @@ namespace game
         /////////////////////////////
         ENEMY_DEATH,
         AREA_CLEAR,
+
+
+        ////////////////////////////////
+        ////  Empower / Disempower  ////
+        ////////////////////////////////
+        EMPOWER_ACTIVE,
+        EMPOWER_UNACTIVE,
+        DISEMPOWER_ACTIVE,
+        DISEMPOWER_UNACTIVE,
 
 
         //////////////////////////
@@ -79,18 +90,26 @@ namespace game
 
     };
 
-
-    struct WeaponDeactivationEventArgs : ursine::EventArgs
+    struct AmmoPickupEventArgs : ursine::EventArgs
     {
         int m_ammo;
+
+        AmmoPickupEventArgs(const int ammo)
+            : m_ammo( ammo )
+        { }
+    };
+
+    struct WeaponDeactivationEventArgs : AmmoPickupEventArgs
+    {
         int m_clip;
 
         ursine::ecs::EntityHandle whoToConnect;
 
         WeaponDeactivationEventArgs(const ursine::ecs::EntityHandle &who, int ammo = 1, int clip = -1)
-            : m_ammo( ammo )
+            : AmmoPickupEventArgs( ammo )
             , m_clip( clip )
-            , whoToConnect( who ) { }
+            , whoToConnect( who ) 
+        { }
     };
 
     struct WeaponActivationEventArgs : WeaponDeactivationEventArgs
@@ -99,6 +118,20 @@ namespace game
 
         WeaponActivationEventArgs(const ursine::ecs::EntityHandle &who, ursine::ecs::Transform* camHandle = nullptr, int ammo = -1, int clip = -1)
             : WeaponDeactivationEventArgs(who, ammo, clip)
-            , m_camHandle(camHandle) { }
+            , m_camHandle(camHandle) 
+        { }
+    };
+    
+
+    // projectile event args
+    struct ProjectileInitEventArgs : ursine::EventArgs
+    {
+        ursine::SVec3 m_forwardVec;
+        float m_range;
+
+        ProjectileInitEventArgs(const ursine::SVec3 forward, float range)
+            : m_forwardVec( forward )
+            , m_range( range )
+        { }
     };
 }

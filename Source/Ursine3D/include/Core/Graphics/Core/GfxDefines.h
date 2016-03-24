@@ -17,7 +17,7 @@
 
 
 //gpu defines
-#define MAX_CONST_BUFF          15
+#define MAX_CONST_BUFF          14
 
 //gfx defines
 #define RELEASE_RESOURCE(resource) \

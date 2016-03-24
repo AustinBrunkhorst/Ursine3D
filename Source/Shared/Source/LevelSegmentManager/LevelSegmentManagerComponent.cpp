@@ -20,6 +20,7 @@
 #include "LockPlayerCharacterControllerState.h"
 #include "ChangeSegmentState.h"
 #include "CombatBowl1IntroCinematicState.h"
+#include "RepositionPlayersAndCloseDoorState.h"
 #include "BossRoomTopAnimationState.h"
 #include "TriggerWaitState.h"
 #include "CurrentSegmentCondition.h"
@@ -66,6 +67,8 @@ void LevelSegmentManager::SetCurrentSegment(LevelSegments segment)
     args.segment = segment;
 
     Dispatch( LevelSegmentManagerEvents::SegmentChanged, &args );
+
+    NOTIFY_COMPONENT_CHANGED( "currentSegment", m_segment );
 }
 
 bool LevelSegmentManager::GetEnableDebugOutput(void) const
@@ -188,6 +191,9 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
 {
     auto resources = GetOwner( )->GetComponent<CombatBowl1Resources>( );
 
+    if (!resources)
+        return;
+
     // Create a state machine that initializes the scene
     auto stateM = std::make_shared<SegmentLogicStateMachine>( "Init Combat Bowl", this );
 
@@ -286,7 +292,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
     );
 
     // Next state for spawning the players (reposition them if they are present)
-    auto playerCreateState = initStateM->AddState<SpawnPlayersState>( false, true );
+    auto playerCreateState = initStateM->AddState<SpawnPlayersState>( true, false );
 
     initState->AddTransition( playerCreateState, "Go To Init Players" );
 
@@ -303,56 +309,32 @@ void LevelSegmentManager::initBossRoomLogic(void)
         LevelSegments::BossRoom_Phase5
     } );
 
-    // initialize the boss room open cinematic logic
-    auto cinematicStateM = std::make_shared<SegmentLogicStateMachine>( "Boss Room Cinematic", this );
+    // Setup logic for the introduction cinematic
+    auto cinematicStateM = std::make_shared<SegmentLogicStateMachine>( "Boss Cinematic", this );
 
-    // Create an empty state to give the players time to spawn
-    auto emptyState = cinematicStateM->AddState<SegmentLogicState>( "Empty State" );
-
-    // Lock the players
+    auto createPlayers = initStateM->AddState<SpawnPlayersState>( false, false );
     auto lockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
-
-    auto trans = emptyState->AddTransition( lockPlayers, "Go To Lock Players" );
-
-    trans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 0.1f ) );
-
-    // Tween viewports
-    auto tweenViewports = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SqueezeIn, true );
-
-    lockPlayers->AddTransition( tweenViewports, "Go To Tween Viewports" );
-
-    // Switch to boss room cinematic
-    auto changeState = cinematicStateM->AddState<ChangeSegmentState>( LevelSegments::BossRoom_Introduction );
-
-    tweenViewports->AddTransition( changeState, "Go To Change Segment To BossRoom_Introduction" );
-
-    // Start the top animation
-    auto topAnimating = cinematicStateM->AddState<BossRoomTopAnimationState>( );
-
-    changeState->AddTransition( topAnimating, "Go To Top Animationg" );
-
-    // Wait for animation to finish, and then tween the viewports again
-    auto tweenBackViewports = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SqueezeOut, true );
-
-    auto timedTransition = topAnimating->AddTransition( tweenBackViewports, "Go To Tween In Viewports" );
-
-    timedTransition->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 15.0f ) );
-
-    // Unlcok the players
     auto unlockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+    auto repositionAndClose = cinematicStateM->AddState<RepositionPlayersAndCloseDoorState>( );
+    auto tweenOut = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
+    auto tweenIn = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
 
-    tweenBackViewports->AddTransition( unlockPlayers, "Go To Unlock Players" );
+    createPlayers->AddTransition( lockPlayers, "Lock Dem" );
 
-    // Switch to boss phase 1
-    auto changeToFinishState = cinematicStateM->AddState<ChangeSegmentState>( LevelSegments::BossRoom_Phase1 );
+    lockPlayers->AddTransition( tweenOut, "Tween Out" );
 
-    unlockPlayers->AddTransition( changeToFinishState, "Go To Finish State Phase1" );
+    tweenOut->AddTransition( repositionAndClose, "Reposition Players" )
+            ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
 
-    cinematicStateM->SetInitialState( emptyState );
+    repositionAndClose->AddTransition( tweenIn, "Go To Tween In" )
+                      ->AddCondition<sm::CurrentSegmentCondition>( this, LevelSegments::BossRoom_Phase1 );
 
+    tweenIn->AddTransition( unlockPlayers, "Unlock Players" );
+
+    cinematicStateM->SetInitialState( createPlayers );
     addSegmentLogic( cinematicStateM, {
-        LevelSegments::CB4_OpenBossRoom,
-        LevelSegments::BossRoom_Introduction
+        LevelSegments::BossRoom_Introduction,
+        LevelSegments::BossRoom_Phase1
     } );
 }
 
@@ -375,6 +357,9 @@ void LevelSegmentManager::onUpdate(EVENT_HANDLER(World))
 {
     if (m_segment == LevelSegments::Empty)
         return;
+
+    // TODO: Remove this, using it to try and find a weird bug.
+    // std::cout << (m_segment == LevelSegments::BossRoom_Introduction ? "Intro" : m_segment == LevelSegments::BossRoom_Phase1 ? "Phase1" : "Other") << std::endl;
 
     // Update all state machines
     for (auto &logic : m_segmentLogic[ m_segment ])

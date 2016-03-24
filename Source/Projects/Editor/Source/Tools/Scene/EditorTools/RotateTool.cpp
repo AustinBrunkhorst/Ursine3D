@@ -16,9 +16,13 @@
 #include <CameraComponent.h>
 #include <Model3DComponent.h>
 #include <DebugSystem.h>
+#include <EditorToolResources.h>
+#include <ModelData.h>
+#include <ArchetypeData.h>
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 RotateTool::RotateTool(Editor *editor, World *world)
     : EditorTool( editor, world )
@@ -30,6 +34,9 @@ RotateTool::RotateTool(Editor *editor, World *world)
     , m_snapping( false )
     , m_local( false )
     , m_deleteGizmo( false )
+    , m_archetype( editor_resources::ArchetypeRotateTool )
+    , m_torus( editor_resources::ModelTorus )
+    , m_toolResources( GetCoreSystem( Editor )->GetProject( )->GetBuiltInResourceManager( ) )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
@@ -183,10 +190,10 @@ void RotateTool::setDirectionVectors(const SVec3 &basisVector, const EntityHandl
 
 void RotateTool::enableAxis(void)
 {
-    m_gizmo = m_world->CreateEntityFromArchetype( 
-        EDITOR_ARCHETYPE_PATH "EditorTools/RotationGizmo.uatype",
-        "RotationGizmo" 
-    );
+    m_gizmo = m_archetype.Load<ArchetypeData>( m_toolResources )->Instantiate( m_world );
+
+    if (!m_gizmo)
+        return;
 
     setEntitySerializationToggle( false, m_gizmo );
     
@@ -198,6 +205,7 @@ void RotateTool::enableAxis(void)
     {
         model->SetOverdraw( true );
         model->SetMaterialData( 4, 0, 0 );
+        model->SetModel( m_torus );
     }
 }
 
@@ -328,24 +336,24 @@ void RotateTool::updateHoverAxis(void)
 
     // if we're clicking on ourselves, set the dragging flag,
     // and the vector we're dragging on
-    if (rootName == "RotationGizmo")
+    if (rootName.find( "RotationGizmo" ) != std::string::npos)
     {
         // Get the gizmo's name (the models are under the parent named the axis' name)
         auto name = entityTrans->GetParent()->GetOwner()->GetName();
 
-        if ( name == "xAxis" )
+        if (name == "xAxis")
         {
-            setDirectionVectors(SVec3::UnitX(), m_selected);
+            setDirectionVectors( SVec3::UnitX( ), m_selected );
             m_axisType = 1;
         }
-        else if ( name == "yAxis" )
+        else if (name == "yAxis")
         {
-            setDirectionVectors(SVec3::UnitY(), m_selected);
+            setDirectionVectors( SVec3::UnitY( ), m_selected );
             m_axisType = 2;
         }
-        else if ( name == "zAxis" )
+        else if (name == "zAxis")
         {
-            setDirectionVectors(SVec3::UnitZ(), m_selected);
+            setDirectionVectors( SVec3::UnitZ( ), m_selected );
             m_axisType = 3;
         }
         else

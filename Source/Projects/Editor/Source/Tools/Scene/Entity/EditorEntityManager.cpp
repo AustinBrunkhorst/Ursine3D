@@ -25,6 +25,11 @@ using namespace ursine;
 
 namespace
 {
+    namespace gameUIEvents
+    {
+        extern const char* const UI_HealthComponentStats;
+    }
+
     namespace channel
     {
         const auto EntityManager = "EntityManager";

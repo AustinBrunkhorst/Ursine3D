@@ -23,28 +23,37 @@ Interactable::Interactable(void)
     , m_startFunc( nullptr )
     , m_interactFunc( nullptr )
     , m_stopFunc( nullptr )
+    , m_type( NOT_SET )
 {
 }
 
-void Interactable::StartInteraction(const CommandQueue *queue, ecs::EntityHandle &entity)
+void Interactable::StartInteraction(const ecs::EntityHandle &entity)
 {
-    (m_interaction->*m_startFunc)( queue, entity );
+    (m_interaction->*m_startFunc)( entity );
 }
 
-void Interactable::Interact(const CommandQueue *queue, ecs::EntityHandle &entity)
+void Interactable::Interact(const ecs::EntityHandle &entity)
 {
-    (m_interaction->*m_interactFunc)( queue, entity );
+    (m_interaction->*m_interactFunc)( entity );
 }
 
-void Interactable::StopInteraction(const CommandQueue *queue, ecs::EntityHandle &entity)
+void Interactable::StopInteraction(const ecs::EntityHandle &entity)
 {
-    (m_interaction->*m_stopFunc)( queue, entity );
+    (m_interaction->*m_stopFunc)( entity );
 }
 
-void Interactable::SetUpInteractable(Interaction *interaction)
+void Interactable::SetUpInteractable(Interaction *interaction, InteractType type)
 {
     m_interaction  = interaction;
+
     m_startFunc    = &Interaction::StartInteraction;
     m_interactFunc = &Interaction::Interact;
     m_stopFunc     = &Interaction::StopInteraction;
+
+    m_type = type;
+}
+
+Interactable::InteractType Interactable::GetInteractType(void) const
+{
+    return m_type;
 }

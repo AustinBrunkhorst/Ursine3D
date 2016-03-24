@@ -7,11 +7,14 @@
 #include <SystemManager.h>
 #include <CameraComponent.h>
 #include <Model3DComponent.h>
+#include <EditorToolResources.h>
+#include <ArchetypeData.h>
 
 #include <math.h>
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 DuplicateTool::DuplicateTool(Editor *editor, World *world)
     : EditorTool( editor, world )
@@ -23,6 +26,8 @@ DuplicateTool::DuplicateTool(Editor *editor, World *world)
     , m_deleteGizmo( false )
     , m_altDown( false )
     , m_origin( false )
+    , m_archetype( editor_resources::ArchetypeDuplicateTool )
+    , m_toolResources( GetCoreSystem( Editor )->GetProject( )->GetBuiltInResourceManager( ) )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_drawer = m_world->GetEntitySystem<DebugSystem>( );
@@ -129,10 +134,10 @@ void DuplicateTool::OnUpdate(KeyboardManager* kManager, MouseManager* mManager)
 
 void DuplicateTool::enableGizmo(void)
 {
-    m_gizmo = m_world->CreateEntityFromArchetype(
-        EDITOR_ARCHETYPE_PATH "EditorTools/DuplicateGizmo.uatype",
-        "DuplicateGizmo"        
-    );
+    m_gizmo = m_archetype.Load<ArchetypeData>( m_toolResources )->Instantiate( m_world );
+
+    if (!m_gizmo)
+        return;
 
     setEntitySerializationToggle( false, m_gizmo );
 
@@ -217,7 +222,7 @@ void DuplicateTool::updateGizmo(MouseManager *mManager)
 
 void DuplicateTool::debugDraw(void)
 {
-    if (!m_selected)
+    if (!m_selected || !m_gizmo)
         return;
 
     SVec3 v[ 2 ];

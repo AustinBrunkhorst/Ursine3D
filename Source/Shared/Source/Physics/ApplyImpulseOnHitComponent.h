@@ -44,6 +44,12 @@ public:
         SetWorldDirectionInfluence
     );
 
+    EditorField(
+        bool listenToChildren,
+        GetListenToChildren,
+        SetListenToChildren
+    );
+
     ApplyImpulseOnHit(void);
     ~ApplyImpulseOnHit(void);
 
@@ -59,13 +65,25 @@ public:
     const ursine::SVec3 &GetWorldDirectionInfluence(void) const;
     void SetWorldDirectionInfluence(const ursine::SVec3 &direction);
 
+    bool GetListenToChildren(void) const;
+    void SetListenToChildren(bool flag);
+
 private:
 
     void OnInitialize(void) override;
 
-    void onCollision(EVENT_HANDLER(Entity));
+    void onHierarchySerialized(EVENT_HANDLER(ursine::ecs::Entity));
+    void onCollision(EVENT_HANDLER(ursine::ecs::Entity));
+
+    void connectToChildrenCollisionEvents(
+        bool connect, 
+        const std::vector<ursine::ecs::EntityID> *children
+    );
 
     bool m_effectSweptController;
+
+    bool m_listenToChildren;
+    bool m_serialized;
 
     float m_impulse;
 

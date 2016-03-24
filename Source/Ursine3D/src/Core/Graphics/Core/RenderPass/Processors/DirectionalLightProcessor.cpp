@@ -29,7 +29,7 @@ namespace ursine
         {
             UAssert(handle.Type_ == m_renderableType, "GfxEntityProcessor attempted to proces invalid type!");
 
-            Light light = m_manager->renderableManager->GetRenderableByID<Light>( handle.Index_ );
+            Light &light = m_manager->renderableManager->GetRenderableByID<Light>( handle.Index_ );
 
             // if wrong type
             if (light.GetType( ) != Light::LIGHT_DIRECTIONAL)
@@ -49,7 +49,7 @@ namespace ursine
 
         void DirectionalLightProcessor::prepOperation(_DRAWHND handle, SMat4 &view, SMat4 &proj, Camera &currentCamera)
         {
-            Light directionalLight = m_manager->renderableManager->GetRenderableByID<Light>(handle.Index_);
+            Light &directionalLight = m_manager->renderableManager->GetRenderableByID<Light>( handle.Index_ );
 
             // precalculate some stuff
             SMat4 transposedView = currentCamera.GetViewMatrix();
@@ -77,7 +77,7 @@ namespace ursine
 
         void DirectionalLightProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
-            Light light = m_manager->renderableManager->GetRenderableByID<Light>(handle.Index_);
+            Light &light = m_manager->renderableManager->GetRenderableByID<Light>( handle.Index_ );
             m_manager->shaderManager->Render(
                 m_manager->modelManager->GetModelIndexcountByID( INTERNAL_QUAD )
             );
