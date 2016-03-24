@@ -89,23 +89,21 @@ namespace ursine
 
             //public members
         public:
-            DXCore::DirectXCore *dxCore;
-            DXCore::ShaderManager *shaderManager;
+            DXCore::DirectXCore         *dxCore;
+            DXCore::ShaderManager       *shaderManager;
             DXCore::ShaderBufferManager *bufferManager;
-            DXCore::InputLayoutManager *layoutManager;
-            ModelManager *modelManager;
-            RenderableManager *renderableManager;
-            CameraManager *cameraManager;
-            TextureManager *textureManager;
-            ViewportManager *viewportManager;
-            GfxUIManager *uiManager;
-            DrawingManager *drawingManager;
-            FontManager *fontManager;
-            GfxProfiler *gfxProfiler;
+            DXCore::InputLayoutManager  *layoutManager;
+            ModelManager                *modelManager;
+            RenderableManager           *renderableManager;
+            CameraManager               *cameraManager;
+            TextureManager              *textureManager;
+            ViewportManager             *viewportManager;
+            GfxUIManager                *uiManager;
+            DrawingManager              *drawingManager;
+            FontManager                 *fontManager;
+            GfxProfiler                 *gfxProfiler;
 
-            GfxInfo *gfxInfo;
-
-            BitmapFont m_font;
+            GfxInfo                     *gfxInfo;
 
             //thred stuff
         private:

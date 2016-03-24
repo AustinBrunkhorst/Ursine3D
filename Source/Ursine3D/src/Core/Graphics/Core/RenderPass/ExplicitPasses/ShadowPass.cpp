@@ -29,17 +29,10 @@ namespace ursine
         void ShadowPass::executePass(Camera &currentCamera)
         {
             D3D11_VIEWPORT vpData;
-            vpData.Width = 1024;
-            vpData.Height = 1024;
             vpData.TopLeftX = 0;
             vpData.TopLeftY = 0;
             vpData.MinDepth = 0;
             vpData.MaxDepth = 1;
-
-            m_manager->dxCore->GetDeviceContext()->RSSetViewports(
-                1,
-                &vpData
-            );
 
             /////////////////////////////////////////////////////////////////////////////
             // GET OBJECT RANGE
@@ -77,43 +70,34 @@ namespace ursine
             // for each light,
             for(unsigned x = lightStart; x < lightEnd; ++x)
             {
+                // get light
+                Light &light = m_manager->renderableManager->GetRenderableByID<Light>(drawList[ x ].Index_);
+
+                if ( light.GetType() != Light::LIGHT_SPOTLIGHT )
+                    continue;
+
+                m_manager->GetDXCore( )->StartDebugEvent( "Shadow Start" );
+
                 beginPass( currentCamera );
 
-                m_manager->dxCore->GetDeviceContext()->RSSetViewports(
+                setDepthTarget( &light );
+
+                vpData.Width    = static_cast<float>( light.GetShadowmapWidth( ) );
+                vpData.Height   = static_cast<float>( light.GetShadowmapWidth( ) );
+
+                m_manager->dxCore->GetDeviceContext( )->RSSetViewports(
                     1,
                     &vpData
                 );
 
-                // get light
-                Light &light = m_manager->renderableManager->GetRenderableByID<Light>( drawList[ x ].Index_ );
-
-                if(light.GetType( ) != Light::LIGHT_SPOTLIGHT)
-                    continue;
-
                 // set light data
-                auto view = light.GenerateShadowView( );
-                auto proj = light.GenerateShadowProjection( );
-                auto invCam = currentCamera.GetViewMatrix( );
-                invCam.Inverse( );
+                auto view       = light.GenerateShadowView( );
+                auto proj       = light.GenerateShadowProjection( );
                 
                 // map shadow view/projection
                 m_manager->bufferManager->MapCameraBuffer( 
                     view, 
                     proj 
-                );
-
-                ShadowProjectionBuffer spb;
-                invCam.Transpose( );
-                view.Transpose( );
-                proj.Transpose( );
-                spb.invCam      = invCam.ToD3D( );
-                spb.lightView   = view.ToD3D( );
-                spb.lightProj   = proj.ToD3D( );
-
-                m_manager->bufferManager->MapBuffer<BUFFER_SHADOWMAP, ShadowProjectionBuffer>(
-                    &spb, 
-                    SHADERTYPE_PIXEL, 
-                    13
                 );
 
                 // render this set of objects
@@ -123,6 +107,8 @@ namespace ursine
                     objStart,
                     objEnd
                 );
+
+                m_manager->GetDXCore( )->StartDebugEvent("Shadow End");
             }
 
             // end debug event
@@ -130,6 +116,62 @@ namespace ursine
 
             // stamp this process
             m_manager->gfxProfiler->Stamp(m_passName);
+        }
+
+        void ShadowPass::setDepthTarget(Light *light)
+        {
+            auto dxCore     = m_manager->GetDXCore( );
+            auto devCon     = dxCore->GetDeviceContext( );
+            auto depthMgr   = dxCore->GetDepthMgr( );
+
+            // if it doesn't have a light or needs to be resized, do so
+            auto handle     = light->GetShadowmapHandle( );
+            auto width      = light->GetShadowmapWidth( );
+
+            // if it exists, check for resize
+            if(handle != 0)
+            {
+                auto depthStencil = depthMgr->GetShadowmapDepthStencil( light->GetShadowmapHandle( ) );
+
+                if(width != depthStencil.width)
+                    depthMgr->ResizeShadowmapDepthTarget( 
+                        handle, 
+                        width, 
+                        width 
+                    );
+            }
+            else // create a new one
+            {
+                light->SetShadowmapHandle(
+                    depthMgr->CreateShadowmapDepthTarget(
+                        width, 
+                        width
+                    )
+                );
+            }
+
+            auto depthStencil = depthMgr->GetShadowmapDepthStencil( light->GetShadowmapHandle( ) );
+
+            // clear depth
+            m_manager->GetDXCore( )->GetDeviceContext( )->ClearDepthStencilView(
+                depthStencil.depthStencilView, 
+                D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 
+                1.0f, 
+                0
+            );
+
+            // get RTs
+            for (unsigned x = 0; x < m_outputTargets.size(); ++x)
+            {
+                m_targetArray[ x ] = dxCore->GetRenderTargetMgr()->GetRenderTarget( m_outputTargets[ x ] )->RenderTargetView;
+            }
+
+            // Set RTs
+            devCon->OMSetRenderTargets(
+                static_cast<UINT>( m_outputTargets.size( ) ),
+                m_targetArray.data( ),
+                depthStencil.depthStencilView
+            );
         }
     }
 }

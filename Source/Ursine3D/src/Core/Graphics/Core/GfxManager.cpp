@@ -142,7 +142,7 @@ namespace ursine
             LogMessage("Initialize Models", 1);
             modelManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext(), config.modelListPath);
 
-            renderableManager->Initialize();
+            renderableManager->Initialize( this );
             cameraManager->Initialize();
 
             LogMessage("Initialize Textures", 1);
@@ -165,10 +165,6 @@ namespace ursine
             Invalidate();
 
             m_ready = true;
-
-            // load the font
-            std::string textPath = "Assets/Bitmap Fonts/MainFont.fnt";
-            m_font.Load(textPath);
 
             //textureManager->CreateTexture("Font", "Assets/Bitmap Fonts/"  + m_font.GetTextureFiles()[ 0 ], 512, 512);
 
@@ -667,7 +663,6 @@ namespace ursine
                         AddResource( &diffuseRT ).
                         AddResource( &normalRT ).
                         AddResource( &specPowRT ).
-                        AddResource( &shadowmapDepth ).
 
                         Accepts( RENDERABLE_LIGHT ).
                         Processes( &slProcessor ).

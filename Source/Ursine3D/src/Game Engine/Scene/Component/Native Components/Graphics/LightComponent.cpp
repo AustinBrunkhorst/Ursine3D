@@ -166,6 +166,17 @@ namespace ursine
             m_light->SetRenderMask( static_cast<unsigned long long>(mask) );
         }
 
+        unsigned Light::GetShadowmapSize(void) const
+        {
+            return m_light->GetShadowmapWidth( );
+        }
+        void Light::SetShadowmapSize(unsigned size)
+        {
+            if(size > 4096)
+                size = 4096;
+            m_light->SetShadowmapWidth( size );
+        }
+
         void Light::updateRenderer(void)
         {
             auto trans = GetOwner()->GetTransform();
@@ -194,8 +205,6 @@ namespace ursine
             lightDir = trans->GetWorldRotation() * lightDir;
 
             light.SetDirection(lightDir);
-
-            light.SetSpotlightTransform(trans->GetLocalToWorldMatrix());
         }
     }
 }

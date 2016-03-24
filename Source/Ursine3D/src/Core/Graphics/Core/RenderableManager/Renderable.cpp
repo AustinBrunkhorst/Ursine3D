@@ -15,6 +15,7 @@
 #include "Renderable.h"
 #include <Core/Graphics/Core/GfxDefines.h>
 #include <DirectXMath.h>
+#include "GfxManager.h"
 
 namespace ursine
 {
@@ -32,6 +33,10 @@ namespace ursine
             m_useOverdraw = false;
             m_useDebugRendering = false;
             m_mask = 0;
+        }
+
+        void Renderable::Uninitialize(GfxManager *mgr)
+        {
         }
 
         void Renderable::SetEntityID(ecs::EntityID id)
@@ -323,7 +328,16 @@ namespace ursine
 
             m_spotlightAngles = Vec2(15, 30);
 
+            m_shadowmap = 0;
+            m_shadowmapWidth = 1024;
+
             Renderable::Initialize();
+        }
+
+        void Light::Uninitialize(GfxManager *mgr)
+        {
+            if(m_shadowmap != 0)
+                mgr->dxCore->GetDepthMgr( )->DestroyShadowmapDepthTarget( m_shadowmap );
         }
 
         Light::LightType Light::GetType(void)
@@ -469,6 +483,25 @@ namespace ursine
                     m_radius
                 )
             );
+        }
+
+        unsigned Light::GetShadowmapWidth(void) const
+        {
+            return m_shadowmapWidth;
+        }
+
+        void Light::SetShadowmapWidth(unsigned width)
+        {
+            m_shadowmapWidth = width;
+        }
+
+        GfxHND Light::GetShadowmapHandle(void) const
+        {
+            return m_shadowmap;
+        }
+        void Light::SetShadowmapHandle(GfxHND handle)
+        {
+            m_shadowmap = handle;
         }
 
         /////////////////////////////////////////////////////////////

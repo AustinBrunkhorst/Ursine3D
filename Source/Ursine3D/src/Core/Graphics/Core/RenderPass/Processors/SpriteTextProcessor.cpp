@@ -95,6 +95,7 @@ namespace ursine
 
             // map text data ////////////////////////////////////////
             SpriteTextBuffer stb;
+            auto &font = m_manager->fontManager->GetBitmapFont(handle.Material_);
             stb.worldPosition = spriteText.GetPosition( ).ToD3D( );
             stb.offset = spriteText.GetSize( );
             stb.sizeScalar = DirectX::XMFLOAT2(
@@ -102,8 +103,8 @@ namespace ursine
                 spriteText.GetHeight( ) * spriteText.GetSize( )
             );
             stb.textureDimensions = DirectX::XMFLOAT2(
-                m_manager->m_font.GetCommonData( ).textureDimensions.scaleW,
-                m_manager->m_font.GetCommonData( ).textureDimensions.scaleH
+                font.GetCommonData( ).textureDimensions.scaleW,
+                font.GetCommonData( ).textureDimensions.scaleH
             );
 
             /////////////////////////////////////////////////////////
@@ -112,7 +113,6 @@ namespace ursine
 
             GlyphBuffer gb;
             auto &text = spriteText.GetText( );
-            auto &font = m_manager->fontManager->GetBitmapFont( handle.Material_ );
             auto &characterData = font.GetCharacterData( );
             auto &commonData = font.GetCommonData( );
             auto &infoData = font.GetInfoData( );

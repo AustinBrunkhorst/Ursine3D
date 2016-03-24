@@ -95,7 +95,7 @@ namespace ursine
                 //Setup the raster description which will determine how and what polygons will be drawn.
                 rasterDesc.AntialiasedLineEnable = true;
                 rasterDesc.CullMode = D3D11_CULL_BACK;
-                rasterDesc.DepthBias = 0;
+                rasterDesc.DepthBias = -5;
                 rasterDesc.DepthBiasClamp = 0.0f;
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
@@ -113,7 +113,7 @@ namespace ursine
                 //Setup the raster description which will determine how and what polygons will be drawn.
                 rasterDesc.AntialiasedLineEnable = true;
                 rasterDesc.CullMode = D3D11_CULL_FRONT;
-                rasterDesc.DepthBias = 0;
+                rasterDesc.DepthBias = -5;
                 rasterDesc.DepthBiasClamp = 0.0f;
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
@@ -131,7 +131,7 @@ namespace ursine
                 //Setup the raster description which will determine how and what polygons will be drawn.
                 rasterDesc.AntialiasedLineEnable = true;
                 rasterDesc.CullMode = D3D11_CULL_NONE;
-                rasterDesc.DepthBias = 0;
+                rasterDesc.DepthBias = -5;
                 rasterDesc.DepthBiasClamp = 0.0f;
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_WIREFRAME;

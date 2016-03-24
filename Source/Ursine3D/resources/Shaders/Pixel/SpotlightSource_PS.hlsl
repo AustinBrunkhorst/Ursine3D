@@ -111,11 +111,11 @@ float SpotShadowPCF(float3 position)
     float sum = 0;
     float x, y;
 
-    for (y = -1.5; y <= 1.5; y += 1.0)
-        for (x = -1.5; x <= 1.5; x += 1.0)
+    for (y = -1.5; y <= 1.5; y += 1.5)
+        for (x = -1.5; x <= 1.5; x += 1.5)
             sum += ShadowmapTexture.SampleCmpLevelZero(PCFSampler, UVD.xy + float2(x, y) * offsetY, UVD.z);
 
-    return sum / 16.0;
+    return sum / 9.0;
 
     /*
     return (ShadowmapTexture.SampleCmpLevelZero(PCFSampler, UVD.xy + float2(-1.5f, 0.5f) * offsetY, UVD.z) +

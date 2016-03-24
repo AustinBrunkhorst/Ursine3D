@@ -73,6 +73,27 @@ namespace ursine
                 SHADERTYPE_PIXEL
             );
 
+            // set light data
+            auto lightview = spotLight.GenerateShadowView();
+            auto lightproj = spotLight.GenerateShadowProjection();
+            auto invCam = currentCamera.GetViewMatrix();
+            invCam.Inverse();
+
+            // map shadow projection buffer
+            ShadowProjectionBuffer spb;
+            invCam.Transpose();
+            lightview.Transpose();
+            lightproj.Transpose();
+            spb.invCam = invCam.ToD3D();
+            spb.lightView = lightview.ToD3D();
+            spb.lightProj = lightproj.ToD3D();
+
+            m_manager->bufferManager->MapBuffer<BUFFER_SHADOWMAP, ShadowProjectionBuffer>(
+                &spb,
+                SHADERTYPE_PIXEL,
+                13
+            );
+
             // MAP TRANSFORM DATA ///////////////////////////////////
             m_manager->bufferManager->MapTransformBuffer(
                 spotLight.GetSpotlightTransform() * SMat4(
@@ -81,6 +102,11 @@ namespace ursine
                     SVec3(1.0f, 1.0f, 1.0f)
                 )
             );
+
+            // MAP DEPTH DATA ///////////////////////////////////////
+            // SHADER_SLOT_4
+            auto shadowmap = m_manager->dxCore->GetDepthMgr( )->GetShadowmapDepthStencil( spotLight.GetShadowmapHandle( ) );
+            m_manager->dxCore->GetDeviceContext( )->PSSetShaderResources( 4, 1, &shadowmap.depthStencilSRV );
 
             // DETERMINE CULLING MODE ///////////////////////////////
             SVec3 light2Cam = currentCamera.GetPosition( ) - spotLight.GetPosition( );
