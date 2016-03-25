@@ -46,7 +46,7 @@ namespace ursine
 
             void ModelInfo::Read(resources::ResourceReader &input)
             {
-                input.ReadString( name );
+                input.Read( name );
 
                 input.Read( mmeshCount );
                 input.Read( mmaterialCount );
@@ -77,7 +77,7 @@ namespace ursine
                 {
                     auto &mesh = mMeshLvVec[ i ];
 
-                    input.ReadString( mesh.meshName );
+                    input.Read( mesh.meshName );
 
                     input.Read( mesh.meshTM );
                     input.Read( mesh.mParentIndex );
@@ -89,7 +89,7 @@ namespace ursine
                 {
                     auto &rig = mRigLvVec[ i ];
 
-                    input.ReadString( rig.boneName );
+                    input.Read( rig.boneName );
 
                     input.Read( rig.mParentIndex );
                 }
@@ -97,7 +97,7 @@ namespace ursine
 
             void ModelInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output.WriteString( name );
+                output.Write( name );
 
                 output.Write( mmeshCount );
                 output.Write( mmaterialCount );
@@ -127,7 +127,7 @@ namespace ursine
                 {
                     for (auto &iter : mMeshLvVec)
                     {
-                        output.WriteString( iter.meshName );
+                        output.Write( iter.meshName );
                         output.Write( iter.meshTM );
                         output.Write( iter.mParentIndex );
                     }
@@ -137,7 +137,7 @@ namespace ursine
                 {
                     for (auto &iter : mRigLvVec)
                     {
-                        output.WriteString( iter.boneName );
+                        output.Write( iter.boneName );
                         output.Write( iter.mParentIndex );
                     }
                 }

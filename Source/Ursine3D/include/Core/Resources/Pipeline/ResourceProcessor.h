@@ -17,6 +17,10 @@ namespace ursine
             public:
                 typedef std::shared_ptr<ResourceProcessor> Handle;
 
+            protected:
+                template<typename InputType>
+                InputType *expectInput(ResourceData::Handle input);
+
             private:
                 friend class ResourcePipelineManager;
 
@@ -30,3 +34,5 @@ namespace ursine
         }
     }
 }
+
+#include "ResourceProcessor.hpp"

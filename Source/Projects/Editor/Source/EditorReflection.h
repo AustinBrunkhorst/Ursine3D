@@ -44,3 +44,4 @@
 #include "Tools/JavaScript/EntityUtils.h"
 #include "Tools/JavaScript/ComponentUtils.h"
 #include "Tools/JavaScript/NotificationUtils.h"
+#include "Tools/JavaScript/GameContextUtils.h"

@@ -1,7 +1,6 @@
 package ursine.editor;
 
-import ursine.native.Extern;
-import ursine.utils.EventManager;
+import ursine.api.events.EventManager;
 
 class NativeBroadcastManager {
     static private var m_instance : NativeBroadcastManager;

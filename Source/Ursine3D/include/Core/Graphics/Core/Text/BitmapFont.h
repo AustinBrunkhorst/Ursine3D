@@ -23,7 +23,7 @@ public:
     BitmapFont(void);
 
     void Load(const std::string textPath);
-    void Load(uint8_t *binaryData, size_t size);
+    void Load(const uint8_t *binaryData, size_t size);
 
     // acessor stuff for rendering
     const std::vector<std::string> &GetTextureFiles(void) const;
@@ -102,6 +102,8 @@ private:
         return 0;
     }
 
+    void ReadBytes(void *destination, size_t count);
+
     bool ValidateFile(void);
     void ReadInfoData(int blockSize);
     void ReadCommonData(int blockSize);
@@ -115,7 +117,7 @@ private:
 
 private:
     std::fstream                m_input;
-    uint8_t                     *m_binaryData;
+    const uint8_t               *m_binaryData;
     size_t                      m_binarySize;
     size_t                      m_position;
 

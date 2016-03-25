@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -187,10 +187,11 @@ namespace ursine
             void invalidateTexture(bool unload = true);
             void invalidateModel(bool unload = true);
 
+            void onTextureReload(void);
+            void OnModelReload(void);
             void clearMatrixPalette(void);
 
             std::vector<SMat4> &getMatrixPalette(void);
-
         } Meta(Enable, WhiteListMethods, DisplayName( "Model3D" ));
     }
 }

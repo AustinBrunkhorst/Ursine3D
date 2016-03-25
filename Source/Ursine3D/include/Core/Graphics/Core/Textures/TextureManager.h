@@ -25,6 +25,8 @@ namespace ursine
 {
     namespace graphics
     {
+        class FontManager;
+
         class TextureManager
         {
         public:
@@ -34,15 +36,19 @@ namespace ursine
             void Uninitialize(void);
 
             // create/destroy
-            GfxHND CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height);
+            GfxHND CreateTexture(const uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height);
             void DestroyTexture(GfxHND &handle);
 
             // load/unload
             void LoadTexture(GfxHND handle);
             void UnloadTexture(GfxHND handle);
 
+            void LoadFontTextures(GfxHND font, FontManager *manager);
+            void UnloadFontTextures(GfxHND font, FontManager *manager);
+
             // mapping stuff
             void MapTextureByID(const unsigned ID, const unsigned int bufferIndex = 0);
+            void MapTextureArrayByIDs(const unsigned int bufferIndex, std::initializer_list<unsigned> IDs);
             void MapSamplerState(const SAMPLER_STATES type, const unsigned bufferIndex = 0);
 
             // dynamic textures for UI and stuff
@@ -56,7 +62,7 @@ namespace ursine
         private:
             void LoadTextureToGPU(Texture &texture) const;
 
-            void InitalizeTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height, Texture &texture) const;
+            void InitalizeTexture(const uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height, Texture &texture) const;
 
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_deviceContext;

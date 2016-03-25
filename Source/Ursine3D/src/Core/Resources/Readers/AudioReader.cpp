@@ -18,36 +18,21 @@ namespace ursine
             AudioData::EventList events( eventCount );
 
             for (auto &e : events)
-                input.ReadString( e );
+                input.Read( e );
 
-            void *initBytes;
-            size_t initSize;
+            BinaryData initData;
 
-            input.Read( initSize );
+            input.Read( initData );
 
-            initBytes = new uint8[ initSize ];
+            BinaryData bankData;
 
-            input.ReadBytes( initBytes, initSize );
-
-            void *bankBytes;
-            size_t bankSize;
-
-            input.Read( bankSize );
-
-            bankBytes = new uint8[ bankSize ];
-
-            input.ReadBytes( bankBytes, bankSize );
+            input.Read( bankData );
 
             auto resource = std::make_shared<AudioData>( 
                 events, 
-                initBytes, 
-                initSize, 
-                bankBytes, 
-                bankSize
+                std::move( initData ),
+                std::move( bankData )
             );
-
-            delete[] initBytes;
-            delete[] bankBytes;
 
             return resource;
         }

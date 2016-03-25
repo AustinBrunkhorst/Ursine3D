@@ -38,11 +38,9 @@ namespace ursine
     private:
         GamepadManager *m_manager;
 
-        CefRefPtr<CefBrowser> m_browser;
-
         void onGamepadButtonDown(EVENT_HANDLER(GamepadManager));
         void onGamepadButtonUp(EVENT_HANDLER(GamepadManager));
         void onGamepadConnected(EVENT_HANDLER(GamepadManager));
         void onGamepadDisconnected(EVENT_HANDLER(GamepadManager));
-    } Meta(Enable, DisplayName( "GamepadManager" ));
+    } Meta(Enable, DisplayName( "NativeGamepadManager" ));
 }

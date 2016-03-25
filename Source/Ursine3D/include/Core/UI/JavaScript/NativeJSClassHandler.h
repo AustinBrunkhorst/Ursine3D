@@ -50,7 +50,8 @@ namespace ursine
                 const meta::Constructor &constructor,
                 CefRefPtr<CefV8Value> context,
                 const CefV8ValueList &arguments,
-                CefString &exception
+                CefString &exception,
+                CefRefPtr<CefV8Value> thisContext
             );
 
             IMPLEMENT_REFCOUNTING( InstanceWrapper );

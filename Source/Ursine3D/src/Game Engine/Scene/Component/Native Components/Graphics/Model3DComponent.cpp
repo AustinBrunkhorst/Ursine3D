@@ -27,7 +27,7 @@ namespace ursine
 {
     namespace ecs
     {
-        NATIVE_COMPONENT_DEFINITION(Model3D);
+        NATIVE_COMPONENT_DEFINITION( Model3D );
 
         Model3D::Model3D(void)
             : BaseComponent( )

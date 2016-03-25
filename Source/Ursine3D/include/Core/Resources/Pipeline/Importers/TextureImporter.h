@@ -18,6 +18,8 @@ namespace ursine
                 TextureImporter(void);
                 ~TextureImporter(void);
 
+                static void ConvertToDDS(const fs::path &input, const fs::path &tempDirectory, BinaryData &output);
+
             private:
                 unsigned m_importedWidth;
                 unsigned m_importedHeight;

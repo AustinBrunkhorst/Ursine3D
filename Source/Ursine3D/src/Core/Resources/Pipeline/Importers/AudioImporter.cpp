@@ -16,7 +16,7 @@ namespace
     const auto kWWiseEventsHeader = std::string( "Event" );
 
     void extractBankEvents(const ursine::fs::path &bankName, ursine::resources::AudioData::EventList &outEvents);
-    void loadBinary(const ursine::fs::path &fileName, void *&outBytes, size_t &outSize);
+    void loadBinary(const ursine::fs::path &fileName, ursine::BinaryData &outData);
 }
 
 namespace ursine
@@ -49,26 +49,19 @@ namespace ursine
 
         //extractBankEvents( bankFile, eventNames );
 
-        void *initBytes;
-        size_t initSize;
+        BinaryData initData;
 
-        loadBinary( initBankFile, initBytes, initSize );
+        loadBinary( initBankFile, initData );
 
-        void *bankBytes;
-        size_t bankSize;
+        BinaryData bankData;
 
-        loadBinary( bankFile, bankBytes, bankSize );
+        loadBinary( bankFile, bankData );
 
         auto resource = std::make_shared<AudioData>( 
             eventNames, 
-            initBytes, 
-            initSize, 
-            bankBytes, 
-            bankSize
+            std::move( initData ),
+            std::move( bankData )
         );
-
-        delete[] initBytes;
-        delete[] bankBytes;
 
         return resource;
     }
@@ -135,23 +128,11 @@ namespace
         }
     }
 
-    void loadBinary(const ursine::fs::path &fileName, void *&outBytes, size_t &outSize)
+    void loadBinary(const ursine::fs::path &fileName, ursine::BinaryData &outData)
     {
-        std::ifstream stream( fileName.string( ), std::ios::in | std::ios::binary );
-
-        UAssertCatchable( stream,
+        UAssertCatchable( ursine::fs::LoadAllBinary( fileName.string( ), outData ),
             "Unable to load audio file.\nfile: %s",
             fileName.string( ).c_str( )
         );
-
-        stream.seekg( 0, std::ios::end );
-
-        outSize = stream.tellg( );
-
-        outBytes = new char[ outSize ];
-
-        stream.seekg( 0, std::ios::beg );
-
-        stream.read( reinterpret_cast<char*>( outBytes ), outSize );
     }
 }

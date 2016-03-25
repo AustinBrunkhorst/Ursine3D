@@ -164,3 +164,9 @@
 #include "Triggers/SegmentChangeTriggerComponent.h"
 #include "Triggers/VisibilityTriggerComponent.h"
 #include "Triggers/AnimateEntityOnTriggerComponent.h"
+
+/////////////////////////////////
+//           UI                //
+/////////////////////////////////
+
+#include "UI/UIScreensConfigComponent.h"

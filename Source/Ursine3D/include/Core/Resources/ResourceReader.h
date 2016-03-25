@@ -2,6 +2,8 @@
 
 #include "FileSystem.h"
 
+#include "BinaryData.h"
+
 #include <istream>
 
 namespace ursine
@@ -22,7 +24,8 @@ namespace ursine
             char ReadByte(void);
             size_t ReadBytes(void *input, size_t count);
 
-            ResourceReader &ReadString(std::string &input);
+            ResourceReader &Read(std::string &input);
+            ResourceReader &Read(BinaryData &input);
 
             template<typename T>
             ResourceReader &Read(T &input);

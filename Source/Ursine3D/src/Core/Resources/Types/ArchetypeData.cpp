@@ -28,7 +28,7 @@ namespace ursine
         {
             auto jsonString = m_data.dump( false );
 
-            output.WriteString( jsonString );
+            output.Write( jsonString );
         }
 
         meta::Type ArchetypeData::GetReaderType(void)

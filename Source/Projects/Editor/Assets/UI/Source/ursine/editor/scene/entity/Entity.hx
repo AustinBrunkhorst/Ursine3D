@@ -1,12 +1,11 @@
 package ursine.editor.scene.entity;
 
-import ursine.controls.PolymerElement;
 import ursine.native.Extern;
 
 import ursine.editor.scene.component.ComponentInspection;
 
-import ursine.utils.EventManager;
-import ursine.utils.IEventContainer;
+import ursine.api.events.EventManager;
+import ursine.api.events.IEventContainer;
 
 @:keepSub
 class Entity implements IEventContainer {

@@ -62,7 +62,7 @@ namespace ursine
             unsigned selectedFilterIndex;
 
             // List of files that were selected
-            FileList selectedFiles;
+            PathList selectedFiles;
 
             operator bool(void)
             {

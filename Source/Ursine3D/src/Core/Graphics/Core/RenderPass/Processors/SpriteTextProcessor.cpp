@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+** ? 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SpriteTextProcessor.cpp
 **
@@ -102,10 +102,6 @@ namespace ursine
                 spriteText.GetWidth( ) * spriteText.GetSize( ),
                 spriteText.GetHeight( ) * spriteText.GetSize( )
             );
-            stb.textureDimensions = DirectX::XMFLOAT2(
-                font.GetCommonData( ).textureDimensions.scaleW,
-                font.GetCommonData( ).textureDimensions.scaleH
-            );
 
             /////////////////////////////////////////////////////////
             // mapping glyph data
@@ -116,6 +112,11 @@ namespace ursine
             auto &characterData = font.GetCharacterData( );
             auto &commonData = font.GetCommonData( );
             auto &infoData = font.GetInfoData( );
+
+            stb.textureDimensions = DirectX::XMFLOAT2(
+                commonData.textureDimensions.scaleW,
+                commonData.textureDimensions.scaleH
+            );
 
             // map the texture
             auto texHandle = m_manager->fontManager->GetTextureHandle( spriteText.GetFontHandle( ), font.GetPageData( )[0] );
