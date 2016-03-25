@@ -339,7 +339,7 @@ void BossAI::OnInitialize(void)
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
         auto spawnBoss = sm->AddState<BossSpawnState>( );
-        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 4.0f );
+        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
 
         spawnBoss->AddTransition( spawnVines, "To Spawn Vines" );
 
