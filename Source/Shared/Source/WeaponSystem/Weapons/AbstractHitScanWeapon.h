@@ -70,13 +70,7 @@
         float CritModifier,                        \
         GetCritModifier,                           \
         SetCritModifier                            \
-    );                                             \
-                                                   \
-    EditorField(                                   \
-        float MaxRange,                            \
-        GetMaxRange,                               \
-        SetMaxRange                                \
-    );                                             
+    );                                                                                 
 
 struct AbstractHitscanWeapon : AbstractWeapon
 {

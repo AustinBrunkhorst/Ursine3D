@@ -70,7 +70,7 @@ void TrailSystem::UpdateTrail(const EntityHandle &entity, TrailComponent *trail)
         trail->GetOwner( )->Delete( );
 
     // Calculate segment vec
-    ursine::SVec3 segmentVec = trail->m_velocity * ( 1.0f / trail->m_segments );
+    ursine::SVec3 segmentVec = trail->m_velocity * ( 1.0f / trail->m_segments ) * ursine::Application::Instance->GetDeltaTime( );
     float segDist = segmentVec.Length( );
 
     // grab particle emitter for emitting particles at segments
