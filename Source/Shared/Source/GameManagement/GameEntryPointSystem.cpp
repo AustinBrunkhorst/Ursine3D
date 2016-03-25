@@ -40,19 +40,6 @@ void GameEntryPointSystem::OnSceneReady(ursine::Scene *scene)
         return;
 
     uiScreens->AddSplash( );
-
-    static int counter = 0;
-
-    m_timers.Create( 500 ).Repeat( ursine::Timer::REPEAT_FOREVER ).Repeated( [=] {
-        auto splash = uiScreens->GetSplash( );
-
-        if (!splash)
-            return;
-
-        splash->Message( "PlayerKilled", ursine::Json::object {
-            { "count", counter++ }
-        } );
-    } );
 }
 
 void GameEntryPointSystem::OnRemove(void)
