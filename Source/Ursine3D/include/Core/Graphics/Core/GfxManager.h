@@ -89,9 +89,10 @@ namespace ursine
 
             //public members
         public:
-            DXCore::DirectXCore *dxCore;
-            DXCore::ShaderManager *shaderManager;
+            DXCore::DirectXCore         *dxCore;
+            DXCore::ShaderManager       *shaderManager;
             DXCore::ShaderBufferManager *bufferManager;
+
             DXCore::InputLayoutManager *layoutManager;
             ModelManager *modelManager;
             RenderableManager *renderableManager;

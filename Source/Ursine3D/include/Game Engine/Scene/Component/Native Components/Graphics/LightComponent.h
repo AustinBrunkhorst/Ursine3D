@@ -74,6 +74,12 @@ namespace ursine
                 SetSpotlightAngles
             );
 
+            EditorField(
+                unsigned shadowResolution,
+                GetShadowmapSize,
+                SetShadowmapSize
+            );
+
             Light(void);
             ~Light(void);
 
@@ -107,16 +113,19 @@ namespace ursine
             const Vec2 &GetSpotlightAngles(void);
             void SetSpotlightAngles(const Vec2 &angles);
 
-			ursine::ecs::RenderMask GetRenderMask(void) const;
-			void SetRenderMask(ursine::ecs::RenderMask mask);
+            ursine::ecs::RenderMask GetRenderMask(void) const;
+            void SetRenderMask(ursine::ecs::RenderMask mask);
+
+            unsigned GetShadowmapSize(void) const;
+            void SetShadowmapSize(unsigned size);
 
             //private methods
         private:
-			void updateRenderer(void);
+            void updateRenderer(void);
 
             graphics::Light *m_light;
 
-			RenderableComponentBase *m_base;
+            RenderableComponentBase *m_base;
 
             friend class RenderSystem;
         } Meta(Enable, DisplayName( "Light" ));

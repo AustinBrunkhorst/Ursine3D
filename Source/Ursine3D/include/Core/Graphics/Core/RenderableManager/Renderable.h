@@ -35,9 +35,12 @@ namespace ursine
             friend class RenderableManager;
         public:
             Renderable(void);
+
             void Initialize(void);
+
             void SetEntityID(ecs::EntityID id);
             ecs::EntityID GetEntityID(void) const;
+
             void SetOverdraw(bool draw);
             bool GetOverdraw() const;
 
@@ -51,6 +54,8 @@ namespace ursine
             void SetActive(const bool isActive);
 
         private:
+            virtual void Uninitialize(GfxManager *mgr);
+
             ecs::EntityID m_entityID;
             bool m_active;
             bool m_useOverdraw;
@@ -173,6 +178,8 @@ namespace ursine
         // LIGHT ////////////////////////////////////////////////////
         class Light : public Renderable
         {
+            friend class RenderableManager;
+
         public:
             //enum for the different types of lights
             enum LightType
@@ -221,7 +228,15 @@ namespace ursine
             SMat4 GenerateShadowView(void) const;
             SMat4 GenerateShadowProjection(void) const;
 
+            unsigned GetShadowmapWidth(void) const;
+            void SetShadowmapWidth(unsigned width);
+
+            GfxHND GetShadowmapHandle(void) const;
+            void SetShadowmapHandle(GfxHND handle);
+
         private:
+            void Uninitialize(GfxManager *mgr) override;
+
             LightType m_type;
             SVec3 m_position;
             Color m_color;
@@ -231,6 +246,9 @@ namespace ursine
 
             Vec2 m_spotlightAngles;
             SMat4 m_spotlightTransform;
+
+            unsigned m_shadowmapWidth;
+            GfxHND m_shadowmap;
         };
 
         /////////////////////////////////////////////////////////////

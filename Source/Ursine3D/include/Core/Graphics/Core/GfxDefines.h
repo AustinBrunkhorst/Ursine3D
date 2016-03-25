@@ -56,6 +56,7 @@
 #define ID_VIEWPORT     42
 #define ID_UI           87
 #define ID_FONT         243
+#define ID_DEPTH_TARGET 97
 
 // internal IDs for models
 #define INTERNAL_CUBE               0

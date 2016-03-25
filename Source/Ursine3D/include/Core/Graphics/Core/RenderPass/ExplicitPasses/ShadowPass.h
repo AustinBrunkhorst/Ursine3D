@@ -19,6 +19,8 @@ namespace ursine
 {
     namespace graphics
     {
+        class Light;
+
         class ShadowPass : public RenderPass
         {
         public:
@@ -27,6 +29,8 @@ namespace ursine
 
         protected:
             void executePass(Camera &currentCamera) override;
+
+            void setDepthTarget(Light *light);
         };
     }
 }

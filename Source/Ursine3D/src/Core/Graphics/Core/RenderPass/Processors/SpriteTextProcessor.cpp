@@ -95,19 +95,20 @@ namespace ursine
 
             // map text data ////////////////////////////////////////
             SpriteTextBuffer stb;
+            auto &font = m_manager->fontManager->GetBitmapFont(handle.Material_);
             stb.worldPosition = spriteText.GetPosition( ).ToD3D( );
             stb.offset = spriteText.GetSize( );
             stb.sizeScalar = DirectX::XMFLOAT2(
                 spriteText.GetWidth( ) * spriteText.GetSize( ),
                 spriteText.GetHeight( ) * spriteText.GetSize( )
             );
+
             /////////////////////////////////////////////////////////
             // mapping glyph data
             Vec2 cursor = Vec2(0, 0);   // "cursor" for text positions
 
             GlyphBuffer gb;
             auto &text = spriteText.GetText( );
-            auto &font = m_manager->fontManager->GetBitmapFont( handle.Material_ );
             auto &characterData = font.GetCharacterData( );
             auto &commonData = font.GetCommonData( );
             auto &infoData = font.GetInfoData( );

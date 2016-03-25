@@ -92,6 +92,7 @@
 
 #include "BossAIComponent.h"
 #include "Boss/Components/PollinateProjectileComponent.h"
+#include "Boss/Components/SludgeshotProjectileComponent.h"
 #include "VineAIComponent.h"
 #include "VineSpawnerComponent.h"
 

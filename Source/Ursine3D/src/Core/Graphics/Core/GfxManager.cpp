@@ -142,7 +142,7 @@ namespace ursine
             LogMessage("Initialize Models", 1);
             modelManager->Initialize(dxCore->GetDevice(), dxCore->GetDeviceContext(), config.modelListPath);
 
-            renderableManager->Initialize();
+            renderableManager->Initialize( this );
             cameraManager->Initialize();
 
             LogMessage("Initialize Textures", 1);
@@ -663,7 +663,6 @@ namespace ursine
                         AddResource( &diffuseRT ).
                         AddResource( &normalRT ).
                         AddResource( &specPowRT ).
-                        AddResource( &shadowmapDepth ).
 
                         Accepts( RENDERABLE_LIGHT ).
                         Processes( &slProcessor ).

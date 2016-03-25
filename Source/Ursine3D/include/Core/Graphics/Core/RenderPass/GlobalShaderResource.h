@@ -28,6 +28,7 @@ namespace ursine
             RESOURCE_TEXTURE,       // texture buffer
             RESOURCE_INPUT_RT,      // render target as texture
             RESOURCE_INPUT_DEPTH,   // depth target as texture
+            RESOURCE_SHADOWMAP,
             RESOURCE_COUNT
         };
 
