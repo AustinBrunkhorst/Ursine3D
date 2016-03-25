@@ -83,6 +83,7 @@ namespace ursine
 
             Meta(Enable)
             Animator(void);
+            ~Animator(void);
 
             void OnSceneReady(Scene *scene) override;
 
@@ -149,7 +150,9 @@ namespace ursine
                              float currNoloopTimePos, float futNoloopTimePos,
                              float &transFactor);
 
-            float getAnimationTimePosition(void) const;
+            AnimationState *getAnimationState(const std::string &stateName);
+
+            float getAnimationTimePosition(void);
             void setAnimationTimePosition(float position);
 
             void getTransFrmByRatio(AnimationState &state, unsigned int &frameIndex, float ratio);
@@ -178,7 +181,7 @@ namespace ursine
 
             void resetSentFlagInEvents(const std::string &currentState);
 
-            // try make state can get animation by EditorResourceField
+            void setAnimationToFirstFrame(EVENT_HANDLER(Entity));
 
         } Meta(
             Enable, 

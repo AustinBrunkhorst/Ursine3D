@@ -44,6 +44,18 @@ public:
     );
 
     EditorField(
+        float seedshotInterval,
+        GetSeedshotInterval,
+        SetSeedshotInterval
+    );
+
+    EditorField(
+        float seedshotCooldown,
+        GetSeedshotCooldown,
+        SetSeedshotCooldown
+    );
+
+    EditorField(
         std::string sludgeshotEntity,
         GetSludgeshotEntityName,
         SetSludgeshotEntityName
@@ -133,6 +145,12 @@ public:
     float GetSeedshotTurnSpeed(void) const;
     void SetSeedshotTurnSpeed(float turnSpeed);
 
+    float GetSeedshotInterval(void) const;
+    void SetSeedshotInterval(float interval);
+
+    float GetSeedshotCooldown(void) const;
+    void SetSeedshotCooldown(float cooldown);
+
     const std::string &GetSludgeshotEntityName(void) const;
     void SetSludgeshotEntityName(const std::string &entityName);
 
@@ -195,6 +213,10 @@ private:
 
     // Seedshot variables
     float m_turnSpeed;
+
+    float m_seedshotInterval;
+
+    float m_seedshotCooldown;
 
     std::string m_seedshotEntity;
 

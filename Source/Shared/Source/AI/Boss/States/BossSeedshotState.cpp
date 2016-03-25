@@ -55,20 +55,23 @@ void BossSeedshotState::Update(BossAIStateMachine *machine)
 {
     auto dt = Application::Instance->GetDeltaTime( );
 
-    m_timer += dt;
+    m_timer -= dt;
 
-    if (m_timer >= 2.0f)
-    {
-        auto boss = machine->GetBoss( )->GetOwner( );
+    auto boss = machine->GetBoss( );
 
-        boss->Dispatch( m_on ? game::FIRE_END : game::FIRE_START, EventArgs::Empty );
+    if (m_timer <= 0.0f)
+    { 
+        auto bossEntity = boss->GetOwner( );
 
-        m_timer = 0.0f;
+        bossEntity->Dispatch( m_on ? game::FIRE_END : game::FIRE_START, EventArgs::Empty );
+
+        if (m_on)
+            m_timer = boss->GetSeedshotCooldown( );
+        else
+            m_timer = boss->GetSeedshotInterval( );
 
         m_on = !m_on;
     }
-
-    auto boss = machine->GetBoss( );
 
     // Find our target if we don't have one
     if (!m_target)
