@@ -33,12 +33,15 @@ namespace ursine
 
                 const fs::path &GetSourceFileName(void) const;
                 const fs::path &GetBuildFileName(void) const;
+                const fs::path &GetBuildCacheFileName(void) const;
 
                 bool HasPreview(void) const;
                 const fs::path &GetPreviewFileName(void) const;
 
                 std::string GetDisplayName(void) const;
                 std::string GetRelativePathDisplayName(void) const;
+
+                const ResourceBuildCache &GetBuildCache(void) const;
 
             private:
                 friend class ResourcePipelineManager;
@@ -47,8 +50,6 @@ namespace ursine
 
                 ResourcePipelineManager *m_manager;
                 ResourceDirectoryNode *m_directoryNode;
-
-                Handle m_parent;
 
                 fs::path m_fileName;
                 fs::path m_metaFileName;
@@ -64,3 +65,5 @@ namespace ursine
         }
     }
 }
+
+#include "ResourceItem.hpp"

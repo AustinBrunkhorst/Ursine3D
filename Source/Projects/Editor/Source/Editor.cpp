@@ -25,8 +25,6 @@
 
 using namespace ursine;
 
-namespace rp = resources::pipeline;
-
 namespace
 {
     const auto kWindowTitle = "Ursine3D Editor";
@@ -38,12 +36,25 @@ namespace
     const auto kEntryPointSplash = "Splash.html";
     const auto kEntryPointEditor = "Editor.html";
 
-    const auto kDefaultPreferencesFile = "Assets/Config/DefaultEditor.prefs";
+    const auto kDefaultPreferencesFile = "Resources/Config/DefaultEditor.prefs";
     const auto kPreferencesFile = "Editor.prefs";
     
     const auto kWindowLocationCentered = Vec2 { -1, -1 };
 
     const auto kProjectExtension = "ursineproj";
+}
+
+namespace ursine
+{
+    UIScreenManager *JSGetGlobalScreenManager(void)
+    {
+        return &GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetScreenManager( );
+    }
+
+    CefRefPtr<CefBrowser> JSGetGlobalBrowser(void)
+    {
+        return GetCoreSystem( Editor )->GetMainWindow( ).GetUI( )->GetBrowser( );
+    }
 }
 
 CORE_SYSTEM_DEFINITION( Editor );
@@ -210,7 +221,9 @@ void Editor::OnInitialize(void)
 
 void Editor::OnRemove(void)
 {
-    writePreferences( );
+    // only write the preferences if we were in the editor
+    if (m_startupConfig.updateHandler == &Editor::onEditorUpdate)
+        writePreferences( );
 
     Application::Instance->Disconnect(
         APP_UPDATE,
@@ -400,13 +413,13 @@ void Editor::initializeProject(const std::string &fileName)
     }
     catch (...)
     {
-        UError( "Unable to resolve project file name." );
-    }
+        UError( "Unable to resolve project file name." ); 
+    } 
 
     std::string projectJsonText;
 
     UAssert( fs::LoadAllText( projectFileName.string( ), projectJsonText ),
-        "Unable to open project file."
+        "Unable to open project file." 
     );
 
     std::string projectJsonError;
@@ -454,7 +467,7 @@ void Editor::exitSplashScreen(void)
     if (m_preferences.windowLocation == kWindowLocationCentered)
         window->SetLocationCentered( );
     else
-        window->SetLocation( m_preferences.windowLocation );
+        window->SetLocation( m_preferences.windowLocation ); 
 
     m_mainWindow.m_ui->GetBrowser( )->GetMainFrame( )->LoadURL( 
         kEntryPointDir + kEntryPointEditor 
@@ -468,6 +481,8 @@ void Editor::exitSplashScreen(void)
         lastWorldGUID = GUIDStringGenerator( )( m_preferences.lastOpenWorld );
 
     auto &resourceManager = m_project->GetScene( ).GetResourceManager( );
+
+    m_project->GetScene( ).GetScreenManager( ).SetUI( m_mainWindow.m_ui );
 
     m_project->initializeScene(
         resourceManager.CreateReference( lastWorldGUID )
@@ -540,7 +555,7 @@ void Editor::onPipelinePreBuildItemStart(EVENT_HANDLER(rp::ResourcePipelineManag
             { "item", fileName.string( ) },
             { "progress", args->progress }
         } 
-    );
+    ); 
 }
 
 void Editor::onPipelinePreBuildItemPreviewStart(EVENT_HANDLER(rp::ResourcePipelineManager))

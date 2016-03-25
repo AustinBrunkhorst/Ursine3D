@@ -30,7 +30,6 @@ using namespace ecs;
 
 BossSeedshotState::BossSeedshotState(void)
     : BossAIState( "Seedshot" )
-    , m_boneTargetComponent( nullptr )
     , m_timer( 0.0f )
     , m_on( false )
 {
@@ -41,7 +40,10 @@ void BossSeedshotState::Enter(BossAIStateMachine *machine)
     auto boss = machine->GetBoss( )->GetOwner( );
 
     // find the bone target finder component
-    m_boneTargetComponent = boss->GetComponentInChildren<FaceBoneTowardsTarget>( );
+    auto components = boss->GetComponentsInChildren<FaceBoneTowardsTarget>( );
+
+    for (auto &component : components)
+        m_boneTargetComponents.push_back( component );
 
     auto animator = boss->GetComponentInChildren<Animator>( );
 
@@ -74,12 +76,13 @@ void BossSeedshotState::Update(BossAIStateMachine *machine)
 
     rotateTowardsTarget( boss );
 
-    if (m_target && m_boneTargetComponent)
+    if (m_target && m_boneTargetComponents.size( ))
     {
         // face the bone towards the target
-        m_boneTargetComponent->SetTargetPosition(
-            m_target->GetTransform( )->GetWorldPosition( )
-        );
+        for (auto &component : m_boneTargetComponents)
+            component->SetTargetPosition(
+                m_target->GetTransform( )->GetWorldPosition( ) + SVec3::UnitY( ) * 5.0f
+            );
     }
 }
 

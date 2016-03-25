@@ -8,5 +8,7 @@ extern class ResourceItem {
     var sourceFile : String;
     var hasPreview : Bool;
     var previewFile : String;
+    var buildFile : String;
+    var buildCacheFile : String;
     var extension : String;
 }

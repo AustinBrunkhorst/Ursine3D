@@ -14,6 +14,7 @@
 #include "Precompiled.h"
 
 #include "Project.h"
+
 #include "ResourcePipelineConfig.h"
 #include "EditorUIResourceHandlerFactory.h"
 
@@ -37,12 +38,15 @@ namespace
 }
 
 Project::Project(void)
-    : m_entityManager( nullptr )
+    : m_gameContext( nullptr )
+    , m_sceneManager( nullptr )
+    , m_entityManager( nullptr )
     , m_pipelineManager( nullptr )
     , m_lastOpenedWorld( GUIDNullGenerator( )( ) )
 {
     m_scene.Listener( this )
-        .On( SCENE_WORLD_CHANGED, &Project::onSceneWorldChanged );
+        .On( SCENE_WORLD_CHANGED, &Project::onSceneWorldChanged )
+        .On( SCENE_PLAYSTATE_CHANGED, &Project::onScenePlayStateChanged );
 
     m_resourcePipeline.Listener( this )
         .On( rp::RP_RESOURCE_MODIFIED, &Project::onResourceModified );
@@ -53,11 +57,14 @@ Project::Project(void)
 Project::~Project(void)
 {
     m_scene.Listener( this )
-        .Off( SCENE_WORLD_CHANGED, &Project::onSceneWorldChanged );
+        .Off( SCENE_WORLD_CHANGED, &Project::onSceneWorldChanged )
+        .Off( SCENE_PLAYSTATE_CHANGED, &Project::onScenePlayStateChanged );
 
     m_resourcePipeline.Listener( this )
         .Off( rp::RP_RESOURCE_MODIFIED, &Project::onResourceModified );
 
+    delete m_gameContext;
+    delete m_sceneManager;
     delete m_entityManager;
     delete m_pipelineManager;
 }
@@ -80,47 +87,6 @@ resources::ResourceManager &Project::GetBuiltInResourceManager(void)
 Scene &Project::GetScene(void)
 {
     return m_scene;
-}
-
-ScenePlayState Project::GetPlayState(void) const
-{
-    return m_scene.GetPlayState( );
-}
-
-void Project::SetPlayState(ScenePlayState state)
-{
-    auto lastState = m_scene.GetPlayState( );
-
-    m_scene.SetPlayState( state );
-
-    if (lastState == PS_EDITOR && (state == PS_PLAYING || state == PS_PAUSED))
-    {
-        auto *oldWorld = m_scene.GetActiveWorld( );
-
-        m_worldCache = ecs::WorldSerializer::Serialize( oldWorld );
-
-        auto *playWorld = ecs::WorldSerializer::Deserialize( m_worldCache );
-
-        playWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( false );
-
-        m_scene.SetActiveWorld( ecs::World::Handle( playWorld ) );
-
-        m_scene.LoadConfiguredSystems( );
-    }
-    else if((lastState == PS_PLAYING || lastState == PS_PAUSED) && state == PS_EDITOR)
-    {
-        auto *cachedWorld = ecs::WorldSerializer::Deserialize( m_worldCache );
-
-        m_scene.SetActiveWorld( ecs::World::Handle( cachedWorld ) );
-
-        cachedWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
-    } 
-    else
-    {
-        m_scene.GetActiveWorld( )->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( 
-            state == PS_PAUSED 
-        );
-    }
 }
 
 void Project::SetEmptyScene(void)
@@ -201,6 +167,11 @@ void Project::initialize(const ProjectConfig &config)
 
 void Project::initializeScene(const resources::ResourceReference &startingWorld)
 {
+    m_gameContext = new EditorGameContext( this );
+
+    m_scene.SetGameContext( m_gameContext );
+
+    m_sceneManager = new EditorSceneManager( this );
     m_entityManager = new EditorEntityManager( this );
 
     auto world = startingWorld.Load<resources::WorldData>( m_scene.GetResourceManager( ) );
@@ -219,7 +190,11 @@ void Project::initializeScene(const resources::ResourceReference &startingWorld)
     m_resourcePipeline.WatchResourceDirectory( );
 
     // create the UI resource factory
-    CefRegisterSchemeHandlerFactory( kUIGameResourceScheme, "", new EditorUIResourceHandlerFactory( ) );
+    CefRegisterSchemeHandlerFactory( 
+        "http", 
+        kUIGameResourceDomain, 
+        new EditorUIResourceHandlerFactory( ) 
+    );
 }
 
 void Project::onSceneWorldChanged(EVENT_HANDLER(Scene))
@@ -233,6 +208,45 @@ void Project::onSceneWorldChanged(EVENT_HANDLER(Scene))
     else
     {
         m_lastOpenedWorld = GUIDNullGenerator( )( );
+    }
+}
+
+void Project::onScenePlayStateChanged(EVENT_HANDLER(Scene))
+{
+    EVENT_ATTRS(Scene, ScenePlayStateChangedArgs);
+
+    auto oldState = args->oldState;
+    auto newState = args->newState;
+
+    if (oldState == PS_EDITOR && (newState == PS_PLAYING || newState == PS_PAUSED))
+    {
+        auto *oldWorld = m_scene.GetActiveWorld( );
+
+        m_worldCache = ecs::WorldSerializer::Serialize( oldWorld );
+
+        auto *playWorld = ecs::WorldSerializer::Deserialize( m_worldCache );
+
+        playWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( false );
+
+        m_scene.SetActiveWorld( ecs::World::Handle( playWorld ) );
+
+        m_scene.LoadConfiguredSystems( );
+    }
+    else if ((oldState == PS_PLAYING || oldState == PS_PAUSED) && newState == PS_EDITOR)
+    {
+        m_scene.GetScreenManager( ).ClearScreens( );
+
+        auto *cachedWorld = ecs::WorldSerializer::Deserialize( m_worldCache );
+
+        m_scene.SetActiveWorld( ecs::World::Handle( cachedWorld ) );
+
+        cachedWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
+    } 
+    else
+    {
+        m_scene.GetActiveWorld( )->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( 
+            newState == PS_PAUSED
+        );
     }
 }
 

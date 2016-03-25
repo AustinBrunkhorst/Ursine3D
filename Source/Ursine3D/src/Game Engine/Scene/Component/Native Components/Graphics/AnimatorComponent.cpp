@@ -545,7 +545,13 @@ namespace ursine
 
             if (m_rigRoot)
             {
+                if (m_rig == "")
+                    return;
+
                 auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
+
+                if (!rig)
+                    return;
 
                 setBoneTransformPointers( m_rigRoot->GetTransform( )->GetChild( 0 ).Get( ), rig->GetBone( 0 ) );
             }

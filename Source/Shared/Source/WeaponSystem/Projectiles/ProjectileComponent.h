@@ -24,20 +24,31 @@ public:
         SetSpeed
     );
 
+    EditorField(
+        bool faceTowardsPath,
+        GetFaceTowardsPath,
+        SetFaceTowardsPath
+    );
+
     Projectile(void);
     ~Projectile(void);
 
     void OnInitialize(void) override;
 
     float GetSpeed(void) const;
-    void SetSpeed(const float speed);
+    void SetSpeed(float speed);
 
-    void Update(const float dt);
+    bool GetFaceTowardsPath(void) const;
+    void SetFaceTowardsPath(bool flag);
+
+    void Update(float dt);
 
 private:
     void OnInit(EVENT_HANDLER(ursine::ecs::Entity));
 
     void CalculateLifeTime(float range);
+
+    bool m_faceTowardsPath;
 
     float m_speed;
     float m_lifeTime;

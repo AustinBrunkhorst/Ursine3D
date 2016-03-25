@@ -34,55 +34,28 @@ namespace ursine
         
     }
 
-    resources::ResourceData::Handle rp::TextureImporter::Import(ResourceImportContext &context)
+    void rp::TextureImporter::ConvertToDDS(const fs::path &input, const fs::path &tempDirectory, BinaryData &output)
     {
-        auto tempDirectory = getTempDirectory( context );
-        auto sourceFile = context.resource->GetSourceFileName( );
-        auto displayName = context.resource->GetDisplayName( );
-
         std::vector<std::string> ddsArgs {
             "-nologo",
             "-o \""+ tempDirectory.string( ) +"\"",
             "-ft dds",
-            "\""+ sourceFile.string( ) +"\""
+            "\""+ input.string( ) +"\""
         };
 
         if (!exists( tempDirectory ))
             create_directories( tempDirectory );
 
         UAssertCatchable( runTexureProcessor( ddsArgs ),
-            "Unable to run texture processor for building DDS'."
+            "Unable to run texture processor for building DDS."
         );
 
-        auto ddsFile = change_extension( tempDirectory / displayName, "dds" );
+        auto ddsFile = change_extension( tempDirectory / input.stem( ), "dds" );
 
-        std::ifstream stream( ddsFile.string( ), std::ios::in | std::ios::binary );
-
-        UAssertCatchable( stream,
+        UAssertCatchable( fs::LoadAllBinary( ddsFile.string( ), output ),
             "Unable to load built DDS file.\nfile: %s",
             ddsFile.string( ).c_str( )
         );
-
-        stream.seekg( 0, std::ios::end );
-
-        auto fileSize = stream.tellg( );
-
-        auto buffer = new char[ fileSize ];
-
-        stream.seekg( 0, std::ios::beg );
-
-        stream.read( buffer, fileSize );
-
-        dx::TexMetadata meta;
-
-        auto result = GetMetadataFromDDSMemory( buffer, fileSize, dx::DDS_FLAGS_NONE, meta );
-
-        UAssertCatchable( result == S_OK,
-            "Unable to get meta data from built DDS file.\nfile: %s",
-            ddsFile.string( ).c_str( )
-        );
-
-        stream.close( );
 
         try
         {
@@ -92,18 +65,39 @@ namespace ursine
         {
             // do nothing
         }
+    }
+
+    resources::ResourceData::Handle rp::TextureImporter::Import(ResourceImportContext &context)
+    {
+        auto tempDirectory = getTempDirectory( context );
+        auto sourceFile = context.resource->GetSourceFileName( );
+        
+        BinaryData ddsData;
+
+        ConvertToDDS( sourceFile, tempDirectory, ddsData );
+
+        dx::TexMetadata meta;
+
+        auto result = GetMetadataFromDDSMemory( 
+            ddsData.GetData( ), 
+            ddsData.GetSize( ), 
+            dx::DDS_FLAGS_NONE, 
+            meta 
+        );
+
+        UAssertCatchable( result == S_OK,
+            "Unable to get meta data from built DDS file.\nfile: %s",
+            sourceFile.string( ).c_str( )
+        );
 
         m_importedWidth = static_cast<unsigned>( meta.width );
         m_importedHeight = static_cast<unsigned>( meta.height );
 
         auto data = std::make_shared<TextureData>(
-            buffer,
-            fileSize, 
+            std::move( ddsData ),
             m_importedWidth, 
             m_importedHeight
         );
-
-        delete[] buffer;
 
         return data;
     }

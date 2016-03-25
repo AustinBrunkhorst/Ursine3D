@@ -14,6 +14,8 @@
 #include "UrsinePrecompiled.h"
 #include "Renderable.h"
 #include <Core/Graphics/Core/GfxDefines.h>
+#include <DirectXMath.h>
+#include "GfxManager.h"
 
 namespace ursine
 {
@@ -21,16 +23,20 @@ namespace ursine
     {
         ///////////////////////////////////////////////////////////////////
         // renderable class
-        Renderable::Renderable()
+        Renderable::Renderable(void)
         {
             m_active = false;
         }
 
-        void Renderable::Initialize()
+        void Renderable::Initialize(void)
         {
             m_useOverdraw = false;
             m_useDebugRendering = false;
             m_mask = 0;
+        }
+
+        void Renderable::Uninitialize(GfxManager *mgr)
+        {
         }
 
         void Renderable::SetEntityID(ecs::EntityID id)
@@ -38,7 +44,7 @@ namespace ursine
             m_entityID = id;
         }
 
-        ecs::EntityID Renderable::GetEntityID() const
+        ecs::EntityID Renderable::GetEntityID(void) const
         {
             return m_entityID;
         }
@@ -48,7 +54,7 @@ namespace ursine
             m_useOverdraw = draw;
         }
 
-        bool Renderable::GetOverdraw() const
+        bool Renderable::GetOverdraw(void) const
         {
             return m_useOverdraw;
         }
@@ -58,7 +64,7 @@ namespace ursine
             m_useDebugRendering = debug;
         }
 
-        bool Renderable::GetDebug() const
+        bool Renderable::GetDebug(void) const
         {
             return m_useDebugRendering;
         }
@@ -87,7 +93,7 @@ namespace ursine
         //model class
         Model::Model(void)
         {
-            m_transform = SMat4::Identity();
+            m_transform = SMat4::Identity( );
         }
 
         const SMat4 &Model::GetWorldMatrix(void)
@@ -109,7 +115,7 @@ namespace ursine
         //model3d
         void Model3D::Initialize(void)
         {
-            Renderable::Initialize();
+            Renderable::Initialize( );
 
             m_textureHandle = INTERNAL_BLANK_TEX;
             m_modelHandle = 0;
@@ -121,11 +127,12 @@ namespace ursine
             SetDebug(false);
             m_color = Color(1, 1, 1, 1);
             m_meshIndex = -1;
+            m_shadowCaster = true;
         }
 
         const char *Model3D::GetModelName(void)
         {
-            return m_modelResourceName.c_str();
+            return m_modelResourceName.c_str( );
         }
 
         void Model3D::SetModelName(std::string modelName)
@@ -143,7 +150,7 @@ namespace ursine
             m_modelHandle = handle;
         }
 
-        GfxHND Model3D::GetTextureHandle()
+        GfxHND Model3D::GetTextureHandle(void)
         {
             return m_textureHandle;
         }
@@ -218,7 +225,7 @@ namespace ursine
             m_shadowCaster = castShadow;
         }
 
-        const Color &Model3D::GetColor() const
+        const Color &Model3D::GetColor(void) const
         {
             return m_color;
         }
@@ -228,7 +235,7 @@ namespace ursine
             m_color = color;
         }
 
-        std::vector<SMat4>& Model3D::GetMatrixPalette()
+        std::vector<SMat4>& Model3D::GetMatrixPalette(void)
         {
             return m_matrixPalette;
         }
@@ -300,7 +307,7 @@ namespace ursine
             m_color = color;
         }
 
-        const Color &Billboard2D::GetColor() const
+        const Color &Billboard2D::GetColor(void) const
         {
             return m_color;
         }
@@ -321,7 +328,16 @@ namespace ursine
 
             m_spotlightAngles = Vec2(15, 30);
 
+            m_shadowmap = 0;
+            m_shadowmapWidth = 1024;
+
             Renderable::Initialize();
+        }
+
+        void Light::Uninitialize(GfxManager *mgr)
+        {
+            if(m_shadowmap != 0)
+                mgr->dxCore->GetDepthMgr( )->DestroyShadowmapDepthTarget( m_shadowmap );
         }
 
         Light::LightType Light::GetType(void)
@@ -389,7 +405,7 @@ namespace ursine
             m_radius = radius;
         }
 
-        float Light::GetIntensity()
+        float Light::GetIntensity(void)
         {
             return m_intensity;
         }
@@ -399,7 +415,7 @@ namespace ursine
             m_intensity = intensity;
         }
 
-        const Vec2& Light::GetSpotlightAngles()
+        const Vec2& Light::GetSpotlightAngles(void)
         {
             return m_spotlightAngles;
         }
@@ -422,6 +438,70 @@ namespace ursine
         const SMat4& Light::GetSpotlightTransform() const
         {
             return m_spotlightTransform;
+        }
+
+        SMat4 Light::GenerateShadowView(void) const
+        {
+            auto tempPos = m_position.ToD3D( );
+            auto position = DirectX::XMFLOAT4( 
+                tempPos.x, 
+                tempPos.y, 
+                tempPos.z, 
+                1.0f 
+            );
+
+            auto tempLook = m_direction.ToD3D( );
+            auto dir = DirectX::XMFLOAT4( 
+                tempLook.x,
+                tempLook.y,
+                tempLook.z,
+                0.0f 
+            );
+
+            auto up = DirectX::XMFLOAT4(
+                0.0f, 
+                1.0f, 
+                0.0f, 
+                0.0f
+            );
+
+            return SMat4(
+                DirectX::XMMatrixLookToLH(
+                    DirectX::XMLoadFloat4(&position),
+                    DirectX::XMLoadFloat4(&dir),
+                    DirectX::XMLoadFloat4(&up)
+                ) 
+            );
+        }
+
+        SMat4 Light::GenerateShadowProjection(void) const
+        {
+            return SMat4( DirectX::XMMatrixPerspectiveFovLH(
+                    math::DegreesToRadians( m_spotlightAngles.Y( ) ), 
+                    1.0f,
+                    0.01f,
+                    m_radius
+                )
+            );
+        }
+
+        unsigned Light::GetShadowmapWidth(void) const
+        {
+            return m_shadowmapWidth;
+        }
+
+        void Light::SetShadowmapWidth(unsigned width)
+        {
+            m_shadowmapWidth = width;
+        }
+
+        GfxHND Light::GetShadowmapHandle(void) const
+        {
+            return m_shadowmap;
+        }
+        void Light::SetShadowmapHandle(GfxHND handle)
+        {
+            m_shadowmap = handle;
         }
 
         /////////////////////////////////////////////////////////////
@@ -462,7 +542,7 @@ namespace ursine
 
         unsigned ParticleSystem::GetParticleVectorSize(void) const
         {
-            return static_cast<unsigned>(m_gpuParticleData.size());
+            return static_cast<unsigned>( m_gpuParticleData.size( ) );
         }
 
         unsigned ParticleSystem::GetActiveParticleCount(void) const
@@ -472,14 +552,14 @@ namespace ursine
 
         unsigned ParticleSystem::GetInactiveParticleCount(void) const
         {
-            return static_cast<unsigned>(m_gpuParticleData.size()) - m_backIndex;
+            return static_cast<unsigned>( m_gpuParticleData.size( ) ) - m_backIndex;
         }
 
         int ParticleSystem::SpawnParticle(void)
         {
             // no available particles, we need to expand
             // should be amortized
-            if (GetInactiveParticleCount() == 0)
+            if (GetInactiveParticleCount( ) == 0)
             {
                 // push new particle to the back
                 m_gpuParticleData.push_back(Particle_GPU());

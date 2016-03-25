@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -24,7 +24,7 @@ using namespace std::placeholders;
 
 namespace
 {
-    void doBrowseFileCallback(int callbackID, int selectedFilter, const fs::FileList &files)
+    void doBrowseFileCallback(int callbackID, int selectedFilter, const fs::PathList &files)
     {
         if (!files.empty( ))
         {

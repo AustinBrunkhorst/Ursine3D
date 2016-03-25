@@ -38,6 +38,7 @@ namespace ursine
         class GfxManager
         {
             friend class RenderPass;
+            friend class ShadowPass;
             friend class GlobalShaderResource;
 
             //public methods
@@ -88,9 +89,10 @@ namespace ursine
 
             //public members
         public:
-            DXCore::DirectXCore *dxCore;
-            DXCore::ShaderManager *shaderManager;
+            DXCore::DirectXCore         *dxCore;
+            DXCore::ShaderManager       *shaderManager;
             DXCore::ShaderBufferManager *bufferManager;
+
             DXCore::InputLayoutManager *layoutManager;
             ModelManager *modelManager;
             RenderableManager *renderableManager;
@@ -103,8 +105,6 @@ namespace ursine
             GfxProfiler *gfxProfiler;
 
             GfxInfo *gfxInfo;
-
-            BitmapFont m_font;
 
             //thred stuff
         private:

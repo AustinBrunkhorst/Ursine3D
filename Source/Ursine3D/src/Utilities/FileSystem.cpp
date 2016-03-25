@@ -57,6 +57,29 @@ namespace ursine
             return true;
         }
 
+        bool LoadAllBinary(const std::string &fileName, BinaryData &output)
+        {
+            std::ifstream input( fileName, std::ios::in | std::ios::binary );
+
+            if (!input)
+                return false;
+
+            input.seekg( 0, std::ios::end );
+
+            auto size = input.tellg( );
+            auto data = new char[ size ];
+
+            input.seekg( 0, std::ios::beg );
+
+            input.read( reinterpret_cast<char*>( data ), size );
+
+            BinaryData::Load( output, data, size );
+
+            input.close( );
+
+            return true;
+        }
+
         std::string SafeFileName(const std::string &fileName, char replacement)
         {
             auto sanitized = fileName;

@@ -87,9 +87,7 @@ JSFunction(SceneSaveWorldAs)
     auto saveFileName = selectSavePath( item ? item->GetSourceFileName( ) : "" );
 
     if (!saveFileName.empty( ))
-    {
         saveWorld( world, saveFileName );
-    }
 
     return CefV8Value::CreateBool( true );
 }
@@ -179,7 +177,7 @@ JSFunction(SceneGetRootEntities)
         ids->SetValue( 
             static_cast<int>( i ), 
             CefV8Value::CreateUInt( root[ i ]->GetID( ) )
-    );
+        );
     }
 
     return ids;
@@ -201,19 +199,17 @@ JSFunction(SceneGetActiveEntities)
         ids->SetValue( 
             static_cast<int>( i ), 
             CefV8Value::CreateUInt( active[ i ]->GetID( ) )
-    );
+        );
     }
 
     return ids;
 }
 
-JSFunction(ScenePlayStart)
+JSFunction(SceneGetPlayState)
 {
-    Application::PostMainThread( [] {
-        getProject( )->SetPlayState( PS_PLAYING );
-    } );
-
-    return CefV8Value::CreateUndefined( );
+    return CefV8Value::CreateUInt(
+        static_cast<unsigned>( getScene( ).GetPlayState( ) )
+    );
 }
 
 JSFunction(SceneSetPlayState)
@@ -221,10 +217,10 @@ JSFunction(SceneSetPlayState)
     if (arguments.size( ) != 1)
         JSThrow( "Invalid arguments.", nullptr );
 
-    auto playing = arguments[ 0 ]->GetBoolValue( );
+    auto state = static_cast<ScenePlayState>( arguments[ 0 ]->GetUIntValue( ) );
 
     Application::PostMainThread( [=] {
-        getProject( )->SetPlayState( playing ? PS_PLAYING : PS_PAUSED );
+        getScene( ).SetPlayState( state );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -236,15 +232,6 @@ JSFunction(SceneStep)
         auto &scene = getScene( );
 
         scene.Step( );
-    } );
-
-    return CefV8Value::CreateUndefined( );
-}
-
-JSFunction(ScenePlayStop)
-{
-    Application::PostMainThread( [] {
-        getProject( )->SetPlayState( PS_EDITOR );
     } );
 
     return CefV8Value::CreateUndefined( );
@@ -280,12 +267,12 @@ namespace
     }
 
     Scene &getScene(void)
-        {
+    {
         return getProject( )->GetScene( );
-        }
+    }
             
     ecs::World *getActiveWorld(void)
-            {
+    {
         return getScene( ).GetActiveWorld( );
     }
 
@@ -310,12 +297,12 @@ namespace
     }
 
     void saveWorld(ecs::World *world, const fs::path &path)
-        {
+    {
         auto data = ecs::WorldSerializer::Serialize( world );
 
         UAssert( fs::WriteAllText( path.string( ), data.dump( true ) ),
-            "Unable to save world.\nfile: %s",
-                path.string( ).c_str( )
-            );
+        "Unable to save world.\nfile: %s",
+            path.string( ).c_str( )
+        );
     }
 }

@@ -3,7 +3,7 @@ package ursine.editor.windows;
 import js.html.HtmlElement;
 import js.html.Element;
 import js.html.DOMElement;
-import js.html.UListElement;
+import ursine.api.input.KeyboardKey;
 import ursine.native.Extern;
 import ursine.controls.TreeView;
 import ursine.controls.TreeViewItem;
@@ -109,10 +109,9 @@ class SceneOutline extends WindowHandler {
         }
     }
 
-    private function onWindowKeyDown(e) {
+    private function onWindowKeyDown(e : js.html.KeyboardEvent) {
         switch (e.keyCode) {
-            // delete
-            case 46: {
+            case KeyboardKey.DELETE: {
                 deleteSelectedEntities( );
             }
         }
@@ -296,9 +295,8 @@ class SceneOutline extends WindowHandler {
             startRenamingEntity( item );
         } );
 
-        item.textContentElement.addEventListener( 'keydown', function(e) {
-            // return key
-            if (e.keyCode == 13) {
+        item.textContentElement.addEventListener( 'keydown', function(e : js.html.KeyboardEvent) {
+            if (e.keyCode == KeyboardKey.RETURN) {
                 item.textContentElement.blur( );
 
                 e.preventDefault( );

@@ -186,7 +186,9 @@ namespace ursine
 
         struct ShadowProjectionBuffer
         {
-            DirectX::XMMATRIX lightProjection;
+            DirectX::XMMATRIX invCam;
+            DirectX::XMMATRIX lightView;
+            DirectX::XMMATRIX lightProj;
         };
     }
 }

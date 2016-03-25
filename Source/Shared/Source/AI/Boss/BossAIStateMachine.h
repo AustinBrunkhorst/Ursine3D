@@ -29,6 +29,8 @@ public:
 
     void Update(void) override;
 
+    void Exit(void);
+
     BossAI *GetBoss(void);
 
 private:

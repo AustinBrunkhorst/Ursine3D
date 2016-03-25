@@ -6,6 +6,8 @@ namespace ursine
     {
         namespace pipeline
         {
+            class ResourceItem;
+
             struct ResourceBuildCache
             {
                 // Determines if this asset built a preview
@@ -14,8 +16,12 @@ namespace ursine
                 // Runtime type of the processed resource
                 meta::Type processedType;
 
+                // Resource that generated this resource.
+                // NULL GUID if it doesn't exist
+                GUID parent;
+
                 // Resources that were generated from this resource
-                std::vector<GUID> generatedResources;
+                std::unordered_set<GUID, GUIDHasher> generatedResources;
             };
         }
     }

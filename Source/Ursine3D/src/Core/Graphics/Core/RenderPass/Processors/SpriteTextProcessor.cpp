@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+** ? 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** SpriteTextProcessor.cpp
 **
@@ -29,7 +29,7 @@ namespace ursine
         {
             UAssert(handle.Type_ == m_renderableType, "GfxEntityProcessor attempted to proces invalid type!");
 
-            SpriteText spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
             // if inactive
             if (!spriteText.GetActive())
@@ -51,7 +51,7 @@ namespace ursine
 
         void SpriteTextProcessor::prepOperation(_DRAWHND handle, SMat4 &view, SMat4 &proj, Camera &currentCamera)
         {
-            SpriteText spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
             // map color data ///////////////////////////////////////
             PointGeometryBuffer pgb;
@@ -85,25 +85,22 @@ namespace ursine
 
         void SpriteTextProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
-            SpriteText spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
             m_manager->shaderManager->Render( 6 * static_cast<unsigned>( spriteText.GetText( ).length( ) ) );
         }
 
         void SpriteTextProcessor::mapSpriteTextBuffer(_DRAWHND handle)
         {
-            SpriteText spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>(handle.Index_);
+            SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
             // map text data ////////////////////////////////////////
             SpriteTextBuffer stb;
+            auto &font = m_manager->fontManager->GetBitmapFont(handle.Material_);
             stb.worldPosition = spriteText.GetPosition( ).ToD3D( );
             stb.offset = spriteText.GetSize( );
             stb.sizeScalar = DirectX::XMFLOAT2(
                 spriteText.GetWidth( ) * spriteText.GetSize( ),
                 spriteText.GetHeight( ) * spriteText.GetSize( )
-            );
-            stb.textureDimensions = DirectX::XMFLOAT2(
-                m_manager->m_font.GetCommonData( ).textureDimensions.scaleW,
-                m_manager->m_font.GetCommonData( ).textureDimensions.scaleH
             );
 
             /////////////////////////////////////////////////////////
@@ -112,10 +109,14 @@ namespace ursine
 
             GlyphBuffer gb;
             auto &text = spriteText.GetText( );
-            auto &font = m_manager->fontManager->GetBitmapFont( handle.Material_ );
             auto &characterData = font.GetCharacterData( );
             auto &commonData = font.GetCommonData( );
             auto &infoData = font.GetInfoData( );
+
+            stb.textureDimensions = DirectX::XMFLOAT2(
+                commonData.textureDimensions.scaleW,
+                commonData.textureDimensions.scaleH
+            );
 
             // map the texture
             auto texHandle = m_manager->fontManager->GetTextureHandle( spriteText.GetFontHandle( ), font.GetPageData( )[0] );

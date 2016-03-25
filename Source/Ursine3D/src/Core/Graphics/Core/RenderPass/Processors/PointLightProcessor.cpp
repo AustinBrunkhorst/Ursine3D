@@ -29,7 +29,7 @@ namespace ursine
         {
             UAssert(handle.Type_ == m_renderableType, "GfxEntityProcessor attempted to proces invalid type!");
 
-            Light light = m_manager->renderableManager->GetRenderableByID<Light>( handle.Index_ );
+            Light &light = m_manager->renderableManager->GetRenderableByID<Light>( handle.Index_ );
 
             // if wrong type
             if (light.GetType( ) != Light::LIGHT_POINT)
@@ -49,7 +49,7 @@ namespace ursine
 
         void PointLightProcessor::prepOperation(_DRAWHND handle, SMat4 &view, SMat4 &proj, Camera &currentCamera)
         {
-            Light pointLight = m_manager->renderableManager->GetRenderableByID<Light>(handle.Index_);
+            Light &pointLight = m_manager->renderableManager->GetRenderableByID<Light>( handle.Index_ );
 
             // get radius
             float radius = pointLight.GetRadius() * 2;
