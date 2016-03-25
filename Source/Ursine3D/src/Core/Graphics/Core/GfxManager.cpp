@@ -896,7 +896,7 @@ namespace ursine
                         Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_BACKCULL ).
-                        Set( BLEND_STATE_COUNT ).
+                        Set( BLEND_STATE_DEFAULT ).
                         Set( DXCore::TOPOLOGY_POINT_LIST ).
 
                         AddResource( &viewBuffer ).
