@@ -119,6 +119,8 @@ namespace ursine
             auto trans = GetOwner( )->GetTransform( );
             m_particleSystem->SetPosition( trans->GetWorldPosition( ) );
 
+            m_particleSystem->SetTransform( trans->GetLocalToWorldMatrix( ) );
+
             GetOwner( )->Dispatch( ENTITY_PARTICLE_UPDATE, nullptr );
 
             m_base->dirty = true;

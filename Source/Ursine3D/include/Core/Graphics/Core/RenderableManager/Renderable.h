@@ -296,6 +296,9 @@ namespace ursine
 
             bool GetSystemSpace(void) const;
             void SetSystemSpace(const bool useWorldCoordinates);
+
+            const SMat4 &GetTransform(void) const;
+            void SetTransform(const SMat4 &transform);
         private:
             // members
             unsigned m_backIndex;
@@ -309,6 +312,8 @@ namespace ursine
 
             bool m_useAdditive;
             bool m_worldSpace;
+
+            SMat4 m_transform;
         };
 
         /////////////////////////////////////////////////////////////
