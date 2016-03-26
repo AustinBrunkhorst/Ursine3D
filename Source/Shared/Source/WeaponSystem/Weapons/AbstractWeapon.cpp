@@ -330,6 +330,11 @@ void AbstractWeapon::ActivateWeapon(const ecs::EntityHandle &whoToConnect, ecs::
         .On(game::CEASE_FIRE, &AbstractWeapon::CeaseFire)
         .On(game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill);
 
+    // connect to owner for cease and fire at will
+    m_owner->Listener( this )
+        .On(game::CEASE_FIRE, &AbstractWeapon::CeaseFire)
+        .On(game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill);
+
     // Gun is being reloaded from inventory (swapped in) so update
     //   ammo and clip to previous values before swapped out
     if (ammo != -1)
@@ -366,6 +371,11 @@ void AbstractWeapon::DetachWeapon(void)
     m_boss->Listener( this )
         .Off( game::FIRE_START, &AbstractWeapon::TriggerPulled )
         .Off( game::FIRE_END, &AbstractWeapon::TriggerReleased )
+        .Off(game::CEASE_FIRE, &AbstractWeapon::CeaseFire)
+        .Off(game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill);
+
+    // disconnect to owner for cease and fire at will
+    m_owner->Listener(this)
         .Off(game::CEASE_FIRE, &AbstractWeapon::CeaseFire)
         .Off(game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill);
 
