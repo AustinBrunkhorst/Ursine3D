@@ -17,7 +17,7 @@
 #include "BossAIComponent.h"
 #include "HealthComponent.h"
 
-#include <ParticleSystemComponent.h>
+#include <ParticleEmitterComponent.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -38,5 +38,5 @@ void BossInvulnerableToggleState::Enter(BossAIStateMachine *machine)
     auto emitter = boss->GetInvulnerableEmitterEntity( );
 
     if (emitter)
-        emitter->GetComponent<ParticleSystem>( )->SetPlaying( m_toggle );
+        emitter->GetComponent<ParticleEmitter>( )->SetEmitting( m_toggle );
 }

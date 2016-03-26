@@ -26,7 +26,6 @@ namespace ursine
 
         ParticleSystem::ParticleSystem(void)
             : BaseComponent( )
-            , m_playing( true )
             , m_particleColor( Color::White )
             , m_systemSpace( SystemSpace::WorldSpace )
             , m_renderMode( RenderMode::Additive )
@@ -121,22 +120,9 @@ namespace ursine
             m_particleSystem->SetPosition( trans->GetWorldPosition( ) );
             m_particleSystem->SetTransform( trans->GetLocalToWorldMatrix( ) );
 
-            if (m_playing)
-                GetOwner( )->Dispatch( ENTITY_PARTICLE_UPDATE, nullptr );
+            GetOwner( )->Dispatch( ENTITY_PARTICLE_UPDATE, nullptr );
 
             m_base->dirty = true;
-        }
-
-        bool ParticleSystem::GetPlaying(void) const
-        {
-            return m_playing;
-        }
-
-        void ParticleSystem::SetPlaying(bool playing)
-        {
-            m_playing = playing;
-
-            NOTIFY_COMPONENT_CHANGED( "playing", m_playing );
         }
 
         const Color &ParticleSystem::GetColor(void) const

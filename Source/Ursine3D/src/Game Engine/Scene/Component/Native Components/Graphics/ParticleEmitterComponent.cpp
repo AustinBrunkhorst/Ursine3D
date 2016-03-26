@@ -29,6 +29,7 @@ namespace ursine
 
         ParticleEmitter::ParticleEmitter(void)
             : BaseComponent( )
+            , m_emitting( true )
             , m_emitRate(100)
             , m_emitRateRange(0.0f, 0.0f)
             , m_emitCount(0)
@@ -154,6 +155,18 @@ namespace ursine
         #endif
 
         // GETTER / SETTERS /////////////////////////////////////////
+        bool ParticleEmitter::GetEmitting(void) const
+        {
+            return m_emitting;
+        }
+
+        void ParticleEmitter::SetEmitting(bool emitting)
+        {
+            m_emitting = emitting;
+
+            NOTIFY_COMPONENT_CHANGED( "emitting", m_emitting );
+        }
+
         float ParticleEmitter::GetEmitRate(void) const
         {
             return m_emitRate;
@@ -367,7 +380,7 @@ namespace ursine
             if (dt > 0.2f)
                 dt = 0.2f;
             // if we are able to spawn or we don't care about spawn count AND we are able to emit
-            if (((m_spawnCount < m_emitCount) || (m_emitCount == 0)) && m_emitRate != 0)
+            if (((m_spawnCount < m_emitCount) || (m_emitCount == 0)) && m_emitRate != 0 && m_emitting)
             {
                 m_currentTime += dt;
 
