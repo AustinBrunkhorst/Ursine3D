@@ -99,6 +99,9 @@ namespace ursine
 
             auto center = GetOwner()->GetTransform()->GetWorldPosition();
 
+            if (m_particleComponent->GetSystemSpace( ) == SystemSpace::LocalSpace)
+                center = Vec3(0, 0, 0);
+
             int particleCount = m_particleComponent->GetActiveParticleCount();
 
             float axisDotAxis = m_axis.Dot(m_axis);

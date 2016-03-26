@@ -103,6 +103,10 @@ namespace ursine
 
             offset *= SVec3(m_xVelRange.GetValue( ), m_yVelRange.GetValue( ), m_zVelRange.GetValue( ));
 
+
+            if (m_particleComponent->GetSystemSpace( ) == SystemSpace::LocalSpace)
+                return (m_initialVelocity + offset);
+
             return GetOwner( )->GetTransform( )->GetWorldRotation( ) * (m_initialVelocity + offset);
         }
 

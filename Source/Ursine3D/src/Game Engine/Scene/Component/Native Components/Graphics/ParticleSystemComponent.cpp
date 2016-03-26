@@ -119,6 +119,7 @@ namespace ursine
         {
             auto trans = GetOwner( )->GetTransform( );
             m_particleSystem->SetPosition( trans->GetWorldPosition( ) );
+            m_particleSystem->SetTransform( trans->GetLocalToWorldMatrix( ) );
 
             if (m_playing)
                 GetOwner( )->Dispatch( ENTITY_PARTICLE_UPDATE, nullptr );
