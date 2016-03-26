@@ -46,6 +46,12 @@ namespace ursine
 
         public:
             EditorField(
+                bool playing,
+                GetPlaying,
+                SetPlaying
+            );
+
+            EditorField(
                 Color color,
                 GetColor,
                 SetColor
@@ -102,6 +108,9 @@ namespace ursine
             // destroys a particle, given an index
             void DestroyParticle(const int index);
 
+            bool GetPlaying(void) const;
+            void SetPlaying(bool playing);
+
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
 
@@ -131,6 +140,8 @@ namespace ursine
             resources::ResourceReference m_texture;
 
             // data for this component
+            bool m_playing;
+
             Color m_particleColor;
 
             SystemSpace m_systemSpace;
