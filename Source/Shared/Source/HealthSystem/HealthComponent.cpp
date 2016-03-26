@@ -15,6 +15,7 @@
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
+#include "DamageEvent.h"
 #include "AudioEmitterComponent.h"
 #include "PlayerIdComponent.h"
 #include "CollisionEventArgs.h"
@@ -39,6 +40,7 @@ Health::Health(void)
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
     , m_dead( false )
+    , m_invulnerable( false )
     , m_type( ENEMY_HEALTH ) { }
 
 Health::~Health(void)
@@ -96,14 +98,25 @@ bool Health::GetSpawnOnDeath(void) const
 {
     return m_spawnOnDeath;
 }
-void Health::SetSpawnOnDeath(const bool state)
+
+void Health::SetSpawnOnDeath(bool state)
 {
     m_spawnOnDeath = state;
 }
 
-void Health::DealDamage(const float damage)
+bool Health::GetInvulnerable(void) const
 {
-    if (m_dead)
+    return m_invulnerable;
+}
+
+void Health::SetInvulnerable(bool invulnerable)
+{
+    m_invulnerable = invulnerable;
+}
+
+void Health::DealDamage(float damage)
+{
+    if (m_dead || m_invulnerable)
         return;
 
     auto owner = GetOwner( );
@@ -178,7 +191,7 @@ void Health::sendDamageTextEvent(const ursine::SVec3& contact, float damage, boo
 {
     ursine::ecs::EntityHandle owner = GetOwner( );
 
-    game::DamageEventArgs dEvent(contact, owner, damage, crit);
+    game::DamageEventArgs dEvent(contact, owner, damage, crit, m_invulnerable);
 
     owner->GetWorld( )->Dispatch(game::DAMAGE_TEXT_EVENT, &dEvent);
 }

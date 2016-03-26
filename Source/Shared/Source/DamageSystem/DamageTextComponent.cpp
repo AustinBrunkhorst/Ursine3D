@@ -9,102 +9,46 @@
 **
 ** -------------------------------------------------------------------------*/
 
-#include <Precompiled.h>
+#include "Precompiled.h"
+
 #include "DamageTextComponent.h"
-#include "Randomizer.h"
-#include "SVec3.h"
+
+#include <Scene.h>
 
 NATIVE_COMPONENT_DEFINITION( DamageText ) ;
 
 using namespace ursine;
 
-
-DamageText::DamageText(void) :
-    BaseComponent( ),
-    m_lifeTime( 0.0f ),
-    m_totalLifeTime( 2.0f ),
-    m_velocity(0.0f, 0.0f, 0.0f),
-    m_varX(0.0f, 0.0f),
-    m_varY(0.0f, 0.0f),
-    m_varZ(0.0f, 0.0f)
-{
-}
-
-DamageText::~DamageText(void)
-{
-    //GetOwner( )->Listener( this )
-    //     .Off( game::FIRE_END, &BaseWeapon::TriggerReleased ); 
-}
+DamageText::DamageText(void)
+    : BaseComponent( ) { }
 
 void DamageText::OnInitialize(void)
 {
-    m_varX.SetMin( 0.0f );
-    m_varY.SetMin( 0.0f );
-    m_varZ.SetMin( 0.0f );
+#if defined(URSINE_WITH_EDITOR)
+
+    auto world = GetOwner( )->GetWorld( );
+
+    if (!world)
+        return;
+
+    auto scene = world->GetOwner( );
+
+    if (!scene)
+        return;
+
+    if (scene->GetPlayState( ) == PS_EDITOR)
+        return;
+
+#endif
+
+    auto animator = GetOwner( )->GetComponent<EntityAnimator>( );
+
+    animator->Listener( this )
+        .On( EntityAnimatorEvent::FinishedAnimating, &DamageText::onAnimationFinish );
 }
 
-
-void DamageText::GenerateVelocity(void)
+void DamageText::onAnimationFinish(EVENT_HANDLER(EntityAnimator))
 {
-    m_velocity += ursine::SVec3( m_varX.GetValue( ), m_varY.GetValue( ), m_varZ.GetValue( ) );
-}
-
-float DamageText::GetTotalLifeTime(void) const
-{
-    return m_totalLifeTime;
-}
-
-void DamageText::SetTotalLifeTime(const float lifeTime)
-{
-    m_totalLifeTime = lifeTime;
-}
-
-
-// Life Time
-float DamageText::GetLifeTime(void) const
-{
-    return m_lifeTime;
-}
-
-void DamageText::IncrementLifeTime(const float lifeTime)
-{
-    m_lifeTime += lifeTime;
-}
-
-
-// velocity //
-const ursine::SVec3& DamageText::GetVelocity(void) const
-{
-    return m_velocity;
-}
-
-void DamageText::SetVelocity(const ursine::SVec3& vel)
-{
-    m_velocity = vel;
-}
-
-
-// variance //
-const ursine::SVec3 DamageText::GetVariance( ) const
-{
-    return ursine::SVec3( m_varX.GetMax( ), m_varY.GetMax( ), m_varZ.GetMax( ) );
-}
-
-void DamageText::SetVariance(const ursine::SVec3& var)
-{
-    m_varX.SetMax( var.X( ) );
-    m_varY.SetMax( var.Y( ) );
-    m_varZ.SetMax( var.Z( ) );
-}
-
-
-
-const float DamageText::GetStartAlpha(void) const
-{
-    return m_startAlpha;
-}
-
-void DamageText::SetStartAlpha(const float alpha)
-{
-    m_startAlpha = alpha;
+    // Delete the damage text
+    GetOwner( )->GetRoot( )->Delete( );
 }
