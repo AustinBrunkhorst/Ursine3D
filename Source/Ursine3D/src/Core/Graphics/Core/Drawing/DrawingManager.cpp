@@ -146,7 +146,7 @@ namespace ursine
 
         void DrawingManager::SetDrawColor(float x, float y, float z, float a)
         {
-            m_color = Color(pow(x, 2.2f), pow(y, 2.2f), pow(z, 2.2f), a);
+            m_color = Color(x, y, z, a);
         }
 
         void DrawingManager::SetDrawColor(const Color &color)

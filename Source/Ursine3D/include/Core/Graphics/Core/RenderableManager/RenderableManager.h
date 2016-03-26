@@ -32,7 +32,7 @@ namespace ursine
             friend class GfxManager;
             
         public:
-            void Initialize();
+            void Initialize(GfxManager *manager);
             void Uninitialize();
 
             GfxHND AddRenderable(const RENDERABLE_TYPE type);
@@ -156,6 +156,8 @@ namespace ursine
 
             //all the free handles
             std::vector<std::stack<unsigned>> m_handleList;
+
+            GfxManager *m_manager;
         };
     }
 }

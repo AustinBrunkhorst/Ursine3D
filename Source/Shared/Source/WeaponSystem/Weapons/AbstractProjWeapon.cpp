@@ -16,18 +16,7 @@ using namespace ursine;
 
 AbstractProjWeapon::AbstractProjWeapon(void) 
     : AbstractWeapon( )
-    , m_projSpeed( 10.0f ) { }
-
-// projectile speed  get/set
-float AbstractProjWeapon::GetProjSpeed(void) const
-{
-    return m_projSpeed;
-}
-
-void AbstractProjWeapon::SetProjSpeed(const float speed)
-{
-    m_projSpeed = speed;
-}
+{ }
 
 // Archetype To Shoot
 const resources::ResourceReference &AbstractProjWeapon::GetArchetypeToShoot(void) const

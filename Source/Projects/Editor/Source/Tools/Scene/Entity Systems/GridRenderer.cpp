@@ -69,10 +69,10 @@ void GridRenderer::onRenderHook(EVENT_HANDLER(ecs::RenderSystem))
     ///////////////////////////////////////////////////////////////////
     // VARIABLES
     //rendering a grid
-    float gridColor[4] = { 0.3f, 0.3f, 0.3f, 1.0f };
-    float xColor[4] = { 0.58f, 0.07f, 0.07f, 1.0f };
-    float zColor[4] = { 0.0f, 0.12f, 0.75f, 1.0f };
-    float subColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    float gridColor[4]  = { 0.3f, 0.3f, 0.3f, 1.0f };
+    float xColor[4]     = { 0.7f, 0.f, 0.f, 1.0f };
+    float zColor[4]     = { 0.f, 0.f, 0.7f, 1.0f };
+    float subColor[4]   = { 0.0f, 0.0f, 0.0f, 1.0f };
 
     //size of a cell
     auto cellSize = settings->GetCellSize();

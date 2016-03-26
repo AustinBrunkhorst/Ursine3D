@@ -11,4 +11,4 @@ ursine_project(Shared
     META_HEADER "SharedReflection.h"
     META_MODULE_HEADER "SharedReflectionModule.h"
     PCH_NAME "Precompiled"
-)
+) 

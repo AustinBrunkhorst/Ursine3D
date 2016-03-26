@@ -46,3 +46,18 @@ const std::vector<boost::regex> &ResourceSyncConfig::GetBuiltExclusionExpression
 {
     return m_exclusionExpressions;
 }
+
+bool ResourceSyncConfig::IsExcluded(const std::string &path) const
+{
+    boost::cmatch match;
+
+    auto *str = path.c_str( );
+
+    for (auto &expression : m_exclusionExpressions)
+    {
+        if (boost::regex_search( str, match, expression ))
+            return true;
+    }
+
+    return false;
+}

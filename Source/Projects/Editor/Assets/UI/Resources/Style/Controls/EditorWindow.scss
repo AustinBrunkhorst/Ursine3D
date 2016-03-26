@@ -38,5 +38,10 @@ $window-header-height: 28px;
     right: 0;
     top: $window-header-height;
     bottom: 0;
+    background: $color-main-bg;
+
+    &.no-background {
+      background: transparent;
+    }
   }
 }

@@ -60,6 +60,9 @@ namespace ursine
             void DrawCube(const SVec3 &center, float size,
                           const Color &color, float duration, bool overdraw = false);
 
+            void DrawCone(const SVec3 &tipPosition, SVec3 focusPosition,
+                          float focalLength, float focalAngleDegrees);
+
         private:
 
             graphics::GfxAPI *m_gfx;

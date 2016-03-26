@@ -11,12 +11,8 @@ namespace ursine
 
     resources::ResourceData::Handle rp::WorldProcessor::Process(resources::ResourceData::Handle input, ResourceProcessorContext &context)
     {
-        UAssertCatchable( input && input->GetType( ) == typeof( JsonData ),
-            "Invalid input to world processor."
-        );
+        auto *json = expectInput<JsonData>( input );
 
-        auto *jsonData = static_cast<JsonData*>( input.get( ) );
-
-        return std::make_shared<WorldData>( jsonData->GetData( ) );
+        return std::make_shared<WorldData>( json->GetData( ) );
     }
 }

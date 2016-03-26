@@ -47,7 +47,7 @@ namespace ursine
 
             std::string readerTypeName;
 
-            reader.ReadString( readerTypeName );
+            reader.Read( readerTypeName );
 
             auto readerType = meta::Type::GetFromName( readerTypeName );
 

@@ -14,6 +14,12 @@
 #pragma once
 
 /////////////////////////////////
+//        Game Management      //
+/////////////////////////////////
+
+#include "GameManagement/GameEntryPointSystem.h"
+
+/////////////////////////////////
 //        Miscelaneous         //
 /////////////////////////////////
 
@@ -77,5 +83,6 @@
 /////////////////////////////////
 //       Damage System         //
 /////////////////////////////////
+
 #include "DamageSystem/DamageTextSystem.h"
 #include "DamageSystem/DamageOnCollideSystem.h"

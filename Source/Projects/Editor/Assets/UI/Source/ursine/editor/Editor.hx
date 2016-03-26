@@ -2,9 +2,13 @@ package ursine.editor;
 
 import haxe.rtti.Meta;
 import ursine.native.Extern;
-import ursine.editor.scene.component.ComponentDatabase;
-import ursine.controls.*;
+import ursine.controls.Menu;
+import ursine.controls.MainMenu;
+import ursine.controls.MenuItem;
+import ursine.controls.MenuSeparator;
 import ursine.editor.MenuItemHandler;
+import ursine.editor.scene.component.ComponentDatabase;
+import ursine.editor.scene.ScenePlayState;
 
 import ursine.editor.menus.MainMenus;
 
@@ -19,12 +23,21 @@ class Editor {
 
     private var m_notificationManager : NativeNotificationManager;
 
+    private var m_toolsContainer : js.html.Element;
+    private var m_btnPlay : js.html.Element;
+    private var m_btnToggle : js.html.Element;
+    private var m_btnStep : js.html.Element;
+    private var m_btnStop : js.html.Element;
+
     public function new() {
         instance = this;
 
         mainMenu = new MainMenu( );
 
         broadcastManager = new NativeBroadcastManager( );
+
+        broadcastManager.getChannel( 'SceneManager' )
+            .on( 'PlayStateChanged', onScenePlayStateChanged );
 
         componentDatabase = new ComponentDatabase(
             Extern.GetNativeComponentDatabase( )
@@ -39,6 +52,8 @@ class Editor {
             .appendChild( mainMenu );
 
         initSimulationPlayback( );
+
+        onScenePlayStateChanged( );
     }
 
     private function buildMenus() {
@@ -151,38 +166,50 @@ class Editor {
     }
 
     private function initSimulationPlayback() {
-        var toolsContainer = js.Browser.document.querySelector( '#simulation-tools' );
+        m_toolsContainer = js.Browser.document.querySelector( '#simulation-tools' );
 
-        var btnPlay = js.Browser.document.querySelector( '#simulation-play' );
-        var btnToggle = js.Browser.document.querySelector( '#simulation-toggle' );
-        var btnStep = js.Browser.document.querySelector( '#simulation-step' );
-        var btnStop = js.Browser.document.querySelector( '#simulation-stop' );
+        m_btnPlay = js.Browser.document.querySelector( '#simulation-play' );
+        m_btnToggle = js.Browser.document.querySelector( '#simulation-toggle' );
+        m_btnStep = js.Browser.document.querySelector( '#simulation-step' );
+        m_btnStop = js.Browser.document.querySelector( '#simulation-stop' );
 
-        btnPlay.addEventListener( 'click', function() {
-            toolsContainer.classList.add( 'running' );
-
-            Extern.ScenePlayStart( );
+        m_btnPlay.addEventListener( 'click', function() {
+            Extern.SceneSetPlayState( ScenePlayState.Playing );
         } );
 
-        btnToggle.addEventListener( 'click', function() {
-            var playing = !toolsContainer.classList.contains( 'paused' );
+        m_btnToggle.addEventListener( 'click', function() {
+            var currentState = Extern.SceneGetPlayState( );
 
-            toolsContainer.classList.toggle( 'paused', playing );
-
-            Extern.SceneSetPlayState( !playing );
+            Extern.SceneSetPlayState( currentState == ScenePlayState.Playing ?
+                ScenePlayState.Paused : ScenePlayState.Playing
+            );
         } );
 
-        btnStep.addEventListener( 'click', function() {
-            if (btnStep.classList.contains( 'disabled' ))
-                return;
-
+        m_btnStep.addEventListener( 'click', function() {
             Extern.SceneStep( );
         } );
 
-        btnStop.addEventListener( 'click', function() {
-            toolsContainer.classList.remove( 'running', 'paused' );
-
-            Extern.ScenePlayStop( );
+        m_btnStop.addEventListener( 'click', function() {
+            Extern.SceneSetPlayState( ScenePlayState.InEditor );
         } );
+    }
+
+    private function onScenePlayStateChanged() {
+        var state = Extern.SceneGetPlayState( );
+
+        switch (state) {
+            case ScenePlayState.Playing: {
+                m_toolsContainer.classList.add( 'running' );
+                m_toolsContainer.classList.remove( 'paused' );
+            }
+
+            case ScenePlayState.Paused: {
+                m_toolsContainer.classList.add( 'running', 'paused' );
+            }
+
+            case ScenePlayState.InEditor: {
+                m_toolsContainer.classList.remove( 'running', 'paused' );
+            }
+        }
     }
 }

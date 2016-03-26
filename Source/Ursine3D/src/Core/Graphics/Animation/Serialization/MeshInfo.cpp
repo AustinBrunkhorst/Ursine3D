@@ -136,7 +136,7 @@ namespace ursine
 
             void MeshInfo::Read(resources::ResourceReader &input)
             {
-                input.ReadString( name );
+                input.Read( name );
 
                 input.Read( meshVtxInfoCount );
                 input.Read( meshVtxIdxCount );
@@ -158,7 +158,7 @@ namespace ursine
                 mtrlName.resize( mtrlCount );
 
                 for (i = 0; i < mtrlCount; ++i)
-                    input.ReadString( mtrlName[ i ] );
+                    input.Read( mtrlName[ i ] );
 
                 materialIndices.resize( mtrlIndexCount );
 
@@ -168,7 +168,7 @@ namespace ursine
 
             void MeshInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output.WriteString( name );
+                output.Write( name );
 
                 output.Write( meshVtxInfoCount );
                 output.Write( meshVtxIdxCount );
@@ -190,7 +190,7 @@ namespace ursine
                 if (mtrlName.size( ) > 0)
                 {
                     for (auto &iter : mtrlName)
-                        output.WriteString( iter );
+                        output.Write( iter );
                 }
 
                 if (materialIndices.size( ) > 0)

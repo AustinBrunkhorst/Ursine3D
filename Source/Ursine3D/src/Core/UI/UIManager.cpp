@@ -98,7 +98,7 @@ namespace ursine
 
     void UIManager::OnRegisterCustomSchemes(CefRefPtr<CefSchemeRegistrar> registrar)
     {
-        registrar->AddCustomScheme( kUIGameResourceScheme, true, false, false );
+        registrar->AddCustomScheme( "http", true, true, false );
     }
 
     void UIManager::onAppUpdate(EVENT_HANDLER(Application))

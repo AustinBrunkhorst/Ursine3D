@@ -13,7 +13,7 @@ namespace ursine
         {
             std::string jsonString;
 
-            input.ReadString( jsonString );
+            input.Read( jsonString );
 
             std::string jsonError;
 

@@ -186,7 +186,7 @@ std::vector<MetaDataManager::Property> MetaDataManager::extractProperties(
     result.RemoveAll( ConstructorTokenType::Whitespace );
 
     auto &tokens = result.GetTokens( );
-    auto tokenCount = tokens.size( );
+    int tokenCount = static_cast<int>( tokens.size( ) );
 
     // case where there is only one identifier, which means there's one property
     // with a default constructor

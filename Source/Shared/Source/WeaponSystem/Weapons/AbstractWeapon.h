@@ -34,109 +34,80 @@
 #define MAX_AMMO false
 #define AMMO_USED true
 
-#define AbstractWeaponFields( )           \
-    EditorField(                          \
-        DamageType damageType,            \
-        GetDamageType,                    \
-        SetDamageType                     \
-    );                                    \
-                                          \
-    EditorField(                          \
-        float Damage,                     \
-        GetDamageToApply,                 \
-        SetDamageToApply                  \
-    );                                    \
-                                          \
-    EditorField(                          \
-        float CritModifier,               \
-        GetCritModifier,                  \
-        SetCritModifier                   \
-    );                                    \
-                                          \
-    EditorField(                          \
-        float DamageInterval,             \
-        GetDamageInterval,                \
-        SetDamageInterval                 \
-    );                                    \
-                                          \
-    EditorField(                          \
-        bool DelBulletOnCollision,        \
-        GetDeleteOnCollision,             \
-        SetDeleteOnCollision              \
-    );                                    \
-                                          \
-    EditorField(                          \
-        bool SemiAutomatic,               \
-        GetSemiAutomatic,                 \
-        SetSemiAutomatic                  \
-    );                                    \
-                                          \
-    EditorField(                          \
-        float FireDelay,                  \
-        GetFireRate,                      \
-        SetFireRate                       \
-    );                                    \
-                                          \
-    EditorField(                          \
-        float ReloadTime,                 \
-        GetReloadTime,                    \
-        SetReloadTime                     \
-    );                                    \
-                                          \
-    EditorField(                          \
-        float RecoilAngle,                \
-        GetRecoilAngle,                   \
-        SetRecoilAngle                    \
-    );                                    \
-                                          \
-    EditorField(                          \
-        float MaxRange,                   \
-        GetMaxRange,                      \
-        SetMaxRange                       \
-    );                                    \
-                                          \
-    EditorField(                          \
-        float Accuracy,                   \
-        GetAccuracy,                      \
-        SetAccuracy                       \
-    );                                    \
-                                          \
-    EditorField(                          \
-        float SpreadFactor,               \
-        GetSpreadFactor,                  \
-        SetSpreadFactor                   \
-    );                                    \
-                                          \
-    EditorField(                          \
-        int MaxAmmoCount,                 \
-        GetMaxAmmoCount,                  \
-        SetMaxAmmoCount                   \
-    );                                    \
-                                          \
-    EditorField(                          \
-        int ClipSize,                     \
-        GetClipSize,                      \
-        SetClipSize                       \
-    );                                    \
-                                          \
-    EditorField(                          \
-        int ProjectileFireCount,          \
-        GetProjFireCount,                 \
-        SetProjFireCount                  \
-    );                                    \
-                                          \
-    EditorField(                          \
-        WeaponType WeaponTier,            \
-        GetWeaponType,                    \
-        SetWeaponType                     \
-    );                                    \
-                                          \
-    EditorResourceField(                  \
-        ursine::resources::ArchetypeData, \
-        fireParticle,                     \
-        GetFireParticle,                  \
-        SetFireParticle                   \
-    );                                    \
+#define AbstractWeaponFields( )            \
+    EditorField(                           \
+        bool SemiAutomatic,                \
+        GetSemiAutomatic,                  \
+        SetSemiAutomatic                   \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float FireDelay,                   \
+        GetFireRate,                       \
+        SetFireRate                        \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float ReloadTime,                  \
+        GetReloadTime,                     \
+        SetReloadTime                      \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float RecoilAngle,                 \
+        GetRecoilAngle,                    \
+        SetRecoilAngle                     \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float Range,                       \
+        GetMaxRange,                       \
+        SetMaxRange                        \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float Accuracy,                    \
+        GetAccuracy,                       \
+        SetAccuracy                        \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float SpreadFactor,                \
+        GetSpreadFactor,                   \
+        SetSpreadFactor                    \
+    );                                     \
+                                           \
+    EditorField(                           \
+        int MaxAmmoCount,                  \
+        GetMaxAmmoCount,                   \
+        SetMaxAmmoCount                    \
+    );                                     \
+                                           \
+    EditorField(                           \
+        int ClipSize,                      \
+        GetClipSize,                       \
+        SetClipSize                        \
+    );                                     \
+                                           \
+    EditorField(                           \
+        int ProjectileFireCount,           \
+        GetProjFireCount,                  \
+        SetProjFireCount                   \
+    );                                     \
+                                           \
+    EditorField(                           \
+        WeaponType WeaponTier,             \
+        GetWeaponType,                     \
+        SetWeaponType                      \
+    );                                     \
+                                           \
+    EditorResourceField(                   \
+        ursine::resources::ArchetypeData,  \
+        MuzzleParticle,                    \
+        GetFireParticle,                   \
+        SetFireParticle                    \
+    );                                     
+
 
 #define AbstractWeaponConnect( Obj )                            \
     GetOwner( )->Listener( this )                               \
@@ -209,21 +180,6 @@ public:
     ///////////////////////////////
     ////  Gettors and Settors  ////
     ///////////////////////////////
-    DamageType GetDamageType(void) const;
-    void SetDamageType(DamageType type);
-
-    float GetDamageToApply(void) const;
-    void  SetDamageToApply(float damage);
-
-    float GetCritModifier(void) const;
-    void SetCritModifier(float modifier);
-
-    float GetDamageInterval(void) const;
-    void SetDamageInterval(const float damageInterval);
-
-    bool GetDeleteOnCollision(void) const;
-    void SetDeleteOnCollision(bool state);
-
     float GetFireRate(void) const;
     void SetFireRate(float rate);
 
@@ -278,22 +234,6 @@ protected:
     // who is my owner
     ursine::ecs::EntityHandle m_owner;
 
-    // The type of damage being dealt
-    DamageType m_damageType;
-
-    // damage to apply when triggered
-    float m_damageToApply;
-
-    // scalar to apply to damage
-    float m_critModifier;
-
-    // time to wait until apply damage again
-    //   (keeps from applying damage each frame)
-    float m_damageInterval;
-
-    // does projectile die on first collision
-    bool m_deleteOnCollision;
-
     // Rate at which bullets can be fired
     float m_fireRate;
 
@@ -342,6 +282,7 @@ protected:
     // fire position Handle for shooting
     ursine::ecs::Animator* m_animatorHandle;
 
+    // spread to apply to shot
     ursine::Randomizer m_spread;
 
     // Particle to spawn at tip of gun when shot
@@ -368,7 +309,7 @@ protected:
     void DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON));
     void DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON));
 
-    void PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
+    void PickUpAmmo(EVENT_HANDLER(ursine::ecs::PICKUP_AMMO));
 
     //***************************************//
     //  MUST IMPLEMENT, so base class can    //

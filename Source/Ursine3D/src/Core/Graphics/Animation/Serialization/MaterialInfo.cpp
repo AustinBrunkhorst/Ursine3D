@@ -186,7 +186,7 @@ namespace ursine
 
             void MaterialInfo::Read(resources::ResourceReader &input)
             {
-                input.ReadString( name );
+                input.Read( name );
                                           
                 input.Read( type );
                 input.Read( ambitype );
@@ -209,22 +209,22 @@ namespace ursine
                 ambi_texNames.resize( ambi_mapCount );
 
                 for (i = 0; i < ambi_mapCount; ++i)
-                    input.ReadString( ambi_texNames[ i ] );
+                    input.Read( ambi_texNames[ i ] );
 
                 diff_texNames.resize( diff_mapCount );
 
                 for (i = 0; i < diff_mapCount; ++i)
-                    input.ReadString( diff_texNames[ i ] );
+                    input.Read( diff_texNames[ i ] );
 
                 emis_texNames.resize( emis_mapCount );
 
                 for (i = 0; i < emis_mapCount; ++i)
-                    input.ReadString( emis_texNames[ i ] );
+                    input.Read( emis_texNames[ i ] );
 
                 spec_texNames.resize( spec_mapCount );
 
                 for (i = 0; i < spec_mapCount; ++i)
-                    input.ReadString( spec_texNames[ i ] );
+                    input.Read( spec_texNames[ i ] );
 
                 input.Read( shineness );
                 input.Read( TransparencyFactor );
@@ -232,7 +232,7 @@ namespace ursine
 
             void MaterialInfo::Write(resources::pipeline::ResourceWriter &output)
             {
-                output.WriteString( name );
+                output.Write( name );
 
                 output.Write( type );
                 output.Write( ambitype );
@@ -253,25 +253,25 @@ namespace ursine
                 if (ambi_texNames.size( ) > 0)
                 {
                     for (auto &iter : ambi_texNames)
-                        output.WriteString( iter );
+                        output.Write( iter );
                 }
 
                 if (diff_texNames.size( ) > 0)
                 {
                     for (auto &iter : diff_texNames)
-                        output.WriteString( iter );
+                        output.Write( iter );
                 }
 
                 if (emis_texNames.size( ) > 0)
                 {
                     for (auto &iter : emis_texNames)
-                        output.WriteString( iter );
+                        output.Write( iter );
                 }
 
                 if (spec_texNames.size( ) > 0)
                 {
                     for (auto &iter : spec_texNames)
-                        output.WriteString( iter );
+                        output.Write( iter );
                 }
 
                 output.Write( shineness );

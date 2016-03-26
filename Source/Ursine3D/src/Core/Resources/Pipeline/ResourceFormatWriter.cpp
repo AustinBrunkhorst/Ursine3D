@@ -50,7 +50,7 @@ namespace ursine
         /// write the resource's data
 
         // reader type
-        m_writer.WriteString( readerType.GetName( ) );
+        m_writer.Write( readerType.GetName( ) );
 
         resource->Write( m_writer );
 

@@ -60,7 +60,7 @@
 
 /// Screen Management
 
-#include "ScreenManager.h"
+#include "UIScreenManager.h"
 
 /// Audio
 
@@ -73,7 +73,7 @@
 
 #include "JSKeyboardManager.h"
 #include "JSGamepadManager.h"
-#include "JSScreenManager.h"
+#include "JSUIScreenManager.h"
 
 /// Game Engine
 

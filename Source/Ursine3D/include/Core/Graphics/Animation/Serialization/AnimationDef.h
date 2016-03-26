@@ -73,6 +73,11 @@ namespace ursine
 {
     namespace graphics
     {
+        inline bool IsEqualEpsilon(float A, float B)
+        {
+            return fabs(A - B) <= 1e-5f;
+        }
+
         namespace FBX_DATA
         {
             // UVSet
@@ -254,7 +259,6 @@ namespace ursine
             // As a result, this struct stores a XMFLOAT3 and a vector of joint indices
             struct CtrlPoint
             {
-                pseudodx::XMFLOAT3 mPosition;
                 std::vector<BlendIdxWeight> mBlendingInfo;
             };
 

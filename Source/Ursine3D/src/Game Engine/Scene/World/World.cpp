@@ -243,7 +243,8 @@ namespace ursine
 
                 m_deleted.pop_back( );
 
-                deleteEntity( entity );
+                if (entity)
+                    deleteEntity( entity );
             }
         }
 

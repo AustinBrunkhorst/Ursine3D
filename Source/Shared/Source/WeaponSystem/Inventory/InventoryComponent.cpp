@@ -12,7 +12,6 @@
 #include <Precompiled.h>
 #include "InventoryComponent.h"
 #include "ComponentIncludes.h"
-#include "CameraComponent.h"
 #include "TransformComponent.h"
 #include "WeaponPosComponent.h"
 

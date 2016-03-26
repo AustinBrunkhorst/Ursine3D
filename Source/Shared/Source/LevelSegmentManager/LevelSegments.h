@@ -24,13 +24,17 @@ namespace LevelSegments_enum
         Tut_GateOpens,
         Tut_MovementTutorial, // Tell the player to move to a position
         Tut_JumpTutorial, // Tell the player to jump
+        Meta(Disable)
         Tut_WeaponPickupTutorial, // How to pickup weapons (weapon pickup + FX + button icon)
         Tut_HipFireTutorial, // Shooting targets
         Tut_AimFireTutorial, // Shooting targets
+        Meta(Disable)
         Tut_AmmoPickupTutorial, // Ammo pickups
         Tut_ShootMovingTargetsTutorial, // Shooting moving targets
+        Meta(Disable)
         Tut_SoloTriggerTutorial, // Accumulate trigger pad (particle effects)
         Tut_ReviveTutorial, // Revive mechanic (kill one player, have other revive the other)
+        Meta(Disable)
         Tut_SimultaneousTriggerTutorial, // SoloTrigger X 2
         Tut_SimulationCreationCinematic, // Cinematic for simulation begin
 

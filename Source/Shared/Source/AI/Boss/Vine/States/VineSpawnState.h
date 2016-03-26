@@ -27,5 +27,5 @@ public:
 private:
     bool m_finished;
 
-    void onAnimationFinished(EVENT_HANDLER(Entity));
+    void onAnimationFinished(EVENT_HANDLER(ursine::ecs::Entity));
 };

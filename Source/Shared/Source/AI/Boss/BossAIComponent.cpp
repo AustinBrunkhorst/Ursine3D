@@ -15,12 +15,17 @@
 
 #include "BossSeedshotState.h"
 #include "BossSpawnVinesState.h"
+#include "BossPollinateState.h"
+#include "BossSludgeshotState.h"
+#include "BossSpawnState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
 #include "IntCondition.h"
 
-#include "EntityEvent.h"
+#include <EntityEvent.h>
+#include <DebugSystem.h>
+#include <SystemManager.h>
 
 NATIVE_COMPONENT_DEFINITION( BossAI );
 
@@ -31,6 +36,25 @@ using namespace resources;
 namespace
 {
     const int kPhaseNumber = 5;
+
+    int GetSegmentIndex(LevelSegments segment)
+    {
+        switch (segment)
+        {
+        case LevelSegments::BossRoom_Phase1:
+            return 0;
+        case LevelSegments::BossRoom_Phase2:
+            return 1;
+        case LevelSegments::BossRoom_Phase3:
+            return 2;
+        case LevelSegments::BossRoom_Phase4:
+            return 3;
+        case LevelSegments::BossRoom_Phase5:
+            return 4;
+        }
+
+        return -1;
+    }
 }
 
 BossAI::BossAI(void)
@@ -38,7 +62,27 @@ BossAI::BossAI(void)
     , m_segment( LevelSegments::Empty )
     , m_vineCount( 0 )
     , m_turnSpeed( 90.0f )
+    , m_seedshotInterval( 2.0f )
+    , m_seedshotCooldown( 2.0f )
+    , m_sludgeshotAnimationTime( 5.0f )
+    , m_maxPollinateSpreadAngle( 30.0f )
+    , m_pollinateLocalForward( 0.0f, 0.0f, 1.0f )
+    , m_pollinateProjectileCount( 0 )
+    , m_pollinateGravity( 10.0f )
+    , m_pollinateSpreadDistance( 30.0f )
+    , m_pollinateSpreadTime( 2.0f )
+    , m_pollinateProjectileLifeTime( 15.0f ) { }
+
+const std::string &BossAI::GetSeedshotEntityName(void) const
 {
+    return m_seedshotEntity;
+}
+
+void BossAI::SetSeedshotEntityName(const std::string &entityName)
+{
+    m_seedshotEntity = entityName;
+
+    NOTIFY_COMPONENT_CHANGED( "seedshotEntity", m_seedshotEntity );
 }
 
 float BossAI::GetSeedshotTurnSpeed(void) const
@@ -53,16 +97,174 @@ void BossAI::SetSeedshotTurnSpeed(float turnSpeed)
     NOTIFY_COMPONENT_CHANGED( "seedshotTurnSpeed", m_turnSpeed );
 }
 
-const std::string &BossAI::GetSeedshotEntityName(void) const
+float BossAI::GetSeedshotInterval(void) const
 {
-    return m_seedshotEntity;
+    return m_seedshotInterval;
 }
 
-void BossAI::SetSeedshotEntityName(const std::string &entityName)
+void BossAI::SetSeedshotInterval(float interval)
 {
-    m_seedshotEntity = entityName;
+    m_seedshotInterval = interval;
 
-    NOTIFY_COMPONENT_CHANGED( "seedshotEntity", m_seedshotEntity );
+    NOTIFY_COMPONENT_CHANGED( "seedshotInterval", m_seedshotInterval );
+}
+
+float BossAI::GetSeedshotCooldown(void) const
+{
+    return m_seedshotCooldown;
+}
+
+void BossAI::SetSeedshotCooldown(float cooldown)
+{
+    m_seedshotCooldown = cooldown;
+
+    NOTIFY_COMPONENT_CHANGED( "seedshotCooldown", m_seedshotCooldown );
+}
+
+const std::string &BossAI::GetSludgeshotEntityName(void) const
+{
+    return m_sludgeshotEntity;
+}
+
+void BossAI::SetSludgeshotEntityName(const std::string &name)
+{
+    m_sludgeshotEntity = name;
+
+    NOTIFY_COMPONENT_CHANGED( "sludgeshotEntity", m_sludgeshotEntity );
+}
+
+float BossAI::GetSludgeshotAnimationTime(void) const
+{
+    return m_sludgeshotAnimationTime;
+}
+
+void BossAI::SetSludgeshotAnimationTime(float time)
+{
+    m_sludgeshotAnimationTime = time;
+
+    NOTIFY_COMPONENT_CHANGED( "sludgeshotAnimationTime", m_sludgeshotAnimationTime );
+}
+
+const ResourceReference &BossAI::GetSludgeshotArchetype(void) const
+{
+    return m_sludgeshotArchetype;
+}
+
+void BossAI::SetSludgeshotArchetype(const ResourceReference &archetype)
+{
+    m_sludgeshotArchetype = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "sludgeshotArchetype", m_sludgeshotArchetype );
+}
+
+const std::string &BossAI::GetPollinateEntityName(void) const
+{
+    return m_pollinateEntity;
+}
+
+void BossAI::SetPollinateEntityName(const std::string &entityname)
+{
+    m_pollinateEntity = entityname;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateEntity", m_pollinateEntity );
+}
+
+const SVec3 &BossAI::GetPollinateLocalForward(void) const
+{
+    return m_pollinateLocalForward;
+}
+
+void BossAI::SetPollinateLocalForward(const SVec3 &localForward)
+{
+    m_pollinateLocalForward = localForward;
+
+    m_pollinateLocalForward.Normalize( );
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateLocalForward", m_pollinateLocalForward );
+}
+
+float BossAI::GetMaxPollinateSpreadAngle(void) const
+{
+    return m_maxPollinateSpreadAngle;
+}
+
+void BossAI::SetMaxPollinateSpreadAngle(float angle)
+{
+    m_maxPollinateSpreadAngle = angle;
+
+    NOTIFY_COMPONENT_CHANGED( "maxPollinateSpreadAngle", m_maxPollinateSpreadAngle );
+}
+
+int BossAI::GetPollinateProjectileCount(void) const
+{
+    return m_pollinateProjectileCount;
+}
+
+void BossAI::SetPollinateprojectileCount(int count)
+{
+    m_pollinateProjectileCount = count;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateProjectileCount", m_pollinateProjectileCount );
+}
+
+float BossAI::GetPollinateGravity(void) const
+{
+    return m_pollinateGravity;
+}
+
+void BossAI::SetPollinateGravity(float gravity)
+{
+    m_pollinateGravity = gravity;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateGravity", m_pollinateGravity );
+}
+
+float BossAI::GetPollinateSpreadDistance(void) const
+{
+    return m_pollinateSpreadDistance;
+}
+
+void BossAI::SetPollinateSpreadDistance(float distance)
+{
+    m_pollinateSpreadDistance = distance;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateSpreadDistance", m_pollinateSpreadDistance );
+}
+
+float BossAI::GetPollinateSpreadTime(void) const
+{
+    return m_pollinateSpreadTime;
+}
+
+void BossAI::SetPollinateSpreadTime(float time)
+{
+    m_pollinateSpreadTime = time;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateSpreadTime", m_pollinateSpreadTime );
+}
+
+float BossAI::GetPollinateProjectileLifeTime(void) const
+{
+    return m_pollinateProjectileLifeTime;
+}
+
+void BossAI::SetPollinateProjectileLifeTime(float lifeTime)
+{
+    m_pollinateProjectileLifeTime = lifeTime;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateProjectileLifeTime", m_pollinateProjectileLifeTime );
+}
+
+const ResourceReference &BossAI::GetPollinateArchetype(void) const
+{
+    return m_pollinateArchetype;
+}
+
+void BossAI::SetPollinateArchetype(const ResourceReference &pollinateArchetype)
+{
+    m_pollinateArchetype = pollinateArchetype;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateArchetype", m_pollinateArchetype );
 }
 
 const ResourceReference &BossAI::GetVineArchetype(void) const
@@ -80,6 +282,16 @@ void BossAI::SetVineArchetype(const ResourceReference &vineArchetype)
 EntityHandle BossAI::GetSeedshotEntity(void)
 {
     return GetOwner( )->GetChildByName( m_seedshotEntity );
+}
+
+EntityHandle BossAI::GetSludgeshotEntity(void)
+{
+    return GetOwner( )->GetChildByName( m_sludgeshotEntity );
+}
+
+EntityHandle BossAI::GetPollinateEntity(void)
+{
+    return GetOwner( )->GetChildByName( m_pollinateEntity );
 }
 
 void BossAI::AddSpawnedVine(EntityHandle vine)
@@ -118,22 +330,20 @@ void BossAI::OnInitialize(void)
     }
 
     // Boss Phase I
-    // - Spawn Vines in the VineSpawnPositions
-    // - When all vines die, use seedshot, then sit there and take damage.
-    // - If not enough damage is done before a certain amount of time (after vines all die), respwan them
+    // - Boss uproots
+    // - Spawn vines
+    // - go into seedshotting
+    // - boss becomes exausted after all vines become down, and can be damaged now
+    // - After exaustion duration, if he isn't below a certain percent, the steps repeat
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
-        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 4.0f );
-        /*auto seedShot = sm->AddState<BossSeedshotState>( );
+        auto spawnBoss = sm->AddState<BossSpawnState>( );
+        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
 
-        auto seedshotTrans = spawnVines->AddTransition( seedShot, "To Seedshot" );
+        spawnBoss->AddTransition( spawnVines, "To Spawn Vines" );
 
-        seedshotTrans->AddCondition<sm::IntCondition>( 
-            BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
-        );
-        */
-        sm->SetInitialState( spawnVines );
+        sm->SetInitialState( spawnBoss );
 
         m_bossLogic[ 0 ].push_back( sm );
     }
@@ -147,6 +357,28 @@ void BossAI::OnInitialize(void)
         sm->SetInitialState( seedshot );
 
         m_bossLogic[ 1 ].push_back( sm );
+    }
+
+    // TESTING: Pollinate
+    {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        auto pollinate = sm->AddState<BossPollinateState>( );
+
+        sm->SetInitialState( pollinate );
+
+        m_bossLogic[ 2 ].push_back( sm );
+    }
+
+    // TESTING: Sludgeshot
+    {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        auto sludgeshot = sm->AddState<BossSludgeshotState>( );
+
+        sm->SetInitialState( sludgeshot );
+
+        m_bossLogic[ 3 ].push_back( sm );
     }
 }
 
@@ -164,26 +396,7 @@ void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
 
 void BossAI::onUpdate(EVENT_HANDLER(World))
 {
-    int index = -1;
-
-    switch (m_segment)
-    {
-        case LevelSegments::BossRoom_Phase1:
-            index = 0;
-            break;
-        case LevelSegments::BossRoom_Phase2:
-            index = 1;
-            break;
-        case LevelSegments::BossRoom_Phase3:
-            index = 2;
-            break;
-        case LevelSegments::BossRoom_Phase4:
-            index = 3;
-            break;
-        case LevelSegments::BossRoom_Phase5:
-            index = 4;
-            break;
-    }
+    int index = GetSegmentIndex( m_segment );
 
     if (index == -1)
         return;
@@ -197,6 +410,20 @@ void BossAI::onUpdate(EVENT_HANDLER(World))
 void BossAI::onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager))
 {
     EVENT_ATTRS(LevelSegmentManager, LevelSegmentChangeArgs);
+
+    if (args->segment == m_segment)
+        return;
+
+    // If the previous state is within our range
+    if (m_segment <= LevelSegments::BossRoom_Phase5 &&
+        m_segment >= LevelSegments::BossRoom_Phase1)
+    {
+        // exit this state
+        auto index = GetSegmentIndex( m_segment );
+
+        for (auto &machine : m_bossLogic[ index ])
+            machine->Exit( );
+    }
 
     m_segment = args->segment;
 }
@@ -218,3 +445,30 @@ void BossAI::updateVineCount(void)
         }
     }
 }
+
+#if defined(URSINE_WITH_EDITOR)
+
+void BossAI::visualizePollinateSpread(void)
+{
+    static float FocalLength = 25.0f;
+
+    auto world = GetOwner( )->GetWorld( );
+    auto drawer = world->GetEntitySystem<DebugSystem>( );
+
+    auto pollinateEntity = GetPollinateEntity( );
+
+    if (!pollinateEntity)
+        return;
+
+    auto trans = pollinateEntity->GetTransform( );
+
+    // The position of the bone
+    auto position = trans->GetWorldPosition( );
+
+    // The position of the center focal point
+    auto focus = trans->ToWorld( m_pollinateLocalForward * FocalLength );
+
+    drawer->DrawCone( position, focus, FocalLength, m_maxPollinateSpreadAngle );
+}
+
+#endif

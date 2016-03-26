@@ -15,45 +15,62 @@
 #include <Raycasting.h>
 
 
-#define HitscanEditorFields( )                            \
-    EditorField(                                          \
-        ursine::physics::RaycastType RaycastType,         \
-        GetRaycastType,                                   \
-        SetRaycastType                                    \
-        );                                                \
-                                                          \
-    EditorField(                                          \
-        float DrawDuration,                               \
-        GetDrawDuration,                                  \
-        SetDrawDuration                                   \
-    );                                                    \
-                                                          \
-    EditorResourceField(                                  \
-        ursine::resources::ArchetypeData,                 \
-        shotParticle,                                     \
-        GetShotParticle,                                  \
-        SetShotParticle                                   \
-    );                                                    \
-                                                          \
-    EditorResourceField(                                  \
-        ursine::resources::ArchetypeData,                 \
-        trailParticle,                                    \
-        GetTrailParticle,                                 \
-        SetTrailParticle                                  \
-    );                                                    \
-                                                          \
-    EditorField(                                          \
-        bool AlwaysDraw,                                  \
-        GetAlwaysDraw,                                    \
-        SetAlwaysDraw                                     \
-    );                                                    \
-                                                          \
-    EditorField(                                          \
-        bool DebugDraw,                                   \
-        GetDebug,                                         \
-        SetDebug                                          \
-    );
-
+#define HitscanEditorFields( )                     \
+    EditorField(                                   \
+        ursine::physics::RaycastType RaycastType,  \
+        GetRaycastType,                            \
+        SetRaycastType                             \
+        );                                         \
+                                                   \
+    EditorField(                                   \
+        float DrawDuration,                        \
+        GetDrawDuration,                           \
+        SetDrawDuration                            \
+    );                                             \
+                                                   \
+    EditorResourceField(                           \
+        ursine::resources::ArchetypeData,          \
+        shotParticle,                              \
+        GetShotParticle,                           \
+        SetShotParticle                            \
+    );                                             \
+                                                   \
+    EditorResourceField(                           \
+        ursine::resources::ArchetypeData,          \
+        trailParticle,                             \
+        GetTrailParticle,                          \
+        SetTrailParticle                           \
+    );                                             \
+                                                   \
+    EditorField(                                   \
+        bool AlwaysDraw,                           \
+        GetAlwaysDraw,                             \
+        SetAlwaysDraw                              \
+    );                                             \
+                                                   \
+    EditorField(                                   \
+        bool DebugDraw,                            \
+        GetDebug,                                  \
+        SetDebug                                   \
+    );                                             \
+                                                   \
+    EditorField(                                   \
+        DamageType damageType,                     \
+        GetDamageType,                             \
+        SetDamageType                              \
+    );                                             \
+                                                   \
+    EditorField(                                   \
+        float Damage,                              \
+        GetDamageToApply,                          \
+        SetDamageToApply                           \
+    );                                             \
+                                                   \
+    EditorField(                                   \
+        float CritModifier,                        \
+        GetCritModifier,                           \
+        SetCritModifier                            \
+    );                                                                                 
 
 struct AbstractHitscanWeapon : AbstractWeapon
 {
@@ -78,11 +95,29 @@ struct AbstractHitscanWeapon : AbstractWeapon
     bool GetDebug(void) const;
     void SetDebug(const bool debug);
 
+    DamageType GetDamageType(void) const;
+    void SetDamageType(DamageType type);
+
+    float GetDamageToApply(void) const;
+    void  SetDamageToApply(float damage);
+
+    float GetCritModifier(void) const;
+    void SetCritModifier(float modifier);
+
     // type of raycast (when to stop)
     ursine::physics::RaycastType m_raycastType;
 
+    // The type of damage being dealt
+    DamageType m_damageType;
+
     // how long to draw
     float m_drawDuration;
+
+    // damage to apply when triggered
+    float m_damageToApply;
+
+    // scalar to apply to damage
+    float m_critModifier;
 
     // particle to spawn where shot collide
     ursine::resources::ResourceReference m_shotParticle;
@@ -95,5 +130,4 @@ struct AbstractHitscanWeapon : AbstractWeapon
 
     // show debug info
     bool m_debug;
-
 };

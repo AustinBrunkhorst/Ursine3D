@@ -174,7 +174,9 @@ UpgradeLog*.htm
 FakesAssemblies/
 
 # JetBrains Workspace Configurations
-.idea/
+**/.idea/workspace.xml 
+**/.idea/tasks.xml
+**/.idea/watcherTasks.xml
 .idea_modules/
 
 # Byte-compiled / optimized / DLL files

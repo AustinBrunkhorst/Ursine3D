@@ -18,10 +18,6 @@ using namespace ursine;
 
 AbstractWeapon::AbstractWeapon(void) 
     : m_owner( )
-    , m_damageToApply( 1.0f )
-    , m_critModifier( 1.0f )
-    , m_damageInterval( 1.0f )
-    , m_deleteOnCollision( false )
     , m_fireRate( 0.2f )
     , m_fireTimer( 0.0f )
     , m_reloadTime( 0.0f )
@@ -39,7 +35,6 @@ AbstractWeapon::AbstractWeapon(void)
     , m_semiAutomatic( false )
     , m_triggerPulled( false )
     , m_active( true )
-    , m_damageType( DAMAGE_ENEMY )
 {   
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
@@ -105,57 +100,6 @@ int AbstractWeapon::CanFire(void) const
 ////  Gettors and Settors  ////
 ///////////////////////////////
 
-//// Damage
-DamageType AbstractWeapon::GetDamageType(void) const
-{
-    return m_damageType;
-}
-
-void AbstractWeapon::SetDamageType(DamageType type)
-{
-    m_damageType = type;
-}
-
-float AbstractWeapon::GetDamageToApply(void) const
-{
-    return m_damageToApply;
-}
-
-void AbstractWeapon::SetDamageToApply(float damage)
-{
-    m_damageToApply = damage;
-}
-
-float AbstractWeapon::GetCritModifier(void) const
-{
-    return m_critModifier;
-}
-
-void AbstractWeapon::SetCritModifier(float modifier)
-{
-    m_critModifier = modifier;
-}
-
-float AbstractWeapon::GetDamageInterval(void) const
-{
-    return m_damageInterval;
-}
-
-void AbstractWeapon::SetDamageInterval(float damageInterval)
-{
-    m_damageInterval = damageInterval;
-}
-
-bool AbstractWeapon::GetDeleteOnCollision(void) const
-{
-    return m_deleteOnCollision;
-}
-
-void AbstractWeapon::SetDeleteOnCollision(bool state)
-{
-    m_deleteOnCollision = state;
-}
-
 // Fire Rate
 float AbstractWeapon::GetFireRate(void) const
 {
@@ -167,6 +111,7 @@ void AbstractWeapon::SetFireRate(float rate)
     m_fireRate = rate;
 }
 
+// Reload time
 float AbstractWeapon::GetReloadTime(void) const
 {
     return m_reloadTime;
@@ -307,6 +252,7 @@ void AbstractWeapon::SetWeaponType(WeaponType type)
     m_weaponType = type;
 }
 
+// particle to use when firing on muzzle area
 const ursine::resources::ResourceReference& AbstractWeapon::GetFireParticle(void) const
 {
     return m_fireParticle;
@@ -317,6 +263,7 @@ void AbstractWeapon::SetFireParticle(const ursine::resources::ResourceReference&
     m_fireParticle = archetype;
 }
 
+// semi automatic
 bool AbstractWeapon::GetSemiAutomatic(void) const
 {
     return m_semiAutomatic;
@@ -460,17 +407,9 @@ void AbstractWeapon::DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON))
     DeactivateWeapon( args->whoToConnect, args->m_ammo, args->m_clip );
 }
 
-void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED))
+void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(game::PICKUP_AMMO))
 {
-    EVENT_ATTRS(ursine::ecs::Entity, ursine::physics::CollisionEventArgs);
+    EVENT_ATTRS( ursine::ecs::Entity, game::AmmoPickupEventArgs );
 
-    if (args->otherEntity->HasComponent<AmmoPickup>( ))
-    {
-        AmmoPickup &pickup = *args->otherEntity->GetComponent<AmmoPickup>( );
-
-        if (AddAmmo( args->otherEntity->GetComponent<AmmoPickup>( )->m_count ))
-        {
-            args->otherEntity->Delete( );
-        }
-    }
+    AddAmmo( args->m_ammo );
 }

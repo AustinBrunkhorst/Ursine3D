@@ -44,11 +44,14 @@ namespace editor_commands
     JSFunction(CreateDirectionalLight);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
-    JSFunction(InspectEditorUI);
-
-    Meta(Enable, ExposeJavaScript, EditorCommand)
     JSFunction(CreateParticleSystem);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
     JSFunction(CreateSpriteText);
+
+    Meta(Enable, ExposeJavaScript, EditorCommand)
+    JSFunction(InspectEditorUI);
+
+    Meta(Enable, ExposeJavaScript, EditorCommand)
+    JSFunction(ReloadEditorUI);
 }

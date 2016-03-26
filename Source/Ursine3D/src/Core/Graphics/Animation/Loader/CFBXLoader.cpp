@@ -24,8 +24,8 @@ namespace ursine
     namespace graphics
     {
         CFBXLoader::CFBXLoader() :
-            mSdkManager(nullptr), 
-            mScene(nullptr), 
+            mSdkManager(nullptr),
+            mScene(nullptr),
             m_Model(nullptr),
             mConverter(nullptr)
         {
@@ -112,9 +112,9 @@ namespace ursine
             //The first thing to do is to create the FBX Manager which is the object allocator for almost all the classes in the SDK
             pManager = FbxManager::Create();
 
-            UAssertCatchable( pManager,
+            UAssertCatchable(pManager,
                 "FBXManager was null."
-            );
+                );
 
             //Create an IOSettings object. This object holds all import/export settings.
             FbxIOSettings* ios = FbxIOSettings::Create(pManager, IOSROOT);
@@ -127,9 +127,9 @@ namespace ursine
             //Create an FBX scene. This object holds most objects imported/exported from/to files.
             pScene = FbxScene::Create(pManager, "My Scene");
 
-            UAssertCatchable( pScene,
+            UAssertCatchable(pScene,
                 "Unable to create scene."
-            );
+                );
         }
 
         void CFBXLoader::TriangulateRecursive(FbxNode* pNode)
@@ -483,7 +483,7 @@ namespace ursine
                 //Meshes have a separate geometry transform that also needs to be applied
                 FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
                 meshTransform = meshTransform * geoTransform;
-                mConverter->ConvertMatrix(meshTransform); \
+                mConverter->ConvertMatrix(meshTransform);
 
                 // vertex, normal, tangent, texcoord, material
                 ProcessVertices(mesh, newMesh);
@@ -525,9 +525,6 @@ namespace ursine
                 for (unsigned int i = 0; i < ctrlPointCount; ++i)
                 {
                     FBX_DATA::CtrlPoint* newCtrlPoint = new FBX_DATA::CtrlPoint;
-                    FbxVector4 controlPos = mesh->GetControlPointAt(i);
-                    mConverter->ConvertVector(controlPos);
-                    newCtrlPoint->mPosition = FBXVectorToXMFLOAT3(controlPos);
                     (*control)[i] = newCtrlPoint;
                 }
             }
@@ -623,10 +620,10 @@ namespace ursine
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
 
-                        UAssertCatchable( lPolygonSize == 3,
+                        UAssertCatchable(lPolygonSize == 3,
                             "Model is not triangulated.\npoly size: %i",
                             lPolygonSize
-                        );
+                            );
 
                         for (int i = 0; i < lPolygonSize; ++i)
                         {
@@ -695,10 +692,10 @@ namespace ursine
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
 
-                        UAssertCatchable( lPolygonSize == 3,
+                        UAssertCatchable(lPolygonSize == 3,
                             "Model is not triangulated.\npoly size: %i",
                             lPolygonSize
-                        );
+                            );
 
                         for (int i = 0; i < lPolygonSize; ++i)
                         {
@@ -790,12 +787,12 @@ namespace ursine
                     for (int lPolyIndex = 0; lPolyIndex < lPolyCount; ++lPolyIndex)
                     {
                         // build the max index array that we need to pass into MakePoly
-                        const int lPolySize = pMesh->GetPolygonSize( lPolyIndex );
+                        const int lPolySize = pMesh->GetPolygonSize(lPolyIndex);
 
-                        UAssertCatchable( lPolySize == 3, 
+                        UAssertCatchable(lPolySize == 3,
                             "Model is not triangulated.\npoly size: %i",
                             lPolySize
-                        );
+                            );
 
                         for (int lVertIndex = 0; lVertIndex < lPolySize; ++lVertIndex)
                         {
@@ -1052,33 +1049,39 @@ namespace ursine
 
         void CFBXLoader::RemoveUnnecessaryWeights()
         {
-            for (auto controlIter = m_Model->mCtrlPoints.begin(); controlIter != m_Model->mCtrlPoints.end(); ++controlIter)
+            for (auto &controlIter : m_Model->mCtrlPoints)
             {
                 //Remove or remove BlendWeights if there are more than 4
-                for (auto iter = (*controlIter)->begin(); iter != (*controlIter)->end(); ++iter)
+                for (auto &iter : (*controlIter))
                 {
-                    std::sort(iter->second->mBlendingInfo.begin(), iter->second->mBlendingInfo.end(), FBX_DATA::compare_bw_descend);
+                    std::sort(iter.second->mBlendingInfo.begin(), iter.second->mBlendingInfo.end(), FBX_DATA::compare_bw_descend);
 
-                    while (iter->second->mBlendingInfo.size() > 4)
-                        iter->second->mBlendingInfo.pop_back();
+                    //if (iter.second->mBlendingInfo.size() == 1)
+                    //{
+                    //    if (iter.second->mBlendingInfo[0].mBlendingWeight < 1.0f)
+                    //        break;
+                    //}
 
-                    //check if we have less than 4 blend weight then we have to add some dummy weights
+                    while (iter.second->mBlendingInfo.size() > 4)
+                        iter.second->mBlendingInfo.pop_back();
+
+                    // check if we have less than 4 blend weight then we have to add some dummy weights
                     // how can I give identity matrix to non-animating mesh? or at least just give it vertex
                     FBX_DATA::BlendIdxWeight currBlendWeight;
-                    while (iter->second->mBlendingInfo.size() < 4)
-                        iter->second->mBlendingInfo.push_back(currBlendWeight);
+                    while (iter.second->mBlendingInfo.size() < 4)
+                        iter.second->mBlendingInfo.push_back(currBlendWeight);
 
                     //normalize the weights
                     double sum = 0.0f;
 
                     for (int w = 0; w < 4; ++w)
-                        sum += iter->second->mBlendingInfo[w].mBlendingWeight;
+                        sum += iter.second->mBlendingInfo[w].mBlendingWeight;
 
                     for (int w = 0; w < 4; ++w)
                     {
                         if (0.0f == sum)
                             sum = 1.0f;
-                        iter->second->mBlendingInfo[w].mBlendingWeight /= sum;
+                        iter.second->mBlendingInfo[w].mBlendingWeight /= sum;
                     }
                 }
             }
@@ -1107,11 +1110,6 @@ namespace ursine
             if (scale[0] < 0.0f || scale[1] < 0.0f || scale[2] < 0.0f)
                 return false;
             return true;
-        }
-
-        inline bool IsEqualEpsilon(float A, float B)
-        {
-            return fabs(A - B) <= 1e-5f;
         }
 
         bool CFBXLoader::CheckScaling(FbxVector4 scale)
@@ -1449,9 +1447,9 @@ namespace ursine
 
         FbxAMatrix CFBXLoader::GetGeometryTransformation(FbxNode* pNode)
         {
-            UAssertCatchable( pNode, 
-                "Mesh geometry was null." 
-            );
+            UAssertCatchable(pNode,
+                "Mesh geometry was null."
+                );
 
             const FbxVector4 lT = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
             const FbxVector4 lR = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
@@ -1480,7 +1478,7 @@ namespace ursine
         }
 
         //reconstruct vertices and indices
-        void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& mvVec, std::vector<unsigned int>& miVec, const FBX_DATA::MeshData& md)
+        void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& target_mvs, std::vector<unsigned int>& target_mis, const FBX_DATA::MeshData& md)
         {
             for (unsigned int i = 0; i < md.indexCnt; ++i)
             {
@@ -1515,6 +1513,7 @@ namespace ursine
                     if (!(*m_Model->mCtrlPoints[meshIdx]).empty())
                     {
                         // currently, just for using 1st control point vec
+
                         newMV.ctrlBlendWeights.x = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingWeight;
                         newMV.ctrlBlendWeights.y = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingWeight;
                         newMV.ctrlBlendWeights.z = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingWeight;
@@ -1523,28 +1522,36 @@ namespace ursine
                         newMV.ctrlIndices.y = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingIndex;
                         newMV.ctrlIndices.z = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingIndex;
                         newMV.ctrlIndices.w = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingIndex;
+
+                        //if (!newMV.CheckSum())
+                        //    break;
+                        //
+                        //if (!newMV.IsValidControls())
+                        //    break;
+                        //
+                        //if (!newMV.IsValidWeights())
+                        //    break;
                     }
                 }
 
                 bool bFound = false;
                 unsigned int index = 0;
-                for (unsigned int j = 0; j < mvVec.size(); ++j)
+                for (index = 0; index < target_mvs.size(); ++index)
                 {
-                    if (newMV == mvVec[j])
+                    if (newMV == target_mvs[index])
                     {
                         bFound = true;
                         // if there is same MeshVertex, just add the index of it.
-                        miVec.push_back(j);
+                        target_mis.push_back(index);
                         break;
                     }
-                    ++index;
                 }
 
                 // if there is no MeshVertex, store the vertex and set a index as the last one
                 if (!bFound)
                 {
-                    mvVec.push_back(newMV);
-                    miVec.push_back(index);
+                    target_mvs.push_back(newMV);
+                    target_mis.push_back(index);
                 }
             }
         }

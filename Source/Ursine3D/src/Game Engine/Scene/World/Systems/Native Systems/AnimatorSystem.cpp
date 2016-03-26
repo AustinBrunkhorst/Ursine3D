@@ -150,7 +150,8 @@ namespace ursine
                     continue;
                 if (x.GetStateName( ) == animator->m_curStName)
                     currentState = &x;
-                if (x.GetStateName( ) == animator->m_futStName)
+                if ( (x.GetStateName( ) == animator->m_futStName) 
+                    && (animator->m_curStName != animator->m_futStName) )
                     futureState = &x;
             }
 
@@ -209,13 +210,23 @@ namespace ursine
 
             // blending / playing animation should take place in here
             animator->updateState( 
-                currentState, 
-                currentAnimation, 
-                futureState, 
-                futureAnimation, 
+                &currentState, 
+                &currentAnimation, 
+                &futureState, 
+                &futureAnimation, 
                 dt, 
                 animator->m_transFactor
             );
+
+            // dispatch the events
+            animator->sendAvailableEvents( 
+                currentState->GetStateName( ), currentState->GetRatio( )
+            );
+
+            if (futureState)
+                animator->sendAvailableEvents( 
+                    futureState->GetStateName( ), futureState->GetRatio( )
+                );
 
             // generate the matrices
             AnimationBuilder::GenerateAnimationData(

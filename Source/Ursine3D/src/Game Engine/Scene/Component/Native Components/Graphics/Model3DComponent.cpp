@@ -27,7 +27,7 @@ namespace ursine
 {
     namespace ecs
     {
-        NATIVE_COMPONENT_DEFINITION(Model3D);
+        NATIVE_COMPONENT_DEFINITION( Model3D );
 
         Model3D::Model3D(void)
             : BaseComponent( )
@@ -44,6 +44,8 @@ namespace ursine
             m_model->SetRenderMask( 0 );
 
             clearMatrixPalette( );
+
+            SetIsShadowCaster( true );
         }
 
         Model3D::~Model3D(void)
@@ -227,6 +229,8 @@ namespace ursine
         void Model3D::SetIsShadowCaster(bool castShadows)
         {
             m_model->SetShaderCaster(castShadows);
+
+            NOTIFY_COMPONENT_CHANGED("castsShadows", castShadows);
         }
 
         void Model3D::updateRenderer(void)

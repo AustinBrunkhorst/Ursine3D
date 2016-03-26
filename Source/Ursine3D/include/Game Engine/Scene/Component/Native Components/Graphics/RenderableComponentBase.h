@@ -26,6 +26,8 @@ namespace ursine
     class RenderableComponentBase
     {
     public:
+        typedef std::shared_ptr<RenderableComponentBase> Handle;
+
         // lets us know if we need to update the matrix in the renderer
         bool dirty;
 

@@ -25,19 +25,45 @@ using namespace ecs;
 UnloadResource::UnloadResource(void)
     : BaseComponent( )
     , m_manager( nullptr )
+    , m_unsubscribed( true )
+    , m_unloadSegment( LevelSegments::Empty )
 {
+}
+
+UnloadResource::~UnloadResource(void)
+{
+    auto world = GetOwner( )->GetWorld( );
+
+    // If we haven't unsubscribed && the world isn't deleted
+    if (!m_unsubscribed && world)
+    {
+        auto managers = world->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
+
+        if (managers.size( ) == 0)
+            return;
+
+        m_manager->Listener( this )
+            .Off( LevelSegmentManagerEvents::SegmentChanged, &UnloadResource::onSegmentChange );
+        m_unsubscribed = true;
+        m_manager = nullptr;
+    }
 }
 
 UnloadResource::UnloadResource(LevelSegmentManager *manager, LevelSegments unloadSegment)
     : BaseComponent( )
     , m_unloadSegment( unloadSegment )
     , m_manager( manager )
+    , m_unsubscribed( true )
 {
     if (m_manager->GetCurrentSegment( ) >= m_unloadSegment)
         GetOwner( )->Delete( );
     else
+    {
         m_manager->Listener( this )
             .On( LevelSegmentManagerEvents::SegmentChanged, &UnloadResource::onSegmentChange );
+
+        m_unsubscribed = false;
+    }
 }
 
 void UnloadResource::OnSceneReady(Scene *scene)
@@ -57,8 +83,12 @@ void UnloadResource::OnSceneReady(Scene *scene)
     if (m_manager->GetCurrentSegment( ) >= m_unloadSegment)
         GetOwner( )->Delete( );
     else
+    {
         m_manager->Listener( this )
             .On( LevelSegmentManagerEvents::SegmentChanged, &UnloadResource::onSegmentChange );
+
+        m_unsubscribed = false;
+    }
 }
 
 LevelSegments UnloadResource::GetUnloadSegment(void) const
@@ -79,8 +109,5 @@ void UnloadResource::onSegmentChange(EVENT_HANDLER(LevelSegmentManager))
     if (m_unloadSegment == args->segment)
     {
         GetOwner( )->Delete( );
-
-        m_manager->Listener( this )
-            .Off( LevelSegmentManagerEvents::SegmentChanged, &UnloadResource::onSegmentChange );
     }
 }

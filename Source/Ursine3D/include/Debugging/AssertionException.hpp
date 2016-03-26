@@ -9,7 +9,7 @@ namespace ursine
     template<typename ... Args>
     AssertionException::AssertionException(URSINE_FFL_ARGS, URSINE_LOG_FORMATTED)
     {
-        m_file = file;
+        m_file = fs::path( file ).filename( ).string( );
         m_function = function;
         m_line = line;
 

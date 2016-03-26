@@ -191,6 +191,38 @@ namespace ursine
             }
         }
 
+        void DebugSystem::DrawCone(const SVec3 &tipPosition, SVec3 focusPosition,
+                                   float focalLength, float focalAngleDegrees)
+        {
+            // The direction from the base to the focal point
+            auto dir = focusPosition - tipPosition;
+
+            // The orthogonal vectors
+            SVec3 u, v;
+
+            dir.GenerateOrthogonalVectors( u, v );
+
+            // The radius of the focal ring
+            float radius = focalLength * sinf( math::DegreesToRadians( focalAngleDegrees ) );
+
+            if (focalAngleDegrees > 45.0f)
+            {
+                float angle = focalAngleDegrees - 45.0f;
+                float t = angle / 45.0f;
+
+                focusPosition -= dir * t;
+            }
+
+            // render the circle
+            DrawCircle( focusPosition, dir, radius, Color::Gold, 5.0f, true );
+
+            // render the lines
+            DrawLine( tipPosition, focusPosition + u * radius, Color::Gold, 5.0f, true );
+            DrawLine( tipPosition, focusPosition - u * radius, Color::Gold, 5.0f, true );
+            DrawLine( tipPosition, focusPosition + v * radius, Color::Gold, 5.0f, true );
+            DrawLine( tipPosition, focusPosition - v * radius, Color::Gold, 5.0f, true );
+        }
+
         void DebugSystem::OnInitialize(void)
         {
             EntitySystem::OnInitialize( );

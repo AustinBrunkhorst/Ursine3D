@@ -32,6 +32,12 @@ void BossAIStateMachine::Update(void)
     StateMachine::Update( );
 }
 
+void BossAIStateMachine::Exit(void)
+{
+    if (m_currentState && !m_transitionFound)
+        m_currentState->OnExit( this );
+}
+
 BossAI *BossAIStateMachine::GetBoss(void)
 {
     return m_boss;

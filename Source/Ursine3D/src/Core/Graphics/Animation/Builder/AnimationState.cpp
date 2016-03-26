@@ -95,6 +95,17 @@ namespace ursine
         m_transPos = tPos;
     }
 
+    float AnimationState::GetRatio(void) const
+    {
+        if (!m_animation)
+            return false;
+
+        unsigned keyframeCount1 = m_animation->GetRigKeyFrameCount( );
+        auto &lastFrame = m_animation->GetKeyframe( keyframeCount1 - 1, 0 );
+
+        return m_timePos / lastFrame.length;
+    }
+
     bool AnimationState::PlayingAnimation(void)
     {
         if (!m_animation)
@@ -104,15 +115,14 @@ namespace ursine
         auto &curr_firstFrame = m_animation->GetKeyframe( 0, 0 );
         auto &curr_lastFrame = m_animation->GetKeyframe( keyframeCount1 - 1, 0 );
 
-        if (GetTimePosition( ) > curr_lastFrame.length)
+        if (m_timePos > curr_lastFrame.length)
         {
-            if (IsLooping( ))
+            if (m_looping)
                 SetTimePosition( curr_firstFrame.length );
             else
-            {
                 SetTimePosition( curr_lastFrame.length );
-                return true;
-            }
+
+            return true;
         }
 
         return false;

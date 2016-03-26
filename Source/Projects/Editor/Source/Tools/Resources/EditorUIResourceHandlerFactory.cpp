@@ -16,7 +16,7 @@ CefRefPtr<CefResourceHandler> EditorUIResourceHandlerFactory::Create(
     auto *editor = GetCoreSystem( Editor );
 
     return new ursine::UIResourceHandler(
-        ursine::kUIGameResourceScheme,
+        ursine::kUIGameResourceDomain,
         &editor->GetProject( )->GetScene( ).GetResourceManager( ) 
     );
 }

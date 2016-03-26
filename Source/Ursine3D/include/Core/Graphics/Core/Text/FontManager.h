@@ -28,7 +28,7 @@ namespace ursine
             void Uninitialize(void);
 
             // create a font, returns the handle to it
-            GfxHND CreateBitmapFont(uint8_t *binaryData, size_t binarySize);
+            GfxHND CreateBitmapFont(const uint8_t *binaryData, size_t binarySize);
 
             void DestroyBitmapFont(GfxHND &fontHandle);
 
@@ -36,7 +36,7 @@ namespace ursine
             void RegisterTexture(GfxHND fontHandle, const std::string &fontName, GfxHND textureHandle);
 
             // gets a font
-            const BitmapFont &GetBitmapFont(unsigned index);
+            const BitmapFont &GetBitmapFont(GfxHND index);
 
             // gets a texture handle for a font
             GfxHND GetTextureHandle(GfxHND fontHandle, const std::string &textureName);

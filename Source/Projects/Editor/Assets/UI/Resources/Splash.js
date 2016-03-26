@@ -4,16 +4,13 @@ var gProgressText = null;
 var gBroadcastHandlers = {
     ResourcePipeline: {
         preBuildItemStart: function(data) {
-            gProgressSpan.style.width = (data.progress * 100) + '%';
-            gProgressText.innerHTML = 'Building '+ data.item;
+            setStatus( 'Building '+ data.item, data.progress );
         },
         preBuildItemPreviewStart: function(data) {
-            gProgressSpan.style.width = (data.progress * 100) + '%';
-            gProgressText.innerHTML = 'Preview '+ data.item;
+            setStatus( 'Preview '+ data.item, data.progress );
         },
         preBuildComplete: function(data) {
-            gProgressSpan.style.width = '100%';
-            gProgressText.innerHTML = 'Launching Editor';
+            setStatus( 'Launching Editor', 1.0 );
         }
     }
 };
@@ -24,6 +21,11 @@ window.addEventListener( 'load', function() {
     gProgressSpan = document.querySelector( '#progress span' );
     gProgressText = document.querySelector( '#progress-text' );
 } );
+
+function setStatus(text, progress) {
+    gProgressSpan.style.width = (progress * 100) + '%';
+    gProgressText.innerHTML = text;
+}
 
 function NativeBroadcast(target, message, data) {
     var targetHandler = gBroadcastHandlers[ target ];

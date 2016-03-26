@@ -30,11 +30,18 @@ namespace
 namespace ursine
 {
     JSConstructor(JSKeyboardManager)
-        : m_manager( GetCoreSystem(KeyboardManager) )
+        : m_manager( GetCoreSystem( KeyboardManager ) )
     {
         m_manager->Listener( this )
             .On( KM_KEY_DOWN, &JSKeyboardManager::onKeyboardKeyDown )
             .On( KM_KEY_UP, &JSKeyboardManager::onKeyboardKeyUp );
+
+        static const auto thisType = decltypeof( *this );
+
+        auto value = context->GetValue( thisType.GetName( ) );
+
+        // create static instance value
+        value->SetValue( "instance", thisContext, V8_PROPERTY_ATTRIBUTE_DONTDELETE );
     }
 
     JSKeyboardManager::~JSKeyboardManager(void)

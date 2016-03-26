@@ -1,13 +1,14 @@
 package ursine.controls;
 
 import js.html.HtmlElement;
+
 @:enum
 abstract NotificationType(Int) {
-    var None = 0;
-    var Warning = 1;
-    var Error = 2;
-    var Info = 3;
-    var Question = 4;
+    inline var None = 0;
+    inline var Warning = 1;
+    inline var Error = 2;
+    inline var Info = 3;
+    inline var Question = 4;
 }
 
 @:native( "NotificationControl" )

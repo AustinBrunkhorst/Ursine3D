@@ -26,7 +26,7 @@ namespace ursine
 }
 
 class DamageOnCollide;
-struct AbstractWeapon;
+struct AbstractHitscanWeapon;
 
 enum HealthEvents
 {
@@ -112,7 +112,7 @@ public:
     void DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit);
 
     bool CanDamage(DamageOnCollide *damage) const;
-    bool CanDamage(AbstractWeapon *weapon) const;
+    bool CanDamage(AbstractHitscanWeapon *weapon) const;
 
 private:
     void OnInitialize(void) override;

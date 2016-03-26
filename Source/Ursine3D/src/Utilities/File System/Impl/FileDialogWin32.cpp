@@ -205,7 +205,7 @@ namespace
 
         if (success) 
         {
-            fs::FileList files;
+            fs::PathList files;
 
             auto *selection = ofn.lpstrFile;
 

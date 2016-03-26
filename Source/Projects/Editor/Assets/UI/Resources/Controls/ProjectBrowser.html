@@ -304,9 +304,17 @@
                 if (e.ctrlKey) {
                     menu.addSeparator( );
 
-                    var makeEditorResource = menu.addItem( 'Make Editor Resource', function() {
+                    menu.addItem( 'Make Editor Resource', function() {
                         ProjectMakeEditorResource( resource.guid );
                     }.bind( this ) );
+
+                    menu.addItem( 'Open Build File', function() {
+                        ProcessOpen( resource.buildFile, false );
+                    } );
+
+                    menu.addItem( 'Open Build Cache File', function() {
+                        ProcessOpen( resource.buildCacheFile, false );
+                    } );
                 }
 
                 this.fire( 'resource-contextmenu', {

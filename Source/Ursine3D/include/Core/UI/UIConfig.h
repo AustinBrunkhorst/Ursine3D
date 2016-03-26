@@ -23,5 +23,5 @@ namespace ursine
     const auto kUIDebuggingPort = 6999;
     const auto kUINativeBroadcastFunction = "NativeBroadcast";
 
-    const auto kUIGameResourceScheme = "game";
+    const auto kUIGameResourceDomain = "game";
 }
