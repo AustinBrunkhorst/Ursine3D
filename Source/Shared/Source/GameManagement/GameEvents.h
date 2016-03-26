@@ -34,6 +34,8 @@ namespace game
         DEACTIVATE_WEAPON,
         PROJECTILE_INIT,
         PICKUP_AMMO,
+        CEASE_FIRE,
+        FIRE_AT_WILL,
 
 
         /////////////////////////////
