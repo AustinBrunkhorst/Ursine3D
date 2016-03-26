@@ -14,11 +14,18 @@
 #include <Component.h>
 #include <SVec3.h>
 
+namespace ursine
+{
+    typedef Array<std::string> IgnoredEntityArray;
+}
+
 class ApplyImpulseOnHit : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 
 public:
+
+    
 
     EditorField(
         bool effectSweptController,
@@ -50,6 +57,12 @@ public:
         SetListenToChildren
     );
 
+    EditorField(
+        ursine::IgnoredEntityArray ignoredEntities,
+        GetIgnoredEntities,
+        SetIgnoredEntities
+        );
+
     ApplyImpulseOnHit(void);
     ~ApplyImpulseOnHit(void);
 
@@ -67,6 +80,9 @@ public:
 
     bool GetListenToChildren(void) const;
     void SetListenToChildren(bool flag);
+
+    const ursine::IgnoredEntityArray &GetIgnoredEntities(void) const;
+    void SetIgnoredEntities(const ursine::IgnoredEntityArray &ignored);
 
 private:
 
@@ -89,5 +105,7 @@ private:
 
     ursine::SVec3 m_localDirection;
     ursine::SVec3 m_worldDirection;
+
+    ursine::IgnoredEntityArray m_ignored;
 
 } Meta(Enable);
