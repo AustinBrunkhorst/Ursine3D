@@ -44,6 +44,18 @@ public:
     );
 
     EditorField(
+        float seedshotInterval,
+        GetSeedshotInterval,
+        SetSeedshotInterval
+    );
+
+    EditorField(
+        float seedshotCooldown,
+        GetSeedshotCooldown,
+        SetSeedshotCooldown
+    );
+
+    EditorField(
         std::string sludgeshotEntity,
         GetSludgeshotEntityName,
         SetSludgeshotEntityName
@@ -118,6 +130,12 @@ public:
         SetPollinateArchetype
     );
 
+    EditorField(
+        std::string invulnerableEmitterEntity,
+        GetInvulnerableEmitterEntityName,
+        SetInvulnerableEmitterEntityName
+    );
+
     EditorResourceField(
         ursine::resources::ArchetypeData,
         vineArchetype,
@@ -132,6 +150,12 @@ public:
 
     float GetSeedshotTurnSpeed(void) const;
     void SetSeedshotTurnSpeed(float turnSpeed);
+
+    float GetSeedshotInterval(void) const;
+    void SetSeedshotInterval(float interval);
+
+    float GetSeedshotCooldown(void) const;
+    void SetSeedshotCooldown(float cooldown);
 
     const std::string &GetSludgeshotEntityName(void) const;
     void SetSludgeshotEntityName(const std::string &entityName);
@@ -169,6 +193,9 @@ public:
     const ursine::resources::ResourceReference &GetPollinateArchetype(void) const;
     void SetPollinateArchetype(const ursine::resources::ResourceReference &pollinateArchetype);
 
+    const std::string &GetInvulnerableEmitterEntityName(void) const;
+    void SetInvulnerableEmitterEntityName(const std::string &entityName);
+
     const ursine::resources::ResourceReference &GetVineArchetype(void) const;
     void SetVineArchetype(const ursine::resources::ResourceReference &vineArchetype);
 
@@ -177,6 +204,8 @@ public:
     ursine::ecs::EntityHandle GetSludgeshotEntity(void);
 
     ursine::ecs::EntityHandle GetPollinateEntity(void);
+
+    ursine::ecs::EntityHandle GetInvulnerableEmitterEntity(void);
 
     void AddSpawnedVine(ursine::ecs::EntityHandle vine);
 
@@ -195,6 +224,10 @@ private:
 
     // Seedshot variables
     float m_turnSpeed;
+
+    float m_seedshotInterval;
+
+    float m_seedshotCooldown;
 
     std::string m_seedshotEntity;
 
@@ -223,6 +256,9 @@ private:
     float m_pollinateProjectileLifeTime;
 
     ursine::resources::ResourceReference m_pollinateArchetype;
+
+    // Invulnerable emitter
+    std::string m_invulnerableEmitterEntity;
 
     // Vine variables
     ursine::resources::ResourceReference m_vineArchetype;

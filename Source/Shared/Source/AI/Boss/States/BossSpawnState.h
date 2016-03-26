@@ -1,30 +1,29 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** VineSpawnState.h
+** BossSpawnState.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
 **
-** Contributors:
-** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
 #pragma once
 
-#include "VineAIState.h"
+#include "BossAIState.h"
 
-class VineSpawnState : public VineAIState
+class BossSpawnState : public BossAIState
 {
 public:
-    VineSpawnState(void);
+    BossSpawnState(void);
 
     bool CanExit(void) override { return m_finished; }
 
-    void Enter(VineAIStateMachine *machine) override;
+    void Enter(BossAIStateMachine *machine) override;
 
 private:
+
     bool m_finished;
 
     void onAnimationFinished(EVENT_HANDLER(ursine::ecs::Entity));

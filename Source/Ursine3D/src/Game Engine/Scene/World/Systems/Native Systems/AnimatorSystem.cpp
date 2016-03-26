@@ -223,6 +223,11 @@ namespace ursine
                 currentState->GetStateName( ), currentState->GetRatio( )
             );
 
+            if (futureState)
+                animator->sendAvailableEvents( 
+                    futureState->GetStateName( ), futureState->GetRatio( )
+                );
+
             // generate the matrices
             AnimationBuilder::GenerateAnimationData(
                 currentState,

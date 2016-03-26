@@ -178,6 +178,16 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "textColor", color );
         }
 
+        RenderMask SpriteText::GetRenderMask(void) const
+        {
+            return static_cast<RenderMask>(m_spriteText->GetRenderMask() & 0xFFFFFFFF);
+        }
+
+        void SpriteText::SetRenderMask(RenderMask mask)
+        {
+            m_spriteText->SetRenderMask(static_cast<unsigned long long>(mask));
+        }
+
         void SpriteText::SetOverdraw(bool flag)
         {
             m_spriteText->SetOverdraw( flag );

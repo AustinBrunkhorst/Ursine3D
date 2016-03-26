@@ -136,15 +136,16 @@ void BitmapFont::ReadBytes(void *destination, size_t count)
 
 bool BitmapFont::ValidateFile(void)
 {
-	char signature[4];
+    char signature[4];
 
-	signature[ 0 ] = ReadData<char>( 1 );
-	signature[ 1 ] = ReadData<char>( 1 );
-	signature[ 2 ] = ReadData<char>( 1 );
-	signature[ 3 ] = 0;
+    signature[ 0 ] = ReadData<char>( 1 );
+    signature[ 1 ] = ReadData<char>( 1 );
+    signature[ 2 ] = ReadData<char>( 1 );
+    signature[ 3 ] = 0;
 
     UAssertCatchable( strcmp( signature, "BMF" ) == 0,
-        "Invalid .fnt file magic."    
+        "Invalid .fnt file magic. "
+        "Make sure the font is built with the binary descriptor."    
     );
 
     auto formatVersion = ReadData<int>( 1 );

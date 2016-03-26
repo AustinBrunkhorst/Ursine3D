@@ -68,9 +68,16 @@ void RepositionPlayersAndCloseDoorState::Enter(SegmentLogicStateMachine *machine
 
     // get the boss door and close it
     auto resources = segmentManager->GetOwner( )->GetComponent<BossRoomResources>( );
+
+    if (resources->bossDoorEntityName.empty( ))
+        return;
+
     auto bossDoor = world->GetEntityFromName( resources->bossDoorEntityName );
 
     UAssert( bossDoor, "What the fuck duder, where's the door?" );
 
-    bossDoor->GetComponent<EntityAnimatorGroup>( )->StopGroupAnimators( );
+    auto animator = bossDoor->GetComponent<EntityAnimatorGroup>( );
+
+    if (animator)
+        animator->StopGroupAnimators( );
 }

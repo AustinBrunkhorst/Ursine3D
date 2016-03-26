@@ -632,6 +632,16 @@ namespace ursine
             m_worldSpace = useWorldCoordinates;
         }
 
+        const SMat4& ParticleSystem::GetTransform(void) const
+        {
+            return m_transform;
+        }
+
+        void ParticleSystem::SetTransform(const SMat4& transform)
+        {
+            m_transform = transform;
+        }
+
         /////////////////////////////////////////////////////////////
         // SPRITE TEXT //////////////////////////////////////////////
         SpriteText::SpriteText(void)

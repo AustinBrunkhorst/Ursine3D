@@ -44,6 +44,7 @@
 #include "DamageSystem/CritSpotComponent.h"
 #include "DamageSystem/DamageOnCollideComponent.h"
 #include "DamageSystem/DamageTextComponent.h"
+#include "DamageSystem/DamageTextManagerComponent.h"
 
 /////////////////////////////////
 //    Interaction System       //

@@ -15,7 +15,6 @@
 
 #include <Component.h>
 #include <ArchetypeData.h>
-#include <RigidbodyComponent.h>
 
 namespace ursine
 {
@@ -88,6 +87,12 @@ public:
         SetSpawnOnDeath
     );
 
+    EditorField(
+        bool invulnerable,
+        GetInvulnerable,
+        SetInvulnerable
+    );
+
     Meta(Enable)
     Health(void);
     ~Health(void);
@@ -96,7 +101,7 @@ public:
     void SetHealthType(HealthType type);
 
     float GetHealth(void) const;
-    void SetHealth(const float health);
+    void SetHealth(float health);
     float GetMaxHealth(void) const;
 
     const ursine::resources::ResourceReference &GetArchetypeOnDeath(void) const;
@@ -106,9 +111,12 @@ public:
     void SetDeleteOnZeroHealth(bool flag);
 
     bool GetSpawnOnDeath(void) const;
-    void SetSpawnOnDeath(const bool state);
+    void SetSpawnOnDeath(bool state);
 
-    void DealDamage(const float damage);
+    bool GetInvulnerable(void) const;
+    void SetInvulnerable(bool invulnerable);
+
+    void DealDamage(float damage);
     void DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit);
 
     bool CanDamage(DamageOnCollide *damage) const;
@@ -118,7 +126,7 @@ private:
     void OnInitialize(void) override;
     void sendDamageTextEvent(const ursine::SVec3& contact, float damage, bool crit);
 
-    void OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED));
+    void OnDeath(EVENT_HANDLER(ursine::ecs::Entity));
 
     HealthType m_type;
 
@@ -133,5 +141,8 @@ private:
     // A flag letting us know if we're dead or not.
     // This solves the problem of dealing damage after it's already dead.
     bool m_dead;
+
+    // Flag letting us know if we're invulnerable
+    bool m_invulnerable;
 
 } Meta(Enable, WhiteListMethods, DisplayName( "Health" ));

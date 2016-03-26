@@ -17,6 +17,9 @@
 #include "BossSpawnVinesState.h"
 #include "BossPollinateState.h"
 #include "BossSludgeshotState.h"
+#include "BossSpawnState.h"
+#include "BossInvulnerableToggleState.h"
+#include "BossDazedState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -61,6 +64,8 @@ BossAI::BossAI(void)
     , m_segment( LevelSegments::Empty )
     , m_vineCount( 0 )
     , m_turnSpeed( 90.0f )
+    , m_seedshotInterval( 2.0f )
+    , m_seedshotCooldown( 2.0f )
     , m_sludgeshotAnimationTime( 5.0f )
     , m_maxPollinateSpreadAngle( 30.0f )
     , m_pollinateLocalForward( 0.0f, 0.0f, 1.0f )
@@ -92,6 +97,30 @@ void BossAI::SetSeedshotTurnSpeed(float turnSpeed)
     m_turnSpeed = turnSpeed;
 
     NOTIFY_COMPONENT_CHANGED( "seedshotTurnSpeed", m_turnSpeed );
+}
+
+float BossAI::GetSeedshotInterval(void) const
+{
+    return m_seedshotInterval;
+}
+
+void BossAI::SetSeedshotInterval(float interval)
+{
+    m_seedshotInterval = interval;
+
+    NOTIFY_COMPONENT_CHANGED( "seedshotInterval", m_seedshotInterval );
+}
+
+float BossAI::GetSeedshotCooldown(void) const
+{
+    return m_seedshotCooldown;
+}
+
+void BossAI::SetSeedshotCooldown(float cooldown)
+{
+    m_seedshotCooldown = cooldown;
+
+    NOTIFY_COMPONENT_CHANGED( "seedshotCooldown", m_seedshotCooldown );
 }
 
 const std::string &BossAI::GetSludgeshotEntityName(void) const
@@ -240,6 +269,18 @@ void BossAI::SetPollinateArchetype(const ResourceReference &pollinateArchetype)
     NOTIFY_COMPONENT_CHANGED( "pollinateArchetype", m_pollinateArchetype );
 }
 
+const std::string &BossAI::GetInvulnerableEmitterEntityName(void) const
+{
+    return m_invulnerableEmitterEntity;
+}
+
+void BossAI::SetInvulnerableEmitterEntityName(const std::string &entityName)
+{
+    m_invulnerableEmitterEntity = entityName;
+
+    NOTIFY_COMPONENT_CHANGED( "invulnerableEmitterEntity", m_invulnerableEmitterEntity );
+}
+
 const ResourceReference &BossAI::GetVineArchetype(void) const
 {
     return m_vineArchetype;
@@ -265,6 +306,11 @@ EntityHandle BossAI::GetSludgeshotEntity(void)
 EntityHandle BossAI::GetPollinateEntity(void)
 {
     return GetOwner( )->GetChildByName( m_pollinateEntity );
+}
+
+EntityHandle BossAI::GetInvulnerableEmitterEntity(void)
+{
+    return GetOwner( )->GetChildByName( m_invulnerableEmitterEntity );
 }
 
 void BossAI::AddSpawnedVine(EntityHandle vine)
@@ -303,22 +349,31 @@ void BossAI::OnInitialize(void)
     }
 
     // Boss Phase I
-    // - Spawn Vines in the VineSpawnPositions
-    // - When all vines die, use seedshot, then sit there and take damage.
-    // - If not enough damage is done before a certain amount of time (after vines all die), respwan them
+    // - Boss uproots
+    // - Spawn vines
+    // - go into seedshotting
+    // - boss becomes exausted after all vines become down, and can be damaged now
+    // - After exaustion duration, if he isn't below a certain percent, the steps repeat
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
-        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 4.0f );
-        /*auto seedShot = sm->AddState<BossSeedshotState>( );
+        auto spawnBoss = sm->AddState<BossSpawnState>( );
+        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
+        auto seedshot = sm->AddState<BossSeedshotState>( );
+        auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
+        auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
+        auto dazed = sm->AddState<BossDazedState>( );
 
-        auto seedshotTrans = spawnVines->AddTransition( seedShot, "To Seedshot" );
+        spawnBoss->AddTransition( spawnVines, "To Spawn Vines" );
+        spawnVines->AddTransition( invulnerable, "To Invulnerable" );
+        invulnerable->AddTransition( seedshot, "To Seedshot" );
+        seedshot->AddTransition( vulnerable, "To Vulnerable" )
+                ->AddCondition<sm::IntCondition>( 
+                    BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
+                );
+        vulnerable->AddTransition( dazed, "To Dazed" );
 
-        seedshotTrans->AddCondition<sm::IntCondition>( 
-            BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
-        );
-        */
-        sm->SetInitialState( spawnVines );
+        sm->SetInitialState( spawnBoss );
 
         m_bossLogic[ 0 ].push_back( sm );
     }

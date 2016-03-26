@@ -40,6 +40,12 @@ namespace ursine
             );
 
             EditorField(
+                bool emitting,
+                GetEmitting,
+                SetEmitting
+            );
+
+            EditorField(
                 float emitRate,
                 GetEmitRate,
                 SetEmitRate
@@ -144,6 +150,9 @@ namespace ursine
             SVec3 GeneratePosition(void);
 
             // getter/setters
+            bool GetEmitting(void) const;
+            void SetEmitting(bool emitting);
+
             float GetEmitRate(void) const;
             void SetEmitRate(const float rate);
 
@@ -199,6 +208,8 @@ namespace ursine
 
             // parent component, this is kinda important
             Component::Handle<ParticleSystem> m_particleComponent;
+
+            bool m_emitting;
 
             // all of these need variance /////////////////////////////////////
             // emit speed

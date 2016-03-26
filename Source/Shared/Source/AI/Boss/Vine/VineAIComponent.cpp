@@ -229,9 +229,6 @@ void VineAI::OnInitialize(void)
     // TO TEST:
     // - tell it to pursue enemy, and tell it to come back home
 
-    GetOwner( )->GetWorld( )->Listener( this )
-        .On( WORLD_UPDATE, &VineAI::onUpdate );
-
     GetOwner( )->Listener( this )
         .On( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 }
@@ -321,6 +318,9 @@ void VineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
     );
 
     m_stateMachine.SetInitialState( spawnState );
+
+    GetOwner( )->GetWorld( )->Listener( this )
+        .On( WORLD_UPDATE, &VineAI::onUpdate );
 }
 
 #if defined(URSINE_WITH_EDITOR)

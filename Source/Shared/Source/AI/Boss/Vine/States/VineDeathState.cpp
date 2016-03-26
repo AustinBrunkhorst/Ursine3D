@@ -17,6 +17,8 @@
 
 #include "VineAIStateMachine.h"
 #include "VineAIComponent.h"
+
+#include <SphereColliderComponent.h>
 #include <EntityEvent.h>
 
 using namespace ursine;
@@ -30,17 +32,44 @@ VineDeathState::VineDeathState(void)
 void VineDeathState::Enter(VineAIStateMachine *machine)
 {
     auto ai = machine->GetAI( );
-    auto animator = ai->GetAnimator( );
 
-    owner = ai->GetOwner( );
+    m_animator = ai->GetAnimator( );
+    m_owner = ai->GetOwner( );
 
-    animator->SetCurrentState( "Spike_Down" );
+    m_animator->SetTimeScalar( 0.5f );
 
-    animator->GetOwner( )->Listener( this )
-        .On( ENTITY_ANIMATION_FINISH, &VineDeathState::onAnimationFinished );
+    // Flop over
+    m_animator->SetCurrentState( "Swipe_In" );
+
+    m_animator->GetOwner( )->Listener( this )
+        .On( ENTITY_ANIMATION_FINISH, &VineDeathState::onFlopFinish );
+
+    // Delete all colliders
+    auto colliders = m_owner->GetComponentsInChildren<SphereCollider>( );
+
+    for (auto &collider : colliders)
+        collider->GetOwner( )->RemoveComponent<SphereCollider>( );
 }
 
-void VineDeathState::onAnimationFinished(EVENT_HANDLER(Entity))
+void VineDeathState::onFlopFinish(EVENT_HANDLER(Entity))
 {
-    owner->Delete( );
+    EVENT_SENDER(Entity, sender);
+
+    sender->Listener( this )
+        .Off( ENTITY_ANIMATION_FINISH, &VineDeathState::onFlopFinish );
+
+    m_animator->SetCurrentState( "Spike_Down" );
+
+    sender->Listener( this )
+        .On( ENTITY_ANIMATION_FINISH, &VineDeathState::onDigFinish );
+}
+
+void VineDeathState::onDigFinish(EVENT_HANDLER(Entity))
+{
+    EVENT_SENDER(Entity, sender);
+
+    sender->Listener( this )
+        .Off( ENTITY_ANIMATION_FINISH, &VineDeathState::onDigFinish );
+
+    m_owner->Delete( );
 }

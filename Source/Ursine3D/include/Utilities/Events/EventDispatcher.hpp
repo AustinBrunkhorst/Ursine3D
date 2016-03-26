@@ -135,16 +135,14 @@ namespace ursine
         if (search == m_events.end( ))
             return;
 
-        auto &handlers = search->second;
+        // it's either we copy or we use a list
+        // let's just copy for now
+        auto handlers = search->second;
 
         decltype( handlers.size( ) ) i = 0;
 
-        while (i < handlers.size( ))
-        {
+        for (; i < handlers.size( ); ++i)
             handlers[ i ].handler( sender, args );
-
-            ++i;
-        }
     }
 
     template<typename Key, typename Handler>

@@ -441,10 +441,7 @@ namespace ursine
             PrimitiveColorBuffer pcb;
             //pcb.color = DirectX::XMFLOAT4( vp.GetBackgroundColor( ) );
             pcb.color = DirectX::XMFLOAT4( 
-                0.0f, 
-                0.0f, 
-                0.0f, 
-                1.0f 
+                cam.GetClearColor( ).ToVector4( ).ToD3D( )
             );
             bufferManager->MapBuffer<BUFFER_PRIM_COLOR>(
                 &pcb, 

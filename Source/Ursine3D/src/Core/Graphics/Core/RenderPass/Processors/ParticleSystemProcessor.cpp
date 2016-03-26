@@ -56,19 +56,21 @@ namespace ursine
             // SET RENDER SPACE /////////////////////////////////////
             PointGeometryBuffer pgb;
             if (particleSystem.GetSystemSpace( ))
-                pgb.cameraPosition = DirectX::XMFLOAT4( 0, 0, 0, 0 );
+            {
+                m_manager->bufferManager->MapTransformBuffer( SMat4::Identity( ) );
+            }
             else
-                pgb.cameraPosition = DirectX::XMFLOAT4( 
-                    particleSystem.GetPosition( ).GetFloatPtr( ) 
-                );
+            {
+                m_manager->bufferManager->MapTransformBuffer(particleSystem.GetTransform( ));
+            }
 
             // SET COLOR ////////////////////////////////////////////
             // set color
             auto &color = particleSystem.GetColor( );
-            pgb.cameraUp.x = pow(color.r, 2.2f);
-            pgb.cameraUp.y = pow(color.g, 2.2f);
-            pgb.cameraUp.z = pow(color.b, 2.2f);
-            pgb.cameraUp.w = pow(color.a, 2.2f);
+            pgb.cameraUp.x = color.r;
+            pgb.cameraUp.y = color.g;
+            pgb.cameraUp.z = color.b;
+            pgb.cameraUp.w = color.a;
             m_manager->bufferManager->MapBuffer<BUFFER_POINT_GEOM>(
                 &pgb, 
                 SHADERTYPE_VERTEX
