@@ -253,5 +253,10 @@ namespace ursine
 
             return target->GetTransform()->GetWorldPosition();
         }
+
+        ecs::AIMovementController* WalkState::GetMovementController(void) const
+        {
+            return m_move;
+        }
     }
 }

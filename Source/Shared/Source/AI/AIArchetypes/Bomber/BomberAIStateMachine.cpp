@@ -10,7 +10,6 @@ namespace ursine
         {
             // Condition/SM variables to go here
             AddBool("HitPlayer", false);
-
         }
     }
 }

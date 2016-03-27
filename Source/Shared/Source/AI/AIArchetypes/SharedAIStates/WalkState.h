@@ -54,6 +54,8 @@ namespace ursine
             void SetBoidbehaviorScale(float scale);
 
             void SetAttackRange(float range);
+
+            ecs::AIMovementController *GetMovementController(void) const;
         private:
 
             void updateSurroundingActorsList(AIStateMachine *stateMachine);

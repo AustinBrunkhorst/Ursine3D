@@ -40,7 +40,11 @@ namespace ursine
             void Update(AIStateMachine *machine) override;
             void Exit(AIStateMachine *machine) override;
 
+            void SetExplosionObject(ursine::resources::ResourceReference &dmgExplosionEntity);
+
         private:
+            ursine::resources::ResourceReference m_objToSpawn;
+
             WalkState *m_walk;
 
             bool m_finished;

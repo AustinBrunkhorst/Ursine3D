@@ -51,14 +51,20 @@ namespace ursine
         {
             m_walk->Exit(machine);
 
-            // if we are here, the animation ended so it is time to explode.
+            // if we are here, the animation ended so it is time to explode:
             
             // AOE damage
-
+            // &
             // dope particles
+            machine->GetEntity()->GetWorld()->CreateEntityFromArchetype(m_objToSpawn);
 
-            // destroy ourselves
+            // destroy ourselves (just going to use data already stored in walkstate)
+            machine->GetEntity(  ).Get( )->Delete( );
         }
 
+        void BomberExplodeState::SetExplosionObject(ursine::resources::ResourceReference& dmgExplosionEntity)
+        {
+            m_objToSpawn = dmgExplosionEntity;
+        }
     }
 }
