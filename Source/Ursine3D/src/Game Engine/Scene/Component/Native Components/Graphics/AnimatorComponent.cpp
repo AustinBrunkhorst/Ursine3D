@@ -159,15 +159,15 @@ namespace ursine
 
             // if there is no future state or future animation, then loop current animation again and again
             if (!bFut)
-            {                
+            {
                 if ((*currSt)->PlayingAnimation() && !m_finishEventSent)
                 {
                     if (!(*currSt)->IsLooping( ))
                     {
+                        m_finishEventSent = true;
+
                         GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
 
-                        m_finishEventSent = true;
-                
                         transFactor = 0.0f;
                     }
 

@@ -20,11 +20,13 @@
 using namespace ursine;
 
 const std::string BossAIStateMachine::VineCount = "Vine Count";
+const std::string BossAIStateMachine::Health = "Boss Health";
 
 BossAIStateMachine::BossAIStateMachine(BossAI *boss)
     : m_boss( boss )
 {
     AddInt( VineCount, 0 );
+    AddFloat( Health, 100.0f );
 }
 
 void BossAIStateMachine::Update(void)

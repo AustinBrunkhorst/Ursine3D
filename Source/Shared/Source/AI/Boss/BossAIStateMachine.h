@@ -24,6 +24,7 @@ public:
 
     // Global variables for the boss
     static const std::string VineCount;
+    static const std::string Health;
 
     BossAIStateMachine(BossAI *boss);
 
