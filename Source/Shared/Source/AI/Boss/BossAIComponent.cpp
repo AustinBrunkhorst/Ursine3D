@@ -394,9 +394,9 @@ void BossAI::OnInitialize(void)
         auto dazed = sm->AddState<BossDazedState>( );
         auto changePhaseState = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase2 );
 
-        invulnerable->AddTransition( spawnBoss, "To Spawn Boss" );
         spawnBoss->AddTransition( spawnVines, "To Spawn Vines" );
-        spawnVines->AddTransition( seedshot, "To Seedshot" );
+        spawnVines->AddTransition( invulnerable, "To Invulnerable" );
+        invulnerable->AddTransition( seedshot, "To Seedshot" );
         seedshot->AddTransition( vulnerable, "To Vulnerable" )
                 ->AddCondition<sm::IntCondition>( 
                     BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
@@ -419,7 +419,7 @@ void BossAI::OnInitialize(void)
              );
 
 
-        sm->SetInitialState( invulnerable );
+        sm->SetInitialState( spawnBoss );
 
         m_bossLogic[ 0 ].push_back( sm );
     }

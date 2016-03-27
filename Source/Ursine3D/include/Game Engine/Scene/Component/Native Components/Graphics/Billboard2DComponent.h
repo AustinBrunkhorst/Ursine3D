@@ -32,18 +32,24 @@ namespace ursine
             friend class RenderSystem;
 
         public:
-            EditorMeta(BitMaskEditor)
-            EditorField(
-                ursine::ecs::RenderMask renderMask,
-                GetRenderMask,
-                SetRenderMask
-            );
-
             EditorResourceField(
                 ursine::resources::TextureData,
                 texture,
                 GetTexture,
                 SetTexture
+            );
+
+            EditorField(
+                ursine::Vec2 dimensions,
+                GetDimensions,
+                SetDimensions
+            );
+
+            EditorMeta(BitMaskEditor)
+            EditorField(
+                ursine::ecs::RenderMask renderMask,
+                GetRenderMask,
+                SetRenderMask
             );
 
             Meta(Enable)
@@ -56,11 +62,14 @@ namespace ursine
             //get/set model
             graphics::Billboard2D *GetBillboard(void);
 
-            RenderMask GetRenderMask(void) const;
-            void SetRenderMask(RenderMask mask);
-
             const resources::ResourceReference &GetTexture(void) const;
             void SetTexture(const resources::ResourceReference &texture);
+
+            ursine::Vec2 GetDimensions(void) const;
+            void SetDimensions(const ursine::Vec2 &dimensions);
+
+            RenderMask GetRenderMask(void) const;
+            void SetRenderMask(RenderMask mask);
 
         private:
             graphics::GfxAPI *m_graphics;

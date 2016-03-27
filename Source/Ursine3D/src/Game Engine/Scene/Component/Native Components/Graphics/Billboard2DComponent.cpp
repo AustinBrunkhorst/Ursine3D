@@ -31,7 +31,8 @@ namespace ursine
             m_base->SetHandle( m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_BILLBOARD2D ) );
 
             m_billboard = &m_graphics->RenderableMgr.GetBillboard2D( m_base->GetHandle( ) );
-            m_billboard->SetDimensions( 100.0f, 100.0f );
+
+            SetDimensions( Vec2( 100.0f, 100.0f ) );
         } 
 
         Billboard2D::~Billboard2D(void)
@@ -73,16 +74,6 @@ namespace ursine
             return m_billboard;
         }
 
-        RenderMask Billboard2D::GetRenderMask(void) const
-        {
-            return static_cast<RenderMask>( m_billboard->GetRenderMask( ) & 0xFFFFFFFF );
-        }
-
-        void Billboard2D::SetRenderMask(RenderMask mask)
-        {
-            m_billboard->SetRenderMask( static_cast<unsigned long long>( mask ) );
-        }
-
         const resources::ResourceReference &Billboard2D::GetTexture(void) const
         {
             return m_texture;
@@ -98,6 +89,32 @@ namespace ursine
             invalidateTexture( );
 
             NOTIFY_COMPONENT_CHANGED( "texture", m_texture );
+        }
+
+        Vec2 Billboard2D::GetDimensions(void) const
+        {
+            Vec2 result;
+
+            m_billboard->GetDimensions( result.X( ), result.Y( ) );
+
+            return result;
+        }
+
+        void Billboard2D::SetDimensions(const Vec2 &dimensions)
+        {
+            m_billboard->SetDimensions( dimensions.X( ), dimensions.Y( ) );
+
+            NOTIFY_COMPONENT_CHANGED( "dimensions", dimensions );
+        }
+
+        RenderMask Billboard2D::GetRenderMask(void) const
+        {
+            return static_cast<RenderMask>( m_billboard->GetRenderMask( ) & 0xFFFFFFFF );
+        }
+
+        void Billboard2D::SetRenderMask(RenderMask mask)
+        {
+            m_billboard->SetRenderMask( static_cast<unsigned long long>( mask ) );
         }
 
         void Billboard2D::updateRenderer(void)
