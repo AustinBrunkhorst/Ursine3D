@@ -71,7 +71,7 @@ void EditorIcon::OnInitialize(void)
         ->GetComponent<ecs::Billboard2D>( )
         ->GetBillboard( );
 
-    billboard->SetDimensions( 50, 50 );
+    billboard->SetDimensions( 64, 64 );
     billboard->SetEntityID( owner->GetID( ) );
 
     m_billboard->GetComponent<ecs::Billboard2D>( )->SetRenderMask( ecs::RenderMask::MEditorTool );

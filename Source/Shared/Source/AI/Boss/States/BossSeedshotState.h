@@ -35,7 +35,7 @@ private:
 
     ursine::ecs::EntityHandle m_target;
 
-    FaceBoneTowardsTarget *m_boneTargetComponent;
+    std::vector<FaceBoneTowardsTarget *> m_boneTargetComponents;
 
     void findTarget(BossAI *boss);
     void rotateTowardsTarget(BossAI *boss);

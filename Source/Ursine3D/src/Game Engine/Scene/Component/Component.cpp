@@ -78,6 +78,9 @@ namespace ursine
         {
             EVENT_ATTRS(World, EditorWorldResourceModifiedArgs);
 
+            if (!m_owner)
+                return;
+
             auto search = m_resourceModificationCallbacks.find( args->resourceGUID );
 
             if (search != m_resourceModificationCallbacks.end( ))

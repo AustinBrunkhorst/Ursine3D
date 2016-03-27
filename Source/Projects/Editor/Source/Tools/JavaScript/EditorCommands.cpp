@@ -26,6 +26,7 @@ namespace editor_commands
 {
     namespace
     {
+        Scene &getScene(void);
         ecs::World *getActiveWorld(void);
         ecs::EntityHandle createEntity(const std::string &name = "Empty Entity");
     }
@@ -155,17 +156,6 @@ namespace editor_commands
         return CefV8Value::CreateUndefined( );
     }
 
-    JSFunction(InspectEditorUI)
-    {
-        std::string debugURL( "http://localhost:" );
-
-        debugURL += std::to_string( kUIDebuggingPort );
-
-        utils::OpenPath( debugURL );
-
-        return CefV8Value::CreateUndefined( );
-    }
-
     JSFunction(CreateParticleSystem)
     {
         Application::PostMainThread( [] 
@@ -193,11 +183,50 @@ namespace editor_commands
         return CefV8Value::CreateUndefined( );
     }
 
+    JSFunction(InspectEditorUI)
+    {
+        std::string debugURL( "http://localhost:" );
+
+        debugURL += std::to_string( kUIDebuggingPort );
+
+        utils::OpenPath( debugURL );
+
+        return CefV8Value::CreateUndefined( );
+    }
+
+    JSFunction(ReloadEditorUI)
+    {
+        if (getScene( ).GetPlayState( ) != PS_EDITOR)
+        {
+            NotificationConfig error;
+
+            error.type = NOTIFY_ERROR;
+            error.header = "Error";
+            error.message = "Unable to reload UI with an active game session.";
+
+            EditorPostNotification( error );
+
+            return CefV8Value::CreateBool( false );
+        }
+
+        CefRefPtr<CefV8Value> returnValue;
+        CefRefPtr<CefV8Exception> e;
+
+        CefV8Context::GetCurrentContext( )->Eval( "location.reload(true)", returnValue, e );
+
+        return returnValue;
+    }
+
     namespace
     {
+        Scene &getScene(void)
+        {
+            return GetCoreSystem( Editor )->GetProject( )->GetScene( );
+        }
+
         ecs::World *getActiveWorld(void)
         {
-            return GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetActiveWorld( );
+            return getScene( ).GetActiveWorld( );
         }
 
         ecs::EntityHandle createEntity(const std::string &name)

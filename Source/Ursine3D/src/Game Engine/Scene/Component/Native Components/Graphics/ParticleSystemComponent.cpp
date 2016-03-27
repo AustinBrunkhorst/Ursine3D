@@ -118,6 +118,7 @@ namespace ursine
         {
             auto trans = GetOwner( )->GetTransform( );
             m_particleSystem->SetPosition( trans->GetWorldPosition( ) );
+            m_particleSystem->SetTransform( trans->GetLocalToWorldMatrix( ) );
 
             GetOwner( )->Dispatch( ENTITY_PARTICLE_UPDATE, nullptr );
 
@@ -133,6 +134,7 @@ namespace ursine
         void ParticleSystem::SetColor(const Color &color)
         {
             m_particleSystem->SetColor( color );
+
             NOTIFY_COMPONENT_CHANGED( "color", color );
         }
 

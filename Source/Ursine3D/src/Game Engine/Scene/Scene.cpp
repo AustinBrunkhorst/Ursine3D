@@ -26,18 +26,24 @@ namespace ursine
 {
     Scene::Scene(void)
         : EventDispatcher( this )
+        , m_gameContext( nullptr )
         , m_playState( PS_EDITOR )
         , m_viewport( 0 )
-        , m_activeWorld( nullptr )
+        , m_activeWorld( nullptr ) { }
+
+    Scene::~Scene(void) { }
+
+    GameContext *Scene::GetGameContext(void)
     {
+        return m_gameContext;
     }
 
-    Scene::~Scene(void)
+    void Scene::SetGameContext(GameContext *context)
     {
-
+        m_gameContext = context;
     }
 
-    ecs::World *Scene::GetActiveWorld(void)
+    ecs::World *Scene::GetActiveWorld(void) const
     {
         return m_activeWorld.get( );
     }
@@ -88,7 +94,19 @@ namespace ursine
 
     void Scene::SetPlayState(ScenePlayState state)
     {
+        if (state == m_playState)
+            return;
+
+        ScenePlayStateChangedArgs e( m_playState, state );
+
         m_playState = state;
+
+        Dispatch( SCENE_PLAYSTATE_CHANGED, &e );
+    }
+
+    UIScreenManager &Scene::GetScreenManager(void)
+    {
+        return m_screenManager;
     }
 
     resources::ResourceManager &Scene::GetResourceManager(void)
@@ -100,6 +118,10 @@ namespace ursine
     {
         if (m_activeWorld)
             m_activeWorld->Update( );
+
+        SceneFrameSteppedArgs e( Application::Instance->GetDeltaTime( ) );
+
+        Dispatch( SCENE_FRAME_STEPPED, &e );
     }
 
     void Scene::Update(DeltaTime dt) const

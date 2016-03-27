@@ -12,7 +12,7 @@ namespace ursine
             RESOURCE_DATA;
 
         public:
-            TextureData(void *bytes, size_t size, unsigned width, unsigned height);
+            TextureData(BinaryData data, unsigned width, unsigned height);
             ~TextureData(void);
 
             graphics::GfxHND GetTextureHandle(void) const;

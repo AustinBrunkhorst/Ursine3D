@@ -55,6 +55,14 @@ namespace ursine
 
         ~UIView(void);
 
+        static void Message(
+            CefRefPtr<CefBrowser> browser,
+            UIMessageCommand command,
+            const std::string &target,
+            const std::string &message,
+            const Json &data
+        );
+
         CefRefPtr<CefBrowser> GetBrowser(void) const;
 
         void Close(void);
@@ -73,6 +81,16 @@ namespace ursine
 
     private:
         friend class UIManager;
+
+        struct QueuedMessage
+        {
+            UIMessageCommand command;
+            std::string target;
+            std::string message;
+            Json data;
+        };
+
+        std::vector<QueuedMessage> m_preLoadQueue;
 
         CefRect m_viewport;
         Window::Handle m_window;

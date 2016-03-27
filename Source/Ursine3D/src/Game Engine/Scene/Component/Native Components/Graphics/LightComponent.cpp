@@ -166,6 +166,17 @@ namespace ursine
             m_light->SetRenderMask( static_cast<unsigned long long>(mask) );
         }
 
+        unsigned Light::GetShadowmapSize(void) const
+        {
+            return m_light->GetShadowmapWidth( );
+        }
+        void Light::SetShadowmapSize(unsigned size)
+        {
+            if(size > 4096)
+                size = 4096;
+            m_light->SetShadowmapWidth( size );
+        }
+
         void Light::updateRenderer(void)
         {
             auto trans = GetOwner()->GetTransform();
@@ -177,10 +188,10 @@ namespace ursine
             //get inner/outer angles
             float outer = light.GetSpotlightAngles().Y() * 3.1415f / 180.f;
 
-            SVec3 scale = trans->GetWorldScale();
+            SVec3 scale = trans->GetLocalScale();
             scale.SetX(tanf(outer / 2.f) * scale.Z() * 2.2f); //arbitrary scalar to prevent artifacts from exact sizing
             scale.SetY(tanf(outer / 2.f) * scale.Z() * 2.2f);
-            trans->SetWorldScale(scale);
+            trans->SetLocalScale(scale);
 
             // get size for spotlight, if needed
             if ( m_light->GetType() == graphics::Light::LIGHT_SPOTLIGHT )
@@ -194,8 +205,6 @@ namespace ursine
             lightDir = trans->GetWorldRotation() * lightDir;
 
             light.SetDirection(lightDir);
-
-            light.SetSpotlightTransform(trans->GetLocalToWorldMatrix());
         }
     }
 }

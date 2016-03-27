@@ -44,6 +44,7 @@
 #include "DamageSystem/CritSpotComponent.h"
 #include "DamageSystem/DamageOnCollideComponent.h"
 #include "DamageSystem/DamageTextComponent.h"
+#include "DamageSystem/DamageTextManagerComponent.h"
 
 /////////////////////////////////
 //    Interaction System       //
@@ -91,6 +92,8 @@
 #include "EnemyDeathComponent.h"
 
 #include "BossAIComponent.h"
+#include "Boss/Components/PollinateProjectileComponent.h"
+#include "Boss/Components/SludgeshotProjectileComponent.h"
 #include "VineAIComponent.h"
 #include "VineSpawnerComponent.h"
 
@@ -162,3 +165,9 @@
 #include "Triggers/SegmentChangeTriggerComponent.h"
 #include "Triggers/VisibilityTriggerComponent.h"
 #include "Triggers/AnimateEntityOnTriggerComponent.h"
+
+/////////////////////////////////
+//           UI                //
+/////////////////////////////////
+
+#include "UI/UIScreensConfigComponent.h"

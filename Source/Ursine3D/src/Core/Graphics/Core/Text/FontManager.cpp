@@ -26,7 +26,7 @@ namespace ursine
         {
         }
 
-        GfxHND FontManager::CreateBitmapFont(uint8_t *binaryData, size_t binarySize)
+        GfxHND FontManager::CreateBitmapFont(const uint8_t *binaryData, size_t binarySize)
         {
             GfxHND handle;
             auto *hnd = HND_RSRCE(handle);
@@ -93,7 +93,7 @@ namespace ursine
             m_textureCache[ hnd->Index_ ].emplace( fontName, textureHandle );
         }
 
-        const BitmapFont &FontManager::GetBitmapFont(unsigned index)
+        const BitmapFont &FontManager::GetBitmapFont(GfxHND index)
         {
             auto search = m_fontCache.find( index & 0xFFFF );
 
@@ -126,7 +126,7 @@ namespace ursine
 
             auto handle = m_textureCache[ hnd->Index_ ].find( textureName );
 
-            UAssert( search != m_fontCache.end( ),
+            UAssert( handle != m_textureCache[ hnd->Index_ ].end( ),
                 "Failed to find font texture.\nID: %i\nFont: %s",
                 hnd->Index_,
                 textureName.c_str( )

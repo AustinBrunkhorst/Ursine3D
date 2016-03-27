@@ -218,6 +218,16 @@ namespace ursine
                 animator->m_transFactor
             );
 
+            // dispatch the events
+            animator->sendAvailableEvents( 
+                currentState->GetStateName( ), currentState->GetRatio( )
+            );
+
+            if (futureState)
+                animator->sendAvailableEvents( 
+                    futureState->GetStateName( ), futureState->GetRatio( )
+                );
+
             // generate the matrices
             AnimationBuilder::GenerateAnimationData(
                 currentState,

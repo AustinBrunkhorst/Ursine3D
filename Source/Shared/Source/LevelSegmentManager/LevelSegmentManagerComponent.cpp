@@ -316,6 +316,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
     auto lockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
     auto unlockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
     auto repositionAndClose = cinematicStateM->AddState<RepositionPlayersAndCloseDoorState>( );
+    auto changeSegment = cinematicStateM->AddState<ChangeSegmentState>( LevelSegments::BossRoom_Phase1 );
     auto tweenOut = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
     auto tweenIn = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
 
@@ -326,8 +327,10 @@ void LevelSegmentManager::initBossRoomLogic(void)
     tweenOut->AddTransition( repositionAndClose, "Reposition Players" )
             ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
 
-    repositionAndClose->AddTransition( tweenIn, "Go To Tween In" )
-                      ->AddCondition<sm::CurrentSegmentCondition>( this, LevelSegments::BossRoom_Phase1 );
+    repositionAndClose->AddTransition( changeSegment, "Go To Phase 1" );
+
+    changeSegment->AddTransition( tweenIn, "Go To Tween In" )
+                 ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 13.0f ) );
 
     tweenIn->AddTransition( unlockPlayers, "Unlock Players" );
 

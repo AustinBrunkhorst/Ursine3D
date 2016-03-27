@@ -22,7 +22,8 @@ namespace ursine
         , m_constructor( classType.GetDynamicConstructor( { 
             typeof( CefRefPtr<CefV8Value> ), 
             typeof( const CefV8ValueList& ),
-            typeof( CefString& )
+            typeof( CefString& ),
+            typeof( CefRefPtr<CefV8Value> )
         } ) )
         , m_prototypeHandler( new PrototypeHandler( ) )
     {
@@ -80,7 +81,7 @@ namespace ursine
         auto object = context->CreateObject( nullptr );
 
         object->SetUserData( 
-            new InstanceWrapper( m_constructor, context, arguments, exception )
+            new InstanceWrapper( m_constructor, context, arguments, exception, object )
         );
 
         for (auto &method : m_prototypeHandler->methods)
@@ -130,10 +131,11 @@ namespace ursine
         const meta::Constructor &constructor, 
         CefRefPtr<CefV8Value> context,
         const CefV8ValueList &arguments,
-        CefString &exception
+        CefString &exception,
+        CefRefPtr<CefV8Value> thisContext
     )
         : instance( 
-            constructor.Invoke( context, std::move( arguments ), std::move( exception ) )
+            constructor.Invoke( context, std::move( arguments ), std::move( exception ), thisContext )
         )
     {
         

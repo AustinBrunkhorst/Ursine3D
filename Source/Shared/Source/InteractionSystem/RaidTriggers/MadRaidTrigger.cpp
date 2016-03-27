@@ -48,8 +48,7 @@ MadRaidTrigger::MadRaidTrigger(void) :
     m_damage( 10.0f ),
     m_modifier( 1.0f ),
     m_madTimer( 0.0f ),
-    m_triggerType( EMPOWER ),
-    m_madSymbol( "MadTriggerSymbol" )
+    m_triggerType( EMPOWER )
 { }
 
 MadRaidTrigger::~MadRaidTrigger(void)
@@ -113,39 +112,37 @@ void MadRaidTrigger::SetModifier(const float modifier)
 }
 
 
-const std::string& MadRaidTrigger::GetMadSymbol(void) const
+const ursine::resources::ResourceReference& MadRaidTrigger::GetMadSymbol(void) const
 {
     return m_madSymbol;
 }
 
-void MadRaidTrigger::SetMadSymbol(const std::string& symbol)
+void MadRaidTrigger::SetMadSymbol(const ursine::resources::ResourceReference& symbol)
 {
     m_madSymbol = symbol;
 }
 
 
-void MadRaidTrigger::StartInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity)
+void MadRaidTrigger::StartInteraction(const ursine::ecs::EntityHandle &entity)
 {
-    auto owner = queue->GetOwner( );
-    bool isPlayer = owner->HasComponent< PlayerID >( );
-    bool hasBuff = owner->HasComponent< BuffComponent >( );
+    bool isPlayer = entity->HasComponent< PlayerID >( );
+    bool hasBuff = entity->HasComponent< BuffComponent >( );
     
     if ( !isPlayer || !hasBuff )
         return;
 
     ChildStartInteractionLogic( );
 
-    AddPlayer(owner, owner->GetComponent< PlayerID >( )->GetID( ));
+    AddPlayer(entity, entity->GetComponent< PlayerID >( )->GetID( ));
 }
 
-void MadRaidTrigger::Interact(const CommandQueue* queue, ursine::ecs::EntityHandle &entity)
+void MadRaidTrigger::Interact(const ursine::ecs::EntityHandle &entity)
 {
 }
 
-void MadRaidTrigger::StopInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity)
+void MadRaidTrigger::StopInteraction(const ursine::ecs::EntityHandle &entity)
 {
-    auto owner = queue->GetOwner( );
-    bool isPlayer = owner->HasComponent< PlayerID >( );
+    bool isPlayer = entity->HasComponent< PlayerID >( );
 
     if ( isPlayer )
     {
@@ -154,7 +151,7 @@ void MadRaidTrigger::StopInteraction(const CommandQueue* queue, ursine::ecs::Ent
         if ( NOT_MAD )
             ChangeToInteractState( );
 
-        RemovePlayer( owner->GetComponent< PlayerID >( )->GetID( ) );
+        RemovePlayer( entity->GetComponent< PlayerID >( )->GetID( ) );
 
         ChildStopInteractionLogic( );
     }

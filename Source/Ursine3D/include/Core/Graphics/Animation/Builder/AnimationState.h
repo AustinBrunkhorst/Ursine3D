@@ -99,6 +99,8 @@ namespace ursine
 
         const float &GetTransPosition(void) const;
         void SetTransPosition(float tPos);
+
+        float GetRatio(void) const;
         
         // Returns whether or not an animation has finished animating (only for non looping)
         bool PlayingAnimation(void);

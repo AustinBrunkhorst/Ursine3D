@@ -276,9 +276,12 @@ namespace ursine
 
     void AudioManager::LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank)
     {
+        auto &initData = data.GetInitData( );
+        auto &bankData = data.GetBankData( );
+
         auto initResult = AK::SoundEngine::LoadBank( 
-            data.GetInitBytes( ), 
-            static_cast<AkUInt32>( data.GetInitByteSize( ) ), 
+            initData.GetData( ), 
+            static_cast<AkUInt32>( initData.GetSize( ) ), 
             outInit
         );
 
@@ -287,8 +290,8 @@ namespace ursine
         );
 
         auto bankResult = AK::SoundEngine::LoadBank( 
-            data.GetBankBytes( ), 
-            static_cast<AkUInt32>( data.GetBankSize( ) ), 
+            bankData.GetData( ),
+            static_cast<AkUInt32>( bankData.GetSize( ) ),
             outBank
         );
 
@@ -308,7 +311,7 @@ namespace ursine
     {
         auto initResult = AK::SoundEngine::UnloadBank(
             data.GetInitID( ),
-            data.GetInitBytes( ),
+            data.GetInitData( ).GetData( ),
             nullptr
         );
 
@@ -318,7 +321,7 @@ namespace ursine
 
         auto bankResult = AK::SoundEngine::UnloadBank(
             data.GetBankID( ),
-            data.GetBankBytes( ),
+            data.GetBankData( ).GetData( ),
             nullptr
         );
 

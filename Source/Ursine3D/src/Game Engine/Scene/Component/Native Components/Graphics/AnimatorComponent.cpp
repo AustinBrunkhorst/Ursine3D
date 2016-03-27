@@ -20,6 +20,8 @@
 #include "Model3DComponent.h"
 #include "EntityEvent.h"
 #include "Notification.h"
+#include "AnimatorSystem.h"
+#include "SystemManager.h"
 
 namespace
 {
@@ -34,7 +36,7 @@ namespace ursine
     {
         NATIVE_COMPONENT_DEFINITION(Animator);
 
-        Animator::Animator( )
+        Animator::Animator(void)
             : BaseComponent( )
             , m_playing( true )
             , m_debug( false )
@@ -47,9 +49,22 @@ namespace ursine
             , m_finishEventSent( false )
             , m_enableBoneManipulation( false ) { }
 
+        Animator::~Animator(void)
+        {
+            // enable deletion on the rig root if it exists
+            if (m_rigRoot)
+                enableDeletionOnEntities( m_rigRoot, true );
+        }
+
         void Animator::OnSceneReady(Scene *scene)
         {
-            setRigTransformPointers( );
+            // If animator isn't playing, and we have a current state,
+            // make the rig represent the first frame of animation
+            if (!m_playing && !m_curStName.empty( ))
+            {
+                GetOwner( )->Listener( this )
+                    .On( ENTITY_HIERARCHY_SERIALIZED, &Animator::setAnimationToFirstFrame );
+            }
         }
 
         void Animator::OnSerialize(Json::object &output) const
@@ -81,8 +96,15 @@ namespace ursine
                 NOTIFY_COMPONENT_CHANGED( "currentState", m_curStName );
             }
             else
+            {
                 m_futStName = state;
 
+                if (m_futStName != m_curStName)
+                {
+                    // reset the future state's animation event's flags
+                    resetSentFlagInEvents( m_futStName );
+                }
+            }
             m_finishEventSent = false;
         }
 
@@ -145,11 +167,17 @@ namespace ursine
             {                
                 if ((*currSt)->PlayingAnimation() && !m_finishEventSent)
                 {
-                    GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
+                    if (!(*currSt)->IsLooping( ))
+                    {
+                        GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
+
+                        m_finishEventSent = true;
                 
-                    m_finishEventSent = true;
-                
-                    transFactor = 0.0f;
+                        transFactor = 0.0f;
+                    }
+
+                    // reset "sent" flag on the state's events
+                    resetSentFlagInEvents( (*currSt)->GetStateName( ) );
                 }
 
                 return;
@@ -310,26 +338,35 @@ namespace ursine
             m_blending = false;
         }
 
-        float Animator::getAnimationTimePosition(void) const
+        AnimationState *Animator::getAnimationState(const std::string &stateName)
         {
             for (auto &x : stArray)
             {
-                if (x.GetStateName( ) == m_curStName)
-                    return x.GetTimePosition( );
+                if (x.GetStateName( ) == stateName)
+                {
+                    return &x;
+                }
             }
+
+            return nullptr;
+        }
+
+        float Animator::getAnimationTimePosition(void)
+        {
+            auto state = getAnimationState( m_curStName );
+
+            if (state)
+                return state->GetTimePosition( );
+
             return 0.0f;
         }
 
         void Animator::setAnimationTimePosition(float position)
         {
-            for (auto &x : stArray)
-            {
-                if (x.GetStateName( ) == m_curStName)
-                {
-                    x.SetTimePosition( position );
-                    return;
-                }
-            }
+            auto state = getAnimationState( m_curStName );
+
+            if (state)
+                state->SetTimePosition( position );
         }
 
         // find the closest animation keyframe of the state, and set a transition position
@@ -553,7 +590,13 @@ namespace ursine
 
             if (m_rigRoot)
             {
+                if (m_rig == "")
+                    return;
+
                 auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
+
+                if (!rig)
+                    return;
 
                 setBoneTransformPointers( m_rigRoot->GetTransform( )->GetChild( 0 ).Get( ), rig->GetBone( 0 ) );
             }
@@ -581,6 +624,89 @@ namespace ursine
             {
                 enableDeletionOnEntities( GetOwner( )->GetWorld( )->GetEntity( child ), flag );
             }
+        }
+
+        void Animator::sendAvailableEvents(const std::string &currentState, float currentRatio)
+        {
+            if (currentState == "")
+                return;
+
+            for (auto &stEvent : stEvents)
+            {
+                if (stEvent.GetStateName( ) != currentState)
+                    continue;
+
+                if (stEvent.m_sent)
+                    continue;
+
+                if (stEvent.GetRatio( ) <= currentRatio)
+                {
+                    // send the event
+                    AnimatorStateEventArgs args( stEvent );
+
+                    GetOwner( )->Dispatch( ENTITY_ANIMATION_STATE_EVENT, &args );
+
+                    if (m_debug)
+                        std::cout << "Sending Message: " << args.message << std::endl;
+
+                    // set the "sent" flag
+                    stEvent.m_sent = true;
+                }
+            }
+        }
+
+        void Animator::resetSentFlagInEvents(const std::string &currentState)
+        {
+            if (currentState == "")
+                return;
+
+            for (auto &stEvent : stEvents)
+            {
+                if (stEvent.GetStateName( ) != currentState)
+                    continue;
+
+                stEvent.m_sent = false;
+            }
+        }
+
+        void Animator::setAnimationToFirstFrame(EVENT_HANDLER(Entity))
+        {
+            EVENT_SENDER(Entity, sender);
+
+            sender->Listener( this )
+                .Off( ENTITY_HIERARCHY_SERIALIZED, &Animator::setAnimationToFirstFrame );
+
+            auto state = getAnimationState( m_curStName );
+
+            if (!state)
+                return;
+
+            if (!loadStateAnimation( state ))
+                return;
+
+            auto animation = state->GetAnimation( );
+
+            auto &curr_firstFrame = animation->GetKeyframe( 0, 0 );
+
+            state->SetTimePosition( curr_firstFrame.length );
+
+            // make sure we have a rig
+            if (!m_rigRoot)
+            {
+                m_rigRoot = GetOwner( )->GetChildByName( kRigRootName );
+
+                if (!m_rigRoot)
+                    return;
+            }
+
+            // Update this animator once
+            m_playing = true;
+
+            auto animatorSystem = GetOwner( )->GetWorld( )->GetEntitySystem<AnimatorSystem>( );
+
+            animatorSystem->updateAnimator( this, Application::Instance->GetDeltaTime( ) );
+
+            m_playing = false;
         }
     }
 }

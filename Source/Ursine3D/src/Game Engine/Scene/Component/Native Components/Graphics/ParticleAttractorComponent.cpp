@@ -94,22 +94,31 @@ namespace ursine
 
             auto center = GetOwner()->GetTransform()->GetWorldPosition();
 
+            if (m_particleComponent->GetSystemSpace( ) == SystemSpace::LocalSpace)
+                center = Vec3(0, 0, 0);
+
             for ( int x = 0; x < particleCount; ++x )
             {
                 // for each particle, determine distance from ourselves
-                auto vec = (center - SVec3(gpuData[ x ].position[ 0 ],
-                    gpuData[ x ].position[ 1 ],
-                    gpuData[ x ].position[ 2 ]
-                    ));
+                auto vec = (center - SVec3(
+                        gpuData[ x ].position[ 0 ],
+                        gpuData[ x ].position[ 1 ],
+                        gpuData[ x ].position[ 2 ]
+                    )
+                );
+
+                // distance from center
                 float distance = vec.LengthSquared();
 
                 // calculate how much strength to apply, within min is full, else interp from min to max
                 SVec3 velocity;
+
+                // if within min, apply full strength
                 if ( distance <= sqrdMin )
                 {
                     velocity = vec * dt * m_strength;
                 }
-                else
+                else // interpolate between min and max
                 {
                     float scalar = 1.f - ((distance - sqrdMin) / (sqrdMax - sqrdMin));
                     velocity = vec * dt * m_strength * scalar;

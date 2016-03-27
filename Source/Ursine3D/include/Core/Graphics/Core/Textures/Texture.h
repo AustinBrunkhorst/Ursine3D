@@ -21,15 +21,15 @@ namespace ursine
     {
         struct Texture
         {
-            Texture() 
-                : m_width( 0 ), 
-                m_height( 0 ), 
-                m_internalID( -1 ),
-                m_referenceCount( 0 ),
-                m_shaderResource( nullptr ), 
-                m_texture2d( nullptr )
-            {
-            }
+            Texture(void)
+                : m_width( 0 )
+                , m_height( 0 )
+                , m_internalID( -1 )
+                , m_referenceCount( 0 )
+                , m_shaderResource( nullptr )
+                , m_texture2d( nullptr )
+                , m_binaryData( nullptr )
+                , m_binarySize( 0 ) { }
 
             unsigned m_width;
             unsigned m_height;

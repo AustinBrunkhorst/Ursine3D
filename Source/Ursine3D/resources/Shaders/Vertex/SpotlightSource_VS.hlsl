@@ -31,7 +31,7 @@ PixelInputType main( VertexInputType input )
     input.position.w = 1.f;
 
     // Calculate the position of the vertex against the world, view, and projection matrices.
-    output.Position = mul( input.position, transform );
+    output.Position = mul( float4(input.position.xyz, 1.0f), transform );
     output.Position = mul( output.Position, viewMatrix );
     output.Position = mul( output.Position, projectionMatrix );
 

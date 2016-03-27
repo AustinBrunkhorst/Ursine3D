@@ -11,12 +11,8 @@ namespace ursine
 
     resources::ResourceData::Handle rp::ArchetypeProcessor::Process(resources::ResourceData::Handle input, ResourceProcessorContext &context)
     {
-        UAssertCatchable( input && input->GetType( ) == typeof( JsonData ),
-            "Invalid input to archetype processor."
-        );
+        auto *json = expectInput<JsonData>( input );
 
-        auto *jsonData = static_cast<JsonData*>( input.get( ) );
-
-        return std::make_shared<ArchetypeData>( jsonData->GetData( ) );
+        return std::make_shared<ArchetypeData>( json->GetData( ) );
     }
 }

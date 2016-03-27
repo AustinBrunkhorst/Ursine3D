@@ -46,7 +46,7 @@ namespace ursine
             return m_stream->gcount( );
         }
 
-        ResourceReader &ResourceReader::ReadString(std::string &input)
+        ResourceReader &ResourceReader::Read(std::string &input)
         {
             unsigned length;
 
@@ -55,6 +55,27 @@ namespace ursine
             input.resize( length );
 
             ReadBytes( &input[ 0 ], length );
+
+            return *this;
+        }
+
+        ResourceReader &ResourceReader::Read(BinaryData &input)
+        {
+            uint64 size;
+
+            Read( size );
+
+            auto *data = new byte[ size ];
+
+            auto bytesRead = ReadBytes( data, size );
+
+            UAssertCatchable( bytesRead == size,
+                "Mismatch buffer sizes. Expected %zd bytes got %zd",
+                size,
+                bytesRead
+            );
+
+            BinaryData::Load( input, data, size );
 
             return *this;
         }

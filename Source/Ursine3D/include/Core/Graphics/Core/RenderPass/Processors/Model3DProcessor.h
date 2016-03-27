@@ -24,7 +24,7 @@ namespace ursine
         class Model3DProcessor : public GraphicsEntityProcessor
         {
         public:
-            Model3DProcessor(void);
+            Model3DProcessor(bool debugRender = true);
 
         private:
              bool cullOperation(_DRAWHND, Camera &currentCamera) override;
@@ -33,6 +33,8 @@ namespace ursine
 
              void renderFullModel(_DRAWHND handle, bool renderDebug = false);
              void renderSection(_DRAWHND handle, bool renderDebug = false);
+
+             bool m_shadowPass;
         };
     }
 }

@@ -51,8 +51,14 @@ void DisempowerTrigger::OnInitialize(void)
         .On(game::EMPOWER_ACTIVE, &DisempowerTrigger::OnEmpowerActive)
         .On(game::EMPOWER_UNACTIVE, &DisempowerTrigger::OnEmpowerUnactive);;
 
-    GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this);
+    GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this, Interactable::CONTINUE);
 }
+
+void DisempowerTrigger::OnSceneReady(ursine::Scene* scene)
+{
+    BaseRaidTrigger::Initialize(GetOwner( ));
+}
+
 
 
 void DisempowerTrigger::ChildStartInteractionLogic( )

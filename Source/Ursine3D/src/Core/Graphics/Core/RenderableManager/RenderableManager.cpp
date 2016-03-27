@@ -18,7 +18,7 @@ namespace ursine
 {
     namespace graphics
     {
-        void RenderableManager::Initialize(void)
+        void RenderableManager::Initialize(GfxManager *manager)
         {
             //m_currentRenderableModel3D.resize(MAX_RENDERABLES);
             //m_currentRenderableBillboards.resize(MAX_RENDERABLES);
@@ -31,6 +31,8 @@ namespace ursine
             m_renderableSpriteText.resize(MAX_RENDERABLES);
 
             m_handleList.resize(RENDERABLE_TYPE_COUNT);
+
+            m_manager = manager;
 
             for (unsigned x = 0; x < RENDERABLE_TYPE_COUNT; ++x)
             {
@@ -88,6 +90,27 @@ namespace ursine
             const _RENDERABLEHND *rend = reinterpret_cast<const _RENDERABLEHND*>(&handle);
 
             UAssert(rend->Index_ != ID_RENDERABLE, "attempted to free a non-valid renderable handle");
+
+            switch (rend->Type_)
+            {
+            case RENDERABLE_MODEL3D:
+                m_renderableModel3D[ rend->Index_ ].Uninitialize( m_manager );
+                break;
+            case RENDERABLE_LIGHT:
+                m_renderableLights[ rend->Index_ ].Uninitialize( m_manager );
+                break;
+            case RENDERABLE_BILLBOARD2D:
+                m_renderableBillboards[ rend->Index_ ].Uninitialize( m_manager );
+                break;
+            case RENDERABLE_PS:
+                m_renderableParticleSystems[ rend->Index_ ].Uninitialize( m_manager );
+                break;
+            case RENDERABLE_SPRITE_TEXT:
+                m_renderableSpriteText[ rend->Index_ ].Uninitialize( m_manager );
+                break;
+            default:
+                UAssert(false, "Tried to destroy an invalid renderable!");
+            }
 
             m_handleList[ rend->Type_ ].push(rend->Index_);
 

@@ -13,30 +13,32 @@
 
 #pragma once
 
+#include "GameContext.h"
+
 #include "World.h"
+
+#include "UIScreenManager.h"
 #include "ResourceManager.h"
+
 #include "GFXAPIDefines.h"
 
+#include "ScenePlayState.h"
 #include "SceneEvent.h"
 
 #include "DeltaTime.h"
 
 namespace ursine
 {
-    enum ScenePlayState
-    {
-        PS_EDITOR,
-        PS_PLAYING,
-        PS_PAUSED
-    };
-
     class Scene : public EventDispatcher<SceneEventType>
     {
     public:
         Scene(void);
         ~Scene(void);
 
-        ecs::World *GetActiveWorld(void);
+        GameContext *GetGameContext(void);
+        void SetGameContext(GameContext *context);
+
+        ecs::World *GetActiveWorld(void) const;
 
         void SetActiveWorld(ecs::World::Handle world);
         bool SetActiveWorld(const resources::ResourceReference &reference);
@@ -47,6 +49,7 @@ namespace ursine
         ScenePlayState GetPlayState(void) const;
         void SetPlayState(ScenePlayState state);
 
+        UIScreenManager &GetScreenManager(void);
         resources::ResourceManager &GetResourceManager(void);
 
         void Step(void) const;
@@ -55,10 +58,11 @@ namespace ursine
         void Render(void) const;
 
         void LoadConfiguredSystems(void);
-
     private:
         Scene(const Scene &rhs) = delete;
         Scene &operator=(const Scene &rhs) = delete;
+
+        GameContext *m_gameContext;
 
         ScenePlayState m_playState;
 
@@ -66,6 +70,7 @@ namespace ursine
 
         ecs::World::Handle m_activeWorld;
 
+        UIScreenManager m_screenManager;
         resources::ResourceManager m_resourceManager;
     };
 }

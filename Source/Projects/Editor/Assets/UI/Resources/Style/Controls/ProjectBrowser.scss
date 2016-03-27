@@ -93,7 +93,7 @@ $toolbar-height: 25px;
     .resource {
       display: inline-block;
       max-width: 105px;
-      height: 90px;
+      min-height: 90px;
       margin-bottom: 10px;
       vertical-align: top;
       cursor: pointer;
@@ -113,6 +113,7 @@ $toolbar-height: 25px;
         margin: 0 auto;
         padding: 5px;
         transition: opacity $duration-transition-btn ease;
+        text-align: center;
 
         &[has-preview] {
           img {
@@ -223,6 +224,39 @@ $toolbar-height: 25px;
           text-shadow: 0 1px 2px rgba(black, 0.75);
 
           @include icon-regular( $icon-regular-film, 54px );
+
+          &:after {
+            display: none;
+          }
+        }
+
+        &[resource-type*="FontData"] {
+          color: $color-accent;
+          text-shadow: 0 1px 2px rgba(black, 0.75);
+
+          @include icon-regular( $icon-regular-font, 50px );
+
+          &:after {
+            display: none;
+          }
+        }
+
+        &[resource-type*="UIProjectData"] {
+          color: $color-accent;
+          text-shadow: 0 1px 2px rgba(black, 0.75);
+
+          @include icon-regular( $icon-regular-display, 46px );
+
+          &:after {
+            display: none;
+          }
+        }
+
+        &[resource-type*="UIScreenData"] {
+          color: $color-accent;
+          text-shadow: 0 1px 2px rgba(black, 0.75);
+
+          @include icon-regular( $icon-regular-modal-window, 46px );
 
           &:after {
             display: none;

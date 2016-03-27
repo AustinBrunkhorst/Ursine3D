@@ -32,8 +32,25 @@ public:
     void ClearSelectedEntities(void);
 
 private:
+    ursine::MouseManager *m_mouseManager;
+    ursine::KeyboardManager *m_keyboardManager;
+
+    EditorCameraSystem *m_editorCameraSystem;
+
+    // current ID we're locked onto
+    ursine::ecs::EntityHandle m_currentSelected;
+
+    std::unordered_map<ursine::KeyboardKey, EditorTool*> m_tools;
+
+    EditorTool *m_currentTool;
+
+    SelectTool *m_selectTool;
+    DuplicateTool *m_dupTool;
+
     void OnSceneReady(ursine::Scene *scene) override;
     void OnRemove(void) override;
+
+    bool isEditing(void) const;
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 
@@ -57,19 +74,4 @@ private:
 
     void onSelectedAdd(EVENT_HANDLER(ursine::ecs::World));
     void onSelectedRemoved(EVENT_HANDLER(ursine::ecs::World));
-
-    ursine::MouseManager *m_mouseManager;
-    ursine::KeyboardManager *m_keyboardManager;
-
-    EditorCameraSystem *m_editorCameraSystem;
-
-    // current ID we're locked onto
-    ursine::ecs::EntityHandle m_currentSelected;
-
-    std::unordered_map<ursine::KeyboardKey, EditorTool*> m_tools;
-
-    EditorTool *m_currentTool;
-
-    SelectTool *m_selectTool;
-    DuplicateTool *m_dupTool;
 } Meta(Enable, AutoAddEntitySystem);

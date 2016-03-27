@@ -18,6 +18,8 @@
 #include "RenderMask.h"
 #include "RenderableComponentBase.h"
 
+#include "FontData.h"
+
 namespace ursine
 {
     namespace ecs
@@ -29,7 +31,6 @@ namespace ursine
             Right = graphics::SpriteText::ALIGN_RIGHT,
         } Meta(Enable);
 
-
         class SpriteText : public Component
         {
             NATIVE_COMPONENT;
@@ -37,6 +38,13 @@ namespace ursine
             friend class RenderSystem;
 
         public:
+            EditorResourceField(
+                ursine::resources::FontData,
+                font,
+                GetFont,
+                SetFont
+            );
+
             EditorField(
                 float size,
                 GetSize,
@@ -74,11 +82,28 @@ namespace ursine
                 SetColor
             );
 
+            EditorMeta(BitMaskEditor)
+            EditorField(
+                ursine::ecs::RenderMask renderMask,
+                GetRenderMask,
+                SetRenderMask
+            );
+
+            EditorField(
+                bool overdraw,
+                GetOverdraw,
+                SetOverdraw
+            );
+
             Meta(Enable)
             SpriteText(void);
             ~SpriteText(void);
 
             void OnInitialize(void) override;
+            void OnSceneReady(Scene *scene) override;
+
+            const ursine::resources::ResourceReference &GetFont(void) const;
+            void SetFont(const ursine::resources::ResourceReference &font);
 
             float GetSize(void) const;
             void SetSize(float size);
@@ -107,15 +132,21 @@ namespace ursine
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
 
+            ursine::ecs::RenderMask GetRenderMask(void) const;
+            void SetRenderMask(ursine::ecs::RenderMask mask);
+
             void SetOverdraw(bool flag);
             bool GetOverdraw(void) const;
 
         private:
+            resources::ResourceReference m_font;
+
             graphics::SpriteText *m_spriteText;
 
-            RenderableComponentBase *m_base;
+            RenderableComponentBase::Handle m_base;
 
             void updateRenderer(void);
+            void invalidateFont(void);
 
         } Meta(Enable, WhiteListMethods, DisplayName( "SpriteText" ));
     }

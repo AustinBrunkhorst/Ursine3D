@@ -69,6 +69,7 @@ namespace ursine
                 ID3D11Texture2D *backBufferPtr;
                 D3D_FEATURE_LEVEL finalFeatureLevel;
                 D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ] = {
+                    D3D_FEATURE_LEVEL_11_1,
                     D3D_FEATURE_LEVEL_11_0,
                     D3D_FEATURE_LEVEL_10_0
                 };
@@ -83,7 +84,7 @@ namespace ursine
                         nullptr, 
                         D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, 
                         FeatureLevelArray, 
-                        2, 
+                        3, 
                         D3D11_SDK_VERSION,
                         &m_device, 
                         &finalFeatureLevel, 
@@ -108,6 +109,8 @@ namespace ursine
                         __uuidof(ID3DUserDefinedAnnotation), 
                         reinterpret_cast<void**>(&m_userAnnotation)
                     );
+
+                    UWarningIf(result == S_OK, "Failed to create graphics annotation device!" );
                 }
                 else
                 {
@@ -118,7 +121,7 @@ namespace ursine
                         nullptr, 
                         D3D11_CREATE_DEVICE_SINGLETHREADED,
                         FeatureLevelArray,
-                        2, 
+                        3, 
                         D3D11_SDK_VERSION,
                         &m_device, 
                         &finalFeatureLevel,
@@ -134,19 +137,19 @@ namespace ursine
                 UINT qualityLevel_1, qualityLevel_4, qualityLevel_8;
 
                 result = m_device->CheckMultisampleQualityLevels(
-                    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                    DXGI_FORMAT_R8G8B8A8_UNORM,
                     1,
                     &qualityLevel_1
                 );
 
                 result = m_device->CheckMultisampleQualityLevels(
-                    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                    DXGI_FORMAT_R8G8B8A8_UNORM,
                     4,
                     &qualityLevel_4
                 );
 
                 result = m_device->CheckMultisampleQualityLevels(
-                    DXGI_FORMAT_R8G8B8A8_UNORM_SRGB,
+                    DXGI_FORMAT_R8G8B8A8_UNORM,
                     8,
                     &qualityLevel_8
                 );
@@ -183,7 +186,7 @@ namespace ursine
                 swapChainDesc.BufferDesc.Height = height;
 
                 //Set regular 32-bit surface for the back buffer.
-                swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+                swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
                 //Set the refresh rate of the back buffer.
                 if (true) //@Matt change this to properly do vsync
@@ -354,7 +357,7 @@ namespace ursine
 
             void DirectXCore::ClearSwapchain(void)
             {
-                float color[ 4 ] = { 0.01f, 0.01f, 0.01f, 1.0f };
+                float color[ 4 ] = { 0.25f, 0.25f, 0.25f, 1.0f };
                 m_deviceContext->ClearRenderTargetView(m_targetManager->GetRenderTarget(RENDER_TARGET_SWAPCHAIN)->RenderTargetView, color);
             }
 
@@ -458,11 +461,10 @@ namespace ursine
 
             void DirectXCore::Invalidate(void)
             {
-                m_blendManager->Invalidate();
-                m_depthStateManager->Invalidate();
-                m_depthStencilManager->Invalidate();
-                m_targetManager->Invalidate();
-                m_rasterStateManager->Invalidate();
+                m_blendManager->Invalidate( );
+                m_depthStateManager->Invalidate( );
+                m_targetManager->Invalidate( );
+                m_rasterStateManager->Invalidate( );
             }
 
             void DirectXCore::SetFullscreenState(const bool state)
@@ -520,7 +522,7 @@ namespace ursine
                 RELEASE_RESOURCE(pBuffer);
 
                 //depth stuff
-                m_depthStencilManager->Resize(width, height);
+                m_depthStencilManager->ResizeMainDepthTargets(width, height);
                 m_targetManager->ResizeDeferred(width, height);
                 m_targetManager->ResizeEngineTargets(width, height);
 

@@ -20,38 +20,38 @@
 #include "BuffComponent.h"
 
 
-#define BASE_FIELDS( )                    \
-    EditorField(                          \
-        BuffType RaidEffect,              \
-        GetRaidEffect,                    \
-        SetRaidEffect                     \
-    );                                    \
-                                          \
-    EditorResourceField(                  \
-        ursine::resources::ArchetypeData, \
-        ParticleEffect,                   \
-        GetEmitter,                       \
-        SetEmitter                        \
-    );                                    \
-                                          \
-    EditorResourceField(                  \
-        ursine::resources::ArchetypeData, \
-        UISymbol,                         \
-        GetUISymbol,                      \
-        SetUISymbol                       \
-    );                                    \
-                                          \
-    EditorField(                          \
-        ursine::Color SuccessColor,       \
-        GetSuccessColor,                  \
-        SetSuccessColor                   \
-    );                                    \
-                                          \
-    EditorField(                          \
-        ursine::Color InteractColor,      \
-        GetInteractColor,                 \
-        SetInteractColor                  \
-    );                                    \
+#define BASE_FIELDS( )                        \
+    EditorField(                              \
+        BuffType RaidEffect,                  \
+        GetRaidEffect,                        \
+        SetRaidEffect                         \
+    );                                        \
+                                              \
+    EditorResourceField(                      \
+        ursine::resources::ArchetypeData,     \
+        ParticleEffect,                       \
+        GetEmitter,                           \
+        SetEmitter                            \
+    );                                        \
+                                              \
+    EditorResourceField(                      \
+        ursine::resources::ResourceReference, \
+        UISymbol,                             \
+        GetUISymbol,                          \
+        SetUISymbol                           \
+    );                                        \
+                                              \
+    EditorField(                              \
+        ursine::Color SuccessColor,           \
+        GetSuccessColor,                      \
+        SetSuccessColor                       \
+    );                                        \
+                                              \
+    EditorField(                              \
+        ursine::Color InteractColor,          \
+        GetInteractColor,                     \
+        SetInteractColor                      \
+    );                                        \
 
 class CommandQueue;
 

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "ResourcePipelineConfig.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -5,10 +7,11 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 #include "TextureImporter.h"
+#include "FontImporter.h"
 #include "FBXFileImporter.h"
 #include "AudioImporter.h"
 #include "JsonImporter.h"
-#include "UIResourceImporter.h"
+#include "UIProjectImporter.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Processors
@@ -18,6 +21,7 @@
 #include "TextureProcessor.h"
 #include "WorldProcessor.h"
 #include "ArchetypeProcessor.h"
+#include "UIScreenProcessor.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Resource Types
@@ -28,6 +32,9 @@
 
 #include "ModelData.h"
 #include "ModelReader.h"
+
+#include "FontData.h"
+#include "FontReader.h"
 
 #include "AnimationClipData.h"
 #include "AnimationClipReader.h"
@@ -44,5 +51,8 @@
 #include "ArchetypeReader.h"
 #include "ArchetypeData.h"
 
-#include "UIResourceReader.h"
-#include "UIResourceData.h"
+#include "UIProjectReader.h"
+#include "UIProjectData.h"
+
+#include "UIScreenReader.h"
+#include "UIScreenData.h"

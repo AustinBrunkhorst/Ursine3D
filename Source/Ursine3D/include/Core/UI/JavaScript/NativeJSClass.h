@@ -17,9 +17,9 @@
 
 #include "JSConfig.h"
 
-#define JSConstructor(name)             \
-    Meta(DisableNonDynamic, WrapObject) \
-    name::name(JSHandlerArgs)           \
+#define JSConstructor(name)                                      \
+    Meta(DisableNonDynamic, WrapObject)                          \
+    name::name(JSHandlerArgs, CefRefPtr<CefV8Value> thisContext) \
 
 #define JSMethod(name)                        \
     CefRefPtr<CefV8Value> name(JSHandlerArgs) \
@@ -31,6 +31,11 @@ namespace ursine
     class NativeJSClass : public meta::Object
     {
     protected:
+        NativeJSClass(void);
+
         void messageBrowser(const std::string &channel, const std::string &message, const Json &data) const;
     } Meta(Enable, WhiteListMethods);
+
+    URSINE_TODO( "Find a better solution to this." );
+    extern CefRefPtr<CefBrowser> JSGetGlobalBrowser(void);
 }

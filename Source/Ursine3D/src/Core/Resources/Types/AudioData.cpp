@@ -11,24 +11,27 @@ namespace ursine
     {
         AudioData::AudioData(
             const EventList &events, 
-            void *initBytes,
-            size_t initByteSize, 
-            void *bankBytes,
-            size_t bankSize
+            BinaryData initData,
+            BinaryData bankData
         )
             : m_events( events )
-            , m_initBytes( new uint8[ initByteSize ] )
-            , m_initByteSize( initByteSize )
-            , m_bankBytes( new uint8[ bankSize ] )
-            , m_bankSize( bankSize )
+            , m_initData( std::move( initData ) )
+            , m_bankData( std::move( bankData ) )
         {
-            std::memcpy( m_initBytes, initBytes, m_initByteSize );
-            std::memcpy( m_bankBytes, bankBytes, m_bankSize );
-
             auto *audioManager = GetCoreSystem( AudioManager );
 
             if (audioManager)
                 audioManager->LoadBank( *this, m_initID, m_bankID );
+        }
+
+        AudioData::AudioData(const AudioData &rhs)
+            : m_events( rhs.m_events )
+            , m_initData( BinaryData::Copy( rhs.m_initData ) )
+            , m_bankData( BinaryData::Copy( rhs.m_bankData ) )
+            , m_initID( rhs.m_initID )
+            , m_bankID( rhs.m_bankID )
+        {
+
         }
 
         AudioData::~AudioData(void)
@@ -44,24 +47,14 @@ namespace ursine
             return m_events;
         }
 
-        void *AudioData::GetInitBytes(void) const
+        const BinaryData &AudioData::GetInitData(void) const
         {
-            return m_initBytes;
+            return m_initData;
         }
 
-        size_t AudioData::GetInitByteSize(void) const
+        const BinaryData &AudioData::GetBankData(void) const
         {
-            return m_initByteSize;
-        }
-
-        void *AudioData::GetBankBytes(void) const
-        {
-            return m_bankBytes;
-        }
-
-        size_t AudioData::GetBankSize(void) const
-        {
-            return m_bankSize;
+            return m_bankData;
         }
 
         AkBankID AudioData::GetInitID(void) const
@@ -79,13 +72,10 @@ namespace ursine
             output.Write( static_cast<unsigned>( m_events.size( ) ) );
 
             for (auto &e : m_events)
-                output.WriteString( e );
+                output.Write( e );
 
-            output.Write( m_initByteSize );
-            output.WriteBytes( m_initBytes, m_initByteSize );
-
-            output.Write( m_bankSize );
-            output.WriteBytes( m_bankBytes, m_bankSize );
+            output.Write( m_initData );
+            output.Write( m_bankData );
         }
 
         meta::Type AudioData::GetReaderType(void)

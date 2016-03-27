@@ -56,30 +56,30 @@ namespace ursine
             void Execute(Camera &currentCamera);
 
             // all the sets
-            RenderPass &Set(std::initializer_list<RENDER_TARGETS> targets); // where do we write to
-            RenderPass &Set(SHADER_LIST shader);                            // shader we use
-            RenderPass &Set(DEPTH_STENCIL_LIST depthStencil);               // what depth we read from
-            RenderPass &Set(DEPTH_STATES depthState);                       // what depth state
-            RenderPass &Set(SAMPLER_STATES samplerState);                   // how do we sample
-            RenderPass &Set(RASTER_STATES rasterState);                     // how do we rasterize
-            RenderPass &Set(BLEND_STATES blendState);                       // how do we blend
-            RenderPass &Set(DXCore::PRIMITIVE_TOPOLOGY topology);           // topology
+            RenderPass &Set(std::initializer_list<RENDER_TARGETS> targets);     // where do we write to
+            RenderPass &Set(SHADER_LIST shader);                                // shader we use
+            RenderPass &Set(DEPTH_STENCIL_LIST depthStencil);                   // what depth we read from
+            RenderPass &Set(DEPTH_STATES depthState);                           // what depth state
+            RenderPass &Set(SAMPLER_STATES samplerState, unsigned index = 0);   // how do we sample
+            RenderPass &Set(RASTER_STATES rasterState);                         // how do we rasterize
+            RenderPass &Set(BLEND_STATES blendState);                           // how do we blend
+            RenderPass &Set(DXCore::PRIMITIVE_TOPOLOGY topology);               // topology
 
-            RenderPass &Accepts(RENDERABLE_TYPE type);                      // what will we accept?
-            RenderPass &Processes(GraphicsEntityProcessor *processor);      // what will we use to process?
-            RenderPass &AddResource(GlobalShaderResource *gsr);             // global resources
-            RenderPass &AddPrePass(RenderPass *newPass);                    // sub passes
-            RenderPass &AddPostPass(RenderPass *newPass);                   // sub passes
+            RenderPass &Accepts(RENDERABLE_TYPE type);                          // what will we accept?
+            RenderPass &Processes(GraphicsEntityProcessor *processor);          // what will we use to process?
+            RenderPass &AddResource(GlobalShaderResource *gsr);                 // global resources
+            RenderPass &AddPrePass(RenderPass *newPass);                        // sub passes
+            RenderPass &AddPostPass(RenderPass *newPass);                       // sub passes
 
-            RenderPass &OverrideLayout(SHADER_LIST inputLayout);            // override the input layout
-            RenderPass &IsFullscreenPass(bool isFullscreenPass);            // sets as a fullscreen pass
+            RenderPass &OverrideLayout(SHADER_LIST inputLayout);                // override the input layout
+            RenderPass &IsFullscreenPass(bool isFullscreenPass);                // sets as a fullscreen pass
 
-            static void SetGfxMgr(GfxManager *mgr);                         // setting up mgr
+            static void SetGfxMgr(GfxManager *mgr);                             // setting up mgr
 
         protected:
             // dynamic initialization for this frame
             // update global resources
-            virtual void beginPass(void);
+            virtual void beginPass(Camera &currentCamera);
 
             // process pre-passes
             void executePrePasses(Camera &currentCamera);
@@ -121,7 +121,7 @@ namespace ursine
             DEPTH_STATES m_depthState;
 
             // sampler
-            SAMPLER_STATES m_samplerState;
+            std::vector<SAMPLER_STATES> m_samplerStates;
 
             // raster state
             RASTER_STATES m_rasterState;

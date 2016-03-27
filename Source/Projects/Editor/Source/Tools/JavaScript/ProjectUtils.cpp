@@ -199,6 +199,8 @@ namespace
             { "sourceFile", sourceFile.string( ) },
             { "hasPreview", resource->HasPreview( ) },
             { "previewFile", resource->GetPreviewFileName( ).string( ) },
+            { "buildFile", resource->GetBuildFileName( ).string( ) },
+            { "buildCacheFile", resource->GetBuildCacheFileName( ).string( ) },
             { "extension", sourceFile.extension( ).string( ) }
         };
     }

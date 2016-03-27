@@ -60,7 +60,7 @@ void BitmapFont::Load(const std::string textPath)
     } while ( !m_input.eof() );
 }
 
-void BitmapFont::Load(uint8_t * binaryData, size_t size)
+void BitmapFont::Load(const uint8_t *binaryData, size_t size)
 {
     m_useBinary = true;
 
@@ -119,28 +119,42 @@ const std::vector<std::string> &BitmapFont::GetPageData(void) const
     return m_pageData;
 }
 
+void BitmapFont::ReadBytes(void *destination, size_t count)
+{
+    if (m_binaryData == nullptr)
+    {
+        if (m_input.is_open( ))
+            m_input.read( static_cast<char*>( destination ), count );
+    }
+    else
+    {
+        memcpy( destination, m_binaryData + m_position, count );
+
+        m_position += count;
+    }
+}
+
 bool BitmapFont::ValidateFile(void)
 {
-	char signature[4];
+    char signature[4];
 
-	signature[0] = ReadData<char>(1);
-	signature[1] = ReadData<char>(1);
-	signature[2] = ReadData<char>(1);
-	signature[3] = 0;
+    signature[ 0 ] = ReadData<char>( 1 );
+    signature[ 1 ] = ReadData<char>( 1 );
+    signature[ 2 ] = ReadData<char>( 1 );
+    signature[ 3 ] = 0;
 
-	if(strcmp(signature, "BMF") != 0)
-	{
-        throw TextLoadingException("File is not a valid .fnt file!");
-        return false;
-	}
+    UAssertCatchable( strcmp( signature, "BMF" ) == 0,
+        "Invalid .fnt file magic. "
+        "Make sure the font is built with the binary descriptor."    
+    );
 
-    int formatVersion = ReadData<int>(1);
+    auto formatVersion = ReadData<int>( 1 );
 
-    if ( formatVersion != 3 )
-    {
-        throw TextLoadingException("File is an older version of .fnt, upgrade software!");
-        return false;
-    }
+    UAssertCatchable( formatVersion == 3,
+        "Unknown .fnt file version. Expected '%i' got '%i'.",
+        3, 
+        formatVersion
+    );
 
     return true;
 }
@@ -160,10 +174,11 @@ void BitmapFont::ReadInfoData(int blockSize)
     m_infoData.spacing.spacingVertical      = ReadData<uint8_t>(1);
     m_infoData.outlineThickness             = ReadData<uint8_t>(1);
 
-    int stringsize = blockSize - 14;
-    char stringBuff[ 512 ];
-    m_input.read(stringBuff, stringsize);
-    m_infoData.fontName = std::string(stringBuff);
+    auto stringLength = blockSize - 14;
+
+    m_infoData.fontName.resize( stringLength );
+
+    ReadBytes( &m_infoData.fontName[ 0 ], stringLength );
 }
 
 void BitmapFont::ReadCommonData(int blockSize)
@@ -185,16 +200,20 @@ void BitmapFont::ReadPageData(int blockSize)
     // how many bytes will each string be?
     unsigned pageSize = blockSize / m_commonData.pages;
 
+    char tempBuffer[ 128 ];
+
     // for each page
-    for ( unsigned x = 0; x < m_commonData.pages; ++x )
+    for (unsigned x = 0; x < m_commonData.pages; ++x)
     {
-        char tempBuffer[ 1024 ];
+        m_pageData.emplace_back( );
 
-        // read in data
-        m_input.read(tempBuffer, pageSize);
+        auto &page = m_pageData.back( );
 
-        // add to page vector
-        m_pageData.push_back(tempBuffer);
+        page.resize( pageSize );
+
+        ReadBytes( tempBuffer, pageSize );
+
+        page = std::string(tempBuffer);
     }
 }
 
