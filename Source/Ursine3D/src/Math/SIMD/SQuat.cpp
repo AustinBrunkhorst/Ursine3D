@@ -236,21 +236,21 @@ namespace ursine
     void SQuat::Slerp(const SQuat &other, float t, SQuat &result) const
     {
         float mag = sqrt( LengthSquared( ) * other.LengthSquared( ) );
-
+        
         UAssert(mag > 0.0f, "The magnitude cannot be zero.");
-
+        
         float product = Dot( other ) / mag;
-
+        
         if (fabsf( product ) < 1.0f)
         {
             // take care of long angle case: http://en.wikipedia.org/wiki/Slerp
             float sign = ( product < 0.0f ) ? -1.0f : 1.0f;
-
+        
             float theta = acos( sign * product );
             float s1 = sin( sign * t * theta );
             float d = 1.0f / sin( theta );
             float s0 = sin( ( 1.0f - t ) * theta );
-
+        
             result.Set(
                 ( m_x * s0 + other.X( ) * s1 ) * d,
                 ( m_y * s0 + other.Y( ) * s1 ) * d,

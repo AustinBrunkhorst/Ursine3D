@@ -20,13 +20,6 @@ namespace Utilities
     /*===============================
     Utility Functions for FBX
     ===============================*/
-    void Swap(void* a, void* b)
-    {
-        void* tmp = a;
-        a = b;
-        b = tmp;
-    }
-
     ursine::SVec3 SetFloat3ToSVec3(const pseudodx::XMFLOAT3& rhs)
     {
         return ursine::SVec3(rhs.x, rhs.y, rhs.z);
@@ -73,10 +66,7 @@ namespace Utilities
     FbxAMatrix FBXMatrixToFBXAMatrix(FbxMatrix* src)
     {
         FbxAMatrix ret;
-        ret.mData[0][0] = src->mData[0][0], ret.mData[0][1] = src->mData[0][1], ret.mData[0][2] = src->mData[0][2], ret.mData[0][3] = src->mData[0][3];
-        ret.mData[1][0] = src->mData[1][0], ret.mData[1][1] = src->mData[1][1], ret.mData[1][2] = src->mData[1][2], ret.mData[1][3] = src->mData[1][3];
-        ret.mData[2][0] = src->mData[2][0], ret.mData[2][1] = src->mData[2][1], ret.mData[2][2] = src->mData[2][2], ret.mData[2][3] = src->mData[2][3];
-        ret.mData[3][0] = src->mData[3][0], ret.mData[3][1] = src->mData[3][1], ret.mData[3][2] = src->mData[3][2], ret.mData[3][3] = src->mData[3][3];
+        memcpy((double*)&ret.mData, &src->mData, sizeof(src->mData));
         return ret;
     }
 

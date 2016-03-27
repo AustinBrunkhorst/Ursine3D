@@ -115,15 +115,6 @@ namespace ursine
             */
             void ProcessStaticMesh(FbxNode* pNode, int myindex, int inParentIndex);
 
-            /** @brief fbx loader control point funciton
-            *
-            *  this will import control points data from fbx file
-            *
-            *  @param pNode the pointer of the FbxNode
-            *  @return nothing
-            */
-            void ProcessControlPoint(FbxNode* pNode);
-
             /** @brief fbx loader vertices funciton
             *
             *  this will import vertices data from fbx file

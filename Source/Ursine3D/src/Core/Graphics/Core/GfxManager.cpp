@@ -530,6 +530,8 @@ namespace ursine
             RenderPass          billboardPass("BillboardPass");
             RenderPass          textPass("SpriteTextPass");
 
+            RenderPass          debugPass("debugPass");
+
             // create processors
             auto modelProcessor = Model3DProcessor();
             auto slProcessor = SpotLightProcessor();
@@ -556,6 +558,8 @@ namespace ursine
             GlobalGPUResource   specPowRT(SHADER_SLOT_3, RESOURCE_INPUT_RT);
             GlobalGPUResource   debugInput(SHADER_SLOT_0, RESOURCE_INPUT_RT);
             GlobalGPUResource   lightmapRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
+
+            GlobalGPUResource   debugTarget(SHADER_SLOT_0, RESOURCE_INPUT_RT);
 
             // other resources
             GlobalGPUResource   spriteModel(SHADER_SLOT_0, RESOURCE_MODEL);
@@ -889,6 +893,27 @@ namespace ursine
                         OverrideLayout(SHADER_OVERRIDE).
                         InitializePass();
                 }
+
+                 {
+                    debugPass.
+                        Set( { RENDER_TARGET_SWAPCHAIN } ).
+                        Set( SHADER_QUAD ).
+                        Set( DEPTH_STENCIL_COUNT ).
+                        Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
+                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( RASTER_STATE_SOLID_NOCULL ).
+                        Set( BLEND_STATE_COUNT ).
+                        Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
+
+                        AddResource( &viewIdentity ).
+                        AddResource( &fullscreenTransform ).
+                        AddResource( &fullscreenModel ).
+                        AddResource( &debugTarget ).
+
+                        IsFullscreenPass(true).
+
+                    InitializePass();
+                }
             }
 
             /////////////////////////////////////////////////////////
@@ -907,7 +932,8 @@ namespace ursine
                 AddPrePass(&particlePass).
                 AddPrePass(&billboardPass).
                 AddPrePass(&textPass).
-                InitializePass();
+                AddPrePass(&debugPass).
+            InitializePass();
 
             /////////////////////////////////////////////////////////
             // UPDATE RESOURCES
@@ -975,6 +1001,8 @@ namespace ursine
 
             // lightmapRT(SHADER_SLOT_1, RESOURCE_INPUT_RT);
             lightmapRT.Update(RENDER_TARGET_LIGHTMAP);
+
+            debugTarget.Update( RENDER_TARGET_DEFERRED_COLOR );
 
             // TEXTURES AND MODELS /////////////
             lightConeModel.Update(INTERNAL_CONE);

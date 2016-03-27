@@ -21,13 +21,6 @@ namespace Utilities
     Utility Functions for FBX
     ===============================*/
 
-    /** @brief swap function
-    *
-    *  this will just swap both a and b(for swaping y,z factor of the vector)
-    *
-    *  @return nothing
-    */
-    void Swap(void* a, void* b);
     /** @brief convert XMFLOAT3 to SVec3 function
     *
     *  this will convert XMFLOAT3 format to SVec3
