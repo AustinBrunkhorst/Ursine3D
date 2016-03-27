@@ -4,6 +4,12 @@ cbuffer CameraBuffer : register(b0)
     matrix projection;
 };
 
+cbuffer TransformBuffer : register(b1)
+{
+    matrix World;
+}
+
+
 cbuffer invView : register(b4)
 {
     matrix invView;
@@ -123,7 +129,7 @@ PixelInputType main(uint id : SV_VERTEXID)
     position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[ 0 ]));
 
     // into world -> translate
-    position = mul(position, (float3x3)invView) + g_bufPosColor[ particleIndex ].position + cameraPosition.xyz;
+    position = mul(position, (float3x3)invView) + mul(float4(g_bufPosColor[ particleIndex ].position, 1.0f), World).xyz;
 
     output.position = mul(float4(position, 1.0f), view);
     output.position = mul(output.position, projection);

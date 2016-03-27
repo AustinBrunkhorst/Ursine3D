@@ -48,7 +48,11 @@ void BossSeedshotState::Enter(BossAIStateMachine *machine)
     auto animator = boss->GetComponentInChildren<Animator>( );
 
     if (animator)
+    {
         animator->SetEnableBoneManipulation( true );
+        animator->SetPlaying( true );
+        animator->SetCurrentState( "Idle" );
+    }
 }
 
 void BossSeedshotState::Update(BossAIStateMachine *machine)

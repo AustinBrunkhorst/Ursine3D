@@ -18,6 +18,8 @@
 #include "BossPollinateState.h"
 #include "BossSludgeshotState.h"
 #include "BossSpawnState.h"
+#include "BossInvulnerableToggleState.h"
+#include "BossDazedState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -267,6 +269,18 @@ void BossAI::SetPollinateArchetype(const ResourceReference &pollinateArchetype)
     NOTIFY_COMPONENT_CHANGED( "pollinateArchetype", m_pollinateArchetype );
 }
 
+const std::string &BossAI::GetInvulnerableEmitterEntityName(void) const
+{
+    return m_invulnerableEmitterEntity;
+}
+
+void BossAI::SetInvulnerableEmitterEntityName(const std::string &entityName)
+{
+    m_invulnerableEmitterEntity = entityName;
+
+    NOTIFY_COMPONENT_CHANGED( "invulnerableEmitterEntity", m_invulnerableEmitterEntity );
+}
+
 const ResourceReference &BossAI::GetVineArchetype(void) const
 {
     return m_vineArchetype;
@@ -292,6 +306,11 @@ EntityHandle BossAI::GetSludgeshotEntity(void)
 EntityHandle BossAI::GetPollinateEntity(void)
 {
     return GetOwner( )->GetChildByName( m_pollinateEntity );
+}
+
+EntityHandle BossAI::GetInvulnerableEmitterEntity(void)
+{
+    return GetOwner( )->GetChildByName( m_invulnerableEmitterEntity );
 }
 
 void BossAI::AddSpawnedVine(EntityHandle vine)
@@ -340,8 +359,19 @@ void BossAI::OnInitialize(void)
 
         auto spawnBoss = sm->AddState<BossSpawnState>( );
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
+        auto seedshot = sm->AddState<BossSeedshotState>( );
+        auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
+        auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
+        auto dazed = sm->AddState<BossDazedState>( );
 
         spawnBoss->AddTransition( spawnVines, "To Spawn Vines" );
+        spawnVines->AddTransition( invulnerable, "To Invulnerable" );
+        invulnerable->AddTransition( seedshot, "To Seedshot" );
+        seedshot->AddTransition( vulnerable, "To Vulnerable" )
+                ->AddCondition<sm::IntCondition>( 
+                    BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
+                );
+        vulnerable->AddTransition( dazed, "To Dazed" );
 
         sm->SetInitialState( spawnBoss );
 

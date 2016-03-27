@@ -15,26 +15,35 @@
 #include <EventArgs.h>
 #include <SVec3.h>
 
-enum DamageEvent
+namespace game
 {
-    WORLD_DAMAGE_EVENT = ursine::ecs::WORLD_EVENT_USER
-};
+    enum DamageEvent
+    {
+        /////////////////////////
+        ////  damage events  ////
+        /////////////////////////
+        DAMAGE_TEXT_EVENT = ursine::ecs::WORLD_EVENT_USER
+    };
 
-class DamageEventArgs : public ursine::EventArgs
-{
-public:
-    DamageEventArgs(float damage, bool crit,
-                    const ursine::SVec3 &hitPosition,
-                    ursine::ecs::EntityHandle &entityHit)
-        : damage( damage )
-        , crit( crit )
-        , hitPosition( hitPosition )
-        , entityHit( entityHit )
-        { }
+    class DamageEventArgs : public ursine::EventArgs
+    {
+    public:
+        DamageEventArgs(const ursine::SVec3 &hitPosition,
+                        ursine::ecs::EntityHandle &entityHit,
+                        float damage, bool crit, bool invulnerable)
+            : hitPosition( hitPosition )
+            , entityHit( entityHit )
+            , damage( damage )
+            , crit( crit )
+            , invulnerable( invulnerable ) { }
 
-    float damage;
-    bool crit;
-    ursine::SVec3 hitPosition;
-    ursine::ecs::EntityHandle entityHit;
+        ursine::SVec3 hitPosition;
 
-};
+        ursine::ecs::EntityHandle entityHit;
+
+        float damage;
+
+        bool crit;
+        bool invulnerable;
+    };
+}

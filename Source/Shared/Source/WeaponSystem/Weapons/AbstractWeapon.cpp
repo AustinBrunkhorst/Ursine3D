@@ -34,7 +34,7 @@ AbstractWeapon::AbstractWeapon(void)
     , m_firePosHandle( nullptr )
     , m_semiAutomatic( false )
     , m_triggerPulled( false )
-    , m_active( true )
+    , m_active( false )
 {   
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
@@ -42,6 +42,10 @@ AbstractWeapon::AbstractWeapon(void)
 
 AbstractWeapon::~AbstractWeapon(void)
 {
+    m_owner->Listener(this)
+        .Off(game::ACTIVATE_WEAPON, &AbstractWeapon::ActivateWeapon)
+        .Off(game::DETACH_WEAPON, &AbstractWeapon::DetachWeapon)
+        .Off(game::DEACTIVATE_WEAPON, &AbstractWeapon::DeactivateWeapon);
 }
 
 void AbstractWeapon::Initialize(const ecs::EntityHandle &owner)
@@ -57,9 +61,9 @@ void AbstractWeapon::Initialize(const ecs::EntityHandle &owner)
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
 
-    m_owner->Listener(this)                               
-        .On(game::ACTIVATE_WEAPON, &AbstractWeapon::ActivateWeapon)        
-        .On(game::DETACH_WEAPON, &AbstractWeapon::DetachWeapon)            
+    m_owner->Listener(this)
+        .On(game::ACTIVATE_WEAPON, &AbstractWeapon::ActivateWeapon)
+        .On(game::DETACH_WEAPON, &AbstractWeapon::DetachWeapon)
         .On(game::DEACTIVATE_WEAPON, &AbstractWeapon::DeactivateWeapon);
 }
 
@@ -311,12 +315,25 @@ void AbstractWeapon::TriggerReleased( EVENT_HANDLER(game::FIRE_END))
         m_fireTimer = 0.0f;
 }
 
-void AbstractWeapon::ActivateWeapon(const ecs::EntityHandle &owner, const ecs::EntityHandle &whoToConnect, ecs::Transform* camHandle, int ammo, int clip)
+void AbstractWeapon::ActivateWeapon(const ecs::EntityHandle &whoToConnect, ecs::Transform* camHandle, int ammo, int clip)
 {
+    // allow firing
+    m_active = true;
+    
+    // who will be telling me to shoot
+    m_boss = whoToConnect;
+
     // connect to parent's fire event
-    whoToConnect->Listener( this )
+    m_boss->Listener( this )
         .On( game::FIRE_START, &AbstractWeapon::TriggerPulled )
-        .On( game::FIRE_END, &AbstractWeapon::TriggerReleased );
+        .On( game::FIRE_END, &AbstractWeapon::TriggerReleased )
+        .On(game::CEASE_FIRE, &AbstractWeapon::CeaseFire)
+        .On(game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill);
+
+    // connect to owner for cease and fire at will
+    m_owner->Listener( this )
+        .On(game::CEASE_FIRE, &AbstractWeapon::CeaseFire)
+        .On(game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill);
 
     // Gun is being reloaded from inventory (swapped in) so update
     //   ammo and clip to previous values before swapped out
@@ -327,58 +344,68 @@ void AbstractWeapon::ActivateWeapon(const ecs::EntityHandle &owner, const ecs::E
     }
 
     // Grab camera handle for shooting
-    if (m_camHandle)
+    if ( camHandle )
         m_camHandle = camHandle;
     else
-        m_camHandle = owner->GetTransform( );
+        m_camHandle = m_owner->GetTransform( );
 
     // Grab fire position child
-    FirePos* firePos = owner->GetComponentInChildren<FirePos>( );
+    FirePos* firePos = m_owner->GetComponentInChildren<FirePos>( );
 
     // if the fire position was a child then grab transform for shooting
     if (firePos)
         m_firePosHandle = firePos->GetOwner( )->GetTransform( );
     else
-        m_firePosHandle = owner->GetTransform( );
+        m_firePosHandle = m_owner->GetTransform( );
 
     // Grab animator of weapon's child model
-    m_animatorHandle = owner->GetComponentInChildren<ecs::Animator>( );
+    m_animatorHandle = m_owner->GetComponentInChildren<ecs::Animator>( );
 }
 
-void AbstractWeapon::DetachWeapon(const ecs::EntityHandle &owner, const ecs::EntityHandle &whoToDisconnect)
+void AbstractWeapon::DetachWeapon(void)
 {
+    // disable firing
+    m_active = false;
+
     // disconnect from parent's fire event
-    whoToDisconnect->Listener( this )
+    m_boss->Listener( this )
         .Off( game::FIRE_START, &AbstractWeapon::TriggerPulled )
-        .Off( game::FIRE_END, &AbstractWeapon::TriggerReleased );
+        .Off( game::FIRE_END, &AbstractWeapon::TriggerReleased )
+        .Off(game::CEASE_FIRE, &AbstractWeapon::CeaseFire)
+        .Off(game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill);
+
+    // disconnect to owner for cease and fire at will
+    m_owner->Listener(this)
+        .Off(game::CEASE_FIRE, &AbstractWeapon::CeaseFire)
+        .Off(game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill);
 
     // unattach from parent
-    owner->GetTransform( )->DetachFromParent( );
+    m_owner->GetTransform( )->DetachFromParent( );
 
     // give rigidbody so fall to the ground
-    ecs::Rigidbody* body = owner->AddComponent<ecs::Rigidbody>( );
+    ecs::Rigidbody* body = m_owner->AddComponent<ecs::Rigidbody>( );
 
     // give body an impulse to simulate throwing
-    body->AddImpulse( owner->GetTransform( )->GetForward( ) * 3 + SVec3(0.0f, 3.0f, 0.0f) );
+    body->AddImpulse(m_owner->GetTransform( )->GetForward( ) * 3 + SVec3(0.0f, 3.0f, 0.0f) );
 
     // need dat collision for floor
-    owner->AddComponent<ecs::BoxCollider>( );
+    m_owner->AddComponent<ecs::BoxCollider>( );
 
     // need dat interactability
-    owner->AddComponent<Interactable>( );
+    m_owner->AddComponent<Interactable>( );
 
     // make a weapon pick up
-    WeaponPickup* pickup = owner->AddComponent<WeaponPickup>( );
+    WeaponPickup* pickup = m_owner->AddComponent<WeaponPickup>( );
     pickup->SetAmmoInfo( m_ammoCount, m_clipCount );
 
     // flag to remove this component
     RemoveMySelf( );
 }
 
-void AbstractWeapon::DeactivateWeapon(const ursine::ecs::EntityHandle &whoToDisconnect, int& saveAmmo, int& saveClip)
+void AbstractWeapon::DeactivateWeapon(int& saveAmmo, int& saveClip)
 {
     // disconnect from parent's fire event
-    whoToDisconnect->Listener( this )
+    m_boss->Listener( this )
         .Off( game::FIRE_START, &AbstractWeapon::TriggerPulled )
         .Off( game::FIRE_END, &AbstractWeapon::TriggerReleased );
 
@@ -390,21 +417,19 @@ void AbstractWeapon::ActivateWeapon(EVENT_HANDLER(game::ACTIVATE_WEAPON))
 {
     EVENT_ATTRS(ursine::ecs::Entity, game::WeaponActivationEventArgs);
 
-    ActivateWeapon( sender, args->whoToConnect, args->m_camHandle, args->m_ammo, args->m_clip );
+    ActivateWeapon( args->whoToConnect, args->m_camHandle, args->m_ammo, args->m_clip );
 }
 
 void AbstractWeapon::DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON))
 {
-    EVENT_ATTRS(ursine::ecs::Entity, game::WeaponDeactivationEventArgs);
-
-    DetachWeapon( sender, args->whoToConnect );
+    DetachWeapon( );
 }
 
 void AbstractWeapon::DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON))
 {
     game::WeaponDeactivationEventArgs* args = static_cast<game::WeaponDeactivationEventArgs*>( const_cast<ursine::EventArgs*>( _args ) );
 
-    DeactivateWeapon( args->whoToConnect, args->m_ammo, args->m_clip );
+    DeactivateWeapon( args->m_ammo, args->m_clip );
 }
 
 void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(game::PICKUP_AMMO))
@@ -412,4 +437,14 @@ void AbstractWeapon::PickUpAmmo(EVENT_HANDLER(game::PICKUP_AMMO))
     EVENT_ATTRS( ursine::ecs::Entity, game::AmmoPickupEventArgs );
 
     AddAmmo( args->m_ammo );
+}
+
+void AbstractWeapon::CeaseFire(EVENT_HANDLER(game::CEASE_FIRE))
+{
+    m_active = false;
+}
+
+void AbstractWeapon::FireAtWill(EVENT_HANDLER(game::FIRE_AT_WILL))
+{
+    m_active = true;
 }

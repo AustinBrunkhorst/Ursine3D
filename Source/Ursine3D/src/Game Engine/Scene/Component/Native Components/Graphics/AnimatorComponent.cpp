@@ -166,8 +166,6 @@ namespace ursine
                     {
                         GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
 
-                        std::cout << "HERE" << std::endl;
-
                         m_finishEventSent = true;
                 
                         transFactor = 0.0f;
