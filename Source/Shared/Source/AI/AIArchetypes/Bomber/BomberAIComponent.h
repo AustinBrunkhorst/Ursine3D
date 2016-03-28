@@ -25,9 +25,9 @@ class BomberAI : public ursine::ecs::Component
 public:
 
     EditorField(
-        float SlamDelay,
-        GetSlamDelay,
-        SetSlamDelay
+        float ExplosionDelay,
+        GetExplosionDelay,
+        SetExplosionDelay
         );
 
     EditorField(
@@ -43,9 +43,9 @@ public:
         );
 
     EditorField(
-        float AttackRadius,
-        GetAttackRadius,
-        SetAttackRadius
+        float BlastRadius,
+        GetBlastRadius,
+        SetBlastRadius
         );
 
     EditorField(
