@@ -1092,7 +1092,7 @@ namespace ursine
                         
                         UAssert( boneIdx != -1, "Bone Parsing Fucked up" );
 
-                        // New bind pose matrix storing method
+                        // New bind pose matrix importing method
                         // Check negative scale
                         {
                             mConverter->ConvertMatrix(bindPoseMatrix);
