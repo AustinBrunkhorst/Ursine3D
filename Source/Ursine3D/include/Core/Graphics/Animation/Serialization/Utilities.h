@@ -85,6 +85,7 @@ namespace Utilities
     *  @return converted SMat4 result
     */
     ursine::SMat4 FBXAMatrixToSMat4(FbxAMatrix* src);
+    FbxAMatrix SMat4ToFBXAMatrix(ursine::SMat4* src);
     /** @brief convert FbxVector4 to SVec4 function
     *
     *  this will convert FbxVector4 format to SVec4

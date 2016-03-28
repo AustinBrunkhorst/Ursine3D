@@ -80,6 +80,16 @@ namespace Utilities
         return ret;
     }
 
+    FbxAMatrix SMat4ToFBXAMatrix(ursine::SMat4* src)
+    {
+        FbxAMatrix ret;
+        ret.mData[0][0] = src->GetRow(0).X(); ret.mData[0][1] = src->GetRow(0).Y(); ret.mData[0][2] = src->GetRow(0).Z(); ret.mData[0][3] = src->GetRow(0).W();
+        ret.mData[1][0] = src->GetRow(1).X(); ret.mData[1][1] = src->GetRow(1).Y(); ret.mData[1][2] = src->GetRow(1).Z(); ret.mData[1][3] = src->GetRow(1).W();
+        ret.mData[2][0] = src->GetRow(2).X(); ret.mData[2][1] = src->GetRow(2).Y(); ret.mData[2][2] = src->GetRow(2).Z(); ret.mData[2][3] = src->GetRow(2).W();
+        ret.mData[3][0] = src->GetRow(3).X(); ret.mData[3][1] = src->GetRow(3).Y(); ret.mData[3][2] = src->GetRow(3).Z(); ret.mData[3][3] = src->GetRow(3).W();
+        return ret;
+    }
+
     ursine::SVec4 ConvertVector4(const FbxVector4& vec)
     {
         return ursine::SVec4(static_cast<float>(vec.mData[0]),

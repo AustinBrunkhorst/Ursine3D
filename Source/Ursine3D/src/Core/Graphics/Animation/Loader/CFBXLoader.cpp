@@ -296,6 +296,12 @@ namespace ursine
                     ++i;
                 }
                 
+
+                std::ofstream fout;
+                std::string nm = m_Model->name.c_str();
+                nm += ".txt";
+                fout.open(nm);
+                
                 // bone data
                 i = 0;
                 m_ModelInfo.mboneCount = static_cast<unsigned int>(m_Model->mBoneData.mbonehierarchy.size());
@@ -312,8 +318,20 @@ namespace ursine
                     iter.boneSpaceRotation = m_Model->mBoneData.mbonehierarchy[i].boneSpaceRotation;
                     iter.boneSpaceScaling = m_Model->mBoneData.mbonehierarchy[i].boneSpaceScaling;
 
+                    fout << "Name : " << iter.name << std::endl;
+                    fout << "PI : " << iter.mParentIndex << std::endl;
+                    fout << "BP : " << iter.bindPosition.x << "," << iter.bindPosition.y << "," << iter.bindPosition.z << std::endl;
+                    fout << "BR : " << iter.bindRotation.x << "," << iter.bindRotation.y << "," << iter.bindRotation.z << std::endl;
+                    fout << "BS : " << iter.bindScaling.x << "," << iter.bindScaling.y << "," << iter.bindScaling.z << std::endl;
+                    fout << "SP : " << iter.boneSpacePosition.x << "," << iter.boneSpacePosition.y << "," << iter.boneSpacePosition.z << std::endl;
+                    fout << "SR : " << iter.boneSpaceRotation.x << "," << iter.boneSpaceRotation.y << "," << iter.boneSpaceRotation.z << std::endl;
+                    fout << "SS : " << iter.boneSpaceScaling.x << "," << iter.boneSpaceScaling.y << "," << iter.boneSpaceScaling.z << std::endl;
+
                     ++i;
                 }
+
+                if (fout.is_open() == true)
+                    fout.close();
 
                 // level data
                 // mesh lvl
@@ -1064,12 +1082,38 @@ namespace ursine
                         if (!cluster->GetLink())
                             continue;
 
+                        FbxAMatrix bindPoseMatrix;
+                        cluster->GetTransformLinkMatrix(bindPoseMatrix);
+
                         //joint name and index
                         FbxNode* pLink = cluster->GetLink();
 
                         int boneIdx = GetJointIndexByName(pLink->GetName());
-
+                        
                         UAssert( boneIdx != -1, "Bone Parsing Fucked up" );
+
+                        // New bind pose matrix storing method
+                        // Check negative scale
+                        {
+                            mConverter->ConvertMatrix(bindPoseMatrix);
+
+                            FbxVector4 scl = bindPoseMatrix.GetS();
+                            if (!CheckScaling(scl) || !CheckPositive(scl))
+                                bindPoseMatrix.SetS(FbxVector4(1, 1, 1));
+
+                            FbxAMatrix inverse = bindPoseMatrix.Inverse();
+
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].bindPosition = FBXVectorToXMFLOAT3(bindPoseMatrix.GetT());
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].bindRotation = FBXQuaternionToXMLOAT4(bindPoseMatrix.GetQ());
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].bindScaling = FBXVectorToXMFLOAT3(bindPoseMatrix.GetS());
+
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].boneSpacePosition = FBXVectorToXMFLOAT3(inverse.GetT());
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].boneSpaceRotation = FBXQuaternionToXMLOAT4(inverse.GetQ());
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].boneSpaceScaling = FBXVectorToXMFLOAT3(inverse.GetS());
+
+                            SMat4 locTM = FBXAMatrixToSMat4(&bindPoseMatrix);
+                            m_Model->mBoneData.mboneLocalTM[boneIdx] = locTM;
+                        }
 
                         double* weights = cluster->GetControlPointWeights();
 
@@ -1355,22 +1399,6 @@ namespace ursine
 
                     if (!CheckScaling(s) || !CheckPositive(s))
                         localMatrix.SetS(FbxVector4(1, 1, 1));
-                    
-                    //auto quat = localMatrix.GetQ();
-                    //
-                    //// Check for the double angle problem
-                    //if (iter != time.begin())
-                    //{
-                    //    --iter;
-                    //    auto prevQuat = GetLocalMatrixFromTime(pNode, *iter).GetQ();
-                    //    ++iter;
-                    //
-                    //    if (prevQuat.DotProduct(quat) < 0.0f)
-                    //    {
-                    //        quat = -quat;
-                    //    }
-                    //}
-                    //animClip.boneAnim[boneindex].keyFrames[i].rot = FBXQuaternionToXMLOAT4(quat);
 
                     animClip.boneAnim[boneindex].keyFrames[i].time = static_cast<float>(iter->GetSecondDouble());
                     // Scale keyframe translation interpolation by specified scale
