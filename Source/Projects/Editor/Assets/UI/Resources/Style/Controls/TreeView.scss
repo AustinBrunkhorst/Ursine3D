@@ -128,7 +128,7 @@ $item-indent: 6px;
           &[contentEditable=true] {
             padding: 2px;
             background: #333337;
-            border: 1px solid #bdbd73;
+            border: 1px solid $color-accent;
             color: #dcdcdc;
             outline: none;
             text-overflow: clip;

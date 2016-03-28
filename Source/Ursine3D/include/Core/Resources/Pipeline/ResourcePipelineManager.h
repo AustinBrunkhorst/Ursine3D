@@ -37,6 +37,8 @@ namespace ursine
                 void StopWatchingResourceDirectory(void);
                 bool IsWatchingResourceDirectory(void) const;
 
+                void AllowFileActionProcessing(bool allow);
+
                 void InvalidateResourceMeta(ResourceItem::Handle resource);
                 void InvalidateResourceCache(ResourceItem::Handle resource);
 
@@ -45,6 +47,7 @@ namespace ursine
                 ResourceItem::List GetItemsByType(const meta::Type &type) const;
 
                 void RemoveItem(ResourceItem::Handle item);
+                bool ChangeItemDisplayName(ResourceItem::Handle item, const std::string &displayName);
 
                 // Creates a unique file name in the configured temporary directory
                 fs::path CreateTemporaryFileName(void) const;
@@ -54,6 +57,7 @@ namespace ursine
                 struct FileWatchAction
                 {
                     fs::Action type;
+                    fs::path sourcePath;
                     fs::path directory;
                     fs::path fileName;
                     fs::path oldFileName;
@@ -71,6 +75,7 @@ namespace ursine
 
                 std::thread m_buildWorkerThread;
 
+                bool m_isFileActionsActive;
                 bool m_isProcessingFileActions;
                 std::thread m_fileActionProcessorThread;
 
@@ -170,7 +175,7 @@ namespace ursine
                 ) override;
 
                 void processPendingFileActions(void);
-                void processPendingFileAction(const fs::path &resourceFile, const FileWatchAction &action);
+                bool processPendingFileAction(const fs::path &resourceFile, const FileWatchAction &action);
 
                 void onResourceAdded(const fs::path &fileName);
                 void onResourceModified(ResourceItem::Handle resource);

@@ -26,6 +26,7 @@ namespace ursine
                 bool IsDirectoryResource(void) const;
 
                 Handle GetParent(void) const;
+                bool IsGenerated(void) const;
 
                 const GUID &GetGUID(void) const;
 
@@ -64,6 +65,9 @@ namespace ursine
             };
         }
     }
+
+    extern template 
+    Json JsonSerializer::Serialize(const rp::ResourceItem::Handle &data);
 }
 
 #include "ResourceItem.hpp"

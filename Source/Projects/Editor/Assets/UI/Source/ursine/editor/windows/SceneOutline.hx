@@ -14,10 +14,10 @@ import ursine.editor.scene.entity.Entity;
 class SceneOutline extends WindowHandler {
     public static var instance : SceneOutline;
 
+    private static inline var m_selectedComponent = 'Selected';
+
     private var m_rootView : TreeView;
     private var m_entityItems : Map<UInt, TreeViewItem>;
-
-    private var m_selectedEntities : Array<UInt> = null;
 
     public function new() {
         instance = this;
@@ -34,8 +34,6 @@ class SceneOutline extends WindowHandler {
         }
 
         m_entityItems = new Map<UInt, TreeViewItem>( );
-
-        m_selectedEntities = new Array<UInt>( );
 
         window.container.appendChild( m_rootView );
 
@@ -56,35 +54,14 @@ class SceneOutline extends WindowHandler {
     }
 
     public function clearSelectedEntities() {
-        for (uid in m_selectedEntities) {
-            var item = m_entityItems[ uid ];
-
-            if (item == null)
-                continue;
-
-            untyped item.entity.deselect( );
-        }
+        Extern.SceneClearSelectedEntities( );
     }
 
     public function deleteSelectedEntities() {
-        for (uid in m_selectedEntities) {
-            var item = m_entityItems[ uid ];
-
-            if (item == null)
-                continue;
-
-            var entity : Entity = untyped item.entity;
-
-            if (entity.isRemovalEnabled( )) {
-                entity.remove( );
-            } else {
-                // TODO: add removal warning
-            }
-        }
+        Extern.SceneDeleteSelectedEntities( );
     }
 
     private function resetScene() {
-        m_selectedEntities = new Array<UInt>( );
         m_rootView.innerHTML = '';
         m_entityItems = new Map<UInt, TreeViewItem>( );
 
@@ -133,7 +110,7 @@ class SceneOutline extends WindowHandler {
             return;
 
         // TODO: handle multi selection
-        if (m_selectedEntities.indexOf( e.uniqueID ) != -1)
+        if (untyped item.entity.hasComponent( m_selectedComponent ))
             selectEntity( null );
 
         if (item.parentNode != null)
@@ -189,7 +166,7 @@ class SceneOutline extends WindowHandler {
     }
 
     private function onComponentAdded(e) {
-        if (e.component == 'Selected') {
+        if (e.component == m_selectedComponent) {
             var item : TreeViewItem = m_entityItems[ e.uniqueID ];
 
             if (item != null)
@@ -198,7 +175,7 @@ class SceneOutline extends WindowHandler {
     }
 
     private function onComponentRemoved(e) {
-        if (e.component == 'Selected') {
+        if (e.component == m_selectedComponent) {
             var item : TreeViewItem = m_entityItems[ e.uniqueID ];
 
             if (item != null)
@@ -228,7 +205,7 @@ class SceneOutline extends WindowHandler {
                 parentItem.child.appendChild( item );
         }
 
-        if (entity.hasComponent( 'Selected' ))
+        if (entity.hasComponent( m_selectedComponent ))
             selectEntity( item );
     }
 
@@ -319,7 +296,7 @@ class SceneOutline extends WindowHandler {
 
         item.textElement.addEventListener( 'click', function(e) {
             // already selected
-            if (m_selectedEntities.indexOf( untyped item.entity.uniqueID ) != -1)
+            if (untyped item.entity.hasComponent( m_selectedComponent ))
                 return;
 
             clearSelectedEntities( );
@@ -380,8 +357,6 @@ class SceneOutline extends WindowHandler {
 
             // TODO: handle multi selection
             EntityInspector.instance.inspect( untyped item.entity );
-
-            m_selectedEntities.push( untyped item.entity.uniqueID );
         }
     }
 
@@ -391,10 +366,6 @@ class SceneOutline extends WindowHandler {
 
             // TODO: handle multi selection
             EntityInspector.instance.inspect( null );
-
-            m_selectedEntities = m_selectedEntities.filter( function(x) {
-                return x != untyped item.entity.uniqueID;
-            } );
         }
     }
 }

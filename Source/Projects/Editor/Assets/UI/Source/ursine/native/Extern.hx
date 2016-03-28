@@ -31,6 +31,10 @@ class Extern {
         return untyped __js__( "ProjectGetResource(guid)" );
     }
 
+    public static function ProjectDeleteResource(guid : String) {
+        return untyped __js__( "ProjectDeleteResource(guid)" );
+    }
+
     public static inline function ProjectSetEmptyScene() {
         return untyped __js__( "ProjectSetEmptyScene()" );
     }
@@ -61,6 +65,14 @@ class Extern {
 
     public static inline function SceneGetActiveEntities() {
         return untyped __js__( "SceneGetActiveEntities()" );
+    }
+
+    public static inline function SceneClearSelectedEntities() {
+        return untyped __js__( "SceneClearSelectedEntities()" );
+    }
+
+    public static inline function SceneDeleteSelectedEntities() {
+        return untyped __js__( "SceneDeleteSelectedEntities()" );
     }
 
     public static inline function SceneLoad() {

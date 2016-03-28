@@ -34,8 +34,6 @@ using namespace ursine;
 
 namespace
 {
-    const ursine::GUID kNullGUID = GUIDNullGenerator( )( );
-
     Project *getProject(void);
     Scene &getScene(void);
     ecs::World *getActiveWorld(void);
@@ -203,6 +201,46 @@ JSFunction(SceneGetActiveEntities)
     }
 
     return ids;
+}
+
+JSFunction(SceneClearSelectedEntities)
+{
+    Application::PostMainThread( [=] {
+        auto *world = getActiveWorld( );
+
+        if (!world)
+            return;
+
+        auto selected = world->GetEntitiesFromFilter( ecs::Filter( ).All<ecs::Selected>( ) );
+
+        for (auto &entity : selected)
+        {
+            if (entity)
+                entity->RemoveComponent<ecs::Selected>( );
+        }
+    } );
+
+    return CefV8Value::CreateBool( true );
+}
+
+JSFunction(SceneDeleteSelectedEntities)
+{
+    Application::PostMainThread( [=] {
+        auto *world = getActiveWorld( );
+
+        if (!world)
+            return;
+
+        auto selected = world->GetEntitiesFromFilter( ecs::Filter( ).All<ecs::Selected>( ) );
+
+        for (auto &entity : selected)
+        {
+            if (entity)
+                entity->Delete( );
+        }
+    } );
+
+    return CefV8Value::CreateBool( true );
 }
 
 JSFunction(SceneGetPlayState)

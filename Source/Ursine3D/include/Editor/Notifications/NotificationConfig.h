@@ -33,11 +33,13 @@ namespace ursine
     {
         // duration to use for an infinite duration 
         // (does not automatically close)
-        const TimeSpan InfiniteDuration = 0;
+        const TimeSpan InfiniteDuration { 0 };
 
         // determines if this notification is dimissible with
         // the close button in the top right
-        bool dismissible = true;
+        bool dismissible { true };
+
+        NotificationMode mode { NOTIFICATION_DEFAULT };
 
         // type of the notification: determines the icon
         // displayed next to the heading

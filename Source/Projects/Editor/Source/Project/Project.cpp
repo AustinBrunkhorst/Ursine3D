@@ -42,7 +42,7 @@ Project::Project(void)
     , m_sceneManager( nullptr )
     , m_entityManager( nullptr )
     , m_pipelineManager( nullptr )
-    , m_lastOpenedWorld( GUIDNullGenerator( )( ) )
+    , m_lastOpenedWorld( kNullGUID )
 {
     m_scene.Listener( this )
         .On( SCENE_WORLD_CHANGED, &Project::onSceneWorldChanged )
@@ -207,7 +207,7 @@ void Project::onSceneWorldChanged(EVENT_HANDLER(Scene))
     }
     else
     {
-        m_lastOpenedWorld = GUIDNullGenerator( )( );
+        m_lastOpenedWorld = kNullGUID;
     }
 }
 

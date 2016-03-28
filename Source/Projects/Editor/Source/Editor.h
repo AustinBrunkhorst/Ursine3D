@@ -15,12 +15,13 @@
 
 #include <CoreSystem.h>
 
-#include <NotificationManager.h>
-
 #include "EditorPreferences.h"
 
 #include "Project.h"
 #include "EditorWindow.h"
+
+#include <TimerManager.h>
+#include <NotificationManager.h>
 
 class Editor : public ursine::core::CoreSystem
 {
@@ -77,6 +78,8 @@ private:
     EditorPreferences m_preferences;
     Project *m_project;
 
+    ursine::TimerID m_buildPipelineFocusTimeout;
+
     ///////////////////////////////////////////////////////////////////////////
     // Core System
     ///////////////////////////////////////////////////////////////////////////
@@ -121,6 +124,7 @@ private:
     void onEditorUpdate(EVENT_HANDLER(ursine::Application));
 
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
+    void onMainWindowFocusChanged(EVENT_HANDLER(ursine::Window));
 
     void onPipelinePreBuildItemStart(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
     void onPipelinePreBuildItemPreviewStart(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));

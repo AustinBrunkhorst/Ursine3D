@@ -55,10 +55,11 @@ namespace ursine
     rp::ResourcePipelineManager::ResourcePipelineManager(void)
         : EventDispatcher( this )
         , m_rootDirectory( new ResourceDirectoryNode( nullptr ) )
-        , m_isProcessingFileActions( false )
+        , m_isFileActionsActive( false )
+        , m_isProcessingFileActions( true )
         , m_resourceDirectoryWatch( -1 )
     {
-        
+
     }
 
     rp::ResourcePipelineManager::~ResourcePipelineManager(void)
@@ -132,7 +133,7 @@ namespace ursine
 
         m_fileWatcher.watch( );
 
-        m_isProcessingFileActions = true;
+        m_isFileActionsActive = true;
 
         m_fileActionProcessorThread = std::thread(
             &ResourcePipelineManager::processPendingFileActions,
@@ -150,7 +151,7 @@ namespace ursine
         if (!IsWatchingResourceDirectory( ))
             return;
 
-        m_isProcessingFileActions = false;
+        m_isFileActionsActive = false;
 
         m_fileWatcher.removeWatch( m_resourceDirectoryWatch );
     }
@@ -160,6 +161,13 @@ namespace ursine
     bool rp::ResourcePipelineManager::IsWatchingResourceDirectory(void) const
     {
         return m_resourceDirectoryWatch != -1;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::AllowFileActionProcessing(bool allow)
+    {
+        m_isProcessingFileActions = allow;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -261,14 +269,84 @@ namespace ursine
 
     void rp::ResourcePipelineManager::RemoveItem(ResourceItem::Handle item)
     {
+        UAssert( item != nullptr, 
+            "Attempting to remove null resource." 
+        );
+
+        std::lock_guard<std::mutex> lock( m_databaseMutex );
+
+        // remove all generated resources first
+        for (auto &guid : item->m_buildCache.generatedResources)
+        {
+            auto generated = GetItem( guid );
+
+            if (generated)
+                RemoveItem( generated );
+        }
+
+        removeResource( item, true );
+
         ResourceChangeArgs e;
 
         e.type = RP_RESOURCE_REMOVED;
         e.resource = item;
 
         Dispatch( e.type, &e );
+    }
 
-        removeResource( item, true );
+    ///////////////////////////////////////////////////////////////////////////
+
+    bool rp::ResourcePipelineManager::ChangeItemDisplayName(
+        ResourceItem::Handle item, 
+        const std::string &displayName
+    )
+    {
+        std::lock_guard<std::mutex> lock( m_databaseMutex );
+
+        auto santized = fs::SafeFileName( displayName, '-' );
+
+        auto oldFileName = item->m_fileName;
+
+        auto newFileName = oldFileName.parent_path( );
+        auto extension = oldFileName.extension( );
+
+        newFileName /= santized;
+        newFileName.replace_extension( extension );
+
+        auto newMetaFileName = getResourceMetaPath( newFileName );
+
+        // already exists
+        if (exists( newFileName ) || exists( newMetaFileName ))
+            return false;
+
+        try
+        {
+            m_pathToResource.erase( oldFileName );
+            m_pathToResource[ newFileName ] = item;
+
+            rename( item->m_fileName, newFileName );
+            rename( item->m_metaFileName, newMetaFileName );
+
+            item->m_fileName = newFileName;
+            item->m_metaFileName = newMetaFileName;
+        }
+        // something dun borked up in here
+        catch (...)
+        {
+            m_pathToResource.erase( newFileName );
+            m_pathToResource[ oldFileName ] = item;
+
+            return false;
+        }
+
+        ResourceRenameArgs renameEvent;
+
+        renameEvent.resource = item;
+        renameEvent.oldName = oldFileName;
+
+        Dispatch( RP_RESOURCE_RENAMED, &renameEvent );
+
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1109,9 +1187,39 @@ namespace ursine
         buildResource( buildContext );
         buildResourcePreview( buildContext );
 
-        URSINE_TODO( "Make generated resources better" );
-
         InvalidateResourceCache( resource );
+
+        std::list<ResourceBuildContext> generatedResources;
+
+        addGeneratedResources( buildContext, generatedResources );
+
+        ResourceChangeArgs addEvent;
+
+        addEvent.type = RP_RESOURCE_ADDED;
+        addEvent.isGenerated = true;
+
+        // handle the generated resources
+        for (auto &generated : generatedResources)
+        {
+            // new if we haven't built it yet (i.e the cache hasn't been made yet)
+            auto isNew = 
+                !generated.resource->m_buildCache.processedType.IsValid( );
+
+            if (buildIsInvalidated( generated.resource ))
+            {
+                buildResource( generated );
+                buildResourcePreview( generated );
+
+                InvalidateResourceCache( generated.resource );
+            }
+
+            if (isNew)
+            {
+                addEvent.resource = generated.resource;
+
+                Dispatch( addEvent.type, &addEvent );
+            }
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1148,7 +1256,15 @@ namespace ursine
         {
             try
             {
-                remove( resource->m_fileName );
+                if (resource->m_isDirectoryResource)
+                {
+                    remove_all( resource->m_fileName );
+                }
+                else
+                {
+                    remove( resource->m_fileName );
+                }
+                
                 remove( resource->m_metaFileName );
                 remove( resource->m_buildFileName );
                 remove( resource->m_buildPreviewFileName );
@@ -1200,30 +1316,46 @@ namespace ursine
 
         // if this file is contained in a directory resource, make sure the action is mapped
         // to the directory, not the modified subresource itself
-        m_pendingFileActions[
-            directoryResource ? 
-                directoryResource->m_fileName : 
-                actionData.absoluteFilePath
-        ] = actionData;
+        actionData.sourcePath = directoryResource ?
+            directoryResource->m_fileName :
+            actionData.absoluteFilePath;
+
+        m_pendingFileActions[ actionData.sourcePath ] = actionData;
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
     void rp::ResourcePipelineManager::processPendingFileActions(void)
     {
-        while (m_isProcessingFileActions)
+        while (m_isFileActionsActive)
         {
-            decltype( m_pendingFileActions ) actionsCopy;
-
-            // clear the pending file actions by move constructing it to the copy
+            if (m_isProcessingFileActions)
             {
-                std::lock_guard<std::mutex> lock( m_fileWatchActionMutex );
+                decltype( m_pendingFileActions ) actionsCopy;
+                std::vector<FileWatchAction> staleActions;
 
-                actionsCopy = move( m_pendingFileActions );
+                // clear the pending file actions by move constructing it to the copy
+                {
+                    std::lock_guard<std::mutex> lock( m_fileWatchActionMutex );
+
+                    actionsCopy = move( m_pendingFileActions );
+                }
+
+                for (auto &entry : actionsCopy)
+                {
+                    if (!processPendingFileAction( entry.first, entry.second ))
+                        staleActions.push_back( entry.second );
+                }
+
+                // re-add the stale actions
+                {
+                    std::lock_guard<std::mutex> lock( m_fileWatchActionMutex );
+
+                    // add each of the stale actions back that don't already exist
+                    for (auto &stale : staleActions)
+                        m_pendingFileActions.emplace( stale.sourcePath, stale );
+                }
             }
-
-            for (auto &entry : actionsCopy)
-                processPendingFileAction( entry.first, entry.second );
 
             // make sure we don't exhaust the CPU
             std::this_thread::sleep_for( milliseconds( 500 ) );
@@ -1232,13 +1364,13 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    void rp::ResourcePipelineManager::processPendingFileAction(const fs::path &resourceFile, const FileWatchAction &action)
+    bool rp::ResourcePipelineManager::processPendingFileAction(const fs::path &resourceFile, const FileWatchAction &action)
     {
         auto now = system_clock::now( );
 
         // this guy isn't stale yet, ignore him
-        if (now - action.time > kResourceActionStaleDuration)
-            return;
+        if (now - action.time < kResourceActionStaleDuration)
+            return false;
 
         switch (action.type)
         {
@@ -1281,7 +1413,7 @@ namespace ursine
 
                 // this resource doesn't exist
                 if (search == m_pathToResource.end( ))
-                    return;
+                    return true;
 
                 // modify the resource this meta file represents
                 auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, search->second );
@@ -1289,7 +1421,7 @@ namespace ursine
                 if (handler.joinable( ))
                     handler.detach( );
 
-                return;
+                return true;
             }
 
             auto search = m_pathToResource.find( resourceFile );
@@ -1315,6 +1447,8 @@ namespace ursine
         default:
             break;
         }
+
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////

@@ -7,7 +7,7 @@ namespace ursine
     namespace resources
     {
         ResourceReference::ResourceReference(void)
-            : m_resourceGUID( GUIDNullGenerator( )( ) )
+            : m_resourceGUID( kNullGUID )
         {
 
         }
@@ -55,7 +55,7 @@ namespace ursine
             // parse error
             catch (...)
             {
-                m_resourceGUID = GUIDNullGenerator( )( );
+                m_resourceGUID = kNullGUID;
             }
         }
     }
