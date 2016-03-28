@@ -53,22 +53,18 @@ void VineDeathState::Enter(VineAIStateMachine *machine)
 
 void VineDeathState::onFlopFinish(EVENT_HANDLER(Entity))
 {
-    EVENT_SENDER(Entity, sender);
-
-    sender->Listener( this )
+    m_animator->GetOwner( )->Listener( this )
         .Off( ENTITY_ANIMATION_FINISH, &VineDeathState::onFlopFinish );
 
-    m_animator->SetCurrentState( "Spike_Down" );
-
-    sender->Listener( this )
+    m_animator->GetOwner( )->Listener( this )
         .On( ENTITY_ANIMATION_FINISH, &VineDeathState::onDigFinish );
+
+    m_animator->SetCurrentState( "Spike_Down" );
 }
 
 void VineDeathState::onDigFinish(EVENT_HANDLER(Entity))
 {
-    EVENT_SENDER(Entity, sender);
-
-    sender->Listener( this )
+    m_animator->GetOwner( )->Listener( this )
         .Off( ENTITY_ANIMATION_FINISH, &VineDeathState::onDigFinish );
 
     m_owner->Delete( );

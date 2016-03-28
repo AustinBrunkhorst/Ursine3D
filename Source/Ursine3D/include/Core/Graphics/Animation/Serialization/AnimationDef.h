@@ -34,6 +34,8 @@ namespace pseudodx
         XMUINT4() {}
         XMUINT4(uint32_t _x, uint32_t _y, uint32_t _z, uint32_t _w) : x(_x), y(_y), z(_z), w(_w) {}
         XMUINT4& operator= (const XMUINT4& Uint4) { x = Uint4.x; y = Uint4.y; z = Uint4.z; w = Uint4.w; return *this; }
+        bool operator== (const XMUINT4& Uint4) { return ((x == Uint4.x) && (y == Uint4.y) && (z == Uint4.z) && (w == Uint4.w)) ? true : false; }
+        bool operator!= (const XMUINT4& Uint4) { return (!(*this == Uint4)); }
     };
 
     struct XMFLOAT4
@@ -45,6 +47,8 @@ namespace pseudodx
         XMFLOAT4() {}
         XMFLOAT4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
         XMFLOAT4& operator= (const XMFLOAT4& Float4) { x = Float4.x; y = Float4.y; z = Float4.z; w = Float4.w; return *this; }
+        bool operator== (const XMFLOAT4& Float4) { return ( (x == Float4.x) && (y == Float4.y) && (z == Float4.z) && (w == Float4.w) ) ? true : false; }
+        bool operator!= (const XMFLOAT4& Float4) { return (!(*this == Float4)); }
     };
 
     struct XMFLOAT3
@@ -56,6 +60,8 @@ namespace pseudodx
         XMFLOAT3() {}
         XMFLOAT3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
         XMFLOAT3& operator= (const XMFLOAT3& Float3) { x = Float3.x; y = Float3.y; z = Float3.z; return *this; }
+        bool operator== (const XMFLOAT3& Float3) { return ( (x == Float3.x) && (y == Float3.y) && (z == Float3.z) ) ? true : false; }
+        bool operator!= (const XMFLOAT3& Float3) { return ( !(*this == Float3) ); }
     };
 
     struct XMFLOAT2
@@ -66,6 +72,8 @@ namespace pseudodx
         XMFLOAT2() {}
         XMFLOAT2(float _x, float _y) : x(_x), y(_y) {}
         XMFLOAT2& operator= (const XMFLOAT2& Float2) { x = Float2.x; y = Float2.y; return *this; }
+        bool operator== (const XMFLOAT2& Float2) { return ( (x == Float2.x) && (y == Float2.y) ) ? true : false; }
+        bool operator!= (const XMFLOAT2& Float2) { return ( !(*this == Float2) ); }
     };
 }
 
@@ -220,6 +228,14 @@ namespace ursine
                 pseudodx::XMFLOAT3 trans;
                 pseudodx::XMFLOAT4 rot;
                 pseudodx::XMFLOAT3 scl;
+
+                KeyFrame() :
+                    time(0.f),
+                    trans(0.f, 0.f, 0.f),
+                    rot(0.f,0.f,0.f,1.f),
+                    scl(1.f,1.f,1.f)
+                {
+                }
             };
 
             struct BoneAnimation
@@ -263,7 +279,7 @@ namespace ursine
             };
 
             // Control Points
-            typedef std::unordered_map<unsigned int, CtrlPoint*> ControlPoints;
+            typedef std::unordered_map<unsigned int, CtrlPoint> ControlPoints;
 
             struct AnimationClip
             {
@@ -362,16 +378,16 @@ namespace ursine
 
             struct FbxModel
             {
-                std::vector<FbxPose*>	mAnimPose;
+                std::vector<FbxPose*>   mAnimPose;
 
                 // ===== Data we need to export =======
                 // need to be exported as binary
-                eLayout					mLayout;
-                std::string				name;
-                FbxBoneData				mBoneData;
-                std::vector<MeshData*>	mMeshData;
+                eLayout                 mLayout;
+                std::string             name;
+                FbxBoneData             mBoneData;
+                std::vector<MeshData*>  mMeshData;
                 std::vector<FbxMaterial*> mMaterials;
-                std::vector<ControlPoints*> mCtrlPoints;
+                std::vector<ControlPoints> mCtrlPoints;
                 std::vector<AnimationData*> mAnimationData;
                 // ====================================
                 FbxModel() {}

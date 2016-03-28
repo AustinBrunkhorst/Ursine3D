@@ -24,6 +24,7 @@ public:
 
     void Enter(BossAIStateMachine *machine) override;
     void Update(BossAIStateMachine *machine) override;
+    void Exit(BossAIStateMachine *machine) override;
 
 private:
 

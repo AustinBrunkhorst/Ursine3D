@@ -154,20 +154,25 @@ namespace ursine
         {
             // Increment the current state's time marker
             (*currSt)->IncrementTimePosition( dt * m_speedScalar );
+
+            //unsigned keyframeCount1 = (*currAni)->GetRigKeyFrameCount();
+            //auto &curr_firstFrame = (*currAni)->GetKeyframe(0, 0);
+            //auto &curr_lastFrame = (*currAni)->GetKeyframe(keyframeCount1 - 1, 0);
+            //(*currSt)->SetTimePosition( curr_firstFrame.length );
                         
             bool bFut = (*futSt) && (*futAni);
 
             // if there is no future state or future animation, then loop current animation again and again
             if (!bFut)
-            {                
+            {
                 if ((*currSt)->PlayingAnimation() && !m_finishEventSent)
                 {
                     if (!(*currSt)->IsLooping( ))
                     {
+                        m_finishEventSent = true;
+
                         GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
 
-                        m_finishEventSent = true;
-                
                         transFactor = 0.0f;
                     }
 
@@ -387,7 +392,6 @@ namespace ursine
             }
         }
 
-
         StateBlender *Animator::getStateBlenderByNames(const std::string &currst, const std::string &futst)
         {
             if (currst == "" || futst == "")
@@ -531,6 +535,23 @@ namespace ursine
 
             // Iterate through all bones and spawn them as children to the rig root
             auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
+
+            // if there is no matching rig, it means this mesh is static mesh
+            // throw message box
+            if (!rig)
+            {
+                NotificationConfig config;
+
+                config.type = NOTIFY_ERROR;
+                config.header = "Error";
+                config.message = "The Model is static mesh. There's no matching rig or animation for this.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds(5.0f);
+
+                EditorPostNotification(config);
+
+                return;
+            }
 
             createBoneEntities( m_rigRoot->GetTransform( ), rig->GetBone( 0 ) );
         }

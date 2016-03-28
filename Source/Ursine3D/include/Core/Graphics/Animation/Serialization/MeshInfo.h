@@ -35,47 +35,25 @@ namespace ursine
 
                 MeshVertex()
                 {
-                    pos = pseudodx::XMFLOAT3(0, 0, 0);
-                    normal = pseudodx::XMFLOAT3(0, 0, 0);
-                    tangent = pseudodx::XMFLOAT3(0, 0, 0);
-                    uv = pseudodx::XMFLOAT2(0, 0);
+                    pos = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
+                    normal = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
+                    tangent = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
+                    uv = pseudodx::XMFLOAT2(0.f, 0.f);
                     ctrlIndices = pseudodx::XMUINT4(0, 0, 0, 0);
-                    ctrlBlendWeights = pseudodx::XMFLOAT4(0, 0, 0, 0);
+                    ctrlBlendWeights = pseudodx::XMFLOAT4(0.f, 0.f, 0.f, 0.f);
                 }
 
                 bool operator==(const MeshVertex& rhs)
                 {
-                    if ((pos.x != rhs.pos.x) ||
-                        (pos.y != rhs.pos.y) ||
-                        (pos.z != rhs.pos.z))
-                        return false;
+                    if ( (pos == rhs.pos)
+                        && (normal == rhs.normal)
+                        && (tangent == rhs.tangent)
+                        && (uv == rhs.uv)
+                        && (ctrlIndices == rhs.ctrlIndices)
+                        && (ctrlBlendWeights == rhs.ctrlBlendWeights) )
+                        return true;
 
-                    if ((normal.x != rhs.normal.x) ||
-                        (normal.y != rhs.normal.y) ||
-                        (normal.z != rhs.normal.z))
-                        return false;
-
-                    if ((tangent.x != rhs.tangent.x) ||
-                        (tangent.y != rhs.tangent.y) ||
-                        (tangent.z != rhs.tangent.z))
-                        return false;
-
-                    if ((uv.x != rhs.uv.x) || (uv.y != rhs.uv.y))
-                        return false;
-
-                    if ((ctrlIndices.x != rhs.ctrlIndices.x) ||
-                        (ctrlIndices.y != rhs.ctrlIndices.y) ||
-                        (ctrlIndices.z != rhs.ctrlIndices.z) ||
-                        (ctrlIndices.w != rhs.ctrlIndices.w))
-                        return false;
-
-                    if ((ctrlBlendWeights.x != rhs.ctrlBlendWeights.x) ||
-                        (ctrlBlendWeights.y != rhs.ctrlBlendWeights.y) ||
-                        (ctrlBlendWeights.z != rhs.ctrlBlendWeights.z) ||
-                        (ctrlBlendWeights.w != rhs.ctrlBlendWeights.w))
-                        return false;
-
-                    return true;
+                    return false;
                 }
 
                 bool IsValidWeights()

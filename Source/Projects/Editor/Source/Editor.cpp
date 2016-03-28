@@ -14,11 +14,11 @@
 #include "Precompiled.h"
 
 #include "Editor.h"
-#include "Project.h"
+#include "Project.h" 
 #include <Application.h>
 #include <Scene.h>
 #include <WindowManager.h>
-#include <UIManager.h>
+#include <UIManager.h> 
 #include <Timer.h>
 
 #include <ResourcePipelineManager.h>

@@ -257,7 +257,11 @@ namespace ursine
                     keyframe.trans.z
                 );
 
-                auto scale = SVec3(1, 1, 1);
+                auto scale = SVec3(
+                    keyframe.scl.x,
+                    keyframe.scl.y,
+                    keyframe.scl.z
+                );
 
                 auto rot = SQuat(
                     keyframe.rot.x, 
@@ -317,7 +321,7 @@ namespace ursine
         m_name2Rig[name] = rig;
         return rigIndex;
     }
-
+    
     void AnimationBuilder::interpolateRigKeyFrames(
         const std::vector<AnimationKeyframe>& frame1,
         const std::vector<AnimationKeyframe>& frame2,
@@ -378,7 +382,11 @@ namespace ursine
             boneData.boneSpacePosition.z
         );
 
-        auto boneScale = SVec3(1, 1, 1);
+        auto boneScale = SVec3(
+            boneData.boneSpaceScaling.x,
+            boneData.boneSpaceScaling.y,
+            boneData.boneSpaceScaling.z
+        );
 
         auto boneRot = SQuat(
             boneData.boneSpaceRotation.x,
@@ -395,7 +403,11 @@ namespace ursine
             boneData.bindPosition.z 
         );
 
-        auto bindScale = SVec3(1, 1, 1);
+        auto bindScale = SVec3(
+            boneData.bindScaling.x,
+            boneData.bindScaling.y,
+            boneData.bindScaling.z
+        );
 
         auto bindRot = SQuat( 
             boneData.bindRotation.x, 
