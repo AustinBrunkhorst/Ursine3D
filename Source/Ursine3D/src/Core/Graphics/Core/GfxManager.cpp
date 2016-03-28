@@ -1158,19 +1158,19 @@ namespace ursine
                 // BILLBOARD PASS
                 billboardPass.
                     Set(
-                {
-                    RENDER_TARGET_SWAPCHAIN,
-                    RENDER_TARGET_DEFERRED_NORMAL,
-                        RENDER_TARGET_DEFERRED_SPECPOW
-                }
-                        ).
-                    Set(SHADER_BILLBOARD2D).
-                    Set(DEPTH_STENCIL_MAIN).
-                    Set(DEPTH_STATE_DEPTH_NOSTENCIL).
-                    Set(SAMPLER_STATE_WRAP_TEX).
-                    Set(RASTER_STATE_SOLID_BACKCULL).
-                    Set(BLEND_STATE_COUNT).
-                    Set(DXCore::TOPOLOGY_POINT_LIST).
+                        {
+                            RENDER_TARGET_SWAPCHAIN,
+                            RENDER_TARGET_DEFERRED_NORMAL,
+                            RENDER_TARGET_DEFERRED_SPECPOW
+                        }
+                    ).
+                    Set( SHADER_BILLBOARD2D ).
+                    Set( DEPTH_STENCIL_MAIN ).
+                    Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
+                    Set( SAMPLER_STATE_WRAP_TEX ).
+                    Set( RASTER_STATE_SOLID_BACKCULL ).
+                    Set( BLEND_STATE_DEFAULT ).
+                    Set( DXCore::TOPOLOGY_POINT_LIST ).
 
                     AddResource(&viewBuffer).
                     AddResource(&spriteModel).
@@ -1179,7 +1179,7 @@ namespace ursine
 
                     Accepts(RENDERABLE_BILLBOARD2D).
                     Processes(&billboardPorcessor).
-                    InitializePass();
+                InitializePass( );
 
                 /////////////////////////////////////////////////////////
                 // LINE RENDER PASS

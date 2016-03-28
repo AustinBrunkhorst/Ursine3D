@@ -62,9 +62,9 @@ namespace ursine
             machine->GetEntity(  ).Get( )->Delete( );
         }
 
-        void BomberExplodeState::SetExplosionObject(ursine::resources::ResourceReference& dmgExplosionEntity)
+        void BomberExplodeState::SetExplosionArchetype(ursine::resources::ResourceReference& dmgExplosionArchetype)
         {
-            m_objToSpawn = dmgExplosionEntity;
+            m_objToSpawn = dmgExplosionArchetype;
         }
     }
 }
