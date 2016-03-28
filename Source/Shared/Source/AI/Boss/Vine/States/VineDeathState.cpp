@@ -19,6 +19,7 @@
 #include "VineAIComponent.h"
 
 #include <SphereColliderComponent.h>
+#include <GhostComponent.h>
 #include <EntityEvent.h>
 
 using namespace ursine;
@@ -49,6 +50,12 @@ void VineDeathState::Enter(VineAIStateMachine *machine)
 
     for (auto &collider : colliders)
         collider->GetOwner( )->RemoveComponent<SphereCollider>( );
+
+    // Delete all ghost bodies
+    auto ghosts = m_owner->GetComponentsInChildren<Ghost>( );
+
+    for (auto &ghost : ghosts)
+        ghost->GetOwner( )->RemoveComponent<Ghost>( );
 }
 
 void VineDeathState::onFlopFinish(EVENT_HANDLER(Entity))
