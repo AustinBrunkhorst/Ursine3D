@@ -40,9 +40,15 @@ namespace ursine
             );
 
             EditorField(
-                ursine::Vec2 dimensions,
-                GetDimensions,
-                SetDimensions
+                bool screenSpace,
+                GetScreenSpace,
+                SetScreenSpace
+            );
+
+            EditorField(
+                Vec2 scale,
+                GetScale,
+                SetScale
             );
 
             EditorMeta(BitMaskEditor)
@@ -65,8 +71,11 @@ namespace ursine
             const resources::ResourceReference &GetTexture(void) const;
             void SetTexture(const resources::ResourceReference &texture);
 
-            ursine::Vec2 GetDimensions(void) const;
-            void SetDimensions(const ursine::Vec2 &dimensions);
+            bool GetScreenSpace(void) const;
+            void SetScreenSpace(bool flag);
+
+            Vec2 GetScale(void) const;
+            void SetScale(const Vec2 &scale);
 
             RenderMask GetRenderMask(void) const;
             void SetRenderMask(RenderMask mask);
@@ -78,6 +87,10 @@ namespace ursine
             RenderableComponentBase *m_base;
 
             resources::ResourceReference m_texture;
+
+            bool m_screenSpace;
+
+            Vec2 m_scale;
 
             void updateRenderer(void);
 
