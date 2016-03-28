@@ -59,7 +59,7 @@ namespace ursine
         template<typename SystemType>
         SystemType *CoreSystem(void);
 
-		static void PostMainThread(Task task);
+        static void PostMainThread(Task task);
 
     protected:
         // determines if the application should continue updating
@@ -83,11 +83,11 @@ namespace ursine
 
         EventDispatcher<uint32> m_platformEvents;
 
-		std::mutex m_mutex;
+        std::mutex m_mutex;
 
-		std::vector<Task> m_tasks;
+        std::vector<Task> m_tasks;
 
-		void flushTasks(void);
+        void flushTasks(void);
     };
 }
 

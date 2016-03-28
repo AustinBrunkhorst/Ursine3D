@@ -44,6 +44,7 @@
 #include "DamageSystem/CritSpotComponent.h"
 #include "DamageSystem/DamageOnCollideComponent.h"
 #include "DamageSystem/DamageTextComponent.h"
+#include "DamageSystem/DamageTextManagerComponent.h"
 
 /////////////////////////////////
 //    Interaction System       //
@@ -99,6 +100,7 @@
 #include "AIHordelingTypeComponent.h"
 #include "FodderAIComponent.h"
 #include "TankAIComponent.h"
+#include "BomberAIComponent.h"
 
 /////////////////////////////////
 //       Level Logic           //

@@ -20,6 +20,8 @@
 #include "Model3DComponent.h"
 #include "EntityEvent.h"
 #include "Notification.h"
+#include "AnimatorSystem.h"
+#include "SystemManager.h"
 
 namespace
 {
@@ -34,7 +36,7 @@ namespace ursine
     {
         NATIVE_COMPONENT_DEFINITION(Animator);
 
-        Animator::Animator( )
+        Animator::Animator(void)
             : BaseComponent( )
             , m_playing( true )
             , m_debug( false )
@@ -47,9 +49,22 @@ namespace ursine
             , m_finishEventSent( false )
             , m_enableBoneManipulation( false ) { }
 
+        Animator::~Animator(void)
+        {
+            // enable deletion on the rig root if it exists
+            if (m_rigRoot)
+                enableDeletionOnEntities( m_rigRoot, true );
+        }
+
         void Animator::OnSceneReady(Scene *scene)
         {
-            setRigTransformPointers( );
+            // If animator isn't playing, and we have a current state,
+            // make the rig represent the first frame of animation
+            if (!m_playing && !m_curStName.empty( ))
+            {
+                GetOwner( )->Listener( this )
+                    .On( ENTITY_HIERARCHY_SERIALIZED, &Animator::setAnimationToFirstFrame );
+            }
         }
 
         void Animator::OnSerialize(Json::object &output) const
@@ -139,20 +154,25 @@ namespace ursine
         {
             // Increment the current state's time marker
             (*currSt)->IncrementTimePosition( dt * m_speedScalar );
+
+            //unsigned keyframeCount1 = (*currAni)->GetRigKeyFrameCount();
+            //auto &curr_firstFrame = (*currAni)->GetKeyframe(0, 0);
+            //auto &curr_lastFrame = (*currAni)->GetKeyframe(keyframeCount1 - 1, 0);
+            //(*currSt)->SetTimePosition( curr_firstFrame.length );
                         
             bool bFut = (*futSt) && (*futAni);
 
             // if there is no future state or future animation, then loop current animation again and again
             if (!bFut)
-            {                
+            {
                 if ((*currSt)->PlayingAnimation() && !m_finishEventSent)
                 {
                     if (!(*currSt)->IsLooping( ))
                     {
-                        GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
-                
                         m_finishEventSent = true;
-                
+
+                        GetOwner( )->Dispatch( ENTITY_ANIMATION_FINISH, nullptr );
+
                         transFactor = 0.0f;
                     }
 
@@ -318,26 +338,35 @@ namespace ursine
             m_blending = false;
         }
 
-        float Animator::getAnimationTimePosition(void) const
+        AnimationState *Animator::getAnimationState(const std::string &stateName)
         {
             for (auto &x : stArray)
             {
-                if (x.GetStateName( ) == m_curStName)
-                    return x.GetTimePosition( );
+                if (x.GetStateName( ) == stateName)
+                {
+                    return &x;
+                }
             }
+
+            return nullptr;
+        }
+
+        float Animator::getAnimationTimePosition(void)
+        {
+            auto state = getAnimationState( m_curStName );
+
+            if (state)
+                return state->GetTimePosition( );
+
             return 0.0f;
         }
 
         void Animator::setAnimationTimePosition(float position)
         {
-            for (auto &x : stArray)
-            {
-                if (x.GetStateName( ) == m_curStName)
-                {
-                    x.SetTimePosition( position );
-                    return;
-                }
-            }
+            auto state = getAnimationState( m_curStName );
+
+            if (state)
+                state->SetTimePosition( position );
         }
 
         // find the closest animation keyframe of the state, and set a transition position
@@ -362,7 +391,6 @@ namespace ursine
                 }
             }
         }
-
 
         StateBlender *Animator::getStateBlenderByNames(const std::string &currst, const std::string &futst)
         {
@@ -508,6 +536,23 @@ namespace ursine
             // Iterate through all bones and spawn them as children to the rig root
             auto *rig = AnimationBuilder::GetAnimationRigByName( m_rig );
 
+            // if there is no matching rig, it means this mesh is static mesh
+            // throw message box
+            if (!rig)
+            {
+                NotificationConfig config;
+
+                config.type = NOTIFY_ERROR;
+                config.header = "Error";
+                config.message = "The Model is static mesh. There's no matching rig or animation for this.";
+                config.dismissible = true;
+                config.duration = TimeSpan::FromSeconds(5.0f);
+
+                EditorPostNotification(config);
+
+                return;
+            }
+
             createBoneEntities( m_rigRoot->GetTransform( ), rig->GetBone( 0 ) );
         }
 
@@ -622,6 +667,46 @@ namespace ursine
 
                 stEvent.m_sent = false;
             }
+        }
+
+        void Animator::setAnimationToFirstFrame(EVENT_HANDLER(Entity))
+        {
+            EVENT_SENDER(Entity, sender);
+
+            sender->Listener( this )
+                .Off( ENTITY_HIERARCHY_SERIALIZED, &Animator::setAnimationToFirstFrame );
+
+            auto state = getAnimationState( m_curStName );
+
+            if (!state)
+                return;
+
+            if (!loadStateAnimation( state ))
+                return;
+
+            auto animation = state->GetAnimation( );
+
+            auto &curr_firstFrame = animation->GetKeyframe( 0, 0 );
+
+            state->SetTimePosition( curr_firstFrame.length );
+
+            // make sure we have a rig
+            if (!m_rigRoot)
+            {
+                m_rigRoot = GetOwner( )->GetChildByName( kRigRootName );
+
+                if (!m_rigRoot)
+                    return;
+            }
+
+            // Update this animator once
+            m_playing = true;
+
+            auto animatorSystem = GetOwner( )->GetWorld( )->GetEntitySystem<AnimatorSystem>( );
+
+            animatorSystem->updateAnimator( this, Application::Instance->GetDeltaTime( ) );
+
+            m_playing = false;
         }
     }
 }

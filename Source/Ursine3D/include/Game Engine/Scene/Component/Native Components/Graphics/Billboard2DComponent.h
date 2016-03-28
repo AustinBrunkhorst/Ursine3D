@@ -32,18 +32,30 @@ namespace ursine
             friend class RenderSystem;
 
         public:
-            EditorMeta(BitMaskEditor)
-            EditorField(
-                ursine::ecs::RenderMask renderMask,
-                GetRenderMask,
-                SetRenderMask
-            );
-
             EditorResourceField(
                 ursine::resources::TextureData,
                 texture,
                 GetTexture,
                 SetTexture
+            );
+
+            EditorField(
+                bool screenSpace,
+                GetScreenSpace,
+                SetScreenSpace
+            );
+
+            EditorField(
+                Vec2 scale,
+                GetScale,
+                SetScale
+            );
+
+            EditorMeta(BitMaskEditor)
+            EditorField(
+                ursine::ecs::RenderMask renderMask,
+                GetRenderMask,
+                SetRenderMask
             );
 
             Meta(Enable)
@@ -56,11 +68,17 @@ namespace ursine
             //get/set model
             graphics::Billboard2D *GetBillboard(void);
 
-            RenderMask GetRenderMask(void) const;
-            void SetRenderMask(RenderMask mask);
-
             const resources::ResourceReference &GetTexture(void) const;
             void SetTexture(const resources::ResourceReference &texture);
+
+            bool GetScreenSpace(void) const;
+            void SetScreenSpace(bool flag);
+
+            Vec2 GetScale(void) const;
+            void SetScale(const Vec2 &scale);
+
+            RenderMask GetRenderMask(void) const;
+            void SetRenderMask(RenderMask mask);
 
         private:
             graphics::GfxAPI *m_graphics;
@@ -69,6 +87,10 @@ namespace ursine
             RenderableComponentBase *m_base;
 
             resources::ResourceReference m_texture;
+
+            bool m_screenSpace;
+
+            Vec2 m_scale;
 
             void updateRenderer(void);
 

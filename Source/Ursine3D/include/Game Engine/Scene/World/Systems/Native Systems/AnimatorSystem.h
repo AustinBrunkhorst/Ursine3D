@@ -34,6 +34,8 @@ namespace ursine
 
         private:
 
+            friend class Animator;
+
             void OnInitialize(void) override;
             void OnRemove(void) override;
 
@@ -53,6 +55,7 @@ namespace ursine
             void debugDraw(Animator *animator, const AnimationRig *rig, const std::vector<SMat4> &vec);
 
             std::vector<Animator*> m_animators;
+
         } Meta(
             Enable,
             WhiteListMethods,

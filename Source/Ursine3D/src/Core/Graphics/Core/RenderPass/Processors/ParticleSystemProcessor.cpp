@@ -56,11 +56,13 @@ namespace ursine
             // SET RENDER SPACE /////////////////////////////////////
             PointGeometryBuffer pgb;
             if (particleSystem.GetSystemSpace( ))
-                pgb.cameraPosition = DirectX::XMFLOAT4( 0, 0, 0, 0 );
+            {
+                m_manager->bufferManager->MapTransformBuffer( SMat4::Identity( ) );
+            }
             else
-                pgb.cameraPosition = DirectX::XMFLOAT4( 
-                    particleSystem.GetPosition( ).GetFloatPtr( ) 
-                );
+            {
+                m_manager->bufferManager->MapTransformBuffer(particleSystem.GetTransform( ));
+            }
 
             // SET COLOR ////////////////////////////////////////////
             // set color

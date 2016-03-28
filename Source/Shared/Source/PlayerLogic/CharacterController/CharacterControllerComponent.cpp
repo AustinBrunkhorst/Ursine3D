@@ -151,6 +151,11 @@ bool CharacterController::GetLockLooking(void) const
 void CharacterController::SetLockLooking(bool flag)
 {
     m_lockLooking = flag;
+
+    if (m_lockLooking)
+        GetOwner( )->Dispatch( game::CEASE_FIRE, nullptr );
+    else
+        GetOwner( )->Dispatch( game::FIRE_AT_WILL, nullptr );
 }
 
 void CharacterController::OnInitialize(void)

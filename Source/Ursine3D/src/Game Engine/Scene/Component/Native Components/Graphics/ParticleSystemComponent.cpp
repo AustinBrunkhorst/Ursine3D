@@ -117,11 +117,10 @@ namespace ursine
 
         void ParticleSystem::updateRenderer(void)
         {
-            auto &owner = GetOwner( );
-
-            auto trans = owner->GetTransform( );
+            auto trans = GetOwner( )->GetTransform( );
 
             m_particleSystem->SetPosition( trans->GetWorldPosition( ) );
+            m_particleSystem->SetTransform( trans->GetLocalToWorldMatrix( ) );
 
             m_base->dirty = true;
         }

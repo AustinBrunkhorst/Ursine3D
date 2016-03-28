@@ -153,22 +153,15 @@ public:
 
     // Activate Weapon for use
     void ActivateWeapon(
-        const ursine::ecs::EntityHandle &owner, 
         const ursine::ecs::EntityHandle &whatToConnect, 
         ursine::ecs::Transform* camHandle, int ammo, int clip
     );
 
     // Detatch weapon from parent and turn into interactable
-    void DetachWeapon(
-        const ursine::ecs::EntityHandle &owner, 
-        const ursine::ecs::EntityHandle &whatToConnect
-    );
+    void DetachWeapon(void);
 
     // Deactivate Weapon for use
-    void DeactivateWeapon(
-        const ursine::ecs::EntityHandle &whatToDisconnect, 
-        int& saveAmmo, int& saveClip
-    );
+    void DeactivateWeapon(int& saveAmmo, int& saveClip);
 
     /////////////////////////////
     ////  Weapon Fire Logic  ////
@@ -233,6 +226,9 @@ protected:
 
     // who is my owner
     ursine::ecs::EntityHandle m_owner;
+
+    // who is telling me to shoot
+    ursine::ecs::EntityHandle m_boss;
 
     // Rate at which bullets can be fired
     float m_fireRate;
@@ -310,6 +306,9 @@ protected:
     void DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON));
 
     void PickUpAmmo(EVENT_HANDLER(ursine::ecs::PICKUP_AMMO));
+
+    void CeaseFire(EVENT_HANDLER(game::CEASE_FIRE));
+    void FireAtWill(EVENT_HANDLER(game::FIRE_AT_WILL));
 
     //***************************************//
     //  MUST IMPLEMENT, so base class can    //

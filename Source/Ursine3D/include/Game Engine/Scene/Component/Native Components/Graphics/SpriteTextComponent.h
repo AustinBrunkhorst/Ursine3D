@@ -82,6 +82,19 @@ namespace ursine
                 SetColor
             );
 
+            EditorMeta(BitMaskEditor)
+            EditorField(
+                ursine::ecs::RenderMask renderMask,
+                GetRenderMask,
+                SetRenderMask
+            );
+
+            EditorField(
+                bool overdraw,
+                GetOverdraw,
+                SetOverdraw
+            );
+
             Meta(Enable)
             SpriteText(void);
             ~SpriteText(void);
@@ -118,6 +131,9 @@ namespace ursine
 
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
+
+            ursine::ecs::RenderMask GetRenderMask(void) const;
+            void SetRenderMask(ursine::ecs::RenderMask mask);
 
             void SetOverdraw(bool flag);
             bool GetOverdraw(void) const;

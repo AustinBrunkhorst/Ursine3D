@@ -42,6 +42,8 @@ namespace ursine
 
             m_animator->Play( m_clipName );
 
+            m_finished = false;
+
             m_animator->Listener(this)
                 .On(EntityAnimatorEvent::FinishedAnimating, &DamageState::onAnimationFinished);
         }

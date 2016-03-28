@@ -582,7 +582,7 @@ namespace ursine
             m_cpuParticleData[ m_backIndex ].lifeTime = -1.0f;
         }
 
-        const SVec3 & ParticleSystem::GetPosition(void) const
+        const SVec3 &ParticleSystem::GetPosition(void) const
         {
             return m_position;
         }
@@ -630,6 +630,16 @@ namespace ursine
         void ParticleSystem::SetSystemSpace(const bool useWorldCoordinates)
         {
             m_worldSpace = useWorldCoordinates;
+        }
+
+        const SMat4& ParticleSystem::GetTransform(void) const
+        {
+            return m_transform;
+        }
+
+        void ParticleSystem::SetTransform(const SMat4& transform)
+        {
+            m_transform = transform;
         }
 
         /////////////////////////////////////////////////////////////

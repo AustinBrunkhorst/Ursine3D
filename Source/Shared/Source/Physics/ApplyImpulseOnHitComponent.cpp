@@ -105,6 +105,16 @@ void ApplyImpulseOnHit::SetListenToChildren(bool flag)
     NOTIFY_COMPONENT_CHANGED( "listenToChildren", m_listenToChildren );
 }
 
+const ursine::IgnoredEntityArray& ApplyImpulseOnHit::GetIgnoredEntities(void) const
+{
+    return m_ignored;
+}
+
+void ApplyImpulseOnHit::SetIgnoredEntities(const ursine::IgnoredEntityArray& ignored)
+{
+    m_ignored = ignored;
+}
+
 void ApplyImpulseOnHit::OnInitialize(void)
 {
     GetOwner( )->Listener( this )
@@ -128,6 +138,13 @@ void ApplyImpulseOnHit::onHierarchySerialized(EVENT_HANDLER(Entity))
 void ApplyImpulseOnHit::onCollision(EVENT_HANDLER(Entity))
 {
     EVENT_ATTRS(Entity, physics::CollisionEventArgs);
+
+    // if entity name is on ignore list
+    for (auto name : m_ignored)
+    {
+        if (name.compare( args->otherEntity->GetRoot( )->GetName( ) ) == 0)
+            return;
+    }
 
     if (m_effectSweptController && args->otherEntity->HasComponent<SweptController>( ))
     {

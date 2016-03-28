@@ -16,6 +16,7 @@
 
 #include "BossAIStateMachine.h"
 #include "LevelSegmentManagerComponent.h"
+#include "HealthComponent.h"
 
 class Health;
 
@@ -41,6 +42,18 @@ public:
         float seedshotTurnSpeed,
         GetSeedshotTurnSpeed,
         SetSeedshotTurnSpeed
+    );
+
+    EditorField(
+        float seedshotInterval,
+        GetSeedshotInterval,
+        SetSeedshotInterval
+    );
+
+    EditorField(
+        float seedshotCooldown,
+        GetSeedshotCooldown,
+        SetSeedshotCooldown
     );
 
     EditorField(
@@ -118,11 +131,30 @@ public:
         SetPollinateArchetype
     );
 
+    EditorField(
+        std::string invulnerableEmitterEntity,
+        GetInvulnerableEmitterEntityName,
+        SetInvulnerableEmitterEntityName
+    );
+
     EditorResourceField(
         ursine::resources::ArchetypeData,
         vineArchetype,
         GetVineArchetype,
         SetVineArchetype
+    );
+
+    Meta(InputRange(0.0f, 100.0f, 0.1f, "{{value.toFixed( 2 )}} %"))
+    EditorField(
+        float phase1HealthTransitionThreshold,
+        GetPhase1HealthTransitionThreshold,
+        SetPhase1HealthTransitionThreshold
+    );
+
+    EditorField(
+        float phase1DazedResetTimer,
+        GetPhase1DazedResetTimer,
+        SetPhase1DazedResetTimer
     );
 
     BossAI(void);
@@ -132,6 +164,12 @@ public:
 
     float GetSeedshotTurnSpeed(void) const;
     void SetSeedshotTurnSpeed(float turnSpeed);
+
+    float GetSeedshotInterval(void) const;
+    void SetSeedshotInterval(float interval);
+
+    float GetSeedshotCooldown(void) const;
+    void SetSeedshotCooldown(float cooldown);
 
     const std::string &GetSludgeshotEntityName(void) const;
     void SetSludgeshotEntityName(const std::string &entityName);
@@ -169,8 +207,17 @@ public:
     const ursine::resources::ResourceReference &GetPollinateArchetype(void) const;
     void SetPollinateArchetype(const ursine::resources::ResourceReference &pollinateArchetype);
 
+    const std::string &GetInvulnerableEmitterEntityName(void) const;
+    void SetInvulnerableEmitterEntityName(const std::string &entityName);
+
     const ursine::resources::ResourceReference &GetVineArchetype(void) const;
     void SetVineArchetype(const ursine::resources::ResourceReference &vineArchetype);
+
+    float GetPhase1HealthTransitionThreshold(void) const;
+    void SetPhase1HealthTransitionThreshold(float threshold);
+
+    float GetPhase1DazedResetTimer(void) const;
+    void SetPhase1DazedResetTimer(float timer);
 
     ursine::ecs::EntityHandle GetSeedshotEntity(void);
 
@@ -178,7 +225,12 @@ public:
 
     ursine::ecs::EntityHandle GetPollinateEntity(void);
 
+    ursine::ecs::EntityHandle GetInvulnerableEmitterEntity(void);
+
     void AddSpawnedVine(ursine::ecs::EntityHandle vine);
+
+    Meta(Disable)
+    const std::vector<ursine::ecs::EntityHandle> &GetVines(void) const;
 
 private:
 
@@ -191,10 +243,16 @@ private:
 
     void onVineDeath(EVENT_HANDLER(Health));
 
+    void updateHealth(void);
+
     void updateVineCount(void);
 
     // Seedshot variables
     float m_turnSpeed;
+
+    float m_seedshotInterval;
+
+    float m_seedshotCooldown;
 
     std::string m_seedshotEntity;
 
@@ -224,11 +282,23 @@ private:
 
     ursine::resources::ResourceReference m_pollinateArchetype;
 
+    // Invulnerable emitter
+    std::string m_invulnerableEmitterEntity;
+
     // Vine variables
     ursine::resources::ResourceReference m_vineArchetype;
 
     // The number of vines alive
     int m_vineCount;
+
+    // Vector of all vines
+    std::vector<ursine::ecs::EntityHandle> m_vines;
+
+    // The threshold we're using for the phase 1 transition (1-100%)
+    float m_phase1HealthThreshold;
+
+    // The timer we use for resetting the boss
+    float m_phase1DazedResetTimer;
 
     // Logic variables
     LevelSegments m_segment;
@@ -236,4 +306,4 @@ private:
     typedef std::vector<BossAIStateMachine::Handle> StateMachines;
     StateMachines m_bossLogic[5];
 
-} Meta(Enable);
+} Meta(Enable, RequiresComponents(typeof(Health)));
