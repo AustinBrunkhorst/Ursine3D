@@ -51,6 +51,8 @@ void BossSpawnVinesState::Enter(BossAIStateMachine *machine)
 
     if (m_spawners.size( ) == 0)
         m_finished = true;
+    else
+        m_finished = false;
 }
 
 void BossSpawnVinesState::Update(BossAIStateMachine *machine)
@@ -100,4 +102,11 @@ void BossSpawnVinesState::Update(BossAIStateMachine *machine)
         if (m_index >= m_spawners.size( ))
             m_finished = true;
     }
+}
+
+void BossSpawnVinesState::Exit(BossAIStateMachine *machine)
+{
+    m_index = 0;
+    m_spawners.clear( );
+    m_delayTimer = 0.0f;
 }

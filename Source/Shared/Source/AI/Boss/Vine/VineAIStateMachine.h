@@ -30,6 +30,8 @@ public:
     static const std::string InView;
 
     static const std::string GoHome;
+    static const std::string IsHome;
+
     static const std::string PursueTarget;
 
     static const std::string Dead;

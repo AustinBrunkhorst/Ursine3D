@@ -36,6 +36,7 @@ namespace
 
 Health::Health(void)
     : BaseComponent( )
+    , EventDispatcher<HealthEvents>( this )
     , m_health( 100 )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
@@ -57,6 +58,8 @@ HealthType Health::GetHealthType(void) const
 void Health::SetHealthType(HealthType type)
 {
     m_type = type;
+
+    NOTIFY_COMPONENT_CHANGED( "healthType", m_type );
 }
 
 float Health::GetHealth(void) const
@@ -67,6 +70,8 @@ float Health::GetHealth(void) const
 void Health::SetHealth(const float health)
 {
     m_health = health;
+
+    NOTIFY_COMPONENT_CHANGED( "EntityHealth", m_health );
 }
 
 float Health::GetMaxHealth(void) const
@@ -82,6 +87,8 @@ const ursine::resources::ResourceReference &Health::GetArchetypeOnDeath(void) co
 void Health::SetArchetypeOnDeath(const ursine::resources::ResourceReference &objToSpawn)
 {
     m_objToSpawn = objToSpawn;
+
+    NOTIFY_COMPONENT_CHANGED( "archetypeToSpawnOnDeath", m_objToSpawn );
 }
 
 bool Health::GetDeleteOnZeroHealth(void) const
@@ -92,6 +99,8 @@ bool Health::GetDeleteOnZeroHealth(void) const
 void Health::SetDeleteOnZeroHealth(bool flag)
 {
     m_deleteOnZero = flag;
+
+    NOTIFY_COMPONENT_CHANGED( "deleteOnZeroHealth", m_deleteOnZero );
 }
 
 bool Health::GetSpawnOnDeath(void) const
@@ -102,6 +111,8 @@ bool Health::GetSpawnOnDeath(void) const
 void Health::SetSpawnOnDeath(bool state)
 {
     m_spawnOnDeath = state;
+
+    NOTIFY_COMPONENT_CHANGED( "SpawnOnDeath", m_spawnOnDeath );
 }
 
 bool Health::GetInvulnerable(void) const
@@ -112,8 +123,11 @@ bool Health::GetInvulnerable(void) const
 void Health::SetInvulnerable(bool invulnerable)
 {
     m_invulnerable = invulnerable;
+
+    NOTIFY_COMPONENT_CHANGED( "invulnerable", m_invulnerable );
 }
 
+#include <iostream>
 void Health::DealDamage(float damage)
 {
     if (m_dead || m_invulnerable)
@@ -125,10 +139,11 @@ void Health::DealDamage(float damage)
     if (m_health < 0)
         return;
 
-    m_health -= damage;
+    SetHealth( GetHealth( ) - damage );
 
     if (m_health <= 0)
     {
+        std::cout << "HERE: " << GetOwner( )->GetName( ) << std::endl;
         Dispatch( HEALTH_ZERO, ursine::EventArgs::Empty );
 
         if (m_deleteOnZero)

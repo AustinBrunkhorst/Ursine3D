@@ -20,6 +20,9 @@
 #include "BossSpawnState.h"
 #include "BossInvulnerableToggleState.h"
 #include "BossDazedState.h"
+#include "BossChangePhaseState.h"
+#include "BossEnrageState.h"
+#include "BossPhase2VineHandlerState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -28,6 +31,8 @@
 #include <EntityEvent.h>
 #include <DebugSystem.h>
 #include <SystemManager.h>
+#include <TimerCondition.h>
+#include <FloatCondition.h>
 
 NATIVE_COMPONENT_DEFINITION( BossAI );
 
@@ -61,8 +66,6 @@ namespace
 
 BossAI::BossAI(void)
     : BaseComponent( )
-    , m_segment( LevelSegments::Empty )
-    , m_vineCount( 0 )
     , m_turnSpeed( 90.0f )
     , m_seedshotInterval( 2.0f )
     , m_seedshotCooldown( 2.0f )
@@ -73,7 +76,11 @@ BossAI::BossAI(void)
     , m_pollinateGravity( 10.0f )
     , m_pollinateSpreadDistance( 30.0f )
     , m_pollinateSpreadTime( 2.0f )
-    , m_pollinateProjectileLifeTime( 15.0f ) { }
+    , m_pollinateProjectileLifeTime( 15.0f )
+    , m_vineCount( 0 ) 
+    , m_phase1HealthThreshold( 75.0f )
+    , m_phase1DazedResetTimer( 5.0f )
+    , m_segment( LevelSegments::Empty ) { }
 
 const std::string &BossAI::GetSeedshotEntityName(void) const
 {
@@ -293,6 +300,30 @@ void BossAI::SetVineArchetype(const ResourceReference &vineArchetype)
     NOTIFY_COMPONENT_CHANGED( "vineArchetype", m_vineArchetype );
 }
 
+float BossAI::GetPhase1HealthTransitionThreshold(void) const
+{
+    return m_phase1HealthThreshold;
+}
+
+void BossAI::SetPhase1HealthTransitionThreshold(float threshold)
+{
+    m_phase1HealthThreshold = threshold;
+
+    NOTIFY_COMPONENT_CHANGED( "phase1HealthTransitionThreshold", m_phase1HealthThreshold );
+}
+
+float BossAI::GetPhase1DazedResetTimer(void) const
+{
+    return m_phase1DazedResetTimer;
+}
+
+void BossAI::SetPhase1DazedResetTimer(float timer)
+{
+    m_phase1DazedResetTimer = timer;
+
+    NOTIFY_COMPONENT_CHANGED( "phase1DazedResetTimer", m_phase1DazedResetTimer );
+}
+
 EntityHandle BossAI::GetSeedshotEntity(void)
 {
     return GetOwner( )->GetChildByName( m_seedshotEntity );
@@ -315,6 +346,8 @@ EntityHandle BossAI::GetInvulnerableEmitterEntity(void)
 
 void BossAI::AddSpawnedVine(EntityHandle vine)
 {
+    m_vines.push_back( vine );
+
     auto health = vine->GetComponent<Health>( );
 
     health->Listener( this )
@@ -323,6 +356,11 @@ void BossAI::AddSpawnedVine(EntityHandle vine)
     ++m_vineCount;
 
     updateVineCount( );
+}
+
+const std::vector<EntityHandle> &BossAI::GetVines(void) const
+{
+    return m_vines;
 }
 
 void BossAI::OnInitialize(void)
@@ -348,7 +386,7 @@ void BossAI::OnInitialize(void)
         m_segment = lm->GetCurrentSegment( );
     }
 
-    // Boss Phase I
+    // Boss Phase 1
     // - Boss uproots
     // - Spawn vines
     // - go into seedshotting
@@ -363,6 +401,7 @@ void BossAI::OnInitialize(void)
         auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
         auto dazed = sm->AddState<BossDazedState>( );
+        auto changePhaseState = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase2 );
 
         spawnBoss->AddTransition( spawnVines, "To Spawn Vines" );
         spawnVines->AddTransition( invulnerable, "To Invulnerable" );
@@ -373,20 +412,55 @@ void BossAI::OnInitialize(void)
                 );
         vulnerable->AddTransition( dazed, "To Dazed" );
 
+        // Go back to spawning vines if the reset timer is up
+        dazed->AddTransition( spawnVines, "Back To Spawn Vines" )
+             ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( m_phase1DazedResetTimer ) );
+
+        // Go to the next phase when the health is below a certain threashold
+        auto health = GetOwner( )->GetComponent<Health>( );
+        auto max = health->GetMaxHealth( );
+        auto fraction = m_phase1HealthThreshold * 0.01f;
+        auto threshold = max * fraction;
+
+        dazed->AddTransition( changePhaseState, "To Phase 2" )
+             ->AddCondition<sm::FloatCondition>( 
+                 BossAIStateMachine::Health, sm::Comparison::LessThan, threshold 
+             );
+
+
         sm->SetInitialState( spawnBoss );
 
         m_bossLogic[ 0 ].push_back( sm );
     }
 
-    // TESTING: seedshot
+    // Phase 2
+    // Boss angry
+    // Sound Queue
+    // Spawn all 4 vines
+    // Send out 2 towards player
+    // Timer exists for uprooting again.
+    // If damage threshold done is achieved, go home
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
+        auto enrage = sm->AddState<BossEnrageState>( );
+        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase2, 1.0f );
         auto seedshot = sm->AddState<BossSeedshotState>( );
 
-        sm->SetInitialState( seedshot );
+        enrage->AddTransition( spawnVines, "To Spawn Vines" );
+        spawnVines->AddTransition( seedshot, "To Seedshot" );
+
+        sm->SetInitialState( enrage );
 
         m_bossLogic[ 1 ].push_back( sm );
+
+        auto vineHandlerSM = std::make_shared<BossAIStateMachine>( this );
+
+        auto vineHandler = vineHandlerSM->AddState<BossPhase2VineHandlerState>( );
+
+        vineHandlerSM->SetInitialState( vineHandler );
+
+        m_bossLogic[ 1 ].push_back( vineHandlerSM );
     }
 
     // TESTING: Pollinate
@@ -426,6 +500,9 @@ void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
 
 void BossAI::onUpdate(EVENT_HANDLER(World))
 {
+    // update health
+    updateHealth( );
+
     int index = GetSegmentIndex( m_segment );
 
     if (index == -1)
@@ -460,9 +537,32 @@ void BossAI::onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager))
 
 void BossAI::onVineDeath(EVENT_HANDLER(Health))
 {
+    EVENT_SENDER(Health, sender);
+
+    auto owner = sender->GetOwner( );
+
+    m_vines.erase(
+        std::find( m_vines.begin( ), m_vines.end( ), owner )
+    );
+
     --m_vineCount;
 
     updateVineCount( );
+}
+
+void BossAI::updateHealth(void)
+{
+    auto health = GetOwner( )->GetComponent<Health>( );
+
+    auto currentHealth = health->GetHealth( );
+
+    for (int i = 0; i < kPhaseNumber; ++i)
+    {
+        for (auto &machine : m_bossLogic[ i ])
+        {
+            machine->SetFloat( BossAIStateMachine::Health,  currentHealth );
+        }
+    }
 }
 
 void BossAI::updateVineCount(void)

@@ -102,6 +102,7 @@ void VineGoHomeState::Update(VineAIStateMachine *machine)
 
             // We've successfully pursued our target
             machine->SetBool( VineAIStateMachine::GoHome, false );
+            machine->SetBool( VineAIStateMachine::IsHome, true );
 
             break;
         }
