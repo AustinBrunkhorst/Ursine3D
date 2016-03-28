@@ -156,7 +156,7 @@ float AbstractWeapon::GetAccuracy(void) const
 
 void AbstractWeapon::SetAccuracy(float accuracy)
 {
-    m_accuracy = math::Clamp( 0.0f, 1.0f, accuracy );
+    m_accuracy = math::Clamp( accuracy, 0.0f, 1.0f );
 }
 
 // Spread moefoe
