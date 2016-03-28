@@ -75,6 +75,9 @@ void BossSeedshotState::Update(BossAIStateMachine *machine)
             m_timer = boss->GetSeedshotInterval( );
 
         m_on = !m_on;
+
+        if (!m_on)
+            findTarget( boss );
     }
 
     // Find our target if we don't have one
@@ -109,14 +112,20 @@ void BossSeedshotState::Exit(BossAIStateMachine *machine)
 void BossSeedshotState::findTarget(BossAI *boss)
 {
     auto world = boss->GetOwner( )->GetWorld( );
-
-    // for now just pick one by random
     auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+    float minHealth = std::numeric_limits<float>( ).max( );
 
-    if (players.size( ) > 1)
-        m_target = players[ rand( ) % 2 ];
-    else
-        m_target = players[ 0 ];
+    // find the player with the lowest health
+    for (auto &player : players)
+    {
+        auto health = player->GetComponent<Health>( )->GetHealth( );
+
+        if (health < minHealth)
+        {
+            minHealth = health;
+            m_target = player;
+        }
+    }
 }
 
 void BossSeedshotState::rotateTowardsTarget(BossAI *boss)

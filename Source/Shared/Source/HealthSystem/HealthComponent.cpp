@@ -36,6 +36,7 @@ namespace
 
 Health::Health(void)
     : BaseComponent( )
+    , EventDispatcher<HealthEvents>( this )
     , m_health( 100 )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
@@ -126,6 +127,7 @@ void Health::SetInvulnerable(bool invulnerable)
     NOTIFY_COMPONENT_CHANGED( "invulnerable", m_invulnerable );
 }
 
+#include <iostream>
 void Health::DealDamage(float damage)
 {
     if (m_dead || m_invulnerable)
@@ -141,6 +143,7 @@ void Health::DealDamage(float damage)
 
     if (m_health <= 0)
     {
+        std::cout << "HERE: " << GetOwner( )->GetName( ) << std::endl;
         Dispatch( HEALTH_ZERO, ursine::EventArgs::Empty );
 
         if (m_deleteOnZero)

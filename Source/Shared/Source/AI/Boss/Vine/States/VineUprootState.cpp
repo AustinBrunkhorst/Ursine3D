@@ -44,6 +44,7 @@ void VineUprootState::Enter(VineAIStateMachine *machine)
     m_finished = false;
     m_animating = false;
     m_state = UprootState::Burrowing;
+    machine->SetBool( VineAIStateMachine::IsHome, false );
 }
 
 void VineUprootState::Update(VineAIStateMachine *machine)

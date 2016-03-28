@@ -229,6 +229,9 @@ public:
 
     void AddSpawnedVine(ursine::ecs::EntityHandle vine);
 
+    Meta(Disable)
+    const std::vector<ursine::ecs::EntityHandle> &GetVines(void) const;
+
 private:
 
     void OnInitialize(void) override;
@@ -287,6 +290,9 @@ private:
 
     // The number of vines alive
     int m_vineCount;
+
+    // Vector of all vines
+    std::vector<ursine::ecs::EntityHandle> m_vines;
 
     // The threshold we're using for the phase 1 transition (1-100%)
     float m_phase1HealthThreshold;

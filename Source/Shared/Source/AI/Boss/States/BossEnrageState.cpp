@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** BossSpawnState.cpp
+** BossEnrageState.cpp
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -11,7 +11,7 @@
 
 #include "Precompiled.h"
 
-#include "BossSpawnState.h"
+#include "BossEnrageState.h"
 
 #include "BossAIStateMachine.h"
 #include "BossAIComponent.h"
@@ -22,11 +22,11 @@
 using namespace ursine;
 using namespace ecs;
 
-BossSpawnState::BossSpawnState(void)
-    : BossAIState( "Boss Spawn" )
+BossEnrageState::BossEnrageState(void)
+    : BossAIState( "Boss Enrage" )
     , m_finished( false ) { }
 
-void BossSpawnState::Enter(BossAIStateMachine *machine)
+void BossEnrageState::Enter(BossAIStateMachine *machine)
 {
     auto boss = machine->GetBoss( )->GetOwner( );
 
@@ -35,9 +35,9 @@ void BossSpawnState::Enter(BossAIStateMachine *machine)
     if (animator)
     {
         animator->GetOwner( )->Listener( this )
-            .On( ENTITY_ANIMATION_FINISH, &BossSpawnState::onAnimationFinished );
+            .On( ENTITY_ANIMATION_FINISH, &BossEnrageState::onAnimationFinished );
 
-        animator->SetCurrentState( "Spike_Up" );
+        animator->SetCurrentState( "Enrage" );
         animator->SetPlaying( true );
 
         m_finished = false;
@@ -48,12 +48,12 @@ void BossSpawnState::Enter(BossAIStateMachine *machine)
     }
 }
 
-void BossSpawnState::onAnimationFinished(EVENT_HANDLER(Entity))
+void BossEnrageState::onAnimationFinished(EVENT_HANDLER(Entity))
 {
     EVENT_SENDER(Entity, sender);
 
     sender->Listener( this )
-        .Off( ENTITY_ANIMATION_FINISH, &BossSpawnState::onAnimationFinished );
+        .Off( ENTITY_ANIMATION_FINISH, &BossEnrageState::onAnimationFinished );
 
     auto animator = sender->GetComponent<Animator>( );
 

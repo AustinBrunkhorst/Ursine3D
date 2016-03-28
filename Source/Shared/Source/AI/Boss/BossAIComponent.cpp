@@ -21,6 +21,8 @@
 #include "BossInvulnerableToggleState.h"
 #include "BossDazedState.h"
 #include "BossChangePhaseState.h"
+#include "BossEnrageState.h"
+#include "BossPhase2VineHandlerState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -344,6 +346,8 @@ EntityHandle BossAI::GetInvulnerableEmitterEntity(void)
 
 void BossAI::AddSpawnedVine(EntityHandle vine)
 {
+    m_vines.push_back( vine );
+
     auto health = vine->GetComponent<Health>( );
 
     health->Listener( this )
@@ -352,6 +356,11 @@ void BossAI::AddSpawnedVine(EntityHandle vine)
     ++m_vineCount;
 
     updateVineCount( );
+}
+
+const std::vector<EntityHandle> &BossAI::GetVines(void) const
+{
+    return m_vines;
 }
 
 void BossAI::OnInitialize(void)
@@ -434,11 +443,24 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
+        auto enrage = sm->AddState<BossEnrageState>( );
+        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase2, 1.0f );
         auto seedshot = sm->AddState<BossSeedshotState>( );
 
-        sm->SetInitialState( seedshot );
+        enrage->AddTransition( spawnVines, "To Spawn Vines" );
+        spawnVines->AddTransition( seedshot, "To Seedshot" );
+
+        sm->SetInitialState( enrage );
 
         m_bossLogic[ 1 ].push_back( sm );
+
+        auto vineHandlerSM = std::make_shared<BossAIStateMachine>( this );
+
+        auto vineHandler = vineHandlerSM->AddState<BossPhase2VineHandlerState>( );
+
+        vineHandlerSM->SetInitialState( vineHandler );
+
+        m_bossLogic[ 1 ].push_back( vineHandlerSM );
     }
 
     // TESTING: Pollinate
@@ -515,6 +537,14 @@ void BossAI::onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager))
 
 void BossAI::onVineDeath(EVENT_HANDLER(Health))
 {
+    EVENT_SENDER(Health, sender);
+
+    auto owner = sender->GetOwner( );
+
+    m_vines.erase(
+        std::find( m_vines.begin( ), m_vines.end( ), owner )
+    );
+
     --m_vineCount;
 
     updateVineCount( );

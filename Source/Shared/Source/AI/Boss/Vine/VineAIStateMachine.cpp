@@ -29,6 +29,8 @@ const std::string VineAIStateMachine::InRange = "InRange";
 const std::string VineAIStateMachine::InView = "InView";
 
 const std::string VineAIStateMachine::GoHome = "GoHome";
+const std::string VineAIStateMachine::IsHome = "IsHome";
+
 const std::string VineAIStateMachine::PursueTarget = "PursueTarget";
 
 const std::string VineAIStateMachine::Dead = "Dead";
@@ -41,6 +43,7 @@ VineAIStateMachine::VineAIStateMachine(VineAI* ai)
     AddBool( InRange, false );
     AddBool( InView, false );
     AddBool( GoHome, false );
+    AddBool( IsHome, true );
     AddBool( PursueTarget, false );
     AddBool( Dead, false );
 }

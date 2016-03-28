@@ -38,6 +38,8 @@ void VineSpawnState::Enter(VineAIStateMachine *machine)
 
     animator->SetPlaying( true );
     animator->SetCurrentState( "Spike_Up" );
+
+    machine->SetBool( VineAIStateMachine::IsHome, true );
 }
 
 void VineSpawnState::onAnimationFinished(EVENT_HANDLER(Entity))
