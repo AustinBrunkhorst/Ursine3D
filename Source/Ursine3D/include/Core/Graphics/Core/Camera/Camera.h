@@ -140,7 +140,7 @@ namespace ursine
             // forward or deferred?
             ViewportRenderMode m_renderMode;
 
-            // these are the dimensions of this camera's viewport
+            // these are the dimensions of this camera's viewport, normalized on -1, 1 range
             float m_width;
             float m_height;
             float m_xPos;
