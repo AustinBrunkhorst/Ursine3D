@@ -24,16 +24,16 @@
         #define EditorMeta(...) __attribute__((annotate(#__VA_ARGS__)))
 
         #define EditorButton(name, title) Meta(Enable, CreateButton(title)) void name(void);
-
-        #define EditorOnlyField(field) field
+        #define BasicEditorOnlyField(field) field
+        #define EditorOnlyField(expression, getter, setter) Meta(Enable, Getter(#getter), Setter(#setter)) expression
 
     #else
 
         #define EditorMeta(...)
 
         #define EditorButton(name, title)
-
-        #define EditorOnlyField(field)
+        #define BasicEditorOnlyField(field)
+        #define EditorOnlyField(expression, getter, setter)
 
     #endif
 
@@ -52,6 +52,7 @@
     #define EditorMeta(...) 
 
     #define EditorField(expression, getter, setter)
+    #define EditorOnlyField(expression, getter, setter)
     #define EditorResourceField(resourceType, fieldName, getter, setter)
 
     #define EditorAnnotate(annotation)
@@ -59,14 +60,12 @@
     #if defined(URSINE_WITH_EDITOR)
 
         #define EditorButton(name, title) void name(void)
-
-        #define EditorOnlyField(field) field
+        #define BasicEditorOnlyField(field) field
 
     #else
 
         #define EditorButton(name, title)
-
-        #define EditorOnlyField(field)
+        #define BasicEditorOnlyField(field)
 
     #endif
 

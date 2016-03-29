@@ -53,8 +53,13 @@ namespace ursine
         CefRefPtr<CefFrame> frame,
         CefRefPtr<CefRequest> request,
         NavigationType navigationType,
-        bool isDirect)
+        bool isDirect
+    )
     {
+        // disable backspace for navigation
+        if (navigationType == NAVIGATION_BACK_FORWARD)
+            return true;
+
         return false;
     }
 

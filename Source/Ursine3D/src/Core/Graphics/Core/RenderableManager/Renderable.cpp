@@ -582,7 +582,7 @@ namespace ursine
             m_cpuParticleData[ m_backIndex ].lifeTime = -1.0f;
         }
 
-        const SVec3 & ParticleSystem::GetPosition(void) const
+        const SVec3 &ParticleSystem::GetPosition(void) const
         {
             return m_position;
         }

@@ -40,12 +40,11 @@ using namespace ecs;
 
 LevelSegmentManager::LevelSegmentManager(void)
     : BaseComponent( )
+    , EventDispatcher( this )
     , m_segment( LevelSegments::Empty )
     , m_player1( )
     , m_player2( )
-    , m_enableDebugOutput( false )
-{
-}
+    , m_enableDebugOutput( false ) { }
 
 LevelSegmentManager::~LevelSegmentManager(void)
 {

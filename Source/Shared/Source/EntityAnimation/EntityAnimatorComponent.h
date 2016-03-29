@@ -35,11 +35,11 @@ class EntityAnimator
 public:
     // TODO: multi clips?
 
-    EditorOnlyField(bool keyPosition);
-    EditorOnlyField(bool keyScale);
-    EditorOnlyField(bool keyRotation);
-    EditorOnlyField(float delta);
-    EditorOnlyField(ursine::ease::Type ease);
+    BasicEditorOnlyField(bool keyPosition);
+    BasicEditorOnlyField(bool keyScale);
+    BasicEditorOnlyField(bool keyRotation);
+    BasicEditorOnlyField(float delta);
+    BasicEditorOnlyField(ursine::ease::Type ease);
 
     EditorField(
         std::string animationClipName,

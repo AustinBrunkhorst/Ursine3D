@@ -3,6 +3,12 @@ package ursine.controls;
 import js.html.HtmlElement;
 
 @:enum
+abstract NotificationMode(Int) {
+    inline var Default = 0;
+    inline var BlockingDialog = 1;
+}
+
+@:enum
 abstract NotificationType(Int) {
     inline var None = 0;
     inline var Warning = 1;
@@ -14,6 +20,7 @@ abstract NotificationType(Int) {
 @:native( "NotificationControl" )
 extern class Notification extends PolymerElement {
     var dismissible : Bool;
+    var mode : NotificationMode;
     var type : NotificationType;
     var header : String;
     var message : String;

@@ -22,20 +22,21 @@ namespace ursine
 {
     namespace ecs
     {
-        NATIVE_COMPONENT_DEFINITION(ParticleSystem);
+        NATIVE_COMPONENT_DEFINITION( ParticleSystem );
 
         ParticleSystem::ParticleSystem(void)
             : BaseComponent( )
             , m_particleColor( Color::White )
             , m_systemSpace( SystemSpace::WorldSpace )
             , m_renderMode( RenderMode::Additive )
+            , m_updateInEditor( false )
         {
             // store a pointer to the GfxAPI core system
-            m_graphics = GetCoreSystem(graphics::GfxAPI);
+            m_graphics = GetCoreSystem( graphics::GfxAPI );
 
             m_base = new RenderableComponentBase( std::bind( &ParticleSystem::updateRenderer, this ) );
 
-            m_base->SetHandle(m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_PS) );
+            m_base->SetHandle(m_graphics->RenderableMgr.AddRenderable( graphics::RENDERABLE_PS ) );
 
             m_base->dirty = true;
 
@@ -117,17 +118,15 @@ namespace ursine
         void ParticleSystem::updateRenderer(void)
         {
             auto trans = GetOwner( )->GetTransform( );
+
             m_particleSystem->SetPosition( trans->GetWorldPosition( ) );
             m_particleSystem->SetTransform( trans->GetLocalToWorldMatrix( ) );
-
-            GetOwner( )->Dispatch( ENTITY_PARTICLE_UPDATE, nullptr );
 
             m_base->dirty = true;
         }
 
         const Color &ParticleSystem::GetColor(void) const
         {
-            // TODO: insert return statement here
             return m_particleSystem->GetColor( );
         }
 
@@ -159,6 +158,7 @@ namespace ursine
         {
             return m_systemSpace;
         }
+
         void ParticleSystem::SetSystemSpace(const SystemSpace &space)
         {
             m_systemSpace = space;
@@ -181,8 +181,24 @@ namespace ursine
 
         void ParticleSystem::SetRenderMask(RenderMask mask)
         {
-            m_particleSystem->SetRenderMask( static_cast<unsigned long long>(mask) );
+            m_particleSystem->SetRenderMask( static_cast<unsigned long long>( mask ) );
         }
+
+        #if defined(URSINE_WITH_EDITOR)
+
+        bool ParticleSystem::UpdatesInEditor(void) const
+        {
+            return m_updateInEditor;
+        }
+
+        void ParticleSystem::SetUpdatesInEditor(bool updates)
+        {
+            m_updateInEditor = updates;
+
+            NOTIFY_COMPONENT_CHANGED( "updateInEditor", m_updateInEditor );
+        }
+
+        #endif
 
         void ParticleSystem::SetRenderMode(const RenderMode &renderMode)
         {
@@ -207,8 +223,9 @@ namespace ursine
             {
                 auto handle = data->GetTextureHandle( );
 
-                if(unload)
+                if (unload)
                     m_graphics->ResourceMgr.UnloadTexture( m_particleSystem->GetTextureHandle( ) );
+
                 m_graphics->ResourceMgr.LoadTexture( handle );
 
                 m_particleSystem->SetTextureHandle( handle );

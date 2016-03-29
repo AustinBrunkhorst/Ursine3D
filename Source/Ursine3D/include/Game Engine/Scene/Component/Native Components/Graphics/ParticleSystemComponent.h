@@ -77,6 +77,12 @@ namespace ursine
                 SetRenderMask
             );
 
+            EditorOnlyField(
+                bool updateInEditor,
+                UpdatesInEditor,
+                SetUpdatesInEditor
+            );
+            
             Meta(Enable)
             ParticleSystem(void);
             ~ParticleSystem(void);
@@ -117,6 +123,13 @@ namespace ursine
             ursine::ecs::RenderMask GetRenderMask(void) const;
             void SetRenderMask(ursine::ecs::RenderMask mask);
 
+        #if defined(URSINE_WITH_EDITOR)
+
+            bool UpdatesInEditor(void) const;
+            void SetUpdatesInEditor(bool updates);
+
+        #endif
+
         private:
             // command all particle components to operate on the set of particles
             void updateRenderer(void);
@@ -136,6 +149,12 @@ namespace ursine
             SystemSpace m_systemSpace;
 
             RenderMode m_renderMode;
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            bool m_updateInEditor;
+
+        #endif
 
             void invalidateTexture(bool unload = true);
 

@@ -5,7 +5,8 @@
 #include "Project.h"
 
 EditorGameContext::EditorGameContext(Project *project)
-    : m_project( project ) { }
+    : GameContext( this )
+    , m_project( project ) { }
 
 void EditorGameContext::ExitGame(void)
 {

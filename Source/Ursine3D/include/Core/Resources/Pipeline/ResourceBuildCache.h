@@ -11,10 +11,10 @@ namespace ursine
             struct ResourceBuildCache
             {
                 // Determines if this asset built a preview
-                bool hasPreview;
+                bool hasPreview { false };
 
                 // Runtime type of the processed resource
-                meta::Type processedType;
+                meta::Type processedType { meta::Type::Invalid };
 
                 // Resource that generated this resource.
                 // NULL GUID if it doesn't exist

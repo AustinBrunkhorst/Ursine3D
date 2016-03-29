@@ -967,6 +967,7 @@ ursine_editor_NativeNotificationManager.prototype = {
 	onCreated: function(e) {
 		var _g = this;
 		var notification = new NotificationControl(e.type,e.message,e.header);
+		notification.mode = e.mode;
 		notification.dismissible = e.dismissible;
 		this.initNotificationButtons(e.id,notification,e.buttons);
 		notification.addEventListener("closed",function() {
@@ -1895,6 +1896,7 @@ var ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector =
 	this.m_displayText.addEventListener("resource-drag",$bind(this,this.onResourceDrag));
 	this.m_displayText.addEventListener("resource-drop",$bind(this,this.onResourceDrop));
 	this.inspector.container.appendChild(this.m_displayText);
+	ursine_editor_Editor.instance.broadcastManager.getChannel("ResourcePipeline").on("ResourceRemoved",$bind(this,this.onResourceRemoved)).on("ResourceRenamed",$bind(this,this.onResourceRenamed));
 	this.updateValue(instance);
 };
 $hxClasses["ursine.editor.scene.component.inspectors.fields.ResourceReferenceInspector"] = ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector;
@@ -1919,6 +1921,18 @@ ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.proto
 	,onResourceDrop: function(e) {
 		var resource = e.detail.resource;
 		this.notifyChanged(this.m_field,{ guid : resource.guid});
+	}
+	,onResourceRemoved: function(e) {
+		var resource = e.resource;
+		if(resource.guid != this.m_instance.guid) return;
+		this.notifyChanged(this.m_field,{ guid : null});
+	}
+	,onResourceRenamed: function(e) {
+		var guid = e.guid;
+		if(guid != this.m_instance.guid) return;
+		var resource = ursine_native_Extern.ProjectGetResource(guid);
+		this.m_displayText.innerText = resource.displayName;
+		this.m_displayText.classList.toggle("invalid",false);
 	}
 	,__class__: ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector
 });
@@ -2727,7 +2741,7 @@ var ursine_editor_windows_ProjectBrowser = function() {
 	this.m_browser.addEventListener("resource-dblclick",$bind(this,this.onResourceDblClick));
 	this.m_browser.addEventListener("resource-contextmenu",$bind(this,this.onResourceContextMenu));
 	this.window.container.appendChild(this.m_browser);
-	ursine_editor_Editor.instance.broadcastManager.getChannel("ResourcePipeline").on("ResourceAdded",$bind(this,this.onResourceAdded)).on("ResourceModified",$bind(this,this.onResourceModified));
+	ursine_editor_Editor.instance.broadcastManager.getChannel("ResourcePipeline").on("ResourceAdded",$bind(this,this.onResourceAdded)).on("ResourceModified",$bind(this,this.onResourceModified)).on("ResourceRemoved",$bind(this,this.onResourceRemoved)).on("ResourceRenamed",$bind(this,this.onResourceRenamed));
 };
 $hxClasses["ursine.editor.windows.ProjectBrowser"] = ursine_editor_windows_ProjectBrowser;
 ursine_editor_windows_ProjectBrowser.__name__ = ["ursine","editor","windows","ProjectBrowser"];
@@ -2741,6 +2755,19 @@ ursine_editor_windows_ProjectBrowser.prototype = $extend(ursine_editor_WindowHan
 		notification.show();
 	}
 	,onResourceModified: function(data) {
+	}
+	,onResourceRemoved: function(data) {
+		var resource = data.resource;
+		this.m_browser.removeResource(resource);
+		var notification = new NotificationControl(3,"<strong class=\"highlight\">" + resource.relativePathDisplayName + "</div>","Resource Deleted");
+		notification.show();
+	}
+	,onResourceRenamed: function(data) {
+		var resource = ursine_native_Extern.ProjectGetResource(data.guid);
+		if(resource == null) throw new js__$Boot_HaxeError("Invalid resource renamed.");
+		this.m_browser.renameResource(resource,data.oldName);
+		var notification = new NotificationControl(3,"<strong class=\"highlight\">" + resource.relativePathDisplayName + "</div>","Resource Renamed");
+		notification.show();
 	}
 	,onResourceDblClick: function(e) {
 		var extension = e.detail.resource.extension.substr(1).toLowerCase();
@@ -2763,7 +2790,6 @@ ursine_editor_windows_ProjectBrowser.prototype = $extend(ursine_editor_WindowHan
 	,__class__: ursine_editor_windows_ProjectBrowser
 });
 var ursine_editor_windows_SceneOutline = function() {
-	this.m_selectedEntities = null;
 	ursine_editor_windows_SceneOutline.instance = this;
 	ursine_editor_WindowHandler.call(this);
 	this.window.heading = "Outline";
@@ -2772,7 +2798,6 @@ var ursine_editor_windows_SceneOutline = function() {
 	this.m_rootView.setAsRoot(true);
 	this.m_rootView.enableModification = true;
 	this.m_entityItems = new haxe_ds_IntMap();
-	this.m_selectedEntities = [];
 	this.window.container.appendChild(this.m_rootView);
 	this.resetScene();
 	ursine_editor_Editor.instance.broadcastManager.getChannel("SceneManager").on("WorldChanged",$bind(this,this.resetScene));
@@ -2784,31 +2809,12 @@ ursine_editor_windows_SceneOutline.__name__ = ["ursine","editor","windows","Scen
 ursine_editor_windows_SceneOutline.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandler.prototype,{
 	clearSelectedEntities: function() {
-		var _g = 0;
-		var _g1 = this.m_selectedEntities;
-		while(_g < _g1.length) {
-			var uid = _g1[_g];
-			++_g;
-			var item = this.m_entityItems.h[uid];
-			if(item == null) continue;
-			item.entity.deselect();
-		}
+		SceneClearSelectedEntities();
 	}
 	,deleteSelectedEntities: function() {
-		var _g = 0;
-		var _g1 = this.m_selectedEntities;
-		while(_g < _g1.length) {
-			var uid = _g1[_g];
-			++_g;
-			var item = this.m_entityItems.h[uid];
-			if(item == null) continue;
-			var entity = item.entity;
-			if(entity.isRemovalEnabled()) entity.remove(); else {
-			}
-		}
+		SceneDeleteSelectedEntities();
 	}
 	,resetScene: function() {
-		this.m_selectedEntities = [];
 		this.m_rootView.innerHTML = "";
 		this.m_entityItems = new haxe_ds_IntMap();
 		ursine_editor_windows_EntityInspector.instance.inspect(null);
@@ -2850,7 +2856,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	,onEntityRemoved: function(e) {
 		var item = this.m_entityItems.h[e.uniqueID];
 		if(item == null) return;
-		if(this.m_selectedEntities.indexOf(e.uniqueID) != -1) this.selectEntity(null);
+		if(item.entity.hasComponent("Selected")) this.selectEntity(null);
 		if(item.parentNode != null) item.parentNode.removeChild(item);
 		this.m_entityItems.remove(e.uniqueID);
 	}
@@ -2960,7 +2966,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		item.text = entity.getName();
 		item.entity = entity;
 		item.textElement.addEventListener("click",function(e6) {
-			if(_g.m_selectedEntities.indexOf(item.entity.uniqueID) != -1) return;
+			if(item.entity.hasComponent("Selected")) return;
 			_g.clearSelectedEntities();
 			item.entity.select();
 		});
@@ -3001,16 +3007,12 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			item.selected = true;
 			item.scrollIntoViewIfNeeded();
 			ursine_editor_windows_EntityInspector.instance.inspect(item.entity);
-			this.m_selectedEntities.push(item.entity.uniqueID);
 		}
 	}
 	,deselectEntity: function(item) {
 		if(item != null) {
 			item.selected = false;
 			ursine_editor_windows_EntityInspector.instance.inspect(null);
-			this.m_selectedEntities = this.m_selectedEntities.filter(function(x) {
-				return x != item.entity.uniqueID;
-			});
 		}
 	}
 	,__class__: ursine_editor_windows_SceneOutline

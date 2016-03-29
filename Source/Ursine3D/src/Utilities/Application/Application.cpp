@@ -29,10 +29,12 @@ namespace ursine
     Application *Application::Instance = nullptr;
 
     Application::Application(int argc, char *argv[])
-        : m_isRunning( true )
+        : EventDispatcher( this )
+        , m_isRunning( true )
         , m_isActive( true )
         , m_argc( argc )
         , m_argv( argv )
+        , m_platformEvents( this )
     {
         Instance = this;
 
