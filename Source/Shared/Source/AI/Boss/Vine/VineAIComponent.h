@@ -15,9 +15,17 @@
 
 #include "VineAIStateMachine.h"
 
-#include "AnimatorComponent.h"
+#include <AnimatorComponent.h>
+#include <EventDispatcher.h>
 
-class VineAI : public ursine::ecs::Component
+enum VineAIEvents
+{
+    VINE_HEALTH_THRESHOLD_REACHED
+};
+
+class VineAI 
+    : public ursine::ecs::Component
+    , public ursine::EventDispatcher<VineAIEvents>
 {
     NATIVE_COMPONENT;
 
@@ -112,7 +120,14 @@ public:
         GetUprootCooldown,
         SetUprootCooldown
     );
-    
+
+    EditorMeta(InputRange(0.0f, 1.0f, 0.1f, "{{value.toFixed( 2 )}} %"))
+    EditorField(
+        float damageThreshold,
+        GetDamageThreshold,
+        SetDamageThreshold
+    );
+
     EditorMeta(Annotation("List of ROOT entities we're colliding with (used for uproot)."))
     ursine::Array<std::string> collisionList;
 

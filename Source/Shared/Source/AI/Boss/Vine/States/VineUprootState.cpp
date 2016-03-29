@@ -130,9 +130,6 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             for (auto &model : models)
                 model->SetActive( true );
 
-            // We've successfully pursued our target
-            machine->SetBool( VineAIStateMachine::PursueTarget, false );
-
             // Update the vine's "time of last pursue"
             ai->m_timeOfLastPursue = Application::Instance->GetTimeSinceStartup( );
 

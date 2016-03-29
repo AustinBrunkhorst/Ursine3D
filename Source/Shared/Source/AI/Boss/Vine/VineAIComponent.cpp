@@ -36,6 +36,7 @@ using namespace ecs;
 
 VineAI::VineAI(void)
     : BaseComponent( )
+    , EventDispatcher( this )
     , m_faceClosestPlayer( true )
     , m_whipTurnSpeed( 90.0f )
     , m_whipAngle( 45.0f )
@@ -206,6 +207,7 @@ const SVec3 &VineAI::GetHomeLocation(void) const
 void VineAI::GoToHomeLocation(void)
 {
     m_stateMachine.SetBool( VineAIStateMachine::GoHome, true );
+    m_stateMachine.SetBool( VineAIStateMachine::PursueTarget, false );
 }
 
 bool VineAI::IsHome(void)
