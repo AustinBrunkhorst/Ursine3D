@@ -56,6 +56,10 @@ class ResourceReferenceInspector extends FieldInspectionHandler {
 
         inspector.container.appendChild( m_displayText );
 
+        Editor.instance.broadcastManager.getChannel( 'ResourcePipeline' )
+            .on( 'ResourceRemoved', onResourceRemoved )
+            .on( 'ResourceRenamed', onResourceRenamed );
+
         updateValue( instance );
     }
 
@@ -90,5 +94,30 @@ class ResourceReferenceInspector extends FieldInspectionHandler {
         notifyChanged( m_field, {
             guid: resource.guid
         } );
+    }
+
+    private function onResourceRemoved(e : Dynamic) {
+        var resource : ResourceItem = e.resource;
+
+        // wasn't this resource
+        if (resource.guid != m_instance.guid)
+            return;
+
+        notifyChanged( m_field, {
+            guid: null
+        } );
+    }
+
+    private function onResourceRenamed(e : Dynamic) {
+        var guid : String = e.guid;
+
+        // wasn't this resource
+        if (guid != m_instance.guid)
+            return;
+
+        var resource : ResourceItem = Extern.ProjectGetResource( guid );
+
+        m_displayText.innerText = resource.displayName;
+        m_displayText.classList.toggle( 'invalid', false );
     }
 }

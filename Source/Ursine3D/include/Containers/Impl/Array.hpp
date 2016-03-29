@@ -34,6 +34,9 @@ namespace ursine
 {
     template<typename T>
     Array<T>::Array(void)
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        : m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -41,6 +44,9 @@ namespace ursine
     template<typename T>
     Array<T>::Array(const Array &rhs)
         : m_impl( rhs.m_impl )
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        , m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -48,6 +54,9 @@ namespace ursine
     template<typename T>
     Array<T>::Array(const Array &&rhs)
         : m_impl( std::move( rhs.m_impl ) )
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        , m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -55,6 +64,9 @@ namespace ursine
     template<typename T>
     Array<T>::Array(const std::vector<T> &rhs)
         : m_impl( rhs )
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        , m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -62,6 +74,9 @@ namespace ursine
     template<typename T>
     Array<T>::Array(const std::initializer_list<T> &rhs)
         : m_impl( rhs )
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        , m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -69,6 +84,9 @@ namespace ursine
     template<typename T>
     Array<T>::Array(const std::initializer_list<T> &&rhs)
         : m_impl( std::move( rhs ) )
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        , m_modifyEvents( this )
+    #endif
     {
 
     }

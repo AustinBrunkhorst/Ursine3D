@@ -15,10 +15,12 @@
 
 #include "Editor.h"
 #include "Project.h" 
+
 #include <Application.h>
 #include <Scene.h>
 #include <WindowManager.h>
-#include <UIManager.h> 
+#include <UIManager.h>
+
 #include <Timer.h>
 
 #include <ResourcePipelineManager.h>
@@ -42,6 +44,8 @@ namespace
     const auto kWindowLocationCentered = Vec2 { -1, -1 };
 
     const auto kProjectExtension = "ursineproj";
+
+    const auto kResourceFocusTimeout = TimeSpan::FromSeconds( 1.0f );
 }
 
 namespace ursine
@@ -232,7 +236,10 @@ void Editor::OnRemove(void)
     );
 
     m_mainWindow.m_window->Listener( this )
-        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize ); 
+        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize )
+        .Off( WINDOW_FOCUS_CHANGED, &Editor::onMainWindowFocusChanged );
+
+    m_buildPipelineFocusTimeout.Cancel( );
 
     m_mainWindow.m_ui->Disconnect( UI_LOADED, this, &Editor::onUILoaded );
 
@@ -476,7 +483,7 @@ void Editor::exitSplashScreen(void)
     ursine::GUID lastWorldGUID;
 
     if (m_preferences.lastOpenWorld.empty( ))
-        lastWorldGUID = GUIDNullGenerator( )( );
+        lastWorldGUID = kNullGUID;
     else
         lastWorldGUID = GUIDStringGenerator( )( m_preferences.lastOpenWorld );
 
@@ -487,6 +494,9 @@ void Editor::exitSplashScreen(void)
     m_project->initializeScene(
         resourceManager.CreateReference( lastWorldGUID )
     );
+
+    m_mainWindow.m_window->Listener( this )
+        .On( WINDOW_FOCUS_CHANGED, &Editor::onMainWindowFocusChanged );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -537,6 +547,26 @@ void Editor::onMainWindowResize(EVENT_HANDLER(Window))
         0, 0,
         args->width, args->height
     } );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::onMainWindowFocusChanged(EVENT_HANDLER(Window))
+{
+    EVENT_ATTRS(Window, WindowFocusArgs);
+
+    m_buildPipelineFocusTimeout.Cancel( );
+
+    if (args->focused)
+    {
+        m_buildPipelineFocusTimeout = Timer::Create( kResourceFocusTimeout ).Completed( [=] {
+            m_project->GetResourcePipeline( ).AllowFileActionProcessing( true );
+        } );
+    } 
+    else
+    {
+        m_project->GetResourcePipeline( ).AllowFileActionProcessing( false );
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////

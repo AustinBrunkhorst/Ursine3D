@@ -41,7 +41,10 @@ namespace ursine
                 RP_RESOURCE_REMOVED,
                 
                 // An existing resource has been modified via file watching
-                RP_RESOURCE_MODIFIED
+                RP_RESOURCE_MODIFIED,
+
+                // An existing resource has been renamed
+                RP_RESOURCE_RENAMED,
             };
 
             struct ResourceBuildArgs : EventArgs
@@ -66,8 +69,17 @@ namespace ursine
             {
                 ResourcePipelineEventType type { RP_RESOURCE_ADDED };
                 ResourceItem::Handle resource { nullptr };
+                bool isGenerated { false };
 
                 ResourceChangeArgs(void) = default;
+            };
+
+            struct ResourceRenameArgs : EventArgs
+            {
+                ResourceItem::Handle resource;
+                fs::path oldName;
+
+                ResourceRenameArgs(void) = default;
             };
         }
     }

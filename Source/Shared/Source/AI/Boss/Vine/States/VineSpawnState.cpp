@@ -31,7 +31,8 @@ VineSpawnState::VineSpawnState(void)
 
 void VineSpawnState::Enter(VineAIStateMachine *machine)
 {
-    auto animator = machine->GetAI( )->GetAnimator( );
+    auto vineAI = machine->GetAI( );
+    auto animator = vineAI->GetAnimator( );
 
     animator->GetOwner( )->Listener( this )
         .On( ENTITY_ANIMATION_FINISH, &VineSpawnState::onAnimationFinished );
@@ -40,6 +41,10 @@ void VineSpawnState::Enter(VineAIStateMachine *machine)
     animator->SetCurrentState( "Spike_Up" );
 
     machine->SetBool( VineAIStateMachine::IsHome, true );
+
+    vineAI->SetHomeLocation( 
+        vineAI->GetOwner( )->GetTransform( )->GetWorldPosition( )
+    );
 }
 
 void VineSpawnState::onAnimationFinished(EVENT_HANDLER(Entity))

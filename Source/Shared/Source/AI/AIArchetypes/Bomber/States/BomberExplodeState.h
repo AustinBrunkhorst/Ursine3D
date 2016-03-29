@@ -12,6 +12,7 @@
 ** -------------------------------------------------------------------------*/
 
 #pragma once
+#include <ArchetypeData.h>
 
 #include "AIState.h"
 #include "Entity.h"
@@ -40,7 +41,9 @@ namespace ursine
             void Update(AIStateMachine *machine) override;
             void Exit(AIStateMachine *machine) override;
 
-            void SetExplosionObject(ursine::resources::ResourceReference &dmgExplosionEntity);
+            void SetExplosionArchetype(ursine::resources::ResourceReference &dmgExplosionEntity);
+
+            void SetExplodeRange(float range);
 
         private:
             ursine::resources::ResourceReference m_objToSpawn;
@@ -48,6 +51,8 @@ namespace ursine
             WalkState *m_walk;
 
             bool m_finished;
+
+            float m_explodeRange;
         };
 
     }

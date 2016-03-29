@@ -35,6 +35,7 @@ namespace ursine
 
         RenderSystem::RenderSystem(World *world)
             : EntitySystem( world )
+            , EventDispatcher( this )
             , m_worldConfig( nullptr )
         {
             m_graphics = GetCoreSystem( graphics::GfxAPI );

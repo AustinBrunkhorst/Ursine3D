@@ -13,6 +13,8 @@
 
 #include <Component.h>
 
+#include <ArchetypeData.h>
+
 #include "BomberAIStateMachine.h"
 
 // This header is needed. Don't be tricked by VS's lies
@@ -29,23 +31,24 @@ public:
         GetExplosionDelay,
         SetExplosionDelay
         );
-
+    /*
     EditorField(
         float damageOnAttack,
         GetDamage,
         SetDamage
         );
 
+        EditorField(
+        float BlastRadius,
+        GetBlastRadius,
+        SetBlastRadius
+        );
+        */
+
     EditorField(
         float AttackRange,
         GetAttackRange,
         SetAttackRange
-        );
-
-    EditorField(
-        float BlastRadius,
-        GetBlastRadius,
-        SetBlastRadius
         );
 
     EditorField(
@@ -66,20 +69,27 @@ public:
         SetBoidScale
         );
 
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        explosionObject,
+        GetExplosionArchetype,
+        SetExplosionArchetype
+        );
+
     BomberAI(void);
     ~BomberAI(void);
 
     float GetExplosionDelay(void) const;
     void SetExplosionDelay(float delay);
-
+    /*
     float GetDamage(void) const;
     void SetDamage(float dmg);
 
-    float GetAttackRange(void) const;
-    void SetAttackRange(float range);
-
     float GetBlastRadius(void) const;
     void SetBlastRadius(float radius);
+    */
+    float GetAttackRange(void) const;
+    void SetAttackRange(float range);
 
     float GetCohesionScale(void) const;
     void SetCohesionScale(float newScale);
@@ -90,6 +100,9 @@ public:
     float GetBoidScale(void) const;
     void SetBoidScale(float newScale);
 
+    const ursine::resources::ResourceReference &GetExplosionArchetype(void) const;
+    void SetExplosionArchetype(const ursine::resources::ResourceReference &explosion);
+
 private:
 
     void OnInitialize(void) override;
@@ -99,13 +112,16 @@ private:
     Meta(Disable)
         ursine::sm::BomberAIStateMachine m_stateMachine;
 
+    // this gets passed to the explode state to be spawned on explosion
+    ursine::resources::ResourceReference m_explosionObj;
+
     float m_explosionDelay;
 
     float m_damage;
 
     float m_attackRange;
 
-    float m_blastRadius;
+    //float m_blastRadius;
 
     float m_cohesionScale;
 

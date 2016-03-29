@@ -29,10 +29,12 @@ namespace ursine
     Application *Application::Instance = nullptr;
 
     Application::Application(int argc, char *argv[])
-        : m_isRunning( true )
+        : EventDispatcher( this )
+        , m_isRunning( true )
         , m_isActive( true )
         , m_argc( argc )
         , m_argv( argv )
+        , m_platformEvents( this )
     {
         Instance = this;
 
@@ -174,6 +176,11 @@ namespace ursine
     DeltaTime Application::GetDeltaTime(void) const
     {
         return m_dt;
+    }
+
+    TimeSpan Application::GetTimeSinceStartup(void) const
+    {
+        return TimeSpan( static_cast<int>( SDL_GetTicks( ) ) );
     }
 
     FrameRateController &Application::GetFrameRateController(void)

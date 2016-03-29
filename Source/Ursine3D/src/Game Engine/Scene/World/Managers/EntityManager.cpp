@@ -558,7 +558,7 @@ namespace ursine
                 entity = &m_cache.back( );
 
                 // add a new event listener
-                m_events.emplace_back( );
+                m_events.emplace_back( nullptr );
             }
             // we can use the queue so just reset and pop the last one
             else

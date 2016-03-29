@@ -324,6 +324,30 @@ void BossAI::SetPhase1DazedResetTimer(float timer)
     NOTIFY_COMPONENT_CHANGED( "phase1DazedResetTimer", m_phase1DazedResetTimer );
 }
 
+float BossAI::GetPhase2HealthTransitionThreshold(void) const
+{
+    return m_phase2HealthThreshold;
+}
+
+void BossAI::SetPhase2HealthTransitionThreshold(float threshold)
+{
+    m_phase2HealthThreshold = threshold;
+
+    NOTIFY_COMPONENT_CHANGED( "phase2HealthTransitionThreshold", m_phase2HealthThreshold );
+}
+
+float BossAI::GetPhase2DazedResetTimer(void) const
+{
+    return m_phase2DazedResetTimer;
+}
+
+void BossAI::SetPhase2DazedResetTimer(float timer)
+{
+    m_phase2DazedResetTimer = timer;
+
+    NOTIFY_COMPONENT_CHANGED( "phase2DazedResetTimer", m_phase2DazedResetTimer );
+}
+
 EntityHandle BossAI::GetSeedshotEntity(void)
 {
     return GetOwner( )->GetChildByName( m_seedshotEntity );
@@ -444,11 +468,36 @@ void BossAI::OnInitialize(void)
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
         auto enrage = sm->AddState<BossEnrageState>( );
+        auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
+        auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase2, 1.0f );
         auto seedshot = sm->AddState<BossSeedshotState>( );
+        auto dazed = sm->AddState<BossDazedState>( );
+        auto changePhaseState = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase3 );
 
-        enrage->AddTransition( spawnVines, "To Spawn Vines" );
+        enrage->AddTransition( invulnerable, "To Invulneralbe" );
+        invulnerable->AddTransition( spawnVines, "To Spawn Vines" );
         spawnVines->AddTransition( seedshot, "To Seedshot" );
+        seedshot->AddTransition( vulnerable, "To Vulnerable" )
+                ->AddCondition<sm::IntCondition>( 
+                    BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
+                );
+        vulnerable->AddTransition( dazed, "To Dazed" );
+
+        // Go back to spawning vines if the reset timer is up
+        dazed->AddTransition( spawnVines, "Back To Spawn Vines" )
+             ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( m_phase2DazedResetTimer ) );
+
+        // Go to the next phase when the health is below a certain threashold
+        auto health = GetOwner( )->GetComponent<Health>( );
+        auto max = health->GetMaxHealth( );
+        auto fraction = m_phase2HealthThreshold * 0.01f;
+        auto threshold = max * fraction;
+
+        dazed->AddTransition( changePhaseState, "To Phase 3" )
+             ->AddCondition<sm::FloatCondition>( 
+                 BossAIStateMachine::Health, sm::Comparison::LessThan, threshold 
+             );
 
         sm->SetInitialState( enrage );
 

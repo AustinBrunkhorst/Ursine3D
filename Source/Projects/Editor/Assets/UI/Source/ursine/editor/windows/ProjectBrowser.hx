@@ -26,7 +26,9 @@ class ProjectBrowser extends WindowHandler {
 
         Editor.instance.broadcastManager.getChannel( 'ResourcePipeline' )
             .on( 'ResourceAdded', onResourceAdded )
-            .on( 'ResourceModified', onResourceModified );
+            .on( 'ResourceModified', onResourceModified )
+            .on( 'ResourceRemoved', onResourceRemoved )
+            .on( 'ResourceRenamed', onResourceRenamed );
     }
 
     private function onResourceAdded(data : Dynamic) {
@@ -48,6 +50,37 @@ class ProjectBrowser extends WindowHandler {
 
     private function onResourceModified(data : Dynamic) {
 
+    }
+
+    private function onResourceRemoved(data : Dynamic) {
+        var resource : ResourceItem = cast data.resource;
+
+        m_browser.removeResource( resource );
+
+        var notification = new Notification(
+            NotificationType.Info,
+            '<strong class="highlight">${resource.relativePathDisplayName}</div>',
+            'Resource Deleted'
+        );
+
+        notification.show( );
+    }
+
+    private function onResourceRenamed(data : Dynamic) {
+        var resource : ResourceItem = cast Extern.ProjectGetResource( data.guid );
+
+        if (resource == null)
+            throw 'Invalid resource renamed.';
+
+        m_browser.renameResource( resource, data.oldName );
+
+        var notification = new Notification(
+            NotificationType.Info,
+            '<strong class="highlight">${resource.relativePathDisplayName}</div>',
+            'Resource Renamed'
+        );
+
+        notification.show( );
     }
 
     private function onResourceDblClick(e : js.html.CustomEvent) {

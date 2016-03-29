@@ -14,7 +14,7 @@
 namespace ursine
 {
     template<typename Key, typename Handler>
-    EventDispatcher<Key, Handler>::EventDispatcher(void *defaultSender /*= nullptr*/)
+    EventDispatcher<Key, Handler>::EventDispatcher(void *defaultSender)
         : m_defaultSender( defaultSender ) { }
 
     template<typename Key, typename Handler>

@@ -50,6 +50,7 @@ void BomberAI::SetExplosionDelay(float delay)
     m_explosionDelay = delay;
 }
 
+/*
 float BomberAI::GetDamage() const
 {
     return m_damage;
@@ -59,6 +60,7 @@ void BomberAI::SetDamage(float dmg)
 {
     m_damage = dmg;
 }
+*/
 
 float BomberAI::GetAttackRange() const
 {
@@ -69,7 +71,7 @@ void BomberAI::SetAttackRange(float range)
 {
     m_attackRange = range;
 }
-
+/*
 float BomberAI::GetBlastRadius(void) const
 {
     return m_blastRadius;
@@ -79,7 +81,7 @@ void BomberAI::SetBlastRadius(float radius)
 {
     m_blastRadius = radius;
 }
-
+*/
 float BomberAI::GetCohesionScale() const
 {
     return m_cohesionScale;
@@ -110,6 +112,16 @@ void BomberAI::SetBoidScale(float newScale)
     m_boidScale = newScale;
 }
 
+const ursine::resources::ResourceReference& BomberAI::GetExplosionArchetype() const
+{
+    return m_explosionObj;
+}
+
+void BomberAI::SetExplosionArchetype(const ursine::resources::ResourceReference& explosion)
+{
+    m_explosionObj = explosion;
+}
+
 void BomberAI::OnInitialize(void)
 {
     GetOwner()->GetWorld()->Listener( this )
@@ -131,6 +143,8 @@ void BomberAI::OnInitialize(void)
 
     // rest of state machine goes here
     auto explodeState = m_stateMachine.AddState<sm::BomberExplodeState>("BomberExplodeState", walkState, m_damage);
+    explodeState->SetExplosionArchetype(m_explosionObj);
+    explodeState->SetExplodeRange(m_attackRange);
 
     auto trans = walkState->AddTransition(explodeState, "Walk State to Explode State");
 

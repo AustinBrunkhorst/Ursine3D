@@ -12,6 +12,11 @@
         <div id="buttons"></div>
     </template>
     <script>
+        var NotificationMode = {
+            Normal: 0,
+            BlockingDialog: 1
+        };
+
         var NotificationType = {
             None: 0,
             Warning: 1,
@@ -24,7 +29,9 @@
             // default duration before closing in milliseconds
             duration: 8000,
             // duration that makes the notification never automatically close
-            infiniteDuration: 0
+            infiniteDuration: 0,
+            // entrance/exit transition duration
+            transitionDuration: 225
         };
 
         var NotificationControl = Polymer({
@@ -34,6 +41,10 @@
                     type: Boolean,
                     notify: true,
                     value: true
+                },
+                mode: {
+                    type: Number,
+                    value: NotificationMode.Normal
                 },
                 type: {
                     type: Number,
@@ -66,18 +77,47 @@
             },
 
             show: function(duration) {
-                document.querySelector( '#notification-container' ).appendChild( this );
+                var container;
 
-                if (duration == NotificationConfig.infiniteDuration)
-                    return;
+                switch (this.mode) {
+                    case NotificationMode.Normal: {
+                        if (duration == NotificationConfig.infiniteDuration)
+                            return;
 
-                if (this._timeout !== null)
-                    clearTimeout( this._timeout );
+                        if (this._timeout !== null)
+                            clearTimeout( this._timeout );
 
-                this._timeout = setTimeout(
-                    this.close.bind( this ),
-                    duration || NotificationConfig.duration
-                );
+                        this._timeout = setTimeout(
+                            this.close.bind( this ),
+                            duration || NotificationConfig.duration
+                        );
+
+                        document.querySelector( '#notification-container' ).appendChild( this );
+
+                        setTimeout( function() {
+                            this.classList.add( 'active' );
+                        }.bind( this ), 10 );
+
+                        break;
+                    }
+
+                    case NotificationMode.BlockingDialog: {
+                        var modal = document.createElement( 'div' );
+
+                        modal.classList.add( 'modal-container' );
+
+                        modal.appendChild( this );
+
+                        document.querySelector( '#notification-modal-container' ).appendChild( modal );
+
+                        setTimeout( function() {
+                            modal.classList.add( 'active' );
+                            this.classList.add( 'active' );
+                        }.bind( this ), 10 );
+
+                        break;
+                    }
+                }
             },
             close: function() {
                 if (this._closed === true)
@@ -85,12 +125,21 @@
 
                 clearTimeout( this._timeout );
 
-                if (this.parentNode)
-                    this.parentNode.removeChild( this );
+                setTimeout( function() {
+                    var removeTarget = this.mode == NotificationMode.Normal ? this : this.parentNode;
 
-                this.fire( 'closed', {
+                    if (removeTarget.parentNode)
+                        removeTarget.parentNode.removeChild( removeTarget );
 
-                } );
+                    this.fire( 'closed', {
+
+                    } );
+                }.bind( this ), NotificationConfig.transitionDuration );
+
+                this.classList.remove( 'active' );
+
+                if (this.mode == NotificationMode.BlockingDialog)
+                    this.parentNode.classList.remove( 'active' );
 
                 this._closed = true;
             },

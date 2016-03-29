@@ -48,7 +48,7 @@ namespace ursine
         template<typename Listener>
         using ChainType = ChainableEventOperator<EventDispatcher<Key>, Listener>;
 
-        EventDispatcher(void *defaultSender = nullptr);
+        EventDispatcher(void *defaultSender);
 
         // Binds a connection to a static function
         template<typename Args = EventArgs>

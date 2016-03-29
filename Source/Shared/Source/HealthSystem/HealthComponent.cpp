@@ -36,13 +36,14 @@ namespace
 
 Health::Health(void)
     : BaseComponent( )
-    , EventDispatcher<HealthEvents>( this )
+    , EventDispatcher( this )
+    , m_type( ENEMY_HEALTH )
     , m_health( 100 )
+    , m_maxHealth( 100 )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
     , m_dead( false )
-    , m_invulnerable( false )
-    , m_type( ENEMY_HEALTH ) { }
+    , m_invulnerable( false ) { }
 
 Health::~Health(void)
 {

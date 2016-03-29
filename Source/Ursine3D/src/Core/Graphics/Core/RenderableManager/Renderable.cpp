@@ -598,7 +598,7 @@ namespace ursine
             m_backIndex = 0;
         }
 
-        const SVec3 & ParticleSystem::GetPosition(void) const
+        const SVec3 &ParticleSystem::GetPosition(void) const
         {
             return m_position;
         }

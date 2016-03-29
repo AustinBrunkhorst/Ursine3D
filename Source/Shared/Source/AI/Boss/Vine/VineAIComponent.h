@@ -28,6 +28,16 @@ public:
         "Draw Range"
     );
 
+    EditorButton(
+        pursueTarget,
+        "Pursue Target"
+    );
+
+    EditorButton(
+        goHome,
+        "Go Home"
+    );
+
     EditorField(
         bool faceClosestPlayer,
         GetFaceClosestPlayer,
@@ -171,7 +181,10 @@ public:
 
     void PursueTarget(void);
 
+    const ursine::TimeSpan &GetTimeOfLastPursue(void) const;
+
 private:
+    friend class VineUprootState;
 
     void OnInitialize(void) override;
 
@@ -203,5 +216,7 @@ private:
     ursine::ecs::Animator *m_animator;
 
     ursine::ecs::EntityHandle m_target;
+
+    ursine::TimeSpan m_timeOfLastPursue;
 
 } Meta(Enable);
