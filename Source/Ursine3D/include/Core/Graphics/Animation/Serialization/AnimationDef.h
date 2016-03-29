@@ -385,17 +385,15 @@ namespace ursine
                 eLayout                 mLayout;
                 std::string             name;
                 FbxBoneData             mBoneData;
-                std::vector<MeshData*>  mMeshData;
-                std::vector<FbxMaterial*> mMaterials;
+                std::vector<MeshData>  mMeshData;
+                std::vector<FbxMaterial> mMaterials;
                 std::vector<ControlPoints> mCtrlPoints;
-                std::vector<AnimationData*> mAnimationData;
+                std::vector<AnimationData> mAnimationData;
                 // ====================================
+
                 FbxModel() {}
+
                 ~FbxModel()
-                {
-                    Release();
-                }
-                void Release()
                 {
                     mMeshData.clear();
                     mMaterials.clear();
