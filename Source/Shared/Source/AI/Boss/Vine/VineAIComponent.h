@@ -112,12 +112,6 @@ public:
         GetUprootCooldown,
         SetUprootCooldown
     );
-
-    EditorField(
-        ursine::SVec3 colliderSize,
-        GetColliderSize,
-        SetColliderSize
-    );
     
     EditorMeta(Annotation("List of ROOT entities we're colliding with (used for uproot)."))
     ursine::Array<std::string> collisionList;
@@ -164,9 +158,6 @@ public:
     float GetUprootCooldown(void) const;
     void SetUprootCooldown(float cooldown);
 
-    const ursine::SVec3 &GetColliderSize(void) const;
-    void SetColliderSize(const ursine::SVec3 &colliderSize);
-
     ursine::ecs::Animator *GetAnimator(void);
 
     ursine::ecs::EntityHandle GetTarget(void);
@@ -205,7 +196,6 @@ private:
     float m_uprootDistance;
     float m_uprootDelay;
     float m_uprootCooldown;
-    ursine::SVec3 m_colliderSize;
 
     ursine::SVec3 m_homeLocation;
 

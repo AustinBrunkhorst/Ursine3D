@@ -47,7 +47,6 @@ VineAI::VineAI(void)
     , m_uprootDistance( 2.0f )
     , m_uprootDelay( 2.0f )
     , m_uprootCooldown( 5.0f )
-    , m_colliderSize( 1.0f, 1.0f, 1.0f )
     , m_stateMachine( this )
     , m_animator( nullptr )
     , m_target( nullptr )
@@ -177,16 +176,6 @@ float VineAI::GetUprootCooldown(void) const
 void VineAI::SetUprootCooldown(float cooldown)
 {
     m_uprootCooldown = cooldown;
-}
-
-const SVec3 &VineAI::GetColliderSize(void) const
-{
-    return m_colliderSize;
-}
-
-void VineAI::SetColliderSize(const SVec3 &colliderSize)
-{
-    m_colliderSize = colliderSize;
 }
 
 Animator *VineAI::GetAnimator(void)

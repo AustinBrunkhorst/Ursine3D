@@ -25,6 +25,7 @@
 #include <ParticleEmitterComponent.h>
 #include <Model3DComponent.h>
 #include <BoxColliderComponent.h>
+#include <GhostComponent.h>
 #include <EntityEvent.h>
 
 using namespace ursine;
@@ -129,11 +130,6 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             for (auto &model : models)
                 model->SetActive( true );
 
-            /*auto boxCollider = aiOwner->GetComponentInChildren<ecs::BoxCollider>( );
-
-            m_originalDimensions = boxCollider->GetDimensions( );
-            boxCollider->SetDimensions( ai->GetColliderSize( ) );*/
-
             // We've successfully pursued our target
             machine->SetBool( VineAIStateMachine::PursueTarget, false );
 
@@ -183,10 +179,6 @@ void VineUprootState::onAnimationFinished(EVENT_HANDLER(Entity))
         case UprootState::Uprooting:
         {
             m_finished = true;
-
-            /*auto boxCollider = sender->GetComponentInChildren<BoxCollider>( );
-
-            boxCollider->SetDimensions( m_originalDimensions );*/
 
             break;
         }
