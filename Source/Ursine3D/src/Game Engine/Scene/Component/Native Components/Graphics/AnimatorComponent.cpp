@@ -23,6 +23,9 @@
 #include "AnimatorSystem.h"
 #include "SystemManager.h"
 
+#include <RigComponent.h>
+#include <BoneComponent.h>
+
 namespace
 {
     const std::string kAnimationListName = "Animation_List";
@@ -527,6 +530,8 @@ namespace ursine
             auto world = owner->GetWorld( );
             m_rigRoot = world->CreateEntity( kRigRootName );
 
+            m_rigRoot->AddComponent<Rig>( );
+
             // Add it as a child to our entity with the animator component
             owner->GetTransform( )->AddChildAlreadyInLocal( m_rigRoot->GetTransform( ) );
 
@@ -565,6 +570,8 @@ namespace ursine
 
             enableDeletionOnEntities( boneEntity, false );
 
+            boneEntity->AddComponent<Bone>( );
+
             bone->m_transform = boneTrans;
 
             parent->AddChildAlreadyInLocal( boneTrans );
@@ -579,8 +586,13 @@ namespace ursine
         {
             bone->m_transform = transform;
 
-            for (uint i = 0, n = bone->GetChildCount( ); i < n; ++i)
-                setBoneTransformPointers( transform->GetChild( i ).Get( ), bone->GetChild( i ) );
+            for (uint i = 0, j = 0, n = bone->GetChildCount( ); i < n; ++i)
+            {
+                auto child = transform->GetChild( i )->GetOwner( );
+
+                if (child->HasComponent<Bone>( ))
+                    setBoneTransformPointers( child->GetTransform( ), bone->GetChild( j++ ) );
+            }
         }
 
         void Animator::setRigTransformPointers(void)
@@ -598,7 +610,10 @@ namespace ursine
                 if (!rig)
                     return;
 
-                setBoneTransformPointers( m_rigRoot->GetTransform( )->GetChild( 0 ).Get( ), rig->GetBone( 0 ) );
+                auto firstBone = m_rigRoot->GetComponentInChildren<Bone>( );
+
+                if (firstBone)
+                    setBoneTransformPointers( firstBone->GetOwner( )->GetTransform( ), rig->GetBone( 0 ) );
             }
         }
 

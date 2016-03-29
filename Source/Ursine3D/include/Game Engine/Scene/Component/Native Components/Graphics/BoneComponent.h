@@ -19,19 +19,18 @@ namespace ursine
 {
     namespace ecs
     {
-        class Bone
-            : public Component
+        class Bone : public Component
         {
             NATIVE_COMPONENT;
 
         public:
             Bone(void);
-            ~Bone(void);
 
-            Meta(Disable)
-            void OnInitialize(void) override;
-
-        private:
-        } Meta(Enable, DisplayName( "Bone" ));
+        } Meta(
+            Enable, 
+            DisplayName( "Bone" ),
+            HiddenInSelector,
+            DisableComponentRemoval
+        );
     }
 }

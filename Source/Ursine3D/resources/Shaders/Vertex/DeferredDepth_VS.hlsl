@@ -14,6 +14,12 @@ cbuffer MatrixStack : register(b12)
     matrix matPal[ 96 ];
 }
 
+cbuffer TextureOffset : register(b13)
+{
+    float2 textureOffset;
+    float2 buffer;
+}
+
 struct VS_INPUT
 {
     float3  Pos         : POSITION;
@@ -60,7 +66,7 @@ VS_OUTPUT main(VS_INPUT input)
     output.Pos = mul(float4(pos.xyz, 1.f), World);
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
-    output.Tex = input.Tex;
+    output.Tex = input.Tex + textureOffset;
 
     output.normal = mul(float4(norm.xyz, 0), World);
     output.normal = mul(output.normal, View);

@@ -121,7 +121,7 @@ private:
 
     float m_attackRange;
 
-    float m_blastRadius;
+    //float m_blastRadius;
 
     float m_cohesionScale;
 

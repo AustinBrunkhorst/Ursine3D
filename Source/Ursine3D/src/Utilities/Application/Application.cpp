@@ -178,6 +178,11 @@ namespace ursine
         return m_dt;
     }
 
+    TimeSpan Application::GetTimeSinceStartup(void) const
+    {
+        return TimeSpan( static_cast<int>( SDL_GetTicks( ) ) );
+    }
+
     FrameRateController &Application::GetFrameRateController(void)
     {
         return m_frameRateController;

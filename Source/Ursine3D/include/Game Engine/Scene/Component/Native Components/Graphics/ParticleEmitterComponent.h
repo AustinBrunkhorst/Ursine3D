@@ -136,6 +136,12 @@ namespace ursine
                 SetEmitterSize
             );
 
+            EditorField(
+                bool fastMovingEmitter,
+                GetFastMovingEmitter,
+                SetFastMovingEmitter
+            );
+
             ParticleEmitter(void);
             ~ParticleEmitter(void);
 
@@ -198,6 +204,9 @@ namespace ursine
             const float GetFill(void) const;
             void SetFill(const float fill);
 
+            bool GetFastMovingEmitter(void) const;
+            void SetFastMovingEmitter(bool isFastMoving);
+
             int spawnParticle(void);
 
             void ResetSpawnCount(void);
@@ -210,6 +219,8 @@ namespace ursine
             Component::Handle<ParticleSystem> m_particleComponent;
 
             bool m_emitting;
+
+            SVec3 m_lastPosition;
 
             // all of these need variance /////////////////////////////////////
             // emit speed
@@ -256,6 +267,7 @@ namespace ursine
 
             float m_fill;
 
+            bool m_fastMovingEmitter;
         } Meta(
             Enable, 
             DisplayName( "ParticleEmitter" ),

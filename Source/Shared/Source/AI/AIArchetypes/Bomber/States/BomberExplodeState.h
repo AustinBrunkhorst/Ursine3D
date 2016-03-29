@@ -43,12 +43,16 @@ namespace ursine
 
             void SetExplosionArchetype(ursine::resources::ResourceReference &dmgExplosionEntity);
 
+            void SetExplodeRange(float range);
+
         private:
             ursine::resources::ResourceReference m_objToSpawn;
 
             WalkState *m_walk;
 
             bool m_finished;
+
+            float m_explodeRange;
         };
 
     }

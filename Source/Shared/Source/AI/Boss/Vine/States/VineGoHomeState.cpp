@@ -55,6 +55,7 @@ void VineGoHomeState::Update(VineAIStateMachine *machine)
     {
         case GoHomeState::Burrowing:
         {
+            // Play the animation
             playAnimation( animator, "Spike_Down" );
             break;
         }
@@ -84,7 +85,7 @@ void VineGoHomeState::Update(VineAIStateMachine *machine)
             emitter->GetComponent<ParticleEmitter>( )->SetEmitRate( 200 );
 
             // Check to see if we've reached a valid distance
-            if (VineStateUtils::AtTarget( ai, 1.0f ))
+            if (VineStateUtils::AtHome( ai, 1.0f ))
             {
                 m_state = GoHomeState::Uprooting;
             }

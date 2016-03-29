@@ -144,6 +144,7 @@ void BomberAI::OnInitialize(void)
     // rest of state machine goes here
     auto explodeState = m_stateMachine.AddState<sm::BomberExplodeState>("BomberExplodeState", walkState, m_damage);
     explodeState->SetExplosionArchetype(m_explosionObj);
+    explodeState->SetExplodeRange(m_attackRange);
 
     auto trans = walkState->AddTransition(explodeState, "Walk State to Explode State");
 

@@ -28,6 +28,16 @@ public:
         "Draw Range"
     );
 
+    EditorButton(
+        pursueTarget,
+        "Pursue Target"
+    );
+
+    EditorButton(
+        goHome,
+        "Go Home"
+    );
+
     EditorField(
         bool faceClosestPlayer,
         GetFaceClosestPlayer,
@@ -102,12 +112,6 @@ public:
         GetUprootCooldown,
         SetUprootCooldown
     );
-
-    EditorField(
-        ursine::SVec3 colliderSize,
-        GetColliderSize,
-        SetColliderSize
-    );
     
     EditorMeta(Annotation("List of ROOT entities we're colliding with (used for uproot)."))
     ursine::Array<std::string> collisionList;
@@ -154,9 +158,6 @@ public:
     float GetUprootCooldown(void) const;
     void SetUprootCooldown(float cooldown);
 
-    const ursine::SVec3 &GetColliderSize(void) const;
-    void SetColliderSize(const ursine::SVec3 &colliderSize);
-
     ursine::ecs::Animator *GetAnimator(void);
 
     ursine::ecs::EntityHandle GetTarget(void);
@@ -171,7 +172,10 @@ public:
 
     void PursueTarget(void);
 
+    const ursine::TimeSpan &GetTimeOfLastPursue(void) const;
+
 private:
+    friend class VineUprootState;
 
     void OnInitialize(void) override;
 
@@ -192,7 +196,6 @@ private:
     float m_uprootDistance;
     float m_uprootDelay;
     float m_uprootCooldown;
-    ursine::SVec3 m_colliderSize;
 
     ursine::SVec3 m_homeLocation;
 
@@ -203,5 +206,7 @@ private:
     ursine::ecs::Animator *m_animator;
 
     ursine::ecs::EntityHandle m_target;
+
+    ursine::TimeSpan m_timeOfLastPursue;
 
 } Meta(Enable);

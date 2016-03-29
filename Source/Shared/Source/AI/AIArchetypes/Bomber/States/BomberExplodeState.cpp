@@ -45,6 +45,21 @@ namespace ursine
         {
             // we gon start moving at the player, maybe speed up over time
             m_walk->Update(machine);
+
+            auto aiTrans = machine->GetEntity()->GetTransform();
+            Vec3 aiActorPos = aiTrans->GetWorldPosition();
+
+            auto playerPos = GetTargetPlayerPosition(aiTrans->GetOwner()->GetWorld());
+
+            auto playerDirection = playerPos - aiActorPos;
+
+            if (playerDirection.Length() <= m_explodeRange)
+            {
+                m_finished = true;
+
+                // we will just manually call exit
+                this->Exit(machine);
+            }
         }
 
         void BomberExplodeState::Exit(AIStateMachine* machine)
@@ -56,7 +71,13 @@ namespace ursine
             // AOE damage
             // &
             // dope particles
-            machine->GetEntity()->GetWorld()->CreateEntityFromArchetype(m_objToSpawn);
+            auto explosion = machine->GetEntity()->GetWorld()->CreateEntityFromArchetype(m_objToSpawn);
+
+            if (explosion != nullptr)
+            {
+                explosion->GetTransform( )->SetWorldPosition( 
+                    machine->GetEntity( )->GetTransform( )->GetWorldPosition( ) );
+            }
 
             // destroy ourselves (just going to use data already stored in walkstate)
             machine->GetEntity(  ).Get( )->Delete( );
@@ -65,6 +86,11 @@ namespace ursine
         void BomberExplodeState::SetExplosionArchetype(ursine::resources::ResourceReference& dmgExplosionArchetype)
         {
             m_objToSpawn = dmgExplosionArchetype;
+        }
+
+        void BomberExplodeState::SetExplodeRange(float range)
+        {
+            m_explodeRange = range;
         }
     }
 }

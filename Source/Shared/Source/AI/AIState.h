@@ -24,6 +24,8 @@ namespace ursine
             virtual void Enter(AIStateMachine *) = 0;
             virtual void Update(AIStateMachine *) = 0;
             virtual void Exit(AIStateMachine *) = 0;
+
+            static Vec3 GetTargetPlayerPosition(ecs::World *world);
         };
 
     }

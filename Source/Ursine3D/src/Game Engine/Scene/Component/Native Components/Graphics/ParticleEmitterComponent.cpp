@@ -51,6 +51,7 @@ namespace ursine
             , m_fillGenerator(0.0f, 0.0f)
             , m_radiusGenerator(-1.0f, 1.0f)
             , m_fill(0.0f)
+            , m_fastMovingEmitter(false)
             , m_xGenerator(0, 0)
             , m_yGenerator(0, 0)
             , m_zGenerator(0, 0)
@@ -71,6 +72,8 @@ namespace ursine
 
             GetOwner( )->Listener(this)
                 .On(ENTITY_PARTICLE_UPDATE, &ParticleEmitter::onParticleUpdate);
+
+            m_lastPosition = GetOwner( )->GetTransform( )->GetWorldPosition( );
         }
 
         // GENERATOR METHODS ////////////////////////////////////////
@@ -331,6 +334,16 @@ namespace ursine
             m_zGenerator = Randomizer(m_fill * m_emitterSize.Z( ), m_emitterSize.Z( ));
         }
 
+        bool ParticleEmitter::GetFastMovingEmitter(void) const
+        {
+            return m_fastMovingEmitter;
+        }
+
+        void ParticleEmitter::SetFastMovingEmitter(bool isFastMoving)
+        {
+            m_fastMovingEmitter = isFastMoving;
+        }
+
         int ParticleEmitter::spawnParticle(void)
         {
             // create a particles
@@ -376,49 +389,74 @@ namespace ursine
         void ParticleEmitter::onParticleUpdate(EVENT_HANDLER(Entity))
         {
             float dt = Application::Instance->GetDeltaTime( );
+            auto &gpuData = m_particleComponent->GetGPUParticleData( );
+            auto &cpuData = m_particleComponent->GetCPUParticleData( );
+
+            SVec3 frameVelocity = GetOwner( )->GetTransform( )->GetWorldPosition( ) - m_lastPosition;
 
             if (dt > 0.2f)
                 dt = 0.2f;
+
             // if we are able to spawn or we don't care about spawn count AND we are able to emit
             if (((m_spawnCount < m_emitCount) || (m_emitCount == 0)) && m_emitRate != 0 && m_emitting)
             {
                 m_currentTime += dt;
 
                 // calculate time needed to spawn 1 particle
-                float spawnTime = 1.f / static_cast<float>(m_emitRate);
+                float spawnTime = 1.f / (m_emitRate + m_emitRateRange.GetValue( ));
 
-                while ( m_currentTime >= spawnTime && ((m_spawnCount < m_emitCount) || m_emitCount == 0) )
+                float timeOffset = 0;
+                float frameTime = m_currentTime;
+
+                while (m_currentTime >= spawnTime && ((m_spawnCount < m_emitCount) || m_emitCount == 0))
                 {
+                    timeOffset += spawnTime;
                     m_currentTime -= spawnTime;
-                    spawnParticle( );
+                    unsigned particleIndex = spawnParticle( );
+
+                    // if we're a fast moving emitter, we can compensate for the movement
+                    if(m_fastMovingEmitter)
+                    {
+                        float scalar = 1.0f - timeOffset / frameTime;
+
+                        // update to compensate and stop waves of spawning
+                        // remove time from life7
+                        cpuData[ particleIndex ].lifeTime -= m_currentTime;
+
+                        gpuData[ particleIndex ].rotation[ 0 ] -= cpuData[ particleIndex ].roll * m_currentTime;
+
+                        // update position with velocity
+                        gpuData[ particleIndex ].position[ 0 ] += -frameVelocity.X( ) * scalar + cpuData[ particleIndex ].velocity.X( ) * m_currentTime;
+                        gpuData[ particleIndex ].position[ 1 ] += -frameVelocity.Y( ) * scalar + cpuData[ particleIndex ].velocity.Y( ) * m_currentTime;
+                        gpuData[ particleIndex ].position[ 2 ] += -frameVelocity.Z( ) * scalar + cpuData[ particleIndex ].velocity.Z( ) * m_currentTime;
+                    }
                 }
             }
 
-            auto &gpuData = m_particleComponent->GetGPUParticleData( );
-            auto &cpuData = m_particleComponent->GetCPUParticleData( );
-
             // update ALL particles
             int activeParticles = m_particleComponent->GetActiveParticleCount( );
-            for ( int x = 0; x < activeParticles; ++x )
+            for (int x = 0; x < activeParticles; ++x)
             {
                 // remove time from life
                 cpuData[ x ].lifeTime -= dt;
 
                 // destroy if dead
-                if ( cpuData[ x ].lifeTime <= 0 )
+                if (cpuData[ x ].lifeTime <= 0)
                 {
-                    m_particleComponent->DestroyParticle(x);
+                    m_particleComponent->DestroyParticle( x );
                     --activeParticles;
                     continue;
                 }
 
-                gpuData[x].rotation[0] -= cpuData[x].roll * dt;
+                gpuData[ x ].rotation[ 0 ] -= cpuData[ x ].roll * dt;
 
                 // update position with velocity
                 gpuData[ x ].position[ 0 ] += cpuData[ x ].velocity.X( ) * dt;
                 gpuData[ x ].position[ 1 ] += cpuData[ x ].velocity.Y( ) * dt;
                 gpuData[ x ].position[ 2 ] += cpuData[ x ].velocity.Z( ) * dt;
             }                                                         
+
+            m_lastPosition = GetOwner( )->GetTransform( )->GetWorldPosition( );
         }                                                             
     }
 }

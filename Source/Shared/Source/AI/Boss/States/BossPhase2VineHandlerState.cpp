@@ -17,6 +17,10 @@
 #include "BossAIComponent.h"
 #include "VineAIComponent.h"
 
+#include <TimeSpan.h>
+
+using namespace ursine;
+
 BossPhase2VineHandlerState::BossPhase2VineHandlerState(void)
     : BossAIState( "Boss Phase2 Vine Handler" ) { }
 
@@ -41,5 +45,22 @@ void BossPhase2VineHandlerState::Update(BossAIStateMachine *machine)
 
     // if there are less than two away from home, send one out
     if (numAwayFromHome < 2 && homeVines.size( ) > 0)
-        homeVines[ 0 ]->PursueTarget( );
+    {
+        // Find the vine that has been sitting at home the longest
+        TimeSpan latestTime = homeVines[ 0 ]->GetTimeOfLastPursue( );
+        int index = 0;
+
+        for (int i = 1; i < homeVines.size( ); ++i)
+        {
+            auto &time = homeVines[ i ]->GetTimeOfLastPursue( );
+
+            if (time < latestTime)
+            {
+                index = i;
+                latestTime = time;
+            }
+        }
+
+        homeVines[ index ]->PursueTarget( );
+    }
 }

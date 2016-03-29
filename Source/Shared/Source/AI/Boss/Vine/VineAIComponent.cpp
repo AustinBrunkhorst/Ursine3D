@@ -27,6 +27,7 @@
 #include <SystemManager.h>
 #include <DebugSystem.h>
 #include <EntityEvent.h>
+#include <Application.h>
 
 NATIVE_COMPONENT_DEFINITION( VineAI );
 
@@ -46,12 +47,10 @@ VineAI::VineAI(void)
     , m_uprootDistance( 2.0f )
     , m_uprootDelay( 2.0f )
     , m_uprootCooldown( 5.0f )
-    , m_colliderSize( 1.0f, 1.0f, 1.0f )
     , m_stateMachine( this )
     , m_animator( nullptr )
     , m_target( nullptr )
-{
-}
+    , m_timeOfLastPursue( Application::Instance->GetTimeSinceStartup( ) ) { }
 
 VineAI::~VineAI(void)
 {
@@ -179,16 +178,6 @@ void VineAI::SetUprootCooldown(float cooldown)
     m_uprootCooldown = cooldown;
 }
 
-const SVec3 &VineAI::GetColliderSize(void) const
-{
-    return m_colliderSize;
-}
-
-void VineAI::SetColliderSize(const SVec3 &colliderSize)
-{
-    m_colliderSize = colliderSize;
-}
-
 Animator *VineAI::GetAnimator(void)
 {
     return m_animator;
@@ -227,13 +216,17 @@ bool VineAI::IsHome(void)
 void VineAI::PursueTarget(void)
 {
     m_stateMachine.SetBool( VineAIStateMachine::PursueTarget, true );
+    m_stateMachine.SetBool( VineAIStateMachine::IsHome, false );
+    m_timeOfLastPursue = Application::Instance->GetTimeSinceStartup( );
+}
+
+const TimeSpan &VineAI::GetTimeOfLastPursue(void) const
+{
+    return m_timeOfLastPursue;
 }
 
 void VineAI::OnInitialize(void)
 {
-    // TO TEST:
-    // - tell it to pursue enemy, and tell it to come back home
-
     GetOwner( )->Listener( this )
         .On( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 }
@@ -250,8 +243,6 @@ void VineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
         .Off( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 
     m_animator = GetOwner( )->GetComponentInChildren<Animator>( );
-
-    m_homeLocation = GetOwner( )->GetTransform( )->GetWorldPosition( );
 
     // Setup the state machine
     m_stateMachine.Initialize( );
@@ -339,6 +330,16 @@ void VineAI::drawRange(void)
     auto normal = trans->GetUp( );
 
     drawer->DrawCircle( center, normal, m_whipRange, Color::Yellow, 5.0f, true );
+}
+
+void VineAI::pursueTarget(void)
+{
+    PursueTarget( );
+}
+
+void VineAI::goHome(void)
+{
+    GoToHomeLocation( );
 }
 
 #endif
