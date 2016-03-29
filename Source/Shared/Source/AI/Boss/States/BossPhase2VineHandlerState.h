@@ -22,9 +22,10 @@ public:
 
     void Enter(BossAIStateMachine *machine) override;
     void Update(BossAIStateMachine *machine) override;
+    void Exit(BossAIStateMachine *machine) override;
 
 private:
 
-    void onHealthThresholdReached(EVENT_HANDLER(VineAI));
+    void onHealthThresholdReached(VineAI *vine);
 
 };

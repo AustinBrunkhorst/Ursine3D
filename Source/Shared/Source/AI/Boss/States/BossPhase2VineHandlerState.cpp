@@ -19,6 +19,8 @@
 
 #include <TimeSpan.h>
 
+#include <functional> 
+
 using namespace ursine;
 
 BossPhase2VineHandlerState::BossPhase2VineHandlerState(void)
@@ -26,16 +28,12 @@ BossPhase2VineHandlerState::BossPhase2VineHandlerState(void)
 
 void BossPhase2VineHandlerState::Enter(BossAIStateMachine *machine)
 {
-    // subscribe to all the vines
+    // set the callback for when the health thresholds are reached
     auto boss = machine->GetBoss( );
 
-    auto &vines = boss->GetVines( );
-
-    for (auto &vine : vines)
-    {
-        vine->GetComponent<VineAI>( )->Listener( this )
-            .On( VINE_HEALTH_THRESHOLD_REACHED, &BossPhase2VineHandlerState::onHealthThresholdReached );
-    }
+    boss->SetVineHealthThresholdCallback( 
+        std::bind( &BossPhase2VineHandlerState::onHealthThresholdReached, this, std::placeholders::_1 ) 
+    );
 }
 
 void BossPhase2VineHandlerState::Update(BossAIStateMachine *machine)
@@ -79,14 +77,24 @@ void BossPhase2VineHandlerState::Update(BossAIStateMachine *machine)
     }
 }
 
-void BossPhase2VineHandlerState::onHealthThresholdReached(EVENT_HANDLER(VineAI))
+void BossPhase2VineHandlerState::Exit(BossAIStateMachine *machine)
 {
-    EVENT_SENDER(VineAI, sender);
+    machine->GetBoss( )->SetVineHealthThresholdCallback( nullptr );
+}
 
+#include <iostream>
+void BossPhase2VineHandlerState::onHealthThresholdReached(VineAI *vine)
+{
     // If the vine has taken damage to make it's health threshold go to a certain point, 
     // tell it to go back home or pursue a target
-    if (sender->IsHome( ))
-        sender->PursueTarget( );
+    if (vine->IsHome( ))
+    {
+        vine->PursueTarget( );
+        std::cout << "Pursue Enemy" << std::endl;
+    }
     else
-        sender->GoToHomeLocation( );
+    {
+        vine->GoToHomeLocation( );
+        std::cout << "Go Home" << std::endl;
+    }
 }

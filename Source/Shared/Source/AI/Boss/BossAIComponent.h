@@ -17,6 +17,7 @@
 #include "BossAIStateMachine.h"
 #include "LevelSegmentManagerComponent.h"
 #include "HealthComponent.h"
+#include "VineAIComponent.h"
 
 class Health;
 
@@ -251,6 +252,8 @@ public:
     Meta(Disable)
     const std::vector<ursine::ecs::EntityHandle> &GetVines(void) const;
 
+    void SetVineHealthThresholdCallback(const std::function<void(VineAI*)> &callback);
+
 private:
 
     void OnInitialize(void) override;
@@ -261,6 +264,8 @@ private:
     void onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager));
 
     void onVineDeath(EVENT_HANDLER(Health));
+
+    void onVineHealthThresholdReached(EVENT_HANDLER(VineAI));
 
     void updateHealth(void);
 
@@ -312,6 +317,9 @@ private:
 
     // Vector of all vines
     std::vector<ursine::ecs::EntityHandle> m_vines;
+
+    // This callback is called when a vine health threshold is reached
+    std::function<void(VineAI*)> m_vineHealthThresholdCallback;
 
     // The threshold we're using for the phase 1 transition (1-100%)
     float m_phase1HealthThreshold;
