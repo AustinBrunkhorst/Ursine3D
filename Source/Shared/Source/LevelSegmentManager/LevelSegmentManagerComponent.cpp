@@ -23,6 +23,7 @@
 #include "RepositionPlayersAndCloseDoorState.h"
 #include "BossRoomTopAnimationState.h"
 #include "TriggerWaitState.h"
+#include "ToggleHudState.h"
 #include "CurrentSegmentCondition.h"
 
 #include "TutorialResourcesComponent.h"
@@ -294,7 +295,12 @@ void LevelSegmentManager::initBossRoomLogic(void)
         // Next state for spawning the players (reposition them if they are present)
         auto playerCreateState = initStateM->AddState<SpawnPlayersState>( true, false );
 
+        // Turn the huds on aswell
+        auto hudOn = initStateM->AddState<ToggleHudState>( true );
+
         initState->AddTransition( playerCreateState, "Go To Init Players" );
+
+        playerCreateState->AddTransition( hudOn, "Turn Hud On" );
 
         initStateM->SetInitialState( initState );
 
@@ -322,20 +328,29 @@ void LevelSegmentManager::initBossRoomLogic(void)
         auto changeSegment = cinematicStateM->AddState<ChangeSegmentState>( LevelSegments::BossRoom_Phase1 );
         auto tweenOut = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
         auto tweenIn = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
+        auto toggleHudOn = cinematicStateM->AddState<ToggleHudState>( true );
+        auto toggleHudOn2 = cinematicStateM->AddState<ToggleHudState>( true );
+        auto toggleHudOff = cinematicStateM->AddState<ToggleHudState>( false );
 
-        createPlayers->AddTransition( lockPlayers, "Lock Dem" );
+        createPlayers->AddTransition( toggleHudOn, "Toggle Hud On" );
 
-        lockPlayers->AddTransition( tweenOut, "Tween Out" );
+        toggleHudOn->AddTransition( lockPlayers, "Lock Dem" );
+
+        lockPlayers->AddTransition( toggleHudOff, "Toggle Hud Off" );
+
+        toggleHudOff->AddTransition( tweenOut, "Tween Out" );
 
         tweenOut->AddTransition( repositionAndClose, "Reposition Players" )
                 ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
 
         repositionAndClose->AddTransition( changeSegment, "Go To Phase 1" );
 
-        changeSegment->AddTransition( tweenIn, "Go To Tween In" )
+        changeSegment->AddTransition( tweenIn, "Tween Viewports In" )
                      ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 13.0f ) );
 
-        tweenIn->AddTransition( unlockPlayers, "Unlock Players" );
+        tweenIn->AddTransition( toggleHudOn2, "Go To Hud On" );
+
+        toggleHudOn2->AddTransition( unlockPlayers, "Unlock Players" );
 
         cinematicStateM->SetInitialState( createPlayers );
 
@@ -352,14 +367,18 @@ void LevelSegmentManager::initBossRoomLogic(void)
         auto createPlayers = p1to2StateM->AddState<SpawnPlayersState>( false, false );
         auto lockPlayers = p1to2StateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
         auto unlockPlayers = p1to2StateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+        auto toggleHudOn = p1to2StateM->AddState<ToggleHudState>( true );
+        auto toggleHudOff = p1to2StateM->AddState<ToggleHudState>( false );
         auto tweenOut = p1to2StateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
         auto tweenIn = p1to2StateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
 
         createPlayers->AddTransition( lockPlayers, "Lock Players" );
-        lockPlayers->AddTransition( tweenOut, "Tween Out" );
+        lockPlayers->AddTransition( toggleHudOff, "Toggle Hud Off" ); 
+        toggleHudOff->AddTransition( tweenOut, "Tween Out" );
         tweenOut->AddTransition( tweenIn, "Tween In" )
                 ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
-        tweenIn->AddTransition( unlockPlayers, "Unlock Players" );
+        tweenIn->AddTransition( toggleHudOn, "Toggle Hud On" );
+        toggleHudOn->AddTransition( unlockPlayers, "Unlock Players" );
 
         p1to2StateM->SetInitialState( createPlayers );
 

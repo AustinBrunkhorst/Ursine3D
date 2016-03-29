@@ -15,9 +15,29 @@
 
 #include "VineAIStateMachine.h"
 
-#include "AnimatorComponent.h"
+#include "HealthComponent.h"
 
-class VineAI : public ursine::ecs::Component
+#include <AnimatorComponent.h>
+#include <EventDispatcher.h>
+
+enum VineAIEvents
+{
+    VINE_HEALTH_THRESHOLD_REACHED
+};
+
+struct HealthThreshold
+{
+    EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{(value * 100.0).toFixed( 2 )}} %"))
+    float percentage;
+
+    HealthThreshold(void)
+        : percentage( 1.0f ) { }
+
+} Meta(Enable, EnableArrayType);
+
+class VineAI 
+    : public ursine::ecs::Component
+    , public ursine::EventDispatcher<VineAIEvents>
 {
     NATIVE_COMPONENT;
 
@@ -112,7 +132,9 @@ public:
         GetUprootCooldown,
         SetUprootCooldown
     );
-    
+
+    ursine::Array<HealthThreshold> healthThresholds;
+
     EditorMeta(Annotation("List of ROOT entities we're colliding with (used for uproot)."))
     ursine::Array<std::string> collisionList;
 
@@ -121,6 +143,8 @@ public:
 
     VineAI(void);
     ~VineAI(void);
+
+    void OnSceneReady(ursine::Scene *scene) override;
 
     bool GetFaceClosestPlayer(void) const;
     void SetFaceClosestPlayer(bool flag);
@@ -183,6 +207,8 @@ private:
 
     void onChildrenSerialized(EVENT_HANDLER(ursine::ecs::Entity));
 
+    void onDamageTaken(EVENT_HANDLER(Health));
+
     bool m_faceClosestPlayer;
 
     float m_whipTurnSpeed;
@@ -209,4 +235,10 @@ private:
 
     ursine::TimeSpan m_timeOfLastPursue;
 
-} Meta(Enable);
+    // This is our current index into the health threshold array
+    int m_currentHealthThreshold;
+
+} Meta(
+    Enable,
+    RequiresComponents(typeof(Health))
+);

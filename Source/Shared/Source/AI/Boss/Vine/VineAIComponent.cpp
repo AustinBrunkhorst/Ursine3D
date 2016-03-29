@@ -36,6 +36,7 @@ using namespace ecs;
 
 VineAI::VineAI(void)
     : BaseComponent( )
+    , EventDispatcher( this )
     , m_faceClosestPlayer( true )
     , m_whipTurnSpeed( 90.0f )
     , m_whipAngle( 45.0f )
@@ -50,12 +51,32 @@ VineAI::VineAI(void)
     , m_stateMachine( this )
     , m_animator( nullptr )
     , m_target( nullptr )
-    , m_timeOfLastPursue( Application::Instance->GetTimeSinceStartup( ) ) { }
+    , m_timeOfLastPursue( Application::Instance->GetTimeSinceStartup( ) )
+    , m_currentHealthThreshold( 0 ) { }
 
 VineAI::~VineAI(void)
 {
     GetOwner( )->GetWorld( )->Listener( this )
         .Off( WORLD_UPDATE, &VineAI::onUpdate );
+
+    auto health = GetOwner( )->GetComponent<Health>( );
+
+    if (health)
+    {
+        health->Listener( this )
+            .Off( HEALTH_DAMAGE_TAKEN, &VineAI::onDamageTaken );
+    }
+}
+
+void VineAI::OnSceneReady(ursine::Scene *scene)
+{
+    auto health = GetOwner( )->GetComponent<Health>( );
+
+    if (health)
+    {
+        health->Listener( this )
+            .On( HEALTH_DAMAGE_TAKEN, &VineAI::onDamageTaken );
+    }
 }
 
 bool VineAI::GetFaceClosestPlayer(void) const
@@ -206,6 +227,7 @@ const SVec3 &VineAI::GetHomeLocation(void) const
 void VineAI::GoToHomeLocation(void)
 {
     m_stateMachine.SetBool( VineAIStateMachine::GoHome, true );
+    m_stateMachine.SetBool( VineAIStateMachine::PursueTarget, false );
 }
 
 bool VineAI::IsHome(void)
@@ -317,6 +339,25 @@ void VineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
 
     GetOwner( )->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &VineAI::onUpdate );
+}
+
+void VineAI::onDamageTaken(EVENT_HANDLER(Health))
+{
+    EVENT_ATTRS(Health, HealthEventArgs);
+
+    if (healthThresholds.Size( ) <= m_currentHealthThreshold)
+        return;
+
+    auto &current = healthThresholds[ m_currentHealthThreshold ];
+
+    if (args->percentage <= current.percentage)
+    {
+        // Dispatch an event letting everyone know a current threshold was hit
+        Dispatch( VINE_HEALTH_THRESHOLD_REACHED, nullptr );
+
+        // increment our index
+        ++m_currentHealthThreshold;
+    }
 }
 
 #if defined(URSINE_WITH_EDITOR)
