@@ -13,11 +13,18 @@
 
 #include "BossAIState.h"
 
+#include "VineAIComponent.h"
+
 class BossPhase2VineHandlerState : public BossAIState
 {
 public:
     BossPhase2VineHandlerState(void);
 
+    void Enter(BossAIStateMachine *machine) override;
     void Update(BossAIStateMachine *machine) override;
+
+private:
+
+    void onHealthThresholdReached(EVENT_HANDLER(VineAI));
 
 };
