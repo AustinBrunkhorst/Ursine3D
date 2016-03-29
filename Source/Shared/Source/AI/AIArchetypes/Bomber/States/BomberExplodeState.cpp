@@ -58,7 +58,7 @@ namespace ursine
                 m_finished = true;
 
                 // we will just manually call exit
-                Exit(machine);
+                this->Exit(machine);
             }
         }
 
@@ -71,7 +71,13 @@ namespace ursine
             // AOE damage
             // &
             // dope particles
-            machine->GetEntity()->GetWorld()->CreateEntityFromArchetype(m_objToSpawn);
+            auto explosion = machine->GetEntity()->GetWorld()->CreateEntityFromArchetype(m_objToSpawn);
+
+            if (explosion != nullptr)
+            {
+                explosion->GetTransform( )->SetWorldPosition( 
+                    machine->GetEntity( )->GetTransform( )->GetWorldPosition( ) );
+            }
 
             // destroy ourselves (just going to use data already stored in walkstate)
             machine->GetEntity(  ).Get( )->Delete( );
