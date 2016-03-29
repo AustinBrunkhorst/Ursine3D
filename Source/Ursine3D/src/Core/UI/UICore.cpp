@@ -44,6 +44,9 @@ namespace ursine
         cmdLine->AppendSwitch( "disable-gpu" );
         cmdLine->AppendSwitch( "disable-gpu-compositing" );
 
+        cmdLine->AppendSwitch( "high-dpi-support" );
+        cmdLine->AppendSwitchWithValue( "touch-events", "enabled" );
+
         //command_line->AppendSwitch("off-screen-rendering-enabled");
         //command_line->AppendSwitch("in-process-gpu");
         //command_line->AppendSwitchWithValue("use-gl", "desktop");

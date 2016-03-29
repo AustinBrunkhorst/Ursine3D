@@ -40,7 +40,7 @@ namespace ursine
 
         // duration to wait until there are no actions on pending file action
         // to be considered stale
-        const auto kResourceActionStaleDuration = milliseconds( 1500 );
+        const auto kResourceActionStaleDuration = milliseconds( 700 );
 
         const meta::Type::Set &getImporterTypes(void)
         {
@@ -1184,8 +1184,34 @@ namespace ursine
     {
         ResourceBuildContext buildContext( this, resource );
 
+        Application::PostMainThread( [=] {
+            ResourceBuildArgs buildEvent;
+
+            buildEvent.type = RP_BUILD_RESOURCE_START;
+            buildEvent.resource = resource;
+
+            Dispatch( buildEvent.type, &buildEvent );
+        } );
+
+        auto startTime = system_clock::now( );
+
         buildResource( buildContext );
         buildResourcePreview( buildContext );
+
+        auto duration = system_clock::now( ) - startTime;
+
+        Application::PostMainThread( [=] {
+            ResourceBuildArgs buildEvent;
+
+            buildEvent.type = RP_BUILD_RESOURCE_COMPLETE;
+            buildEvent.resource = resource;
+            buildEvent.operationDuration = static_cast<int>(
+                duration_cast<milliseconds>( duration ).count( ) 
+            );
+            buildEvent.successful = true;
+
+            Dispatch( buildEvent.type, &buildEvent );
+        } );
 
         InvalidateResourceCache( resource );
 
@@ -1206,12 +1232,7 @@ namespace ursine
                 !generated.resource->m_buildCache.processedType.IsValid( );
 
             if (buildIsInvalidated( generated.resource ))
-            {
-                buildResource( generated );
-                buildResourcePreview( generated );
-
-                InvalidateResourceCache( generated.resource );
-            }
+                rebuildResource( generated.resource );
 
             if (isNew)
             {
@@ -1563,8 +1584,6 @@ namespace ursine
                 resource->GetSourceFileName( ).string( ).c_str( )
             );
         }
-
-        std::cout << "modified: " << resource->GetSourceFileName( ) << std::endl;
 
         Application::PostMainThread( [=]
         {

@@ -57,7 +57,7 @@ class NativeNotificationManager {
                 Extern.NotificationButtonCallback( id, index );
             }.bind( i ) );
 
-            notification.buttons.appendChild( element );
+            notification.buttonsContainer.appendChild( element );
 
             ++i;
         }

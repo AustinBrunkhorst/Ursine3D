@@ -35,10 +35,10 @@ class NativeCanvasWindowHandler extends WindowHandler {
         var bounds = window.container.getBoundingClientRect( );
 
         m_nativeHandler.Event( 'viewportInvalidated', {
-            x: bounds.left,
-            y: bounds.top,
-            width: bounds.width,
-            height: bounds.height
+            x: bounds.left * js.Browser.window.devicePixelRatio,
+            y: bounds.top * js.Browser.window.devicePixelRatio,
+            width: bounds.width * js.Browser.window.devicePixelRatio,
+            height: bounds.height * js.Browser.window.devicePixelRatio
         } );
     }
 }

@@ -20,6 +20,12 @@
 #include <SDL_syswm.h>
 #include <SDL_image.h>
 
+namespace
+{
+    // DPI which represents 100% zoom
+    const auto kBaseDPIFactor = 96.0f;
+}
+
 namespace ursine
 {
      Window::Window(WindowManager *manager, InternalWindowHandle handle)
@@ -29,6 +35,7 @@ namespace ursine
         , m_isShown( false )
         , m_isMaximized( false )
         , m_id( SDL_GetWindowID( handle ) )
+        , m_dpiScale( 1.0f )
         , m_manager( manager )
         , m_handle( handle )
     {
@@ -37,11 +44,31 @@ namespace ursine
         SDL_GetWindowSize( handle, &width, &height );
 
         m_size.Set( static_cast<float>( width ), static_cast<float>( height ) );
+
+#if defined(PLATFORM_WINDOWS)
+
+        auto hwnd = static_cast<HWND>( GetPlatformHandle( ) );
+
+        auto dc = GetDC( hwnd );
+
+        auto dpiX = GetDeviceCaps( dc, LOGPIXELSX );
+        auto dpiY = GetDeviceCaps( dc, LOGPIXELSY );
+
+        m_dpiScale = math::Min( dpiX, dpiY ) / kBaseDPIFactor;
+
+        ReleaseDC( hwnd, dc );
+
+#endif
     }
 
     Window::~Window(void)
     {
         SDL_DestroyWindow( m_handle );
+    }
+
+    WindowManager *Window::GetManager(void)
+    {
+        return m_manager;
     }
 
     void Window::SetTitle(const std::string &title)
@@ -56,7 +83,7 @@ namespace ursine
 
     void Window::SetResizable(bool resizable)
     {
-#if defined(PLATFORM_WINDOWS)
+    #if defined(PLATFORM_WINDOWS)
 
         auto hwnd = static_cast<HWND>( GetPlatformHandle( ) );
 
@@ -69,7 +96,7 @@ namespace ursine
 
         SetWindowLong( hwnd, GWL_STYLE, styleFlags );
 
-#endif
+    #endif
     }
 
     const Vec2 &Window::GetSize(void) const
@@ -215,6 +242,11 @@ namespace ursine
         }
 
         m_isShown = show;
+    }
+
+    float Window::GetDPIScaleFactor(void) const
+    {
+        return m_dpiScale;
     }
 
     void Window::SetIcon(const std::string &fileName)

@@ -34,9 +34,9 @@
 
 #include "MouseButton.h"
 
-#include <include/cef_client.h>
-#include <include/cef_v8.h>
-#include <include/cef_display_handler.h>
+#include <cef_client.h>
+#include <cef_v8.h>
+#include <cef_display_handler.h>
 
 namespace ursine
 {
@@ -46,6 +46,7 @@ namespace ursine
     class UIView 
         : public EventDispatcher<UIViewEventType>
         , public CefClient
+        , public CefLifeSpanHandler
         , public CefDisplayHandler
         , public CefLoadHandler
         , public UIRendererType
@@ -111,8 +112,27 @@ namespace ursine
         ////////////////////////////////////////////////////////////////////
 
         CefRefPtr<CefRenderHandler> GetRenderHandler(void) override;
+        CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler(void) override;
         CefRefPtr<CefDisplayHandler> GetDisplayHandler(void) override;
         CefRefPtr<CefLoadHandler> GetLoadHandler(void) override;
+
+        ////////////////////////////////////////////////////////////////////
+        // LifeSpanHandler Methods
+        ////////////////////////////////////////////////////////////////////
+
+        bool OnBeforePopup(
+            CefRefPtr<CefBrowser> browser,
+            CefRefPtr<CefFrame> frame,
+            const CefString &targetURL,
+            const CefString &targetFrameName,
+            WindowOpenDisposition targetDisposition,
+            bool userGesture,
+            const CefPopupFeatures &popupFeatures,
+            CefWindowInfo &windowInfo,
+            CefRefPtr<CefClient> &client,
+            CefBrowserSettings &settings,
+            bool *noJavaScriptAccess
+        ) override;
 
         ////////////////////////////////////////////////////////////////////
         // DisplayHandler Methods

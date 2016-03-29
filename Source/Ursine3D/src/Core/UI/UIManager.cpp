@@ -63,11 +63,11 @@ namespace ursine
 
         UICore::Instance = new UICore( );
 
+        CefEnableHighDPISupport( );
+
         UAssert( CefInitialize( mainArgs, settings, UICore::Instance, nullptr ),
             "Unable to initialize CEF." 
         );
-
-        CefEnableHighDPISupport( );
 
         app->Connect( APP_UPDATE, this, &UIManager::onAppUpdate );
     }
