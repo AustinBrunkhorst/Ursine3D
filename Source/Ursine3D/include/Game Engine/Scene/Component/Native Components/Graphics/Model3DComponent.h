@@ -112,6 +112,12 @@ namespace ursine
                 SetIsShadowCaster
             );
 
+            EditorField(
+                Vec2 textureOffset,
+                GetTextureUVOffset,
+                SetTextureUVOffset
+            );
+
             Meta(Enable)
             Model3D(void);
             ~Model3D(void);
@@ -163,6 +169,9 @@ namespace ursine
 
             bool GetIsShadowCaster(void) const;
             void SetIsShadowCaster(bool castShadows);
+
+            const Vec2 &GetTextureUVOffset(void) const;
+            void SetTextureUVOffset(const Vec2 &offset);
 
             void OnSerialize(Json::object &output) const override;
             void OnDeserialize(const Json &input) override;

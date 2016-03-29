@@ -122,6 +122,9 @@ namespace ursine
             bool GetShadowCaster(void) const;
             void SetShaderCaster(bool castShadow);
 
+            const Vec2 &GetTextureUVOffset(void) const;
+            void SetTextureUVOffset(const Vec2 &offset);
+
         private:
             float m_emissive;
             float m_specPow;
@@ -134,6 +137,8 @@ namespace ursine
 
             float m_animationTime;
             std::vector<SMat4> m_matrixPalette;
+
+            Vec2 m_textureUVOffset;
 
             // for multimaps
             int m_meshIndex;
@@ -281,6 +286,7 @@ namespace ursine
             int SpawnParticle(void);
 
             void DestroyParticle(const int index);
+            void DestroyAllParticles(void);
 
             const SVec3 &GetPosition(void) const;
             void SetPosition(const SVec3 &position);

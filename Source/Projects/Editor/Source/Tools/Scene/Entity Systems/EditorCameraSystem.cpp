@@ -184,7 +184,7 @@ void EditorCameraSystem::updateCameraKeys(float dt)
 {
     auto *keyboardMgr = GetCoreSystem(KeyboardManager);
 
-    float speed = log(m_camera->lookZoomFactor + 2) * log(m_camera->lookZoomFactor + 2) * 10.0f;
+    float speed = log(m_camera->lookZoomFactor + 2) * log(m_camera->lookZoomFactor + 2) * 5.0f;
     
     // focus with f
     if (keyboardMgr->IsTriggeredDown( KEY_F ))
@@ -334,6 +334,11 @@ void EditorCameraSystem::updateCameraMouse(float dt)
         if (mouseDelta.Length( ) > 0)
         {
             m_camera->lookZoomFactor += -mouseDelta.Y( ) * speed * dt * 0.5f;
+        }
+
+        if (m_camera->lookZoomFactor < 1.0f)
+        {
+            m_camera->lookZoomFactor = 1.0f;
         }
     }
 

@@ -159,6 +159,7 @@ namespace ursine
         {
             return m_systemSpace;
         }
+
         void ParticleSystem::SetSystemSpace(const SystemSpace &space)
         {
             m_systemSpace = space;
@@ -167,6 +168,8 @@ namespace ursine
                 m_particleSystem->SetSystemSpace( true );
             else
                 m_particleSystem->SetSystemSpace( false );
+
+            m_particleSystem->DestroyAllParticles( );
         }
 
         RenderMode ParticleSystem::GetRenderMode(void) const

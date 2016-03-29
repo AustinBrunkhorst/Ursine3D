@@ -233,6 +233,17 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED("castsShadows", castShadows);
         }
 
+        const Vec2 &Model3D::GetTextureUVOffset(void) const
+        {
+            return m_model->GetTextureUVOffset( );
+        }
+
+        void Model3D::SetTextureUVOffset(const Vec2 &offset)
+        {
+            m_model->SetTextureUVOffset( offset );
+            NOTIFY_COMPONENT_CHANGED("textureOffset", m_model->GetTextureUVOffset());
+        }
+
         void Model3D::updateRenderer(void)
         {
             auto trans = GetOwner( )->GetTransform( );

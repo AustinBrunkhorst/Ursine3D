@@ -128,6 +128,7 @@ namespace ursine
             m_color = Color(1, 1, 1, 1);
             m_meshIndex = -1;
             m_shadowCaster = true;
+            m_textureUVOffset = Vec2(0, 0);
         }
 
         const char *Model3D::GetModelName(void)
@@ -223,6 +224,16 @@ namespace ursine
         void Model3D::SetShaderCaster(bool castShadow)
         {
             m_shadowCaster = castShadow;
+        }
+
+        const Vec2 &Model3D::GetTextureUVOffset(void) const
+        {
+            return m_textureUVOffset;
+        }
+
+        void Model3D::SetTextureUVOffset(const Vec2 &offset)
+        {
+            m_textureUVOffset = offset;
         }
 
         const Color &Model3D::GetColor(void) const
@@ -580,6 +591,11 @@ namespace ursine
             m_cpuParticleData[ index ] = m_cpuParticleData[ m_backIndex ];
 
             m_cpuParticleData[ m_backIndex ].lifeTime = -1.0f;
+        }
+
+        void ParticleSystem::DestroyAllParticles(void)
+        {
+            m_backIndex = 0;
         }
 
         const SVec3 & ParticleSystem::GetPosition(void) const
