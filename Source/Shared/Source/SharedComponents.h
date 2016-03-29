@@ -140,6 +140,7 @@
 #include "Misc/AnimateTutorialTextComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
 #include "Misc/DeathTriggerGroupComponent.h"
+#include "Misc/PingTestComponent.h"
 
 /////////////////////////////////
 //           Physics           //

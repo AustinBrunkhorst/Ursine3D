@@ -14,8 +14,11 @@
 #pragma once
 
 #include "EntitySystem.h"
+
 #include "AudioManager.h"
+
 #include "AudioID.h"
+#include "AudioEventInfo.h"
 
 namespace ursine
 {
@@ -35,8 +38,6 @@ namespace ursine
             void CreateAudioObject(AkGameObjectID& id);
 
             void DeleteAudioObject(AkGameObjectID& id);
-
-            static void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
 
             void AssignListener(AkGameObjectID obj, ListenerMask listeners);
 
@@ -61,11 +62,17 @@ namespace ursine
 
 			bool ChangeAssignedListener(ListenerIndex oldIndex, ListenerIndex newIndex);
 
-            static void SetGameState(const std::string name, const std::string state);
+            static void SetGameState(const std::string &name, const std::string &state);
             
-            static void SetObjectSwitch(const std::string name, const std::string state, AkGameObjectID obj);
+            static void SetObjectSwitch(const std::string &name, const std::string &state, AkGameObjectID obj);
 
-            static void SetTrigger(const std::string name, AkGameObjectID obj);
+            static void SetTrigger(const std::string &name, AkGameObjectID obj);
+
+			static void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
+
+			static void PostAudioEvent(const std::string param, AkGameObjectID id = AUDIO_GLOBAL_OBJECT_ID);
+
+			void PostAudioEventInfo(AudioEvent::Handle e, AkGameObjectID id);
 
         private:
             AudioManager *m_audioMan;

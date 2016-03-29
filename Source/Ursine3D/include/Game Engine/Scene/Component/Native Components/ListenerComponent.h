@@ -43,8 +43,13 @@ namespace ursine
 			ListenerIndex GetListenerIndex(void) const;
 			void SetListenerIndex(ListenerIndex index);
 
+			ListenerMask GetListenerMask(void);
+
 		private:
 			 ListenerIndex m_listenerIndex;
+			 ListenerMask m_mask;
+
+			 void indexToMask(void);
 
 		} Meta(Enable, WhiteListMethods, DisplayName( "AudioListener" ));
 	}

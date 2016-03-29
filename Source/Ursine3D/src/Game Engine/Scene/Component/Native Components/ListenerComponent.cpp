@@ -32,7 +32,8 @@ namespace ursine
 
 		AudioListener::AudioListener(void)
 			: BaseComponent( )
-			, m_listenerIndex( ListenerIndex( 0 ) ) { }
+			, m_mask( ListenerMask::L1 )
+			, m_listenerIndex( ListenerIndex::L1 ) { }
 
 		AudioListener::~AudioListener(void)
 		{
@@ -75,7 +76,47 @@ namespace ursine
 
 			m_listenerIndex = index;
 
+			indexToMask( );
+
+			m_dirty = true;
+
 			NOTIFY_COMPONENT_CHANGED( "listener", m_listenerIndex );
+		}
+
+		ListenerMask AudioListener::GetListenerMask(void)
+		{
+			return m_mask;
+		}
+
+		void AudioListener::indexToMask(void)
+		{
+			switch (m_listenerIndex)
+			{
+			case ListenerIndex::L1:
+				m_mask = ListenerMask::L1;
+				break;
+			case ListenerIndex::L2:
+				m_mask = ListenerMask::L2;
+				break;
+			case ListenerIndex::L3:
+				m_mask = ListenerMask::L3;
+				break;
+			case ListenerIndex::L4:
+				m_mask = ListenerMask::L4;
+				break;
+			case ListenerIndex::L5:
+				m_mask = ListenerMask::L5;
+				break;
+			case ListenerIndex::L6:
+				m_mask = ListenerMask::L6;
+				break;
+			case ListenerIndex::L7:
+				m_mask = ListenerMask::L7;
+				break;
+			case ListenerIndex::LG:
+				m_mask = ListenerMask::L8;
+				break;
+			}
 		}
 	}
 }
