@@ -89,3 +89,13 @@ bool VineStateUtils::AtTarget(VineAI *ai, float distance)
 
     return dist <= distance;
 }
+
+bool VineStateUtils::AtHome(VineAI *ai, float distance)
+{
+    auto homePos = ai->GetHomeLocation( );
+    auto aiPos = ai->GetOwner( )->GetTransform( )->GetWorldPosition( );
+
+    float dist = SVec3::Distance( homePos, aiPos );
+
+    return dist <= distance;
+}

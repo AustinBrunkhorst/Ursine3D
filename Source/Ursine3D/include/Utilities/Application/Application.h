@@ -19,6 +19,7 @@
 #include "PlatformEventArgs.h"
 
 #include "FrameRateController.h"
+#include "TimeSpan.h"
 
 #include <mutex>
 
@@ -51,6 +52,8 @@ namespace ursine
         void SetActive(bool active);
 
         DeltaTime GetDeltaTime(void) const;
+
+        TimeSpan GetTimeSinceStartup(void) const;
 
         FrameRateController &GetFrameRateController(void);
 

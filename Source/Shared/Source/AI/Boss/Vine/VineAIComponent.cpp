@@ -27,6 +27,7 @@
 #include <SystemManager.h>
 #include <DebugSystem.h>
 #include <EntityEvent.h>
+#include <Application.h>
 
 NATIVE_COMPONENT_DEFINITION( VineAI );
 
@@ -50,8 +51,7 @@ VineAI::VineAI(void)
     , m_stateMachine( this )
     , m_animator( nullptr )
     , m_target( nullptr )
-{
-}
+    , m_timeOfLastPursue( Application::Instance->GetTimeSinceStartup( ) ) { }
 
 VineAI::~VineAI(void)
 {
@@ -227,13 +227,17 @@ bool VineAI::IsHome(void)
 void VineAI::PursueTarget(void)
 {
     m_stateMachine.SetBool( VineAIStateMachine::PursueTarget, true );
+    m_stateMachine.SetBool( VineAIStateMachine::IsHome, false );
+    m_timeOfLastPursue = Application::Instance->GetTimeSinceStartup( );
+}
+
+const TimeSpan &VineAI::GetTimeOfLastPursue(void) const
+{
+    return m_timeOfLastPursue;
 }
 
 void VineAI::OnInitialize(void)
 {
-    // TO TEST:
-    // - tell it to pursue enemy, and tell it to come back home
-
     GetOwner( )->Listener( this )
         .On( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 }
@@ -250,8 +254,6 @@ void VineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
         .Off( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 
     m_animator = GetOwner( )->GetComponentInChildren<Animator>( );
-
-    m_homeLocation = GetOwner( )->GetTransform( )->GetWorldPosition( );
 
     // Setup the state machine
     m_stateMachine.Initialize( );
@@ -339,6 +341,16 @@ void VineAI::drawRange(void)
     auto normal = trans->GetUp( );
 
     drawer->DrawCircle( center, normal, m_whipRange, Color::Yellow, 5.0f, true );
+}
+
+void VineAI::pursueTarget(void)
+{
+    PursueTarget( );
+}
+
+void VineAI::goHome(void)
+{
+    GoToHomeLocation( );
 }
 
 #endif

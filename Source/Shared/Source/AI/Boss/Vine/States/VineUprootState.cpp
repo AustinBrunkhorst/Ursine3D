@@ -129,13 +129,16 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             for (auto &model : models)
                 model->SetActive( true );
 
-            auto boxCollider = aiOwner->GetComponentInChildren<ecs::BoxCollider>( );
+            /*auto boxCollider = aiOwner->GetComponentInChildren<ecs::BoxCollider>( );
 
             m_originalDimensions = boxCollider->GetDimensions( );
-            boxCollider->SetDimensions( ai->GetColliderSize( ) );
+            boxCollider->SetDimensions( ai->GetColliderSize( ) );*/
 
             // We've successfully pursued our target
             machine->SetBool( VineAIStateMachine::PursueTarget, false );
+
+            // Update the vine's "time of last pursue"
+            ai->m_timeOfLastPursue = Application::Instance->GetTimeSinceStartup( );
 
             break;
         }
@@ -181,9 +184,9 @@ void VineUprootState::onAnimationFinished(EVENT_HANDLER(Entity))
         {
             m_finished = true;
 
-            auto boxCollider = sender->GetComponentInChildren<BoxCollider>( );
+            /*auto boxCollider = sender->GetComponentInChildren<BoxCollider>( );
 
-            boxCollider->SetDimensions( m_originalDimensions );
+            boxCollider->SetDimensions( m_originalDimensions );*/
 
             break;
         }
