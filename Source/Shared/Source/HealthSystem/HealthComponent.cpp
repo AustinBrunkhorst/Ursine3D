@@ -16,9 +16,15 @@
 #include "HealthComponent.h"
 #include "GameEvents.h"
 #include "AudioEmitterComponent.h"
+#include "PlayerIdComponent.h"
 #include "CollisionEventArgs.h"
 
 NATIVE_COMPONENT_DEFINITION( Health );
+
+namespace gameUIEvents
+{
+    const auto UI_HealthComponentStats = "UI_HealthComponentStats";
+}
 
 namespace
 {
@@ -106,9 +112,22 @@ void Health::DealDamage(const float damage)
     }
     else
     {
-        HealthEventArgs args( damage, m_health / m_maxHealth );
+        float percentage = m_health / m_maxHealth;
 
+        // dispatch damage taken event
+        HealthEventArgs args( damage, m_health / m_maxHealth );
         Dispatch( HEALTH_DAMAGE_TAKEN, &args );
+
+        // dispacth to ui if player
+        if ( owner->HasComponent< PlayerID >( ) )
+        {
+            ursine::Json message = ursine::Json::object {
+                { "playerID", owner->GetComponent< PlayerID >( )->GetID( ) },
+                { "healthPercent", percentage }
+            };
+
+            GetOwner( )->GetWorld( )->MessageUI( gameUIEvents::UI_HealthComponentStats, message );
+        }
     }
 
     URSINE_TODO("Fix sound hack for health");

@@ -89,13 +89,6 @@ void InteractionBaySystem::onUpdate(EVENT_HANDLER(World))
         // find closest interactable index to bay
         closestIndex = SortBayInteractables( bay->GetOwner( )->GetTransform( ), bay->m_transforms );
 
-        // current bay is not contacting an interactables
-        if ( closestIndex == -1 )
-        {
-            bay->m_prevInteractable = nullptr;
-            continue;
-        }
-        
         // update le bay and its interaction
         UpdateBay( bay, closestIndex );
     }
@@ -107,6 +100,16 @@ void InteractionBaySystem::UpdateBay(InteractionBay* bay, const int closestIndex
     Interactable* currInteractable;
     CommandQueue* queue = bay->GetOwner( )->GetComponent<CommandQueue>( );
     auto id = bay->GetOwner( );
+
+    if ( !bay->m_prevInteractable && closestIndex == -1 )
+        return;
+
+    if ( closestIndex == -1 )
+    {
+        bay->m_prevInteractable->StopInteraction(queue, id);
+        bay->m_prevInteractable = nullptr;
+        return;
+    }
 
     // get new current interactable
     currInteractable = bay->m_interactables[ closestIndex ];

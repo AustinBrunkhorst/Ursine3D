@@ -26,6 +26,7 @@
 
 #include "Misc/ForceComponent.h"
 #include "Misc/TimeDeathComponent.h"
+#include "Misc/BuffComponent.h"
 
 /////////////////////////////////
 //        Player Logic         //
@@ -52,6 +53,13 @@
 #include "InteractionSystem/InteractableComponent.h"
 #include "InteractionSystem/Pickups/WeaponPickup.h"
 #include "InteractionSystem/Triggers/ControlPointComponent.h"
+
+/////////////////////////////////
+//          Triggers           //
+/////////////////////////////////
+
+#include "InteractionSystem/RaidTriggers/EmpowerTriggerComponent.h"
+#include "InteractionSystem/RaidTriggers/DisempowerTriggerComponent.h"
 
 /////////////////////////////////
 //        Weapon System        //
