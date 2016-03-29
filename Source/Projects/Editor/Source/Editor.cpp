@@ -67,6 +67,8 @@ Editor::Editor(void)
     : m_graphics( nullptr ) 
     , m_project( nullptr ) { }
 
+///////////////////////////////////////////////////////////////////////////////
+
 Editor::~Editor(void) { } 
     
 ///////////////////////////////////////////////////////////////////////////////
@@ -78,6 +80,8 @@ const EditorWindow &Editor::GetMainWindow(void) const
     return m_mainWindow;
 }
      
+///////////////////////////////////////////////////////////////////////////////
+
 const EditorPreferences &Editor::GetPreferences(void) const
 {
     return m_preferences;
@@ -132,6 +136,8 @@ void Editor::CreateNewProject(const std::string &name, const std::string &direct
     LoadProject( projectFileName.string( ) );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void Editor::LoadProject(const std::string &filename)
 {
 #if defined(PLATFORM_WINDOWS)
@@ -165,6 +171,8 @@ void Editor::LoadProject(const std::string &filename)
      
     Application::Instance->Exit( );
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void Editor::SetProjectStatus(const std::string &status)
 {
@@ -241,7 +249,9 @@ void Editor::OnRemove(void)
 
     m_buildPipelineFocusTimeout.Cancel( );
 
-    m_mainWindow.m_ui->Disconnect( UI_LOADED, this, &Editor::onUILoaded );
+    m_mainWindow.m_ui->Listener( this )
+        .Off( UI_LOADED, &Editor::onUILoaded )
+        .Off( UI_POPUP_CREATED, &Editor::onUIPopup );
 
     m_mainWindow.m_ui->Close( );
     m_mainWindow.m_ui = nullptr;
@@ -255,6 +265,8 @@ void Editor::OnRemove(void)
 
     m_project = nullptr;   
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void Editor::loadPreferences(void)
 {
@@ -278,6 +290,8 @@ void Editor::loadPreferences(void)
     m_preferences = meta::Type::DeserializeJson<EditorPreferences>( prefsJson );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void Editor::writePreferences(void)
 {
     auto window = m_mainWindow.m_window;
@@ -291,6 +305,8 @@ void Editor::writePreferences(void)
 
     fs::WriteAllText( kPreferencesFile, prefsJson );
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 std::string Editor::findAvailableProject(void) const
 {
@@ -397,7 +413,9 @@ void Editor::initializeUI(void)
         m_startupConfig.uiEntryPoint 
     );
 
-    m_mainWindow.m_ui->Connect( UI_LOADED, this, &Editor::onUILoaded );
+    m_mainWindow.m_ui->Listener( this )
+        .On( UI_LOADED, &Editor::onUILoaded )
+        .On( UI_POPUP_CREATED, &Editor::onUIPopup );
 
     m_mainWindow.m_ui->SetViewport( {
         0, 0,
@@ -459,6 +477,8 @@ void Editor::initializeProject(const std::string &fileName)
     resourcePipeline.Build( );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void Editor::exitSplashScreen(void)
 {
     auto window = m_mainWindow.m_window;
@@ -510,6 +530,13 @@ void Editor::onUILoaded(EVENT_HANDLER(ursine::UIView))
     {
         m_mainWindow.m_window->Show( true );
     } );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::onUIPopup(EVENT_HANDLER(ursine::UIView))
+{
+    EVENT_ATTRS(ursine::UIView, ursine::UIPopupArgs);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -588,6 +615,8 @@ void Editor::onPipelinePreBuildItemStart(EVENT_HANDLER(rp::ResourcePipelineManag
     ); 
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void Editor::onPipelinePreBuildItemPreviewStart(EVENT_HANDLER(rp::ResourcePipelineManager))
 {
     EVENT_ATTRS(rp::ResourcePipelineManager, rp::ResourceBuildArgs);
@@ -620,6 +649,8 @@ void Editor::onPipelinePreBuildComplete(EVENT_HANDLER(rp::ResourcePipelineManage
 
     Application::PostMainThread( std::bind( &Editor::exitSplashScreen, this ) );
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void Editor::onSceneWorldChanged(EVENT_HANDLER(Scene))
 {

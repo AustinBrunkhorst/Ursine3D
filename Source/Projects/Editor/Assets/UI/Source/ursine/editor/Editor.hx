@@ -7,6 +7,8 @@ import ursine.controls.MainMenu;
 import ursine.controls.MenuItem;
 import ursine.controls.MenuSeparator;
 import ursine.editor.MenuItemHandler;
+import ursine.editor.windows.OutputLog;
+import ursine.editor.resources.NativeResourceManager;
 import ursine.editor.scene.component.ComponentDatabase;
 import ursine.editor.scene.ScenePlayState;
 
@@ -17,11 +19,16 @@ class Editor {
 
     public var mainMenu : MainMenu;
 
+    public var outputWindow : OutputLog;
+
     public var broadcastManager : NativeBroadcastManager;
 
     public var componentDatabase : ComponentDatabase;
 
     private var m_notificationManager : NativeNotificationManager;
+    private var m_resourceManager : NativeResourceManager;
+
+    private var m_statusTextContainer : js.html.DivElement;
 
     private var m_toolsContainer : js.html.Element;
     private var m_btnPlay : js.html.Element;
@@ -36,6 +43,8 @@ class Editor {
 
         broadcastManager = new NativeBroadcastManager( );
 
+        outputWindow = new OutputLog( );
+
         broadcastManager.getChannel( 'SceneManager' )
             .on( 'PlayStateChanged', onScenePlayStateChanged );
 
@@ -44,8 +53,11 @@ class Editor {
         );
 
         m_notificationManager = new NativeNotificationManager( broadcastManager );
+        m_resourceManager = new NativeResourceManager( broadcastManager );
 
         buildMenus( );
+
+        m_statusTextContainer = cast js.Browser.document.querySelector( '#status-bar span' );
 
         js.Browser.document
             .querySelector( '#header-toolbar' )
@@ -54,6 +66,10 @@ class Editor {
         initSimulationPlayback( );
 
         onScenePlayStateChanged( );
+    }
+
+    public function setStatusText(status : String) {
+        m_statusTextContainer.innerHTML = status;
     }
 
     private function buildMenus() {

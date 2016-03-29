@@ -72,7 +72,10 @@
                 this._timeout = null;
             },
 
-            get buttons() {
+            get messageContainer() {
+                return this.$.message;
+            },
+            get buttonsContainer() {
                 return this.$.buttons;
             },
 

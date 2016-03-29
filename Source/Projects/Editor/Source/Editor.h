@@ -119,6 +119,7 @@ private:
     ///////////////////////////////////////////////////////////////////////////
 
     void onUILoaded(EVENT_HANDLER(ursine::UIView));
+    void onUIPopup(EVENT_HANDLER(ursine::UIView));
 
     void onLauncherUpdate(EVENT_HANDLER(ursine::Application));
     void onEditorUpdate(EVENT_HANDLER(ursine::Application));

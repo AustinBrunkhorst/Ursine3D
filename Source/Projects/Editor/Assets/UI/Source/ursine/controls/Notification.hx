@@ -25,8 +25,8 @@ extern class Notification extends PolymerElement {
     var header : String;
     var message : String;
 
-    // buttons container
-    var buttons : HtmlElement;
+    var messageContainer : HtmlElement;
+    var buttonsContainer : HtmlElement;
 
     function new(type : NotificationType, message : String, ?header : String) : Void;
 

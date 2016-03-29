@@ -17,6 +17,7 @@
 
 #include "KeyboardModifiers.h"
 #include "KeyboardManager.h"
+#include "WindowManager.h"
 #include "MouseManager.h"
 
 #if defined(PLATFORM_WINDOWS)
@@ -173,6 +174,11 @@ namespace ursine
         return this;
     }
 
+    CefRefPtr<CefLifeSpanHandler> UIView::GetLifeSpanHandler(void)
+    {
+        return this;
+    }
+
     CefRefPtr<CefDisplayHandler> UIView::GetDisplayHandler(void)
     {
         return this;
@@ -181,6 +187,40 @@ namespace ursine
     CefRefPtr<CefLoadHandler> UIView::GetLoadHandler(void)
     {
         return this;
+    }
+
+    bool UIView::OnBeforePopup(
+        CefRefPtr<CefBrowser> browser,
+        CefRefPtr<CefFrame> frame,
+        const CefString &targetURL,
+        const CefString &targetFrameName,
+        WindowOpenDisposition targetDisposition,
+        bool userGesture,
+        const CefPopupFeatures &popupFeatures,
+        CefWindowInfo &windowInfo,
+        CefRefPtr<CefClient> &client,
+        CefBrowserSettings &settings,
+        bool *noJavaScriptAccess
+    )
+    {
+        windowInfo.SetAsPopup(
+            static_cast<CefWindowHandle>( m_window->GetPlatformHandle( ) ),
+            targetFrameName
+        );
+
+        UIPopupArgs e;
+
+        e.name = targetFrameName.ToString( );
+        e.browser = browser;
+        e.frame = frame;
+        e.popupFeatures = &popupFeatures;
+        e.windowInfo = &windowInfo;
+        e.client = &client;
+        e.settings = &settings;
+
+        Dispatch( UI_POPUP_CREATED, &e );
+
+        return false;
     }
 
     bool UIView::OnConsoleMessage(
@@ -237,7 +277,7 @@ namespace ursine
     {
         auto handle = m_window->GetPlatformHandle( );
 
-#if defined(PLATFORM_WINDOWS)
+    #if defined(PLATFORM_WINDOWS)
 
         SetClassLongPtr( 
             static_cast<HWND>( handle ), 
@@ -246,7 +286,7 @@ namespace ursine
         );
 
         SetCursor( cursor );
-#endif
+    #endif
     }
 
     void UIView::OnLoadEnd(
@@ -255,6 +295,10 @@ namespace ursine
         int httpStatusCode
     )
     {
+        m_browser->GetHost( )->SetZoomLevel( 
+            1.0f - m_window->GetDPIScaleFactor( )
+        );
+
         // dispatch all of the queued messages
         for (auto &message : m_preLoadQueue)
         {

@@ -72,7 +72,7 @@ void EditorIcon::OnInitialize(void)
 
     auto *billboard = billboardComp->GetBillboard( );
 
-    billboardComp->SetScale( { 0.075f, 0.075f } );
+    billboardComp->SetScale( { 0.045f, 0.045f } );
     billboard->SetEntityID( owner->GetID( ) );
 
     m_billboard->GetComponent<ecs::Billboard2D>( )->SetRenderMask( ecs::RenderMask::MEditorTool );

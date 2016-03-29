@@ -176,6 +176,11 @@ StringBuf.prototype = {
 var StringTools = function() { };
 $hxClasses["StringTools"] = StringTools;
 StringTools.__name__ = ["StringTools"];
+StringTools.lpad = function(s,c,l) {
+	if(c.length <= 0) return s;
+	while(s.length < l) s = c + s;
+	return s;
+};
 StringTools.replace = function(s,sub,by) {
 	return s.split(sub).join(by);
 };
@@ -785,10 +790,13 @@ var ursine_editor_Editor = function() {
 	ursine_editor_Editor.instance = this;
 	this.mainMenu = new MainMenuControl();
 	this.broadcastManager = new ursine_editor_NativeBroadcastManager();
+	this.outputWindow = new ursine_editor_windows_OutputLog();
 	this.broadcastManager.getChannel("SceneManager").on("PlayStateChanged",$bind(this,this.onScenePlayStateChanged));
 	this.componentDatabase = new ursine_editor_scene_component_ComponentDatabase(GetNativeComponentDatabase());
 	this.m_notificationManager = new ursine_editor_NativeNotificationManager(this.broadcastManager);
+	this.m_resourceManager = new ursine_editor_resources_NativeResourceManager(this.broadcastManager);
 	this.buildMenus();
+	this.m_statusTextContainer = window.document.querySelector("#status-bar span");
 	window.document.querySelector("#header-toolbar").appendChild(this.mainMenu);
 	this.initSimulationPlayback();
 	this.onScenePlayStateChanged();
@@ -796,7 +804,10 @@ var ursine_editor_Editor = function() {
 $hxClasses["ursine.editor.Editor"] = ursine_editor_Editor;
 ursine_editor_Editor.__name__ = ["ursine","editor","Editor"];
 ursine_editor_Editor.prototype = {
-	buildMenus: function() {
+	setStatusText: function(status) {
+		this.m_statusTextContainer.innerHTML = status;
+	}
+	,buildMenus: function() {
 		var classTypeNames = Object.keys( $hxClasses );
 		var menuHandlerType = Type.resolveClass(Type.getClassName(ursine_editor_MenuItemHandler));
 		var handlers = [];
@@ -953,7 +964,7 @@ ursine_editor_NativeCanvasWindowHandler.prototype = $extend(ursine_editor_Window
 	}
 	,onViewportInvalidated: function() {
 		var bounds = this.window.container.getBoundingClientRect();
-		this.m_nativeHandler.Event("viewportInvalidated",{ x : bounds.left, y : bounds.top, width : bounds.width, height : bounds.height});
+		this.m_nativeHandler.Event("viewportInvalidated",{ x : bounds.left * window.devicePixelRatio, y : bounds.top * window.devicePixelRatio, width : bounds.width * window.devicePixelRatio, height : bounds.height * window.devicePixelRatio});
 	}
 	,__class__: ursine_editor_NativeCanvasWindowHandler
 });
@@ -1002,7 +1013,7 @@ ursine_editor_NativeNotificationManager.prototype = {
 			})(function(index) {
 				ursine_native_Extern.NotificationButtonCallback(id,index);
 			},i));
-			notification.buttons.appendChild(element);
+			notification.buttonsContainer.appendChild(element);
 			++i;
 		}
 	}
@@ -1117,6 +1128,24 @@ ursine_editor_menus_ToolsMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_ToolsMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
 	__class__: ursine_editor_menus_ToolsMenu
 });
+var ursine_editor_resources_NativeResourceManager = function(broadcastManager) {
+	broadcastManager.getChannel("ResourcePipeline").on("ResourceBuildStart",$bind(this,this.onResourceBuildStart)).on("ResourceBuildComplete",$bind(this,this.onResourceBuildComplete));
+};
+$hxClasses["ursine.editor.resources.NativeResourceManager"] = ursine_editor_resources_NativeResourceManager;
+ursine_editor_resources_NativeResourceManager.__name__ = ["ursine","editor","resources","NativeResourceManager"];
+ursine_editor_resources_NativeResourceManager.prototype = {
+	onResourceBuildStart: function(e) {
+		var resource = ursine_native_Extern.ProjectGetResource(e.guid);
+		if(resource == null) throw new js__$Boot_HaxeError("Failed to get resource from GUID " + e.guid);
+		ursine_editor_windows_OutputLog.log("Building " + resource.relativePathDisplayName + "...");
+	}
+	,onResourceBuildComplete: function(e) {
+		var resource = ursine_native_Extern.ProjectGetResource(e.guid);
+		if(resource == null) throw new js__$Boot_HaxeError("Failed to get resource from GUID " + e.guid);
+		if(e.successful) ursine_editor_windows_OutputLog.log("Built in " + e.duration + " ms: " + resource.relativePathDisplayName); else ursine_editor_windows_OutputLog.log("Build Failed: " + resource.relativePathDisplayName + "<br>Reason: " + e.error.message);
+	}
+	,__class__: ursine_editor_resources_NativeResourceManager
+};
 var ursine_editor_scene_component_ComponentDatabase = function(database) {
 	this.m_componentInspectionHandlers = new haxe_ds_StringMap();
 	this.m_fieldInspectionHandlers = new haxe_ds_StringMap();
@@ -2732,6 +2761,54 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.window.container.appendChild(this.m_btnAddComponent);
 	}
 	,__class__: ursine_editor_windows_EntityInspector
+});
+var ursine_editor_windows_OutputLog = function() {
+	ursine_editor_windows_OutputLog.instance = this;
+	ursine_editor_WindowHandler.call(this);
+	this.m_isOpen = false;
+	this.initElements();
+};
+$hxClasses["ursine.editor.windows.OutputLog"] = ursine_editor_windows_OutputLog;
+ursine_editor_windows_OutputLog.__name__ = ["ursine","editor","windows","OutputLog"];
+ursine_editor_windows_OutputLog.log = function(info) {
+	ursine_editor_windows_OutputLog.instance.m_logContainer.appendChild(ursine_editor_windows_OutputLog.instance.createLogElement(info));
+	var lastLine = info.split("\n")[0];
+	ursine_editor_Editor.instance.setStatusText(lastLine);
+};
+ursine_editor_windows_OutputLog.__super__ = ursine_editor_WindowHandler;
+ursine_editor_windows_OutputLog.prototype = $extend(ursine_editor_WindowHandler.prototype,{
+	initElements: function() {
+		var _this = window.document;
+		this.m_logContainer = _this.createElement("div");
+		this.window.container.appendChild(this.m_logContainer);
+		window.document.querySelector("#status-bar").addEventListener("click",$bind(this,this.onStatusBarClick));
+	}
+	,createLogElement: function(info) {
+		var element;
+		var _this = window.document;
+		element = _this.createElement("div");
+		var time;
+		var _this1 = window.document;
+		time = _this1.createElement("span");
+		var date = new Date();
+		var hours = date.getHours();
+		var h = hours % 12 + 1;
+		var m = StringTools.lpad(date.getMinutes(),"0",2);
+		var s = StringTools.lpad(date.getSeconds(),"0",2);
+		var z;
+		if(hours < 12) z = "AM"; else z = "PM";
+		time.innerText = "" + h + ":" + m + ":" + s + " " + z;
+		element.appendChild(time);
+		var contents;
+		var _this2 = window.document;
+		contents = _this2.createElement("span");
+		contents.innerHTML = info;
+		element.appendChild(contents);
+		return element;
+	}
+	,onStatusBarClick: function(e) {
+	}
+	,__class__: ursine_editor_windows_OutputLog
 });
 var ursine_editor_windows_ProjectBrowser = function() {
 	ursine_editor_WindowHandler.call(this);
