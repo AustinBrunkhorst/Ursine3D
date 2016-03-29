@@ -28,6 +28,8 @@ namespace ursine
 
             bool GetCondition(StateMachine *stateMachine) override;
 
+            void Reset(StateMachine *machine) override;
+
         private:
 
             bool m_finished;

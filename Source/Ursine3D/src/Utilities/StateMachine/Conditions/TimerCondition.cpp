@@ -40,5 +40,11 @@ namespace ursine
 
             return m_finished;
         }
+
+        void TimerCondition::Reset(StateMachine *machine)
+        {
+            m_timer.Cancel( );
+            m_finished = false;
+        }
     }
 }

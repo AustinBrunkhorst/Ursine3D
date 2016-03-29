@@ -51,6 +51,15 @@ namespace ursine
             {
                 DEBUG_OUTPUT( "[Begin] OnEnter For State \"" + m_currentState->m_name + "\"" );
 
+                // Reset all the state's transition's conditions
+                for (auto &transition : m_currentState->m_transitions)
+                {
+                    for (auto &condition : transition->m_conditions)
+                    {
+                        condition->Reset( this );
+                    }
+                }
+
                 m_currentState->OnEnter( this );
                 m_startingState = false;
 

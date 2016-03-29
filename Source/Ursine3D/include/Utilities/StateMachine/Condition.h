@@ -39,6 +39,8 @@ namespace ursine
 
             virtual bool GetCondition(StateMachine *stateMachine) = 0;
 
+            virtual void Reset(StateMachine *stateMachine) { }
+
         protected:
             std::string m_variableName;
 

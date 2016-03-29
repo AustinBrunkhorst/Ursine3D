@@ -505,7 +505,7 @@ void BossAI::OnInitialize(void)
         vulnerable->AddTransition( dazed, "To Dazed" );
 
         // Go back to spawning vines if the reset timer is up
-        dazed->AddTransition( spawnVines, "Back To Spawn Vines" )
+        dazed->AddTransition( invulnerable, "Back To Invulnerable" )
              ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( m_phase2DazedResetTimer ) );
 
         // Go to the next phase when the health is below a certain threashold
