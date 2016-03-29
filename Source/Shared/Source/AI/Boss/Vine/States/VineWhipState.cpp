@@ -38,6 +38,11 @@ void VineWhipState::Enter(VineAIStateMachine *machine)
     m_finished = false;
     m_animating = false;
     m_state = WhipState::In;
+
+    auto health = machine->GetAI( )->GetOwner( )->GetComponent<Health>( );
+
+    health->Listener( this )
+        .On( HEALTH_ZERO, &VineWhipState::onVineDeath );
 }
 
 void VineWhipState::Update(VineAIStateMachine *machine)
@@ -138,6 +143,11 @@ void VineWhipState::Exit(VineAIStateMachine *machine)
         VineAIStateMachine::WhipCooldown,
         machine->GetAI( )->GetWhipCooldown( )
     );
+
+    auto health = machine->GetAI( )->GetOwner( )->GetComponent<Health>( );
+
+    health->Listener( this )
+        .Off( HEALTH_ZERO, &VineWhipState::onVineDeath );
 }
 
 void VineWhipState::playAnimation(Animator *animator, const std::string &clip)
@@ -176,4 +186,9 @@ void VineWhipState::onAnimationFinished(EVENT_HANDLER(Entity))
 
     sender->Listener( this )
         .Off( ENTITY_ANIMATION_FINISH, &VineWhipState::onAnimationFinished );
+}
+
+void VineWhipState::onVineDeath(EVENT_HANDLER(Health))
+{
+    m_finished = true;
 }

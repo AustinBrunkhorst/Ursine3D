@@ -46,4 +46,3 @@ void LockPlayerCharacterControllerState::Enter(SegmentLogicStateMachine *machine
     c2->SetLockMovement( m_lockP2Move );
     c2->SetLockLooking( m_lockP2Look );
 }
-

@@ -370,13 +370,22 @@ EntityHandle BossAI::GetInvulnerableEmitterEntity(void)
 
 void BossAI::AddSpawnedVine(EntityHandle vine)
 {
+    // Add it to our vector
     m_vines.push_back( vine );
 
+    // Subscribe to the death
     auto health = vine->GetComponent<Health>( );
 
     health->Listener( this )
         .On( HEALTH_ZERO, &BossAI::onVineDeath );
 
+    // Subscribe to it's health threshold events
+    auto ai = vine->GetComponent<VineAI>( );
+
+    ai->Listener( this )
+        .On( VINE_HEALTH_THRESHOLD_REACHED, &BossAI::onVineHealthThresholdReached );
+
+    // Increment our counter
     ++m_vineCount;
 
     updateVineCount( );
@@ -385,6 +394,11 @@ void BossAI::AddSpawnedVine(EntityHandle vine)
 const std::vector<EntityHandle> &BossAI::GetVines(void) const
 {
     return m_vines;
+}
+
+void BossAI::SetVineHealthThresholdCallback(const std::function<void(VineAI*)> &callback)
+{
+    m_vineHealthThresholdCallback = callback;
 }
 
 void BossAI::OnInitialize(void)
@@ -421,15 +435,18 @@ void BossAI::OnInitialize(void)
 
         auto spawnBoss = sm->AddState<BossSpawnState>( );
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
+        auto spawnVines2 = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 0.5f );
         auto seedshot = sm->AddState<BossSeedshotState>( );
         auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
+        auto invulnerable2 = sm->AddState<BossInvulnerableToggleState>( true );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
         auto dazed = sm->AddState<BossDazedState>( );
         auto changePhaseState = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase2 );
 
         spawnBoss->AddTransition( spawnVines, "To Spawn Vines" );
         spawnVines->AddTransition( invulnerable, "To Invulnerable" );
-        invulnerable->AddTransition( seedshot, "To Seedshot" );
+        invulnerable->AddTransition( seedshot, "To Seedshot" )
+                    ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 5.0f ) );
         seedshot->AddTransition( vulnerable, "To Vulnerable" )
                 ->AddCondition<sm::IntCondition>( 
                     BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
@@ -437,8 +454,11 @@ void BossAI::OnInitialize(void)
         vulnerable->AddTransition( dazed, "To Dazed" );
 
         // Go back to spawning vines if the reset timer is up
-        dazed->AddTransition( spawnVines, "Back To Spawn Vines" )
+        dazed->AddTransition( invulnerable2, "Back To Invulnerable" )
              ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( m_phase1DazedResetTimer ) );
+
+        invulnerable2->AddTransition( spawnVines2, "Spawn Vines Again" );
+        spawnVines2->AddTransition( seedshot, "Back To Seedshot" );
 
         // Go to the next phase when the health is below a certain threashold
         auto health = GetOwner( )->GetComponent<Health>( );
@@ -590,13 +610,29 @@ void BossAI::onVineDeath(EVENT_HANDLER(Health))
 
     auto owner = sender->GetOwner( );
 
+    // Erase it from our vector of vines
     m_vines.erase(
         std::find( m_vines.begin( ), m_vines.end( ), owner )
     );
 
+    // Unsubscribe from the health threshold events
+    auto ai = owner->GetComponent<VineAI>( );
+
+    ai->Listener( this )
+        .Off( VINE_HEALTH_THRESHOLD_REACHED, &BossAI::onVineHealthThresholdReached );
+
+    // Decrement our counter
     --m_vineCount;
 
     updateVineCount( );
+}
+
+void BossAI::onVineHealthThresholdReached(EVENT_HANDLER(VineAI))
+{
+    EVENT_SENDER(VineAI, sender);
+
+    if (m_vineHealthThresholdCallback)
+        m_vineHealthThresholdCallback( sender );
 }
 
 void BossAI::updateHealth(void)
