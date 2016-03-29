@@ -15,6 +15,7 @@
 #include "ParticlePathAnimatorComponent.h"
 #include "EntityEvent.h"
 #include "Curves.h"
+#include "ParticleSystemComponent.h"
 
 namespace ursine
 {
@@ -131,7 +132,8 @@ namespace ursine
                 unsigned index = static_cast<unsigned>(lifeScale * m_stepCount);
 
                 // calculate where we are on the current interval
-                Vec3 finalVec = m_vectorArray[ index ];
+                float scalar = static_cast<float>(index + 1) - lifeScale;
+                Vec3 finalVec = m_vectorArray[ index ] * scalar + m_vectorArray[ index + 1 ] * (1.0f - scalar);
                 float finalScalar = timeScalar * (1.0f / cpuData[x].totalLifetime);
 
                 gpuData[ x ].position[ 0 ] += finalVec.X() * finalScalar;
@@ -191,14 +193,30 @@ namespace ursine
         void ParticlePathAnimator::updatePointArray(void)
         {
             auto *children = GetOwner( )->GetChildren( );
+            auto *particleSystem = GetOwner( )->GetComponent<ParticleSystem>( );
             unsigned size = static_cast<unsigned>( children->size( ) );
-            m_pointArray.resize(size);
+            m_pointArray.resize(size + 1);
 
-            for(unsigned x = 0; x < size; ++x)
+           if(particleSystem->GetSystemSpace( ) == SystemSpace::WorldSpace)
             {
-                auto childEntity = GetOwner( )->GetWorld( )->GetEntity( (*children)[x] );
-                m_pointArray[x] = childEntity->GetTransform( )->GetWorldPosition( );
+                m_pointArray[0] = GetOwner( )->GetTransform( )->GetWorldPosition( );
+
+                for(unsigned x = 1; x < size; ++x)
+                {
+                    auto childEntity = GetOwner( )->GetWorld( )->GetEntity( (*children)[x] );
+                    m_pointArray[x] = childEntity->GetTransform( )->GetWorldPosition( );
+                }
             }
+           else
+           {
+               m_pointArray[ 0 ] = Vec3(0, 0, 0);
+
+               for (unsigned x = 1; x < size; ++x)
+               {
+                   auto childEntity = GetOwner()->GetWorld()->GetEntity((*children)[ x ]);
+                   m_pointArray[ x ] = childEntity->GetTransform()->GetLocalPosition();
+               }
+           }
         }
 
         void ParticlePathAnimator::updateVectorArray(void)

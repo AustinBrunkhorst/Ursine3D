@@ -101,9 +101,20 @@ namespace ursine
             {
                 data.matPal.matPal[ index++ ] = x.ToD3D( );
             }
-            m_manager->bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(
+            m_manager->bufferManager->MapBuffer<BUFFER_MATRIX_PAL>(
                 &data, 
                 SHADERTYPE_VERTEX
+            );
+
+            /////////////////////////////////////////////////////////
+            // map texture offset
+            TextureUVOffset offset;
+            offset.uv = DirectX::XMFLOAT2(model.GetTextureUVOffset( ).X( ), model.GetTextureUVOffset( ).Y( ));
+
+            m_manager->bufferManager->MapBuffer<BUFFER_TEX_OFFSET>(
+                &offset,
+                SHADERTYPE_VERTEX,
+                13
             );
 
             /////////////////////////////////////////////////////////

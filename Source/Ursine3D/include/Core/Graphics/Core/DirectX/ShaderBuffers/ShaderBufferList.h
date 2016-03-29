@@ -46,6 +46,7 @@ namespace ursine
             BUFFER_MOUSEPOS,
             BUFFER_PARTICLEDATA,
             BUFFER_SHADOWMAP,
+            BUFFER_TEX_OFFSET,
 
             // non-default
             BUFFER_GLYPHDATA,   // 6
@@ -189,6 +190,12 @@ namespace ursine
             DirectX::XMMATRIX invCam;
             DirectX::XMMATRIX lightView;
             DirectX::XMMATRIX lightProj;
+        };
+
+        struct TextureUVOffset
+        {
+            DirectX::XMFLOAT2 uv;
+            DirectX::XMFLOAT2 buffer;
         };
     }
 }

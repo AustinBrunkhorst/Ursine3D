@@ -157,6 +157,19 @@ public:
         SetPhase1DazedResetTimer
     );
 
+    Meta(InputRange(0.0f, 100.0f, 0.1f, "{{value.toFixed( 2 )}} %"))
+    EditorField(
+        float phase2HealthTransitionThreshold,
+        GetPhase2HealthTransitionThreshold,
+        SetPhase2HealthTransitionThreshold
+    );
+
+    EditorField(
+        float phase2DazedResetTimer,
+        GetPhase2DazedResetTimer,
+        SetPhase2DazedResetTimer
+    );
+
     BossAI(void);
 
     const std::string &GetSeedshotEntityName(void) const;
@@ -218,6 +231,12 @@ public:
 
     float GetPhase1DazedResetTimer(void) const;
     void SetPhase1DazedResetTimer(float timer);
+
+    float GetPhase2HealthTransitionThreshold(void) const;
+    void SetPhase2HealthTransitionThreshold(float threshold);
+
+    float GetPhase2DazedResetTimer(void) const;
+    void SetPhase2DazedResetTimer(float timer);
 
     ursine::ecs::EntityHandle GetSeedshotEntity(void);
 
@@ -297,8 +316,14 @@ private:
     // The threshold we're using for the phase 1 transition (1-100%)
     float m_phase1HealthThreshold;
 
-    // The timer we use for resetting the boss
+    // The timer we use for resetting the boss for phase 1
     float m_phase1DazedResetTimer;
+
+    // The threshold we're using for the phase 2 transition (1-100%)
+    float m_phase2HealthThreshold;
+
+    // The timer we use for resetting the boss for phase 2
+    float m_phase2DazedResetTimer;
 
     // Logic variables
     LevelSegments m_segment;
