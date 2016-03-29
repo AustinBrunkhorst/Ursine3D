@@ -63,8 +63,6 @@ namespace ursine
             void setTargetDirectionWaypoints(const SVec3 &target);
             void setTargetDirectionMovement(const SVec3 &target);
 
-            Vec3 getTargetPlayerPosition(ecs::World *world);
-
             typedef std::function<void(const SVec3&)> setTargetDirectionFunc;
             setTargetDirectionFunc setTargetDirection;
 

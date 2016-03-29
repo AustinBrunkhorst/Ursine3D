@@ -37,6 +37,8 @@ namespace ursine
             // first get the entity
             EntityHandle aiActor = stateMachine->GetEntity();
 
+            stateMachine->SetBool("HitPlayer", false);
+            
             //then check if we have a waypoint controller or not and set target function accordingly
             if (aiActor->HasComponent<WaypointAgent>())
             {
@@ -69,7 +71,7 @@ namespace ursine
             Vec3 aiActorPos = aiTrans->GetWorldPosition();
 
             // if we are in range to attack the player, we need to switch to the attack state
-            auto playerPos = getTargetPlayerPosition(aiTrans->GetOwner()->GetWorld());
+            auto playerPos = GetTargetPlayerPosition(aiTrans->GetOwner()->GetWorld());
 
             auto playerDirection = playerPos - aiActorPos;
 
@@ -224,34 +226,6 @@ namespace ursine
         void WalkState::setTargetDirectionMovement(const SVec3& target)
         {
             m_move->SetTargetDirection(target);
-        }
-
-        Vec3 WalkState::getTargetPlayerPosition(ecs::World *world)
-        {
-            // try to grab the player as the target
-            auto players = world->GetEntitiesFromFilter(Filter().All< PlayerID >());
-
-            EntityHandle target = nullptr;
-
-            // if we can't find a player, just go to the closest waypoint
-            if (players.size() < 1)
-            {
-                // if we can't find either, don't bother updating the targets
-                auto selected = world->GetEntitiesFromFilter(Filter().All< Waypoint >());
-
-                if (selected.size() < 1)
-                {
-                    return Vec3::Zero();
-                }
-
-                target = selected[0];
-            }
-            else
-            {
-                target = players[0];
-            }
-
-            return target->GetTransform()->GetWorldPosition();
         }
 
         ecs::AIMovementController* WalkState::GetMovementController(void) const
