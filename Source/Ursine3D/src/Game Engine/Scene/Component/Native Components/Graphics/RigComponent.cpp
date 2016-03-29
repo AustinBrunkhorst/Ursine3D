@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** RigComponent.h
+** RigComponent.cpp
 **
 ** Author:
 ** - Matt Yan - m.yan@digipen.edu
@@ -11,26 +11,17 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-#pragma once
+#include "UrsinePrecompiled.h"
 
-#include "Component.h"
+#include "RigComponent.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        class Rig : public Component
-        {
-            NATIVE_COMPONENT;
+        NATIVE_COMPONENT_DEFINITION( Rig );
 
-        public:
-            Rig(void);
-
-        } Meta(
-            Enable, 
-            DisplayName( "Rig" ),
-            HiddenInSelector,
-            DisableComponentRemoval
-        );
+        Rig::Rig(void)
+            : BaseComponent( ) { }
     }
 }
