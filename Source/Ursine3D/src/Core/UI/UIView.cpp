@@ -296,7 +296,7 @@ namespace ursine
     )
     {
         m_browser->GetHost( )->SetZoomLevel( 
-            1.0f - m_window->GetDPIScaleFactor( )
+            m_window->GetDPIScaleFactor( ) - 1.0f
         );
 
         // dispatch all of the queued messages
