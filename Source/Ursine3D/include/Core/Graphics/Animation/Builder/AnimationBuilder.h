@@ -83,8 +83,19 @@ namespace ursine
             const std::vector<AnimationKeyframe> &frame2, 
             const float time, 
             const unsigned boneCount,
-            std::vector<SMat4> &finalTransform,
+            std::vector<SVec3> &transl,
+            std::vector<SQuat> &rot,
+            std::vector<SVec3> &scl,
             AnimationRig *rig
+        );
+
+        static void interpolateStateAndAnimation(
+            const int &boneCount,
+            AnimationRig* rig,
+            const AnimationState *state,
+            std::vector<SVec3> &transl,
+            std::vector<SQuat> &rot,
+            std::vector<SVec3> &scl
         );
 
         // add resources
@@ -123,7 +134,12 @@ namespace ursine
         static std::unordered_map<std::string, Animation*> m_name2Animation;
         static std::unordered_map<std::string, AnimationRig*> m_name2Rig;
 
-        static std::vector<SMat4> m_toParentTransforms;
-        static std::vector<SMat4> m_toFutParentTransforms;
+        static std::vector<SVec3> m_toParentTransl;
+        static std::vector<SQuat> m_toParentRot;
+        static std::vector<SVec3> m_toParentScl;
+
+        static std::vector<SVec3> m_toFutParentTransl;
+        static std::vector<SQuat> m_toFutParentRot;
+        static std::vector<SVec3> m_toFutParentScl;
     };
 }

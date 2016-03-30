@@ -70,12 +70,21 @@ PixelInputType main(uint id : SV_VERTEXID)
 
     float3 position;
 
+    // scale
+    float3 rightVec = mul(g_bufPosColor[ particleIndex ].rotation, (float3x3)view);
+    float3 upVec = cross(rightVec, float3(0, 0, -1));
+
+    upVec.z = 0;
+    rightVec.z = 0;
+
     switch ( vertexInQuad )
     {
     case 0:
         position.x = -1.f;
         position.y = 1.f;
         position.z = 0.f;
+
+        // position = -rightVec + upVec;
 
         output.uv.x = 0;
         output.uv.y = 0;
@@ -85,6 +94,8 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = 1.f;
         position.z = 0.f;
 
+        // position = rightVec + upVec;
+
         output.uv.x = 1;
         output.uv.y = 0;
         break;
@@ -92,6 +103,8 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.x = -1.f;
         position.y = -1.f;
         position.z = 0.f;
+
+        // position = -rightVec - upVec;
 
         output.uv.x = 0;
         output.uv.y = 1;
@@ -101,6 +114,8 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = 1.f;
         position.z = 0.f;
 
+        // position = rightVec + upVec;
+
         output.uv.x = 1;
         output.uv.y = 0;
         break;
@@ -108,6 +123,8 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.x = 1.f;
         position.y = -1.f;
         position.z = 0.f;
+
+        // position = rightVec - upVec;
 
         output.uv.x = 1;
         output.uv.y = 1;
@@ -117,24 +134,26 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = -1.f;
         position.z = 0.f;
 
+        // position = -rightVec - upVec;
+
         output.uv.x = 0;
         output.uv.y = 1;
         break;
     }
 
-    // scale
-    position.xy *= g_bufPosColor[ particleIndex ].scaleX * 0.5f;
+    position.xy *= (g_bufPosColor[ particleIndex ].scaleX) * 0.5f;
 
     // rotate
     position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[ 0 ]));
 
     // into world -> translate
+    
     position = mul(position, (float3x3)invView) + mul(float4(g_bufPosColor[ particleIndex ].position, 1.0f), World).xyz;
 
     output.position = mul(float4(position, 1.0f), view);
     output.position = mul(output.position, projection);
     output.color = (g_bufPosColor[ particleIndex ].color * g_bufPosColor[ particleIndex ].color.w) * color;
-
+     
     return output;
 }
 

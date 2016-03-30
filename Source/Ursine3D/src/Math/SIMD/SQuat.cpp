@@ -348,4 +348,9 @@ namespace ursine
     {
         return Rotate( rhs );
     }
+
+    SQuat SQuat::operator+(const SQuat &rhs) const
+    {
+        return SQuat(m_x * rhs.m_x, m_y * rhs.m_y, m_z * rhs.m_z, m_w * rhs.m_w);
+    }
 }

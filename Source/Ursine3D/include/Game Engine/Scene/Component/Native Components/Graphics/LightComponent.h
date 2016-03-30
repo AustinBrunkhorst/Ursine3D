@@ -33,9 +33,16 @@ namespace ursine
         {
             NATIVE_COMPONENT;
 
-			friend class RenderSystem;
+            friend class RenderSystem;
 
         public:
+            EditorField(
+                bool active,
+                GetIsActive,
+                SetIsActive
+            );
+
+
             EditorField(
                 ursine::ecs::LightType type,
                 GetLightType,
@@ -118,6 +125,9 @@ namespace ursine
 
             unsigned GetShadowmapSize(void) const;
             void SetShadowmapSize(unsigned size);
+
+            bool GetIsActive(void) const;
+            void SetIsActive(bool isActive);
 
             //private methods
         private:

@@ -77,12 +77,14 @@ namespace ursine
             timer->m_paused = false;
     }
 
-    void TimerID::Cancel(void) const
+    void TimerID::Cancel(void)
     {
         if (!IsValid( ))
             return;
 
         m_manager->cancel( m_id );
+
+        m_manager = nullptr;
     }
 
     TimerID &TimerID::Repeat(int count)

@@ -273,7 +273,7 @@ namespace ursine
             *  @param time the set of times in each animation curve
             *  @return nothing
             */
-            void ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time, FbxTime end);
+            void ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time, FbxTime start, FbxTime end);
 
             /** @brief fbx loader geometry funciton
             *
@@ -350,7 +350,7 @@ namespace ursine
             *  @param index the id of the mesh data
             *  @return the mesh data of the model accoring to its index
             */
-            FBX_DATA::MeshData& GetMeshData(int index) const { return (*m_Model->mMeshData[index]); }
+            FBX_DATA::MeshData& GetMeshData(int index) const { return (m_Model->mMeshData[index]); }
 
             /** @brief fbx loader get mesh data count function
             *

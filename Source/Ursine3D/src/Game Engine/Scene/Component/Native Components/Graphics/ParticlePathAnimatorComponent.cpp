@@ -103,6 +103,8 @@ namespace ursine
         void ParticlePathAnimator::onParticleUpdate(EVENT_HANDLER(Entity))
         {
             auto *children = GetOwner()->GetChildren();
+            auto *particleSystem = GetOwner()->GetComponent<ParticleSystem>();
+            SVec3 start = GetOwner()->GetTransform()->GetWorldPosition();
 
             if (children->size() <= 3)
                 return;
@@ -133,23 +135,35 @@ namespace ursine
 
                 // calculate where we are on the current interval
                 float scalar = static_cast<float>(index + 1) - lifeScale;
-                Vec3 finalVec = m_vectorArray[ index ] * scalar + m_vectorArray[ index + 1 ] * (1.0f - scalar);
+                Vec3 finalVec = m_vectorArray[ index ];
                 float finalScalar = timeScalar * (1.0f / cpuData[x].totalLifetime);
 
                 gpuData[ x ].position[ 0 ] += finalVec.X() * finalScalar;
                 gpuData[ x ].position[ 1 ] += finalVec.Y() * finalScalar;
                 gpuData[ x ].position[ 2 ] += finalVec.Z() * finalScalar;
 
+                //gpuData[ x ].rotation[ 0 ] = finalVec.X( );
+                //gpuData[ x ].rotation[ 1 ] = finalVec.Y( );
+                //gpuData[ x ].rotation[ 2 ] = finalVec.Z( );
+
                 if (m_renderCurve)
                 {
                     GetCoreSystem(graphics::GfxAPI)->DrawingMgr.SetColor(Color::Red);
-                    GetCoreSystem(graphics::GfxAPI)->DrawingMgr.DrawLine(SVec3(gpuData[ x ].position[0], gpuData[ x ].position[1], gpuData[ x ].position[2]), SVec3(gpuData[ x ].position[ 0 ], gpuData[ x ].position[ 1 ], gpuData[ x ].position[ 2 ]) + finalVec * 0.5);
+
+                    if (particleSystem->GetSystemSpace() == SystemSpace::WorldSpace)
+                    {
+                        GetCoreSystem(graphics::GfxAPI)->DrawingMgr.DrawLine(SVec3(gpuData[ x ].position[0], gpuData[ x ].position[1], gpuData[ x ].position[2]), SVec3(gpuData[ x ].position[ 0 ], gpuData[ x ].position[ 1 ], gpuData[ x ].position[ 2 ]) + finalVec * 0.5);
+                    }
+                    else
+                    {
+                        GetCoreSystem(graphics::GfxAPI)->DrawingMgr.DrawLine(start + SVec3(gpuData[ x ].position[ 0 ], gpuData[ x ].position[ 1 ], gpuData[ x ].position[ 2 ]), start + SVec3(gpuData[ x ].position[ 0 ], gpuData[ x ].position[ 1 ], gpuData[ x ].position[ 2 ]) + finalVec * 0.5);
+                    }
                 }
             }
 
             if(m_renderCurve)
             {
-                SVec3 start = GetOwner()->GetTransform()->GetWorldPosition();
+                
                 for(unsigned x = 0; x < m_stepCount; ++x)
                 {
                     GetCoreSystem(graphics::GfxAPI)->DrawingMgr.SetColor(Color::Green);
@@ -160,9 +174,19 @@ namespace ursine
                 GetCoreSystem(graphics::GfxAPI)->DrawingMgr.SetColor(Color::LightGreen);
                 GetCoreSystem(graphics::GfxAPI)->DrawingMgr.SetSize(20);
 
-                for(auto &point : m_pointArray)
+                if (particleSystem->GetSystemSpace() == SystemSpace::WorldSpace)
                 {
-                    GetCoreSystem(graphics::GfxAPI)->DrawingMgr.DrawPoint(point);
+                    for(auto &point : m_pointArray)
+                    {
+                        GetCoreSystem(graphics::GfxAPI)->DrawingMgr.DrawPoint(point);
+                    }
+                }
+                else
+                {
+                    for (auto &point : m_pointArray)
+                    {
+                        GetCoreSystem(graphics::GfxAPI)->DrawingMgr.DrawPoint(point + start);
+                    }
                 }
             }
         }
@@ -170,8 +194,12 @@ namespace ursine
         bool ParticlePathAnimator::checkForPointUpdate(void)
         {
             auto *children = GetOwner()->GetChildren();
+            auto childSize = children->size() + 1;
+            auto ourSize = static_cast<size_t>(m_pointArray.size());
 
-            if (children->size() != m_pointArray.size())
+            bool isEqual = childSize == ourSize;
+
+            if (childSize != ourSize)
                 return true;
 
             unsigned index = 0;
@@ -181,7 +209,7 @@ namespace ursine
                 auto childEntity = GetOwner( )->GetWorld( )->GetEntity( child );
                 auto position = childEntity->GetTransform( )->GetWorldPosition( );
                 
-                if(position != m_pointArray[ index++ ])
+                if(position != m_pointArray[ index++ + 1])
                 {
                     return true;
                 }
@@ -201,20 +229,20 @@ namespace ursine
             {
                 m_pointArray[0] = GetOwner( )->GetTransform( )->GetWorldPosition( );
 
-                for(unsigned x = 1; x < size; ++x)
+                for(unsigned x = 0; x < size; ++x)
                 {
-                    auto childEntity = GetOwner( )->GetWorld( )->GetEntity( (*children)[x] );
-                    m_pointArray[x] = childEntity->GetTransform( )->GetWorldPosition( );
+                    auto childEntity = GetOwner( )->GetWorld( )->GetEntity( (*children)[ x ] );
+                    m_pointArray[ x + 1] = childEntity->GetTransform( )->GetWorldPosition( );
                 }
             }
            else
            {
                m_pointArray[ 0 ] = Vec3(0, 0, 0);
 
-               for (unsigned x = 1; x < size; ++x)
+               for (unsigned x = 0; x < size; ++x)
                {
                    auto childEntity = GetOwner()->GetWorld()->GetEntity((*children)[ x ]);
-                   m_pointArray[ x ] = childEntity->GetTransform()->GetLocalPosition();
+                   m_pointArray[ x + 1 ] = childEntity->GetTransform()->GetLocalPosition();
                }
            }
         }

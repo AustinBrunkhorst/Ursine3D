@@ -70,7 +70,10 @@ namespace ursine
     // change this to push_back or something that can handle multiple animations insdie
     const Animation* AnimationState::GetAnimation(void) const
     {
-        return m_animation;
+        if (m_animation)
+            return m_animation;
+        else
+            return nullptr;
     }
 
     const ResourceReference &AnimationState::GetClip(void) const

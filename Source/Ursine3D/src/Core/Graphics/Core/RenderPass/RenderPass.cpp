@@ -106,15 +106,28 @@ namespace ursine
 
         void RenderPass::Execute(Camera &currentCamera)
         {
+            /////////////////////////////////////////////////////////
             // trigger pre-passes
             executePrePasses( currentCamera );
 
+            /////////////////////////////////////////////////////////
             // begin our pass
+
+            // start debug event
+            m_manager->dxCore->StartDebugEvent( m_passName );
+
             beginPass( currentCamera );
 
             // execute our own pass
             executePass( currentCamera );
 
+            // end debug event
+            m_manager->dxCore->EndDebugEvent( );
+
+            // stamp this process
+            m_manager->gfxProfiler->Stamp( m_passName );
+
+            /////////////////////////////////////////////////////////
             // triger post-passes
             executePostPasses( currentCamera );
         }
@@ -280,9 +293,6 @@ namespace ursine
                 while(drawList[end].Type_ == m_renderableMode && end < m_manager->m_drawCount )
                     ++end;
 
-                // start debug event
-                m_manager->dxCore->StartDebugEvent( m_passName );
-
                 // process
                 m_processor->Process( 
                     m_manager->m_drawList, 
@@ -290,12 +300,6 @@ namespace ursine
                     start, 
                     end 
                 );
-
-                // end debug event
-                m_manager->dxCore->EndDebugEvent( );
-
-                // stamp this process
-                m_manager->gfxProfiler->Stamp( m_passName );
             }
             else if(m_fullscreenPass)
             {

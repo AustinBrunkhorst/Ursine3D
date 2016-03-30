@@ -157,11 +157,6 @@ namespace ursine
         {
             // Increment the current state's time marker
             (*currSt)->IncrementTimePosition( dt * m_speedScalar );
-
-            //unsigned keyframeCount1 = (*currAni)->GetRigKeyFrameCount();
-            //auto &curr_firstFrame = (*currAni)->GetKeyframe(0, 0);
-            //auto &curr_lastFrame = (*currAni)->GetKeyframe(keyframeCount1 - 1, 0);
-            //(*currSt)->SetTimePosition( curr_firstFrame.length );
                         
             bool bFut = (*futSt) && (*futAni);
 
@@ -275,8 +270,10 @@ namespace ursine
             if (m_blending)
             {
                 // if blending is true, start transitioning from this state to that state
-                (*futSt)->IncrementTimePosition(dt  *m_speedScalar);
+                (*futSt)->IncrementTimePosition(dt * m_speedScalar);
+
                 transFactor += dt  *m_speedScalar;
+
                 if (transFactor > 1.0f)
                     transFactor = 1.0f;
 

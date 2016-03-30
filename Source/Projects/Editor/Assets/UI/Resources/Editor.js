@@ -1489,15 +1489,15 @@ ursine_editor_scene_component_inspectors_components_LightInspector.prototype = $
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum = database.getNativeType(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeName).enumValue;
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields = new haxe_ds_IntMap();
 		var k = database.getEnumValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeDirectional);
-		var v = ["color","intensity","renderMask"];
+		var v = ["active","color","intensity","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k] = v;
 		v;
 		var k1 = database.getEnumValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypePoint);
-		var v1 = ["color","intensity","radius","renderMask"];
+		var v1 = ["active","color","intensity","radius","renderMask"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k1] = v1;
 		v1;
 		var k2 = database.getEnumValue(ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeEnum,ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSpot);
-		var v2 = ["color","intensity","spotlightAngles","renderMask","shadowResolution"];
+		var v2 = ["active","color","intensity","spotlightAngles","renderMask","shadowResolution"];
 		ursine_editor_scene_component_inspectors_components_LightInspector.m_typeToFields.h[k2] = v2;
 		v2;
 	}
