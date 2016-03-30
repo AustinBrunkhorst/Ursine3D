@@ -142,9 +142,9 @@ namespace ursine
                 gpuData[ x ].position[ 1 ] += finalVec.Y() * finalScalar;
                 gpuData[ x ].position[ 2 ] += finalVec.Z() * finalScalar;
 
-                gpuData[ x ].rotation[ 0 ] = finalVec.X( );
-                gpuData[ x ].rotation[ 1 ] = finalVec.Y( );
-                gpuData[ x ].rotation[ 2 ] = finalVec.Z( );
+                //gpuData[ x ].rotation[ 0 ] = finalVec.X( );
+                //gpuData[ x ].rotation[ 1 ] = finalVec.Y( );
+                //gpuData[ x ].rotation[ 2 ] = finalVec.Z( );
 
                 if (m_renderCurve)
                 {

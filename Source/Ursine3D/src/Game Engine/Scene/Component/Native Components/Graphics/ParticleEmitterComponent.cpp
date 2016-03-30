@@ -448,10 +448,10 @@ namespace ursine
                     continue;
                 }
 
-                // gpuData[ x ].rotation[ 0 ] -= cpuData[ x ].roll * dt;
-                gpuData[ x ].rotation[ 0 ] = cpuData[ x ].velocity.X();
-                gpuData[ x ].rotation[ 1 ] = cpuData[ x ].velocity.Y();
-                gpuData[ x ].rotation[ 2 ] = cpuData[ x ].velocity.Z();
+                gpuData[ x ].rotation[ 0 ] -= cpuData[ x ].roll * dt;
+                //gpuData[ x ].rotation[ 0 ] = cpuData[ x ].velocity.X();
+                //gpuData[ x ].rotation[ 1 ] = cpuData[ x ].velocity.Y();
+                //gpuData[ x ].rotation[ 2 ] = cpuData[ x ].velocity.Z();
 
                 // update position with velocity
                 gpuData[ x ].position[ 0 ] += cpuData[ x ].velocity.X( ) * dt;

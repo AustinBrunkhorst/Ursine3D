@@ -84,7 +84,7 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = 1.f;
         position.z = 0.f;
 
-        position = -rightVec + upVec;
+        // position = -rightVec + upVec;
 
         output.uv.x = 0;
         output.uv.y = 0;
@@ -94,7 +94,7 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = 1.f;
         position.z = 0.f;
 
-        position = rightVec + upVec;
+        // position = rightVec + upVec;
 
         output.uv.x = 1;
         output.uv.y = 0;
@@ -104,7 +104,7 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = -1.f;
         position.z = 0.f;
 
-        position = -rightVec - upVec;
+        // position = -rightVec - upVec;
 
         output.uv.x = 0;
         output.uv.y = 1;
@@ -114,7 +114,7 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = 1.f;
         position.z = 0.f;
 
-        position = rightVec + upVec;
+        // position = rightVec + upVec;
 
         output.uv.x = 1;
         output.uv.y = 0;
@@ -124,7 +124,7 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = -1.f;
         position.z = 0.f;
 
-        position = rightVec - upVec;
+        // position = rightVec - upVec;
 
         output.uv.x = 1;
         output.uv.y = 1;
@@ -134,7 +134,7 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = -1.f;
         position.z = 0.f;
 
-        position = -rightVec - upVec;
+        // position = -rightVec - upVec;
 
         output.uv.x = 0;
         output.uv.y = 1;
@@ -144,7 +144,7 @@ PixelInputType main(uint id : SV_VERTEXID)
     position.xy *= (g_bufPosColor[ particleIndex ].scaleX) * 0.5f;
 
     // rotate
-    //position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[ 0 ]));
+    position.xy = mul(position.xy, GenerateRotation(g_bufPosColor[ particleIndex ].rotation[ 0 ]));
 
     // into world -> translate
     
