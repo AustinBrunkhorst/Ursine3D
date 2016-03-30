@@ -67,7 +67,7 @@ namespace ursine
         *
         *  @return time (decimal) that the animation is at.
         */
-        float GetTimePosition(void) const;
+        float &GetTimePosition(void) const;
 
         /** @brief sets the animation position
         *

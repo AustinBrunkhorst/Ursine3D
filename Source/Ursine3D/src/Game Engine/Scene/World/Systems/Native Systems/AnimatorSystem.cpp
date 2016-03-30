@@ -219,9 +219,6 @@ namespace ursine
                 if (futureAnimation->GetDesiredBoneCount( ) != rig->GetBoneCount( ))
                     return;
             }
-            else
-                // We don't have a future state so just reset the trans factor
-                animator->m_transFactor = 0.0f;
             
             ///// FOR INSTATE ANIMATION
             ///// added

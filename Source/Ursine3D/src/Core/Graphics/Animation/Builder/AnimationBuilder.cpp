@@ -298,7 +298,37 @@ namespace ursine
         m_name2Rig[name] = rig;
         return rigIndex;
     }
-    
+
+    float AnimationBuilder::linearInterpolation(float &coeff1, float &coeff2, float transRate)
+    {
+        // for example, coeff1 = 1, coeff2 = 0, then calculation should be
+        // ( (1.0f - 0.0f) - trasRate) * frame1 + transRate * frame2
+        return (coeff1 - coeff2) - transRate;
+    }
+
+    float AnimationBuilder::cubicInterpolation(float coeff[4], float transRate)
+    {
+        return coeff[1] + 0.5f * transRate * (
+            coeff[2] - coeff[0] + transRate * (
+                2.f * coeff[0] - 5.f * coeff[1] + 4.f * coeff[2] - coeff[3] + transRate * (
+                    3.f * (coeff[1] - coeff[2]) + coeff[3] - coeff[0]
+                    )
+                )
+            );
+    }
+
+    float AnimationBuilder::bicubicInterpolation(float coeff[4][4], float transRate_x, float transRate_y)
+    {
+        float arr[4];
+
+        arr[0] = cubicInterpolation(coeff[0], transRate_y);
+        arr[1] = cubicInterpolation(coeff[1], transRate_y);
+        arr[2] = cubicInterpolation(coeff[2], transRate_y);
+        arr[3] = cubicInterpolation(coeff[3], transRate_y);
+
+        return cubicInterpolation(arr, transRate_x);
+    }
+
     void AnimationBuilder::interpolateRigKeyFrames(
         const std::vector<AnimationKeyframe>& frame1,
         const std::vector<AnimationKeyframe>& frame2,
@@ -366,13 +396,15 @@ namespace ursine
         if (boneCount != animation->GetDesiredBoneCount())
             return;
 
+        bool bFound = false; 
+
         // determine the 2 current keyframes to use
         // we assume that all frames exist, and that they were baked across all total keyframes
         for (unsigned x = 0; x < frameCount - 1; ++x)
         {
             // get the two current keyframes
-            const std::vector<AnimationKeyframe> &f1 = animation->GetKeyframes(x);
-            const std::vector<AnimationKeyframe> &f2 = animation->GetKeyframes(x + 1);
+            auto &f1 = animation->GetKeyframes(x);
+            auto &f2 = animation->GetKeyframes(x + 1);
 
             // check if the current keyframe set holds the time value between them
             if (f1[0].length <= time && time < f2[0].length)
@@ -387,9 +419,24 @@ namespace ursine
                     rig
                     );
 
+                bFound = true;
+
                 // kick out, we're done
                 break;
             }
+        }
+
+        if (!bFound)
+        {
+            auto &f1 = animation->GetKeyframes(frameCount - 1);
+            interpolateRigKeyFrames(
+                f1,
+                f1,
+                time,
+                boneCount,
+                transl, rot, scl,
+                rig
+                );
         }
     }
 

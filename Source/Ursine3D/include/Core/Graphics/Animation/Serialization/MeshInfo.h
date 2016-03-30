@@ -28,6 +28,7 @@ namespace ursine
             {
                 pseudodx::XMFLOAT3	pos;
                 pseudodx::XMFLOAT3	normal;
+                pseudodx::XMFLOAT3	binormal;
                 pseudodx::XMFLOAT3	tangent;
                 pseudodx::XMFLOAT2	uv;
                 pseudodx::XMUINT4	ctrlIndices;
@@ -37,6 +38,7 @@ namespace ursine
                 {
                     pos = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
                     normal = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
+                    binormal = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
                     tangent = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
                     uv = pseudodx::XMFLOAT2(0.f, 0.f);
                     ctrlIndices = pseudodx::XMUINT4(0, 0, 0, 0);
@@ -45,12 +47,13 @@ namespace ursine
 
                 bool operator==(const MeshVertex& rhs)
                 {
-                    if ( (pos == rhs.pos)
+                    if ((pos == rhs.pos)
                         && (normal == rhs.normal)
+                        && (binormal == rhs.binormal)
                         && (tangent == rhs.tangent)
                         && (uv == rhs.uv)
                         && (ctrlIndices == rhs.ctrlIndices)
-                        && (ctrlBlendWeights == rhs.ctrlBlendWeights) )
+                        && (ctrlBlendWeights == rhs.ctrlBlendWeights))
                         return true;
 
                     return false;

@@ -133,6 +133,15 @@ namespace ursine
             */
             void ProcessNormals(FbxMesh* pMesh, FBX_DATA::MeshData* pData);
 
+            /** @brief fbx loader binormal funciton
+            *
+            *  this will import binormal data from fbx file
+            *
+            *  @param pNode the pointer of the FbxNode
+            *  @return nothing
+            */
+            void ProcessBinormal(FbxMesh* pMesh, FBX_DATA::MeshData* pData);
+
             /** @brief fbx loader tangent funciton
             *
             *  this will import tangent data from fbx file
@@ -395,7 +404,7 @@ namespace ursine
         private:
             unsigned int            boneindex;
             std::pair<bool, bool>   m_AnimationFlag;	// first flag = if there is animation
-                                                    // second flag = if there is only animation
+                                                        // second flag = if there is only animation
             FbxPose*                m_AnimPose;
             FBX_DATA::FbxModel*     m_Model;
 

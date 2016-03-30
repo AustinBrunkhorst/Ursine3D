@@ -265,6 +265,9 @@ namespace ursine
                 {
                     (*futSt)->SetTimePosition(fut_firstFrame.length);
 
+                    // reset the transFactor;
+                    transFactor = 0.0f;
+
                     // approve blending
                     m_blending = true;
                 }
@@ -333,7 +336,10 @@ namespace ursine
             m_curStName = m_futStName;
             m_futStName = "";
 
-            (*currSt)->SetTimePosition(currloopTimePos);
+            // reset future time position as the first frame of it, 
+            // and change current state as future state
+            // then change future state as null
+            (*futSt)->SetTimePosition(futloopTimePos);
             (*currSt) = (*futSt);
             (*futSt) = nullptr;
 

@@ -34,8 +34,8 @@ namespace pseudodx
         XMUINT4() {}
         XMUINT4(uint32_t _x, uint32_t _y, uint32_t _z, uint32_t _w) : x(_x), y(_y), z(_z), w(_w) {}
         XMUINT4& operator= (const XMUINT4& Uint4) { x = Uint4.x; y = Uint4.y; z = Uint4.z; w = Uint4.w; return *this; }
-        bool operator== (const XMUINT4& Uint4) { return ((x == Uint4.x) && (y == Uint4.y) && (z == Uint4.z) && (w == Uint4.w)) ? true : false; }
-        bool operator!= (const XMUINT4& Uint4) { return (!(*this == Uint4)); }
+        bool operator== (const XMUINT4& Uint4) { return ( (x == Uint4.x) && (y == Uint4.y) && (z == Uint4.z) && (w == Uint4.w) ) ? true : false; }
+        bool operator!= (const XMUINT4& Uint4) { return ( !(*this == Uint4) ); }
     };
 
     struct XMFLOAT4
@@ -48,7 +48,7 @@ namespace pseudodx
         XMFLOAT4(float _x, float _y, float _z, float _w) : x(_x), y(_y), z(_z), w(_w) {}
         XMFLOAT4& operator= (const XMFLOAT4& Float4) { x = Float4.x; y = Float4.y; z = Float4.z; w = Float4.w; return *this; }
         bool operator== (const XMFLOAT4& Float4) { return ( (x == Float4.x) && (y == Float4.y) && (z == Float4.z) && (w == Float4.w) ) ? true : false; }
-        bool operator!= (const XMFLOAT4& Float4) { return (!(*this == Float4)); }
+        bool operator!= (const XMFLOAT4& Float4) { return ( !(*this == Float4) ); }
     };
 
     struct XMFLOAT3
@@ -232,8 +232,8 @@ namespace ursine
                 KeyFrame() :
                     time(0.f),
                     trans(0.f, 0.f, 0.f),
-                    rot(0.f,0.f,0.f,1.f),
-                    scl(1.f,1.f,1.f)
+                    rot(0.f, 0.f, 0.f, 1.f),
+                    scl(1.f, 1.f, 1.f)
                 {
                 }
             };
@@ -350,18 +350,21 @@ namespace ursine
                 unsigned int vertexCnt;
                 unsigned int indexCnt;
                 unsigned int normalCnt;
+                unsigned int binormalCnt;
                 unsigned int tangentCnt;
                 unsigned int uvCnt;
                 unsigned int mtrlIndexCnt;
                 int parentIndex;
 
                 FbxLayerElement::EMappingMode normalMode;
+                FbxLayerElement::EMappingMode binormalMode;
                 FbxLayerElement::EMappingMode tangentMode;
                 SMat4 meshTM;
 
                 pseudodx::XMFLOAT3* vertices;
                 unsigned int* indices;
                 pseudodx::XMFLOAT3* normals;
+                pseudodx::XMFLOAT3* binormals;
                 pseudodx::XMFLOAT3* tangents;
                 pseudodx::XMFLOAT2* uvs;
                 unsigned int* materialIndices;
@@ -369,9 +372,9 @@ namespace ursine
                 // material
                 std::vector<FbxMaterial> fbxmaterials;
 
-                MeshData() : mLayout(NONE), vertexCnt(0), indexCnt(0), normalCnt(0), tangentCnt(0), uvCnt(0),
+                MeshData() : mLayout(NONE), vertexCnt(0), indexCnt(0), normalCnt(0), binormalCnt(0), tangentCnt(0), uvCnt(0),
                     normalMode(FbxLayerElement::eNone), tangentMode(FbxLayerElement::eNone),
-                    vertices(nullptr), indices(nullptr), normals(nullptr), tangents(nullptr), uvs(nullptr)
+                    vertices(nullptr), indices(nullptr), normals(nullptr), binormals(nullptr), tangents(nullptr), uvs(nullptr)
                 {
                 }
             };

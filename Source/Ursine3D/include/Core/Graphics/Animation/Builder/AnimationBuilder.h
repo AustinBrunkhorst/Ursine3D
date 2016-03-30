@@ -26,7 +26,7 @@ namespace ursine
 {
     namespace graphics {
         namespace ufmt_loader {
-        class ModelInfo;
+            class ModelInfo;
         }
     }
 
@@ -47,7 +47,7 @@ namespace ursine
         /////////////////////////////////////////////////////////////
         // static stuff /////////////////////////////////////////////
         static void InitializeStaticData(void);
-        
+
         // getting an animation
         static Animation *GetAnimationByIndex(const unsigned index);
         static Animation *GetAnimationByName(const std::string &name);
@@ -77,11 +77,23 @@ namespace ursine
         static int LoadBoneData(const graphics::ufmt_loader::ModelInfo &modelData, const std::string &name);
 
     private:
+        // various methods of interpolation
+        // transRate = 0~1 ( x axis value )
+        // return  = result of interpolation ( y axis value )
+        // linear interpolation : coeff1 usually 1, coeff2 usually 0
+        static float linearInterpolation(float &coeff1, float &coeff2, float transRate);
+
+        // cubic interpolation : coeff1 usually 1, coeff4 usually 0, coeff2 and coeff3 could be something bigger than 0
+        static float cubicInterpolation(float coeff[4], float transRate);
+
+        // bicubic interpolation : coeff
+        static float bicubicInterpolation(float coeff[4][4], float transRate_x, float transRate_y);
+
         // interpolate between 2 sets of keyframes
-        static void interpolateRigKeyFrames( 
-            const std::vector<AnimationKeyframe> &frame1, 
-            const std::vector<AnimationKeyframe> &frame2, 
-            const float time, 
+        static void interpolateRigKeyFrames(
+            const std::vector<AnimationKeyframe> &frame1,
+            const std::vector<AnimationKeyframe> &frame2,
+            const float time,
             const unsigned boneCount,
             std::vector<SVec3> &transl,
             std::vector<SQuat> &rot,
@@ -105,7 +117,7 @@ namespace ursine
         /** @brief recursively load a bone hierarchy
         *
         *  given an existing binary tree, this method will
-        *  generate the current bone, then instantiate 
+        *  generate the current bone, then instantiate
         *  this bone's children
         *
         *  @param hierarchy binary tree of children
@@ -129,7 +141,7 @@ namespace ursine
         // all the data
         static std::vector<Animation> m_animationData;
         static std::vector<AnimationRig> m_animationRigData;
-        
+
         // lookup tables for stuff
         static std::unordered_map<std::string, Animation*> m_name2Animation;
         static std::unordered_map<std::string, AnimationRig*> m_name2Rig;
