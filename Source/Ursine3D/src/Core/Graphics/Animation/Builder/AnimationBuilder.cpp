@@ -298,37 +298,7 @@ namespace ursine
         m_name2Rig[name] = rig;
         return rigIndex;
     }
-
-    float AnimationBuilder::linearInterpolation(float &coeff1, float &coeff2, float transRate)
-    {
-        // for example, coeff1 = 1, coeff2 = 0, then calculation should be
-        // ( (1.0f - 0.0f) - trasRate) * frame1 + transRate * frame2
-        return (coeff1 - coeff2) - transRate;
-    }
-
-    float AnimationBuilder::cubicInterpolation(float coeff[4], float transRate)
-    {
-        return coeff[1] + 0.5f * transRate * (
-            coeff[2] - coeff[0] + transRate * (
-                2.f * coeff[0] - 5.f * coeff[1] + 4.f * coeff[2] - coeff[3] + transRate * (
-                    3.f * (coeff[1] - coeff[2]) + coeff[3] - coeff[0]
-                    )
-                )
-            );
-    }
-
-    float AnimationBuilder::bicubicInterpolation(float coeff[4][4], float transRate_x, float transRate_y)
-    {
-        float arr[4];
-
-        arr[0] = cubicInterpolation(coeff[0], transRate_y);
-        arr[1] = cubicInterpolation(coeff[1], transRate_y);
-        arr[2] = cubicInterpolation(coeff[2], transRate_y);
-        arr[3] = cubicInterpolation(coeff[3], transRate_y);
-
-        return cubicInterpolation(arr, transRate_x);
-    }
-
+    
     void AnimationBuilder::interpolateRigKeyFrames(
         const std::vector<AnimationKeyframe>& frame1,
         const std::vector<AnimationKeyframe>& frame2,
