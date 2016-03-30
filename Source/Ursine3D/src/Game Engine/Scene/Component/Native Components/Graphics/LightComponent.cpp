@@ -170,11 +170,22 @@ namespace ursine
         {
             return m_light->GetShadowmapWidth( );
         }
+
         void Light::SetShadowmapSize(unsigned size)
         {
             if(size > 4096)
                 size = 4096;
             m_light->SetShadowmapWidth( size );
+        }
+
+        bool Light::GetIsActive() const
+        {
+            return m_light->GetActive( );
+        }
+
+        void Light::SetIsActive(bool isActive)
+        {
+            m_light->SetActive( isActive );
         }
 
         void Light::updateRenderer(void)

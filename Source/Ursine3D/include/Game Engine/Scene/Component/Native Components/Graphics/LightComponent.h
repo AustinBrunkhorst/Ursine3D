@@ -37,6 +37,13 @@ namespace ursine
 
         public:
             EditorField(
+                bool active,
+                GetIsActive,
+                SetIsActive
+            );
+
+
+            EditorField(
                 ursine::ecs::LightType type,
                 GetLightType,
                 SetLightType
@@ -118,6 +125,9 @@ namespace ursine
 
             unsigned GetShadowmapSize(void) const;
             void SetShadowmapSize(unsigned size);
+
+            bool GetIsActive(void) const;
+            void SetIsActive(bool isActive);
 
             //private methods
         private:
