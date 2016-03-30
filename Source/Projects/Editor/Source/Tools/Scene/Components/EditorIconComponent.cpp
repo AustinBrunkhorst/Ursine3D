@@ -22,6 +22,11 @@ NATIVE_COMPONENT_DEFINITION( EditorIcon );
 
 using namespace ursine;
 
+namespace
+{
+    const auto kChildEntityName = "__bb";
+}
+
 EditorIcon::EditorIcon(void)
     : BaseComponent( )
     , m_billboard( )
@@ -51,7 +56,7 @@ void EditorIcon::OnInitialize(void)
     auto &owner = GetOwner( );
 
     // look for the editor icon billboard and see if it's already there
-    auto child = owner->GetChildByName( "EditorIconBillboard1234" );
+    auto child = owner->GetChildByName( kChildEntityName );
 
     if (child)
     {
@@ -60,10 +65,12 @@ void EditorIcon::OnInitialize(void)
     else
     {
         m_billboard = owner->GetWorld( )->CreateEntity( );
+
         owner->GetTransform( )->AddChildAlreadyInLocal( m_billboard->GetTransform( ) );
+
         m_billboard->EnableSerialization( false );
         m_billboard->SetVisibleInEditor( false );
-        m_billboard->SetName( "EditorIconBillboard1234" );
+        m_billboard->SetName( kChildEntityName );
         m_billboard->AddComponent<ecs::Billboard2D>( );
     }
 

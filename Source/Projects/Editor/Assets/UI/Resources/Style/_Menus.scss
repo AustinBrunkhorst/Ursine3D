@@ -165,6 +165,10 @@ x-main-menu, x-context-menu {
       &.arrow-down {
         @include icon-half( $icon-half-arrow-down, $context-menu-icon-size );
       }
+
+      &.checkmark {
+        @include icon-half( $icon-half-ok, $context-menu-icon-size );
+      }
     }
   }
 }

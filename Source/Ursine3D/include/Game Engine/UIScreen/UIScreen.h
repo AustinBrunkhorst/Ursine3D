@@ -24,8 +24,17 @@ namespace ursine
     public:
         void Message(const std::string &message, const Json &data) const;
 
+        template<typename EventType>
+        void TriggerEvent(const EventType &data) const;
+
+        template<typename EventType>
+        void TriggerEvent(const std::string &eventName, EventType &data) const;
+
         // Request to exit this screen
         void Exit(const Json &data = { }) const;
+
+        // Actually deletes this screen
+        void Remove(void);
 
         UIScreenManager *GetManager(void) const;
 
@@ -72,3 +81,5 @@ namespace ursine
         fs::path m_path;
     } Meta(Disable);
 }
+
+#include "UIScreen.hpp"

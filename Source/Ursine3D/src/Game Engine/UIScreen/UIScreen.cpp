@@ -44,6 +44,11 @@ namespace ursine
         m_manager->ExitScreen( this, data );
     }
 
+    void UIScreen::Remove(void)
+    {
+        m_manager->RemoveScreen( this );
+    }
+
     UIScreenManager *UIScreen::GetManager(void) const
     {
         return m_manager;

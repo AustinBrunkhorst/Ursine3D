@@ -13,8 +13,11 @@
 
 #include <Component.h>
 
+#include <UIScreen.h>
 #include <UIScreenManager.h>
 #include <UIScreenData.h>
+
+#include "UIEvents.h"
 
 #define DECLARE_SCREEN(screenName)                                                                                           \
 public:                                                                                                                      \
@@ -31,6 +34,11 @@ public:                                                                         
     inline ursine::UIScreen *Add##screenName(const ursine::UIScreenConfig &config = { }, const ursine::Json &initData = { }) \
     {                                                                                                                        \
         return addScreen( m_##screenName, config, initData );                                                                \
+    }                                                                                                                        \
+    template<typename EventType>                                                                                             \
+    inline void Trigger##screenName##Event(const EventType &data) const                                                      \
+    {                                                                                                                        \
+        triggerEvent( #screenName, m_##screenName, EventType::DefaultName, data );                                           \
     }                                                                                                                        \
     inline void Remove##screenName(void)                                                                                     \
     {                                                                                                                        \
@@ -59,9 +67,10 @@ public:
     DECLARE_SCREEN( MainMenu );
     DECLARE_SCREEN( Pause );
     DECLARE_SCREEN( Credits );
+    DECLARE_SCREEN( PlayerHUD );
 
 private:
-    std::unordered_map<ursine::GUID, ursine::UIScreen*, ursine::GUIDHasher> m_created;
+    std::unordered_map<ursine::GUID, ursine::UIScreenID, ursine::GUIDHasher> m_created;
 
     ursine::UIScreen *addScreen(
         const ursine::resources::ResourceReference &reference,
@@ -69,8 +78,18 @@ private:
         const ursine::Json &initData
     );
 
+    template<typename EventType>
+    void triggerEvent(
+        const char *screenName, 
+        const ursine::resources::ResourceReference &target,
+        const std::string &eventName, 
+        const EventType &data
+    ) const;
+
     ursine::UIScreen *getScreen(const ursine::resources::ResourceReference &reference) const;
     void removeScreen(const ursine::resources::ResourceReference &reference);
 } Meta(Enable);
+
+#include "UIScreensConfigComponent.hpp"
 
 #undef DECLARE_SCREEN

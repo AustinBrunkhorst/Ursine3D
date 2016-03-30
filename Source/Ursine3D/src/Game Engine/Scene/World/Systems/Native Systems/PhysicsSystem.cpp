@@ -41,7 +41,7 @@ namespace ursine
         PhysicsSystem::PhysicsSystem(World *world)
             : EntitySystem( world )
             , m_debugDrawer( GetCoreSystem( graphics::GfxAPI ) )
-            , m_enableDebugDraw( true )
+            , m_enableDebugDraw( false )
             , m_playmodeDebugDraw( false )
         {
             m_collisionShapes.One<

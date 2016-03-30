@@ -1,6 +1,8 @@
 package ursine.editor.scene.entity;
 
 abstract EntityEvent(String) {
+    public static inline var RefreshEntities = "RefreshEntities";
+
     public static inline var EntityAdded = "EntityAdded";
     public static inline var EntityRemoved = "EntityRemoved";
     public static inline var EntityNameChanged = "EntityNameChanged";

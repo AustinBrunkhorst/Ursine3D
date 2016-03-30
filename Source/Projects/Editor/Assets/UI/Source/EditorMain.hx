@@ -15,12 +15,12 @@ class EditorMain {
         var mainDockContainer =
             js.Browser.document.body.querySelector( '#main-dock-container' );
 
-        var mainDock = new DockContainer( );
+        editor.mainDock = new DockContainer( );
 
-        mainDock.style.width = '100%';
-        mainDock.style.height = '100%';
+        editor.mainDock.style.width = '100%';
+        editor.mainDock.style.height = '100%';
 
-        mainDockContainer.appendChild( mainDock );
+        mainDockContainer.appendChild( editor.mainDock );
 
         var sceneView = new SceneView( );
         var entityInspector = new EntityInspector( );
@@ -28,7 +28,7 @@ class EditorMain {
 
         var projectBrowser = new ProjectBrowser( );
 
-        var leftColumn = mainDock.addColumn( );
+        var leftColumn = editor.mainDock.addColumn( );
         {
             leftColumn.style.width = '20%';
 
@@ -43,7 +43,7 @@ class EditorMain {
             column.appendChild( entityInspector.window );
         }
 
-        var rightColumn = mainDock.addColumn( );
+        var rightColumn = editor.mainDock.addColumn( );
         {
             rightColumn.style.width = '80%';
 

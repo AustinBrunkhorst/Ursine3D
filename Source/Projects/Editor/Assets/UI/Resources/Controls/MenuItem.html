@@ -27,6 +27,12 @@
                     value: false,
                     notify: true,
                     observer: '_onDisabledChanged'
+                },
+                checked: {
+                    type: Boolean,
+                    value: false,
+                    notify: true,
+                    observer: '_onCheckedChanged'
                 }
             },
             listeners: {
@@ -133,6 +139,9 @@
                 else
                     this.removeAttribute( 'disabled' );
             },
+            _onCheckedChanged: function () {
+                this.icon = this.checked ? 'checkmark' : '';
+            },
 
             _clearChildrenFocus: function() {
                 var hovered = this.$.menu.querySelectorAll( '.hover' );
@@ -140,7 +149,6 @@
                 // remove hover from child menus
                 [ ].forEach.call( hovered, function(item) {
                     item.classList.remove( 'hover' );
-
                 } );
             }
         } );

@@ -56,14 +56,6 @@ namespace ursine
 
         ~UIView(void);
 
-        static void Message(
-            CefRefPtr<CefBrowser> browser,
-            UIMessageCommand command,
-            const std::string &target,
-            const std::string &message,
-            const Json &data
-        );
-
         CefRefPtr<CefBrowser> GetBrowser(void) const;
 
         void Close(void);
@@ -92,6 +84,9 @@ namespace ursine
         };
 
         std::vector<QueuedMessage> m_preLoadQueue;
+        Json::array m_messageQueue;
+
+        std::mutex m_messageMutex;
 
         CefRect m_viewport;
         Window::Handle m_window;
@@ -165,6 +160,8 @@ namespace ursine
         // Event Handlers
         ////////////////////////////////////////////////////////////////////
         
+        void onUpdate(EVENT_HANDLER(Application));
+
         void onKeyboard(EVENT_HANDLER(MouseManager));
         void onText(EVENT_HANDLER(MouseManager));
         void onMouseMove(EVENT_HANDLER(MouseManager));

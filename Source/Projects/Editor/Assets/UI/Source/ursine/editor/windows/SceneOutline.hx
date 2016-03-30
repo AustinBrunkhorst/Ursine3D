@@ -1,5 +1,6 @@
 package ursine.editor.windows;
 
+import ursine.editor.scene.ScenePlayState;
 import js.html.HtmlElement;
 import js.html.Element;
 import js.html.DOMElement;
@@ -40,9 +41,11 @@ class SceneOutline extends WindowHandler {
         resetScene( );
 
         Editor.instance.broadcastManager.getChannel( 'SceneManager' )
-            .on( 'WorldChanged', resetScene );
+            .on( 'WorldChanged', resetScene )
+            .on( 'PlayStateChanged', onPlaystateChanged );
 
         Editor.instance.broadcastManager.getChannel( 'EntityManager' )
+            .on( EntityEvent.RefreshEntities, refresh )
             .on( EntityEvent.EntityAdded, onEntityAdded )
             .on( EntityEvent.EntityRemoved, onEntityRemoved )
             .on( EntityEvent.EntityNameChanged, onEntityNameChanged )
@@ -78,6 +81,21 @@ class SceneOutline extends WindowHandler {
         }
     }
 
+    private function refresh() {
+        m_rootView.innerHTML = '';
+        m_entityItems = new Map<UInt, TreeViewItem>( );
+
+        var entities : Array<UInt> = Extern.SceneGetRootEntities( );
+
+        var event = { uniqueID: 0 };
+
+        for (uniqueID in entities) {
+            var entity = new Entity( uniqueID );
+
+            initEntity( entity );
+        }
+    }
+
     private function initEntity(entity : Entity) {
         addEntity( entity );
 
@@ -91,6 +109,16 @@ class SceneOutline extends WindowHandler {
             case KeyboardKey.DELETE: {
                 deleteSelectedEntities( );
             }
+        }
+    }
+
+    private function onPlaystateChanged(e) {
+        var state = Extern.SceneGetPlayState( );
+
+        m_rootView.classList.toggle( 'inactive', state == ScenePlayState.Playing );
+
+        if (state == ScenePlayState.Paused) {
+            refresh( );
         }
     }
 

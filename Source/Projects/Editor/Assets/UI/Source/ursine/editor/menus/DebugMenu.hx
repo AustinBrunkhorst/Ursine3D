@@ -5,7 +5,7 @@ import ursine.native.Extern;
 import ursine.controls.Notification;
 import ursine.editor.scene.ScenePlayState;
 
-@menuIndex( 3 )
+@menuIndex( 4 )
 class DebugMenu extends MenuItemHandler {
     @mainMenuItem( "Debug/Editor UI/Reload" )
     static function doEditorReload() {

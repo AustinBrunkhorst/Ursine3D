@@ -22,8 +22,7 @@ namespace ursine
 
     void NativeJSClass::messageBrowser(const std::string &channel, const std::string &message, const Json &data) const
     {
-        UIView::Message(
-            JSGetGlobalBrowser( ),
+        static_cast<UIView*>( JSGetGlobalBrowser( )->GetHost( )->GetClient( ).get( ) )->Message(
             UI_CMD_BROADCAST, 
             channel, 
             message, 

@@ -51,9 +51,10 @@ namespace ursine
             nullptr 
         );
 
-        UAssert( m_browser, "Unable to create UIView" );
+        UAssert( m_browser, "Unable to create UIView." );
 
-        auto *app = Application::Instance;
+        Application::Instance->Listener( this )
+            .On( APP_UPDATE, &UIView::onUpdate );
 
         m_keyboardManager = GetCoreSystem( KeyboardManager );
         m_mouseManager = GetCoreSystem( MouseManager );
@@ -78,27 +79,6 @@ namespace ursine
         
     }
 
-    void UIView::Message(
-        CefRefPtr<CefBrowser> browser, 
-        UIMessageCommand command, 
-        const std::string &target, 
-        const std::string &message, 
-        const Json &data
-    )
-    {
-        auto processMessage = CefProcessMessage::Create( target );
-
-        auto args = processMessage->GetArgumentList( );
-
-        args->SetSize( 3 );
-
-        args->SetInt( 0, command );
-        args->SetString( 1, message );
-        args->SetString( 2, data.dump( ) );
-
-        browser->SendProcessMessage( PID_RENDERER, processMessage );
-    }
-
     CefRefPtr<CefBrowser> UIView::GetBrowser(void) const
     {
         return m_browser;
@@ -106,6 +86,9 @@ namespace ursine
 
     void UIView::Close(void)
     {
+        Application::Instance->Listener( this )
+            .Off( APP_UPDATE, &UIView::onUpdate );
+
         m_window->Listener( this )
             .Off( WINDOW_FOCUS_CHANGED, &UIView::onWindowFocus );
 
@@ -166,7 +149,13 @@ namespace ursine
             return;
         }
 
-        Message( m_browser, command, target, message, data );
+        std::lock_guard<std::mutex> lock( m_messageMutex );
+
+        m_messageQueue.emplace_back( Json::array {
+            { target },
+            { message },
+            { data }
+        } );
     }
 
     CefRefPtr<CefRenderHandler> UIView::GetRenderHandler(void)
@@ -313,6 +302,34 @@ namespace ursine
         m_preLoadQueue.clear( );
 
         Dispatch( UI_LOADED, EventArgs::Empty );
+    }
+
+    void UIView::onUpdate(EVENT_HANDLER(Application))
+    {
+        decltype( m_messageQueue ) copy;
+
+        // lock the message
+        {
+            std::lock_guard<std::mutex> lock( m_messageMutex );
+
+            copy = std::move( m_messageQueue );
+        }
+
+        // no messages queued
+        if (copy.empty( ))
+            return;
+
+        // iterate through all tasks and execute them
+        auto processMessage = CefProcessMessage::Create( "." );
+
+        auto args = processMessage->GetArgumentList( );
+
+        args->SetSize( 2 );
+
+        args->SetInt( 0, UI_CMD_BROADCAST );
+        args->SetString( 1, Json( copy ).dump( ) );
+
+        m_browser->SendProcessMessage( PID_RENDERER, processMessage );
     }
 
     void UIView::onKeyboard(EVENT_HANDLER(KeyboardManager))

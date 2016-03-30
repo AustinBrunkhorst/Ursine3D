@@ -10,6 +10,7 @@ namespace ursine
         const extern GUID IconPointLight;
         const extern GUID IconSpotLight;
         const extern GUID IconCamera;
+        const extern GUID IconParticleSystem;
 
         const extern GUID ArchetypeTranslateTool;
         const extern GUID ArchetypeScaleTool;

@@ -8,9 +8,12 @@ import ursine.editor.scene.ScenePlayState;
 import ursine.editor.scene.ui.EditorScreenManager;
 import ursine.editor.resources.ResourceItem;
 
+import ursine.controls.MenuItem;
 import ursine.controls.ItemSelectionPopup;
 
 class SceneView extends NativeCanvasWindowHandler {
+    public static var instance : SceneView;
+
     private static inline var m_resourceTypeArchetype = 'ursine::resources::ArchetypeData';
 
     private static var m_acceptedResourceDrops = [
@@ -20,7 +23,15 @@ class SceneView extends NativeCanvasWindowHandler {
     private var m_screenManager : EditorScreenManager;
     private var m_selector : ItemSelectionPopup = null;
 
+    private var m_fullScreen : Bool;
+    private var m_fullScreenItem : MenuItem;
+
+    private var m_nonFullScreenContainer : js.html.Element;
+    private var m_fullScreenContainer : js.html.Element;
+
     public function new() {
+        instance = this;
+
         super( 'SceneView' );
 
         m_screenManager = new EditorScreenManager( window.container );
@@ -36,6 +47,47 @@ class SceneView extends NativeCanvasWindowHandler {
 
         window.addEventListener( 'resize', onWindowResize );
         window.addEventListener( 'keydown', onWindowKeyDown );
+
+        m_fullScreen = false;
+
+        m_fullScreenItem = Editor.instance.mainMenu
+            .findItem( 'View' ).menu
+            .findItem( 'Fullscreen Scene' );
+
+        m_nonFullScreenContainer = cast window.container.parentNode;
+        m_fullScreenContainer = cast js.Browser.document.querySelector( '#fullscreen-container' );
+    }
+
+    public function toggleFullscreen() {
+        m_fullScreen = !m_fullScreen;
+
+        m_fullScreenItem.checked = m_fullScreen;
+
+        Editor.instance.toggleStatusBar( !m_fullScreen );
+
+        if (m_fullScreen) {
+            Editor.instance.mainDock.style.display = 'none';
+            m_nonFullScreenContainer.removeChild( window.container );
+            m_fullScreenContainer.appendChild( window.container );
+
+            hookViewportEvents( cast window.container );
+
+            window.container.setAttribute( 'tabindex', '-1' );
+            window.container.focus( );
+            window.container.addEventListener( 'keydown', onWindowKeyDown );
+        } else {
+            Editor.instance.mainDock.style.display = 'block';
+            m_fullScreenContainer.removeChild( window.container );
+            m_nonFullScreenContainer.appendChild( window.container );
+
+            unHookViewportEvents( cast window.container );
+
+            window.container.removeAttribute( 'tabindex' );
+            window.container.removeEventListener( 'keydown', onWindowKeyDown );
+            window.focus( );
+        }
+
+        onViewportInvalidated( );
     }
 
     private function onWindowResize(e : js.html.CustomEvent) {
@@ -50,6 +102,10 @@ class SceneView extends NativeCanvasWindowHandler {
             return true;
 
         switch (e.keyCode) {
+            case KeyboardKey.F11: {
+                toggleFullscreen( );
+            }
+
             case KeyboardKey.DELETE: {
                 SceneOutline.instance.deleteSelectedEntities( );
             }

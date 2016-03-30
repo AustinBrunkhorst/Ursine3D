@@ -40,22 +40,22 @@ EditorMain.main = function() {
 EditorMain.initWindows = function() {
 	var editor = new ursine_editor_Editor();
 	var mainDockContainer = window.document.body.querySelector("#main-dock-container");
-	var mainDock = new DockContainerControl();
-	mainDock.style.width = "100%";
-	mainDock.style.height = "100%";
-	mainDockContainer.appendChild(mainDock);
+	editor.mainDock = new DockContainerControl();
+	editor.mainDock.style.width = "100%";
+	editor.mainDock.style.height = "100%";
+	mainDockContainer.appendChild(editor.mainDock);
 	var sceneView = new ursine_editor_windows_SceneView();
 	var entityInspector = new ursine_editor_windows_EntityInspector();
 	var sceneOutline = new ursine_editor_windows_SceneOutline();
 	var projectBrowser = new ursine_editor_windows_ProjectBrowser();
-	var leftColumn = mainDock.addColumn();
+	var leftColumn = editor.mainDock.addColumn();
 	leftColumn.style.width = "20%";
 	var row = leftColumn.addRow();
 	row.style.height = "100%";
 	var column = row.addColumn();
 	column.style.width = "100%";
 	column.appendChild(entityInspector.window);
-	var rightColumn = mainDock.addColumn();
+	var rightColumn = editor.mainDock.addColumn();
 	rightColumn.style.width = "80%";
 	var topRow = rightColumn.addRow();
 	topRow.style.height = "65%";
@@ -807,6 +807,9 @@ ursine_editor_Editor.prototype = {
 	setStatusText: function(status) {
 		this.m_statusTextContainer.innerHTML = status;
 	}
+	,toggleStatusBar: function(visible) {
+		if(visible) this.m_statusTextContainer.parentNode.style.display = "block"; else this.m_statusTextContainer.parentNode.style.display = "none";
+	}
 	,buildMenus: function() {
 		var classTypeNames = Object.keys( $hxClasses );
 		var menuHandlerType = Type.resolveClass(Type.getClassName(ursine_editor_MenuItemHandler));
@@ -847,16 +850,18 @@ ursine_editor_Editor.prototype = {
 				var item = new MenuItemControl();
 				item.text = itemName;
 				item.icon = details[3];
-				var handler1 = [Reflect.field(handler.type,name)];
-				item.addEventListener("open",(function(handler1) {
+				var callback = [Reflect.field(handler.type,name)];
+				item.addEventListener("open",(function(callback) {
 					return function(e) {
-						handler1[0].apply(handler1[0].type,[e]);
+						callback[0].apply(null,[e]);
 					};
-				})(handler1));
+				})(callback));
 				if(details[1] == true) parentMenu.appendChild(new MenuSeparatorControl());
 				parentMenu.appendChild(item);
 				if(details[2] == true) parentMenu.appendChild(new MenuSeparatorControl());
 			}
+			var init = Reflect.field(handler.type,"init");
+			if(init != null) init.apply(null,[this.mainMenu]);
 		}
 	}
 	,populateMenuLevels: function(levels) {
@@ -945,13 +950,7 @@ ursine_editor_WindowHandler.prototype = {
 var ursine_editor_NativeCanvasWindowHandler = function(toolName) {
 	ursine_editor_WindowHandler.call(this);
 	this.m_nativeHandler = new NativeToolHandler(toolName);
-	var _g = 0;
-	var _g1 = ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents;
-	while(_g < _g1.length) {
-		var event = _g1[_g];
-		++_g;
-		this.window.addEventListener(event,$bind(this,this.forwardEvent));
-	}
+	this.hookViewportEvents(this.window);
 	this.window.addEventListener("resize",$bind(this,this.onViewportInvalidated));
 	window.addEventListener("resize",$bind(this,this.onViewportInvalidated));
 };
@@ -959,7 +958,25 @@ $hxClasses["ursine.editor.NativeCanvasWindowHandler"] = ursine_editor_NativeCanv
 ursine_editor_NativeCanvasWindowHandler.__name__ = ["ursine","editor","NativeCanvasWindowHandler"];
 ursine_editor_NativeCanvasWindowHandler.__super__ = ursine_editor_WindowHandler;
 ursine_editor_NativeCanvasWindowHandler.prototype = $extend(ursine_editor_WindowHandler.prototype,{
-	forwardEvent: function(e) {
+	hookViewportEvents: function(target) {
+		var _g = 0;
+		var _g1 = ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents;
+		while(_g < _g1.length) {
+			var event = _g1[_g];
+			++_g;
+			target.addEventListener(event,$bind(this,this.forwardEvent));
+		}
+	}
+	,unHookViewportEvents: function(target) {
+		var _g = 0;
+		var _g1 = ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents;
+		while(_g < _g1.length) {
+			var event = _g1[_g];
+			++_g;
+			target.removeEventListener(event,$bind(this,this.forwardEvent));
+		}
+	}
+	,forwardEvent: function(e) {
 		this.m_nativeHandler.Event(e.type,e);
 	}
 	,onViewportInvalidated: function() {
@@ -1127,6 +1144,16 @@ ursine_editor_menus_ToolsMenu.disableLines = function() {
 ursine_editor_menus_ToolsMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_ToolsMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
 	__class__: ursine_editor_menus_ToolsMenu
+});
+var ursine_editor_menus_ViewMenu = function() { };
+$hxClasses["ursine.editor.menus.ViewMenu"] = ursine_editor_menus_ViewMenu;
+ursine_editor_menus_ViewMenu.__name__ = ["ursine","editor","menus","ViewMenu"];
+ursine_editor_menus_ViewMenu.doFullscreenToggle = function() {
+	ursine_editor_windows_SceneView.instance.toggleFullscreen();
+};
+ursine_editor_menus_ViewMenu.__super__ = ursine_editor_MenuItemHandler;
+ursine_editor_menus_ViewMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+	__class__: ursine_editor_menus_ViewMenu
 });
 var ursine_editor_resources_NativeResourceManager = function(broadcastManager) {
 	broadcastManager.getChannel("ResourcePipeline").on("ResourceBuildStart",$bind(this,this.onResourceBuildStart)).on("ResourceBuildComplete",$bind(this,this.onResourceBuildComplete));
@@ -2877,8 +2904,8 @@ var ursine_editor_windows_SceneOutline = function() {
 	this.m_entityItems = new haxe_ds_IntMap();
 	this.window.container.appendChild(this.m_rootView);
 	this.resetScene();
-	ursine_editor_Editor.instance.broadcastManager.getChannel("SceneManager").on("WorldChanged",$bind(this,this.resetScene));
-	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on("EntityAdded",$bind(this,this.onEntityAdded)).on("EntityRemoved",$bind(this,this.onEntityRemoved)).on("EntityNameChanged",$bind(this,this.onEntityNameChanged)).on("EntityParentChanged",$bind(this,this.onEntityParentChanged)).on("ComponentAdded",$bind(this,this.onComponentAdded)).on("ComponentRemoved",$bind(this,this.onComponentRemoved));
+	ursine_editor_Editor.instance.broadcastManager.getChannel("SceneManager").on("WorldChanged",$bind(this,this.resetScene)).on("PlayStateChanged",$bind(this,this.onPlaystateChanged));
+	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on("RefreshEntities",$bind(this,this.refresh)).on("EntityAdded",$bind(this,this.onEntityAdded)).on("EntityRemoved",$bind(this,this.onEntityRemoved)).on("EntityNameChanged",$bind(this,this.onEntityNameChanged)).on("EntityParentChanged",$bind(this,this.onEntityParentChanged)).on("ComponentAdded",$bind(this,this.onComponentAdded)).on("ComponentRemoved",$bind(this,this.onComponentRemoved));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
 };
 $hxClasses["ursine.editor.windows.SceneOutline"] = ursine_editor_windows_SceneOutline;
@@ -2895,6 +2922,19 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		this.m_rootView.innerHTML = "";
 		this.m_entityItems = new haxe_ds_IntMap();
 		ursine_editor_windows_EntityInspector.instance.inspect(null);
+		var entities = SceneGetRootEntities();
+		var event_uniqueID = 0;
+		var _g = 0;
+		while(_g < entities.length) {
+			var uniqueID = entities[_g];
+			++_g;
+			var entity = new ursine_editor_scene_entity_Entity(uniqueID);
+			this.initEntity(entity);
+		}
+	}
+	,refresh: function() {
+		this.m_rootView.innerHTML = "";
+		this.m_entityItems = new haxe_ds_IntMap();
 		var entities = SceneGetRootEntities();
 		var event_uniqueID = 0;
 		var _g = 0;
@@ -2922,6 +2962,11 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 			this.deleteSelectedEntities();
 			break;
 		}
+	}
+	,onPlaystateChanged: function(e) {
+		var state = SceneGetPlayState();
+		this.m_rootView.classList.toggle("inactive",state == 0);
+		if(state == 1) this.refresh();
 	}
 	,onEntityAdded: function(e) {
 		var _g = this;
@@ -3096,6 +3141,7 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 });
 var ursine_editor_windows_SceneView = function() {
 	this.m_selector = null;
+	ursine_editor_windows_SceneView.instance = this;
 	ursine_editor_NativeCanvasWindowHandler.call(this,"SceneView");
 	this.m_screenManager = new ursine_editor_scene_ui_EditorScreenManager(this.window.container);
 	this.window.heading = "Scene";
@@ -3106,12 +3152,39 @@ var ursine_editor_windows_SceneView = function() {
 	this.onViewportInvalidated();
 	this.window.addEventListener("resize",$bind(this,this.onWindowResize));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
+	this.m_fullScreen = false;
+	this.m_fullScreenItem = ursine_editor_Editor.instance.mainMenu.findItem("View").menu.findItem("Fullscreen Scene");
+	this.m_nonFullScreenContainer = this.window.container.parentNode;
+	this.m_fullScreenContainer = window.document.querySelector("#fullscreen-container");
 };
 $hxClasses["ursine.editor.windows.SceneView"] = ursine_editor_windows_SceneView;
 ursine_editor_windows_SceneView.__name__ = ["ursine","editor","windows","SceneView"];
 ursine_editor_windows_SceneView.__super__ = ursine_editor_NativeCanvasWindowHandler;
 ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWindowHandler.prototype,{
-	onWindowResize: function(e) {
+	toggleFullscreen: function() {
+		this.m_fullScreen = !this.m_fullScreen;
+		this.m_fullScreenItem.checked = this.m_fullScreen;
+		ursine_editor_Editor.instance.toggleStatusBar(!this.m_fullScreen);
+		if(this.m_fullScreen) {
+			ursine_editor_Editor.instance.mainDock.style.display = "none";
+			this.m_nonFullScreenContainer.removeChild(this.window.container);
+			this.m_fullScreenContainer.appendChild(this.window.container);
+			this.hookViewportEvents(this.window.container);
+			this.window.container.setAttribute("tabindex","-1");
+			this.window.container.focus();
+			this.window.container.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
+		} else {
+			ursine_editor_Editor.instance.mainDock.style.display = "block";
+			this.m_fullScreenContainer.removeChild(this.window.container);
+			this.m_nonFullScreenContainer.appendChild(this.window.container);
+			this.unHookViewportEvents(this.window.container);
+			this.window.container.removeAttribute("tabindex");
+			this.window.container.removeEventListener("keydown",$bind(this,this.onWindowKeyDown));
+			this.window.focus();
+		}
+		this.onViewportInvalidated();
+	}
+	,onWindowResize: function(e) {
 		this.m_screenManager.invalidateScreenViewport();
 	}
 	,onWindowKeyDown: function(e) {
@@ -3119,6 +3192,9 @@ ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWi
 		if(state == 0) return true;
 		var _g = e.keyCode;
 		switch(_g) {
+		case 122:
+			this.toggleFullscreen();
+			break;
 		case 46:
 			ursine_editor_windows_SceneOutline.instance.deleteSelectedEntities();
 			break;
@@ -3240,12 +3316,13 @@ var Enum = { };
 var __map_reserved = {}
 js_Boot.__toStr = {}.toString;
 ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mouseover","mouseout"];
-ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
+ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
-ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
+ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNewWorld : { mainMenuItem : ["File/New World",false,true]}, doSaveWorld : { mainMenuItem : ["File/Save World",false,false]}, doSaveWorldAs : { mainMenuItem : ["File/Save World As",false,false]}, doSaveProject : { mainMenuItem : ["File/Save Project",true,false]}, doOpenProject : { mainMenuItem : ["File/Open Project",false,false]}}};
-ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
+ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [7]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
 ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
+ursine_editor_menus_ViewMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doFullscreenToggle : { mainMenuItem : ["View/Fullscreen Scene"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";
 ursine_editor_scene_component_inspectors_FieldInspectionHandler.m_fieldNameRegex = new EReg("([A-Z](?=[A-Z][a-z])|[^A-Z](?=[A-Z])|[a-zA-Z](?=[^a-zA-Z]))","g");

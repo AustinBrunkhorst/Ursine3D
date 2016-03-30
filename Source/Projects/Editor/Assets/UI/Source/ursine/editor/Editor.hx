@@ -6,6 +6,7 @@ import ursine.controls.Menu;
 import ursine.controls.MainMenu;
 import ursine.controls.MenuItem;
 import ursine.controls.MenuSeparator;
+import ursine.controls.docking.DockContainer;
 import ursine.editor.MenuItemHandler;
 import ursine.editor.windows.OutputLog;
 import ursine.editor.resources.NativeResourceManager;
@@ -18,6 +19,7 @@ class Editor {
     public static var instance : Editor = null;
 
     public var mainMenu : MainMenu;
+    public var mainDock : DockContainer;
 
     public var outputWindow : OutputLog;
 
@@ -70,6 +72,10 @@ class Editor {
 
     public function setStatusText(status : String) {
         m_statusTextContainer.innerHTML = status;
+    }
+
+    public function toggleStatusBar(visible : Bool) {
+        untyped m_statusTextContainer.parentNode.style.display = visible ? 'block' : 'none';
     }
 
     private function buildMenus() {
@@ -137,10 +143,10 @@ class Editor {
                 item.text = itemName;
                 item.icon = details[ 3 ];
 
-                var handler = Reflect.field( handler.type, name );
+                var callback = Reflect.field( handler.type, name );
 
                 item.addEventListener( 'open', function(e) {
-                    Reflect.callMethod( handler.type, cast handler, [ e ] );
+                    Reflect.callMethod( null, cast callback, [ e ] );
                 } );
 
                 // separator before
@@ -155,6 +161,11 @@ class Editor {
                     parentMenu.appendChild( new MenuSeparator( ) );
                 }
             }
+
+            var init = Reflect.field( handler.type, 'init' );
+
+            if (init != null)
+                Reflect.callMethod( null, cast init, [ mainMenu ] );
         }
     }
 

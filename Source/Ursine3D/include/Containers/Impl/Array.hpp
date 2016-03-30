@@ -262,18 +262,18 @@ namespace ursine
     template<typename T>
     void Array<T>::Remove(const T &value)
     {
-        auto find = Find( value );
+        auto search = Find( value );
 
-        if (find == end( ))
+        if (search == end( ))
             return;
 
     #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
 
-        SizeType index = begin - m_impl.cbegin( );
+        SizeType index = search - m_impl.cbegin( );
 
     #endif
 
-        m_impl.erase( find );
+        m_impl.erase( search );
 
         NOTIFY_MODIFICATION( index, AMODIFY_REMOVE );
     }

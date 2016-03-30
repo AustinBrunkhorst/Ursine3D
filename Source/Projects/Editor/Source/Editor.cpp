@@ -324,7 +324,7 @@ std::string Editor::findAvailableProject(void) const
     {
         if (fs::exists( file ))
             return file;
-}
+    }
 
     // couldn't find one
     return "";
@@ -463,9 +463,9 @@ void Editor::initializeProject(const std::string &fileName)
          
     auto &recentProjects = m_preferences.recentProjects;
 
-    // add it as a recent project if it doesn't already exist
-    if (recentProjects.Find( projectFileName.string( ) ) == recentProjects.end( ))
-        recentProjects.Insert( recentProjects.begin( ), projectFileName.string( ) );
+    // remove it if it existed, then add it to the beginning
+    recentProjects.Remove( projectFileName.string( ) );
+    recentProjects.Insert( recentProjects.begin( ), projectFileName.string( ) );
 
     auto &resourcePipeline = m_project->GetResourcePipeline( );
 

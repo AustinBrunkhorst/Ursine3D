@@ -3,6 +3,7 @@ package ursine.controls;
 @:native( "MenuItemControl" )
 extern class MenuItem extends PolymerElement {
     var disabled : Bool;
+    var checked : Bool;
     var text : String;
     var icon : String;
 
