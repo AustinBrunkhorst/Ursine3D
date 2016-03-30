@@ -76,6 +76,12 @@ namespace ursine
             return nullptr;
     }
 
+    ///// FOR INSTATE ANIMATION
+    //const std::vector<Animation*> AnimationState::GetAnimationVector(void) const
+    //{
+    //    return m_animationVec;
+    //}
+
     const ResourceReference &AnimationState::GetClip(void) const
     {
         return m_clip;

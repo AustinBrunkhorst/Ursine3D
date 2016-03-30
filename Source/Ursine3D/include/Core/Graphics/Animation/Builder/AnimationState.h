@@ -94,6 +94,12 @@ namespace ursine
         */
         const Animation *GetAnimation(void) const;
 
+        /** @brief gets the animation vector that state has
+        *
+        *  @return pointer to the animation
+        */
+       // const std::vector<Animation*> GetAnimationVector(void) const;
+
         const ursine::resources::ResourceReference &GetClip(void) const;
         void SetClip(const ursine::resources::ResourceReference &clip);
 
@@ -113,8 +119,13 @@ namespace ursine
 
         resources::ResourceReference m_clip;
 
-        //current animation
+        // current animation
         const Animation *m_animation;
+
+        ///// FOR INSTATE ANIMATION
+        //// for in-state animation
+        //float m_InSt_transFactor; // need slider
+        //std::vector<Animation*> m_animationVec;
 
         bool m_looping;
 

@@ -137,13 +137,17 @@ namespace ursine
             std::string m_stateName;
 
             void updateState(AnimationState **currSt, const Animation **currAni,
-                             AnimationState **futSt, const Animation **futAni, 
-                             float dt, float &transFactor);
+                            AnimationState **futSt, const Animation **futAni, 
+                            //const std::vector<Animation*> &currAnimVec,
+                            //const std::vector<Animation*> &futAnimVec,
+                            float dt, float &transFactor);
 
             void animationLoop(AnimationState **currSt, const Animation **currAni,
-                                AnimationState **futSt, const Animation **futAni,
-                                float dt, float &transFactor,
-                                StateBlender *stateBlender);
+                            AnimationState **futSt, const Animation **futAni,
+                            //const std::vector<Animation*> &currAnimVec,
+                            //const std::vector<Animation*> &futAnimVec,
+                            float dt, float &transFactor,
+                            StateBlender *stateBlender);
 
             void changeState(AnimationState **currSt, AnimationState **futSt,
                              float currloopTimePos, float futloopTimePos, 

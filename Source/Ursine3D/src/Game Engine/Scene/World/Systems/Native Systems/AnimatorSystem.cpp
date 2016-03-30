@@ -179,13 +179,17 @@ namespace ursine
             const Animation *currentAnimation = nullptr == currentState ? nullptr : currentState->GetAnimation( );
             const Animation *futureAnimation = nullptr == futureState ? nullptr : futureState->GetAnimation( );
 
+            ///// FOR INSTATE ANIMATION
+            //const std::vector<Animation*> currAnimVec = currentState->GetAnimationVector();
+            //const std::vector<Animation*> futAnimVec = futureState->GetAnimationVector();
+
             // Get the rig we're using
             auto *rig = AnimationBuilder::GetAnimationRigByName( animator->m_rig );
 
             // If anything we need is null, opt out.
             if (nullptr == currentAnimation || nullptr == rig)
                 return;
-
+            
             // Set the rig's transform pointers 
             // (this is needed because a rig is instanced, and the transform pointers need to be set)
             animator->setRigTransformPointers( );
@@ -193,6 +197,20 @@ namespace ursine
             // If the bone count of the animation doesn't match the rig's bone count, nope out
             if (currentAnimation->GetDesiredBoneCount( ) != rig->GetBoneCount( ))
                 return;
+            ///// FOR INSTATE ANIMATION
+            ///// added
+            //if (nullptr == rig)
+            //    return;
+            //
+            ///// added
+            //for (auto &iter : currAnimVec)
+            //{
+            //    if (nullptr == iter)
+            //        return;
+            //    
+            //    if(iter->GetDesiredBoneCount( ) != rig->GetBoneCount( ))
+            //        return;
+            //}
 
             // If we have a future state
             if (nullptr != futureAnimation)
@@ -204,6 +222,18 @@ namespace ursine
             else
                 // We don't have a future state so just reset the trans factor
                 animator->m_transFactor = 0.0f;
+            
+            ///// FOR INSTATE ANIMATION
+            ///// added
+            //for (auto &iter : futAnimVec)
+            //{
+            //    if ( ( nullptr == iter ) 
+            //        || ( iter->GetDesiredBoneCount( ) != rig->GetBoneCount( ) ) )
+            //    {
+            //        animator->m_transFactor = 0.0f;
+            //        return;
+            //    }
+            //}
 
             // Get the model's matrix palette
             auto &matrixPalette = animator->GetOwner( )->GetComponent<Model3D>( )->getMatrixPalette( );
@@ -214,6 +244,8 @@ namespace ursine
                 &currentAnimation, 
                 &futureState, 
                 &futureAnimation, 
+                //currAnimVec,
+                //futAnimVec,
                 dt, 
                 animator->m_transFactor
             );

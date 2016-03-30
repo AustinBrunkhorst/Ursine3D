@@ -152,8 +152,10 @@ namespace ursine
         }
 
         void Animator::updateState(AnimationState **currSt, const Animation **currAni,
-                                    AnimationState **futSt, const Animation **futAni,
-                                    float dt, float &transFactor)
+                                AnimationState **futSt, const Animation **futAni,
+                                //const std::vector<Animation*> &currAnimVec,
+                                //const std::vector<Animation*> &futAnimVec,
+                                float dt, float &transFactor)
         {
             // Increment the current state's time marker
             (*currSt)->IncrementTimePosition( dt * m_speedScalar );
@@ -186,11 +188,13 @@ namespace ursine
             
             // if user didn't defined state blender, 
             // else play as default currTimePos = 1.0f, futTimePos = 0.0f
-            animationLoop(currSt, currAni, futSt, futAni, dt, transFactor, stb);
+            animationLoop(currSt, currAni, futSt, futAni, /*currAnimVec, futAnimVec,*/ dt, transFactor, stb);
         }
 
         void Animator::animationLoop(AnimationState **currSt, const Animation **currAni,
                                     AnimationState **futSt, const Animation **futAni,
+                                    //const std::vector<Animation*> &currAnimVec,
+                                    //const std::vector<Animation*> &futAnimVec,
                                     float dt, float &transFactor,
                                     StateBlender *stateBlender)
         {

@@ -103,4 +103,49 @@ namespace ursine
         // frame
         std::vector< std::vector<AnimationKeyframe> > m_keyframes;
     };
+
+    class InStateAnimation
+    {
+    public:
+        //EditorField(
+        //    std::string stateName,
+        //    GetStateName,
+        //    SetStateName
+        //    );
+        //
+        //// how can I add multiple animations in animation state?
+        //// how can I use combo box for this?
+        //// Array<Animation> => no, in this case, we should edit
+        //// Get animation as a resource not by name
+        //EditorResourceField(
+        //    ursine::resources::AnimationClipData,
+        //    clip,
+        //    GetClip,
+        //    SetClip
+        //    );
+        //
+        //InStateAnimation(void);
+        //InStateAnimation(const std::string &name);
+        //
+        //// gettors and setters //////////////////////////////////////
+        //
+        //const std::string &GetName(void) const;
+        //void SetName(const std::string &name);
+        //
+        //unsigned GetRigKeyFrameCount(void) const;
+        //
+        //unsigned GetDesiredBoneCount(void) const;
+
+    private:
+        unsigned m_rigKeyframeCount;
+        unsigned m_boneCount;
+        std::string m_name;
+
+        // vector (each keyframe) of vectors (each bone's keyframes)
+        // so it would be like: 
+        //  keyframes[what keyframe are we on][boneIndex]
+        // this should help keep things contiguous in memory when looking at a single key
+        // frame
+        std::vector< Animation > m_animations;
+    };// Meta(Enable, EnableArrayType, DisplayName("InStateAnimation"));
 }
