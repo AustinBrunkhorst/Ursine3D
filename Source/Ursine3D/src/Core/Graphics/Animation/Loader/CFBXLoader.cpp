@@ -552,6 +552,7 @@ namespace ursine
                 // vertex, normal, tangent, texcoord, material
                 ProcessVertices(mesh, &newMesh);
                 ProcessNormals(mesh, &newMesh);
+                ProcessBinormal(mesh, &newMesh);
                 ProcessTangent(mesh, &newMesh);
                 ProcessTexcoord(mesh, &newMesh);
                 ProcessMaterials(pNode, &newMesh);
@@ -692,11 +693,82 @@ namespace ursine
             }
         }
 
+        void CFBXLoader::ProcessBinormal(FbxMesh* pMesh, FBX_DATA::MeshData* pData)
+        {
+            //get the normal element attribute
+            FbxGeometryElementBinormal* binormalElement = pMesh->GetElementBinormal();
+
+            if (binormalElement)
+            {
+                switch (binormalElement->GetMappingMode())
+                {
+                case FbxGeometryElement::eByControlPoint:
+                {
+                    unsigned binormalCount = pMesh->GetControlPointsCount();
+                    pData->binormalMode = FbxGeometryElement::eByControlPoint;
+                    pData->binormalCnt = binormalCount;
+                    pData->binormals = new pseudodx::XMFLOAT3[binormalCount];
+
+                    for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); ++lVertexIndex)
+                    {
+                        int lBinormalIndex = 0;
+
+                        if (binormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+                            lBinormalIndex = lVertexIndex;
+                        if (binormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+                            lBinormalIndex = binormalElement->GetIndexArray().GetAt(lVertexIndex);
+
+                        FbxVector4 lBinormal = binormalElement->GetDirectArray().GetAt(lBinormalIndex);
+                        mConverter->ConvertVector(lBinormal);
+                        pData->binormals[lVertexIndex] = FBXVectorToXMFLOAT3(lBinormal.mData);
+                    }
+                }
+                break;
+                case FbxGeometryElement::eByPolygonVertex:
+                {
+                    int lIndexByPolygonVertex = 0;
+
+                    unsigned binormalCount = pMesh->GetPolygonCount() * pMesh->GetPolygonSize(0);
+
+                    pData->binormalMode = FbxGeometryElement::eByPolygonVertex;
+                    pData->binormalCnt = binormalCount;
+                    pData->binormals = new pseudodx::XMFLOAT3[binormalCount];
+
+                    for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
+                    {
+                        int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
+
+                        UAssertCatchable(lPolygonSize == 3,
+                            "Model is not triangulated.\npoly size: %i",
+                            lPolygonSize
+                            );
+
+                        for (int i = 0; i < lPolygonSize; ++i)
+                        {
+                            int lBinormalIndex = 0;
+
+                            if (binormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+                                lBinormalIndex = lIndexByPolygonVertex;
+                            if (binormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+                                lBinormalIndex = binormalElement->GetIndexArray().GetAt(lIndexByPolygonVertex);
+
+                            FbxVector4 lBinormal = binormalElement->GetDirectArray().GetAt(lBinormalIndex);
+                            mConverter->ConvertVector(lBinormal);
+                            pData->binormals[lIndexByPolygonVertex] = FBXVectorToXMFLOAT3(lBinormal.mData);
+                            ++lIndexByPolygonVertex;
+                        }
+                    }
+                }
+                break;
+                }
+            }
+        }
+
         void CFBXLoader::ProcessTangent(FbxMesh* pMesh, FBX_DATA::MeshData* pData)
         {
             //get the normal element attribute
             FbxGeometryElementTangent* tangentElement = pMesh->GetElementTangent();
-
+            
             if (tangentElement)
             {
                 switch (tangentElement->GetMappingMode())
@@ -708,7 +780,7 @@ namespace ursine
                     pData->tangentCnt = tangentCount;
                     pData->tangents = new pseudodx::XMFLOAT3[tangentCount];
 
-                    for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); lVertexIndex++)
+                    for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); ++lVertexIndex)
                     {
                         int lTangentIndex = 0;
 
@@ -733,7 +805,7 @@ namespace ursine
                     pData->tangentCnt = tangentCount;
                     pData->tangents = new pseudodx::XMFLOAT3[tangentCount];
 
-                    for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); lPolygonIndex++)
+                    for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
 
@@ -1453,6 +1525,7 @@ namespace ursine
                 
                 ProcessVertices(mesh, &newMesh);
                 ProcessNormals(mesh, &newMesh);
+                ProcessBinormal(mesh, &newMesh);
                 ProcessTangent(mesh, &newMesh);
                 ProcessTexcoord(mesh, &newMesh);
                 ProcessMaterials(pNode, &newMesh);
@@ -1603,6 +1676,14 @@ namespace ursine
                         newMV.normal = md.normals[md.indices[i]];
                 }
 
+                if (md.binormals)
+                {
+                    if (md.binormalMode == FbxGeometryElement::eByPolygonVertex)
+                        newMV.binormal = md.binormals[i];
+                    else if (md.binormalMode == FbxGeometryElement::eByControlPoint)
+                        newMV.binormal = md.binormals[md.indices[i]];
+                }
+
                 if (md.tangents)
                 {
                     if (md.tangentMode == FbxGeometryElement::eByPolygonVertex)
@@ -1632,15 +1713,6 @@ namespace ursine
                         newMV.ctrlIndices.y = m_Model->mCtrlPoints[ meshIdx ].at(md.indices[ i ]).mBlendingInfo[ 1 ].mBlendingIndex;
                         newMV.ctrlIndices.z = m_Model->mCtrlPoints[ meshIdx ].at(md.indices[ i ]).mBlendingInfo[ 2 ].mBlendingIndex;
                         newMV.ctrlIndices.w = m_Model->mCtrlPoints[ meshIdx ].at(md.indices[ i ]).mBlendingInfo[ 3 ].mBlendingIndex;
-
-                        //if (!newMV.CheckSum())
-                        //    break;
-                        //
-                        //if (!newMV.IsValidControls())
-                        //    break;
-                        //
-                        //if (!newMV.IsValidWeights())
-                        //    break;
                     }
                 }
 
