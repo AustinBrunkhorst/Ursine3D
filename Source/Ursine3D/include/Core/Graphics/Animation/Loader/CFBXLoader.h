@@ -133,15 +133,6 @@ namespace ursine
             */
             void ProcessNormals(FbxMesh* pMesh, FBX_DATA::MeshData* pData);
 
-            /** @brief fbx loader binormal funciton
-            *
-            *  this will import binormal data from fbx file
-            *
-            *  @param pNode the pointer of the FbxNode
-            *  @return nothing
-            */
-            void ProcessBinormal(FbxMesh* pMesh, FBX_DATA::MeshData* pData);
-
             /** @brief fbx loader tangent funciton
             *
             *  this will import tangent data from fbx file

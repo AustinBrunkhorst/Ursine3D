@@ -29,7 +29,7 @@ namespace ursine
         class ModelInfo;
         }
     }
-    
+
     class AnimationBuilder
     {
     public:
@@ -77,18 +77,6 @@ namespace ursine
         static int LoadBoneData(const graphics::ufmt_loader::ModelInfo &modelData, const std::string &name);
 
     private:
-        // various methods of interpolation
-        // transRate = 0~1 ( x axis value )
-        // return  = result of interpolation ( y axis value )
-        // linear interpolation : coeff1 usually 1, coeff2 usually 0
-        static float linearInterpolation(float &coeff1, float &coeff2, float transRate);
-
-        // cubic interpolation : coeff1 usually 1, coeff4 usually 0, coeff2 and coeff3 could be something bigger than 0
-        static float cubicInterpolation(float coeff[4], float transRate);
-
-        // bicubic interpolation : coeff
-        static float bicubicInterpolation(float coeff[4][4], float transRate_x, float transRate_y);
-
         // interpolate between 2 sets of keyframes
         static void interpolateRigKeyFrames( 
             const std::vector<AnimationKeyframe> &frame1, 
