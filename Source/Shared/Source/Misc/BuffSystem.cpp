@@ -36,20 +36,16 @@ BuffSystem::BuffSystem(ursine::ecs::World* world)
 }
 
 
-void BuffSystem::Enable(ursine::ecs::Entity* entity)
+void BuffSystem::Enable(const ursine::ecs::EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
     // grab all comps needed
     if ( entity->HasComponent< BuffComponent >( ) )
-        m_buffComps[uniqueID] = entity->GetComponent< BuffComponent >( );
+        m_buffComps[entity] = entity->GetComponent< BuffComponent >( );
 }
 
-void BuffSystem::Disable(ursine::ecs::Entity* entity)
+void BuffSystem::Disable(const ursine::ecs::EntityHandle &entity)
 {
-    auto uniqueID = entity->GetUniqueID( );
-
-    m_buffComps.erase( uniqueID );
+    m_buffComps.erase( entity );
 }
 
 void BuffSystem::onUpdate(EVENT_HANDLER(World))

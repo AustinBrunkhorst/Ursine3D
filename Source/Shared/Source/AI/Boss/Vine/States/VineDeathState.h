@@ -14,8 +14,9 @@
 #pragma once
 
 #include "VineAIState.h"
+#include "VineAIComponent.h"
 
-class EntityAnimator;
+#include <AnimatorComponent.h>
 
 class VineDeathState : public VineAIState
 {
@@ -26,8 +27,10 @@ public:
 
 private:
 
-    ursine::ecs::EntityHandle owner;
+    ursine::ecs::EntityHandle m_owner;
+    ursine::ecs::Animator *m_animator;
 
-    void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
+    void onFlopFinish(EVENT_HANDLER(ursine::ecs::Entity));
+    void onDigFinish(EVENT_HANDLER(ursine::ecs::Entity));
 
 };

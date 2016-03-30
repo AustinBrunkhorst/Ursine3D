@@ -153,6 +153,7 @@ void FodderAI::OnInitialize(void)
 
     damageState->AddTransition( pauseState, "damageStateToWalkState" );
 
+
     trans = pauseState->AddTransition(walkState, "PauseStateToWalkState");
     trans->AddCondition<sm::FloatCondition>(
             "PauseTimer",

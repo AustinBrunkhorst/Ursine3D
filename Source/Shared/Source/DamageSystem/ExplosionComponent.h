@@ -11,8 +11,8 @@
 ** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
-#include "Component.h"
-
+#include <Component.h>
+#include <ArchetypeData.h>
 namespace ursine
 {
     namespace ecs
@@ -22,40 +22,11 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
-            ExplosionComponent(void);
-
-            // function that is called when you want the object to explode
-            void Explode(void);
-
-            ////////////////////////////////////////////////////////////////////
-            // Getters and Setters
-            ////////////////////////////////////////////////////////////////////
-            const std::string &GetEffectName(void) const;
-            void SetEffectName(const std::string &name);
-
-            float GetRadius(void) const;
-            void SetRadius(float rad);
-
-            float GetDamage(void) const;
-            void SetDamage(float dmg);
-
-            float GetDamageFallOff(void) const;
-            void SetDamageFallOff(float falloff);
-
-            bool GetDamagePlayers(void) const;
-            void SetDamagePlayers(bool dmg);
-
-            bool GetDamageEnemies(void) const;
-            void SetDamageEnemies(bool dmg);
-
-
-            ////////////////////////////////////////////////////////////////////
-            // Expose data to editor
-            ////////////////////////////////////////////////////////////////////
-            EditorField(
-                std::string ExplosionEffectArchetype,
-                GetEffectName,
-                SetEffectName
+            EditorResourceField(
+                ursine::resources::ArchetypeData,
+                explosionEffectArchetype,
+                GetEffectArchetype,
+                SetEffectArchetype
             );
 
             EditorField(
@@ -88,8 +59,34 @@ namespace ursine
                 SetDamageEnemies
             );
 
+            ExplosionComponent(void);
+
+            // function that is called when you want the object to explode
+            void Explode(void);
+
+            ////////////////////////////////////////////////////////////////////
+            // Getters and Setters
+            ////////////////////////////////////////////////////////////////////
+            const ursine::resources::ResourceReference &GetEffectArchetype(void) const;
+            void SetEffectArchetype(const ursine::resources::ResourceReference &name);
+
+            float GetRadius(void) const;
+            void SetRadius(float rad);
+
+            float GetDamage(void) const;
+            void SetDamage(float dmg);
+
+            float GetDamageFallOff(void) const;
+            void SetDamageFallOff(float falloff);
+
+            bool GetDamagePlayers(void) const;
+            void SetDamagePlayers(bool dmg);
+
+            bool GetDamageEnemies(void) const;
+            void SetDamageEnemies(bool dmg);
+
         private:
-            std::string m_effectName;
+            ursine::resources::ResourceReference m_effectArchetype;
 
             // radius of explosion
             float m_radius;

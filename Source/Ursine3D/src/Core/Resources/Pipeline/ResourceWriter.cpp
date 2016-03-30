@@ -19,18 +19,43 @@ namespace ursine
 
             }
 
+            void ResourceWriter::WriteBytes(std::ostream &stream, const void *bytes, size_t count)
+            {
+                stream.write( reinterpret_cast<const char*>( bytes ), count );
+            }
+
+            void ResourceWriter::Write(std::ostream &stream, const std::string &output)
+            {
+                Write( stream, static_cast<unsigned>( output.size( ) ) );
+
+                stream.write( output.c_str( ), output.size( ) );
+            }
+
+            void ResourceWriter::Write(std::ostream &stream, const BinaryData &output)
+            {
+                uint64 size = output.GetSize( );
+
+                Write( stream, size );
+                WriteBytes( stream, output.GetData( ), size );
+            }
+
             ResourceWriter &ResourceWriter::WriteBytes(const void *bytes, size_t count)
             {
-                m_stream.write( reinterpret_cast<const char*>( bytes ), count );
+                WriteBytes( m_stream, bytes, count );
 
                 return *this;
             }
 
-            ResourceWriter &ResourceWriter::WriteString(const std::string &output)
+            ResourceWriter &ResourceWriter::Write(const std::string &output)
             {
-                Write( static_cast<unsigned>( output.size( ) ) );
+                Write( m_stream, output );
 
-                m_stream.write( output.c_str( ), output.size( ) );
+                return *this;
+            }
+
+            ResourceWriter &ResourceWriter::Write(const BinaryData &value) 
+            {
+                Write( m_stream, value );
 
                 return *this;
             }

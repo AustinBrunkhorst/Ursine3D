@@ -14,8 +14,7 @@
 #pragma once
 
 #include "VineAIState.h"
-
-class EntityAnimator;
+#include "VineAIComponent.h"
 
 class VineGoHomeState : public VineAIState
 {
@@ -40,7 +39,7 @@ private:
 
     GoHomeState m_state;
 
-    void playAnimation(EntityAnimator *animator, const std::string &clip);
+    void playAnimation(ursine::ecs::Animator *animator, const std::string &clip);
 
-    void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
+    void onAnimationFinished(EVENT_HANDLER(ursine::ecs::Entity));
 };

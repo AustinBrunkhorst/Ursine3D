@@ -34,16 +34,19 @@ Meta(Enable, ExposeJavaScript)
 JSFunction(SceneGetActiveEntities);
 
 Meta(Enable, ExposeJavaScript)
-JSFunction(ScenePlayStart);
+JSFunction(SceneClearSelectedEntities);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(SceneDeleteSelectedEntities);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(SceneGetPlayState);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(SceneSetPlayState);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(SceneStep);
-
-Meta(Enable, ExposeJavaScript)
-JSFunction(ScenePlayStop);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(SceneGetEntitySystems);

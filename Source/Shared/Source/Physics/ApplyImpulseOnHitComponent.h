@@ -14,11 +14,18 @@
 #include <Component.h>
 #include <SVec3.h>
 
+namespace ursine
+{
+    typedef Array<std::string> IgnoredEntityArray;
+}
+
 class ApplyImpulseOnHit : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 
 public:
+
+    
 
     EditorField(
         bool effectSweptController,
@@ -44,6 +51,18 @@ public:
         SetWorldDirectionInfluence
     );
 
+    EditorField(
+        bool listenToChildren,
+        GetListenToChildren,
+        SetListenToChildren
+    );
+
+    EditorField(
+        ursine::IgnoredEntityArray ignoredEntities,
+        GetIgnoredEntities,
+        SetIgnoredEntities
+        );
+
     ApplyImpulseOnHit(void);
     ~ApplyImpulseOnHit(void);
 
@@ -59,17 +78,34 @@ public:
     const ursine::SVec3 &GetWorldDirectionInfluence(void) const;
     void SetWorldDirectionInfluence(const ursine::SVec3 &direction);
 
+    bool GetListenToChildren(void) const;
+    void SetListenToChildren(bool flag);
+
+    const ursine::IgnoredEntityArray &GetIgnoredEntities(void) const;
+    void SetIgnoredEntities(const ursine::IgnoredEntityArray &ignored);
+
 private:
 
     void OnInitialize(void) override;
 
-    void onCollision(EVENT_HANDLER(Entity));
+    void onHierarchySerialized(EVENT_HANDLER(ursine::ecs::Entity));
+    void onCollision(EVENT_HANDLER(ursine::ecs::Entity));
+
+    void connectToChildrenCollisionEvents(
+        bool connect, 
+        const std::vector<ursine::ecs::EntityID> *children
+    );
 
     bool m_effectSweptController;
+
+    bool m_listenToChildren;
+    bool m_serialized;
 
     float m_impulse;
 
     ursine::SVec3 m_localDirection;
     ursine::SVec3 m_worldDirection;
+
+    ursine::IgnoredEntityArray m_ignored;
 
 } Meta(Enable);

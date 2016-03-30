@@ -46,11 +46,14 @@ namespace ursine
             
             /////////////////////////////////////////////////////////
             // NEW LOADING METHODS
-            GfxHND CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height);
+            GfxHND CreateTexture(const uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height);
             void DestroyTexture(GfxHND &handle);
 
             void LoadTexture(GfxHND handle);
             void UnloadTexture(GfxHND handle);
+            
+            void LoadFontTextures(GfxHND handle);
+            void UnloadFontTextures(GfxHND handle);
 
             void GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize);
 
@@ -72,6 +75,8 @@ namespace ursine
 
             // get a model info
             ufmt_loader::ModelInfo *GetModelInfo(const GfxHND &handle);
+            ufmt_loader::ModelInfo *GetModelInfoNByName(const std::string &name);
+
 
             /////////////////////////////////////////////////////////
             // Animation
@@ -85,7 +90,7 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // FONT
             /////////////////////////////////////////////////////////
-            GfxHND CreateBitmapFont(uint8_t *binaryData, size_t binarySize);
+            GfxHND CreateBitmapFont(const uint8_t *binaryData, size_t binarySize);
             void DestroyBitmapFont(GfxHND &fontHandle);
             void RegisterTexture(GfxHND fontHandle, const std::string &fontName, GfxHND textureHandle);
 

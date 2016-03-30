@@ -107,8 +107,7 @@ namespace ursine
         if (d < 0.0f)
             d = Dot( -other );
 
-        // TODO: UAssert(scalar != 0.0f)
-
+        UAssert(scalar != 0.0f, "One of the quaternions is invalid.");
 
         return math::RadiansToDegrees( acos( d / scalar ) ) * 2.0f;
     }
@@ -237,21 +236,21 @@ namespace ursine
     void SQuat::Slerp(const SQuat &other, float t, SQuat &result) const
     {
         float mag = sqrt( LengthSquared( ) * other.LengthSquared( ) );
-
+        
         UAssert(mag > 0.0f, "The magnitude cannot be zero.");
-
+        
         float product = Dot( other ) / mag;
-
+        
         if (fabsf( product ) < 1.0f)
         {
             // take care of long angle case: http://en.wikipedia.org/wiki/Slerp
             float sign = ( product < 0.0f ) ? -1.0f : 1.0f;
-
+        
             float theta = acos( sign * product );
             float s1 = sin( sign * t * theta );
             float d = 1.0f / sin( theta );
             float s0 = sin( ( 1.0f - t ) * theta );
-
+        
             result.Set(
                 ( m_x * s0 + other.X( ) * s1 ) * d,
                 ( m_y * s0 + other.Y( ) * s1 ) * d,
@@ -340,8 +339,18 @@ namespace ursine
         );
     }
 
+    SQuat SQuat::operator*(float rhs) const
+    {
+        return SQuat( m_x * rhs, m_y * rhs, m_z * rhs, m_w * rhs );
+    }
+
     SVec3 SQuat::operator*(const SVec3 &rhs) const
     {
         return Rotate( rhs );
+    }
+
+    SQuat SQuat::operator+(const SQuat &rhs) const
+    {
+        return SQuat(m_x * rhs.m_x, m_y * rhs.m_y, m_z * rhs.m_z, m_w * rhs.m_w);
     }
 }

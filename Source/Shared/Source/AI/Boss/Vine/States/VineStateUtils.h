@@ -25,4 +25,6 @@ public:
     // Determine if we're at our target
     static bool AtTarget(VineAI *ai, float distance);
 
+    static bool AtHome(VineAI *ai, float distance);
+
 };

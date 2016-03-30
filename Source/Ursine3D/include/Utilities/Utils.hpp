@@ -47,6 +47,13 @@ namespace ursine
             return static_cast<A>( 1 ) << value;
         }
 
+        template<typename ElementType, typename...Elements>
+        constexpr auto MakeArray(Elements &&...elements)
+            -> std::array<ElementType, sizeof...(Elements)>
+        {
+            return { { std::forward<Elements>( elements )... } };
+        }
+
         template<typename Container, class Predicate>
         void InsertionSort(Container &v, Predicate predicate)
         {

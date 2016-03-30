@@ -74,6 +74,7 @@ namespace ursine
 
         auto eventData = Json::object {
             { "id", static_cast<int>( id ) },
+            { "mode", static_cast<int>( config.mode ) },
             { "type", static_cast<int>( config.type ) },
             { "dismissible", config.dismissible },
             { "header", config.header },

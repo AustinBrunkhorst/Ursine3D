@@ -32,6 +32,11 @@ private:
     // Resource Events
     ///////////////////////////////////////////////////////////////////////////
 
+    void onResourceBuildStart(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+    void onResourceBuildComplete(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+
     void onResourceAdded(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
     void onResourceModified(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+    void onResourceRemoved(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+    void onResourceRenamed(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
 };

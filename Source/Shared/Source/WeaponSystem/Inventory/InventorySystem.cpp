@@ -1,4 +1,3 @@
-
 /* ----------------------------------------------------------------------------
 ** Team Bear King
 ** ?2016 DigiPen Institute of Technology, All Rights Reserved.
@@ -24,12 +23,6 @@ ENTITY_SYSTEM_DEFINITION( InventorySystem );
 using namespace ursine;
 using namespace ursine::ecs;
 
-namespace
-{
-
-} // unnamed namespace
-
-
 ////////////////////////////
 ////  Inventory System  ////
 ////////////////////////////
@@ -42,8 +35,8 @@ InventorySystem::InventorySystem(World* world)
 void InventorySystem::Enable(const EntityHandle &entity)
 {
     // grab all comps needed
-    if ( entity->HasComponent< Inventory >( ) )
-        m_inventories[ entity ] = entity->GetComponent< Inventory >( );
+    if (entity->HasComponent<Inventory>( ))
+        m_inventories[ entity ] = entity->GetComponent<Inventory>( );
 }
 
 void InventorySystem::Disable(const EntityHandle &entity)
@@ -53,16 +46,15 @@ void InventorySystem::Disable(const EntityHandle &entity)
 
 void InventorySystem::onUpdate(EVENT_HANDLER(World))
 {
-    for ( auto inventory : m_inventories )
+    for (auto inventory : m_inventories)
     {
-        EvaluateInventory(&*inventory.second);
+        EvaluateInventory( &*inventory.second );
     }
 }
 
-
 void InventorySystem::EvaluateInventory(Inventory* inventory)
 {
-    if ( !inventory->m_init )
+    if (!inventory->m_init)
         inventory->Init( );
 
     SwapWeapons( inventory );
@@ -73,17 +65,17 @@ void InventorySystem::EvaluateInventory(Inventory* inventory)
 void InventorySystem::SwapWeapons(Inventory* inventory)
 {
     // check if swap was trigged
-    if ( inventory->m_swap )
+    if (inventory->m_swap)
     {
         int i = ( inventory->m_currWeapon + 1 ) % Inventory::INVENTORY_COUNT;
 
         // walk through weapons and grab next valid weapon
-        for ( ; i != inventory->m_currWeapon; ++i )
+        for (; i != inventory->m_currWeapon; ++i)
         {
             i = i % Inventory::INVENTORY_COUNT;
 
             // search for next active gun
-            if ( inventory->m_inventory[ i ].m_weaponLoaded )
+            if (inventory->m_inventory[ i ].m_weaponLoaded)
             {
                 DeactivateWeapon( inventory, i );
                 inventory->m_newWeapon = true;
@@ -92,20 +84,19 @@ void InventorySystem::SwapWeapons(Inventory* inventory)
         }
 
         // trying to change weapons w/ no other active weapons
-        if ( inventory->m_prevWeapon == inventory->m_currWeapon )
+        if (inventory->m_prevWeapon == inventory->m_currWeapon)
         {
             URSINE_TODO("Give feed back that player cannot switch weapons");
         }
     }
 }
 
-
 void InventorySystem::ChangeCurrentWeapon(Inventory* inventory)
 {
     // did we recieve a new weapon or swap weapons
-    if ( inventory->m_newWeapon )
+    if (inventory->m_newWeapon)
     {
-        if ( !inventory->m_swap && inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded )
+        if (!inventory->m_swap && inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded)
         {
             // detatch current weapon
             game::WeaponDeactivationEventArgs args( inventory->GetOwner( ) );
@@ -117,36 +108,41 @@ void InventorySystem::ChangeCurrentWeapon(Inventory* inventory)
 
         LoadWeapon( inventory );
     }
-} 
- 
+}
+
 void InventorySystem::LoadWeapon(Inventory* inventory)
 {
     WeaponSlotInfo& weaponSlot = inventory->m_inventory[ inventory->m_currWeapon ];
 
     // create weapon
-    weaponSlot.m_weaponLoaded = m_world->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + weaponSlot.m_weaponToLoad, "Weapoon" );
+    weaponSlot.m_weaponLoaded = m_world->CreateEntityFromArchetype( weaponSlot.m_weaponToLoad );
 
     // activate weapon and grab spawn offset
-    ActivateWeapon(inventory);
+    ActivateWeapon( inventory );
 
     // Parent weapon to arm
-    inventory->m_cameraHandle->AddChildAlreadyInLocal( weaponSlot.m_weaponLoaded->GetTransform( ) );
+    auto weaponTrans = weaponSlot.m_weaponLoaded->GetTransform( );
+
+    inventory->m_weaponPosition->AddChild( weaponTrans );
+
+    weaponTrans->SetLocalPosition( SVec3::Zero( ) );
+    weaponTrans->SetLocalScale( SVec3::One( ) );
+    weaponTrans->SetLocalRotation( SQuat::Identity( ) );
 
     inventory->m_newWeapon = false;
 }
 
-
 void InventorySystem::ActivateWeapon(Inventory* inventory)
 {
     //create event args
-    game::WeaponActivationEventArgs args( inventory->GetOwner( ), inventory->m_cameraHandle );
+    game::WeaponActivationEventArgs args( inventory->GetOwner( ), inventory->m_weaponPosition );
 
     // set position
-    ursine::ecs::Transform* trans = inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->GetTransform( );
+    Transform* trans = inventory->m_inventory[ inventory->m_currWeapon ].m_weaponLoaded->GetTransform( );
     trans->SetWorldPosition(trans->GetLocalPosition( ));
     
     // was weapon swapped in (if so give it its' previous stats)
-    if ( inventory->m_swap )
+    if (inventory->m_swap)
     {
         args.m_ammo = inventory->m_inventory[ inventory->m_currWeapon ].m_ammoCount;
         args.m_clip = inventory->m_inventory[ inventory->m_currWeapon ].m_clipCount;
@@ -167,7 +163,8 @@ void InventorySystem::DeactivateWeapon(Inventory* inventory, const int index)
     game::WeaponDeactivationEventArgs args( inventory->GetOwner( ) );
 
     // deactivate weapon
-    inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded->Dispatch(game::DEACTIVATE_WEAPON, &args);
+    inventory->m_inventory[ inventory->m_prevWeapon ]
+        .m_weaponLoaded->Dispatch( game::DEACTIVATE_WEAPON, &args );
 
     // update ammo and clip info
     inventory->m_inventory[ inventory->m_prevWeapon ].m_ammoCount = args.m_ammo;
@@ -176,6 +173,3 @@ void InventorySystem::DeactivateWeapon(Inventory* inventory, const int index)
     // delete the weapon
     inventory->m_inventory[ inventory->m_prevWeapon ].m_weaponLoaded->Delete( );
 }
-
-
-

@@ -27,6 +27,7 @@
 #include <SystemManager.h>
 #include <DebugSystem.h>
 #include <EntityEvent.h>
+#include <Application.h>
 
 NATIVE_COMPONENT_DEFINITION( VineAI );
 
@@ -35,6 +36,7 @@ using namespace ecs;
 
 VineAI::VineAI(void)
     : BaseComponent( )
+    , EventDispatcher( this )
     , m_faceClosestPlayer( true )
     , m_whipTurnSpeed( 90.0f )
     , m_whipAngle( 45.0f )
@@ -46,17 +48,35 @@ VineAI::VineAI(void)
     , m_uprootDistance( 2.0f )
     , m_uprootDelay( 2.0f )
     , m_uprootCooldown( 5.0f )
-    , m_colliderSize( 1.0f, 1.0f, 1.0f )
     , m_stateMachine( this )
     , m_animator( nullptr )
     , m_target( nullptr )
-{
-}
+    , m_timeOfLastPursue( Application::Instance->GetTimeSinceStartup( ) )
+    , m_currentHealthThreshold( 0 ) { }
 
 VineAI::~VineAI(void)
 {
     GetOwner( )->GetWorld( )->Listener( this )
         .Off( WORLD_UPDATE, &VineAI::onUpdate );
+
+    auto health = GetOwner( )->GetComponent<Health>( );
+
+    if (health)
+    {
+        health->Listener( this )
+            .Off( HEALTH_DAMAGE_TAKEN, &VineAI::onDamageTaken );
+    }
+}
+
+void VineAI::OnSceneReady(ursine::Scene *scene)
+{
+    auto health = GetOwner( )->GetComponent<Health>( );
+
+    if (health)
+    {
+        health->Listener( this )
+            .On( HEALTH_DAMAGE_TAKEN, &VineAI::onDamageTaken );
+    }
 }
 
 bool VineAI::GetFaceClosestPlayer(void) const
@@ -179,17 +199,7 @@ void VineAI::SetUprootCooldown(float cooldown)
     m_uprootCooldown = cooldown;
 }
 
-const SVec3 &VineAI::GetColliderSize(void) const
-{
-    return m_colliderSize;
-}
-
-void VineAI::SetColliderSize(const SVec3 &colliderSize)
-{
-    m_colliderSize = colliderSize;
-}
-
-EntityAnimator *VineAI::GetAnimator(void)
+Animator *VineAI::GetAnimator(void)
 {
     return m_animator;
 }
@@ -217,21 +227,28 @@ const SVec3 &VineAI::GetHomeLocation(void) const
 void VineAI::GoToHomeLocation(void)
 {
     m_stateMachine.SetBool( VineAIStateMachine::GoHome, true );
+    m_stateMachine.SetBool( VineAIStateMachine::PursueTarget, false );
+}
+
+bool VineAI::IsHome(void)
+{
+    return m_stateMachine.GetBool( VineAIStateMachine::IsHome );
 }
 
 void VineAI::PursueTarget(void)
 {
     m_stateMachine.SetBool( VineAIStateMachine::PursueTarget, true );
+    m_stateMachine.SetBool( VineAIStateMachine::IsHome, false );
+    m_timeOfLastPursue = Application::Instance->GetTimeSinceStartup( );
+}
+
+const TimeSpan &VineAI::GetTimeOfLastPursue(void) const
+{
+    return m_timeOfLastPursue;
 }
 
 void VineAI::OnInitialize(void)
 {
-    // TO TEST:
-    // - tell it to pursue enemy, and tell it to come back home
-
-    GetOwner( )->GetWorld( )->Listener( this )
-        .On( WORLD_UPDATE, &VineAI::onUpdate );
-
     GetOwner( )->Listener( this )
         .On( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 }
@@ -247,9 +264,7 @@ void VineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
     GetOwner( )->Listener( this )
         .Off( ENTITY_HIERARCHY_SERIALIZED, &VineAI::onChildrenSerialized );
 
-    m_animator = GetOwner( )->GetComponentInChildren<EntityAnimator>( );
-
-    m_homeLocation = GetOwner( )->GetTransform( )->GetWorldPosition( );
+    m_animator = GetOwner( )->GetComponentInChildren<Animator>( );
 
     // Setup the state machine
     m_stateMachine.Initialize( );
@@ -321,6 +336,28 @@ void VineAI::onChildrenSerialized(EVENT_HANDLER(Entity))
     );
 
     m_stateMachine.SetInitialState( spawnState );
+
+    GetOwner( )->GetWorld( )->Listener( this )
+        .On( WORLD_UPDATE, &VineAI::onUpdate );
+}
+
+void VineAI::onDamageTaken(EVENT_HANDLER(Health))
+{
+    EVENT_ATTRS(Health, HealthEventArgs);
+
+    if (healthThresholds.Size( ) <= m_currentHealthThreshold)
+        return;
+
+    auto &current = healthThresholds[ m_currentHealthThreshold ];
+
+    if (args->percentage <= current.percentage)
+    {
+        // Dispatch an event letting everyone know a current threshold was hit
+        Dispatch( VINE_HEALTH_THRESHOLD_REACHED, nullptr );
+
+        // increment our index
+        ++m_currentHealthThreshold;
+    }
 }
 
 #if defined(URSINE_WITH_EDITOR)
@@ -334,6 +371,16 @@ void VineAI::drawRange(void)
     auto normal = trans->GetUp( );
 
     drawer->DrawCircle( center, normal, m_whipRange, Color::Yellow, 5.0f, true );
+}
+
+void VineAI::pursueTarget(void)
+{
+    PursueTarget( );
+}
+
+void VineAI::goHome(void)
+{
+    GoToHomeLocation( );
 }
 
 #endif

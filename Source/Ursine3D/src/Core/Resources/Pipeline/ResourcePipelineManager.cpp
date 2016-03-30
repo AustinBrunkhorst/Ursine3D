@@ -31,6 +31,7 @@ namespace ursine
 
         // cache file serialization is handled explicitly
         const auto kCacheKeyHasPreview = "hasPreview";
+        const auto kCacheKeyParent = "parent";
         const auto kCacheKeyProcessedType = "processedType";
         const auto kCacheKeyGeneratedResources = "generatedResources";
 
@@ -39,7 +40,7 @@ namespace ursine
 
         // duration to wait until there are no actions on pending file action
         // to be considered stale
-        const auto kResourceActionStaleDuration = milliseconds( 1500 );
+        const auto kResourceActionStaleDuration = milliseconds( 700 );
 
         const meta::Type::Set &getImporterTypes(void)
         {
@@ -54,13 +55,17 @@ namespace ursine
     rp::ResourcePipelineManager::ResourcePipelineManager(void)
         : EventDispatcher( this )
         , m_rootDirectory( new ResourceDirectoryNode( nullptr ) )
+        , m_isFileActionsActive( false )
+        , m_isProcessingFileActions( true )
         , m_resourceDirectoryWatch( -1 )
     {
-        
+
     }
 
     rp::ResourcePipelineManager::~ResourcePipelineManager(void)
     {
+        StopWatchingResourceDirectory( );
+
         delete m_rootDirectory;
 
         m_rootDirectory = nullptr;
@@ -128,6 +133,8 @@ namespace ursine
 
         m_fileWatcher.watch( );
 
+        m_isFileActionsActive = true;
+
         m_fileActionProcessorThread = std::thread(
             &ResourcePipelineManager::processPendingFileActions,
             this 
@@ -144,6 +151,8 @@ namespace ursine
         if (!IsWatchingResourceDirectory( ))
             return;
 
+        m_isFileActionsActive = false;
+
         m_fileWatcher.removeWatch( m_resourceDirectoryWatch );
     }
 
@@ -152,6 +161,13 @@ namespace ursine
     bool rp::ResourcePipelineManager::IsWatchingResourceDirectory(void) const
     {
         return m_resourceDirectoryWatch != -1;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::AllowFileActionProcessing(bool allow)
+    {
+        m_isProcessingFileActions = allow;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -197,6 +213,9 @@ namespace ursine
             { kCacheKeyProcessedType, cache.processedType.GetName( ) },
         };
 
+        // assign the parent if it exists
+        output[ kCacheKeyParent ] = to_string( resource->m_buildCache.parent );
+
         Json::array generatedResources;
 
         for (auto &generated : cache.generatedResources)
@@ -219,10 +238,16 @@ namespace ursine
     {
         auto search = m_database.find( guid );
 
-        if (search == m_database.end( ))
-            return nullptr;
+        return search == m_database.end( ) ? nullptr : search->second;
+    }
 
-        return search->second;
+    ///////////////////////////////////////////////////////////////////////////
+
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(const fs::path &sourceFile) const
+    {
+        auto search = m_pathToResource.find( sourceFile );
+
+        return search == m_pathToResource.end( ) ? nullptr : search->second;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -238,6 +263,90 @@ namespace ursine
         }
 
         return matched;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    void rp::ResourcePipelineManager::RemoveItem(ResourceItem::Handle item)
+    {
+        UAssert( item != nullptr, 
+            "Attempting to remove null resource." 
+        );
+
+        std::lock_guard<std::mutex> lock( m_databaseMutex );
+
+        // remove all generated resources first
+        for (auto &guid : item->m_buildCache.generatedResources)
+        {
+            auto generated = GetItem( guid );
+
+            if (generated)
+                RemoveItem( generated );
+        }
+
+        removeResource( item, true );
+
+        ResourceChangeArgs e;
+
+        e.type = RP_RESOURCE_REMOVED;
+        e.resource = item;
+
+        Dispatch( e.type, &e );
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    bool rp::ResourcePipelineManager::ChangeItemDisplayName(
+        ResourceItem::Handle item, 
+        const std::string &displayName
+    )
+    {
+        std::lock_guard<std::mutex> lock( m_databaseMutex );
+
+        auto santized = fs::SafeFileName( displayName, '-' );
+
+        auto oldFileName = item->m_fileName;
+
+        auto newFileName = oldFileName.parent_path( );
+        auto extension = oldFileName.extension( );
+
+        newFileName /= santized;
+        newFileName.replace_extension( extension );
+
+        auto newMetaFileName = getResourceMetaPath( newFileName );
+
+        // already exists
+        if (exists( newFileName ) || exists( newMetaFileName ))
+            return false;
+
+        try
+        {
+            m_pathToResource.erase( oldFileName );
+            m_pathToResource[ newFileName ] = item;
+
+            rename( item->m_fileName, newFileName );
+            rename( item->m_metaFileName, newMetaFileName );
+
+            item->m_fileName = newFileName;
+            item->m_metaFileName = newMetaFileName;
+        }
+        // something dun borked up in here
+        catch (...)
+        {
+            m_pathToResource.erase( newFileName );
+            m_pathToResource[ oldFileName ] = item;
+
+            return false;
+        }
+
+        ResourceRenameArgs renameEvent;
+
+        renameEvent.resource = item;
+        renameEvent.oldName = oldFileName;
+
+        Dispatch( RP_RESOURCE_RENAMED, &renameEvent );
+
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -350,32 +459,31 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    rp::ResourceItem::Handle rp::ResourcePipelineManager::registerResource(const fs::path &fileName, bool isGenerated /*= false */)
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::registerResource(
+        const fs::path &fileName
+    )
     {
         // ignore meta files
         if (fileName.extension( ) == kMetaFileExtension)
             return nullptr;
-
-        auto metaFileName = fileName;
-
-        // add the meta extension IN ADDITION to the existing extension
-        metaFileName.concat( kMetaFileExtension );
+        
+        auto metaFileName = getResourceMetaPath( fileName );
 
         // this resource is already configured
         if (exists( metaFileName ))
-            return addExistingResource( fileName, metaFileName, isGenerated );
+            return addExistingResource( fileName );
 
-        return addDefaultResource( fileName, metaFileName );
+        return addDefaultResource( fileName );
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::addExistingResource(
-        const fs::path &fileName, 
-        const fs::path &metaFileName,
-        bool isGenerated /*= false */
+        const fs::path &fileName
     )
     {
+        auto metaFileName = getResourceMetaPath( fileName );
+
         std::string metaDataError;
         std::string metaDataString;
 
@@ -411,16 +519,6 @@ namespace ursine
                 "Unable to parse GUID in meta file."    
             );
         }
-
-        if (isGenerated)
-        {
-            auto search = m_database.find( guid );
-
-            // if this item is generated and we've already registered it
-            // use it rather than creating a collision with GUIDs
-            if (search != m_database.end( ))
-                return search->second;
-        }
                 
         auto importerName = metaDataJson[ kMetaKeyImporter ].string_value( );
         auto importerType = meta::Type::GetFromName( importerName );
@@ -452,7 +550,7 @@ namespace ursine
 
         try
         {
-            resource = allocateResource( fileName, metaFileName, guid );
+            resource = allocateResource( fileName, guid );
         }
         catch (AssertionException &e)
         {
@@ -506,48 +604,20 @@ namespace ursine
     ///////////////////////////////////////////////////////////////////////////
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::addDefaultResource(
-        const fs::path &fileName, 
-        const fs::path &metaFileName
+        const fs::path &fileName
     )
     {
-        auto &importerTypes = getImporterTypes( );
-        auto extension = fileName.extension( ).string( );
+        auto meta = createDefaultResourceMeta( fileName );
 
-        // remove period from extension
-        if (!extension.empty( ) && extension.front( ) == '.')
-            extension.erase( extension.begin( ) );
-
-        utils::MakeLowerCase( extension );
-
-        meta::Type importerType;
-        meta::Type processorType;
-
-        std::tie( importerType, processorType ) = detectResourceHandlers( fileName );
-
-        // importer does not exist, ignore it.
-        if (!importerType.IsValid( ))
+        // doesn't have an importer
+        if (!meta.importer.IsValid( ))
             return nullptr;
-
-        UAssertCatchable( importerType.GetDynamicConstructor( ).IsValid( ),
-            "Importer '%s' does not have a default dynamic constructor.",
-            importerType.GetName( ).c_str( )
-        );
-
-        UAssertCatchable( processorType.IsValid( ),
-            "Importer '%s' specified an invalid processor.",
-            importerType.GetName( ).c_str( )
-        );
-
-        UAssertCatchable( processorType.GetDynamicConstructor( ).IsValid( ),
-            "Processor '%s' does not have a default dynamic constructor.",
-            processorType.GetName( ).c_str( )
-        );
 
         ResourceItem::Handle resource;
 
         try
         {
-            resource = allocateResource( fileName, metaFileName );
+            resource = allocateResource( fileName );
         }
         catch (AssertionException &e)
         {
@@ -561,38 +631,7 @@ namespace ursine
             return nullptr;
         }
 
-        resource->m_metaData.importer = importerType;
-        resource->m_metaData.processor = processorType;
-
-        auto &processorMeta = processorType.GetMeta( );
-
-        auto *processorConfig = processorMeta.GetProperty<ResourceProcessorConfig>( );
-
-        // no config assumes no import options
-        if (processorConfig)
-        {
-            auto optionsType = processorConfig->optionsType;
-
-            if (!optionsType.IsValid( ))
-            {
-                removeResource( resource );
-
-                UAssertCatchable( false,
-                    "Processor '%s' specified invalid options type.",
-                    processorType.GetName( ).c_str( )
-                );
-            }
-
-            auto defaultOptions = optionsType.Create( );
-
-            // serialize with the default options
-            resource->m_metaData.processorOptions = 
-                optionsType.SerializeJson( defaultOptions );
-        }
-        else
-        {
-            resource->m_metaData.processorOptions = Json::object { };
-        }
+        resource->m_metaData = meta;
 
         try
         {
@@ -615,17 +654,16 @@ namespace ursine
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::allocateResource(
         const fs::path &fileName,
-        const fs::path &metaFileName,
         const GUID &guid /*= GUIDGenerator( )( )*/
     )
     {
         auto resource = std::make_shared<ResourceItem>( this, guid );
 
         resource->m_fileName = fileName;
-        resource->m_metaFileName = metaFileName;
-        resource->m_buildFileName = getResourceBuildFile( guid );
-        resource->m_buildPreviewFileName = getResourceBuildPreviewFile( guid );
-        resource->m_buildCacheFileName = getResourceBuildCacheFile( guid );
+        resource->m_metaFileName = getResourceMetaPath( fileName );
+        resource->m_buildFileName = getResourceBuildPath( guid );
+        resource->m_buildPreviewFileName = getResourceBuildPreviewPath( guid );
+        resource->m_buildCacheFileName = getResourceBuildCachePath( guid );
 
         auto insertion = m_database.insert( { resource->m_guid, resource } );
 
@@ -637,6 +675,39 @@ namespace ursine
         m_pathToResource[ fileName ] = resource;
 
         return resource;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::allocateGeneratedResource(
+        ResourceItem::Handle parent, 
+        const fs::path &sourceFile
+    )
+    {
+        auto search = m_pathToResource.find( sourceFile );
+
+        // if the source file already exists, return the respective resource item
+        if (search != m_pathToResource.end( ))
+            return search->second;
+
+        auto meta = createDefaultResourceMeta( sourceFile );
+
+        auto generated = allocateResource( sourceFile );
+
+        generated->m_metaData = meta;
+
+        if (parent)
+        {
+            generated->m_buildCache.parent = parent->m_guid;
+
+            parent->m_buildCache.generatedResources.emplace( generated->m_guid );
+        }
+
+        insertResource( generated );
+
+        InvalidateResourceMeta( generated );
+
+        return generated;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -773,7 +844,7 @@ namespace ursine
 
     void rp::ResourcePipelineManager::loadResourceBuildCache(ResourceItem::Handle resource)
     {
-        auto cacheFileName = getResourceBuildCacheFile( resource->m_guid );
+        auto cacheFileName = getResourceBuildCachePath( resource->m_guid );
 
         // it's ok that the cache file doesn't exist - it just means this resource is 
         // invalidated and we'll write the cache during build
@@ -829,9 +900,18 @@ namespace ursine
         // convert the string values in the json array to the array of GUIDs
         for (auto &obj : generatedResourcesObj.array_items( ))
         {
-            generatedResources.emplace_back(
-                GUIDStringGenerator( )( obj.string_value( ) )
+            generatedResources.emplace( 
+                GUIDStringGenerator( )( obj.string_value( ) ) 
             );
+        }
+
+        auto &parentObj = cacheJson[ kCacheKeyParent ];
+
+        // attempt to set the parent with the cached GUID
+        if (parentObj.is_string( ))
+        {
+            resource->m_buildCache.parent =
+                GUIDStringGenerator( )( parentObj.string_value( ) );
         }
     }
 
@@ -887,9 +967,18 @@ namespace ursine
             }
             catch (AssertionException &e)
             {
-                UWarning( "Error building resource.\nresource: %s\nerror: %s", 
+                UWarning( 
+                    "Error building resource.\n"
+                    "resource: %s\n"
+                    "error: %s\n"
+                    "from: %s\n"
+                    "in: %s\n"
+                    "on line: %i", 
                     buildContext.resource->GetSourceFileName( ).string( ).c_str( ),
-                    e.GetErrorMessage( ).c_str( )
+                    e.GetErrorMessage( ).c_str( ),
+                    e.GetFunction( ).c_str( ),
+                    e.GetFile( ).c_str( ),
+                    e.GetLine( )
                 );
 
                 buildEvent.error = e;
@@ -937,9 +1026,18 @@ namespace ursine
             }
             catch (AssertionException &e)
             {
-                UWarning( "Error building resource preview.\nresource: %s\nerror: %s", 
+                UWarning( 
+                    "Error building resource preview.\n"
+                    "resource: %s\n"
+                    "error: %s\n"
+                    "from: %s\n"
+                    "in: %s\n"
+                    "on line: %i", 
                     previewContext.resource->GetSourceFileName( ).string( ).c_str( ),
-                    e.GetErrorMessage( ).c_str( )
+                    e.GetErrorMessage( ).c_str( ),
+                    e.GetFunction( ).c_str( ),
+                    e.GetFile( ).c_str( ),
+                    e.GetLine( )
                 );
 
                 buildEvent.error = e;
@@ -1000,44 +1098,15 @@ namespace ursine
         std::list<ResourceBuildContext> &outGenerated
     )
     {
-        // collect generated resources in all passes
-        std::vector<fs::path> allGenerated;
-
         auto &genImport = context.importContext.generatedResources;
 
-        allGenerated.insert( 
-            allGenerated.end( ), 
-            genImport.begin( ), 
-            genImport.end( ) 
-        );
+        for (auto &generated : genImport)
+            outGenerated.emplace_back( this, generated );
 
         auto &genProcess = context.processorContext.generatedResources;
 
-        allGenerated.insert( 
-            allGenerated.end( ), 
-            genProcess.begin( ), 
-            genProcess.end( ) 
-        );
-
-        for (auto &path : allGenerated)
-        {
-            auto resource = registerResource( path, true );
-
-            // don't care about this this resource
-            if (!resource)
-                continue;
-
-            resource->m_parent = context.resource;
-
-            insertResource( resource );
-
-            // add this generated resource to the input resource
-            context.resource->m_buildCache.generatedResources.emplace_back( 
-                resource->GetGUID( )
-            );
-
-            outGenerated.emplace_back( this, resource );
-        }
+        for (auto &generated : genProcess)
+            outGenerated.emplace_back( this, generated );
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1081,11 +1150,17 @@ namespace ursine
             fs::RecursiveDirectoryIterator it( resource->GetSourceFileName( ) );
             fs::RecursiveDirectoryIterator itEnd;
 
+            auto *syncConfig = resource->m_metaData.importer.GetMeta( ).GetProperty<ResourceSyncConfig>( );
+
             for (; it != itEnd; ++it)
             {
-                auto fileTime = last_write_time( *it );
+                auto &directoryItem = *it;
+                
+                // skip checking this entry if it is explicitly excluded from syncing
+                if (syncConfig && syncConfig->IsExcluded( directoryItem.path( ).string( ) ))
+                    continue;
 
-                URSINE_TODO( "Respect sync exclusion properties." );
+                auto fileTime = last_write_time( directoryItem );
 
                 if (fileTime > buildTime)
                     return true;
@@ -1109,16 +1184,75 @@ namespace ursine
     {
         ResourceBuildContext buildContext( this, resource );
 
-        // we don't care about generated resources because they will handled by the file
-        // watcher implicity
+        Application::PostMainThread( [=] {
+            ResourceBuildArgs buildEvent;
+
+            buildEvent.type = RP_BUILD_RESOURCE_START;
+            buildEvent.resource = resource;
+
+            Dispatch( buildEvent.type, &buildEvent );
+        } );
+
+        auto startTime = system_clock::now( );
+
         buildResource( buildContext );
         buildResourcePreview( buildContext );
+
+        auto duration = system_clock::now( ) - startTime;
+
+        Application::PostMainThread( [=] {
+            ResourceBuildArgs buildEvent;
+
+            buildEvent.type = RP_BUILD_RESOURCE_COMPLETE;
+            buildEvent.resource = resource;
+            buildEvent.operationDuration = static_cast<int>(
+                duration_cast<milliseconds>( duration ).count( ) 
+            );
+            buildEvent.successful = true;
+
+            Dispatch( buildEvent.type, &buildEvent );
+        } );
+
+        InvalidateResourceCache( resource );
+
+        std::list<ResourceBuildContext> generatedResources;
+
+        addGeneratedResources( buildContext, generatedResources );
+
+        ResourceChangeArgs addEvent;
+
+        addEvent.type = RP_RESOURCE_ADDED;
+        addEvent.isGenerated = true;
+
+        // handle the generated resources
+        for (auto &generated : generatedResources)
+        {
+            // new if we haven't built it yet (i.e the cache hasn't been made yet)
+            auto isNew = 
+                !generated.resource->m_buildCache.processedType.IsValid( );
+
+            if (buildIsInvalidated( generated.resource ))
+                rebuildResource( generated.resource );
+
+            if (isNew)
+            {
+                addEvent.resource = generated.resource;
+
+                Dispatch( addEvent.type, &addEvent );
+            }
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
-    void rp::ResourcePipelineManager::removeResource(ResourceItem::Handle resource)
+    void rp::ResourcePipelineManager::removeResource(ResourceItem::Handle resource, bool deleteFiles /*= false */)
     {
+        auto parent = resource->GetParent( );
+
+        // remove this from its parent generated resources
+        if (parent)
+            parent->m_buildCache.generatedResources.erase( resource->m_guid );
+
         auto *directoryNode = resource->m_directoryNode;
 
         // has it been inserted yet?
@@ -1138,6 +1272,30 @@ namespace ursine
         m_database.erase( resource->m_guid );
 
         m_pathToResource.erase( resource->m_fileName );
+
+        if (deleteFiles)
+        {
+            try
+            {
+                if (resource->m_isDirectoryResource)
+                {
+                    remove_all( resource->m_fileName );
+                }
+                else
+                {
+                    remove( resource->m_fileName );
+                }
+                
+                remove( resource->m_metaFileName );
+                remove( resource->m_buildFileName );
+                remove( resource->m_buildPreviewFileName );
+                remove( resource->m_buildCacheFileName );
+            }
+            catch (...)
+            {
+                URSINE_TODO( "Determine behavior" );
+            }
+        }
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1164,44 +1322,61 @@ namespace ursine
 
         std::lock_guard<std::mutex> lock( m_fileWatchActionMutex );
 
-        m_pendingFileActions[ actionData.absoluteFilePath ] = actionData;
+        auto directoryResource = getDirectoryResource( actionData.absoluteFilePath );
 
-        /*switch(action)
+        // ignore deletions in directory resources -- almost all implementations of 
+        // file editors create temporary files, so we can't use this action
+        // meaningfully - unless it's the ACTUAL directory itself
+        if (directoryResource && 
+            type == fs::Action::Delete && 
+            actionData.absoluteFilePath != directoryResource->m_fileName
+        )
         {
-        case efsw::Actions::Add:
-            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Added" << std::endl;
-            break;
-        case efsw::Actions::Delete:
-            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Delete" << std::endl;
-            break;
-        case efsw::Actions::Modified:
-            std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Modified" << std::endl;
-            break;
-        case efsw::Actions::Moved:
-                std::cout << "DIR (" << directory << ") FILE (" << fileName << ") has event Moved from (" << oldFileName << ")" << std::endl;
-            break;
-        default:
-            std::cout << "Should never happen!" << std::endl;
-        }*/
+            return;
+        }
+
+        // if this file is contained in a directory resource, make sure the action is mapped
+        // to the directory, not the modified subresource itself
+        actionData.sourcePath = directoryResource ?
+            directoryResource->m_fileName :
+            actionData.absoluteFilePath;
+
+        m_pendingFileActions[ actionData.sourcePath ] = actionData;
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
     void rp::ResourcePipelineManager::processPendingFileActions(void)
     {
-        while (true)
+        while (m_isFileActionsActive)
         {
-            decltype( m_pendingFileActions ) actionsCopy;
-
-            // clear the pending file actions by move constructing it to the copy
+            if (m_isProcessingFileActions)
             {
-                std::lock_guard<std::mutex> lock( m_fileWatchActionMutex );
+                decltype( m_pendingFileActions ) actionsCopy;
+                std::vector<FileWatchAction> staleActions;
 
-                actionsCopy = move( m_pendingFileActions );
+                // clear the pending file actions by move constructing it to the copy
+                {
+                    std::lock_guard<std::mutex> lock( m_fileWatchActionMutex );
+
+                    actionsCopy = move( m_pendingFileActions );
+                }
+
+                for (auto &entry : actionsCopy)
+                {
+                    if (!processPendingFileAction( entry.first, entry.second ))
+                        staleActions.push_back( entry.second );
+                }
+
+                // re-add the stale actions
+                {
+                    std::lock_guard<std::mutex> lock( m_fileWatchActionMutex );
+
+                    // add each of the stale actions back that don't already exist
+                    for (auto &stale : staleActions)
+                        m_pendingFileActions.emplace( stale.sourcePath, stale );
+                }
             }
-
-            for (auto &entry : actionsCopy)
-                processPendingFileAction( entry.second );
 
             // make sure we don't exhaust the CPU
             std::this_thread::sleep_for( milliseconds( 500 ) );
@@ -1210,13 +1385,31 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    void rp::ResourcePipelineManager::processPendingFileAction(const FileWatchAction &action)
+    bool rp::ResourcePipelineManager::processPendingFileAction(const fs::path &resourceFile, const FileWatchAction &action)
     {
         auto now = system_clock::now( );
 
         // this guy isn't stale yet, ignore him
-        if (now - action.time > kResourceActionStaleDuration)
-            return;
+        if (now - action.time < kResourceActionStaleDuration)
+            return false;
+
+        switch (action.type)
+        {
+        case efsw::Actions::Add:
+            std::cout << "DIR (" << action.directory << ") FILE (" << action.fileName << ") has event Added" << std::endl;
+            break;
+        case efsw::Actions::Delete:
+            std::cout << "DIR (" << action.directory << ") FILE (" << action.fileName << ") has event Delete" << std::endl;
+            break;
+        case efsw::Actions::Modified:
+            std::cout << "DIR (" << action.directory << ") FILE (" << action.fileName << ") has event Modified" << std::endl;
+            break;
+        case efsw::Actions::Moved:
+            std::cout << "DIR (" << action.directory << ") FILE (" << action.fileName << ") has event Moved from (" << action.oldFileName << ")" << std::endl;
+            break;
+        default:
+            std::cout << "Should never happen!" << std::endl;
+        }
 
         switch (action.type)
         {
@@ -1228,22 +1421,20 @@ namespace ursine
         case fs::Actions::Moved:
         case fs::Actions::Modified:
         {
-            URSINE_TODO( "Directory resource modification." );
-
-            auto extension = action.absoluteFilePath.extension( ).string( );
+            auto extension = resourceFile.extension( ).string( );
 
             utils::MakeLowerCase( extension );
 
             // meta file modified
             if (extension == kMetaFileExtension)
             {
-                auto sourceFile = change_extension( action.absoluteFilePath, "" );
+                auto sourceFile = change_extension( resourceFile, "" );
 
                 auto search = m_pathToResource.find( sourceFile );
 
                 // this resource doesn't exist
                 if (search == m_pathToResource.end( ))
-                    return;
+                    return true;
 
                 // modify the resource this meta file represents
                 auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, search->second );
@@ -1251,35 +1442,21 @@ namespace ursine
                 if (handler.joinable( ))
                     handler.detach( );
 
-                return;
+                return true;
             }
 
-            auto search = m_pathToResource.find( action.absoluteFilePath );
+            auto search = m_pathToResource.find( resourceFile );
 
             // if it doesn't exist, we're assuming it is added
             if (search == m_pathToResource.end( ))
             {
-                auto directoryResource = getDirectoryResource( action.absoluteFilePath );
-
-                // this file is actually part of a resource, so modify the resource it belongs to
-                if (directoryResource != nullptr)
-                {
-                    auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, directoryResource );
-                
-                    if (handler.joinable( ))
-                        handler.detach( );
-                }
-                // add this baby
-                else
-                {
-                    auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, action.absoluteFilePath );
+                auto handler = std::thread( &ResourcePipelineManager::onResourceAdded, this, resourceFile );
             
-                    if (handler.joinable( ))
-                        handler.detach( );
-                }
+                if (handler.joinable( ))
+                    handler.detach( );
             }
-            // exists, so we'll modify it
-            else
+            // exists, so we'll modify it (if it's actually invalidated)
+            else if (buildIsInvalidated( search->second ))
             {
                 auto handler = std::thread( &ResourcePipelineManager::onResourceModified, this, search->second );
                 
@@ -1291,6 +1468,8 @@ namespace ursine
         default:
             break;
         }
+
+        return true;
     }
 
     ///////////////////////////////////////////////////////////////////////////
@@ -1331,9 +1510,18 @@ namespace ursine
         {
             URSINE_UNUSED( e );
 
-            UWarning( "Unable to add resource.\nresource: %s\nerror: %s", 
+            UWarning( 
+                "Error adding resource.\n"
+                "resource: %s\n"
+                "error: %s\n"
+                "from: %s\n"
+                "in: %s\n"
+                "on line: %i", 
                 fileName.string( ).c_str( ),
-                e.GetErrorMessage( ).c_str( )
+                e.GetErrorMessage( ).c_str( ),
+                e.GetFunction( ).c_str( ),
+                e.GetFile( ).c_str( ),
+                e.GetLine( )
             );
 
             return;
@@ -1374,9 +1562,18 @@ namespace ursine
         {
             URSINE_UNUSED( e );
 
-            UWarning( "Unable to rebuild resource.\nresource: %s\nerror: %s", 
+            UWarning( 
+                "Error rebuilding resource.\n"
+                "resource: %s\n"
+                "error: %s\n"
+                "from: %s\n"
+                "in: %s\n"
+                "on line: %i", 
                 resource->GetSourceFileName( ).string( ).c_str( ),
-                e.GetErrorMessage( ).c_str( )
+                e.GetErrorMessage( ).c_str( ),
+                e.GetFunction( ).c_str( ),
+                e.GetFile( ).c_str( ),
+                e.GetLine( )
             );
 
             return;
@@ -1406,6 +1603,20 @@ namespace ursine
         
     }
 
+    
+    ///////////////////////////////////////////////////////////////////////////
+    // Utilities
+    ///////////////////////////////////////////////////////////////////////////
+
+    fs::path rp::ResourcePipelineManager::getResourceMetaPath(const fs::path &fileName) const
+    {
+        auto metaPath = fileName;
+
+        metaPath.concat( kMetaFileExtension );
+
+        return metaPath;
+    }
+
     ///////////////////////////////////////////////////////////////////////////
 
     rp::ResourceItem::Handle rp::ResourcePipelineManager::getDirectoryResource(const fs::path &fileName) const
@@ -1429,41 +1640,43 @@ namespace ursine
     }
 
     ///////////////////////////////////////////////////////////////////////////
-    // Utilities
-    ///////////////////////////////////////////////////////////////////////////
 
-    fs::path rp::ResourcePipelineManager::getResourceBuildFile(const GUID &guid) const
+    fs::path rp::ResourcePipelineManager::getResourceBuildPath(const GUID &guid) const
     {
-        auto file = m_config.buildDirectory / to_string( guid );
-
-        return file.replace_extension( kResourceFormatExtension );
+        return change_extension( 
+            m_config.buildDirectory / to_string( guid ),
+            kResourceFormatExtension 
+        );
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
-    fs::path rp::ResourcePipelineManager::getResourceBuildPreviewFile(const GUID &guid) const
+    fs::path rp::ResourcePipelineManager::getResourceBuildPreviewPath(const GUID &guid) const
     {
-        auto file = m_config.buildDirectory / to_string( guid );
-
-        return file.replace_extension( kPreviewFileExtension );
+        return change_extension( 
+            m_config.buildDirectory / to_string( guid ),
+            kPreviewFileExtension 
+        );
     }
 
     ///////////////////////////////////////////////////////////////////////////
 
-    fs::path rp::ResourcePipelineManager::getResourceBuildCacheFile(const GUID &guid) const
+    fs::path rp::ResourcePipelineManager::getResourceBuildCachePath(const GUID &guid) const
     {
-        auto file = m_config.buildDirectory / to_string( guid );
-
-        return file.replace_extension( kCacheFileExtension );
+        return change_extension( 
+            m_config.buildDirectory / to_string( guid ),
+            kCacheFileExtension 
+        );
     }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     rp::TypePair rp::ResourcePipelineManager::detectResourceHandlers(const fs::path &path) const
     {
         auto &importerTypes = getImporterTypes( );
         auto extension = path.extension( ).string( );
 
-        // remove period from extension
-        if (!extension.empty( ) && extension.front( ) == '.')
+        if (!extension.empty( ) && extension[ 0 ] == '.')
             extension.erase( extension.begin( ) );
 
         utils::MakeLowerCase( extension );
@@ -1501,5 +1714,83 @@ namespace ursine
             handlers.second = importerConfig->defaultProcessor;
 
         return handlers;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    rp::ResourceMetaData rp::ResourcePipelineManager::createDefaultResourceMeta(
+        const fs::path &sourceFile
+    )
+    {
+        ResourceMetaData meta;
+
+        auto extension = sourceFile.extension( ).string( );
+
+        // remove period from extension
+        if (!extension.empty( ) && extension.front( ) == '.')
+            extension.erase( extension.begin( ) );
+
+        utils::MakeLowerCase( extension );
+
+        meta::Type importerType;
+        meta::Type processorType;
+
+        std::tie( importerType, processorType ) = 
+            detectResourceHandlers( sourceFile );
+
+        // importer does not exist, ignore it.
+        if (!importerType.IsValid( ))
+            return meta;
+
+        UAssertCatchable( importerType.GetDynamicConstructor( ).IsValid( ),
+            "Importer '%s' does not have a default dynamic constructor.",
+            importerType.GetName( ).c_str( )
+        );
+
+        UAssertCatchable( processorType.IsValid( ),
+            "Importer '%s' specified an invalid processor.",
+            importerType.GetName( ).c_str( )
+        );
+
+        UAssertCatchable( processorType.GetDynamicConstructor( ).IsValid( ),
+            "Processor '%s' does not have a default dynamic constructor.",
+            processorType.GetName( ).c_str( )
+        );
+
+        meta.importer = importerType;
+        meta.processor = processorType;
+
+        auto &processorMeta = processorType.GetMeta( );
+
+        auto *processorConfig = 
+            processorMeta.GetProperty<ResourceProcessorConfig>( );
+
+        // no config assumes no import options
+        if (processorConfig)
+        {
+            auto optionsType = processorConfig->optionsType;
+
+            UAssertCatchable( optionsType.IsValid( ),
+                "Processor '%s' specified invalid options type.",
+                processorType.GetName( ).c_str( )
+            );
+
+            auto defaultOptionsCtor = optionsType.GetConstructor( );
+
+            UAssertCatchable( defaultOptionsCtor.IsValid( ),
+                "Processor options type '%s' missing default constructor.",
+                optionsType.GetName( ).c_str( )
+            );
+
+            // serialize with the default options
+            meta.processorOptions = 
+                optionsType.SerializeJson( defaultOptionsCtor.Invoke( ) );
+        }
+        else
+        {
+            meta.processorOptions = Json::object { };
+        }
+
+        return meta;
     }
 }

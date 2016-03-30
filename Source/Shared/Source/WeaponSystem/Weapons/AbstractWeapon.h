@@ -12,11 +12,12 @@
 #pragma once
 
 #include "Randomizer.h"
+#include "DamageOnCollideComponent.h"
 
+#include <ArchetypeData.h>
 
 #define UNLIMITED_AMMO  MAXINT
 #define UNLIMITED_CLIP  MAXINT
-
 
 // Weapon Statuses
 #define MUST_RELOAD         0b00000001
@@ -33,117 +34,92 @@
 #define MAX_AMMO false
 #define AMMO_USED true
 
-
-#define AbstractWeaponFields( )         \
-    EditorField(                        \
-        float Damage,                   \
-        GetDamageToApply,               \
-        SetDamageToApply                \
-        );                              \
-                                        \
-    EditorField(                        \
-        float CritModifier,             \
-        GetCritModifier,                \
-        SetCritModifier                 \
-        );                              \
-                                        \
-    EditorField(                        \
-        float DamageInterval,           \
-        GetDamageInterval,              \
-        SetDamageInterval               \
-        );                              \
-                                        \
-    EditorField(                        \
-        bool DelBulletOnCollision,      \
-        GetDeleteOnCollision,           \
-        SetDeleteOnCollision            \
-        );                              \
-                                        \
-    EditorField(                        \
-        bool SemiAutomatic,             \
-        GetSemiAutomatic,               \
-        SetSemiAutomatic                \
-        );                              \
-                                        \
-    EditorField(                        \
-        float FireDelay,                \
-        GetFireRate,                    \
-        SetFireRate                     \
-        );                              \
-                                        \
-    EditorField(                        \
-        float ReloadTime,               \
-        GetReloadTime,                  \
-        SetReloadTime                   \
-        );                              \
-                                        \
-    EditorField(                        \
-        float RecoilAngle,              \
-        GetRecoilAngle,                 \
-        SetRecoilAngle                  \
-        );                              \
-                                        \
-    EditorField(                        \
-        float MaxRange,                 \
-        GetMaxRange,                    \
-        SetMaxRange                     \
-        );                              \
-                                        \
-    EditorField(                        \
-        float Accuracy,                 \
-        GetAccuracy,                    \
-        SetAccuracy                     \
-        );                              \
-                                        \
-    EditorField(                        \
-        float SpreadFactor,             \
-        GetSpreadFactor,                \
-        SetSpreadFactor                 \
-        );                              \
-                                        \
-    EditorField(                        \
-        int MaxAmmoCount,               \
-        GetMaxAmmoCount,                \
-        SetMaxAmmoCount                 \
-        );                              \
-                                        \
-    EditorField(                        \
-        int ClipSize,                   \
-        GetClipSize,                    \
-        SetClipSize                     \
-        );                              \
-                                        \
-    EditorField(                        \
-        int ProjectileFireCount,        \
-        GetProjFireCount,               \
-        SetProjFireCount                \
-        );                              \
-                                        \
-    EditorField(                        \
-        WeaponType WeaponTier,          \
-        GetWeaponType,                  \
-        SetWeaponType                   \
-        );                              \
-                                        \
-    EditorField(                        \
-        std::string FireParticle,       \
-        GetFireParticle,                \
-        SetFireParticle                 \
-        );                              \
+#define AbstractWeaponFields( )            \
+    EditorField(                           \
+        bool SemiAutomatic,                \
+        GetSemiAutomatic,                  \
+        SetSemiAutomatic                   \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float FireDelay,                   \
+        GetFireRate,                       \
+        SetFireRate                        \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float ReloadTime,                  \
+        GetReloadTime,                     \
+        SetReloadTime                      \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float RecoilAngle,                 \
+        GetRecoilAngle,                    \
+        SetRecoilAngle                     \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float Range,                       \
+        GetMaxRange,                       \
+        SetMaxRange                        \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float Accuracy,                    \
+        GetAccuracy,                       \
+        SetAccuracy                        \
+    );                                     \
+                                           \
+    EditorField(                           \
+        float SpreadFactor,                \
+        GetSpreadFactor,                   \
+        SetSpreadFactor                    \
+    );                                     \
+                                           \
+    EditorField(                           \
+        int MaxAmmoCount,                  \
+        GetMaxAmmoCount,                   \
+        SetMaxAmmoCount                    \
+    );                                     \
+                                           \
+    EditorField(                           \
+        int ClipSize,                      \
+        GetClipSize,                       \
+        SetClipSize                        \
+    );                                     \
+                                           \
+    EditorField(                           \
+        int ProjectileFireCount,           \
+        GetProjFireCount,                  \
+        SetProjFireCount                   \
+    );                                     \
+                                           \
+    EditorField(                           \
+        WeaponType WeaponTier,             \
+        GetWeaponType,                     \
+        SetWeaponType                      \
+    );                                     \
+                                           \
+    EditorResourceField(                   \
+        ursine::resources::ArchetypeData,  \
+        MuzzleParticle,                    \
+        GetFireParticle,                   \
+        SetFireParticle                    \
+    );                                     
 
 
 #define AbstractWeaponConnect( Obj )                            \
     GetOwner( )->Listener( this )                               \
-        .On(game::ACTIVATE_WEAPON, &Obj::ActivateWeapon)        \
-        .On(game::DETACH_WEAPON, &Obj::DetachWeapon)            \
-        .On(game::DEACTIVATE_WEAPON, &Obj::DeactivateWeapon);
+        .On( game::ACTIVATE_WEAPON, &Obj::ActivateWeapon )      \
+        .On( game::DETACH_WEAPON, &Obj::DetachWeapon )          \
+        .On( game::DEACTIVATE_WEAPON, &Obj::DeactivateWeapon) ;
 
 #define AbstractWeaponDisconnect( Obj )                          \
     GetOwner( )->Listener( this )                                \
-        .Off(game::ACTIVATE_WEAPON, &Obj::ActivateWeapon)        \
-        .Off(game::DETACH_WEAPON, &Obj::DetachWeapon)            \
-        .Off(game::DEACTIVATE_WEAPON, &Obj::DeactivateWeapon);
-
+        .Off( game::ACTIVATE_WEAPON, &Obj::ActivateWeapon )      \
+        .Off( game::DETACH_WEAPON, &Obj::DetachWeapon )          \
+        .Off( game::DEACTIVATE_WEAPON, &Obj::DeactivateWeapon );
 
 namespace ursine
 {
@@ -151,9 +127,8 @@ namespace ursine
     {
         class Transform;
         class Animator;
-    } // ecs namespace
-} // ursine namespace
-
+    }
+}
 
 enum WeaponType
 {
@@ -164,26 +139,96 @@ enum WeaponType
     GOD_WEAPON
 } Meta(Enable);
 
-
 struct AbstractWeapon
 {
 public:
+    AbstractWeapon( );
+    virtual ~AbstractWeapon( void );
+
+    void Initialize(const ursine::ecs::EntityHandle &owner);
+
+    /////////////////////////////
+    //// Weapon Setup Logic  ////
+    /////////////////////////////
+
+    // Activate Weapon for use
+    void ActivateWeapon(
+        const ursine::ecs::EntityHandle &whatToConnect, 
+        ursine::ecs::Transform* camHandle, int ammo, int clip
+    );
+
+    // Detatch weapon from parent and turn into interactable
+    void DetachWeapon(void);
+
+    // Deactivate Weapon for use
+    void DeactivateWeapon(int& saveAmmo, int& saveClip);
+
+    /////////////////////////////
+    ////  Weapon Fire Logic  ////
+    /////////////////////////////
+    virtual int FireLogic(void);
+    virtual int CanFire(void) const;
+
+
+    ///////////////////////////////
+    ////  Gettors and Settors  ////
+    ///////////////////////////////
+    float GetFireRate(void) const;
+    void SetFireRate(float rate);
+
+    float GetReloadTime(void) const;
+    void SetReloadTime(float time);
+
+    float GetRecoilAngle(void) const;
+    void SetRecoilAngle(float angle);
+
+    float GetMaxRange(void) const;
+    void SetMaxRange(float range);
+
+    float GetAccuracy(void) const;
+    void SetAccuracy(float accuracy);
+
+    float GetSpreadFactor(void) const;
+    void SetSpreadFactor(float spread);
+
+    int GetAmmoCount(void) const;
+    void SetAmmoCount(int ammo);
+
+    int GetMaxAmmoCount(void) const;
+    void SetMaxAmmoCount(int maxAmmo);
+
+    int GetClipCount(void) const;
+    void SetClipCount(int count);
+
+    int GetClipSize(void) const;
+    void SetClipSize(int size);
+
+    int GetProjFireCount(void) const;
+    void SetProjFireCount(int count);
+
+    WeaponType GetWeaponType(void) const;
+    void SetWeaponType(WeaponType type);
+
+    const ursine::resources::ResourceReference &GetFireParticle(void) const;
+    void SetFireParticle(const ursine::resources::ResourceReference &archetype);
+
+    bool GetSemiAutomatic(void) const;
+    void SetSemiAutomatic(bool semi);
+
+    bool GetTriggerPulled(void) const;
+
+    void ConnectTrigger(const ursine::ecs::EntityHandle &obj);
+
+protected:
+    friend class WeaponSystemUtils;
+    friend class BaseWeaponSystem;
+    friend class HitscanWeaponSystem;
+
     // who is my owner
-    Meta(Disable)
     ursine::ecs::EntityHandle m_owner;
 
-    // damage to apply when triggered
-    float m_damageToApply;
-
-    // scalar to apply to damage
-    float m_critModifier;
-
-    // time to wait until apply damage again
-    //   (keeps from applying damage each frame)
-    float m_damageInterval;
-
-    // does projectile die on first collision
-    bool m_deleteOnCollision;
+    // who is telling me to shoot
+    ursine::ecs::EntityHandle m_boss;
 
     // Rate at which bullets can be fired
     float m_fireRate;
@@ -225,123 +270,28 @@ public:
     WeaponType m_weaponType;
 
     // Camera Handle for shooting
-    Meta(Disable)
     ursine::ecs::Transform* m_camHandle;
 
     // fire position Handle for shooting
-    Meta(Disable)
     ursine::ecs::Transform* m_firePosHandle;
 
     // fire position Handle for shooting
-    Meta(Disable)
     ursine::ecs::Animator* m_animatorHandle;
 
-    Meta(Disable)
+    // spread to apply to shot
     ursine::Randomizer m_spread;
 
     // Particle to spawn at tip of gun when shot
-    std::string m_fireParticle;
+    ursine::resources::ResourceReference m_fireParticle;
 
     // is weapon a semi-automatic
     bool m_semiAutomatic;
 
     // Is trigger being pulled
-    Meta(Disable)
     bool m_triggerPulled;
 
     // can i shoot?
-    Meta(Disable)
     bool m_active;
-
-
-    AbstractWeapon( );
-    virtual ~AbstractWeapon( void );
-
-    void Initialize(const ursine::ecs::EntityHandle &owner);
-
-    /////////////////////////////
-    //// Weapon Setup Logic  ////
-    /////////////////////////////
-
-    // Activate Weapon for use
-    void ActivateWeapon(const ursine::ecs::EntityHandle &owner, const ursine::ecs::EntityHandle &whatToConnect, ursine::ecs::Transform* camHandle, int ammo, int clip);
-
-    // Detatch weapon from parent and turn into interactable
-    void DetachWeapon(const ursine::ecs::EntityHandle &owner, const ursine::ecs::EntityHandle &whatToConnect);
-
-    // Deactivate Weapon for use
-    void DeactivateWeapon(const ursine::ecs::EntityHandle &whatToDisconnect, int& saveAmmo, int& saveClip);
-
-
-    /////////////////////////////
-    ////  Weapon Fire Logic  ////
-    /////////////////////////////
-    virtual int FireLogic(void);
-    virtual int CanFire(void) const;
-
-
-    ///////////////////////////////
-    ////  Gettors and Settors  ////
-    ///////////////////////////////
-    float GetDamageToApply(void) const;
-    void  SetDamageToApply(const float damage);
-
-    float GetCritModifier(void) const;
-    void SetCritModifier(const float modifier);
-
-    float GetDamageInterval(void) const;
-    void SetDamageInterval(const float damageInterval);
-
-    bool GetDeleteOnCollision(void) const;
-    void SetDeleteOnCollision(const bool state);
-
-    float GetFireRate(void) const;
-    void SetFireRate(const float rate);
-
-    float GetReloadTime(void) const;
-    void SetReloadTime(const float time);
-
-    float GetRecoilAngle(void) const;
-    void SetRecoilAngle(const float angle);
-
-    float GetMaxRange(void) const;
-    void SetMaxRange(const float range);
-
-    float GetAccuracy(void) const;
-    void SetAccuracy(const float accuracy);
-
-    float GetSpreadFactor(void) const;
-    void SetSpreadFactor(const float spread);
-
-    int GetAmmoCount(void) const;
-    void SetAmmoCount(const int ammo);
-
-    int GetMaxAmmoCount(void) const;
-    void SetMaxAmmoCount(const int maxAmmo);
-
-    int GetClipCount(void) const;
-    void SetClipCount(const int count);
-
-    int GetClipSize(void) const;
-    void SetClipSize(const int size);
-
-    int GetProjFireCount(void) const;
-    void SetProjFireCount(const int count);
-
-    WeaponType GetWeaponType(void) const;
-    void SetWeaponType(const WeaponType type);
-
-    const std::string& GetFireParticle(void) const;
-    void SetFireParticle(const std::string &archetype);
-
-    bool GetSemiAutomatic(void) const;
-    void SetSemiAutomatic(const bool semi);
-
-    bool GetTriggerPulled(void) const;
-
-    void ConnectTrigger(const ursine::ecs::EntityHandle &obj);
-
-protected:
 
     // Weapons trigger is being pulled
     void TriggerPulled(EVENT_HANDLER(game::FIRE_START));
@@ -355,8 +305,10 @@ protected:
     void DetachWeapon(EVENT_HANDLER(game::DETACH_WEAPON));
     void DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON));
 
-    void PickUpAmmo(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
+    void PickUpAmmo(EVENT_HANDLER(ursine::ecs::PICKUP_AMMO));
 
+    void CeaseFire(EVENT_HANDLER(game::CEASE_FIRE));
+    void FireAtWill(EVENT_HANDLER(game::FIRE_AT_WILL));
 
     //***************************************//
     //  MUST IMPLEMENT, so base class can    //
@@ -365,6 +317,5 @@ protected:
     virtual void RemoveMySelf(void) = 0;
 
 };
-
 
 #define AbstractWeaponInit( Obj, owner )   AbstractWeapon::Initialize( owner );  

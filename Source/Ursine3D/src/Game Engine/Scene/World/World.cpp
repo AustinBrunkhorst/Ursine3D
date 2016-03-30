@@ -96,51 +96,6 @@ namespace ursine
             return entity;
         }
 
-        EntityHandle World::CreateEntityFromArchetype(
-            const std::string &fileName, 
-            const std::string &name
-        )
-        {
-            auto cache = m_archetypeCache.find( fileName );
-
-            EntityHandle entity;
-
-            if (cache == m_archetypeCache.end( ))
-            {
-                std::string jsonData;
-
-                UAssert(
-                    fs::LoadAllText( fileName, jsonData ),
-                    "Failed to load archetype.\nfile: %s", 
-                    fileName.c_str( )
-                );
-
-                std::string jsonError;
-
-                auto data = Json::parse( jsonData, jsonError );
-
-                UAssert(
-                    jsonError.empty( ),
-                    "Failed to load archetype.\nJSON error: %s\nfile: %s",
-                    jsonError.c_str( ),
-                    fileName.c_str( )
-                );
-
-                m_archetypeCache[ fileName ] = data;
-
-                entity = loadArchetype( data );
-            }
-            else
-            {
-                entity = loadArchetype( cache->second );
-            }
-            
-            if (entity)
-                entity->SetName( name );
-
-            return entity;
-        }
-
         EntityHandle World::CreateEntityFromArchetype(const resources::ResourceReference &resource)
         {
             UAssert( m_owner != nullptr,
@@ -229,6 +184,11 @@ namespace ursine
             return m_owner;
         }
 
+        void World::SetOwner(Scene *owner)
+        {
+            setOwner( owner );
+        }
+
         void World::setOwner(Scene *owner)
         {
             UAssert( m_owner == nullptr,
@@ -266,7 +226,7 @@ namespace ursine
 
         void World::deleteEntity(const EntityHandle &entity)
         {
-            m_nameManager->Remove( entity->GetID( ) );
+            m_nameManager->Remove( entity.m_id );
             m_entityManager->Remove( entity );
         }
                 
@@ -283,7 +243,8 @@ namespace ursine
 
                 m_deleted.pop_back( );
 
-                deleteEntity( entity );
+                if (entity)
+                    deleteEntity( entity );
             }
         }
 

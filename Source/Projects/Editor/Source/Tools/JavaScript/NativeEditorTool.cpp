@@ -18,7 +18,8 @@
 using namespace native_tool;
 
 NativeEditorTool::NativeEditorTool(void)
-    : m_isFocused( false )
+    : EventDispatcher( this )
+    , m_isFocused( false )
     , m_hasCursorFocus( false )
 {
     Listener( this )

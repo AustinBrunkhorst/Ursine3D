@@ -24,6 +24,8 @@ namespace ursine
 
             ResourceReference &operator=(const ResourceReference &rhs);
 
+            bool operator==(const ResourceReference &rhs);
+
             template<typename ResourceType>
             ResourceType *Load(ResourceManager &resourceManager, bool ignoreCache = false) const;
 

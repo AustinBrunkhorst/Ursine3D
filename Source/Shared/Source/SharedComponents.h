@@ -44,6 +44,7 @@
 #include "DamageSystem/CritSpotComponent.h"
 #include "DamageSystem/DamageOnCollideComponent.h"
 #include "DamageSystem/DamageTextComponent.h"
+#include "DamageSystem/DamageTextManagerComponent.h"
 
 /////////////////////////////////
 //    Interaction System       //
@@ -69,6 +70,7 @@
 #include "WeaponSystem/Weapons/HitscanWeaponComponent.h"
 #include "WeaponSystem/AmmoPickUpComponent.h"
 #include "WeaponSystem/Weapons/FirePosComponent.h"
+#include "WeaponSystem/Weapons/WeaponPosComponent.h"
 #include "WeaponSystem/Inventory/InventoryComponent.h"
 #include "WeaponSystem/Projectiles/ProjectileComponent.h"
 
@@ -90,12 +92,15 @@
 #include "EnemyDeathComponent.h"
 
 #include "BossAIComponent.h"
+#include "Boss/Components/PollinateProjectileComponent.h"
+#include "Boss/Components/SludgeshotProjectileComponent.h"
 #include "VineAIComponent.h"
 #include "VineSpawnerComponent.h"
 
 #include "AIHordelingTypeComponent.h"
 #include "FodderAIComponent.h"
 #include "TankAIComponent.h"
+#include "BomberAIComponent.h"
 
 /////////////////////////////////
 //       Level Logic           //
@@ -107,9 +112,6 @@
 #include "LevelSegmentManager/SegmentResources/TutorialResourcesComponent.h"
 #include "LevelSegmentManager/SegmentResources/CombatBowl1ResourcesComponent.h"
 #include "LevelSegmentManager/SegmentResources/BossRoomResourcesComponent.h"
-#include "LevelSegmentManager/SegmentLogic/Misc/SegmentChangeTriggerComponent.h"
-#include "LevelSegmentManager/SegmentLogic/Misc/VisibilityTriggerComponent.h"
-
 
 /////////////////////////////////
 //       Entity Animation      //
@@ -117,7 +119,6 @@
 
 #include "EntityAnimation/EntityAnimatorComponent.h"
 #include "EntityAnimation/EntityAnimatorGroupComponent.h"
-#include "EntityAnimation/EntityAnimatorFocusPointComponent.h"
 #include "EntityAnimation/EntityAnimatorFocusModifierComponent.h"
 
 /////////////////////////////////
@@ -140,6 +141,8 @@
 /////////////////////////////////
 
 #include "FX/AnimateParticleResetComponent.h"
+#include "FX/PlayClipOnAnimationFinishComponent.h"
+#include "FX/FaceBoneTowardsTargetComponent.h"
 
 /////////////////////////////////
 //             Misc            //
@@ -147,6 +150,7 @@
 
 #include "Misc/AnimateTutorialTextComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
+#include "LevelSegmentManager/SegmentLogic/Misc/ChangeSegmentOnAnimatorFinishComponent.h"
 #include "Misc/DeathTriggerGroupComponent.h"
 #include "Misc/PingTestComponent.h"
 
@@ -155,3 +159,17 @@
 /////////////////////////////////
 
 #include "Physics/ApplyImpulseOnHitComponent.h"
+
+/////////////////////////////////
+//         Triggers            //
+/////////////////////////////////
+
+#include "Triggers/SegmentChangeTriggerComponent.h"
+#include "Triggers/VisibilityTriggerComponent.h"
+#include "Triggers/AnimateEntityOnTriggerComponent.h"
+
+/////////////////////////////////
+//           UI                //
+/////////////////////////////////
+
+#include "UI/UIScreensConfigComponent.h"

@@ -48,7 +48,7 @@ namespace ursine
         template<typename Listener>
         using ChainType = ChainableEventOperator<EventDispatcher<Key>, Listener>;
 
-        EventDispatcher(void *defaultSender = nullptr);
+        EventDispatcher(void *defaultSender);
 
         // Binds a connection to a static function
         template<typename Args = EventArgs>
@@ -86,14 +86,14 @@ namespace ursine
         void Dispatch(
             const Key &event,
             const EventArgs *args
-        );
+        ) const;
 
         // Dispatches the given event with the given args.
         void Dispatch(
             const Key &event, 
             void *sender, 
             const EventArgs *args
-        );
+        ) const;
 
         // Clears all handlers from this dispatcher (effectively resets)
         void ClearHandlers(void);

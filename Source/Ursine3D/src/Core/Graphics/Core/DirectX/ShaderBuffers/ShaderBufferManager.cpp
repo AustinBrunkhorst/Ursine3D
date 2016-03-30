@@ -55,6 +55,7 @@ namespace ursine
                 MakeBuffer<GlyphBuffer>(BUFFER_GLYPHDATA);
                 MakeBuffer<SpriteTextBuffer>(BUFFER_TEXTDATA);
                 MakeBuffer<ShadowProjectionBuffer>(BUFFER_SHADOWMAP);
+                MakeBuffer<TextureUVOffset>(BUFFER_TEX_OFFSET);
 
                 // COMPUTE SHADERS //////////////////////////////////
                 //GPU-readonly buffer that can only be written to by the CPU 

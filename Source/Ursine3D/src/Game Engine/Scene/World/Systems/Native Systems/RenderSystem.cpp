@@ -22,7 +22,6 @@
 #include "Billboard2DComponent.h"
 #include "CameraComponent.h"
 #include "ParticleSystemComponent.h"
-#include "AnimatorComponent.h"
 #include "SpriteTextComponent.h"
 
 #include "GfxAPI.h"
@@ -36,6 +35,7 @@ namespace ursine
 
         RenderSystem::RenderSystem(World *world)
             : EntitySystem( world )
+            , EventDispatcher( this )
             , m_worldConfig( nullptr )
         {
             m_graphics = GetCoreSystem( graphics::GfxAPI );
@@ -54,10 +54,8 @@ namespace ursine
         void RenderSystem::OnInitialize(void)
         {
             m_world->Listener( this )
-                .On( WORLD_UPDATE, &RenderSystem::onUpdate )
                 .On( WORLD_RENDER, &RenderSystem::onRender )
             #if defined(URSINE_WITH_EDITOR)
-                .On( WORLD_EDITOR_UPDATE, &RenderSystem::onEditorUpdate )
                 .On( WORLD_EDITOR_RENDER, &RenderSystem::onEditorRender )
             #endif
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &RenderSystem::onComponentAdded )
@@ -67,10 +65,8 @@ namespace ursine
         void RenderSystem::OnRemove(void)
         {
             m_world->Listener( this )
-                .Off( WORLD_UPDATE, &RenderSystem::onUpdate )
                 .Off( WORLD_RENDER, &RenderSystem::onRender )
             #if defined(URSINE_WITH_EDITOR)
-                .Off( WORLD_EDITOR_UPDATE, &RenderSystem::onEditorUpdate )
                 .Off( WORLD_EDITOR_RENDER, &RenderSystem::onEditorRender )
             #endif
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &RenderSystem::onComponentAdded )
@@ -113,19 +109,13 @@ namespace ursine
             {
                 addRenderable( args->entity, static_cast<Light*>( component )->m_base );
             }
-            else if (component->Is<Animator>( ))
-            {
-                m_animators.emplace_back(
-                    static_cast<Animator*>( component )
-                );
-            }
             else if (component->Is<ParticleSystem>( ))
             {
                 addRenderable( args->entity, static_cast<ParticleSystem*>( component )->m_base );
             }
             else if(component->Is<SpriteText>( ))
             {
-                addRenderable(args->entity, static_cast<SpriteText*>(component)->m_base);
+                addRenderable( args->entity, static_cast<SpriteText*>( component )->m_base.get( ) );
             }
         }
 
@@ -153,29 +143,10 @@ namespace ursine
                 removeRenderable( args->entity, static_cast<Billboard2D*>( component )->m_base );
             else if (component->Is<Light>( ))
                 removeRenderable( args->entity, static_cast<Light*>( component )->m_base );
-            else if (component->Is<Animator>( ))
-            {
-                auto search = std::find(
-                    m_animators.begin( ),
-                    m_animators.end( ),
-                    static_cast<Animator*>( component )
-                );
-
-                if (search != m_animators.end( ))
-                    m_animators.erase( search );
-            }
             else if (component->Is<ParticleSystem>( ))
                 removeRenderable( args->entity, static_cast<ParticleSystem*>( component )->m_base );
             else if (component->Is<SpriteText>( ))
-                removeRenderable( args->entity, static_cast<SpriteText*>( component )->m_base );
-        }
-
-        void RenderSystem::onUpdate(EVENT_HANDLER(World))
-        {
-            auto dt = Application::Instance->GetDeltaTime( );
-
-            for (auto &animator : m_animators)
-                animator->UpdateAnimation( dt );
+                removeRenderable( args->entity, static_cast<SpriteText*>( component )->m_base.get( ) );
         }
 
         void RenderSystem::onRender(EVENT_HANDLER(World))
@@ -190,8 +161,8 @@ namespace ursine
             {
                 auto camera = m_cameras[ i ];
 
-				if (camera->dirty)
-					camera->updateRenderer( );
+                if (camera->dirty)
+                    camera->updateRenderer( );
 
                 // kinda ugly, eventually make an editor render system
                 if (!camera->GetActive( ) 
@@ -207,18 +178,6 @@ namespace ursine
         }
 
         #if defined(URSINE_WITH_EDITOR)
-
-        void RenderSystem::onEditorUpdate(EVENT_HANDLER(World))
-        {
-            auto dt = Application::Instance->GetDeltaTime( );
-
-            for (auto &animator : m_animators)
-            {
-                // update only if selected
-                if (animator.GetEntity( )->HasComponent<Selected>( ))
-                    animator->UpdateAnimation( dt );
-            }
-        }
 
         void RenderSystem::onEditorRender(EVENT_HANDLER(World))
         {
@@ -256,11 +215,11 @@ namespace ursine
                 for (auto &rend : renderableVec)
                 {
                     if (rend->dirty)
-					{
-						rend->dirty = false;
+                    {
+                        rend->dirty = false;
 
                         rend->m_updateRenderer( );
-					}
+                    }
 
                     m_graphics->RenderObject( rend->m_handle );
                 }

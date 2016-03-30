@@ -15,6 +15,12 @@
 
 namespace ursine
 {
+    enum NotificationMode
+    {
+        NOTIFICATION_DEFAULT,
+        NOTIFICATION_BLOCKING_MODAL
+    };
+
     enum NotificationType
     {
         NOTIFY_NONE,

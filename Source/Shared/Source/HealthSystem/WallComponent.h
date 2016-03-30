@@ -1,4 +1,3 @@
-#pragma once
 /* ---------------------------------------------------------------------------
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -14,15 +13,11 @@
 
 #include <Component.h>
 
-
-struct WallComponent : ursine::ecs::Component
+struct Wall : ursine::ecs::Component
 {
     NATIVE_COMPONENT
 public:
 
-    WallComponent(void);
-    ~WallComponent(void);
+    Wall(void);
 
-    void OnInitialize(void) override;
-
-} Meta(Enable, DisplayName("WallComponent"));
+} Meta(Enable);

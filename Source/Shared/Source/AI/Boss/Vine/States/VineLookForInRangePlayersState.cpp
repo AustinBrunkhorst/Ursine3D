@@ -38,7 +38,7 @@ void VineLookForInRangePlayersState::Enter(VineAIStateMachine *machine)
     m_originalForward = aiTrans->GetForward( );
 
     // animate the vine to be idle
-    ai->GetAnimator( )->Play( "Idle" );
+    ai->GetAnimator( )->SetCurrentState( "Idle" );
 }
 
 void VineLookForInRangePlayersState::Update(VineAIStateMachine *machine)

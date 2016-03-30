@@ -7,6 +7,9 @@
 typedef std::initializer_list<std::string> ExtensionList;
 typedef ursine::Array<std::string> FileExclusionList;
 
+// Expression to match all files with the given extensions
+#define SYNC_EXPR_EXCLUDE_NOT(extensions) "^(?!.*[.](" extensions ")$).*$"
+
 class ResourceImporterConfig : public ursine::meta::MetaProperty
 {
     META_OBJECT;
@@ -45,6 +48,8 @@ public:
     Meta(Disable)
     const std::vector<boost::regex> &GetBuiltExclusionExpressions(void) const;
 
+    Meta(Disable)
+    bool IsExcluded(const std::string &path) const;
 private:
     std::vector<boost::regex> m_exclusionExpressions;
 };

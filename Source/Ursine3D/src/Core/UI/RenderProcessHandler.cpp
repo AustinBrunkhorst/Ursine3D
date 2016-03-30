@@ -39,7 +39,13 @@ namespace ursine
 
     void RenderProcessHandler::OnWebKitInitialized(void)
     {
-        
+        CefRegisterExtension( "v8/NativeBroadcastQueue", 
+            "function NativeBroadcastQueue(events) {"
+                "for (var i = 0, length = events.length; i < length; ++i)"
+                    "NativeBroadcast.apply( null, events[ i ] );"
+            "}", 
+            nullptr 
+        );
     }
 
     void RenderProcessHandler::OnBrowserCreated(
@@ -53,8 +59,13 @@ namespace ursine
         CefRefPtr<CefFrame> frame,
         CefRefPtr<CefRequest> request,
         NavigationType navigationType,
-        bool isDirect)
+        bool isDirect
+    )
     {
+        // disable backspace for navigation
+        if (navigationType == NAVIGATION_BACK_FORWARD)
+            return true;
+
         return false;
     }
 
@@ -64,6 +75,8 @@ namespace ursine
         CefRefPtr<CefV8Context> context)
     {
         auto global = context->GetGlobal( );
+
+        m_nativeBroadcaster = global->GetValue( kUINativeBroadcastFunction );
 
         m_globalFunctionHandler->Bind( global );
 
@@ -87,7 +100,8 @@ namespace ursine
     bool RenderProcessHandler::OnProcessMessageReceived(
         CefRefPtr<CefBrowser> browser,
         CefProcessId sourceProcess,
-        CefRefPtr<CefProcessMessage> message)
+        CefRefPtr<CefProcessMessage> message
+    )
     {
         if (sourceProcess == PID_BROWSER && !browser->IsLoading( ))
         {
@@ -97,7 +111,7 @@ namespace ursine
             switch (args->GetInt( 0 ))
             {
             case UI_CMD_BROADCAST:
-                broadcast( browser, message->GetName( ), args );
+                broadcast( browser, args );
                 return true;
             default:
                 return false;
@@ -108,16 +122,8 @@ namespace ursine
         return false;
     }
 
-    bool RenderProcessHandler::initNativeBroadcaster(CefRefPtr<CefV8Value> global)
-    {
-        m_nativeBroadcaster = global->GetValue( kNativeBroadcastFunction );
-
-        return m_nativeBroadcaster != nullptr;
-    }
-
     void RenderProcessHandler::broadcast(
-        CefRefPtr<CefBrowser> browser, 
-        const std::string &target, 
+        CefRefPtr<CefBrowser> browser,
         CefRefPtr<CefListValue> args
     )
     {
@@ -130,24 +136,21 @@ namespace ursine
 
         auto global = context->GetGlobal( );
 
-        if (!m_nativeBroadcaster && !initNativeBroadcaster( global ))
+        if (!m_nativeBroadcaster)
         {
             context->Exit( );
 
             return;
         }
 
+        // we don't care about errors for performance reasons
         static std::string error;
 
-        auto json = Json::parse( args->GetString( 2 ), error );
+        auto json = Json::parse( args->GetString( 1 ), error );
 
-        CefV8ValueList broadcastArgs {
-            CefV8Value::CreateString( target ),
-            CefV8Value::CreateString( args->GetString( 1 ) ),
-            nullptr
-        };
+        CefV8ValueList broadcastArgs { nullptr };
 
-        JsonSerializer::Deserialize( json, broadcastArgs[ 2 ] );
+        JsonSerializer::Deserialize( json, broadcastArgs[ 0 ] );
 
         m_nativeBroadcaster->ExecuteFunction( global, broadcastArgs );
 

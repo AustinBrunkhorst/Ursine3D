@@ -13,28 +13,7 @@
 #include <WallComponent.h>
 #include "ComponentIncludes.h"
 
-NATIVE_COMPONENT_DEFINITION( WallComponent ) ;
+NATIVE_COMPONENT_DEFINITION( Wall );
 
-using namespace ursine;
-
-
-WallComponent::WallComponent(void) :
-    BaseComponent( )
-{
-}
-
-WallComponent::~WallComponent(void)
-{
-    //GetOwner( )->Listener( this )
-    //     .Off( game::FIRE_END, &BaseWeapon::TriggerReleased ); 
-}
-
-void WallComponent::OnInitialize(void)
-{
-    //GetOwner( )->Listener( this )
-    //    .On( game::FIRE_END, &BaseWeapon::TriggerReleased );
-}
-
-
-
-
+Wall::Wall(void)
+    : BaseComponent( ) { }

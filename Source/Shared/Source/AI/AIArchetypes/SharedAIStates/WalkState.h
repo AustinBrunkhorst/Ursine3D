@@ -18,6 +18,17 @@
 #include <function.h>
 #include <Game Engine/Scene/Component/Native Components/Physics/GhostComponent.h>
 
+// here is a fancy macro for quickly passing component members to this state
+#define INIT_WALKSTATE(name)                                              \
+auto walkState = m_stateMachine.AddState<sm::WalkState>(name);            \
+do{ walkState->SetCohesionScale(m_cohesionScale);                         \
+walkState->SetSeparationScale(m_separationScale);                         \
+walkState->SetBoidbehaviorScale(m_boidScale);                             \
+walkState->SetAttackRange(m_attackRange);                                 \
+m_stateMachine.SetInitialState(walkState);                                \
+}while (0)
+
+
 class AIStateMachine;
 
 namespace ursine
@@ -43,14 +54,14 @@ namespace ursine
             void SetBoidbehaviorScale(float scale);
 
             void SetAttackRange(float range);
+
+            ecs::AIMovementController *GetMovementController(void) const;
         private:
 
             void updateSurroundingActorsList(AIStateMachine *stateMachine);
 
             void setTargetDirectionWaypoints(const SVec3 &target);
             void setTargetDirectionMovement(const SVec3 &target);
-
-            Vec3 getTargetPlayerPosition(ecs::World *world);
 
             typedef std::function<void(const SVec3&)> setTargetDirectionFunc;
             setTargetDirectionFunc setTargetDirection;

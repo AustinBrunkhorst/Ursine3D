@@ -1,5 +1,3 @@
-#pragma once
-
 /* ---------------------------------------------------------------------------
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -11,15 +9,15 @@
 **
 ** -------------------------------------------------------------------------*/
 
+#pragma once
 
 #include <Component.h>
 
-
-struct FirePos : ursine::ecs::Component
+class FirePos : public ursine::ecs::Component
 {
     NATIVE_COMPONENT
-public:
 
+public:
     FirePos(void);
-    ~FirePos(void);
-} Meta(Enable, DisplayName("FirePos"));
+    
+} Meta(Enable);

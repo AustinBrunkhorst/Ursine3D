@@ -9,8 +9,11 @@ namespace ursine
         : m_isDirectoryResource( false )
         , m_manager( manager )
         , m_directoryNode( nullptr )
-        , m_parent( nullptr )
-        , m_guid( guid ) { }
+        , m_guid( guid )
+    {
+        // default to NULL
+        m_buildCache.parent = kNullGUID;
+    }
 
     rp::ResourceItem::~ResourceItem(void) { }
 
@@ -21,7 +24,12 @@ namespace ursine
 
     rp::ResourceItem::Handle rp::ResourceItem::GetParent(void) const
     {
-        return m_parent;
+        return m_manager->GetItem( m_buildCache.parent );
+    }
+
+    bool rp::ResourceItem::IsGenerated(void) const
+    {
+        return m_buildCache.parent != kNullGUID;
     }
 
     const GUID &rp::ResourceItem::GetGUID(void) const
@@ -42,6 +50,11 @@ namespace ursine
     const fs::path &rp::ResourceItem::GetBuildFileName(void) const
     {
         return m_buildFileName;
+    }
+
+    const fs::path &rp::ResourceItem::GetBuildCacheFileName(void) const
+    {
+        return m_buildCacheFileName;
     }
 
     bool rp::ResourceItem::HasPreview(void) const
@@ -67,5 +80,33 @@ namespace ursine
         );
 
         return change_extension( relative, "" ).string( );
+    }
+
+    const rp::ResourceBuildCache &rp::ResourceItem::GetBuildCache(void) const
+    {
+        return m_buildCache;
+    }
+
+    template<>
+    Json JsonSerializer::Serialize(const rp::ResourceItem::Handle &resource)
+    {
+        if (!resource)
+            return nullptr;
+
+        auto sourceFile = resource->GetSourceFileName( );
+
+        return Json::object {
+            { "guid", to_string( resource->GetGUID( ) ) },
+            { "type", resource->GetDataType( ).GetName( ) },
+            { "displayName", resource->GetDisplayName( ) },
+            { "relativePathDisplayName", resource->GetRelativePathDisplayName( ) },
+            { "sourceFile", sourceFile.string( ) },
+            { "hasPreview", resource->HasPreview( ) },
+            { "isGenerated", resource->IsGenerated( ) },
+            { "previewFile", resource->GetPreviewFileName( ).string( ) },
+            { "buildFile", resource->GetBuildFileName( ).string( ) },
+            { "buildCacheFile", resource->GetBuildCacheFileName( ).string( ) },
+            { "extension", sourceFile.extension( ).string( ) }
+        };
     }
 }

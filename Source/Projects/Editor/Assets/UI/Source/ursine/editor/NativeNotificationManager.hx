@@ -19,6 +19,8 @@ class NativeNotificationManager {
     private function onCreated(e : Dynamic) {
         var notification = new Notification( e.type, e.message, e.header );
 
+        notification.mode = e.mode;
+
         notification.dismissible = e.dismissible;
 
         initNotificationButtons( e.id, notification, e.buttons );
@@ -55,7 +57,7 @@ class NativeNotificationManager {
                 Extern.NotificationButtonCallback( id, index );
             }.bind( i ) );
 
-            notification.buttons.appendChild( element );
+            notification.buttonsContainer.appendChild( element );
 
             ++i;
         }

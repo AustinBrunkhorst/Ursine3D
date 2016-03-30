@@ -14,7 +14,7 @@
 
 #include <Component.h>
 #include <vector>
-
+#include <queue>
 
 namespace ursine
 {
@@ -27,14 +27,36 @@ namespace ursine
 
 struct Interactable;
 
+namespace InteractionBayUtils
+{
+    Meta(Disable)
+    typedef std::pair<float, Interactable*> InteractInfo;
+
+
+    Meta(Disable)
+    bool Compare(const InteractInfo& lhs, const InteractInfo& rhs);
+} // InteractionBayUtils namespace
+
 struct InteractionBay : ursine::ecs::Component
 {
-    NATIVE_COMPONENT
+private:
+    NATIVE_COMPONENT;
+
+    Meta(Disable)
+    typedef std::list< InteractionBayUtils::InteractInfo > PrevIteractables;
+
 public:
     Meta(Disable)
-    typedef std::vector<Interactable*> InteractVec;
+    typedef InteractionBayUtils::InteractInfo InteractInfo;
+
     Meta(Disable)
-    typedef std::vector<ursine::ecs::Transform*> TransVec;
+    typedef PrevIteractables::iterator PrevIter;
+
+    Meta(Disable)
+    typedef std::priority_queue<InteractInfo,
+                                std::vector<std::pair<float, Interactable*>>,
+                                std::function<bool(InteractInfo&, InteractInfo&)>
+                               > InteractQueue;
 
     Meta(Enable)
     InteractionBay(void);
@@ -48,11 +70,9 @@ public:
     void Clear(void);
 
     Meta(Disable)
-    InteractionBay::InteractVec m_interactables;
-    Meta(Disable)
-    InteractionBay::TransVec m_transforms;
+    InteractQueue m_interactQueue;
 
     Meta(Disable)
-    Interactable* m_prevInteractable;
+    PrevIteractables m_prevInteractables;
 
 } Meta(Enable, WhiteListMethods, DisplayName("InteractionBay"));

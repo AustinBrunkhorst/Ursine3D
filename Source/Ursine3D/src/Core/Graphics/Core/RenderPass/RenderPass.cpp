@@ -35,7 +35,7 @@ namespace ursine
             , m_inputLayout( SHADER_COUNT )
             , m_depthStencil( DEPTH_STENCIL_COUNT )
             , m_depthState( DEPTH_STATE_COUNT )
-            , m_samplerState( SAMPLER_STATE_COUNT )
+            , m_samplerStates( )
             , m_rasterState( RASTER_STATE_COUNT )
             , m_blendState( BLEND_STATE_COUNT )
             , m_topology( DXCore::TOPOLOGY_COUNT )
@@ -73,7 +73,7 @@ namespace ursine
                 UAssert( m_processor != nullptr, "%s renders entities but had no processor!", m_passName.c_str( ) );
             }
 
-            // if we provide no passes and not fullscreen pass
+            // if we provide no passes and no fullscreen pass
             if(m_prePasses.size( ) + m_postPasses.size( ) == 0 && m_fullscreenPass == false)
             {
                 // we better have an entity
@@ -84,7 +84,7 @@ namespace ursine
             auto globalResourceSize = m_globalResources.size( );
             for(size_t x = 0; x < globalResourceSize; ++x)
                 for( size_t y = x + 1; y < globalResourceSize; ++y)
-                    UAssert( m_globalResources[x] != m_globalResources[y], "%s has conflicting global resources (Resource indices: %i, %i. Conflicting index: %i)", 
+                    UAssert( m_globalResources[ x ] != m_globalResources[ y ], "%s has conflicting global resources (Resource indices: %i, %i. Conflicting index: %i)", 
                         m_passName.c_str( ), 
                         x, 
                         y,
@@ -106,15 +106,28 @@ namespace ursine
 
         void RenderPass::Execute(Camera &currentCamera)
         {
+            /////////////////////////////////////////////////////////
             // trigger pre-passes
             executePrePasses( currentCamera );
 
+            /////////////////////////////////////////////////////////
             // begin our pass
-            beginPass();
+
+            // start debug event
+            m_manager->dxCore->StartDebugEvent( m_passName );
+
+            beginPass( currentCamera );
 
             // execute our own pass
             executePass( currentCamera );
 
+            // end debug event
+            m_manager->dxCore->EndDebugEvent( );
+
+            // stamp this process
+            m_manager->gfxProfiler->Stamp( m_passName );
+
+            /////////////////////////////////////////////////////////
             // triger post-passes
             executePostPasses( currentCamera );
         }
@@ -146,9 +159,15 @@ namespace ursine
             return *this;
         }
 
-        RenderPass &RenderPass::Set(SAMPLER_STATES samplerState)
+        RenderPass &RenderPass::Set(SAMPLER_STATES samplerState, unsigned index)
         {
-            m_samplerState = samplerState;
+            if(m_samplerStates.size( ) < index + 1)
+            {
+                m_samplerStates.resize( index + 1 );
+            }
+
+            m_samplerStates[ index ] = samplerState;
+
             return *this;
         }
 
@@ -217,10 +236,37 @@ namespace ursine
             m_manager = mgr;
         }
 
-        void RenderPass::beginPass(void)
+        void RenderPass::beginPass(Camera &currentCamera)
         {
             setGPUState( );
             mapGlobals( );
+
+            //set directx viewport
+            Viewport &gameVP = m_manager->viewportManager->GetViewport(m_manager->m_GameViewport);
+            D3D11_VIEWPORT gvp = gameVP.GetViewportData();
+            
+            float w, h, x, y;
+            currentCamera.GetViewportPosition( x, y );
+            currentCamera.GetDimensions( w, h );
+
+            w *= gvp.Width;
+            h *= gvp.Height;
+
+            x = x * gvp.Width + gvp.TopLeftX;
+            y = y * gvp.Height + gvp.TopLeftY;
+
+            D3D11_VIEWPORT vpData;
+            vpData.Width = w;
+            vpData.Height = h;
+            vpData.TopLeftX = x;
+            vpData.TopLeftY = y;
+            vpData.MinDepth = 0;
+            vpData.MaxDepth = 1;
+
+            m_manager->dxCore->GetDeviceContext()->RSSetViewports(
+                1, 
+                &vpData 
+            );
         }
 
         void RenderPass::executePrePasses(Camera &currentCamera)
@@ -247,9 +293,6 @@ namespace ursine
                 while(drawList[end].Type_ == m_renderableMode && end < m_manager->m_drawCount )
                     ++end;
 
-                // start debug event
-                m_manager->dxCore->StartDebugEvent( m_passName );
-
                 // process
                 m_processor->Process( 
                     m_manager->m_drawList, 
@@ -257,12 +300,6 @@ namespace ursine
                     start, 
                     end 
                 );
-
-                // end debug event
-                m_manager->dxCore->EndDebugEvent( );
-
-                // stamp this process
-                m_manager->gfxProfiler->Stamp( m_passName );
             }
             else if(m_fullscreenPass)
             {
@@ -301,7 +338,7 @@ namespace ursine
             m_manager->shaderManager->BindShader( m_shader );
 
             // bind layout to match shader. If we overrode it, use that instead
-            if( m_inputLayout == SHADER_COUNT )
+            if (m_inputLayout == SHADER_COUNT)
                 m_manager->layoutManager->SetInputLayout( m_shader );
             else
                 m_manager->layoutManager->SetInputLayout( m_inputLayout );
@@ -310,7 +347,11 @@ namespace ursine
             dxCore->SetDepthState( m_depthState );
 
             // map sampler
-            m_manager->textureManager->MapSamplerState( m_samplerState );
+            for(int x = 0; x < m_samplerStates.size( ); ++x)
+            {
+                m_manager->textureManager->MapSamplerState(m_samplerStates[ x ], x);
+            }
+            
 
             // map raster 
             dxCore->SetRasterState( m_rasterState );

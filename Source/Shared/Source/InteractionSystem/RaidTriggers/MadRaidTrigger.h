@@ -54,7 +54,7 @@
         );                          \
                                     \
     EditorField(                    \
-        std::string MadSymbol,      \
+        ursine::resources::ResourceReference MadSymbol,      \
         GetMadSymbol,               \
         SetMadSymbol                \
         );       
@@ -93,14 +93,14 @@ public:
     const float GetModifier(void) const;
     void SetModifier(const float modifier);
 
-    const std::string& GetMadSymbol(void) const;
-    void SetMadSymbol(const std::string& symbol);
+    const ursine::resources::ResourceReference& GetMadSymbol(void) const;
+    void SetMadSymbol(const ursine::resources::ResourceReference& symbol);
 
 protected:
     // interaction logic
-    void StartInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) override;
-    void Interact(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) override;
-    void StopInteraction(const CommandQueue* queue, ursine::ecs::EntityUniqueID id) override;
+    void StartInteraction(const ursine::ecs::EntityHandle &entity) override;
+    void Interact(const ursine::ecs::EntityHandle &entity) override;
+    void StopInteraction(const ursine::ecs::EntityHandle &entity) override;
 
     virtual void ChildStartInteractionLogic(void) = 0;
     virtual void ChildStopInteractionLogic(void) = 0;
@@ -111,10 +111,10 @@ protected:
     void ChangeToInteractState(void);
     void ChangeToSuccessState(void);
 
-    void AddPlayer(ursine::ecs::Entity* player, int id);
+    void AddPlayer(const ursine::ecs::EntityHandle &player, int id);
     void ChangeEffect(int id);
 
-    void DealDamage(ursine::ecs::Entity* player);
+    void DealDamage(const ursine::ecs::EntityHandle &player);
     void UpdateDamageTimes(float dt);
 
     void onUpdate(EVENT_HANDLER(WORLD_UPDATE));
@@ -144,7 +144,7 @@ protected:
     TriggerType m_triggerType;
 
     // UI symbol to give player
-    std::string m_madSymbol;
+    ursine::resources::ResourceReference m_madSymbol;
 
 
 } Meta(Disable);

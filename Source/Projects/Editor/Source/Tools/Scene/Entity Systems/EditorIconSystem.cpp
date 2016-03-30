@@ -20,6 +20,7 @@
 
 #include <LightComponent.h>
 #include <CameraComponent.h>
+#include <ParticleSystemComponent.h>
 
 #include <EditorToolResources.h>
 #include <TextureData.h>
@@ -41,29 +42,33 @@ void EditorIconSystem::OnSceneReady(Scene *scene)
         .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorIconSystem::onIconAdd )
         .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorIconSystem::onLightTypeChange );
 
-    // Get all entities already in the world
-    auto cams = m_world->GetEntitiesFromFilter( ecs::Filter( ).All<ecs::Camera>( ) );
+    auto entities = m_world->GetActiveEntities( );
 
-    for (auto &cam : cams)
+    ecs::ComponentEventArgs args( 
+        ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, 
+        nullptr, 
+        nullptr
+    );
+
+    for (auto &entity : entities)
     {
-        ecs::ComponentEventArgs args( 
-            ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, 
-            cam, cam->GetComponent<ecs::Camera>( ) 
+        auto components = utils::MakeArray<ecs::Component*>(
+            entity->GetComponent<ecs::Camera>( ),
+            entity->GetComponent<ecs::Light>( ),
+            entity->GetComponent<ecs::ParticleSystem>( )
         );
 
-        onIconAdd( m_world, &args );
-    }
+        args.entity = entity;
 
-    auto lights = m_world->GetEntitiesFromFilter( ecs::Filter( ).All<ecs::Light>( ) );
+        for (auto *component : components)
+        {
+            if (!component)
+                continue;
 
-    for (auto &light : lights)
-    {
-        ecs::ComponentEventArgs args( 
-            ecs::WorldEventType::WORLD_ENTITY_COMPONENT_ADDED, 
-            light, light->GetComponent<ecs::Light>( )
-        );
+            args.component = component;
 
-        onIconAdd( m_world, &args );
+            onIconAdd( m_world, &args );
+        }
     }
 }
 
@@ -96,11 +101,22 @@ void EditorIconSystem::onIconAdd(EVENT_HANDLER(ecs::World))
             "Unable to load editor camera icon."
         );
 
-        if(texture != nullptr)
-            editorIcon->SetIcon( texture->GetTextureHandle( ) );
-        else
-            editorIcon->SetIcon( 0 );
+        editorIcon->SetIcon( texture->GetTextureHandle( ) );
+    }
+    else if (comp->Is<ecs::ParticleSystem>( ))
+    {
+        if (!editorIcon)
+            editorIcon = entity->AddComponent<EditorIcon>( );
 
+        resources::ResourceReference iconRef = editor_resources::IconParticleSystem;
+
+        auto *texture = iconRef.Load<resources::TextureData>( m_toolResources );
+
+        UAssert( texture != nullptr,
+            "Unable to load editor particle system icon."
+        );
+
+        editorIcon->SetIcon( texture->GetTextureHandle( ) );
     }
     else if (comp->Is<ecs::Light>( ))
     {

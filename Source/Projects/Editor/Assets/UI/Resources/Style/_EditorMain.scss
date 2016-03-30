@@ -1,9 +1,26 @@
 @import 'Config';
 
-#main-dock-container {
+#fullscreen-container {
   position: absolute;
   left: 0;
   right: 0;
   top: $header-height;
   bottom: 0;
+  z-index: 100;
+  pointer-events: none;
+
+  > .x-editor-window {
+    pointer-events: all;
+    width: 100%;
+    height: 100%;
+    outline: none;
+  }
+}
+
+#main-dock-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: $header-height;
+  bottom: $status-bar-height;
 }

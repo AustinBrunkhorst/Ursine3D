@@ -2,9 +2,16 @@ package ursine.editor;
 
 import haxe.rtti.Meta;
 import ursine.native.Extern;
-import ursine.editor.scene.component.ComponentDatabase;
-import ursine.controls.*;
+import ursine.controls.Menu;
+import ursine.controls.MainMenu;
+import ursine.controls.MenuItem;
+import ursine.controls.MenuSeparator;
+import ursine.controls.docking.DockContainer;
 import ursine.editor.MenuItemHandler;
+import ursine.editor.windows.OutputLog;
+import ursine.editor.resources.NativeResourceManager;
+import ursine.editor.scene.component.ComponentDatabase;
+import ursine.editor.scene.ScenePlayState;
 
 import ursine.editor.menus.MainMenus;
 
@@ -12,12 +19,24 @@ class Editor {
     public static var instance : Editor = null;
 
     public var mainMenu : MainMenu;
+    public var mainDock : DockContainer;
+
+    public var outputWindow : OutputLog;
 
     public var broadcastManager : NativeBroadcastManager;
 
     public var componentDatabase : ComponentDatabase;
 
     private var m_notificationManager : NativeNotificationManager;
+    private var m_resourceManager : NativeResourceManager;
+
+    private var m_statusTextContainer : js.html.DivElement;
+
+    private var m_toolsContainer : js.html.Element;
+    private var m_btnPlay : js.html.Element;
+    private var m_btnToggle : js.html.Element;
+    private var m_btnStep : js.html.Element;
+    private var m_btnStop : js.html.Element;
 
     public function new() {
         instance = this;
@@ -26,19 +45,37 @@ class Editor {
 
         broadcastManager = new NativeBroadcastManager( );
 
+        outputWindow = new OutputLog( );
+
+        broadcastManager.getChannel( 'SceneManager' )
+            .on( 'PlayStateChanged', onScenePlayStateChanged );
+
         componentDatabase = new ComponentDatabase(
             Extern.GetNativeComponentDatabase( )
         );
 
         m_notificationManager = new NativeNotificationManager( broadcastManager );
+        m_resourceManager = new NativeResourceManager( broadcastManager );
 
         buildMenus( );
+
+        m_statusTextContainer = cast js.Browser.document.querySelector( '#status-bar span' );
 
         js.Browser.document
             .querySelector( '#header-toolbar' )
             .appendChild( mainMenu );
 
         initSimulationPlayback( );
+
+        onScenePlayStateChanged( );
+    }
+
+    public function setStatusText(status : String) {
+        m_statusTextContainer.innerHTML = status;
+    }
+
+    public function toggleStatusBar(visible : Bool) {
+        untyped m_statusTextContainer.parentNode.style.display = visible ? 'block' : 'none';
     }
 
     private function buildMenus() {
@@ -106,10 +143,10 @@ class Editor {
                 item.text = itemName;
                 item.icon = details[ 3 ];
 
-                var handler = Reflect.field( handler.type, name );
+                var callback = Reflect.field( handler.type, name );
 
                 item.addEventListener( 'open', function(e) {
-                    Reflect.callMethod( handler.type, cast handler, [ e ] );
+                    Reflect.callMethod( null, cast callback, [ e ] );
                 } );
 
                 // separator before
@@ -124,6 +161,11 @@ class Editor {
                     parentMenu.appendChild( new MenuSeparator( ) );
                 }
             }
+
+            var init = Reflect.field( handler.type, 'init' );
+
+            if (init != null)
+                Reflect.callMethod( null, cast init, [ mainMenu ] );
         }
     }
 
@@ -151,38 +193,50 @@ class Editor {
     }
 
     private function initSimulationPlayback() {
-        var toolsContainer = js.Browser.document.querySelector( '#simulation-tools' );
+        m_toolsContainer = js.Browser.document.querySelector( '#simulation-tools' );
 
-        var btnPlay = js.Browser.document.querySelector( '#simulation-play' );
-        var btnToggle = js.Browser.document.querySelector( '#simulation-toggle' );
-        var btnStep = js.Browser.document.querySelector( '#simulation-step' );
-        var btnStop = js.Browser.document.querySelector( '#simulation-stop' );
+        m_btnPlay = js.Browser.document.querySelector( '#simulation-play' );
+        m_btnToggle = js.Browser.document.querySelector( '#simulation-toggle' );
+        m_btnStep = js.Browser.document.querySelector( '#simulation-step' );
+        m_btnStop = js.Browser.document.querySelector( '#simulation-stop' );
 
-        btnPlay.addEventListener( 'click', function() {
-            toolsContainer.classList.add( 'running' );
-
-            Extern.ScenePlayStart( );
+        m_btnPlay.addEventListener( 'click', function() {
+            Extern.SceneSetPlayState( ScenePlayState.Playing );
         } );
 
-        btnToggle.addEventListener( 'click', function() {
-            var playing = !toolsContainer.classList.contains( 'paused' );
+        m_btnToggle.addEventListener( 'click', function() {
+            var currentState = Extern.SceneGetPlayState( );
 
-            toolsContainer.classList.toggle( 'paused', playing );
-
-            Extern.SceneSetPlayState( !playing );
+            Extern.SceneSetPlayState( currentState == ScenePlayState.Playing ?
+                ScenePlayState.Paused : ScenePlayState.Playing
+            );
         } );
 
-        btnStep.addEventListener( 'click', function() {
-            if (btnStep.classList.contains( 'disabled' ))
-                return;
-
+        m_btnStep.addEventListener( 'click', function() {
             Extern.SceneStep( );
         } );
 
-        btnStop.addEventListener( 'click', function() {
-            toolsContainer.classList.remove( 'running', 'paused' );
-
-            Extern.ScenePlayStop( );
+        m_btnStop.addEventListener( 'click', function() {
+            Extern.SceneSetPlayState( ScenePlayState.InEditor );
         } );
+    }
+
+    private function onScenePlayStateChanged() {
+        var state = Extern.SceneGetPlayState( );
+
+        switch (state) {
+            case ScenePlayState.Playing: {
+                m_toolsContainer.classList.add( 'running' );
+                m_toolsContainer.classList.remove( 'paused' );
+            }
+
+            case ScenePlayState.Paused: {
+                m_toolsContainer.classList.add( 'running', 'paused' );
+            }
+
+            case ScenePlayState.InEditor: {
+                m_toolsContainer.classList.remove( 'running', 'paused' );
+            }
+        }
     }
 }

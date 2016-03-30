@@ -10,7 +10,15 @@ namespace ursine
         const extern GUID IconPointLight;
         const extern GUID IconSpotLight;
         const extern GUID IconCamera;
-    }   
+        const extern GUID IconParticleSystem;
+
+        const extern GUID ArchetypeTranslateTool;
+        const extern GUID ArchetypeScaleTool;
+        const extern GUID ArchetypeRotateTool;
+        const extern GUID ArchetypeDuplicateTool;
+
+        const extern GUID ModelTorus;
+    }
 }
 
 #endif // defined(URSINE_WITH_EDITOR)

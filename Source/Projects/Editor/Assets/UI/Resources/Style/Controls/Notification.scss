@@ -9,12 +9,18 @@ $icon-size: 22px;
   display: block;
   min-width: 200px;
   max-width: 485px;
-  padding: 7px;
+  padding: 10px;
   margin-bottom: 12px;
   background: #48484d;
   border: 1px solid #6d6d75;
   box-shadow: 0 4px 3px rgba(black, 0.40);
   pointer-events: all !important;
+  transform: translateX(100%);
+  transition: transform 225ms ease;
+
+  &.active {
+    transform: translateX(0);
+  }
 
   &:hover {
     .btn-close {

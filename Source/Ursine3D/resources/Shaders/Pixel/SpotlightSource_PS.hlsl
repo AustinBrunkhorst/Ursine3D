@@ -3,16 +3,25 @@ Texture2D DepthTexture : register(t0);
 Texture2D ColorSpecIntTexture: register(t1);
 Texture2D NormalTexture: register(t2);
 Texture2D SpecPowTexture: register(t3);
+Texture2D ShadowmapTexture: register(t4);
 
 //sample type
 SamplerState SampleType : register(s0);
+SamplerComparisonState PCFSampler : register(s1);
 
 //inv projection 
-cbuffer InvProj : register(b4)
+cbuffer invView : register(b4)
 {
-    float4x4 InvProj;
+    float4x4 invProj;
     float nearPlane;
     float farPlane;
+};
+
+cbuffer ShadowProj : register(b13)
+{
+    float4x4 invCamView;
+    matrix lightView;
+    matrix lightProj;
 };
 
 //buffer for light data
@@ -64,16 +73,58 @@ struct Material
 /////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 
+float LinearizeDepth(float depth)
+{
+    return (2.f * nearPlane) / (farPlane + nearPlane - depth * (farPlane - nearPlane));
+}
+
 //calculating world position
-float3 CalcWorldPos(float2 csPos, float linearDepth)
+float3 CalcViewPos(float2 csPos, float linearDepth)
 {
     float4 position;
     position.xy = csPos.xy;
     position.z = linearDepth;
     position.w = 1.0;
-    position = mul(position, InvProj);
+    position = mul(position, invProj);
     position.xyz /= position.w;
     return position.xyz;
+}
+
+float SpotShadowPCF(float3 position)
+{
+    // Transform the view position to world space
+    float4 worldSpace = mul(float4(position, 1.0), invCamView);
+
+    // transform world space into light projected space
+    float4 posShadowMap = mul(worldSpace, lightView);
+    posShadowMap = mul(posShadowMap, lightProj);
+
+    // Transform the position to shadow clip space
+    float3 UVD = posShadowMap.xyz / posShadowMap.w;
+
+    // Convert to shadow map UV values
+    UVD.xy = 0.5 * UVD.xy + 0.5;
+    UVD.y = 1.0 - UVD.y;
+    //float offsetX = 1.5;
+    //float offsetY = 0.00045f;
+
+    //float sum = 0;
+    //float x, y;
+
+    //for (y = -1.5; y <= 1.5; y += 1.5)
+    //    for (x = -1.5; x <= 1.5; x += 1.5)
+    //        sum += 
+
+    return ShadowmapTexture.SampleCmpLevelZero(PCFSampler, UVD.xy, UVD.z);
+
+    /*
+    return (ShadowmapTexture.SampleCmpLevelZero(PCFSampler, UVD.xy + float2(-1.5f, 0.5f) * offsetY, UVD.z) +
+    ShadowmapTexture.SampleCmpLevelZero(PCFSampler, UVD.xy + float2(0.5f, 0.5f) * offsetY, UVD.z) +
+    ShadowmapTexture.SampleCmpLevelZero(PCFSampler, UVD.xy + float2(-1.5f, -1.5f) * offsetY, UVD.z) +
+    ShadowmapTexture.SampleCmpLevelZero(PCFSampler, UVD.xy + float2(0.5, -1.5f) * offsetY, UVD.z)) * 0.25f;*/
+
+    // Compute the hardware PCF value, which compares the depth (z) to the shadowmap.
+    //return ShadowmapTexture.SampleCmpLevelZero(PCFSampler, UVD.xy, UVD.z);
 }
 
 //unpack the g buffer from our textures
@@ -143,41 +194,9 @@ float3 CalcPoint(float3 position, Material material)
     float3 finalLightColor = (diffuseColor.rgb + specularValue * material.specIntensity);
 
     // apply dotp, attenuation for distance and angle
-    finalLightColor *= normalScalar * angleAttenuation * distAttenuation * intensity;
+    finalLightColor *= material.diffuseColor.xyz * normalScalar * angleAttenuation * distAttenuation * intensity * SpotShadowPCF( position );
 
     return finalLightColor;
-
-
-    ///////////////////////////////////////////////////////////////////////
-    //float3 ToLight = lightPosition - position;
-    //float3 ToEye = -position;
-    //float DistToLight = length(ToLight);
-
-    //// Phong diffuse
-    //ToLight /= DistToLight; // Normalize
-    //float NDotL = saturate(dot(ToLight, material.normal));
-    //float3 finalColor = diffuseColor.rgb * NDotL;
-
-    //// Blinn specular
-    //ToEye = normalize(ToEye);
-    //float3 HalfWay = normalize(ToEye + ToLight);
-    //float NDotH = saturate(dot(HalfWay, material.normal));
-    //finalColor += diffuseColor.rgb * pow(NDotH, material.specPow) *
-    //    material.specIntensity;
-
-    //// Cone attenuation
-    //// get the angle from the ray to the pixel and our main direction
-    //float angleInCone = (dot(ToLight, lightDirection));
-
-    //// calculate final attenuation for the angle
-    //float conAtt = (angleInCone - outerAngle) /
-    //    (innerAngle - outerAngle);
-
-    //float Attn = saturate(1.0f - (DistToLight / lightSize));
-
-    //finalColor *= material.diffuseColor.xyz * Attn * conAtt;
-
-    //return finalColor * intensity;
 }
 
 float4 main(DS_OUTPUT In) : SV_TARGET
@@ -193,17 +212,10 @@ float4 main(DS_OUTPUT In) : SV_TARGET
     mat.specIntensity = gbd.SpecInt;
     mat.emissive = gbd.Emissive;
 
-    //calculate world position
+    //calculate view position
     In.cpPos.xy /= In.cpPos.w;
-    float3 pos = CalcWorldPos(In.cpPos.xy, gbd.LinearDepth);
+    float3 position = CalcViewPos(In.cpPos.xy, gbd.LinearDepth);
 
-    //get the final color
-    float4 finalColor;
-    finalColor.xyz = CalcPoint(pos, mat);
-    finalColor.w = 1.0;
-
-    if ( finalColor.x < 0 || finalColor.y < 0 || finalColor.z < 0 )
-        return float4(0, 0, 0, 0);
-
-    return finalColor;
+    //get the final color, return
+    return float4(CalcPoint(position, mat), 1.0f);
 }

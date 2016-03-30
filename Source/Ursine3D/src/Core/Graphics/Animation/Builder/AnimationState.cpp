@@ -15,6 +15,7 @@
 #include "UrsinePrecompiled.h"
 #include "AnimationState.h"
 #include "AnimationBuilder.h"
+#include "Animation.h"
 #include "Notification.h"
 
 #include "AnimationClipData.h"
@@ -22,66 +23,46 @@
 
 namespace ursine
 {
-    AnimationState::AnimationState()
-        : m_name("")
-        , m_looping(true)
-        , m_timePos(0.0f)
-        , m_transPos(0.0f)
-        , m_animname("")
-        , m_animation(nullptr)
-    {}
+    using namespace resources;
 
-    void AnimationState::OnSceneReady(void)
-    {
-        Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
-        if (!targetAnimation)
-        {
-#if defined(URSINE_WITH_EDITOR)
-            NotificationConfig error;
-
-            error.type = NOTIFY_ERROR;
-            error.header = "Animation doesn't exist";
-            error.message = "To add animation into the state, animation should exist in the Animation List";
-
-            EditorPostNotification(error);
-#endif
-            return;
-        }
-
-        m_animation = targetAnimation;
-    }
+    AnimationState::AnimationState(void)
+        : m_looping( true )
+        , m_timePos( 0.0f )
+        , m_transPos( 0.0f )
+        , m_animation( nullptr )
+        , m_loaded( false ) { }
 
     bool AnimationState::IsLooping(void) const
     {
         return m_looping;
     }
 
-    void AnimationState::SetLooping(const bool isLooping)
+    void AnimationState::SetLooping(bool isLooping)
     {
         m_looping = isLooping;
     }
 
-    const std::string &AnimationState::GetName(void) const
+    const std::string &AnimationState::GetStateName(void) const
     {
-        return m_name;
+        return m_stateName;
     }
 
-    void AnimationState::SetName(const std::string& name)
+    void AnimationState::SetStateName(const std::string& name)
     {
-        m_name = name;
+        m_stateName = name;
     }
     
-    float AnimationState::GetTimePosition(void) const
+    const float &AnimationState::GetTimePosition(void) const
     {
         return m_timePos;
     }
 
-    void AnimationState::SetTimePosition(const float position)
+    void AnimationState::SetTimePosition(float position)
     {
         m_timePos = position;
     }
 
-    void AnimationState::IncrementTimePosition(const float dt)
+    void AnimationState::IncrementTimePosition(float dt)
     {
         m_timePos += dt;
     }
@@ -89,58 +70,28 @@ namespace ursine
     // change this to push_back or something that can handle multiple animations insdie
     const Animation* AnimationState::GetAnimation(void) const
     {
-        return m_animation;
+        if (m_animation)
+            return m_animation;
+        else
+            return nullptr;
     }
 
-    void AnimationState::SetAnimation(Animation* animation)
+    ///// FOR INSTATE ANIMATION
+    //const std::vector<Animation*> AnimationState::GetAnimationVector(void) const
+    //{
+    //    return m_animationVec;
+    //}
+
+    const ResourceReference &AnimationState::GetClip(void) const
     {
-        m_animation = animation;
+        return m_clip;
     }
 
-    const std::string &AnimationState::GetAnimationName(void) const
+    void AnimationState::SetClip(const ResourceReference &clip)
     {
-        return m_animname;
-    }
-    
-    void AnimationState::SetAnimationName(const std::string& name)
-    {
-        if ("" == name)
-            return;
-        m_animname = name;
+        m_clip = clip;
 
-        Animation* targetAnimation = AnimationBuilder::GetAnimationByName(m_animname);
-        if (!targetAnimation)
-        {
-#if defined(URSINE_WITH_EDITOR)
-            NotificationConfig error;
-
-            error.type = NOTIFY_ERROR;
-            error.header = "Animation doesn't exist";
-            error.message = "To add animation into the state, animation should exist in the Animation List";
-
-            EditorPostNotification(error);
-#endif
-            return;
-        }
-
-        m_animation = targetAnimation;
-    }
-
-    // make this can handle multiple names of animation name
-    const Animation* AnimationState::GetAnimationByName(void) const
-    {
-        return m_animation;
-    }
-
-    void AnimationState::SetAnimationByName(const std::string& name)
-    {
-        Animation* targetAnimation = AnimationBuilder::GetAnimationByName(name);
-        if (!targetAnimation)
-        {
-            m_animation = nullptr;
-            return;
-        }
-        m_animation = targetAnimation;
+        m_loaded = false;
     }
 
     const float &AnimationState::GetTransPosition(void) const
@@ -148,26 +99,41 @@ namespace ursine
         return m_transPos;
     }
 
-    void AnimationState::SetTransPosition(const float& tPos)
+    void AnimationState::SetTransPosition(float tPos)
     {
         m_transPos = tPos;
     }
-    
-    void AnimationState::PlayingAnimation(void)
+
+    float AnimationState::GetRatio(void) const
     {
         if (!m_animation)
-            return;
+            return false;
 
-        unsigned keyframeCount1 = m_animation->GetRigKeyFrameCount();
-        auto &curr_firstFrame = m_animation->GetKeyframe(0, 0);
-        auto &curr_lastFrame = m_animation->GetKeyframe(keyframeCount1 - 1, 0);
+        unsigned keyframeCount1 = m_animation->GetRigKeyFrameCount( );
+        auto &lastFrame = m_animation->GetKeyframe( keyframeCount1 - 1, 0 );
 
-        if (GetTimePosition() > curr_lastFrame.length)
+        return m_timePos / lastFrame.length;
+    }
+
+    bool AnimationState::PlayingAnimation(void)
+    {
+        if (!m_animation)
+            return false;
+
+        unsigned keyframeCount1 = m_animation->GetRigKeyFrameCount( );
+        auto &curr_firstFrame = m_animation->GetKeyframe( 0, 0 );
+        auto &curr_lastFrame = m_animation->GetKeyframe( keyframeCount1 - 1, 0 );
+
+        if (m_timePos > curr_lastFrame.length)
         {
-            if (IsLooping())
-                SetTimePosition(curr_firstFrame.length);
+            if (m_looping)
+                SetTimePosition( curr_firstFrame.length );
             else
-                SetTimePosition(curr_lastFrame.length);
+                SetTimePosition( curr_lastFrame.length );
+
+            return true;
         }
+
+        return false;
     }
 }

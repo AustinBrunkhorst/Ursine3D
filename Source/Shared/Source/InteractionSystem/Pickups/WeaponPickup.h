@@ -12,10 +12,15 @@
 ** -------------------------------------------------------------------------*/
 
 #include <Component.h>
+#include <ArchetypeData.h>
+
 #include "BaseInteraction.h"
 #include "AbstractWeapon.h"
+#include "GhostComponent.h"
+#include "TextureData.h"
 
 struct Inventory;
+class CommandQueue;
 
 struct WeaponPickup 
     : ursine::ecs::Component
@@ -37,7 +42,7 @@ public:
     void SetPickupTime(const float time);
 
     EditorField(
-        WeaponType WeaponType,
+        WeaponType weaponType,
         GetWeaponType,
         SetWeaponType
     );
@@ -45,31 +50,32 @@ public:
     WeaponType GetWeaponType(void) const;
     void SetWeaponType(WeaponType weaponType);
 
-    EditorField(
-        std::string Weapon,
+    EditorResourceField(
+        ursine::resources::ArchetypeData, Weapon,
         GetWeaponToPickup,
         SetWeaponToPickup
     );
 
-    const std::string& GetWeaponToPickup(void) const;
-    void SetWeaponToPickup(const std::string& weapon);
+    const ursine::resources::ResourceReference& GetWeaponToPickup(void) const;
+    void SetWeaponToPickup(const ursine::resources::ResourceReference& weapon);
 
-    EditorField(
-        std::string Texture,
+    EditorResourceField(
+        ursine::resources::TextureData,
+        Texture,
         GetTexture,
         SetTexture
     );
 
-    const std::string& GetTexture(void) const;
-    void SetTexture(const std::string& texture);
+    const ursine::resources::ResourceReference& GetTexture(void) const;
+    void SetTexture(const ursine::resources::ResourceReference& texture);
 
     void SetAmmoInfo(const int ammo, const int clip);
 
 private:
     // interaction logic
-    void StartInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity) override;
-    void Interact(const CommandQueue* queue, ursine::ecs::EntityHandle &entity) override;
-    void StopInteraction(const CommandQueue* queue, ursine::ecs::EntityHandle &entity) override;
+    void StartInteraction(const ursine::ecs::EntityHandle &entity) override;
+    void Interact(const ursine::ecs::EntityHandle &entity) override;
+    void StopInteraction(const ursine::ecs::EntityHandle &entity) override;
     void InteractionComplete(void);
     void CheckForAmmo(const ursine::ecs::EntityHandle &entity);
 
@@ -92,16 +98,19 @@ private:
     // inventory handles
     std::unordered_map<ursine::ecs::EntityHandle, Inventory*> m_inventories;
 
+    // command queues
+    std::unordered_map<ursine::ecs::EntityHandle, CommandQueue*> m_queues;
+
     // Weapon the will be picked up on completed interaction
-    std::string m_weaponToPickup;
+    ursine::resources::ResourceReference m_weaponToPickup;
 
     // Texture to display to object
-    std::string m_texture;
+    ursine::resources::ResourceReference m_texture;
 
     void OnInitialize(void) override;
 } Meta(
     Enable, 
     DisplayName( "WeaponPickup" ), 
-    RequiresComponents( typeof( Interactable ) )
+    RequiresComponents( typeof( Interactable ), typeof( ursine::ecs::Ghost) )
 );
 

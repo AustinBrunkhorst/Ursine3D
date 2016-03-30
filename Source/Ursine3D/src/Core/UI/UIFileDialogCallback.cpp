@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -30,7 +30,7 @@ namespace ursine
     {
         if (m_callback) 
         {
-            fs::FileList output;
+            fs::PathList output;
 
             for (auto &path : paths)
                 output.emplace_back( path.ToString( ) );

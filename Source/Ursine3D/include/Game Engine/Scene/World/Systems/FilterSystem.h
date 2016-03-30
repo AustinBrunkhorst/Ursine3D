@@ -59,7 +59,6 @@ namespace ursine
             virtual void Enable(const EntityHandle &entity);
             virtual void Disable(const EntityHandle &entity);
 
-            
             virtual void Initialize(void);
             virtual void Remove(void);
 

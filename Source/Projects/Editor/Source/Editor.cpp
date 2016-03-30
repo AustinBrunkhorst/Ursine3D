@@ -14,18 +14,18 @@
 #include "Precompiled.h"
 
 #include "Editor.h"
-#include "Project.h"
+#include "Project.h" 
+
 #include <Application.h>
 #include <Scene.h>
 #include <WindowManager.h>
 #include <UIManager.h>
+
 #include <Timer.h>
 
 #include <ResourcePipelineManager.h>
 
 using namespace ursine;
-
-namespace rp = resources::pipeline;
 
 namespace
 {
@@ -38,12 +38,27 @@ namespace
     const auto kEntryPointSplash = "Splash.html";
     const auto kEntryPointEditor = "Editor.html";
 
-    const auto kDefaultPreferencesFile = "Assets/Config/DefaultEditor.prefs";
+    const auto kDefaultPreferencesFile = "Resources/Config/DefaultEditor.prefs";
     const auto kPreferencesFile = "Editor.prefs";
     
     const auto kWindowLocationCentered = Vec2 { -1, -1 };
 
     const auto kProjectExtension = "ursineproj";
+
+    const auto kResourceFocusTimeout = TimeSpan::FromSeconds( 1.0f );
+}
+
+namespace ursine
+{
+    UIScreenManager *JSGetGlobalScreenManager(void)
+    {
+        return &GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetScreenManager( );
+    }
+
+    CefRefPtr<CefBrowser> JSGetGlobalBrowser(void)
+    {
+        return GetCoreSystem( Editor )->GetMainWindow( ).GetUI( )->GetBrowser( );
+    }
 }
 
 CORE_SYSTEM_DEFINITION( Editor );
@@ -51,6 +66,8 @@ CORE_SYSTEM_DEFINITION( Editor );
 Editor::Editor(void)   
     : m_graphics( nullptr ) 
     , m_project( nullptr ) { }
+
+///////////////////////////////////////////////////////////////////////////////
 
 Editor::~Editor(void) { } 
     
@@ -63,6 +80,8 @@ const EditorWindow &Editor::GetMainWindow(void) const
     return m_mainWindow;
 }
      
+///////////////////////////////////////////////////////////////////////////////
+
 const EditorPreferences &Editor::GetPreferences(void) const
 {
     return m_preferences;
@@ -117,6 +136,8 @@ void Editor::CreateNewProject(const std::string &name, const std::string &direct
     LoadProject( projectFileName.string( ) );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void Editor::LoadProject(const std::string &filename)
 {
 #if defined(PLATFORM_WINDOWS)
@@ -150,6 +171,8 @@ void Editor::LoadProject(const std::string &filename)
      
     Application::Instance->Exit( );
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void Editor::SetProjectStatus(const std::string &status)
 {
@@ -210,7 +233,9 @@ void Editor::OnInitialize(void)
 
 void Editor::OnRemove(void)
 {
-    writePreferences( );
+    // only write the preferences if we were in the editor
+    if (m_startupConfig.updateHandler == &Editor::onEditorUpdate)
+        writePreferences( );
 
     Application::Instance->Disconnect(
         APP_UPDATE,
@@ -219,9 +244,14 @@ void Editor::OnRemove(void)
     );
 
     m_mainWindow.m_window->Listener( this )
-        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize ); 
+        .Off( WINDOW_RESIZE, &Editor::onMainWindowResize )
+        .Off( WINDOW_FOCUS_CHANGED, &Editor::onMainWindowFocusChanged );
 
-    m_mainWindow.m_ui->Disconnect( UI_LOADED, this, &Editor::onUILoaded );
+    m_buildPipelineFocusTimeout.Cancel( );
+
+    m_mainWindow.m_ui->Listener( this )
+        .Off( UI_LOADED, &Editor::onUILoaded )
+        .Off( UI_POPUP_CREATED, &Editor::onUIPopup );
 
     m_mainWindow.m_ui->Close( );
     m_mainWindow.m_ui = nullptr;
@@ -235,6 +265,8 @@ void Editor::OnRemove(void)
 
     m_project = nullptr;   
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void Editor::loadPreferences(void)
 {
@@ -258,6 +290,8 @@ void Editor::loadPreferences(void)
     m_preferences = meta::Type::DeserializeJson<EditorPreferences>( prefsJson );
 }
 
+///////////////////////////////////////////////////////////////////////////////
+
 void Editor::writePreferences(void)
 {
     auto window = m_mainWindow.m_window;
@@ -271,6 +305,8 @@ void Editor::writePreferences(void)
 
     fs::WriteAllText( kPreferencesFile, prefsJson );
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 std::string Editor::findAvailableProject(void) const
 {
@@ -288,7 +324,7 @@ std::string Editor::findAvailableProject(void) const
     {
         if (fs::exists( file ))
             return file;
-}
+    }
 
     // couldn't find one
     return "";
@@ -377,7 +413,9 @@ void Editor::initializeUI(void)
         m_startupConfig.uiEntryPoint 
     );
 
-    m_mainWindow.m_ui->Connect( UI_LOADED, this, &Editor::onUILoaded );
+    m_mainWindow.m_ui->Listener( this )
+        .On( UI_LOADED, &Editor::onUILoaded )
+        .On( UI_POPUP_CREATED, &Editor::onUIPopup );
 
     m_mainWindow.m_ui->SetViewport( {
         0, 0,
@@ -400,13 +438,13 @@ void Editor::initializeProject(const std::string &fileName)
     }
     catch (...)
     {
-        UError( "Unable to resolve project file name." );
-    }
+        UError( "Unable to resolve project file name." ); 
+    } 
 
     std::string projectJsonText;
 
     UAssert( fs::LoadAllText( projectFileName.string( ), projectJsonText ),
-        "Unable to open project file."
+        "Unable to open project file." 
     );
 
     std::string projectJsonError;
@@ -425,9 +463,9 @@ void Editor::initializeProject(const std::string &fileName)
          
     auto &recentProjects = m_preferences.recentProjects;
 
-    // add it as a recent project if it doesn't already exist
-    if (recentProjects.Find( projectFileName.string( ) ) == recentProjects.end( ))
-        recentProjects.Insert( recentProjects.begin( ), projectFileName.string( ) );
+    // remove it if it existed, then add it to the beginning
+    recentProjects.Remove( projectFileName.string( ) );
+    recentProjects.Insert( recentProjects.begin( ), projectFileName.string( ) );
 
     auto &resourcePipeline = m_project->GetResourcePipeline( );
 
@@ -438,6 +476,8 @@ void Editor::initializeProject(const std::string &fileName)
 
     resourcePipeline.Build( );
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void Editor::exitSplashScreen(void)
 {
@@ -454,7 +494,7 @@ void Editor::exitSplashScreen(void)
     if (m_preferences.windowLocation == kWindowLocationCentered)
         window->SetLocationCentered( );
     else
-        window->SetLocation( m_preferences.windowLocation );
+        window->SetLocation( m_preferences.windowLocation ); 
 
     m_mainWindow.m_ui->GetBrowser( )->GetMainFrame( )->LoadURL( 
         kEntryPointDir + kEntryPointEditor 
@@ -463,15 +503,20 @@ void Editor::exitSplashScreen(void)
     ursine::GUID lastWorldGUID;
 
     if (m_preferences.lastOpenWorld.empty( ))
-        lastWorldGUID = GUIDNullGenerator( )( );
+        lastWorldGUID = kNullGUID;
     else
         lastWorldGUID = GUIDStringGenerator( )( m_preferences.lastOpenWorld );
 
     auto &resourceManager = m_project->GetScene( ).GetResourceManager( );
 
+    m_project->GetScene( ).GetScreenManager( ).SetUI( m_mainWindow.m_ui );
+
     m_project->initializeScene(
         resourceManager.CreateReference( lastWorldGUID )
     );
+
+    m_mainWindow.m_window->Listener( this )
+        .On( WINDOW_FOCUS_CHANGED, &Editor::onMainWindowFocusChanged );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -485,6 +530,13 @@ void Editor::onUILoaded(EVENT_HANDLER(ursine::UIView))
     {
         m_mainWindow.m_window->Show( true );
     } );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void Editor::onUIPopup(EVENT_HANDLER(ursine::UIView))
+{
+    EVENT_ATTRS(ursine::UIView, ursine::UIPopupArgs);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -526,6 +578,26 @@ void Editor::onMainWindowResize(EVENT_HANDLER(Window))
 
 ///////////////////////////////////////////////////////////////////////////////
 
+void Editor::onMainWindowFocusChanged(EVENT_HANDLER(Window))
+{
+    EVENT_ATTRS(Window, WindowFocusArgs);
+
+    m_buildPipelineFocusTimeout.Cancel( );
+
+    if (args->focused)
+    {
+        m_buildPipelineFocusTimeout = Timer::Create( kResourceFocusTimeout ).Completed( [=] {
+            m_project->GetResourcePipeline( ).AllowFileActionProcessing( true );
+        } );
+    } 
+    else
+    {
+        m_project->GetResourcePipeline( ).AllowFileActionProcessing( false );
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
 void Editor::onPipelinePreBuildItemStart(EVENT_HANDLER(rp::ResourcePipelineManager))
 {
     EVENT_ATTRS(rp::ResourcePipelineManager, rp::ResourceBuildArgs);
@@ -540,8 +612,10 @@ void Editor::onPipelinePreBuildItemStart(EVENT_HANDLER(rp::ResourcePipelineManag
             { "item", fileName.string( ) },
             { "progress", args->progress }
         } 
-    );
+    ); 
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void Editor::onPipelinePreBuildItemPreviewStart(EVENT_HANDLER(rp::ResourcePipelineManager))
 {
@@ -575,6 +649,8 @@ void Editor::onPipelinePreBuildComplete(EVENT_HANDLER(rp::ResourcePipelineManage
 
     Application::PostMainThread( std::bind( &Editor::exitSplashScreen, this ) );
 }
+
+///////////////////////////////////////////////////////////////////////////////
 
 void Editor::onSceneWorldChanged(EVENT_HANDLER(Scene))
 {

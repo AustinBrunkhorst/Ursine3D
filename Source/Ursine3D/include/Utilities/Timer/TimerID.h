@@ -45,7 +45,7 @@ namespace ursine
         void Resume(void);
 
         // Cancels the timer.
-        void Cancel(void) const;
+        void Cancel(void);
 
         // Sets the timer to repeat "count" times. use Timer::REPEAT_FOREVER to 
         // repeat until cancelled.

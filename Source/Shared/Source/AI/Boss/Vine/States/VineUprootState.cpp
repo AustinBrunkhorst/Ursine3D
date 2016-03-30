@@ -25,8 +25,11 @@
 #include <ParticleEmitterComponent.h>
 #include <Model3DComponent.h>
 #include <BoxColliderComponent.h>
+#include <GhostComponent.h>
+#include <EntityEvent.h>
 
 using namespace ursine;
+using namespace ecs;
 
 VineUprootState::VineUprootState(void)
     : VineAIState( "Uproot State" )
@@ -42,6 +45,7 @@ void VineUprootState::Enter(VineAIStateMachine *machine)
     m_finished = false;
     m_animating = false;
     m_state = UprootState::Burrowing;
+    machine->SetBool( VineAIStateMachine::IsHome, false );
 }
 
 void VineUprootState::Update(VineAIStateMachine *machine)
@@ -57,7 +61,7 @@ void VineUprootState::Update(VineAIStateMachine *machine)
     {
         case UprootState::Burrowing:
         {
-            playAnimation( animator, "Burrow" );
+            playAnimation( animator, "Spike_Down" );
             break;
         }
         case UprootState::Digging:
@@ -119,20 +123,15 @@ void VineUprootState::Update(VineAIStateMachine *machine)
         }
         case UprootState::Uprooting:
         {
-            playAnimation( animator, "Uproot" );
+            playAnimation( animator, "Spike_Up" );
 
             auto models = aiOwner->GetComponentsInChildren<ecs::Model3D>( );
 
             for (auto &model : models)
                 model->SetActive( true );
 
-            auto boxCollider = aiOwner->GetComponentInChildren<ecs::BoxCollider>( );
-
-            m_originalDimensions = boxCollider->GetDimensions( );
-            boxCollider->SetDimensions( ai->GetColliderSize( ) );
-
-            // We've successfully pursued our target
-            machine->SetBool( VineAIStateMachine::PursueTarget, false );
+            // Update the vine's "time of last pursue"
+            ai->m_timeOfLastPursue = Application::Instance->GetTimeSinceStartup( );
 
             break;
         }
@@ -147,26 +146,26 @@ void VineUprootState::Exit(VineAIStateMachine *machine)
     );
 }
 
-void VineUprootState::playAnimation(EntityAnimator *animator, const std::string &clip)
+void VineUprootState::playAnimation(Animator *animator, const std::string &clip)
 {
-    animator->Play( clip );
+    animator->SetCurrentState( clip );
 
     m_animating = true;
 
-    animator->Listener( this )
-        .On( EntityAnimatorEvent::FinishedAnimating, &VineUprootState::onAnimationFinished );
+    animator->GetOwner( )->Listener( this )
+        .On( ENTITY_ANIMATION_FINISH, &VineUprootState::onAnimationFinished );
 }
 
-void VineUprootState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
+void VineUprootState::onAnimationFinished(EVENT_HANDLER(Entity))
 {
-    EVENT_ATTRS(EntityAnimator, ursine::ecs::EntityEventArgs);
+    EVENT_ATTRS(Entity, EntityEventArgs);
 
     switch (m_state)
     {
         case UprootState::Burrowing:
         {
             // tell all models to turn themselves off
-            auto models = sender->GetOwner( )->GetComponentsInChildren<ecs::Model3D>( );
+            auto models = sender->GetComponentsInChildren<Model3D>( );
 
             for (auto &model : models)
                 model->SetActive( false );
@@ -178,10 +177,6 @@ void VineUprootState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
         {
             m_finished = true;
 
-            auto boxCollider = sender->GetOwner( )->GetComponentInChildren<ecs::BoxCollider>( );
-
-            boxCollider->SetDimensions( m_originalDimensions );
-
             break;
         }
     }
@@ -189,5 +184,5 @@ void VineUprootState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
     m_animating = false;
 
     sender->Listener( this )
-        .Off( EntityAnimatorEvent::FinishedAnimating, &VineUprootState::onAnimationFinished );
+        .Off( ENTITY_ANIMATION_FINISH, &VineUprootState::onAnimationFinished );
 }

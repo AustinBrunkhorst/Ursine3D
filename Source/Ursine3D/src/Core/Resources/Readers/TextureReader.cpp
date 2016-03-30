@@ -15,26 +15,15 @@ namespace ursine
 
         ResourceData::Handle TextureReader::Read(ResourceReader &input)
         {
-            size_t bufferSize;
-            uint8 *buffer;
+            BinaryData data;
 
-            input.Read( bufferSize );
-
-            buffer = new uint8[ bufferSize ];
-
-            auto bytesRead = input.ReadBytes( reinterpret_cast<char*>( buffer ), bufferSize );
-
-            UAssertCatchable( bytesRead == bufferSize,
-                "Mismatch buffer sizes. Expected %zd bytes got %zd",
-                bufferSize,
-                bytesRead
-            );
+            input.Read( data );
 
             dx::TexMetadata meta;
 
             auto result = GetMetadataFromDDSMemory( 
-                buffer, 
-                bytesRead, 
+                data.GetData( ), 
+                data.GetSize( ), 
                 dx::DDS_FLAGS_NONE, 
                 meta 
             );
@@ -43,16 +32,11 @@ namespace ursine
                 "Unable to load DDS from memory."
             );
 
-            auto data = std::make_shared<TextureData>(
-                buffer, 
-                bytesRead, 
+            return std::make_shared<TextureData>(
+                std::move( data ),
                 static_cast<unsigned>( meta.width ), 
                 static_cast<unsigned>( meta.height ) 
             );
-
-            delete[] buffer;
-
-            return data;
         }
     }
 }

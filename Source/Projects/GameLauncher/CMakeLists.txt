@@ -1,0 +1,29 @@
+cmake_minimum_required(VERSION 3.0)
+
+# disable exceptions
+add_definitions(-D_HAS_EXCEPTIONS=0)
+
+include(GlobalConfig)
+
+add_subdirectory(../../Shared "${CMAKE_CURRENT_BINARY_DIR}/Shared")
+
+include_directories(${Shared_INCLUDE_DIRS})
+
+ursine_project(GameLauncher
+    FOLDER "Projects"
+    TYPE EXE
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX
+    COPY_SHADERS "Resources/Shaders/"
+    SOURCE_DIR "Source"
+    INCLUDE_DIR "Source"
+    SYM_LINKS "Resources"
+    PARSE_SOURCE_GROUPS
+    RECURSIVE_INCLUDES
+    BUILD_META
+    META_HEADER "Reflection.h"
+    META_MODULE_HEADER "GameLauncherReflectionModule.h"
+    META_MODULE_DEPENDS Ursine3D Shared
+    PCH_NAME "Precompiled"
+)
+
+target_link_libraries(GameLauncher Shared)

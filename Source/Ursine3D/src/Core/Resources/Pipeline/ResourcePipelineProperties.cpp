@@ -30,10 +30,34 @@ ResourceSyncConfig::ResourceSyncConfig(const FileExclusionList &exclusionExpress
     : exclusionExpressions( exclusionExpressions )
 {
     for (auto &expression : exclusionExpressions)
-        m_exclusionExpressions.emplace_back( expression );
+    {
+        try
+        {
+            m_exclusionExpressions.emplace_back( expression );
+        }
+        catch (boost::regex_error &e)
+        {
+            UError( "Invalid sync exclusion expression.\nerror: %s", e.what( ) );
+        }
+    }
 }
 
 const std::vector<boost::regex> &ResourceSyncConfig::GetBuiltExclusionExpressions(void) const
 {
     return m_exclusionExpressions;
+}
+
+bool ResourceSyncConfig::IsExcluded(const std::string &path) const
+{
+    boost::cmatch match;
+
+    auto *str = path.c_str( );
+
+    for (auto &expression : m_exclusionExpressions)
+    {
+        if (boost::regex_search( str, match, expression ))
+            return true;
+    }
+
+    return false;
 }

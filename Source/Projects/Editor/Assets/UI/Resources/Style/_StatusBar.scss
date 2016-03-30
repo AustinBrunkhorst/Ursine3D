@@ -1,0 +1,25 @@
+@import 'Config';
+
+body {
+  padding-bottom: $status-bar-height;
+}
+
+#status-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: $status-bar-height;
+  background: $status-bar-bg-color;
+  border-top: 1px solid #3f3f46;
+  z-index: 500;
+
+  > span {
+    display: inline-block;
+    padding-left: 5px;
+    font-size: 12px;
+    line-height: $status-bar-height;
+    vertical-align: middle;
+    color: #999999;
+  }
+}

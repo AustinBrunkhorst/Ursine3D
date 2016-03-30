@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -35,9 +35,12 @@ namespace ursine
             friend class RenderableManager;
         public:
             Renderable(void);
+
             void Initialize(void);
+
             void SetEntityID(ecs::EntityID id);
             ecs::EntityID GetEntityID(void) const;
+
             void SetOverdraw(bool draw);
             bool GetOverdraw() const;
 
@@ -51,6 +54,8 @@ namespace ursine
             void SetActive(const bool isActive);
 
         private:
+            virtual void Uninitialize(GfxManager *mgr);
+
             ecs::EntityID m_entityID;
             bool m_active;
             bool m_useOverdraw;
@@ -117,6 +122,9 @@ namespace ursine
             bool GetShadowCaster(void) const;
             void SetShaderCaster(bool castShadow);
 
+            const Vec2 &GetTextureUVOffset(void) const;
+            void SetTextureUVOffset(const Vec2 &offset);
+
         private:
             float m_emissive;
             float m_specPow;
@@ -129,6 +137,8 @@ namespace ursine
 
             float m_animationTime;
             std::vector<SMat4> m_matrixPalette;
+
+            Vec2 m_textureUVOffset;
 
             // for multimaps
             int m_meshIndex;
@@ -173,6 +183,8 @@ namespace ursine
         // LIGHT ////////////////////////////////////////////////////
         class Light : public Renderable
         {
+            friend class RenderableManager;
+
         public:
             //enum for the different types of lights
             enum LightType
@@ -215,7 +227,21 @@ namespace ursine
             void SetSpotlightTransform(const SMat4 &transf);
             const SMat4 &GetSpotlightTransform(void) const;
 
+            SMat4 GenerateViewSpaceShadowTransform(void) const;
+            SMat4 GenerateViewSpaceShadowProjection(void) const;
+
+            SMat4 GenerateShadowView(void) const;
+            SMat4 GenerateShadowProjection(void) const;
+
+            unsigned GetShadowmapWidth(void) const;
+            void SetShadowmapWidth(unsigned width);
+
+            GfxHND GetShadowmapHandle(void) const;
+            void SetShadowmapHandle(GfxHND handle);
+
         private:
+            void Uninitialize(GfxManager *mgr) override;
+
             LightType m_type;
             SVec3 m_position;
             Color m_color;
@@ -225,6 +251,9 @@ namespace ursine
 
             Vec2 m_spotlightAngles;
             SMat4 m_spotlightTransform;
+
+            unsigned m_shadowmapWidth;
+            GfxHND m_shadowmap;
         };
 
         /////////////////////////////////////////////////////////////
@@ -257,6 +286,7 @@ namespace ursine
             int SpawnParticle(void);
 
             void DestroyParticle(const int index);
+            void DestroyAllParticles(void);
 
             const SVec3 &GetPosition(void) const;
             void SetPosition(const SVec3 &position);
@@ -272,6 +302,9 @@ namespace ursine
 
             bool GetSystemSpace(void) const;
             void SetSystemSpace(const bool useWorldCoordinates);
+
+            const SMat4 &GetTransform(void) const;
+            void SetTransform(const SMat4 &transform);
         private:
             // members
             unsigned m_backIndex;
@@ -285,6 +318,8 @@ namespace ursine
 
             bool m_useAdditive;
             bool m_worldSpace;
+
+            SMat4 m_transform;
         };
 
         /////////////////////////////////////////////////////////////

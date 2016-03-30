@@ -34,6 +34,9 @@ namespace ursine
 {
     template<typename T>
     Array<T>::Array(void)
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        : m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -41,6 +44,9 @@ namespace ursine
     template<typename T>
     Array<T>::Array(const Array &rhs)
         : m_impl( rhs.m_impl )
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        , m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -48,6 +54,9 @@ namespace ursine
     template<typename T>
     Array<T>::Array(const Array &&rhs)
         : m_impl( std::move( rhs.m_impl ) )
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        , m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -55,6 +64,9 @@ namespace ursine
     template<typename T>
     Array<T>::Array(const std::vector<T> &rhs)
         : m_impl( rhs )
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        , m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -62,6 +74,9 @@ namespace ursine
     template<typename T>
     Array<T>::Array(const std::initializer_list<T> &rhs)
         : m_impl( rhs )
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        , m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -69,6 +84,9 @@ namespace ursine
     template<typename T>
     Array<T>::Array(const std::initializer_list<T> &&rhs)
         : m_impl( std::move( rhs ) )
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+        , m_modifyEvents( this )
+    #endif
     {
 
     }
@@ -172,17 +190,29 @@ namespace ursine
     template<typename T>
     void Array<T>::Insert(ConstIterator position, const T &value)
     {
-        m_impl.insert( position, value );
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
 
-        NOTIFY_MODIFICATION( position - m_impl.cbegin( ), AMODIFY_INSERT, value );
+        auto index = position - m_impl.cbegin( );
+
+    #endif
+
+        pm_impl.insert( position, value );
+
+        NOTIFY_MODIFICATION( index, AMODIFY_INSERT, value );
     }
 
     template<typename T>
     void Array<T>::Insert(ConstIterator position, const T &&value)
     {
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+
+        auto index = position - m_impl.cbegin( );
+
+    #endif
+
         m_impl.emplace( position, std::move( value ) );
 
-        NOTIFY_MODIFICATION( position - m_impl.cbegin( ), AMODIFY_INSERT, value );
+        NOTIFY_MODIFICATION( index, AMODIFY_INSERT, value );
     }
 
     template<typename T>
@@ -196,9 +226,15 @@ namespace ursine
     template<typename T>
     void Array<T>::Remove(ConstIterator item)
     {
+    #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
+
+        auto index = item - m_impl.cbegin( );
+
+    #endif
+
         m_impl.erase( item );
 
-        NOTIFY_MODIFICATION( item - m_impl.cbegin( ), AMODIFY_REMOVE );
+        NOTIFY_MODIFICATION( index, AMODIFY_REMOVE );
     }
 
     template<typename T>
@@ -226,18 +262,18 @@ namespace ursine
     template<typename T>
     void Array<T>::Remove(const T &value)
     {
-        auto find = Find( value );
+        auto search = Find( value );
 
-        if (find == end( ))
+        if (search == end( ))
             return;
 
     #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
 
-        SizeType index = begin - m_impl.cbegin( );
+        SizeType index = search - m_impl.cbegin( );
 
     #endif
 
-        m_impl.erase( find );
+        m_impl.erase( search );
 
         NOTIFY_MODIFICATION( index, AMODIFY_REMOVE );
     }

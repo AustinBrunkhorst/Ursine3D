@@ -4,19 +4,13 @@
 #include "AbstractWeapon.h"
 #include <Raycasting.h>
 
-#define PROJ_EDITOR_FIELDS( )            \
-    EditorField(                         \
-        float ProjectileSpeed,           \
-        GetProjSpeed,                    \
-        SetProjSpeed                     \
-    );                                   \
-                                         \
-    EditorField(                         \
-        std::string ArchetypeToShoot,    \
-        GetArchetypeToShoot,             \
-        SetArchetypeToShoot              \
-    );                                   \
-                                         \
+#define PROJ_EDITOR_FIELDS( )             \
+    EditorResourceField(                  \
+        ursine::resources::ArchetypeData, \
+        archetypeToShoot,                 \
+        GetArchetypeToShoot,              \
+        SetArchetypeToShoot               \
+    );                                    \
 AbstractWeaponFields( )
 
 struct AbstractProjWeapon : AbstractWeapon
@@ -24,17 +18,11 @@ struct AbstractProjWeapon : AbstractWeapon
 
     AbstractProjWeapon(void);
 
-    float GetProjSpeed(void) const;
-    void SetProjSpeed(const float speed);
-
-    const std::string& GetArchetypeToShoot(void) const;
-    void SetArchetypeToShoot(const std::string &archetype);
+    const ursine::resources::ResourceReference &GetArchetypeToShoot(void) const;
+    void SetArchetypeToShoot(const ursine::resources::ResourceReference &archetype);
 
 protected:
 
-    // projectile speed
-    float m_projSpeed;
-
     // Archetype weapon should fire
-    std::string m_archetypeToShoot;
+    ursine::resources::ResourceReference m_archetypeToShoot;
 };

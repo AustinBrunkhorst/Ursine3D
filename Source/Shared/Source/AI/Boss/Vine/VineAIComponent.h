@@ -15,9 +15,29 @@
 
 #include "VineAIStateMachine.h"
 
-#include "EntityAnimatorComponent.h"
+#include "HealthComponent.h"
 
-class VineAI : public ursine::ecs::Component
+#include <AnimatorComponent.h>
+#include <EventDispatcher.h>
+
+enum VineAIEvents
+{
+    VINE_HEALTH_THRESHOLD_REACHED
+};
+
+struct HealthThreshold
+{
+    EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{(value * 100.0).toFixed( 2 )}} %"))
+    float percentage;
+
+    HealthThreshold(void)
+        : percentage( 1.0f ) { }
+
+} Meta(Enable, EnableArrayType);
+
+class VineAI 
+    : public ursine::ecs::Component
+    , public ursine::EventDispatcher<VineAIEvents>
 {
     NATIVE_COMPONENT;
 
@@ -26,6 +46,16 @@ public:
     EditorButton(
         drawRange,
         "Draw Range"
+    );
+
+    EditorButton(
+        pursueTarget,
+        "Pursue Target"
+    );
+
+    EditorButton(
+        goHome,
+        "Go Home"
     );
 
     EditorField(
@@ -103,12 +133,8 @@ public:
         SetUprootCooldown
     );
 
-    EditorField(
-        ursine::SVec3 colliderSize,
-        GetColliderSize,
-        SetColliderSize
-    );
-    
+    ursine::Array<HealthThreshold> healthThresholds;
+
     EditorMeta(Annotation("List of ROOT entities we're colliding with (used for uproot)."))
     ursine::Array<std::string> collisionList;
 
@@ -117,6 +143,8 @@ public:
 
     VineAI(void);
     ~VineAI(void);
+
+    void OnSceneReady(ursine::Scene *scene) override;
 
     bool GetFaceClosestPlayer(void) const;
     void SetFaceClosestPlayer(bool flag);
@@ -154,10 +182,7 @@ public:
     float GetUprootCooldown(void) const;
     void SetUprootCooldown(float cooldown);
 
-    const ursine::SVec3 &GetColliderSize(void) const;
-    void SetColliderSize(const ursine::SVec3 &colliderSize);
-
-    EntityAnimator *GetAnimator(void);
+    ursine::ecs::Animator *GetAnimator(void);
 
     ursine::ecs::EntityHandle GetTarget(void);
     void SetTarget(ursine::ecs::EntityHandle target);
@@ -167,16 +192,22 @@ public:
 
     // Tell the vine to go back to it's home location
     void GoToHomeLocation(void);
+    bool IsHome(void);
 
     void PursueTarget(void);
 
+    const ursine::TimeSpan &GetTimeOfLastPursue(void) const;
+
 private:
+    friend class VineUprootState;
 
     void OnInitialize(void) override;
 
     void onUpdate(EVENT_HANDLER(World));
 
     void onChildrenSerialized(EVENT_HANDLER(ursine::ecs::Entity));
+
+    void onDamageTaken(EVENT_HANDLER(Health));
 
     bool m_faceClosestPlayer;
 
@@ -191,7 +222,6 @@ private:
     float m_uprootDistance;
     float m_uprootDelay;
     float m_uprootCooldown;
-    ursine::SVec3 m_colliderSize;
 
     ursine::SVec3 m_homeLocation;
 
@@ -199,8 +229,16 @@ private:
 
     VineAIStateMachine m_stateMachine;
 
-    EntityAnimator *m_animator;
+    ursine::ecs::Animator *m_animator;
 
     ursine::ecs::EntityHandle m_target;
 
-} Meta(Enable);
+    ursine::TimeSpan m_timeOfLastPursue;
+
+    // This is our current index into the health threshold array
+    int m_currentHealthThreshold;
+
+} Meta(
+    Enable,
+    RequiresComponents(typeof(Health))
+);

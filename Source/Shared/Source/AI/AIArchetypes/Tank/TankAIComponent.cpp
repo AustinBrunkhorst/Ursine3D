@@ -116,17 +116,11 @@ void TankAI::OnInitialize(void)
     GetOwner()->GetWorld()->Listener( this )
         .On( WORLD_UPDATE, &TankAI::onUpdate );
 
-    // set up the state machine
-
-    GetOwner()->GetWorld()->Listener(this)
-        .On(WORLD_UPDATE, &TankAI::onUpdate);
-
-
     // initialize the state machine
     m_stateMachine.Initialize(GetOwner());
 
     // set up the state machine
-    auto walkState = m_stateMachine.AddState<sm::WalkState>("TankWalkSTate");
+    auto walkState = m_stateMachine.AddState<sm::WalkState>("TankWalkState");
 
     walkState->SetCohesionScale(m_cohesionScale);
 

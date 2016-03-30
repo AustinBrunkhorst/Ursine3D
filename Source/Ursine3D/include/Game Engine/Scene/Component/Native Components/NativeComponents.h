@@ -11,6 +11,8 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
 // All native components are to be added here
 
 #include "RenderMask.h"
@@ -28,6 +30,8 @@
 #include "LightComponent.h"
 #include "Billboard2DComponent.h"
 #include "AnimatorComponent.h"
+#include "RigComponent.h"
+#include "BoneComponent.h"
 #include "FBXSceneRootNodeComponent.h"
 #include "ParticleSystemComponent.h"
 #include "ParticleEmitterComponent.h"

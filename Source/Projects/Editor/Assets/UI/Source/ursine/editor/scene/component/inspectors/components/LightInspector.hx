@@ -89,12 +89,14 @@ class LightInspector extends ComponentInspectionHandler {
         m_typeToFields = new Map<UInt, Array<String>>( );
 
         m_typeToFields[ database.getEnumValue( m_lightTypeEnum, m_lightTypeDirectional ) ] = [
+            "active",
             "color",
             "intensity",
             "renderMask"
         ];
 
         m_typeToFields[ database.getEnumValue( m_lightTypeEnum, m_lightTypePoint ) ] = [
+            "active",
             "color",
             "intensity",
             "radius",
@@ -102,10 +104,12 @@ class LightInspector extends ComponentInspectionHandler {
         ];
 
         m_typeToFields[ database.getEnumValue( m_lightTypeEnum, m_lightTypeSpot ) ] = [
+            "active",
             "color",
             "intensity",
             "spotlightAngles",
-            "renderMask"
+            "renderMask",
+            "shadowResolution"
         ];
     }
 }

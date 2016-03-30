@@ -33,17 +33,21 @@ namespace ursine
     {
         CORE_SYSTEM
     public:
+        Meta(Enable)
         WindowManager(void);
         ~WindowManager(void);
 
-        Meta(Disable)
         Window::Handle AddWindow(
             const std::string &title, 
             const Vec2 &location, 
-            const Vec2 &size, uint32 flags
+            const Vec2 &size, 
+            uint32 flags
         );
 
-        Meta(Disable)
+        // Creates a window from an existing window handle depending
+        // on the platform (ex. HWND on Windows)
+        Window::Handle CreateFrom(const void *data);
+
         Window::Handle GetWindow(uint32 windowID);
 
     private:
@@ -54,5 +58,5 @@ namespace ursine
         void destroy(Window *window);
 
         void onWindowEvent(EVENT_HANDLER(Application));
-    } Meta(Enable);
+    } Meta(Enable, WhiteListMethods);
 }

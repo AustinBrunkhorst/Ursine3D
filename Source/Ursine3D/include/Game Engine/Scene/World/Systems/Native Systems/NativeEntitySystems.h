@@ -14,6 +14,8 @@
 #pragma once
 
 #include "RenderSystem.h"
+#include "AnimatorSystem.h"
+#include "ParticleManagerSystem.h"
 #include "PhysicsSystem.h"
 #include "DebugSystem.h"
 #include "AudioSystem.h"

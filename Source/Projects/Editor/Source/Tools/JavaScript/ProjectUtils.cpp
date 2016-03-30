@@ -16,6 +16,8 @@
 #include "ProjectUtils.h"
 #include "Editor.h"
 
+#include <ResourceItem.h>
+
 #include <FileDialog.h>
 
 using namespace ursine;
@@ -94,6 +96,62 @@ JSFunction(ProjectGetResource)
     catch (...)
     {
         return nullptr;
+    }
+}
+
+JSFunction(ProjectDeleteResource)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    try
+    {
+        auto guid = GUIDStringGenerator( )( arguments[ 0 ]->GetStringValue( ).ToString( ) );
+
+        auto &pipeline = editor->GetProject( )->GetResourcePipeline( );
+
+        auto item = pipeline.GetItem( guid );
+
+        if (!item)
+            return CefV8Value::CreateBool( false );
+
+        pipeline.RemoveItem( item );
+
+        return CefV8Value::CreateBool( true );
+    }
+    catch (...)
+    {
+        return CefV8Value::CreateBool( false );
+    }
+}
+
+JSFunction(ProjectRenameResource)
+{
+    if (arguments.size( ) != 2)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    try
+    {
+        auto guid = GUIDStringGenerator( )( arguments[ 0 ]->GetStringValue( ).ToString( ) );
+
+        auto &pipeline = editor->GetProject( )->GetResourcePipeline( );
+
+        auto item = pipeline.GetItem( guid );
+
+        if (!item)
+            return CefV8Value::CreateBool( false );
+
+        auto newName = arguments[ 1 ]->GetStringValue( ).ToString( );
+
+        return CefV8Value::CreateBool( pipeline.ChangeItemDisplayName( item, newName ) );
+    }
+    catch (...)
+    {
+        return CefV8Value::CreateBool( false );
     }
 }
 
@@ -186,20 +244,6 @@ namespace
 
     Json serializeResource(rp::ResourceItem::Handle resource)
     {
-        if (!resource)
-            return nullptr;
-
-        auto &sourceFile = resource->GetSourceFileName( );
-
-        return Json::object {
-            { "guid", to_string( resource->GetGUID( ) ) },
-            { "type", resource->GetDataType( ).GetName( ) },
-            { "displayName", resource->GetDisplayName( ) },
-            { "relativePathDisplayName", resource->GetRelativePathDisplayName( ) },
-            { "sourceFile", sourceFile.string( ) },
-            { "hasPreview", resource->HasPreview( ) },
-            { "previewFile", resource->GetPreviewFileName( ).string( ) },
-            { "extension", sourceFile.extension( ).string( ) }
-        };
+        return JsonSerializer::Serialize<const rp::ResourceItem::Handle>( resource );
     }
 }

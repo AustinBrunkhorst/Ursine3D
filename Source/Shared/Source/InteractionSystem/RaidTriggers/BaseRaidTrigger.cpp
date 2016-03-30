@@ -10,6 +10,7 @@
 ** -------------------------------------------------------------------------*/
 
 #include <Precompiled.h>
+
 #include "BaseRaidTrigger.h"
 #include "BuffComponent.h"
 #include "PlayerIdComponent.h"
@@ -17,7 +18,6 @@
 #include "World.h"
 #include "EntityEvent.h"
 #include "Color.h"
-
 
 namespace
 {
@@ -32,28 +32,22 @@ namespace
 
         return c;
     }
-} //unnamed namespace
+}
 
-
-
-BaseRaidTrigger::BaseRaidTrigger(void) :
-    m_players{ Player( ), Player( ) },
-    m_playerCount( 0 ),
-    m_raidEffect( EMPOWER ),
-    m_currEffect( EMPOWER ),
-    m_pAnimator( nullptr ),
-    m_successColor( 1.0f, 1.0f, 1.0f, 1.0f ),
-    m_interactColor( 1.0f, 1.0f, 1.0f, 1.0f ),
-    m_uiSymbol( "UI_Default" ),
-    m_archetypeToLoad( "FX/FX_TEST.uatype"),
-    m_active( true )
-{ }
+BaseRaidTrigger::BaseRaidTrigger(void)
+    : m_players { Player( ), Player( ) }
+    , m_playerCount( 0 )
+    , m_raidEffect( EMPOWER )
+    , m_currEffect( EMPOWER )
+    , m_pAnimator( nullptr )
+    , m_successColor( 1.0f, 1.0f, 1.0f, 1.0f )
+    , m_interactColor( 1.0f, 1.0f, 1.0f, 1.0f )
+    , m_active( true ) { }
 
 BaseRaidTrigger::~BaseRaidTrigger(void)
 {
     ClearPlayers( );
 }
-
 
 const BuffType BaseRaidTrigger::GetRaidEffect(void) const
 {
@@ -66,29 +60,15 @@ void BaseRaidTrigger::SetRaidEffect(const BuffType effect)
     m_currEffect = effect;
 }
 
-
-const std::string BaseRaidTrigger::GetEmitter(void) const
+const ursine::resources::ResourceReference &BaseRaidTrigger::GetEmitter(void) const
 {
-    if ( !m_pAnimator )
-        return std::string( "" );
-
-    return m_pAnimator->GetOwner( )->GetName( );
+    return m_archetypeToLoad;
 }
 
-void BaseRaidTrigger::SetEmitter(std::string archetype)
+void BaseRaidTrigger::SetEmitter(const ursine::resources::ResourceReference &archetype)
 {
-    if ( archetype.size( ) )
-    {
-        if ( archetype.find("FX/") == std::string::npos )
-            archetype = "FX/" + archetype;
-
-        if ( archetype.find(".uatype") == std::string::npos )
-            archetype += ".uatype";
-
-        m_archetypeToLoad = archetype;
-    }
+    m_archetypeToLoad = archetype;
 }
-
 
 const ursine::Color& BaseRaidTrigger::GetSuccessColor(void) const
 {
@@ -100,7 +80,6 @@ void BaseRaidTrigger::SetSuccessColor(const ursine::Color& color)
     m_successColor = color;
 }
 
-
 const ursine::Color& BaseRaidTrigger::GetInteractColor(void) const
 {
     return m_interactColor;
@@ -111,31 +90,28 @@ void BaseRaidTrigger::SetInteractColor(const ursine::Color& color)
     m_interactColor = color;
 }
 
-
-const std::string& BaseRaidTrigger::GetUISymbol(void)
+const ursine::resources::ResourceReference &BaseRaidTrigger::GetUISymbol(void)
 {
     return m_uiSymbol;
 }
 
-void BaseRaidTrigger::SetUISymbol(const std::string& symbol)
+void BaseRaidTrigger::SetUISymbol(const ursine::resources::ResourceReference &symbol)
 {
     m_uiSymbol = symbol;
 }
-
-
 
 ///////////////////////////////////////////////
 ////////       Protected Methods       ////////
 ///////////////////////////////////////////////
 
-void BaseRaidTrigger::Initialize(ursine::ecs::Entity* owner)
+void BaseRaidTrigger::Initialize(const ursine::ecs::EntityHandle &owner)
 {
-    if ( m_archetypeToLoad.size( ) )
-    {
-        auto entity = owner->GetWorld( )
-            ->CreateEntityFromArchetype(WORLD_ARCHETYPE_PATH + m_archetypeToLoad, m_archetypeToLoad);
+    auto entity = owner->GetWorld( )
+        ->CreateEntityFromArchetype( m_archetypeToLoad );
 
-        m_pAnimator = entity->GetComponent< ursine::ecs::ParticleColorAnimator >( );
+    if (entity)
+    {
+        m_pAnimator = entity->GetComponent<ursine::ecs::ParticleColorAnimator>( );
 
         entity->GetTransform( )->SetWorldPosition(owner->GetTransform( )->GetWorldPosition( ));
         owner->GetTransform( )->AddChild(entity->GetTransform( ));
@@ -151,12 +127,10 @@ void BaseRaidTrigger::SetAnimatorColors(const ursine::Color& color)
     m_pAnimator->SetColor4( PrepColor( color, 0.2f ) );
 }
 
-
 void BaseRaidTrigger::onDeath(EVENT_HANDLER(ursine::ecs::Entity))
 {
     ClearPlayers( );
 }
-
 
 void BaseRaidTrigger::onPlayerDeath(EVENT_HANDLER(ENTITY_REMOVED))
 {
@@ -164,8 +138,6 @@ void BaseRaidTrigger::onPlayerDeath(EVENT_HANDLER(ENTITY_REMOVED))
     
     RemovePlayer( args->entity->GetComponent< PlayerID >( )->GetID( ) );
 }
-
-
 
 ///////////////////////////////////////////////
 ////////        Player  Methods        ////////
@@ -206,7 +178,6 @@ void BaseRaidTrigger::Player::decrementTime(float dt)
     activeTime -= dt;
 }
 
-
 void BaseRaidTrigger::RemovePlayer(int id)
 {
     if ( m_players[ id ].buffComp )
@@ -225,6 +196,3 @@ void BaseRaidTrigger::ClearPlayers(void)
     RemovePlayer( 0 );
     RemovePlayer( 1 );
 }
-
-
-

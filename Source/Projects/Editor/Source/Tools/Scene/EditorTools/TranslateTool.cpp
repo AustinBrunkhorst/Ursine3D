@@ -9,9 +9,13 @@
 
 #include "EditorDebugDrawSystems.h"
 #include <DebugSystem.h>
+#include <Project.h>
+#include <ArchetypeData.h>
+#include <EditorToolResources.h>
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 TranslateTool::TranslateTool(Editor *editor, World *world)
     : EditorTool( editor, world )
@@ -22,6 +26,8 @@ TranslateTool::TranslateTool(Editor *editor, World *world)
     , m_axisType( -1 )
     , m_snapping( false )
     , m_local( false )
+    , m_archetype( editor_resources::ArchetypeTranslateTool )
+    , m_toolResources( GetCoreSystem( Editor )->GetProject( )->GetBuiltInResourceManager( ) )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
@@ -174,10 +180,10 @@ void TranslateTool::setDirectionVectors(const SVec3& basisVector, const EntityHa
 
 void TranslateTool::enableAxis(void)
 {
-    m_gizmo = m_world->CreateEntityFromArchetype( 
-        EDITOR_ARCHETYPE_PATH "EditorTools/TranslationGizmo.uatype",
-        "TranslationGizmo" 
-    );
+    m_gizmo = m_archetype.Load<ArchetypeData>( m_toolResources )->Instantiate( m_world );
+
+    if (!m_gizmo)
+        return;
 
     setEntitySerializationToggle( false, m_gizmo );
     
@@ -352,7 +358,7 @@ void TranslateTool::updateHoverAxis(void)
 
     // if we're clicking on ourselves, set the dragging flag,
     // and the vector we're dragging on
-    if (rootName == "TranslationGizmo")
+    if (rootName.find( "TranslationGizmo" ) != std::string::npos)
     {
         if (!m_selected)
         {
@@ -365,39 +371,39 @@ void TranslateTool::updateHoverAxis(void)
         // Get the gizmo's name (the models are under the parent named the axis' name)
         auto name = entityTrans->GetParent( )->GetOwner( )->GetName( );
 
-        if ( name == "xAxis" )
+        if (name == "xAxis")
         {
-            setDirectionVectors(SVec3::UnitX(), m_selected);
+            setDirectionVectors( SVec3::UnitX( ), m_selected );
             m_axisType = 1;
         }
-        else if ( name == "yAxis" )
+        else if (name == "yAxis")
         {
-            setDirectionVectors(SVec3::UnitY(), m_selected);
+            setDirectionVectors( SVec3::UnitY( ), m_selected );
             m_axisType = 2;
         }
-        else if ( name == "zAxis" )
+        else if (name == "zAxis")
         {
-            setDirectionVectors(SVec3::UnitZ(), m_selected);
+            setDirectionVectors( SVec3::UnitZ( ), m_selected );
             m_axisType = 3;
         }
         else
         {
             name = entity->GetName( );
 
-            if ( name == "zxPlane" )
+            if (name == "zxPlane")
             {
                 m_axisType = 4;
-                setDirectionVectors(SVec3(1.0f, 0.0f, 1.0f), m_selected);
+                setDirectionVectors( SVec3( 1.0f, 0.0f, 1.0f ), m_selected );
             }
-            else if ( name == "yzPlane" )
+            else if (name == "yzPlane")
             {
                 m_axisType = 5;
-                setDirectionVectors(SVec3(0.0f, 1.0f, 1.0f), m_selected);
+                setDirectionVectors( SVec3( 0.0f, 1.0f, 1.0f ), m_selected );
             }
-            else if ( name == "xyPlane" )
+            else if (name == "xyPlane")
             {
                 m_axisType = 6;
-                setDirectionVectors(SVec3(1.0f, 1.0f, 0.0f), m_selected);
+                setDirectionVectors( SVec3( 1.0f, 1.0f, 0.0f ), m_selected );
             }
         }
 

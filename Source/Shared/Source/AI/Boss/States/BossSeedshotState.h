@@ -15,16 +15,28 @@
 
 #include "BossAIState.h"
 
+class FaceBoneTowardsTarget;
+class BossAI;
+
 class BossSeedshotState : public BossAIState
 {
 public:
     BossSeedshotState(void);
 
-    bool CanExit(void) override { return false; }
-
+    void Enter(BossAIStateMachine *machine) override;
     void Update(BossAIStateMachine *machine) override;
+    void Exit(BossAIStateMachine *machine) override;
 
 private:
+
     float m_timer;
+
     bool m_on;
+
+    ursine::ecs::EntityHandle m_target;
+
+    std::vector<FaceBoneTowardsTarget *> m_boneTargetComponents;
+
+    void findTarget(BossAI *boss);
+    void rotateTowardsTarget(BossAI *boss);
 };

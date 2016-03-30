@@ -32,19 +32,14 @@ namespace
 
     namespace channel
     {
-        const auto SceneManager = "SceneManager";
         const auto EntityManager = "EntityManager";
     }
 
     namespace events
     {
-        namespace scene
-        {
-            const auto WorldChanged = "WorldChanged";
-        }
-
         namespace entity
         {
+            const auto RefreshEntities = "RefreshEntities";
             const auto Added = "EntityAdded";
             const auto Removed = "EntityRemoved";
             const auto NameChanged = "EntityNameChanged";
@@ -128,15 +123,6 @@ void EditorEntityManager::onSceneActiveWorldChanged(EVENT_HANDLER(Scene))
 
     m_activeWorld = sender->GetActiveWorld( );
 
-    Json data;
-
-    m_editor->GetMainWindow( ).GetUI( )->Message(
-        UI_CMD_BROADCAST,
-        channel::SceneManager,
-        events::scene::WorldChanged,
-        data
-    );
-
     initWorldEvents( m_activeWorld );
 }
 
@@ -145,6 +131,10 @@ void EditorEntityManager::onSceneActiveWorldChanged(EVENT_HANDLER(Scene))
 void EditorEntityManager::onEntityAdded(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
+
+    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING && 
+        !args->entity->HasComponent<ecs::Selected>( ))
+        return;
 
     Json message = Json::object {
         { "uniqueID", static_cast<int>( args->entity->GetID( ) ) }
@@ -164,6 +154,10 @@ void EditorEntityManager::onEntityRemoved(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
 
+    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING && 
+        !args->entity->HasComponent<ecs::Selected>( ))
+        return;
+
     Json message = Json::object {
         { "uniqueID", static_cast<int>( args->entity->GetID( ) ) }
     };
@@ -181,6 +175,10 @@ void EditorEntityManager::onEntityRemoved(EVENT_HANDLER(ecs::World))
 void EditorEntityManager::onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorEntityNameChangedArgs);
+
+    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING && 
+        !args->entity->HasComponent<ecs::Selected>( ))
+        return;
 
     Json message = Json::object {
         { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
@@ -200,6 +198,10 @@ void EditorEntityManager::onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World))
 void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
 {
     EVENT_ATTRS(ecs::Entity, ecs::ParentChangedArgs);
+
+    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING && 
+        !sender->HasComponent<ecs::Selected>( ))
+        return;
 
     Json oldUniqueID, newUniqueID;
 

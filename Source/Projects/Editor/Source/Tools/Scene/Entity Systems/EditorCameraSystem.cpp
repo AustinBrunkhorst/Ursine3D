@@ -174,15 +174,18 @@ void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
     m_camera->lookZoomFactor -= args->delta.Y( ) * 15.0f;
 
     if (m_camera->lookZoomFactor < 1.0f)
+    {
         m_camera->lookZoomFactor = 1.0f;
+        m_camera->focusPosition += m_camera->GetLook( ) * args->delta.Y( ) * 15.0f;
+    }
 }
 
 void EditorCameraSystem::updateCameraKeys(float dt)
 {
     auto *keyboardMgr = GetCoreSystem(KeyboardManager);
 
-    float speed = 15;
-
+    float speed = log(m_camera->lookZoomFactor + 2) * log(m_camera->lookZoomFactor + 2) * 5.0f;
+    
     // focus with f
     if (keyboardMgr->IsTriggeredDown( KEY_F ))
     {
@@ -204,7 +207,6 @@ void EditorCameraSystem::updateCameraKeys(float dt)
             m_focusTransition.Stop( )
                 .BeginGroup( )
                     .Property( m_camera->focusPosition, target, duration, ease )
-                    .Property( m_camera->lookZoomFactor, targetZoom, duration, ease )
                 .EndGroup( );
         }
     }
@@ -262,7 +264,7 @@ void EditorCameraSystem::updateCameraKeys(float dt)
     {
         // normalize vector, scale by dt and speed
         dir.Normalize( );
-        dir *= dt * speed;
+        dir *= dt * log(speed + 2) * log(speed + 2) * 10.0f;
 
         // apply to position
         pos += dir;
@@ -282,7 +284,7 @@ void EditorCameraSystem::updateCameraMouse(float dt)
     auto look = cam.GetLook( );
     auto up = cam.GetUp( );
     auto right = cam.GetRight( );
-
+    float speed = log(m_camera->lookZoomFactor + 2) * log(m_camera->lookZoomFactor + 2) * 10.0f;
 
     ///////////////////////////////////////////////////////////////////
     // CAMERA ROTATION
@@ -317,9 +319,9 @@ void EditorCameraSystem::updateCameraMouse(float dt)
         {
             auto size = cam.GetViewportSize( );
 
-            m_camera->focusPosition += right * mouseDelta.X( ) * dt * size.X( ) * 2;
+            m_camera->focusPosition += right * mouseDelta.X( ) * dt * speed * 0.1f;
 
-            m_camera->focusPosition -= up * mouseDelta.Y( ) * dt * size.Y( ) * 2;
+            m_camera->focusPosition -= up * mouseDelta.Y( ) * dt * speed * 0.1f;
         }
     }
 
@@ -331,10 +333,12 @@ void EditorCameraSystem::updateCameraMouse(float dt)
 
         if (mouseDelta.Length( ) > 0)
         {
-            m_camera->lookZoomFactor += -mouseDelta.Y( ) * 15.0f * dt;
+            m_camera->lookZoomFactor += -mouseDelta.Y( ) * speed * dt * 0.5f;
+        }
 
-            if (m_camera->lookZoomFactor < 1.0f)
-                m_camera->lookZoomFactor = 1.0f;
+        if (m_camera->lookZoomFactor < 1.0f)
+        {
+            m_camera->lookZoomFactor = 1.0f;
         }
     }
 

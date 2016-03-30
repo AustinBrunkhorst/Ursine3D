@@ -102,7 +102,9 @@ namespace ursine
         // Operators
         const SQuat &operator*=(const SQuat &q);
         SQuat operator*(const SQuat &rhs) const;
+        SQuat operator*(float rhs) const;
         SVec3 operator*(const SVec3 &rhs) const;
+        SQuat operator+(const SQuat &rhs) const;
 
         ALLOW_ALIGNED_ALLOC(16)
 

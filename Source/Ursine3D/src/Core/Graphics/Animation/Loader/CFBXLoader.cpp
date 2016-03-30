@@ -19,13 +19,42 @@
 #pragma warning (disable : 4244)
 #pragma warning (disable : 4267)
 
+void Swap(void *a, void *b)
+{
+    void *temp;
+    temp = *(void**)a;
+    *(void**)a = *(void**)b;
+    *(void**)b = temp;
+}
+
+// Debug Test file
+//void DebugPrint()
+//{
+//    std::ofstream fout;
+//    std::string nm = m_Model->name.c_str();
+//    nm += ".txt";
+//    fout.open(nm);
+//
+//    fout << "Name : " << iter.name << std::endl;
+//    fout << "PI : " << iter.mParentIndex << std::endl;
+//    fout << "BP : " << iter.bindPosition.x << "," << iter.bindPosition.y << "," << iter.bindPosition.z << std::endl;
+//    fout << "BR : " << iter.bindRotation.x << "," << iter.bindRotation.y << "," << iter.bindRotation.z << std::endl;
+//    fout << "BS : " << iter.bindScaling.x << "," << iter.bindScaling.y << "," << iter.bindScaling.z << std::endl;
+//    fout << "SP : " << iter.boneSpacePosition.x << "," << iter.boneSpacePosition.y << "," << iter.boneSpacePosition.z << std::endl;
+//    fout << "SR : " << iter.boneSpaceRotation.x << "," << iter.boneSpaceRotation.y << "," << iter.boneSpaceRotation.z << std::endl;
+//    fout << "SS : " << iter.boneSpaceScaling.x << "," << iter.boneSpaceScaling.y << "," << iter.boneSpaceScaling.z << std::endl;
+//
+//    if (fout.is_open() == true)
+//        fout.close();
+//}
+
 namespace ursine
 {
     namespace graphics
     {
         CFBXLoader::CFBXLoader() :
-            mSdkManager(nullptr), 
-            mScene(nullptr), 
+            mSdkManager(nullptr),
+            mScene(nullptr),
             m_Model(nullptr),
             mConverter(nullptr)
         {
@@ -72,7 +101,7 @@ namespace ursine
             if (!mSdkManager->GetIOPluginRegistry()->DetectReaderFileFormat(filename.c_str(), lFileFormat))
             {
                 // Unrecognizable file format. Try to fall back to FbxImporter::eFBX_BINARY
-                lFileFormat = mSdkManager->GetIOPluginRegistry()->FindReaderIDByDescription("FBX binary (*.fbx)");;
+                lFileFormat = mSdkManager->GetIOPluginRegistry()->FindReaderIDByDescription("FBX binary (*.fbx)");
             }
 
             // Initialize the importer by providing a filename.
@@ -94,6 +123,7 @@ namespace ursine
             fs::path fName(filename);
             m_Model->name = fName.filename().string();
             m_Model->name = m_Model->name.substr(0, m_Model->name.rfind("."));
+
             // Getting Anim Pose
             m_Model->mAnimPose.resize(mScene->GetPoseCount());
             for (unsigned i = 0; i < m_Model->mAnimPose.size(); ++i)
@@ -112,9 +142,9 @@ namespace ursine
             //The first thing to do is to create the FBX Manager which is the object allocator for almost all the classes in the SDK
             pManager = FbxManager::Create();
 
-            UAssertCatchable( pManager,
+            UAssertCatchable(pManager,
                 "FBXManager was null."
-            );
+                );
 
             //Create an IOSettings object. This object holds all import/export settings.
             FbxIOSettings* ios = FbxIOSettings::Create(pManager, IOSROOT);
@@ -127,9 +157,9 @@ namespace ursine
             //Create an FBX scene. This object holds most objects imported/exported from/to files.
             pScene = FbxScene::Create(pManager, "My Scene");
 
-            UAssertCatchable( pScene,
+            UAssertCatchable(pScene,
                 "Unable to create scene."
-            );
+                );
         }
 
         void CFBXLoader::TriangulateRecursive(FbxNode* pNode)
@@ -161,7 +191,7 @@ namespace ursine
         bool CFBXLoader::ReadyToExport()
         {
             // unify the loader data structure and exporter data structure someday
-            unsigned int i = 0, j = 0, k = 0, l = 0;
+            unsigned int i = 0, j = 0, k = 0;
 
             ///////////////////////////////////////////////////////////////
             // Model Info
@@ -169,118 +199,147 @@ namespace ursine
             // mesh data
             {
                 m_ModelInfo.name = m_Model->name.c_str();
+
+                i = 0;
+
                 m_ModelInfo.mmeshCount = static_cast<unsigned int>(m_Model->mMeshData.size());
-                for (i = 0; i < m_ModelInfo.mmeshCount; ++i)
+                m_ModelInfo.mMeshInfoVec.resize(m_ModelInfo.mmeshCount);
+
+                for (auto &iter : m_ModelInfo.mMeshInfoVec)
                 {
-                    ufmt_loader::MeshInfo newMeshInfo;
-                    FBX_DATA::MeshData* currMD = m_Model->mMeshData[i];
+                    FBX_DATA::MeshData& currMD = m_Model->mMeshData[i];
                     // name & counter initialization
-                    newMeshInfo.name = currMD->name.c_str();
+                    iter.name = currMD.name.c_str();
 
                     // Reconstruct Vertices and Indices for data compression
                     std::vector<ufmt_loader::MeshVertex> rmvVec;
                     std::vector<unsigned int> rIVec;
-                    Reconstruct(i, rmvVec, rIVec, *currMD);
+                    Reconstruct(i, rmvVec, rIVec, currMD);
 
-                    newMeshInfo.meshVtxInfoCount = rmvVec.size();
-                    newMeshInfo.meshVtxIdxCount = rIVec.size();
-                    for (j = 0; j < newMeshInfo.meshVtxInfoCount; ++j)
-                        newMeshInfo.meshVtxInfos.push_back(rmvVec[j]);
-                    for (j = 0; j < newMeshInfo.meshVtxIdxCount; ++j)
-                        newMeshInfo.meshVtxIndices.push_back(rIVec[j]);
+                    j = 0;
+                    iter.meshVtxInfoCount = rmvVec.size();
+                    iter.meshVtxInfos.resize(iter.meshVtxInfoCount);
+                    for (auto &iter2 : iter.meshVtxInfos)
+                    {
+                        iter2 = rmvVec[j];
+                        ++j;
+                    }
 
-                    // push back into the vector
-                    m_ModelInfo.mMeshInfoVec.push_back(newMeshInfo);
+                    j = 0;
+                    iter.meshVtxIdxCount = rIVec.size();
+                    iter.meshVtxIndices.resize(iter.meshVtxIdxCount);
+                    for (auto &iter2 : iter.meshVtxIndices)
+                    {
+                        iter2 = rIVec[j];
+                        ++j;
+                    }
+
+                    ++i;
                 }
 
                 // material data
+                i = 0;
                 m_ModelInfo.mmaterialCount = static_cast<unsigned int>(m_Model->mMaterials.size());
-                ufmt_loader::MaterialInfo newMtrlInfo;
-                for (i = 0; i < m_ModelInfo.mmaterialCount; ++i)
+                m_ModelInfo.mMtrlInfoVec.resize(m_ModelInfo.mmaterialCount);
+                for (auto &iter : m_ModelInfo.mMtrlInfoVec)
                 {
+                    iter.name = m_Model->mMaterials[i].name;
+
                     //ambi
                     j = 0;
-
-                    newMtrlInfo.name = m_Model->mMaterials[i]->name;
-
-                    newMtrlInfo.ambitype = m_Model->mMaterials[i]->ambient.type;
-                    newMtrlInfo.ambi_mcolor = m_Model->mMaterials[i]->ambient.color;
-                    newMtrlInfo.ambi_mapCount = m_Model->mMaterials[i]->ambient.textureSetArray.size();
-                    for (auto iter1 = m_Model->mMaterials[i]->ambient.textureSetArray.begin();
-                    iter1 != m_Model->mMaterials[i]->ambient.textureSetArray.end(); ++iter1, ++j)
-                        newMtrlInfo.ambi_texNames.push_back(iter1->second[j]);
+                    iter.ambitype = m_Model->mMaterials[i].ambient.type;
+                    iter.ambi_mcolor = m_Model->mMaterials[i].ambient.color;
+                    iter.ambi_mapCount = m_Model->mMaterials[i].ambient.textureSetArray.size();
+                    iter.ambi_texNames.resize(iter.ambi_mapCount);
+                    for (auto &iter1 : m_Model->mMaterials[i].ambient.textureSetArray)
+                    {
+                        iter.ambi_texNames[j] = iter1.second[j];
+                        ++j;
+                    }
 
                     //diff
                     j = 0;
-                    newMtrlInfo.difftype = m_Model->mMaterials[i]->diffuse.type;
-                    newMtrlInfo.diff_mcolor = m_Model->mMaterials[i]->diffuse.color;
-                    newMtrlInfo.diff_mapCount = m_Model->mMaterials[i]->diffuse.textureSetArray.size();
-                    for (auto iter1 = m_Model->mMaterials[i]->diffuse.textureSetArray.begin();
-                    iter1 != m_Model->mMaterials[i]->diffuse.textureSetArray.end(); ++iter1, ++j)
-                        newMtrlInfo.diff_texNames.push_back(iter1->second[j]);
+                    iter.difftype = m_Model->mMaterials[i].diffuse.type;
+                    iter.diff_mcolor = m_Model->mMaterials[i].diffuse.color;
+                    iter.diff_mapCount = m_Model->mMaterials[i].diffuse.textureSetArray.size();
+                    iter.diff_texNames.resize(iter.diff_mapCount);
+                    for (auto &iter1 : m_Model->mMaterials[i].diffuse.textureSetArray)
+                    {
+                        iter.diff_texNames[j] = iter1.second[j];
+                        ++j;
+                    }
 
                     //emit
                     j = 0;
-                    newMtrlInfo.emistype = m_Model->mMaterials[i]->emissive.type;
-                    newMtrlInfo.emis_mcolor = m_Model->mMaterials[i]->emissive.color;
-                    newMtrlInfo.emis_mapCount = m_Model->mMaterials[i]->emissive.textureSetArray.size();
-                    for (auto iter1 = m_Model->mMaterials[i]->emissive.textureSetArray.begin();
-                    iter1 != m_Model->mMaterials[i]->emissive.textureSetArray.end(); ++iter1, ++j)
-                        newMtrlInfo.emis_texNames.push_back(iter1->second[j]);
+                    iter.emistype = m_Model->mMaterials[i].emissive.type;
+                    iter.emis_mcolor = m_Model->mMaterials[i].emissive.color;
+                    iter.emis_mapCount = m_Model->mMaterials[i].emissive.textureSetArray.size();
+                    iter.emis_texNames.resize(iter.emis_mapCount);
+                    for (auto &iter1 : m_Model->mMaterials[i].emissive.textureSetArray)
+                    {
+                        iter.emis_texNames[j] = iter1.second[j];
+                        ++j;
+                    }
 
                     //spec
                     j = 0;
-                    newMtrlInfo.spectype = m_Model->mMaterials[i]->specular.type;
-                    newMtrlInfo.spec_mcolor = m_Model->mMaterials[i]->specular.color;
-                    newMtrlInfo.spec_mapCount = m_Model->mMaterials[i]->specular.textureSetArray.size();
-                    for (auto iter1 = m_Model->mMaterials[i]->specular.textureSetArray.begin();
-                    iter1 != m_Model->mMaterials[i]->specular.textureSetArray.end(); ++iter1, ++j)
-                        newMtrlInfo.spec_texNames.push_back(iter1->second[j]);
-                    newMtrlInfo.shineness = m_Model->mMaterials[i]->shineness;
-                    newMtrlInfo.TransparencyFactor = m_Model->mMaterials[i]->TransparencyFactor;
+                    iter.spectype = m_Model->mMaterials[i].specular.type;
+                    iter.spec_mcolor = m_Model->mMaterials[i].specular.color;
+                    iter.spec_mapCount = m_Model->mMaterials[i].specular.textureSetArray.size();
+                    iter.spec_texNames.resize(iter.spec_mapCount);
+                    for (auto &iter1 : m_Model->mMaterials[i].specular.textureSetArray)
+                    {
+                        iter.spec_texNames[j] = iter1.second[j];
+                        ++j;
+                    }
 
-                    // push back into the vector
-                    m_ModelInfo.mMtrlInfoVec.push_back(newMtrlInfo);
+                    ++i;
                 }
 
                 // bone data
+                i = 0;
                 m_ModelInfo.mboneCount = static_cast<unsigned int>(m_Model->mBoneData.mbonehierarchy.size());
-                ufmt_loader::BoneInfo newBoneInfo;
-                for (i = 0; i < m_ModelInfo.mboneCount; ++i)
+                m_ModelInfo.mBoneInfoVec.resize(m_ModelInfo.mboneCount);
+                for (auto &iter : m_ModelInfo.mBoneInfoVec)
                 {
                     // skin info will use model's name
-                    newBoneInfo.name = m_Model->mBoneData.mbonehierarchy[i].mName.c_str();
-                    newBoneInfo.mParentIndex = m_Model->mBoneData.mbonehierarchy[i].mParentIndex;
-                    newBoneInfo.bindPosition = m_Model->mBoneData.mbonehierarchy[i].bindPosition;
-                    newBoneInfo.bindRotation = m_Model->mBoneData.mbonehierarchy[i].bindRotation;
-                    newBoneInfo.bindScaling = m_Model->mBoneData.mbonehierarchy[i].bindScaling;
-                    newBoneInfo.boneSpacePosition = m_Model->mBoneData.mbonehierarchy[i].boneSpacePosition;
-                    newBoneInfo.boneSpaceRotation = m_Model->mBoneData.mbonehierarchy[i].boneSpaceRotation;
-                    newBoneInfo.boneSpaceScaling = m_Model->mBoneData.mbonehierarchy[i].boneSpaceScaling;
+                    iter.name = m_Model->mBoneData.mbonehierarchy[i].mName.c_str();
+                    iter.mParentIndex = m_Model->mBoneData.mbonehierarchy[i].mParentIndex;
+                    iter.bindPosition = m_Model->mBoneData.mbonehierarchy[i].bindPosition;
+                    iter.bindRotation = m_Model->mBoneData.mbonehierarchy[i].bindRotation;
+                    iter.bindScaling = m_Model->mBoneData.mbonehierarchy[i].bindScaling;
+                    iter.boneSpacePosition = m_Model->mBoneData.mbonehierarchy[i].boneSpacePosition;
+                    iter.boneSpaceRotation = m_Model->mBoneData.mbonehierarchy[i].boneSpaceRotation;
+                    iter.boneSpaceScaling = m_Model->mBoneData.mbonehierarchy[i].boneSpaceScaling;
 
-                    // push back into the vector
-                    m_ModelInfo.mBoneInfoVec.push_back(newBoneInfo);
+                    ++i;
                 }
 
                 // level data
                 // mesh lvl
+                i = 0;
                 m_ModelInfo.mmeshlvlCount = m_ModelInfo.mmeshCount;
-                for (i = 0; i < m_ModelInfo.mmeshlvlCount; ++i)
+                m_ModelInfo.mMeshLvVec.resize(m_ModelInfo.mmeshlvlCount);
+                for (auto &iter : m_ModelInfo.mMeshLvVec)
                 {
-                    ufmt_loader::MeshInLvl newMLvl;
-                    newMLvl.meshName = m_Model->mMeshData[i]->name;
-                    newMLvl.meshTM = m_Model->mMeshData[i]->meshTM;
-                    newMLvl.mParentIndex = m_Model->mMeshData[i]->parentIndex;
-                    m_ModelInfo.mMeshLvVec.push_back(newMLvl);
+                    FBX_DATA::MeshData& currMD = m_Model->mMeshData[i];
+                    iter.meshName = currMD.name;
+                    iter.meshTM = currMD.meshTM;
+                    iter.mParentIndex = currMD.parentIndex;
+
+                    ++i;
                 }
+
+                i = 0;
                 // rig lvl
                 m_ModelInfo.mriglvlCount = m_ModelInfo.mboneCount;
-                for (i = 0; i < m_ModelInfo.mriglvlCount; ++i)
+                m_ModelInfo.mRigLvVec.resize(m_ModelInfo.mriglvlCount);
+                for (auto &iter : m_ModelInfo.mRigLvVec)
                 {
-                    ufmt_loader::RigInLvl newRLvl;
-                    newRLvl.boneName = m_ModelInfo.mBoneInfoVec[i].name;
-                    newRLvl.mParentIndex = m_ModelInfo.mBoneInfoVec[i].mParentIndex;
-                    m_ModelInfo.mRigLvVec.push_back(newRLvl);
+                    iter.boneName = m_ModelInfo.mBoneInfoVec[i].name;
+                    iter.mParentIndex = m_ModelInfo.mBoneInfoVec[i].mParentIndex;
+
+                    ++i;
                 }
             }
 
@@ -288,70 +347,69 @@ namespace ursine
             // Anim Info
             ///////////////////////////////////////////////////////////////
             // anim data
-            //if (nullptr == mAnimInfo)
+            if (!m_Model->mAnimationData.empty())
             {
-                if (!m_Model->mAnimationData.empty())
+                i = 0;
+
+                m_AnimInfo.name = m_Model->name;
+                m_AnimInfo.animCount = static_cast<unsigned int>(m_Model->mAnimationData.size());
+                m_AnimInfo.animDataArr.resize(m_AnimInfo.animCount);
+
+                for (auto &iter : m_AnimInfo.animDataArr)
                 {
-                    m_AnimInfo.name = m_Model->name;
-                    m_AnimInfo.animCount = static_cast<unsigned int>(m_Model->mAnimationData.size());
-                    for (unsigned int i = 0; i < m_AnimInfo.animCount; ++i)
+                    iter.keyIndices.resize(m_AnimInfo.animCount);
+                    iter.keyframes.resize(m_AnimInfo.animCount);
+
+                    // counts
+                    iter.clipCount = static_cast<unsigned int>(m_Model->mAnimationData[i].animations.size());
+
+                    /////////////////////////////////////////////////////
+                    // Push back dummy value should includes specific time, not default
+                    // Should build keyframe vector which can cover the beginning and the end
+                    // and then should cover all keyframe values with reasonable keyframe.
+                    /////////////////////////////////////////////////////
+                    URSINE_TODO("Jun! You should fix this!!!!");
+                    for (auto &iter1 : m_Model->mAnimationData[i].animations)
                     {
-                        ufmt_loader::AnimData newAD;
-                        ufmt_loader::KeyIndex newKIs;
-                        ufmt_loader::KFrames newKFs;
+                        // storing animation clip's name
+                        iter.clipname = iter1.first.c_str();
 
-                        // counts
-                        newAD.clipCount = static_cast<unsigned int>(m_Model->mAnimationData[i]->animations.size());
+                        // set keycount / keyframes
+                        iter.boneCount = static_cast<unsigned int>(iter1.second.boneAnim.size());
+                        iter.keyIndices[i].resize(iter.boneCount);
+                        iter.keyframes[i].resize(iter.boneCount);
 
-                        /////////////////////////////////////////////////////
-                        // Push back dummy value should includes specific time, not default
-                        // Should build keyframe vector which can cover the beginning and the end
-                        // and then should cover all keyframe values with reasonable keyframe.
-                        /////////////////////////////////////////////////////
-                        URSINE_TODO("Jun! You should fix this!!!!");
-                        j = 0;
-                        for (auto &iter : m_Model->mAnimationData[i]->animations)
+                        // Unifying keyframes of each animation
+                        unsigned int maxkfCount = 0;
+                        for (auto &iter2 : iter1.second.boneAnim)
                         {
-                            // storing animation clip's name
-                            newAD.clipname = iter.first.c_str();
+                            unsigned int kfCount = static_cast<unsigned int>(iter2.keyFrames.size());
+                            if (maxkfCount < kfCount)
+                                maxkfCount = kfCount;
+                        }
 
-                            // set keycount / keyframes
-                            newAD.boneCount = static_cast<unsigned int>(iter.second.boneAnim.size());
+                        j = 0;
+                        for (auto &iter2 : iter1.second.boneAnim)
+                        {
+                            unsigned int kfCount = static_cast<unsigned int>(iter2.keyFrames.size());
 
-                            // Unifying keyframes of each animation
-                            unsigned int maxkfCount = 0;
-                            for (k = 0; k < iter.second.boneAnim.size(); ++k)
+                            iter.keyIndices[i][j] = maxkfCount;
+                            iter.keyframes[i][j].resize(maxkfCount);
+
+                            for (k = 0; k < maxkfCount; ++k)
                             {
-                                unsigned int kfCount = static_cast<unsigned int>(iter.second.boneAnim[k].keyFrames.size());
-                                if (maxkfCount < kfCount)
-                                    maxkfCount = kfCount;
-                            }
-
-                            for (k = 0; k < iter.second.boneAnim.size(); ++k)
-                            {
-                                ufmt_loader::KFrame newKF;
-                                unsigned int kfCount = static_cast<unsigned int>(iter.second.boneAnim[k].keyFrames.size());
-
-                                newKIs.push_back(maxkfCount);
-                                for (l = 0; l < maxkfCount; ++l)
-                                {
-                                    if (l < maxkfCount && l < kfCount)
-                                        newKF.push_back(iter.second.boneAnim[k].keyFrames[l]);
-                                    else if (l >= kfCount)
-                                        newKF.push_back(iter.second.boneAnim[k].keyFrames[kfCount - 1]);
-                                }
-                                newKFs.push_back(newKF);
+                                if (k < maxkfCount && k < kfCount)
+                                    iter.keyframes[i][j][k] = iter1.second.boneAnim[j].keyFrames[k];
+                                else if (k >= kfCount)
+                                    iter.keyframes[i][j][k] = iter1.second.boneAnim[j].keyFrames[kfCount - 1];
                             }
                             ++j;
                         }
-                        newAD.keyIndices.push_back(newKIs);
-                        newAD.keyframes.push_back(newKFs);
-
-                        // push back into the vector
-                        m_AnimInfo.animDataArr.push_back(newAD);
                     }
+                    ++i;
                 }
             }
+
             return true;
         }
 
@@ -360,7 +418,7 @@ namespace ursine
         //========================================================================
         void CFBXLoader::ProcessScene(FbxNode* pRoot)
         {
-            // FBX has 3 types - Static Mesh, Just Animation Data, Skinned Mesh
+            // FBX could be 3 diff types - Static Mesh, Just Animation Data, Skinned Mesh
             // if there is no animation, just static mesh
             // else process animation
             m_AnimationFlag.first = m_AnimationFlag.second = false;
@@ -375,8 +433,6 @@ namespace ursine
             }
             else
             {
-                // Process Skinned Mesh
-                ProcessControlPoint(pRoot);
                 m_AnimationFlag.first = true;
             }
 
@@ -408,44 +464,46 @@ namespace ursine
                 currJoint.mParentIndex = inParentIndex;
                 currJoint.mName = pNode->GetName();
 
-                int nodeIdx = 0;
+                int nodeIdx = -1;
+
                 FbxPose* targetFP = nullptr;
                 targetFP = GetAnimPoseAndIdx(pNode, nodeIdx);
 
                 FbxAMatrix localMatrix;
-                if (-1 == nodeIdx)
-                    localMatrix.SetIdentity();
-                else
+                if (targetFP)
+                {
+                    UAssert(-1 != nodeIdx, "Fuck you Fuck you");
                     localMatrix = GetPoseMatrix(targetFP, nodeIdx);
+                }
+                else
+                    localMatrix.SetIdentity();
 
                 mConverter->ConvertMatrix(localMatrix);
+
                 // Check negative scale
                 FbxVector4 scl = localMatrix.GetS();
                 if (!CheckScaling(scl) || !CheckPositive(scl))
                     localMatrix.SetS(FbxVector4(1, 1, 1));
+
                 FbxAMatrix inverse = localMatrix.Inverse();
 
                 // Set bind position, bind rotation matrices
                 currJoint.bindPosition = FBXVectorToXMFLOAT3(localMatrix.GetT());
                 currJoint.bindRotation = FBXQuaternionToXMLOAT4(localMatrix.GetQ());
                 currJoint.bindScaling = FBXVectorToXMFLOAT3(localMatrix.GetS());
-                Swap(&currJoint.bindPosition.y, &currJoint.bindPosition.z);
-                Swap(&currJoint.bindRotation.y, &currJoint.bindRotation.z);
-                Swap(&currJoint.bindScaling.y, &currJoint.bindScaling.z);
 
                 // Set bone space position, rotation matrices
                 currJoint.boneSpacePosition = FBXVectorToXMFLOAT3(inverse.GetT());
                 currJoint.boneSpaceRotation = FBXQuaternionToXMLOAT4(inverse.GetQ());
                 currJoint.boneSpaceScaling = FBXVectorToXMFLOAT3(inverse.GetS());
-                Swap(&currJoint.boneSpacePosition.y, &currJoint.boneSpacePosition.z);
-                Swap(&currJoint.boneSpaceRotation.y, &currJoint.boneSpaceRotation.z);
-                Swap(&currJoint.boneSpaceScaling.y, &currJoint.boneSpaceScaling.z);
 
                 // skeleton = bone hierarchy
                 m_Model->mBoneData.mbonehierarchy.push_back(currJoint);
                 m_Model->mBoneData.mboneNodes.push_back(pNode);
+
                 SMat4 locTM = FBXAMatrixToSMat4(&localMatrix);
                 m_Model->mBoneData.mboneLocalTM.push_back(locTM);
+
                 bBone = true;
             }
 
@@ -464,44 +522,51 @@ namespace ursine
             bool bMesh = false;
             if (mesh)
             {
-                FBX_DATA::MeshData* newMesh = new FBX_DATA::MeshData;
-                newMesh->name = pNode->GetName();
-                newMesh->mLayout = FBX_DATA::STATIC;
-                newMesh->parentIndex = inParentIndex;
-                if ("" == newMesh->name)
-                    newMesh->name = m_Model->name;
+                FBX_DATA::MeshData newMesh;
+                newMesh.name = pNode->GetName();
+                newMesh.mLayout = FBX_DATA::STATIC;
+                newMesh.parentIndex = inParentIndex;
+                if ("" == newMesh.name)
+                    newMesh.name = m_Model->name;
 
                 FbxAMatrix  meshTransform;
-                int nodeIdx = 0;
+
+                int nodeIdx = -1;
+
                 FbxPose* targetFP = nullptr;
                 targetFP = GetAnimPoseAndIdx(pNode, nodeIdx);
+
                 if (targetFP)
+                {
+                    UAssert(-1 != nodeIdx, "Fuck you Fuck you");
                     meshTransform = GetPoseMatrix(targetFP, nodeIdx);
+                }
                 else
                     meshTransform = GetGlobalDefaultPosition(pNode);
 
                 //Meshes have a separate geometry transform that also needs to be applied
                 FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
                 meshTransform = meshTransform * geoTransform;
-                mConverter->ConvertMatrix(meshTransform); \
+                mConverter->ConvertMatrix(meshTransform);
 
                 // vertex, normal, tangent, texcoord, material
-                ProcessVertices(mesh, newMesh);
-                ProcessNormals(mesh, newMesh);
-                ProcessTangent(mesh, newMesh);
-                ProcessTexcoord(mesh, newMesh);
-                ProcessMaterials(pNode, newMesh);
+                ProcessVertices(mesh, &newMesh);
+                ProcessNormals(mesh, &newMesh);
+                ProcessBinormal(mesh, &newMesh);
+                ProcessTangent(mesh, &newMesh);
+                ProcessTexcoord(mesh, &newMesh);
+                ProcessMaterials(pNode, &newMesh);
                 m_Model->mMeshData.push_back(newMesh);
 
                 //go through all the control points(verticies) and multiply by the transformation
-                for (unsigned int i = 0; i < newMesh->vertexCnt; ++i)
+                for (unsigned int i = 0; i < newMesh.vertexCnt; ++i)
                 {
                     FbxVector4 vtx;
-                    vtx.mData[0] = newMesh->vertices[i].x;
-                    vtx.mData[1] = newMesh->vertices[i].y;
-                    vtx.mData[2] = newMesh->vertices[i].z;
+                    vtx.mData[0] = newMesh.vertices[i].x;
+                    vtx.mData[1] = newMesh.vertices[i].y;
+                    vtx.mData[2] = newMesh.vertices[i].z;
                     vtx.mData[3] = 0.0f;
-                    newMesh->vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
+                    newMesh.vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
                 }
             }
             for (int i = 0; i < pNode->GetChildCount(); ++i)
@@ -511,28 +576,6 @@ namespace ursine
                 else
                     ProcessStaticMesh(pNode->GetChild(i), myindex, inParentIndex);
             }
-        }
-
-        void CFBXLoader::ProcessControlPoint(FbxNode* pNode)
-        {
-            FbxMesh* mesh = pNode->GetMesh();
-            if (mesh)
-            {
-                FBX_DATA::ControlPoints* control = new FBX_DATA::ControlPoints;
-                m_Model->mCtrlPoints.push_back(control);
-
-                unsigned int ctrlPointCount = mesh->GetControlPointsCount();
-                for (unsigned int i = 0; i < ctrlPointCount; ++i)
-                {
-                    FBX_DATA::CtrlPoint* newCtrlPoint = new FBX_DATA::CtrlPoint;
-                    FbxVector4 controlPos = mesh->GetControlPointAt(i);
-                    mConverter->ConvertVector(controlPos);
-                    newCtrlPoint->mPosition = FBXVectorToXMFLOAT3(controlPos);
-                    (*control)[i] = newCtrlPoint;
-                }
-            }
-            for (int i = 0; i < pNode->GetChildCount(); ++i)
-                ProcessControlPoint(pNode->GetChild(i));
         }
 
         void CFBXLoader::ProcessVertices(FbxMesh* pMesh, FBX_DATA::MeshData* pData)
@@ -623,10 +666,10 @@ namespace ursine
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
 
-                        UAssertCatchable( lPolygonSize == 3,
+                        UAssertCatchable(lPolygonSize == 3,
                             "Model is not triangulated.\npoly size: %i",
                             lPolygonSize
-                        );
+                            );
 
                         for (int i = 0; i < lPolygonSize; ++i)
                         {
@@ -641,6 +684,77 @@ namespace ursine
                             FbxVector4 lNormal = normalElement->GetDirectArray().GetAt(lNormalIndex);
                             mConverter->ConvertVector(lNormal);
                             pData->normals[lIndexByPolygonVertex] = FBXVectorToXMFLOAT3(lNormal);
+                            ++lIndexByPolygonVertex;
+                        }
+                    }
+                }
+                break;
+                }
+            }
+        }
+
+        void CFBXLoader::ProcessBinormal(FbxMesh* pMesh, FBX_DATA::MeshData* pData)
+        {
+            //get the normal element attribute
+            FbxGeometryElementBinormal* binormalElement = pMesh->GetElementBinormal();
+
+            if (binormalElement)
+            {
+                switch (binormalElement->GetMappingMode())
+                {
+                case FbxGeometryElement::eByControlPoint:
+                {
+                    unsigned binormalCount = pMesh->GetControlPointsCount();
+                    pData->binormalMode = FbxGeometryElement::eByControlPoint;
+                    pData->binormalCnt = binormalCount;
+                    pData->binormals = new pseudodx::XMFLOAT3[binormalCount];
+
+                    for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); ++lVertexIndex)
+                    {
+                        int lBinormalIndex = 0;
+
+                        if (binormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+                            lBinormalIndex = lVertexIndex;
+                        if (binormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+                            lBinormalIndex = binormalElement->GetIndexArray().GetAt(lVertexIndex);
+
+                        FbxVector4 lBinormal = binormalElement->GetDirectArray().GetAt(lBinormalIndex);
+                        mConverter->ConvertVector(lBinormal);
+                        pData->binormals[lVertexIndex] = FBXVectorToXMFLOAT3(lBinormal.mData);
+                    }
+                }
+                break;
+                case FbxGeometryElement::eByPolygonVertex:
+                {
+                    int lIndexByPolygonVertex = 0;
+
+                    unsigned binormalCount = pMesh->GetPolygonCount() * pMesh->GetPolygonSize(0);
+
+                    pData->binormalMode = FbxGeometryElement::eByPolygonVertex;
+                    pData->binormalCnt = binormalCount;
+                    pData->binormals = new pseudodx::XMFLOAT3[binormalCount];
+
+                    for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
+                    {
+                        int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
+
+                        UAssertCatchable(lPolygonSize == 3,
+                            "Model is not triangulated.\npoly size: %i",
+                            lPolygonSize
+                            );
+
+                        for (int i = 0; i < lPolygonSize; ++i)
+                        {
+                            int lBinormalIndex = 0;
+
+                            if (binormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
+                                lBinormalIndex = lIndexByPolygonVertex;
+                            if (binormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
+                                lBinormalIndex = binormalElement->GetIndexArray().GetAt(lIndexByPolygonVertex);
+
+                            FbxVector4 lBinormal = binormalElement->GetDirectArray().GetAt(lBinormalIndex);
+                            mConverter->ConvertVector(lBinormal);
+                            pData->binormals[lIndexByPolygonVertex] = FBXVectorToXMFLOAT3(lBinormal.mData);
                             ++lIndexByPolygonVertex;
                         }
                     }
@@ -666,7 +780,7 @@ namespace ursine
                     pData->tangentCnt = tangentCount;
                     pData->tangents = new pseudodx::XMFLOAT3[tangentCount];
 
-                    for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); lVertexIndex++)
+                    for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); ++lVertexIndex)
                     {
                         int lTangentIndex = 0;
 
@@ -691,14 +805,14 @@ namespace ursine
                     pData->tangentCnt = tangentCount;
                     pData->tangents = new pseudodx::XMFLOAT3[tangentCount];
 
-                    for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); lPolygonIndex++)
+                    for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
 
-                        UAssertCatchable( lPolygonSize == 3,
+                        UAssertCatchable(lPolygonSize == 3,
                             "Model is not triangulated.\npoly size: %i",
                             lPolygonSize
-                        );
+                            );
 
                         for (int i = 0; i < lPolygonSize; ++i)
                         {
@@ -790,12 +904,12 @@ namespace ursine
                     for (int lPolyIndex = 0; lPolyIndex < lPolyCount; ++lPolyIndex)
                     {
                         // build the max index array that we need to pass into MakePoly
-                        const int lPolySize = pMesh->GetPolygonSize( lPolyIndex );
+                        const int lPolySize = pMesh->GetPolygonSize(lPolyIndex);
 
-                        UAssertCatchable( lPolySize == 3, 
+                        UAssertCatchable(lPolySize == 3,
                             "Model is not triangulated.\npoly size: %i",
                             lPolySize
-                        );
+                            );
 
                         for (int lVertIndex = 0; lVertIndex < lPolySize; ++lVertIndex)
                         {
@@ -962,9 +1076,7 @@ namespace ursine
                     // 1:many type. this is for exporting function
                     // we will use 1:many type only later. At this point, we should modify MaterialConst function
                     // so that meshnode can load mtrl and texture by mModel->mMaterials' name
-                    FBX_DATA::FbxMaterial* newFbxMtrl = new FBX_DATA::FbxMaterial;
-                    *newFbxMtrl = destMat;
-                    m_Model->mMaterials.push_back(newFbxMtrl);
+                    m_Model->mMaterials.push_back(destMat);
                     // has a risk to store more than two exactly same materials
                 }
             }
@@ -1012,6 +1124,10 @@ namespace ursine
                     // cluster is each mesh fragmented from mesh
                     unsigned int numCluster = skin->GetClusterCount();
 
+                    // control point is vertex of the cluster
+                    // these control points will be influenced by bone animation
+                    FBX_DATA::ControlPoints newCtrlPoints;
+
                     for (unsigned int clusterIndex = 0; clusterIndex < numCluster; ++clusterIndex)
                     {
                         FbxCluster* cluster = skin->GetCluster(clusterIndex);
@@ -1021,27 +1137,59 @@ namespace ursine
 
                         //joint name and index
                         FbxNode* pLink = cluster->GetLink();
+
                         int boneIdx = GetJointIndexByName(pLink->GetName());
+
+                        UAssert(boneIdx != -1, "Bone Parsing Fucked up");
+
+                        // New bind pose matrix importing method
+                        // Check negative scale
+                        {
+                            FbxAMatrix bindPoseMatrix;
+
+                            cluster->GetTransformLinkMatrix(bindPoseMatrix);
+
+                            mConverter->ConvertMatrix(bindPoseMatrix);
+
+                            FbxVector4 scl = bindPoseMatrix.GetS();
+                            if (!CheckScaling(scl) || !CheckPositive(scl))
+                                bindPoseMatrix.SetS(FbxVector4(1, 1, 1));
+
+                            FbxAMatrix inverse = bindPoseMatrix.Inverse();
+
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].bindPosition = FBXVectorToXMFLOAT3(bindPoseMatrix.GetT());
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].bindRotation = FBXQuaternionToXMLOAT4(bindPoseMatrix.GetQ());
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].bindScaling = FBXVectorToXMFLOAT3(bindPoseMatrix.GetS());
+
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].boneSpacePosition = FBXVectorToXMFLOAT3(inverse.GetT());
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].boneSpaceRotation = FBXQuaternionToXMLOAT4(inverse.GetQ());
+                            m_Model->mBoneData.mbonehierarchy[boneIdx].boneSpaceScaling = FBXVectorToXMFLOAT3(inverse.GetS());
+
+                            SMat4 locTM = FBXAMatrixToSMat4(&bindPoseMatrix);
+                            m_Model->mBoneData.mboneLocalTM[boneIdx] = locTM;
+                        }
+
                         double* weights = cluster->GetControlPointWeights();
+
                         int* indicies = cluster->GetControlPointIndices();
 
                         // Associate each joint with the control points it affects
                         int ctrlPtIdxCnt = cluster->GetControlPointIndicesCount();
 
-                        // control point is vertex of the cluster
-                        // these control points will be influenced by bone animation
-                        FBX_DATA::ControlPoints* ctrlPts = m_Model->mCtrlPoints[index];
-
                         for (int i = 0; i < ctrlPtIdxCnt; ++i)
                         {
                             FBX_DATA::BlendIdxWeight currBlendIdxWeight;
+
                             currBlendIdxWeight.mBlendingIndex = boneIdx;
                             currBlendIdxWeight.mBlendingWeight = static_cast<float>(weights[i]);
 
                             int ctrlPtIdx = indicies[i];
-                            (*ctrlPts)[ctrlPtIdx]->mBlendingInfo.push_back(currBlendIdxWeight);
+
+                            newCtrlPoints[ctrlPtIdx].mBlendingInfo.push_back(currBlendIdxWeight);
                         }
                     }
+
+                    m_Model->mCtrlPoints.push_back(newCtrlPoints);
                 }
                 ++index;
             }
@@ -1052,34 +1200,47 @@ namespace ursine
 
         void CFBXLoader::RemoveUnnecessaryWeights()
         {
-            for (auto controlIter = m_Model->mCtrlPoints.begin(); controlIter != m_Model->mCtrlPoints.end(); ++controlIter)
+            for (auto &controlIter : m_Model->mCtrlPoints)
             {
                 //Remove or remove BlendWeights if there are more than 4
-                for (auto iter = (*controlIter)->begin(); iter != (*controlIter)->end(); ++iter)
+                for (auto &iter : controlIter)
                 {
-                    std::sort(iter->second->mBlendingInfo.begin(), iter->second->mBlendingInfo.end(), FBX_DATA::compare_bw_descend);
+                    std::sort(iter.second.mBlendingInfo.begin(), iter.second.mBlendingInfo.end(), FBX_DATA::compare_bw_descend);
 
-                    while (iter->second->mBlendingInfo.size() > 4)
-                        iter->second->mBlendingInfo.pop_back();
+                    while (iter.second.mBlendingInfo.size() > 4)
+                        iter.second.mBlendingInfo.pop_back();
 
-                    //check if we have less than 4 blend weight then we have to add some dummy weights
+                    // check if we have less than 4 blend weight then we have to add some dummy weights
                     // how can I give identity matrix to non-animating mesh? or at least just give it vertex
                     FBX_DATA::BlendIdxWeight currBlendWeight;
-                    while (iter->second->mBlendingInfo.size() < 4)
-                        iter->second->mBlendingInfo.push_back(currBlendWeight);
+                    if (iter.second.mBlendingInfo.empty())
+                    {
+                        currBlendWeight.mBlendingWeight = 1.0f;
+                        iter.second.mBlendingInfo.push_back(currBlendWeight);
+
+                        currBlendWeight.mBlendingWeight = 0.0f;
+                        iter.second.mBlendingInfo.push_back(currBlendWeight);
+                        iter.second.mBlendingInfo.push_back(currBlendWeight);
+                        iter.second.mBlendingInfo.push_back(currBlendWeight);
+
+                    }
+                    else
+                    {
+                        while (iter.second.mBlendingInfo.size() < 4)
+                            iter.second.mBlendingInfo.push_back(currBlendWeight);
+                    }
 
                     //normalize the weights
                     double sum = 0.0f;
 
                     for (int w = 0; w < 4; ++w)
-                        sum += iter->second->mBlendingInfo[w].mBlendingWeight;
+                        sum += iter.second.mBlendingInfo[w].mBlendingWeight;
+
+                    if (0.0f == sum)
+                        continue;
 
                     for (int w = 0; w < 4; ++w)
-                    {
-                        if (0.0f == sum)
-                            sum = 1.0f;
-                        iter->second->mBlendingInfo[w].mBlendingWeight /= sum;
-                    }
+                        iter.second.mBlendingInfo[w].mBlendingWeight /= sum;
                 }
             }
         }
@@ -1096,10 +1257,8 @@ namespace ursine
 
         FbxAMatrix CFBXLoader::GetPoseMatrix(FbxPose* pose, int index)
         {
-            FbxAMatrix lPoseMatrix;
             FbxMatrix lMatrix = pose->GetMatrix(index);
-            lPoseMatrix = FBXMatrixToFBXAMatrix(&lMatrix);
-            return lPoseMatrix;
+            return FBXMatrixToFBXAMatrix(&lMatrix);
         }
 
         bool CFBXLoader::CheckPositive(FbxVector4 scale)
@@ -1107,11 +1266,6 @@ namespace ursine
             if (scale[0] < 0.0f || scale[1] < 0.0f || scale[2] < 0.0f)
                 return false;
             return true;
-        }
-
-        inline bool IsEqualEpsilon(float A, float B)
-        {
-            return fabs(A - B) <= 1e-5f;
         }
 
         bool CFBXLoader::CheckScaling(FbxVector4 scale)
@@ -1210,12 +1364,15 @@ namespace ursine
             for (int i = 0; i < count; ++i)
             {
                 FbxAnimStack* lAnimStack = mScene->GetSrcObject<FbxAnimStack>(i);
+
                 const char* name = lAnimStack->GetName();
+
                 FbxTakeInfo* takeInfo = mScene->GetTakeInfo(name);
+
                 FbxTime start = takeInfo->mLocalTimeSpan.GetStart();
                 FbxTime end = takeInfo->mLocalTimeSpan.GetStop();
 
-                //mScene->GetRootNode()->ResetPivotSet(FbxNode::eDestinationPivot);
+                //mScene->GetRootNode()->ResetPivotSet(FbxNode::eDestinationPivot); 
                 //SetPivotStateRecursive(mScene->GetRootNode());
                 //mScene->GetRootNode()->ConvertPivotAnimationRecursive(lAnimStack, FbxNode::eDestinationPivot, 30.0f);
 
@@ -1232,20 +1389,22 @@ namespace ursine
             int nbAnimLayers = animStack->GetMemberCount<FbxAnimLayer>();
             FbxString lOutputString;
 
-            FBX_DATA::AnimationData* animationData = new FBX_DATA::AnimationData;
-            m_Model->mAnimationData.push_back(animationData);
+            FBX_DATA::AnimationData animationData;
 
             //create the animation clip name of the animation
-            FBX_DATA::AnimationClip& animClip = animationData->animations[animStack->GetName()];
+            FBX_DATA::AnimationClip& animClip = animationData.animations[animStack->GetName()];
 
             //resize for each bone in the heirarchy
             animClip.boneAnim.resize(m_Model->mBoneData.mbonehierarchy.size());
+
             boneindex = 0;
             for (int i = 0; i < nbAnimLayers; ++i)
             {
                 FbxAnimLayer* lAnimLayer = animStack->GetMember<FbxAnimLayer>(i);
                 ProcessAnimation(lAnimLayer, start, end, pNode, animClip);
             }
+
+            m_Model->mAnimationData.push_back(animationData);
         }
 
         void CFBXLoader::ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxTime end, FbxNode* pNode, FBX_DATA::AnimationClip& animClip)
@@ -1259,25 +1418,25 @@ namespace ursine
                 time.insert(start);
 
                 curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-                ProcessAnimation(curve, time, end);
+                ProcessAnimation(curve, time, start, end);
                 curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-                ProcessAnimation(curve, time, end);
+                ProcessAnimation(curve, time, start, end);
                 curve = pNode->LclScaling.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-                ProcessAnimation(curve, time, end);
+                ProcessAnimation(curve, time, start, end);
 
                 curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-                ProcessAnimation(curve, time, end);
+                ProcessAnimation(curve, time, start, end);
                 curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-                ProcessAnimation(curve, time, end);
+                ProcessAnimation(curve, time, start, end);
                 curve = pNode->LclRotation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-                ProcessAnimation(curve, time, end);
+                ProcessAnimation(curve, time, start, end);
 
                 curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_X);
-                ProcessAnimation(curve, time, end);
+                ProcessAnimation(curve, time, start, end);
                 curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Y);
-                ProcessAnimation(curve, time, end);
+                ProcessAnimation(curve, time, start, end);
                 curve = pNode->LclTranslation.GetCurve(animLayer, FBXSDK_CURVENODE_COMPONENT_Z);
-                ProcessAnimation(curve, time, end);
+                ProcessAnimation(curve, time, start, end);
 
                 if (boneindex < animClip.boneAnim.size())
                     animClip.boneAnim[boneindex].keyFrames.resize(time.size());
@@ -1288,19 +1447,19 @@ namespace ursine
                 for (std::set<FbxTime>::iterator iter = time.begin(); iter != time.end(); ++iter, ++i)
                 {
                     FbxAMatrix localMatrix = GetLocalMatrixFromTime(pNode, *iter);
+
                     mConverter->ConvertMatrix(localMatrix);
+
                     FbxVector4 s = localMatrix.GetS();
+
                     if (!CheckScaling(s) || !CheckPositive(s))
                         localMatrix.SetS(FbxVector4(1, 1, 1));
 
                     animClip.boneAnim[boneindex].keyFrames[i].time = static_cast<float>(iter->GetSecondDouble());
                     // Scale keyframe translation interpolation by specified scale
-                    animClip.boneAnim[boneindex].keyFrames[i].trans = FBXVectorToXMFLOAT3(localMatrix.GetT());// *_scale;
+                    animClip.boneAnim[boneindex].keyFrames[i].trans = FBXVectorToXMFLOAT3(localMatrix.GetT());// *_scale;                    
                     animClip.boneAnim[boneindex].keyFrames[i].rot = FBXQuaternionToXMLOAT4(localMatrix.GetQ());
                     animClip.boneAnim[boneindex].keyFrames[i].scl = FBXVectorToXMFLOAT3(localMatrix.GetS());
-                    Swap(&animClip.boneAnim[boneindex].keyFrames[i].trans.y, &animClip.boneAnim[boneindex].keyFrames[i].trans.z);
-                    Swap(&animClip.boneAnim[boneindex].keyFrames[i].rot.y, &animClip.boneAnim[boneindex].keyFrames[i].rot.z);
-                    Swap(&animClip.boneAnim[boneindex].keyFrames[i].scl.y, &animClip.boneAnim[boneindex].keyFrames[i].scl.z);
                 }
                 time.clear();
                 ++boneindex;
@@ -1311,18 +1470,18 @@ namespace ursine
                 ProcessAnimation(animLayer, start, end, pNode->GetChild(j), animClip);
         }
 
-        void CFBXLoader::ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time, FbxTime end)
+        void CFBXLoader::ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time, FbxTime start, FbxTime end)
         {
             if (!pCurve)
                 return;
 
-            FbxTime   lKeyTime;
-            FbxString lOutputString;
             int lKeyCount = pCurve->KeyGetCount();
+
             for (int i = 0; i < lKeyCount; ++i)
             {
                 FbxAnimCurveKey key = pCurve->KeyGet(i);
-                if (key.GetTime() <= end)
+
+                if (key.GetTime() >= start && key.GetTime() <= end)
                     time.insert(key.GetTime());
             }
         }
@@ -1333,44 +1492,54 @@ namespace ursine
             bool bMesh = false;
             if (mesh)
             {
-                FBX_DATA::MeshData* newMesh = new FBX_DATA::MeshData;
-                newMesh->name = pNode->GetName();
-                newMesh->mLayout = FBX_DATA::SKINNED;
-                newMesh->parentIndex = inParentIndex;
-                if ("" == newMesh->name)
-                    newMesh->mLayout = FBX_DATA::SKINNED;
+                FBX_DATA::MeshData newMesh;
 
-                int nodeIdx = 0;
+                newMesh.name = pNode->GetName();
+                newMesh.mLayout = FBX_DATA::SKINNED;
+                newMesh.parentIndex = inParentIndex;
+                if ("" == newMesh.name)
+                    newMesh.mLayout = FBX_DATA::SKINNED;
+
+                int nodeIdx = -1;
+
                 FbxPose* targetFP = nullptr;
                 targetFP = GetAnimPoseAndIdx(pNode, nodeIdx);
+
                 FbxAMatrix  meshTransform;
+
                 if (targetFP)
+                {
+                    UAssert(-1 != nodeIdx, "Fuck you Fuck you");
                     meshTransform = GetPoseMatrix(targetFP, nodeIdx);
+                }
                 else
                     meshTransform = GetGlobalDefaultPosition(pNode);
 
                 //Meshes have a separate geometry transform that also needs to be applied
                 FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
+
                 meshTransform = meshTransform * geoTransform;
                 mConverter->ConvertMatrix(meshTransform);
 
-                ProcessVertices(mesh, newMesh);
-                ProcessNormals(mesh, newMesh);
-                ProcessTangent(mesh, newMesh);
-                ProcessTexcoord(mesh, newMesh);
-                ProcessMaterials(pNode, newMesh);
+                ProcessVertices(mesh, &newMesh);
+                ProcessNormals(mesh, &newMesh);
+                ProcessBinormal(mesh, &newMesh);
+                ProcessTangent(mesh, &newMesh);
+                ProcessTexcoord(mesh, &newMesh);
+                ProcessMaterials(pNode, &newMesh);
 
                 //go through all the control points(verticies) and multiply by the transformation
-                for (unsigned int i = 0; i < newMesh->vertexCnt; ++i)
+                for (unsigned int i = 0; i < newMesh.vertexCnt; ++i)
                 {
                     FbxVector4 vtx;
-                    vtx.mData[0] = newMesh->vertices[i].x;
-                    vtx.mData[1] = newMesh->vertices[i].y;
-                    vtx.mData[2] = newMesh->vertices[i].z;
+                    vtx.mData[0] = newMesh.vertices[i].x;
+                    vtx.mData[1] = newMesh.vertices[i].y;
+                    vtx.mData[2] = newMesh.vertices[i].z;
                     vtx.mData[3] = 0.0f;
-                    newMesh->vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
+                    newMesh.vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
                 }
                 m_Model->mMeshData.push_back(newMesh);
+
                 bMesh = true;
             }
             //go through all the child node and grab there geometry information
@@ -1399,8 +1568,11 @@ namespace ursine
         FbxAMatrix CFBXLoader::GetLocalMatrixFromTime(FbxNode* pNode, FbxTime keyTime)
         {
             FbxNode* parent = pNode->GetParent();
+
             FbxAMatrix localXForm;
+
             FbxNodeAttribute* attr = pNode->GetNodeAttribute();
+
             if (attr && attr->GetAttributeType() && attr->GetAttributeType() == FbxNodeAttribute::eSkeleton)
             {
                 FbxAMatrix PX = parent->EvaluateGlobalTransform(keyTime);
@@ -1449,9 +1621,9 @@ namespace ursine
 
         FbxAMatrix CFBXLoader::GetGeometryTransformation(FbxNode* pNode)
         {
-            UAssertCatchable( pNode, 
-                "Mesh geometry was null." 
-            );
+            UAssertCatchable(pNode,
+                "Mesh geometry was null."
+                );
 
             const FbxVector4 lT = pNode->GetGeometricTranslation(FbxNode::eSourcePivot);
             const FbxVector4 lR = pNode->GetGeometricRotation(FbxNode::eSourcePivot);
@@ -1462,14 +1634,20 @@ namespace ursine
 
         FbxAMatrix CFBXLoader::GetParentTransformation(FbxNode* pParentNode)
         {
-            int nodeIdx = 0;
+            int nodeIdx = -1;
+
             FbxPose* targetFP = nullptr;
             targetFP = GetAnimPoseAndIdx(pParentNode, nodeIdx);
+
             FbxAMatrix parentTM;
             if (targetFP)
+            {
+                UAssert(-1 != nodeIdx, "Fuck you Fuck you");
                 parentTM = GetPoseMatrix(targetFP, nodeIdx);
+            }
             else
                 parentTM = GetGlobalDefaultPosition(pParentNode);
+
             return parentTM;
         }
 
@@ -1480,11 +1658,12 @@ namespace ursine
         }
 
         //reconstruct vertices and indices
-        void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& mvVec, std::vector<unsigned int>& miVec, const FBX_DATA::MeshData& md)
+        void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& target_mvs, std::vector<unsigned int>& target_mis, const FBX_DATA::MeshData& md)
         {
             for (unsigned int i = 0; i < md.indexCnt; ++i)
             {
                 ufmt_loader::MeshVertex newMV;
+
                 newMV.pos = md.vertices[md.indices[i]];
 
                 if (md.normals)
@@ -1493,6 +1672,14 @@ namespace ursine
                         newMV.normal = md.normals[i];
                     else if (md.normalMode == FbxGeometryElement::eByControlPoint)
                         newMV.normal = md.normals[md.indices[i]];
+                }
+
+                if (md.binormals)
+                {
+                    if (md.binormalMode == FbxGeometryElement::eByPolygonVertex)
+                        newMV.binormal = md.binormals[i];
+                    else if (md.binormalMode == FbxGeometryElement::eByControlPoint)
+                        newMV.binormal = md.binormals[md.indices[i]];
                 }
 
                 if (md.tangents)
@@ -1512,39 +1699,39 @@ namespace ursine
                 // controls - maybe divide this part later if necessary
                 if (!m_Model->mCtrlPoints.empty())
                 {
-                    if (!(*m_Model->mCtrlPoints[meshIdx]).empty())
+                    if (!m_Model->mCtrlPoints[meshIdx].empty())
                     {
                         // currently, just for using 1st control point vec
-                        newMV.ctrlBlendWeights.x = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingWeight;
-                        newMV.ctrlBlendWeights.y = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingWeight;
-                        newMV.ctrlBlendWeights.z = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingWeight;
-                        newMV.ctrlBlendWeights.w = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingWeight;
-                        newMV.ctrlIndices.x = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[0].mBlendingIndex;
-                        newMV.ctrlIndices.y = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[1].mBlendingIndex;
-                        newMV.ctrlIndices.z = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[2].mBlendingIndex;
-                        newMV.ctrlIndices.w = m_Model->mCtrlPoints[meshIdx]->at(md.indices[i])->mBlendingInfo[3].mBlendingIndex;
+                        newMV.ctrlBlendWeights.x = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[0].mBlendingWeight;
+                        newMV.ctrlBlendWeights.y = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[1].mBlendingWeight;
+                        newMV.ctrlBlendWeights.z = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[2].mBlendingWeight;
+                        newMV.ctrlBlendWeights.w = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[3].mBlendingWeight;
+
+                        newMV.ctrlIndices.x = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[0].mBlendingIndex;
+                        newMV.ctrlIndices.y = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[1].mBlendingIndex;
+                        newMV.ctrlIndices.z = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[2].mBlendingIndex;
+                        newMV.ctrlIndices.w = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[3].mBlendingIndex;
                     }
                 }
 
                 bool bFound = false;
                 unsigned int index = 0;
-                for (unsigned int j = 0; j < mvVec.size(); ++j)
+                for (index = 0; index < target_mvs.size(); ++index)
                 {
-                    if (newMV == mvVec[j])
+                    if (newMV == target_mvs[index])
                     {
                         bFound = true;
                         // if there is same MeshVertex, just add the index of it.
-                        miVec.push_back(j);
+                        target_mis.push_back(index);
                         break;
                     }
-                    ++index;
                 }
 
                 // if there is no MeshVertex, store the vertex and set a index as the last one
                 if (!bFound)
                 {
-                    mvVec.push_back(newMV);
-                    miVec.push_back(index);
+                    target_mvs.push_back(newMV);
+                    target_mis.push_back(index);
                 }
             }
         }

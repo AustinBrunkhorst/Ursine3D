@@ -6,7 +6,10 @@ extern class ResourceItem {
     var displayName : String;
     var relativePathDisplayName : String;
     var sourceFile : String;
+    var isGenerated : Bool;
     var hasPreview : Bool;
     var previewFile : String;
+    var buildFile : String;
+    var buildCacheFile : String;
     var extension : String;
 }

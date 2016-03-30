@@ -122,8 +122,6 @@ void LightDebugDrawSystem::Process(const EntityHandle &entity)
                 Color::Yellow, 0.0f 
             );
 
-
-
             break;
         }
     }

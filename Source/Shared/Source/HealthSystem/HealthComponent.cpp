@@ -15,9 +15,12 @@
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
+#include "DamageEvent.h"
 #include "AudioEmitterComponent.h"
 #include "PlayerIdComponent.h"
 #include "CollisionEventArgs.h"
+#include "DamageOnCollideComponent.h"
+#include "AbstractHitscanWeapon.h"
 
 NATIVE_COMPONENT_DEFINITION( Health );
 
@@ -33,17 +36,31 @@ namespace
 
 Health::Health(void)
     : BaseComponent( )
+    , EventDispatcher( this )
+    , m_type( ENEMY_HEALTH )
     , m_health( 100 )
-    , m_objToSpawn( "" )
+    , m_maxHealth( 100 )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
-{
-}
+    , m_dead( false )
+    , m_invulnerable( false ) { }
 
 Health::~Health(void)
 {
     GetOwner( )->Listener(this)
         .Off( ursine::ecs::ENTITY_REMOVED, &Health::OnDeath );
+}
+
+HealthType Health::GetHealthType(void) const
+{
+    return m_type;
+}
+
+void Health::SetHealthType(HealthType type)
+{
+    m_type = type;
+
+    NOTIFY_COMPONENT_CHANGED( "healthType", m_type );
 }
 
 float Health::GetHealth(void) const
@@ -54,6 +71,8 @@ float Health::GetHealth(void) const
 void Health::SetHealth(const float health)
 {
     m_health = health;
+
+    NOTIFY_COMPONENT_CHANGED( "EntityHealth", m_health );
 }
 
 float Health::GetMaxHealth(void) const
@@ -61,17 +80,16 @@ float Health::GetMaxHealth(void) const
     return m_maxHealth;
 }
 
-const std::string& Health::GetArchetypeOnDeath(void) const
+const ursine::resources::ResourceReference &Health::GetArchetypeOnDeath(void) const
 {
     return m_objToSpawn;
 }
 
-void Health::SetArchetypeOnDeath(const std::string& objToSpawn)
+void Health::SetArchetypeOnDeath(const ursine::resources::ResourceReference &objToSpawn)
 {
     m_objToSpawn = objToSpawn;
 
-    if ( m_objToSpawn.find(".uatype") == std::string::npos )
-        m_objToSpawn += ".uatype";
+    NOTIFY_COMPONENT_CHANGED( "archetypeToSpawnOnDeath", m_objToSpawn );
 }
 
 bool Health::GetDeleteOnZeroHealth(void) const
@@ -82,33 +100,55 @@ bool Health::GetDeleteOnZeroHealth(void) const
 void Health::SetDeleteOnZeroHealth(bool flag)
 {
     m_deleteOnZero = flag;
+
+    NOTIFY_COMPONENT_CHANGED( "deleteOnZeroHealth", m_deleteOnZero );
 }
 
 bool Health::GetSpawnOnDeath(void) const
 {
     return m_spawnOnDeath;
 }
-void Health::SetSpawnOnDeath(const bool state)
+
+void Health::SetSpawnOnDeath(bool state)
 {
     m_spawnOnDeath = state;
+
+    NOTIFY_COMPONENT_CHANGED( "SpawnOnDeath", m_spawnOnDeath );
 }
 
-void Health::DealDamage(const float damage)
+bool Health::GetInvulnerable(void) const
 {
+    return m_invulnerable;
+}
+
+void Health::SetInvulnerable(bool invulnerable)
+{
+    m_invulnerable = invulnerable;
+
+    NOTIFY_COMPONENT_CHANGED( "invulnerable", m_invulnerable );
+}
+
+void Health::DealDamage(float damage)
+{
+    if (m_dead || m_invulnerable)
+        return;
+
     auto owner = GetOwner( );
 
     // early out if we've already "died"
     if (m_health < 0)
         return;
 
-    m_health -= damage;
+    SetHealth( GetHealth( ) - damage );
 
     if (m_health <= 0)
     {
         Dispatch( HEALTH_ZERO, ursine::EventArgs::Empty );
 
         if (m_deleteOnZero)
-        GetOwner( )->Delete( );
+            GetOwner( )->Delete( );
+
+        m_dead = true;
     }
     else
     {
@@ -129,12 +169,6 @@ void Health::DealDamage(const float damage)
             GetOwner( )->GetWorld( )->MessageUI( gameUIEvents::UI_HealthComponentStats, message );
         }
     }
-
-    URSINE_TODO("Fix sound hack for health");
-    ursine::ecs::AudioEmitter* emitter = owner->GetComponent<ursine::ecs::AudioEmitter>( );
-
-    //if ( emitter )
-       // emitter->AddSoundToPlayQueue(kTakeDamage);
 }
 
 
@@ -143,6 +177,20 @@ void Health::DealDamage(const ursine::SVec3& contactPoint, float damage, bool cr
     DealDamage(damage);
 
     sendDamageTextEvent(contactPoint, damage, crit);
+}
+
+bool Health::CanDamage(DamageOnCollide *damage) const
+{
+    auto type = damage->GetDamageType( );
+
+    return type == DAMAGE_ALL || type == m_type;
+}
+
+bool Health::CanDamage(AbstractHitscanWeapon *weapon) const
+{
+    auto type = weapon->GetDamageType( );
+
+    return type == DAMAGE_ALL || type == m_type;
 }
 
 void Health::OnInitialize(void)
@@ -157,17 +205,18 @@ void Health::sendDamageTextEvent(const ursine::SVec3& contact, float damage, boo
 {
     ursine::ecs::EntityHandle owner = GetOwner( );
 
-    game::DamageEventArgs dEvent(contact, owner, damage, crit);
+    game::DamageEventArgs dEvent(contact, owner, damage, crit, m_invulnerable);
 
     owner->GetWorld( )->Dispatch(game::DAMAGE_TEXT_EVENT, &dEvent);
 }
 
 void Health::OnDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 {
-    if ( m_spawnOnDeath && m_objToSpawn != ".uatype" )
+    if (m_spawnOnDeath)
     {
-        auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( WORLD_ARCHETYPE_PATH + m_objToSpawn );
+        auto obj = GetOwner( )->GetWorld( )->CreateEntityFromArchetype( m_objToSpawn );
 
-        obj->GetTransform( )->SetWorldPosition( GetOwner( )->GetTransform( )->GetWorldPosition( ) );
+        if (obj)
+            obj->GetTransform( )->SetWorldPosition( GetOwner( )->GetTransform( )->GetWorldPosition( ) );
     }
 }

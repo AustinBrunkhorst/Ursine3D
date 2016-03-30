@@ -18,11 +18,11 @@
 #include "VineStateUtils.h"
 #include "VineAIStateMachine.h"
 #include "VineAIComponent.h"
-#include "EntityAnimatorComponent.h"
 
 #include <Application.h>
 #include <ParticleEmitterComponent.h>
 #include <Model3DComponent.h>
+#include <EntityEvent.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -55,7 +55,8 @@ void VineGoHomeState::Update(VineAIStateMachine *machine)
     {
         case GoHomeState::Burrowing:
         {
-            playAnimation( animator, "Burrow" );
+            // Play the animation
+            playAnimation( animator, "Spike_Down" );
             break;
         }
         case GoHomeState::Digging:
@@ -84,7 +85,7 @@ void VineGoHomeState::Update(VineAIStateMachine *machine)
             emitter->GetComponent<ParticleEmitter>( )->SetEmitRate( 200 );
 
             // Check to see if we've reached a valid distance
-            if (VineStateUtils::AtTarget( ai, 1.0f ))
+            if (VineStateUtils::AtHome( ai, 1.0f ))
             {
                 m_state = GoHomeState::Uprooting;
             }
@@ -93,7 +94,7 @@ void VineGoHomeState::Update(VineAIStateMachine *machine)
         }
         case GoHomeState::Uprooting:
         {
-            playAnimation( animator, "Uproot" );
+            playAnimation( animator, "Spike_Up" );
 
             auto models = aiOwner->GetComponentsInChildren<Model3D>( );
 
@@ -102,32 +103,33 @@ void VineGoHomeState::Update(VineAIStateMachine *machine)
 
             // We've successfully pursued our target
             machine->SetBool( VineAIStateMachine::GoHome, false );
+            machine->SetBool( VineAIStateMachine::IsHome, true );
 
             break;
         }
     }
 }
 
-void VineGoHomeState::playAnimation(EntityAnimator *animator, const std::string &clip)
+void VineGoHomeState::playAnimation(Animator *animator, const std::string &clip)
 {
-    animator->Play( clip );
+    animator->SetCurrentState( clip );
 
     m_animating = true;
 
-    animator->Listener( this )
-        .On( EntityAnimatorEvent::FinishedAnimating, &VineGoHomeState::onAnimationFinished );
+    animator->GetOwner( )->Listener( this )
+        .On( ENTITY_ANIMATION_FINISH, &VineGoHomeState::onAnimationFinished );
 }
 
-void VineGoHomeState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
+void VineGoHomeState::onAnimationFinished(EVENT_HANDLER(Entity))
 {
-    EVENT_ATTRS(EntityAnimator, EventArgs);
+    EVENT_ATTRS(Entity, EventArgs);
 
     switch (m_state)
     {
         case GoHomeState::Burrowing:
         {
             // tell all models to turn themselves off
-            auto models = sender->GetOwner( )->GetComponentsInChildren<Model3D>( );
+            auto models = sender->GetComponentsInChildren<Model3D>( );
 
             for (auto &model : models)
                 model->SetActive( false );
@@ -146,5 +148,5 @@ void VineGoHomeState::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
     m_animating = false;
 
     sender->Listener( this )
-        .Off( EntityAnimatorEvent::FinishedAnimating, &VineGoHomeState::onAnimationFinished );
+        .Off( ENTITY_ANIMATION_FINISH, &VineGoHomeState::onAnimationFinished );
 }

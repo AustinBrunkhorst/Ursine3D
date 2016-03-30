@@ -19,22 +19,25 @@
 
 using namespace ursine;
 
+const std::string BossAIStateMachine::VineCount = "Vine Count";
+const std::string BossAIStateMachine::Health = "Boss Health";
+
 BossAIStateMachine::BossAIStateMachine(BossAI *boss)
     : m_boss( boss )
 {
-    AddFloat( "Cooldown", 0.0f );
+    AddInt( VineCount, 0 );
+    AddFloat( Health, 100.0f );
 }
 
 void BossAIStateMachine::Update(void)
 {
-    auto cooldown = GetFloat( "Cooldown" );
-
-    if (cooldown >= 0.0f)
-        cooldown -= Application::Instance->GetDeltaTime( );
-
-    SetFloat( "Cooldown", cooldown );
-
     StateMachine::Update( );
+}
+
+void BossAIStateMachine::Exit(void)
+{
+    if (m_currentState && !m_transitionFound)
+        m_currentState->OnExit( this );
 }
 
 BossAI *BossAIStateMachine::GetBoss(void)

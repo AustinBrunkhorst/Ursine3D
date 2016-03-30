@@ -7,7 +7,7 @@ namespace ursine
     namespace resources
     {
         ResourceReference::ResourceReference(void)
-            : m_resourceGUID( GUIDNullGenerator( )( ) )
+            : m_resourceGUID( kNullGUID )
         {
 
         }
@@ -31,6 +31,11 @@ namespace ursine
             return *this;
         }
 
+        bool ResourceReference::operator==(const ResourceReference &rhs)
+        {
+            return m_resourceGUID == rhs.GetGUID( );
+        }
+
         const GUID &ResourceReference::GetGUID(void) const
         {
             return m_resourceGUID;
@@ -50,7 +55,7 @@ namespace ursine
             // parse error
             catch (...)
             {
-                m_resourceGUID = GUIDNullGenerator( )( );
+                m_resourceGUID = kNullGUID;
             }
         }
     }

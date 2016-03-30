@@ -130,7 +130,11 @@ namespace ursine
             if (!m_run)
                 return;
 
-            UAssert(m_numberOfTargets + 1 <= MAX_PROFILER_TARGETS, "Out of profiling targets!");
+            if(!(m_numberOfTargets + 1 <= MAX_PROFILER_TARGETS))
+            {
+                UWarning("Out of gpu profiler targets!");
+                return;
+            }
 
             m_targetNames[ m_numberOfTargets ] = name;
             m_profiled[ m_numberOfTargets ] = true;

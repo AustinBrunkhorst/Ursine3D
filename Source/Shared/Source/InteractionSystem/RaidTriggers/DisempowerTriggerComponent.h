@@ -29,6 +29,7 @@ public:
 
 protected:
     void OnInitialize(void) override;
+    void OnSceneReady(ursine::Scene* scene) override;
 
     // interaction logic
     void ChildStartInteractionLogic(void) override;
@@ -41,5 +42,5 @@ protected:
 
     bool m_empowerActive;
 
-} Meta(Enable, DisplayName("DisempowerTrigger"));
+} Meta( Enable, DisplayName( "DisempowerTrigger" ), RequiresComponents( typeof( Interactable ) ) );
 

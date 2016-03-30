@@ -11,7 +11,7 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-#pragma
+#pragma once
 
 #include <boost/uuid/uuid.hpp>
 #include <boost/uuid/uuid_generators.hpp>
@@ -24,4 +24,6 @@ namespace ursine
     typedef boost::uuids::random_generator GUIDGenerator;
     typedef boost::uuids::string_generator GUIDStringGenerator;
     typedef boost::uuids::nil_generator GUIDNullGenerator;
+
+    const GUID kNullGUID = GUIDNullGenerator( )( );
 }

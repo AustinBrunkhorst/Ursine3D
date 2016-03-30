@@ -481,7 +481,6 @@ namespace ursine
 
             // we're removing man
             entity->Dispatch( ENTITY_REMOVED, EventArgs::Empty );
-
             m_world->Dispatch( WORLD_ENTITY_REMOVED, &e );
         }
 
@@ -559,7 +558,7 @@ namespace ursine
                 entity = &m_cache.back( );
 
                 // add a new event listener
-                m_events.emplace_back( );
+                m_events.emplace_back( nullptr );
             }
             // we can use the queue so just reset and pop the last one
             else

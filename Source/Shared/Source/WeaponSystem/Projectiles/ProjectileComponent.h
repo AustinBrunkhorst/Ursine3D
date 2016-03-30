@@ -11,29 +11,50 @@
 #pragma once
 
 #include <Component.h>
+#include "RigidbodyComponent.h"
 
 class Projectile : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 public:
+
     EditorField(
         float Speed,
         GetSpeed,
         SetSpeed
-        );
+    );
 
-    Projectile( void );
-    ~Projectile( void );
+    EditorField(
+        bool faceTowardsPath,
+        GetFaceTowardsPath,
+        SetFaceTowardsPath
+    );
 
-    float GetSpeed( void ) const;
-    void SetSpeed( const float speed );
+    Projectile(void);
+    ~Projectile(void);
 
-    void CalculateLifeTime( float range );
-    void Update( const float dt );
+    void OnInitialize(void) override;
+
+    float GetSpeed(void) const;
+    void SetSpeed(float speed);
+
+    bool GetFaceTowardsPath(void) const;
+    void SetFaceTowardsPath(bool flag);
+
+    void Update(float dt);
 
 private:
+    void OnInit(EVENT_HANDLER(ursine::ecs::Entity));
+
+    void CalculateLifeTime(float range);
+
+    bool m_faceTowardsPath;
 
     float m_speed;
     float m_lifeTime;
 
-} Meta(Enable, DisplayName("Projectile"));
+    ursine::SVec3 m_movementVec;
+
+    ursine::ecs::Transform* m_transform;
+
+} Meta( Enable, DisplayName( "Projectile" ), RequiresComponents( typeof( ursine::ecs::Rigidbody ) ) );

@@ -48,7 +48,7 @@ namespace ursine
             m_privates->textureMgr->DestroyDynamicTexture( handle );
         }
 
-        GfxHND ResourceAPI::CreateTexture(uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height)
+        GfxHND ResourceAPI::CreateTexture(const uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height)
         {
             return m_privates->textureMgr->CreateTexture( binaryData, binarySize, width, height );
         }
@@ -66,6 +66,16 @@ namespace ursine
         void ResourceAPI::UnloadTexture(GfxHND handle)
         {
             m_privates->textureMgr->UnloadTexture( handle );
+        }
+
+        void ResourceAPI::LoadFontTextures(GfxHND handle)
+        {
+            m_privates->textureMgr->LoadFontTextures(handle, m_privates->fontMgr);
+        }
+
+        void ResourceAPI::UnloadFontTextures(GfxHND handle)
+        {
+            m_privates->textureMgr->UnloadFontTextures(handle, m_privates->fontMgr);
         }
 
         void ResourceAPI::GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize)
@@ -112,6 +122,11 @@ namespace ursine
             return m_privates->modelMgr->GetModelInfo( handle );
         }
 
+        ufmt_loader::ModelInfo* ResourceAPI::GetModelInfoNByName(const std::string& name)
+        {
+            return m_privates->modelMgr->GetModelInfoByName( name );
+        }
+
         bool ResourceAPI::CheckAnimExistence(const std::string &animeName)
         {
             return m_privates->modelMgr->CheckAnimExistence(animeName);
@@ -132,7 +147,7 @@ namespace ursine
             return m_privates->modelMgr->GeAnimeInfo( handle );
         }
 
-        GfxHND ResourceAPI::CreateBitmapFont(uint8_t *binaryData, size_t binarySize)
+        GfxHND ResourceAPI::CreateBitmapFont(const uint8_t *binaryData, size_t binarySize)
         {
             return m_privates->fontMgr->CreateBitmapFont( binaryData, binarySize );
         }

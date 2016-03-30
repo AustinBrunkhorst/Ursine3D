@@ -115,15 +115,6 @@ namespace ursine
             */
             void ProcessStaticMesh(FbxNode* pNode, int myindex, int inParentIndex);
 
-            /** @brief fbx loader control point funciton
-            *
-            *  this will import control points data from fbx file
-            *
-            *  @param pNode the pointer of the FbxNode
-            *  @return nothing
-            */
-            void ProcessControlPoint(FbxNode* pNode);
-
             /** @brief fbx loader vertices funciton
             *
             *  this will import vertices data from fbx file
@@ -141,6 +132,15 @@ namespace ursine
             *  @return nothing
             */
             void ProcessNormals(FbxMesh* pMesh, FBX_DATA::MeshData* pData);
+
+            /** @brief fbx loader binormal funciton
+            *
+            *  this will import binormal data from fbx file
+            *
+            *  @param pNode the pointer of the FbxNode
+            *  @return nothing
+            */
+            void ProcessBinormal(FbxMesh* pMesh, FBX_DATA::MeshData* pData);
 
             /** @brief fbx loader tangent funciton
             *
@@ -282,7 +282,7 @@ namespace ursine
             *  @param time the set of times in each animation curve
             *  @return nothing
             */
-            void ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time, FbxTime end);
+            void ProcessAnimation(FbxAnimCurve* pCurve, std::set<FbxTime>& time, FbxTime start, FbxTime end);
 
             /** @brief fbx loader geometry funciton
             *
@@ -359,7 +359,7 @@ namespace ursine
             *  @param index the id of the mesh data
             *  @return the mesh data of the model accoring to its index
             */
-            FBX_DATA::MeshData& GetMeshData(int index) const { return (*m_Model->mMeshData[index]); }
+            FBX_DATA::MeshData& GetMeshData(int index) const { return (m_Model->mMeshData[index]); }
 
             /** @brief fbx loader get mesh data count function
             *
@@ -404,7 +404,7 @@ namespace ursine
         private:
             unsigned int            boneindex;
             std::pair<bool, bool>   m_AnimationFlag;	// first flag = if there is animation
-                                                    // second flag = if there is only animation
+                                                        // second flag = if there is only animation
             FbxPose*                m_AnimPose;
             FBX_DATA::FbxModel*     m_Model;
 

@@ -28,6 +28,12 @@ Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectGetResource);
 
 Meta(Enable, ExposeJavaScript)
+JSFunction(ProjectDeleteResource);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(ProjectRenameResource);
+
+Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectMakeEditorResource);
 
 Meta(Enable, ExposeJavaScript)

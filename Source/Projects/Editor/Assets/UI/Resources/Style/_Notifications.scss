@@ -9,3 +9,41 @@
   z-index: 99999;
   pointer-events: none;
 }
+
+#notification-modal-container {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  overflow: hidden;
+  z-index: 999999;
+  pointer-events: none;
+
+  .modal-container {
+    width: 100%;
+    height: 100%;
+    background: rgba(black, 0.0);
+    pointer-events: all !important;
+    transition: background $duration-transition-btn ease;
+
+    &.active {
+      background: rgba(black, 0.5);
+    }
+
+    x-notification {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      margin-top: 50px;
+      opacity: 0;
+      transform: translate(-50%, -50%);
+      transition: margin-top 225ms ease, opacity 225ms ease;
+
+      &.active {
+        margin-top: 0;
+        opacity: 1;
+      }
+    }
+  }
+}

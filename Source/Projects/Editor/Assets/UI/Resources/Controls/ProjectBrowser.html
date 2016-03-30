@@ -1,6 +1,8 @@
 <link rel="import" href="../LIB/Polymer/polymer.html">
 <link rel="import" href="TreeView.html">
 <link rel="import" href="ContextMenu.html">
+<link rel="import" href="Notification.html">
+<link rel="import" href="Button.html">
 
 <dom-module id="x-project-browser">
     <link rel="import" type="css" href="../Style/Controls/ProjectBrowser.css">
@@ -39,6 +41,8 @@
         </div>
     </template>
     <script>
+        const kDirectorySeparator = '\\';
+
         var ProjectBrowserControl = Polymer({
             is: "x-project-browser",
             properties: {
@@ -60,10 +64,7 @@
                 this._pathToResourceEntry = { };
                 this._pathToDirectoryItem = { };
 
-                this._projectDirectory =
-                    this._createDirectoryCrumbs( this._resources.path )
-                        .slice( 0, -1 )
-                        .join( '\\' );
+                this._projectDirectory = this._getFileDirectory( this._resources.path );
 
                 this._buildTree( treeRoot );
             },
@@ -83,17 +84,14 @@
             },
 
             browseDirectory: function(directoryPath) {
-                // normalize path
-                directoryPath.replace( /\//g, '\\' );
-
-                var entry = this._pathToResourceEntry[ directoryPath ];
+                var entry = this._getResourceEntry( directoryPath );
 
                 if (!entry)
                     return;
 
                 this._browseDirectory( entry );
 
-                this._selectDirectoryItem( this._pathToDirectoryItem[ directoryPath ] );
+                this._selectDirectoryItem( this._getDirectoryItem( directoryPath ) );
             },
             addResource: function(resourceData) {
                 var currentNode = this._resources;
@@ -108,7 +106,7 @@
                 for (var i = 0; i < directories.length; ++i) {
                     var directory = directories[ i ];
 
-                    currentPath += '\\'+ directory;
+                    currentPath += kDirectorySeparator + directory;
 
                     var subDir = currentNode.subDirectories.find( function(inputDir, dir) {
                         return this._createDirectoryCrumbs( dir.path ).pop( ) == inputDir;
@@ -122,7 +120,7 @@
 
                         currentNode.subDirectories.push( newNode );
 
-                        var currentItem = this._pathToDirectoryItem[ currentNode.path ];
+                        var currentItem = this._getDirectoryItem( currentNode.path );
 
                         currentItem.child.appendChild(
                             this._createDirectoryTreeItem( newNode )
@@ -138,6 +136,38 @@
                 if (this._lastSelectedTreeItem && this._lastSelectedTreeItem.directoryData.path == currentNode.path) {
                     this.set( 'directoryFolders', currentNode.subDirectories.slice( 0 ) );
                     this.set( 'directoryResources', currentNode.resources.slice( 0 ) );
+                }
+            },
+            removeResource: function(resourceData) {
+                var directory = this._getFileDirectory( resourceData.sourceFile );
+                var entry = this._getResourceEntry( directory );
+
+                if (!entry)
+                    return;
+
+                entry.resources = entry.resources.filter( function(item) {
+                    return item.guid !== resourceData.guid;
+                } );
+
+                if (this._lastSelectedTreeItem && this._lastSelectedTreeItem.directoryData.path == entry.path) {
+                    this.set( 'directoryResources', entry.resources.slice( 0 ) );
+                }
+            },
+            renameResource: function(resourceData, oldName) {
+                var directory = this._getFileDirectory( oldName );
+                var entry = this._getResourceEntry( directory );
+
+                if (!entry)
+                    return;
+
+                // update the resource
+                entry.resources = entry.resources.map( function(item) {
+                    return item.guid === resourceData.guid ? resourceData : item;
+                } );
+
+                // @@@TODO: handle if the directory changed
+                if (this._lastSelectedTreeItem && this._lastSelectedTreeItem.directoryData.path == entry.path) {
+                    this.set( 'directoryResources', entry.resources.slice( 0 ) );
                 }
             },
 
@@ -175,7 +205,7 @@
             _onFolderDblClick: function(e) {
                 var folder = e.model.folder;
 
-                this._selectDirectoryItem( this._pathToDirectoryItem[ folder.path.replace( /\//g, '\\' ) ] );
+                this._selectDirectoryItem( this._getDirectoryItem( folder.path ) );
                 this._browseDirectory( folder );
             },
             _onFolderContextMenu: function(e) {
@@ -289,24 +319,91 @@
 
                 var resource = e.model.resource;
 
-                var showInExplorer = menu.addItem( 'Show In Explorer', function() {
-                    ProcessOpen( this._getFileDirectory( resource.sourceFile ), false );
-                }.bind( this ) );
+                {
+                    var showInExplorer = menu.addItem( 'Show In Explorer', function() {
+                        ProcessOpen( this._getFileDirectory( resource.sourceFile ), false );
+                    }.bind( this ) );
 
-                showInExplorer.icon = 'folder-closed';
+                    showInExplorer.icon = 'folder-closed';
+                }
 
-                var open = menu.addItem( 'Open', function() {
-                    ProcessOpen( resource.sourceFile, false );
-                }.bind( this ) );
+                {
+                    var open = menu.addItem( 'Open', function() {
+                        ProcessOpen( resource.sourceFile, false );
+                    }.bind( this ) );
 
-                open.icon = 'open-file';
+                    open.icon = 'open-file';
+                }
+
+                menu.addSeparator( );
+
+                {
+                    var rename = menu.addItem( 'Rename', function() {
+                        var resourceElement = e.path.find( function(element) {
+                            return element.classList.contains( 'resource' );
+                        } );
+
+                        this._startRenamingResource( resource, resourceElement );
+                    }.bind( this ) );
+
+                    rename.disabled = resource.isGenerated;
+                    rename.icon = 'edit';
+                }
+
+                {
+                    var remove = menu.addItem( 'Delete', function () {
+                        var confirm = new NotificationControl(
+                            NotificationType.Warning,
+                            'Are you sure? This action cannot be undone.',
+                            'Delete '+ resource.displayName
+                        );
+
+                        confirm.mode = NotificationMode.BlockingDialog;
+                        confirm.dismissible = false;
+
+                        var btnOk = new ButtonControl( );
+                        {
+                            btnOk.text = 'Ok';
+
+                            btnOk.addEventListener( 'click', function() {
+                                ProjectDeleteResource( resource.guid );
+
+                                confirm.close( );
+                            } );
+
+                            confirm.buttons.appendChild( btnOk );
+                        }
+
+                        var btnCancel = new ButtonControl( );
+                        {
+                            btnCancel.text = 'Cancel';
+
+                            btnCancel.addEventListener( 'click', confirm.close.bind( confirm ) );
+
+                            confirm.buttons.appendChild( btnCancel );
+                        }
+
+                        confirm.show( NotificationConfig.infiniteDuration );
+                    } );
+
+                    remove.disabled = resource.isGenerated;
+                    remove.icon = 'remove';
+                }
 
                 if (e.ctrlKey) {
                     menu.addSeparator( );
 
-                    var makeEditorResource = menu.addItem( 'Make Editor Resource', function() {
+                    menu.addItem( 'Make Editor Resource', function() {
                         ProjectMakeEditorResource( resource.guid );
                     }.bind( this ) );
+
+                    menu.addItem( 'Open Build File', function() {
+                        ProcessOpen( resource.buildFile, false );
+                    } );
+
+                    menu.addItem( 'Open Build Cache File', function() {
+                        ProcessOpen( resource.buildCacheFile, false );
+                    } );
                 }
 
                 this.fire( 'resource-contextmenu', {
@@ -328,11 +425,16 @@
                 for (var i = 0; i < directory.subDirectories.length; ++i)
                     this._buildDirectory( directory.subDirectories[ i ], item.child );
             },
+
+            _getResourceEntry: function(path) {
+                return this._pathToResourceEntry[ this._normalizePath( path ) ];
+            },
+
             _browseDirectory: function(entry) {
                 if (this._lastBrowsedDirectory === entry.path)
                     return;
 
-                this._lastBrowsedDirectory = entry.path;
+                this._lastBrowsedDirectory = this._normalizePath( entry.path );
 
                 var relativeDir = this._getRelativeResourceDirectory( entry.path );
                 var crumbs = this._createDirectoryCrumbs( relativeDir );
@@ -343,6 +445,9 @@
 
                 this.set( 'directoryResources', entry.resources.slice( 0 ) );
             },
+            _getDirectoryItem: function(path) {
+                return this._pathToDirectoryItem[ this._normalizePath( path ) ];
+            },
             _selectDirectoryItem: function(item) {
                 if (this._lastSelectedTreeItem !== null)
                     this._lastSelectedTreeItem.selected = false;
@@ -352,6 +457,65 @@
                 item.scrollIntoViewIfNeeded( );
 
                 this._lastSelectedTreeItem = item;
+            },
+
+            _startRenamingResource: function(resource, element) {
+                var textElement = element.querySelector( '.display-name' );
+
+                textElement.contentEditable = 'true';
+                textElement.spellcheck = 'false';
+
+                var range = document.createRange( );
+
+                range.selectNodeContents( textElement );
+
+                var selection = window.getSelection( );
+
+                selection.removeAllRanges( );
+                selection.addRange( range );
+
+                var keydownHandler = function(e) {
+                    // return
+                    if (e.keyCode == 13) {
+                        textElement.blur( );
+
+                        e.preventDefault( );
+
+                        return false;
+                    }
+
+                    return true;
+                }.bind( this );
+
+                var blurHandler = function(e) {
+                    textElement.contentEditable = 'false';
+
+                    var newName = textElement.innerText;
+
+                    // make sure the name changed
+                    if (newName.toLowerCase( ) !== resource.displayName.toLowerCase( )) {
+                        var result = ProjectRenameResource( resource.guid, newName );
+
+                        if (!result) {
+                            var error = new NotificationControl(
+                                NotificationType.Error,
+                                'A resource with the name '+ newName +' already exists in this directory.',
+                                'Rename '+ resource.displayName
+                            );
+
+                            error.show( );
+
+                            // revert the changes
+                            textElement.innerText = resource.displayName;
+                        }
+                    }
+
+                    textElement.removeEventListener( 'keydown', keydownHandler );
+                    textElement.removeEventListener( 'blur', blurHandler );
+                }.bind( this );
+
+                textElement.addEventListener( 'keydown', keydownHandler );
+                textElement.addEventListener( 'blur', blurHandler );
             },
 
             _createResourceDragPreview: function(resource) {
@@ -387,7 +551,7 @@
                 item.textElement.addEventListener( 'dblclick', this._onTreeItemDblClick.bind( this, item ) );
                 item.textElement.addEventListener( 'contextmenu', this._onTreeItemContextMenu.bind( this, item ) );
 
-                var normalizedPath = directoryNode.path.replace( /\//g, '\\' );
+                var normalizedPath = this._normalizePath( directoryNode.path );
 
                 this._pathToResourceEntry[ normalizedPath ] = directoryNode;
                 this._pathToDirectoryItem[ normalizedPath ] = item;
@@ -402,11 +566,14 @@
                     resources: [ ]
                 };
             },
+            _normalizePath: function(path) {
+                return path.replace( /\//g, '\\' );
+            },
             _createDirectoryCrumbs: function(directory) {
                 return directory.split( /\/|\\/ );
             },
             _getFileDirectory: function(filename) {
-                return this._createDirectoryCrumbs( filename ).slice( 0, -1 ).join( '\\' );
+                return this._createDirectoryCrumbs( filename ).slice( 0, -1 ).join( kDirectorySeparator );
             },
             _getRelativeResourceDirectory: function(directory) {
                 var basePathLength = this._projectDirectory.length;

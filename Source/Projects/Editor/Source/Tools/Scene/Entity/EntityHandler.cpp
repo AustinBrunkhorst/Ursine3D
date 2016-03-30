@@ -40,7 +40,7 @@ namespace
     void doSaveArchetype(
         const ecs::EntityHandle &entity, 
         int selectedFilter, 
-        const fs::FileList &files
+        const fs::PathList &files
     )
     {
         if (files.empty( ))

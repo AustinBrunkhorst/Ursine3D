@@ -1,3 +1,5 @@
+-lib ursine-api
+
 # compile as JavaScript
 -js ../Resources/Editor.js
 -D noEmbedJS

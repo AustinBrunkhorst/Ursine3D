@@ -21,13 +21,6 @@ namespace Utilities
     Utility Functions for FBX
     ===============================*/
 
-    /** @brief swap function
-    *
-    *  this will just swap both a and b(for swaping y,z factor of the vector)
-    *
-    *  @return nothing
-    */
-    void Swap(void* a, void* b);
     /** @brief convert XMFLOAT3 to SVec3 function
     *
     *  this will convert XMFLOAT3 format to SVec3
@@ -92,6 +85,7 @@ namespace Utilities
     *  @return converted SMat4 result
     */
     ursine::SMat4 FBXAMatrixToSMat4(FbxAMatrix* src);
+    FbxAMatrix SMat4ToFBXAMatrix(ursine::SMat4* src);
     /** @brief convert FbxVector4 to SVec4 function
     *
     *  this will convert FbxVector4 format to SVec4

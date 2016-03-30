@@ -20,7 +20,8 @@ namespace ursine
 {
     namespace graphics
     {
-        Model3DProcessor::Model3DProcessor(void)
+        Model3DProcessor::Model3DProcessor(bool shadowPass)
+            : m_shadowPass(shadowPass)
         {
             m_renderableType = RENDERABLE_MODEL3D;
         }
@@ -29,14 +30,20 @@ namespace ursine
         {
             UAssert(handle.Type_ == m_renderableType || handle.Type_ == RENDERABLE_OVERDRAW, "GfxEntityProcessor attempted to proces invalid type!");
 
-            Model3D model = m_manager->renderableManager->GetRenderableByID<Model3D>(handle.Index_);
+            Model3D &model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
 
             // if inactive
             if ( !model.GetActive() )
                 return true;
 
+            if( !m_shadowPass )
+            {
+                if(!model.GetShadowCaster( ))
+                    return true;
+            }
+
             // if culed by camera mask
-            if ( currentCamera.CheckMask(model.GetRenderMask()) )
+            if (currentCamera.CheckMask(model.GetRenderMask()))
                 return true;
 
             // return false as in DO NOT CULL ME
@@ -45,7 +52,7 @@ namespace ursine
 
         void Model3DProcessor::prepOperation(_DRAWHND handle, SMat4 &view, SMat4 &proj, Camera &currentCamera)
         {
-            Model3D model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
+            Model3D &model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
 
             /////////////////////////////////////////////////////////
             // map color
@@ -94,9 +101,20 @@ namespace ursine
             {
                 data.matPal.matPal[ index++ ] = x.ToD3D( );
             }
-            m_manager->bufferManager->MapBuffer<BUFFER_MATRIX_PAL, MatrixPalBuffer>(
+            m_manager->bufferManager->MapBuffer<BUFFER_MATRIX_PAL>(
                 &data, 
                 SHADERTYPE_VERTEX
+            );
+
+            /////////////////////////////////////////////////////////
+            // map texture offset
+            TextureUVOffset offset;
+            offset.uv = DirectX::XMFLOAT2(model.GetTextureUVOffset( ).X( ), model.GetTextureUVOffset( ).Y( ));
+
+            m_manager->bufferManager->MapBuffer<BUFFER_TEX_OFFSET>(
+                &offset,
+                SHADERTYPE_VERTEX,
+                13
             );
 
             /////////////////////////////////////////////////////////
@@ -106,7 +124,7 @@ namespace ursine
 
         void Model3DProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
         {
-            Model3D model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
+            Model3D &model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
 
             if (model.GetMeshIndex( ) == -1)
                 renderFullModel( 
@@ -150,7 +168,7 @@ namespace ursine
             }
 
             // rendering debug lines
-            if(renderDebug)
+            if(renderDebug && m_shadowPass)
             {
                 m_manager->dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
 
@@ -214,7 +232,7 @@ namespace ursine
             m_manager->shaderManager->Render( m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex ));
 
             // debug rendering
-            if( renderDebug )
+            if(renderDebug && m_shadowPass)
             {
                 m_manager->dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
 
