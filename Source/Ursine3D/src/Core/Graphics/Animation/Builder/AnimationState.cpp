@@ -52,7 +52,7 @@ namespace ursine
         m_stateName = name;
     }
     
-    float &AnimationState::GetTimePosition(void) const
+    const float &AnimationState::GetTimePosition(void) const
     {
         return m_timePos;
     }
