@@ -33,7 +33,7 @@ namespace ursine
         {
             NATIVE_COMPONENT;
 
-			friend class RenderSystem;
+            friend class RenderSystem;
 
         public:
             EditorField(

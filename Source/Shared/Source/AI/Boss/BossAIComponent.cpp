@@ -532,8 +532,21 @@ void BossAI::OnInitialize(void)
         m_bossLogic[ 1 ].push_back( vineHandlerSM );
     }
 
-    // TESTING: Pollinate
+    // Phase 3
+    // - Boss goes under ground
+    // - Spot light on the bosses home location
+    // - Wait till both players are in the trigger zone
+    // - When both players are in the center, spawn boss and vines in outer spawn locations
+    // Then other things, come back to this after other shit is done
     {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        /*auto goUnderground = sm->AddState<BossGoUndergroundState>( );
+        auto spotlightAndTriggers = sm->AddState<Phase3TriggersState>( );
+        auto wackamoleState = sm->AddState<Phase3WhackAMolee>( );*/
+    }
+    // TESTING: Pollinate
+    /*{
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
         auto pollinate = sm->AddState<BossPollinateState>( );
@@ -552,7 +565,7 @@ void BossAI::OnInitialize(void)
         sm->SetInitialState( sludgeshot );
 
         m_bossLogic[ 3 ].push_back( sm );
-    }
+    }*/
 }
 
 void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
