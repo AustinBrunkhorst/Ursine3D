@@ -416,10 +416,14 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
         //weapon.m_animatorHandle->SetPlaying(true);
 
         // create particle at weapons fire pos and parent to weapon
-        auto e = m_world->CreateEntityFromArchetype( weapon.m_fireParticle );
+        auto e = m_world->CreateEntityFromArchetype(weapon.m_fireParticle);
 
         if (e)
-            weapon.m_firePosHandle->AddChildAlreadyInLocal( e->GetTransform( ) );
+        {
+            e->GetTransform( )->SetWorldPosition( SVec3( 0.0f, 0.0f, 0.0f ) );
+            weapon.m_firePosHandle->AddChildAlreadyInLocal(e->GetTransform( ));
+        }
+            
         
         // number of rounds that were fired
         CreateRaycasts(
