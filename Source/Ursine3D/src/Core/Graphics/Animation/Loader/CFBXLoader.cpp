@@ -559,14 +559,14 @@ namespace ursine
                 m_Model->mMeshData.push_back(newMesh);
 
                 //go through all the control points(verticies) and multiply by the transformation
-                for (unsigned int i = 0; i < newMesh.vertexCnt; ++i)
+                for (auto &iter : newMesh.vertices)
                 {
                     FbxVector4 vtx;
-                    vtx.mData[0] = newMesh.vertices[i].x;
-                    vtx.mData[1] = newMesh.vertices[i].y;
-                    vtx.mData[2] = newMesh.vertices[i].z;
+                    vtx.mData[0] = iter.x;
+                    vtx.mData[1] = iter.y;
+                    vtx.mData[2] = iter.z;
                     vtx.mData[3] = 0.0f;
-                    newMesh.vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
+                    iter = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
                 }
             }
             for (int i = 0; i < pNode->GetChildCount(); ++i)
@@ -586,8 +586,7 @@ namespace ursine
             unsigned int ctrlPtCnt = pMesh->GetControlPointsCount();
 
             // vertices
-            pData->vertexCnt = ctrlPtCnt;
-            pData->vertices = new pseudodx::XMFLOAT3[ctrlPtCnt];
+            pData->vertices.resize(ctrlPtCnt);
             for (unsigned int i = 0; i < ctrlPtCnt; ++i)
             {
                 FbxVector4 v = pMesh->GetControlPointAt(i);
@@ -597,8 +596,7 @@ namespace ursine
 
             // indicies
             unsigned int indexCnt = pMesh->GetPolygonVertexCount();
-            pData->indexCnt = indexCnt;
-            pData->indices = new unsigned int[indexCnt];
+            pData->indices.resize(indexCnt);
             int* indexData = pMesh->GetPolygonVertices();
 
             for (unsigned int i = 0; i < indexCnt; ++i)
@@ -633,8 +631,7 @@ namespace ursine
                     //get the size of our data (triangles)
                     unsigned normalCount = pMesh->GetControlPointsCount();
                     pData->normalMode = FbxGeometryElement::eByControlPoint;
-                    pData->normalCnt = normalCount;
-                    pData->normals = new pseudodx::XMFLOAT3[normalCount];
+                    pData->normals.resize(normalCount);
 
                     for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); ++lVertexIndex)
                     {
@@ -659,8 +656,7 @@ namespace ursine
                     //get the size of our data (triangles)
                     unsigned normalCount = pMesh->GetPolygonCount() * pMesh->GetPolygonSize(0);
                     pData->normalMode = FbxGeometryElement::eByPolygonVertex;
-                    pData->normalCnt = normalCount;
-                    pData->normals = new pseudodx::XMFLOAT3[normalCount];
+                    pData->normals.resize(normalCount);
 
                     for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
                     {
@@ -697,7 +693,7 @@ namespace ursine
         {
             //get the normal element attribute
             FbxGeometryElementBinormal* binormalElement = pMesh->GetElementBinormal();
-
+        
             if (binormalElement)
             {
                 switch (binormalElement->GetMappingMode())
@@ -706,18 +702,17 @@ namespace ursine
                 {
                     unsigned binormalCount = pMesh->GetControlPointsCount();
                     pData->binormalMode = FbxGeometryElement::eByControlPoint;
-                    pData->binormalCnt = binormalCount;
-                    pData->binormals = new pseudodx::XMFLOAT3[binormalCount];
-
+                    pData->binormals.resize(binormalCount);
+        
                     for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); ++lVertexIndex)
                     {
                         int lBinormalIndex = 0;
-
+        
                         if (binormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
                             lBinormalIndex = lVertexIndex;
                         if (binormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
                             lBinormalIndex = binormalElement->GetIndexArray().GetAt(lVertexIndex);
-
+        
                         FbxVector4 lBinormal = binormalElement->GetDirectArray().GetAt(lBinormalIndex);
                         mConverter->ConvertVector(lBinormal);
                         pData->binormals[lVertexIndex] = FBXVectorToXMFLOAT3(lBinormal.mData);
@@ -727,31 +722,30 @@ namespace ursine
                 case FbxGeometryElement::eByPolygonVertex:
                 {
                     int lIndexByPolygonVertex = 0;
-
+        
                     unsigned binormalCount = pMesh->GetPolygonCount() * pMesh->GetPolygonSize(0);
-
+        
                     pData->binormalMode = FbxGeometryElement::eByPolygonVertex;
-                    pData->binormalCnt = binormalCount;
-                    pData->binormals = new pseudodx::XMFLOAT3[binormalCount];
-
+                    pData->binormals.resize(binormalCount);
+        
                     for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
-
+        
                         UAssertCatchable(lPolygonSize == 3,
                             "Model is not triangulated.\npoly size: %i",
                             lPolygonSize
                             );
-
+        
                         for (int i = 0; i < lPolygonSize; ++i)
                         {
                             int lBinormalIndex = 0;
-
+        
                             if (binormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
                                 lBinormalIndex = lIndexByPolygonVertex;
                             if (binormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
                                 lBinormalIndex = binormalElement->GetIndexArray().GetAt(lIndexByPolygonVertex);
-
+        
                             FbxVector4 lBinormal = binormalElement->GetDirectArray().GetAt(lBinormalIndex);
                             mConverter->ConvertVector(lBinormal);
                             pData->binormals[lIndexByPolygonVertex] = FBXVectorToXMFLOAT3(lBinormal.mData);
@@ -777,8 +771,7 @@ namespace ursine
                 {
                     unsigned tangentCount = pMesh->GetControlPointsCount();
                     pData->tangentMode = FbxGeometryElement::eByControlPoint;
-                    pData->tangentCnt = tangentCount;
-                    pData->tangents = new pseudodx::XMFLOAT3[tangentCount];
+                    pData->tangents.resize(tangentCount);
 
                     for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); ++lVertexIndex)
                     {
@@ -802,8 +795,7 @@ namespace ursine
                     unsigned tangentCount = pMesh->GetPolygonCount() * pMesh->GetPolygonSize(0);
 
                     pData->tangentMode = FbxGeometryElement::eByPolygonVertex;
-                    pData->tangentCnt = tangentCount;
-                    pData->tangents = new pseudodx::XMFLOAT3[tangentCount];
+                    pData->tangents.resize(tangentCount);
 
                     for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
                     {
@@ -868,8 +860,7 @@ namespace ursine
                 {
                     unsigned int uvCount = pMesh->GetControlPointsCount();
 
-                    pData->uvCnt = uvCount;
-                    pData->uvs = new pseudodx::XMFLOAT2[uvCount];
+                    pData->uvs.resize(uvCount);
                     for (unsigned int lVertexIndex = 0; lVertexIndex < uvCount; ++lVertexIndex)
                     {
                         int lUVIndex = 0;
@@ -896,8 +887,7 @@ namespace ursine
                 {
                     int lPolyIndexCounter = 0;
 
-                    pData->uvCnt = lIndexCount;
-                    pData->uvs = new pseudodx::XMFLOAT2[pData->uvCnt];
+                    pData->uvs.resize(lIndexCount);
 
                     const int lPolyCount = pMesh->GetPolygonCount();
 
@@ -1088,20 +1078,19 @@ namespace ursine
                 FbxLayerElementArrayTemplate<int>& materialIndicies = materialElement->GetIndexArray();
                 if (materialElement->GetMappingMode() == FbxGeometryElement::eByPolygon)
                 {
-                    pData->mtrlIndexCnt = materialIndicies.GetCount();
-                    if (materialIndicies.GetCount() > 0)
+                    pData->materialIndices.resize(materialIndicies.GetCount());
+                    unsigned int i = 0;
+                    for (auto &iter : pData->materialIndices)
                     {
-                        pData->materialIndices = new unsigned[pData->mtrlIndexCnt];
-                        for (int i = 0; i < materialIndicies.GetCount(); ++i)
-                            pData->materialIndices[i] = materialIndicies[i];
+                        iter = materialIndicies[i];
+                        ++i;
                     }
                 }
                 else if (materialElement->GetMappingMode() == FbxGeometryElement::eAllSame)
                 {
-                    pData->mtrlIndexCnt = pData->indexCnt / pNode->GetMesh()->GetPolygonSize(0);
-                    pData->materialIndices = new unsigned[pData->mtrlIndexCnt];
-                    for (int i = 0; i < static_cast<int>(pData->mtrlIndexCnt); ++i)
-                        pData->materialIndices[i] = materialIndicies[0];
+                    pData->materialIndices.resize(pData->indices.size() / pNode->GetMesh()->GetPolygonSize(0));
+                    for(auto &iter : pData->materialIndices)
+                        iter = materialIndicies[0];
                 }
             }
         }
@@ -1529,14 +1518,14 @@ namespace ursine
                 ProcessMaterials(pNode, &newMesh);
 
                 //go through all the control points(verticies) and multiply by the transformation
-                for (unsigned int i = 0; i < newMesh.vertexCnt; ++i)
+                for (auto &iter: newMesh.vertices)
                 {
                     FbxVector4 vtx;
-                    vtx.mData[0] = newMesh.vertices[i].x;
-                    vtx.mData[1] = newMesh.vertices[i].y;
-                    vtx.mData[2] = newMesh.vertices[i].z;
+                    vtx.mData[0] = iter.x;
+                    vtx.mData[1] = iter.y;
+                    vtx.mData[2] = iter.z;
                     vtx.mData[3] = 0.0f;
-                    newMesh.vertices[i] = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
+                    iter = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
                 }
                 m_Model->mMeshData.push_back(newMesh);
 
@@ -1660,37 +1649,38 @@ namespace ursine
         //reconstruct vertices and indices
         void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& target_mvs, std::vector<unsigned int>& target_mis, const FBX_DATA::MeshData& md)
         {
-            for (unsigned int i = 0; i < md.indexCnt; ++i)
+            unsigned int i = 0;
+            for (auto &iter: md.indices)
             {
                 ufmt_loader::MeshVertex newMV;
 
-                newMV.pos = md.vertices[md.indices[i]];
+                newMV.pos = md.vertices[iter];
 
-                if (md.normals)
+                if (!md.normals.empty())
                 {
                     if (md.normalMode == FbxGeometryElement::eByPolygonVertex)
                         newMV.normal = md.normals[i];
                     else if (md.normalMode == FbxGeometryElement::eByControlPoint)
-                        newMV.normal = md.normals[md.indices[i]];
+                        newMV.normal = md.normals[iter];
                 }
 
-                if (md.binormals)
-                {
-                    if (md.binormalMode == FbxGeometryElement::eByPolygonVertex)
-                        newMV.binormal = md.binormals[i];
-                    else if (md.binormalMode == FbxGeometryElement::eByControlPoint)
-                        newMV.binormal = md.binormals[md.indices[i]];
-                }
+                //if (!md.binormals.empty())
+                //{
+                //    if (md.binormalMode == FbxGeometryElement::eByPolygonVertex)
+                //        newMV.binormal = md.binormals[i];
+                //    else if (md.binormalMode == FbxGeometryElement::eByControlPoint)
+                //        newMV.binormal = md.binormals[iter];
+                //}
 
-                if (md.tangents)
+                if (!md.tangents.empty())
                 {
                     if (md.tangentMode == FbxGeometryElement::eByPolygonVertex)
                         newMV.tangent = md.tangents[i];
                     else if (md.tangentMode == FbxGeometryElement::eByControlPoint)
-                        newMV.tangent = md.tangents[md.indices[i]];
+                        newMV.tangent = md.tangents[iter];
                 }
 
-                if (md.uvs)
+                if (!md.uvs.empty())
                 {
                     newMV.uv = md.uvs[i];
                     newMV.uv.y = 1.0f - newMV.uv.y;
@@ -1702,15 +1692,15 @@ namespace ursine
                     if (!m_Model->mCtrlPoints[meshIdx].empty())
                     {
                         // currently, just for using 1st control point vec
-                        newMV.ctrlBlendWeights.x = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[0].mBlendingWeight;
-                        newMV.ctrlBlendWeights.y = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[1].mBlendingWeight;
-                        newMV.ctrlBlendWeights.z = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[2].mBlendingWeight;
-                        newMV.ctrlBlendWeights.w = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[3].mBlendingWeight;
+                        newMV.ctrlBlendWeights.x = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[0].mBlendingWeight;
+                        newMV.ctrlBlendWeights.y = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[1].mBlendingWeight;
+                        newMV.ctrlBlendWeights.z = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[2].mBlendingWeight;
+                        newMV.ctrlBlendWeights.w = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[3].mBlendingWeight;
 
-                        newMV.ctrlIndices.x = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[0].mBlendingIndex;
-                        newMV.ctrlIndices.y = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[1].mBlendingIndex;
-                        newMV.ctrlIndices.z = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[2].mBlendingIndex;
-                        newMV.ctrlIndices.w = m_Model->mCtrlPoints[meshIdx].at(md.indices[i]).mBlendingInfo[3].mBlendingIndex;
+                        newMV.ctrlIndices.x = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[0].mBlendingIndex;
+                        newMV.ctrlIndices.y = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[1].mBlendingIndex;
+                        newMV.ctrlIndices.z = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[2].mBlendingIndex;
+                        newMV.ctrlIndices.w = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[3].mBlendingIndex;
                     }
                 }
 
@@ -1733,6 +1723,8 @@ namespace ursine
                     target_mvs.push_back(newMV);
                     target_mis.push_back(index);
                 }
+
+                ++i;
             }
         }
     }
