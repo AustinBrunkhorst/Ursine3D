@@ -28,7 +28,9 @@
 #include "WallComponent.h"
 #include <Core/Audio/AudioManager.h>
 #include "GameEvents.h"
-
+#include "GhostComponent.h"
+#include "AIMovementControllerComponent.h"
+#include "AIHordelingTypeComponent.h"
 
 ENTITY_SYSTEM_DEFINITION( BaseWeaponSystem );
 ENTITY_SYSTEM_DEFINITION( HitscanWeaponSystem );
@@ -43,6 +45,31 @@ namespace
     const std::string kFireGun = "FIRE_GUN_HAND";
     const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
     const Randomizer random;
+
+    size_t FindNonGhost(EntityHandle& entityToSet, physics::RaycastOutput& rayout, World* world)
+    {
+
+        for ( size_t i = rayout.entity.size( ) - 1; i >= 0; --i )
+        {
+            entityToSet = world->GetEntity( rayout.entity[ i ] );
+
+            if ( !entityToSet->HasComponent< Ghost >( ) || entityToSet->GetRoot( )->HasComponent< AIHordelingType >( ) )
+                return i;
+        }
+
+        return -1;
+    }
+
+    int Test(int j)
+    {
+        int i = 0;
+
+        j += 5;
+
+        i += 10;
+
+        return j * i;
+    }
 }
 
 // Apply spread / accuracy to shooting
@@ -438,11 +465,13 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon &weapon, Transfor
     physics::RaycastInput rayin;   // input for raycast check
     physics::RaycastOutput rayout; // output from raycast check
 
+    int j = 0;
+
     for ( int i = 0; i < projectilesFired; ++i )
     {
         WeaponSystemUtils::ConstructRaycast( weapon, rayin.start, rayin.end );
 
-        if (m_physicsSystem->Raycast( rayin, rayout, weapon.m_raycastType, weapon.m_debug, weapon.m_drawDuration, weapon.m_alwaysDraw ))
+        if (m_physicsSystem->Raycast( rayin, rayout, physics::RAYCAST_ALL_HITS, weapon.m_debug, weapon.m_drawDuration, Color(1.0f, 0.0f, 0.0f, 1.0f), weapon.m_alwaysDraw ))
         {
             switch (weapon.m_raycastType)
             {
@@ -452,8 +481,12 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon &weapon, Transfor
             {
                     auto delta = rayin.end - rayin.start;
 
-                    if (!RaycastClosestHitLogic( delta, rayout, weapon ))
-                        CreateTrail( weapon, rayin.end );
+                    EntityHandle objHit;
+
+                    size_t indexOfObjHit = FindNonGhost( objHit, rayout, m_world );
+
+                    if ( !RaycastClosestHitLogic((int)indexOfObjHit, objHit, delta, rayout, weapon) )
+                        CreateTrail(weapon, rayin.end);
                 break;
             }
             default:
@@ -465,33 +498,18 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon &weapon, Transfor
     }
 }
 
-bool HitscanWeaponSystem::RaycastClosestHitLogic(SVec3 &raycastVec, physics::RaycastOutput &rayout, AbstractHitscanWeapon &weapon)
+bool HitscanWeaponSystem::RaycastClosestHitLogic(int indexOfObjHit, EntityHandle& objHit, SVec3 &raycastVec, physics::RaycastOutput &rayout, AbstractHitscanWeapon &weapon)
 {
+    if ( indexOfObjHit < 0 )
+        return false;
+
     EntityHandle e;
 
-    // get first object hit w/ health and apply damage
-    auto objHit = m_world->GetEntity( rayout.entity.front( ) );
-
-    auto rootHealth = objHit->GetRoot( )->GetComponent<Health>( );
-    auto objHealth = objHit->GetComponent<Health>( );
-
-    if (rootHealth && !rootHealth->CanDamage( &weapon ))
-        return false;
-
-    if (objHealth && !objHealth->CanDamage( &weapon ))
-        return false;
-
-    if (!(objHealth || rootHealth || objHit->HasComponent<Wall>( )))
-        return false;
-
     // where did rayact collide at
-    SVec3 &collisionPoint = rayout.hit[ 0 ];
+    SVec3 &collisionPoint = rayout.hit[ indexOfObjHit ];
 
     // create shot particle
     e = m_world->CreateEntityFromArchetype( weapon.m_shotParticle );
-
-    if (e)
-        e->GetTransform( )->SetWorldPosition( collisionPoint );
 
     float damage = weapon.m_damageToApply;
     bool crit = false;
@@ -506,32 +524,35 @@ bool HitscanWeaponSystem::RaycastClosestHitLogic(SVec3 &raycastVec, physics::Ray
 
         // find actual hit position on obj hit
         SpawnCollisionParticle( collisionPoint, raycastVec, objHit );
-
-        if (e)
-        {
-            e->GetTransform( )->SetWorldPosition( collisionPoint );
-
-            // parent so that it follows objects and dies with object
-            objHit->GetTransform( )->AddChild( e->GetTransform( ) );
-        }
     }
+
+    if ( e )
+        e->GetTransform( )->SetWorldPosition(collisionPoint);
 
     // if object has health
     if ( objHit->GetRoot( )->HasComponent<Health>( ) )
     {
-        objHit->GetRoot( )->GetComponent< Health >( )->DealDamage(collisionPoint, damage, crit );
+        Health* rootHealth = objHit->GetRoot( )->GetComponent< Health >( );
 
-        if (!crit && e)
-            objHit->GetTransform( )->AddChild( e->GetTransform( ) );
+        if ( rootHealth->CanDamage(&weapon) )
+            rootHealth->DealDamage(collisionPoint, damage, crit);
+
+        else
+            return false;
     }
     else if ( objHit->GetComponent<Health>( ) )
     {
-        objHit->GetComponent< Health >( )->DealDamage(collisionPoint, damage, crit );
+        Health* objHealth = objHit->GetComponent< Health >( );
 
-        if (!crit && e)
-            objHit->GetTransform( )->AddChild( e->GetTransform( ) );
+        if ( objHealth->CanDamage(&weapon) )
+            objHealth->DealDamage(collisionPoint, damage, crit);
+
+        else
+            return false;
     }
 
+    if ( !crit && e )
+        objHit->GetTransform( )->AddChild(e->GetTransform( ));
 
     CreateTrail( weapon, collisionPoint );
 
