@@ -26,6 +26,8 @@
 
 #include "EntityEvent.h"
 
+#include "World.h"
+
 namespace ursine
 {
     namespace physics
@@ -168,7 +170,7 @@ namespace ursine
         #endif
         }
 
-        bool Simulation::Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type)
+        bool Simulation::Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type, ursine::ecs::World* world)
         {
             output.entity.clear( );
             output.hit.clear( );
@@ -208,6 +210,38 @@ namespace ursine
                     output.entity.push_back( 
                         closestHit.m_collisionObject->getUserIndex( ) 
                     );
+
+                    return true;
+                }
+                else
+                    return false;
+            }
+            else if ( type == RAYCAST_CLOSEST_NON_GHOST )
+            {
+                ClosestNonGhostRayResultCallback closestHit(start, end, world);
+
+                m_dynamicsWorld->rayTest(start, end, closestHit);
+
+                if ( closestHit.hasHit( ) )
+                {
+                    auto &hitP = closestHit.m_hitPointWorld;
+                    auto &normP = closestHit.m_hitNormalWorld;
+
+                    output.hit.emplace_back(
+                        hitP.getX( ),
+                        hitP.getY( ),
+                        hitP.getZ( )
+                        );
+
+                    output.normal.emplace_back(
+                        normP.getX( ),
+                        normP.getY( ),
+                        normP.getZ( )
+                        );
+
+                    output.entity.push_back(
+                        closestHit.m_collisionObject->getUserIndex( )
+                        );
 
                     return true;
                 }

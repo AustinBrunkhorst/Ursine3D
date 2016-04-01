@@ -15,14 +15,22 @@
 
 #include "SVec3.h"
 #include "EntityConfig.h"
+#include "PhysicsInteropConfig.h"
+
 
 namespace ursine
 {
+    namespace ecs
+    {
+        class World;
+    }
+
     namespace physics
     {
         enum RaycastType
         {
             RAYCAST_CLOSEST_HIT,
+            RAYCAST_CLOSEST_NON_GHOST,
             RAYCAST_ALL_HITS,
             RAYCAST_NUM
         } Meta(Enable);
@@ -44,6 +52,14 @@ namespace ursine
         {
             std::vector<SVec3> hit, normal;
             std::vector<ecs::EntityID> entity;
+        };
+
+        struct	ClosestNonGhostRayResultCallback : public btCollisionWorld::ClosestRayResultCallback
+        {
+            ClosestNonGhostRayResultCallback(const btVector3&	rayFromWorld, const btVector3&	rayToWorld, ursine::ecs::World* world);
+            ursine::ecs::World* m_world;
+
+            virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace) override;
         };
     }
 }
