@@ -70,21 +70,12 @@ PixelInputType main(uint id : SV_VERTEXID)
 
     float3 position;
 
-    // scale
-    float3 rightVec = mul(g_bufPosColor[ particleIndex ].rotation, (float3x3)view);
-    float3 upVec = cross(rightVec, float3(0, 0, -1));
-
-    upVec.z = 0;
-    rightVec.z = 0;
-
     switch ( vertexInQuad )
     {
     case 0:
         position.x = -1.f;
         position.y = 1.f;
         position.z = 0.f;
-
-        // position = -rightVec + upVec;
 
         output.uv.x = 0;
         output.uv.y = 0;
@@ -94,8 +85,6 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = 1.f;
         position.z = 0.f;
 
-        // position = rightVec + upVec;
-
         output.uv.x = 1;
         output.uv.y = 0;
         break;
@@ -103,8 +92,6 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.x = -1.f;
         position.y = -1.f;
         position.z = 0.f;
-
-        // position = -rightVec - upVec;
 
         output.uv.x = 0;
         output.uv.y = 1;
@@ -114,8 +101,6 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = 1.f;
         position.z = 0.f;
 
-        // position = rightVec + upVec;
-
         output.uv.x = 1;
         output.uv.y = 0;
         break;
@@ -124,8 +109,6 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.y = -1.f;
         position.z = 0.f;
 
-        // position = rightVec - upVec;
-
         output.uv.x = 1;
         output.uv.y = 1;
         break;
@@ -133,8 +116,6 @@ PixelInputType main(uint id : SV_VERTEXID)
         position.x = -1.f;
         position.y = -1.f;
         position.z = 0.f;
-
-        // position = -rightVec - upVec;
 
         output.uv.x = 0;
         output.uv.y = 1;

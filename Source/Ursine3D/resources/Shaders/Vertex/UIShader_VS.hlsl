@@ -9,26 +9,14 @@ cbuffer TransformBuffer : register(b1)
     matrix World;
 }
 
-cbuffer MatrixStack : register(b12)
-{
-    matrix matPal[96];
-}
-
-//struct VertexInputType
-//{
-//  float4 position : POSITION;
-//  float4 normal : NORMAL;
-//  float2 uv : UV;
-//  //@matt don't forget this
-//};
-
 struct VS_INPUT
 {
-    float3    Pos        : POSITION;
-    float3    Nor        : NORMAL;
-    float2    Tex        : TEXCOORD;
-    float4    BWeight : BLENDWEIGHT;
-    int4    BIdx    : BLENDINDICES;
+    float3  Pos         : POSITION;
+    float3  Nor         : NORMAL;
+    float3  Tan         : TANGENT;
+    float2  Tex         : TEXCOORD;
+    float4  BWeight     : BLENDWEIGHT;
+    uint4   BIdx        : BLENDINDICES;
 };
 
 

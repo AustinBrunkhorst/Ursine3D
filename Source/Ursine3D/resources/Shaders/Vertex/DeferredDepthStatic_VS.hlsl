@@ -42,30 +42,7 @@ VS_OUTPUT main(VS_INPUT input)
 {
     VS_OUTPUT output;
 
-    float weights[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
-    weights[ 0 ] = input.BWeight.x;
-    weights[ 1 ] = input.BWeight.y;
-    weights[ 2 ] = input.BWeight.z;
-    weights[ 3 ] = 1.0f - weights[ 0 ] - weights[ 1 ] - weights[ 2 ];
-
-    int indices[ 4 ] = { 0, 0, 0, 0 };
-    indices[ 0 ] = input.BIdx.x;
-    indices[ 1 ] = input.BIdx.y;
-    indices[ 2 ] = input.BIdx.z;
-    indices[ 3 ] = input.BIdx.w;
-
-    float3 pos = float3(0.f, 0.f, 0.f);
-    float3 normal = float3(0.0f, 0.0f, 0.0f);
-    
-    for (int i = 0; i < 4; ++i)
-    {
-        pos += weights[ i ] * mul(float4(input.Pos.xyz, 1.0f), matPal[ indices[ i ] ]).xyz;
-        normal += weights[ i ] * mul(float4(input.Nor.xyz, 0.0f), matPal[ indices[ i ] ]).xyz;
-    }
-
-    normal = normalize(normal);
-
-    output.Pos = mul(float4(pos.xyz, 1.f), World);
+    output.Pos = mul(float4(input.Pos.xyz, 1.f), World);
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
     output.Tex = input.Tex + textureOffset;

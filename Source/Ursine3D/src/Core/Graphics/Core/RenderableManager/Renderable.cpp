@@ -490,7 +490,7 @@ namespace ursine
             return SMat4( DirectX::XMMatrixPerspectiveFovLH(
                     math::DegreesToRadians( m_spotlightAngles.Y( ) ), 
                     1.0f,
-                    0.01f,
+                    1.0f,
                     m_radius
                 )
             );
@@ -529,6 +529,7 @@ namespace ursine
             m_textureHandle = 0;
             m_useAdditive = true;
             m_worldSpace = true;
+            m_velocityOrient = false;
         }
 
         std::vector<Particle_GPU>& ParticleSystem::GetGPUParticleData(void)
@@ -656,6 +657,16 @@ namespace ursine
         void ParticleSystem::SetTransform(const SMat4& transform)
         {
             m_transform = transform;
+        }
+
+        bool ParticleSystem::GetVelocityOrient(void) const
+        {
+            return m_velocityOrient;
+        }
+
+        void ParticleSystem::SetVelocityOrient(bool velocityOrient)
+        {
+            m_velocityOrient = velocityOrient;
         }
 
         /////////////////////////////////////////////////////////////

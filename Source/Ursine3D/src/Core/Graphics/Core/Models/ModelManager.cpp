@@ -576,6 +576,13 @@ namespace ursine
                         currMesh.meshVtxInfos[ i ].normal.y,
                         currMesh.meshVtxInfos[ i ].normal.z
                     );
+
+                    buffer[ i ].vTan = DirectX::XMFLOAT3(
+                        currMesh.meshVtxInfos[ i ].tangent.x,
+                        currMesh.meshVtxInfos[ i ].tangent.y,
+                        currMesh.meshVtxInfos[ i ].tangent.z
+                    );
+
                     buffer[ i ].vUv = DirectX::XMFLOAT2(
                         currMesh.meshVtxInfos[ i ].uv.x,
                         currMesh.meshVtxInfos[ i ].uv.y
