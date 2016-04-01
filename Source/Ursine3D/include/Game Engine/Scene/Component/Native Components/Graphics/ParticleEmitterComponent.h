@@ -39,6 +39,11 @@ namespace ursine
                 "Reset Spawn Count"
             );
 
+            EditorButton(
+                destroyAllParticles,
+                "Reset All Particles"
+            );
+
             EditorField(
                 bool emitting,
                 GetEmitting,
@@ -210,6 +215,7 @@ namespace ursine
             int spawnParticle(void);
 
             void ResetSpawnCount(void);
+            
 
         private:
             // temporary updating

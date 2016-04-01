@@ -1,6 +1,6 @@
  
 //texture
-Texture2D modelTexture : register(t0);
+Texture2D gmodelTexture : register(t0);
 
 //sample type
 SamplerState texSample : register(s0);
@@ -25,14 +25,14 @@ cbuffer MaterialBuffer : register(b10)
 };
 
 //what incoming pixel data looks like
-struct PixelInputType
+struct PS_INPUT
 {
   float4 position : SV_POSITION;
   float4 normal : NORMAL;
   float2 uv : UV;
 };
 
-float4 main(PixelInputType input) : SV_TARGET
+float4 main(PS_INPUT input) : SV_TARGET
 {
   float4 diffuseColor = float4(1, 1, 1, 1);
   float4 downColor = float4(1, 1, 1, 1);
@@ -44,7 +44,7 @@ float4 main(PixelInputType input) : SV_TARGET
   float upIntensity, downIntensity;
   float4 color;
 
-  textureColor = modelTexture.Sample(texSample, input.uv);
+  textureColor = gmodelTexture.Sample(texSample, input.uv);
 
   upIntensity = (dot(input.normal, float4(0, 1, 0, 0)));
   downIntensity = (dot(input.normal, float4(0, -1, 0, 0)));
