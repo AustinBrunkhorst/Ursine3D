@@ -139,11 +139,14 @@ if (MSVC)
         # type of shader to compile (vs, ps, gs, etc.)
         string(TOLOWER ${shader_type} shader_type)
 
+        # skip include only from build
+        if (shader_type STREQUAL "_h")
+
+
         # default to vertex shader
         set(vs_shader_type "Vertex")
 
         # map to correct Visual Studio FXCompiler shader type
-
         if (shader_type STREQUAL "ps")
             set(vs_shader_type "Pixel")
         elseif (shader_type STREQUAL "gs")
