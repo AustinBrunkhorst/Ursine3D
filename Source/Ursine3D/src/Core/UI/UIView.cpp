@@ -284,8 +284,9 @@ namespace ursine
         int httpStatusCode
     )
     {
+        // squared to have a more drastic effect
         m_browser->GetHost( )->SetZoomLevel( 
-            m_window->GetDPIScaleFactor( ) - 1.0f
+            pow( m_window->GetDPIScaleFactor( ), 2.0f ) - 1.0f
         );
 
         // dispatch all of the queued messages

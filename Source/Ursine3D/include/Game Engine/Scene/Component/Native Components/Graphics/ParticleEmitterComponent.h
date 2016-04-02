@@ -270,8 +270,9 @@ namespace ursine
             bool m_fastMovingEmitter;
         } Meta(
             Enable, 
-            DisplayName( "ParticleEmitter" ),
-            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )
+            DisplayName( "ParticleEmitter" )
+        ) EditorMeta( 
+            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )    
         );
     }
 }

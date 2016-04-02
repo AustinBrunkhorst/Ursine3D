@@ -293,8 +293,9 @@ namespace ursine
         } Meta(
             Enable,
             WhiteListMethods,
-            DisableComponentRemoval, 
             DisplayName( "Transform" )
+        ) EditorMeta(
+            DisableComponentRemoval
         );
     }
 }

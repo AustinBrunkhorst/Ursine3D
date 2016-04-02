@@ -13,6 +13,8 @@
 
 #pragma once
 
+#if defined(URSINE_WITH_EDITOR)
+
 #include "Component.h"
 
 namespace ursine
@@ -47,3 +49,5 @@ namespace ursine
         );
 	}
 }
+
+#endif // defined(URSINE_WITH_EDITOR)

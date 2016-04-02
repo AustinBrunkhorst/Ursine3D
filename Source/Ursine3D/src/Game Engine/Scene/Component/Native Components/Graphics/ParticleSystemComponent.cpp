@@ -29,7 +29,9 @@ namespace ursine
             , m_particleColor( Color::White )
             , m_systemSpace( SystemSpace::WorldSpace )
             , m_renderMode( RenderMode::Additive )
+            #if defined(URSINE_WITH_EDITOR)
             , m_updateInEditor( false )
+            #endif
         {
             // store a pointer to the GfxAPI core system
             m_graphics = GetCoreSystem( graphics::GfxAPI );

@@ -228,7 +228,9 @@ namespace ursine
             EntitySystem::OnInitialize( );
 
             m_world->Listener(this)
-                .On(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate)
+            #if defined(URSINE_WITH_EDITOR)
+                .On( WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate )
+            #endif
                 .On( WORLD_UPDATE, &DebugSystem::onWorldUpdate );
         }
 
@@ -237,7 +239,9 @@ namespace ursine
             EntitySystem::OnRemove();
 
             m_world->Listener(this)
-                .Off(WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate)
+            #if defined(URSINE_WITH_EDITOR)
+                .Off( WORLD_EDITOR_UPDATE, &DebugSystem::onUpdate )
+            #endif
                 .Off( WORLD_UPDATE, &DebugSystem::onWorldUpdate );
         }
 

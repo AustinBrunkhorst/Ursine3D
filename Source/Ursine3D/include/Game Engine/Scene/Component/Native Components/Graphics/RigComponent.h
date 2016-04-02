@@ -28,7 +28,8 @@ namespace ursine
 
         } Meta(
             Enable, 
-            DisplayName( "Rig" ),
+            DisplayName( "Rig" )
+        ) EditorMeta( 
             HiddenInSelector,
             DisableComponentRemoval
         );

@@ -75,9 +75,13 @@ namespace ursine
         {
             RenderableComponentBase::OnInitialize( GetOwner( ) );
 
+        #if defined(URSINE_WITH_EDITOR)
+
             // make sure we are selected
             if (GetOwner( )->HasComponent<Selected>( ))
                 SetEditorSelectionMode( true );
+
+        #endif
         }
 
         void Camera::updateRenderer(void)

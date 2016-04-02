@@ -78,8 +78,9 @@ namespace ursine
 
         } Meta(
             Enable,
-            DisplayName("ParticleAttractor"),
-            RequiresComponents(typeof(ursine::ecs::ParticleSystem))
+            DisplayName( "ParticleAttractor" )
+        ) EditorMeta(
+            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )    
         );
     }
 }

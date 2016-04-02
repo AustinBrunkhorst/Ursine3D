@@ -16,6 +16,12 @@
 #include <NativeJSFunction.h>
 
 Meta(Enable, ExposeJavaScript)
+JSFunction(ProjectSetFullScreen);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(ProjectGetPreferences);
+
+Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectGetName);
 
 Meta(Enable, ExposeJavaScript)

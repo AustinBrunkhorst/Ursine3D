@@ -24,7 +24,7 @@ namespace ursine
 
         void Component::onInitialize(void)
         {
-#if defined(URSINE_WITH_EDITOR)
+        #if defined(URSINE_WITH_EDITOR)
             auto type = GetType( );
             auto fields = type.GetFields( );
 
@@ -74,6 +74,8 @@ namespace ursine
             OnSceneReady( scene );
         }
 
+        #if defined(URSINE_WITH_EDITOR)
+
         void Component::onResourceModifed(EVENT_HANDLER(World))
         {
             EVENT_ATTRS(World, EditorWorldResourceModifiedArgs);
@@ -86,6 +88,8 @@ namespace ursine
             if (search != m_resourceModificationCallbacks.end( ))
                 search->second( );
         }
+
+        #endif
 
         template<>
         Transform *Component::Handle<Transform>::operator->(void)
