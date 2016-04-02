@@ -63,11 +63,21 @@ namespace ursine
                    m_manager == rhs.m_manager;
         }
 
+        bool EntityHandle::operator==(const Entity *rhs) const
+        {
+            return Get( ) == rhs;
+        }
+
         bool EntityHandle::operator!=(const EntityHandle &rhs) const
         {
             return !(m_version == rhs.m_version &&
                      m_id == rhs.m_id &&
                      m_manager == rhs.m_manager);
+        }
+
+        bool EntityHandle::operator!=(const Entity *rhs) const
+        {
+            return Get( ) != rhs;
         }
 
         Entity *EntityHandle::operator->(void) const 

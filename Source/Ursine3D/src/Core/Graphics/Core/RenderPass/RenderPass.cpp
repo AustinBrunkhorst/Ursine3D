@@ -285,7 +285,7 @@ namespace ursine
                 auto &drawList = m_manager->m_drawList;
 
                 // get the start
-                while(drawList[start].Type_ != m_renderableMode && drawList[ start ].Shader_ != m_shader && start < m_manager->m_drawCount)
+                while((drawList[start].Type_ != m_renderableMode || drawList[ start ].Shader_ != m_shader) && start < m_manager->m_drawCount)
                     ++start;
                 end = start;
 
