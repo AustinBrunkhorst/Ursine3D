@@ -327,16 +327,17 @@ namespace ursine
 
     INLINE void SVec3::GenerateOrthogonalVectors(SVec3 &u, SVec3 &v) const
     {
-        auto normal = Normalize(*this);
-        u = SVec3::Cross(normal, normal == SVec3::UnitY() ? SVec3::UnitX() : SVec3::UnitY());
-        v = SVec3::Cross(normal, u);
+        GenerateOrthogonalVectors( *this, u, v );
     }
 
     INLINE void SVec3::GenerateOrthogonalVectors(const SVec3 &inputVec, SVec3 &u, SVec3 &v)
     {
-        auto normal = Normalize(inputVec);
-        u = SVec3::Cross(normal, normal == SVec3::UnitY() ? SVec3::UnitX() : SVec3::UnitY());
-        v = SVec3::Cross(normal, u);
+        auto normal = Normalize( inputVec );
+
+        bool unitY = inputVec.X( ) == 0.0f && inputVec.Z( ) == 0.0f;
+
+        u = SVec3::Cross( normal, unitY ? SVec3::UnitX( ) : SVec3::UnitY( ) );
+        v = SVec3::Cross( normal, u );
     }
 
     INLINE void SVec3::ProjectToNorm(const SVec3 &normal)
@@ -517,6 +518,9 @@ namespace ursine
 
     INLINE SVec3 SVec3::operator/(float rhs) const
     {
+        if (rhs == 0.0f)
+            return *this;
+
         float inv = 1.0f / rhs;
 
 #ifdef USE_SSE
@@ -609,6 +613,9 @@ namespace ursine
 
     INLINE const SVec3 &SVec3::operator/=(float rhs)
     {
+        if (rhs == 0.0f)
+            return *this;
+
         float inv = 1.0f / rhs;
 
 #ifdef USE_SSE

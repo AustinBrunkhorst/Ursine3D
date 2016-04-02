@@ -134,7 +134,8 @@ namespace ursine
             static const int resolution = 30;
 
             auto normDir = SVec3::Normalize( normal );
-            auto perpDir = SVec3::Cross( normDir, normDir == SVec3::UnitY( ) ? SVec3::UnitX( ) : SVec3::UnitY( ) );
+            auto unitY = normDir.X( ) == 0.0f && normDir.Z( ) == 0.0f;
+            auto perpDir = SVec3::Cross( normDir, unitY ? SVec3::UnitX( ) : SVec3::UnitY( ) );
 
             perpDir.Normalize( );
 
@@ -162,32 +163,33 @@ namespace ursine
         {
             static const int resolution = 80;
 
-            auto normDir = SVec3::Normalize(normal);
-            auto perpDir = SVec3::Cross(normDir, normDir == SVec3::UnitY() ? SVec3::UnitX() : SVec3::UnitY());
+            auto normDir = SVec3::Normalize( normal );
+            auto unitY = normDir.X( ) == 0.0f && normDir.Z( ) == 0.0f;
+            auto perpDir = SVec3::Cross( normDir, unitY ? SVec3::UnitX( ) : SVec3::UnitY( ) );
 
-            perpDir.Normalize();
+            perpDir.Normalize( );
 
             float theta = 0.0f;
             float step = 360.0f / resolution;
 
             for ( int i = 0; i < resolution; ++i )
             {
-                SQuat q1(theta, normDir);
+                SQuat q1( theta, normDir );
 
                 theta += step;
 
-                SQuat q2(theta, normDir);
+                SQuat q2( theta, normDir );
 
-                auto p1 = center + q1.Rotate(perpDir) * radius;
-                auto p2 = center + q2.Rotate(perpDir) * radius;
+                auto p1 = center + q1.Rotate( perpDir ) * radius;
+                auto p2 = center + q2.Rotate( perpDir ) * radius;
 
                 auto camToPoint = p2 - center;
-                float dot = camToPoint.Dot(cameraLook);
+                float dot = camToPoint.Dot( cameraLook );
 
                 if(dot < 0)
-                    DrawLine(p1, p2, color, duration, overdraw);
+                    DrawLine( p1, p2, color, duration, overdraw );
                 else
-                    DrawLine(p1, p2, Color(color.r * 0.2f, color.g * 0.2f, color.b * 0.2f, color.a * 0.2f), duration, overdraw);
+                    DrawLine( p1, p2, Color( color.r * 0.2f, color.g * 0.2f, color.b * 0.2f, color.a * 0.2f ), duration, overdraw );
             }
         }
 
