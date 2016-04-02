@@ -74,7 +74,7 @@ void TranslateTool::OnDeselect(const EntityHandle &entity)
 void TranslateTool::OnMouseDown(const MouseButtonArgs& args)
 {
     // if not hovering to select a gizmo
-    if (!m_hovering)
+    if (!m_hovering || m_altDown)
         return;
 
     SVec3 pos, basisX, basisY, basisZ;
@@ -131,7 +131,7 @@ void TranslateTool::OnMouseUp(const MouseButtonArgs& args)
 
 void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
 {
-    if(m_selected == nullptr)
+    if(m_selected == nullptr || m_altDown)
         return;
 
     if(m_captured)
@@ -231,11 +231,13 @@ void TranslateTool::OnUpdate(KeyboardManager *kManager, MouseManager *mManager)
         m_deleteGizmo = false;
     }
 
-    //m_altDown = kManager->IsDown( KEY_LMENU );
+    m_altDown = kManager->IsDown( KEY_LMENU );
 
     updateAxis( );
     renderAxis( );
-    updateHoverAxis( );
+
+    if(!m_altDown)
+        updateHoverAxis( );
 }
 
 void TranslateTool::setDirectionVectors(const SVec3& basisVector, const EntityHandle &selected)
@@ -288,7 +290,7 @@ void TranslateTool::disableAxis(void)
 
 void TranslateTool::updateAxis(void)
 {
-    if (!m_selected|| !m_gizmo)
+    if (!m_selected || !m_gizmo)
         return;
 
     // update the size of the gizmo

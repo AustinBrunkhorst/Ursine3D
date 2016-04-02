@@ -341,6 +341,7 @@ namespace ursine
 
             m_shadowmap = 0;
             m_shadowmapWidth = 1024;
+            m_renderShadows = true;
 
             Renderable::Initialize();
         }
@@ -510,9 +511,20 @@ namespace ursine
         {
             return m_shadowmap;
         }
+
         void Light::SetShadowmapHandle(GfxHND handle)
         {
             m_shadowmap = handle;
+        }
+
+        bool Light::GetRenderShadows(void) const
+        {
+            return m_renderShadows;
+        }
+
+        void Light::SetRenderShadows(bool renderShadows)
+        {
+            m_renderShadows = renderShadows;
         }
 
         /////////////////////////////////////////////////////////////

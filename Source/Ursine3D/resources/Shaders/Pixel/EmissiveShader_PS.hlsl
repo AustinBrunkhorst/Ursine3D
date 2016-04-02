@@ -23,6 +23,12 @@ struct SURFACE_DATA
     float Emissive;
 };
 
+cbuffer ShadowFalloff : register(b12)
+{
+    float emissive;
+    float3 buffer;
+}
+
 /////////////////////////////////////////////////////////////////////
 // FUNCTIONS
 
@@ -49,5 +55,5 @@ float4 main( DS_OUTPUT In ) : SV_TARGET
     // Unpack the GBuffer
     SURFACE_DATA gbd = UnpackGBuffer( In.Position.xy );
 
-    return gbd.Emissive * gbd.Color;
+    return (gbd.Emissive + emissive) * gbd.Color;
 }

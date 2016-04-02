@@ -239,6 +239,9 @@ namespace ursine
             GfxHND GetShadowmapHandle(void) const;
             void SetShadowmapHandle(GfxHND handle);
 
+            bool GetRenderShadows(void) const;
+            void SetRenderShadows(bool renderShadows);
+
         private:
             void Uninitialize(GfxManager *mgr) override;
 
@@ -254,6 +257,7 @@ namespace ursine
 
             unsigned m_shadowmapWidth;
             GfxHND m_shadowmap;
+            bool m_renderShadows;
         };
 
         /////////////////////////////////////////////////////////////

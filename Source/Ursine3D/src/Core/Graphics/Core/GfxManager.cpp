@@ -81,6 +81,8 @@ namespace ursine
             m_currentlyRendering = false;
             m_sceneActive = false;
             m_currentID = -1;
+            m_lightSteps = 20;
+            m_borderValue = 0;
 
             RenderPass::SetGfxMgr(this);
             GraphicsEntityProcessor::SetGfxMgr(this);
@@ -575,6 +577,8 @@ namespace ursine
             GlobalCBuffer<TransformBuffer, BUFFER_TRANSFORM>        fullscreenTransform( SHADERTYPE_VERTEX );
             GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invView( SHADERTYPE_VERTEX );
             GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invProjection( SHADERTYPE_PIXEL );
+            GlobalCBuffer<FalloffBuffer, BUFFER_LIGHT_FALLOFF>      lightFalloff( SHADERTYPE_PIXEL, SHADER_SLOT_12 );
+            GlobalCBuffer<FalloffBuffer, BUFFER_LIGHT_FALLOFF>      emissiveValue(SHADERTYPE_PIXEL, SHADER_SLOT_12);
 
             // input RTs
             GlobalGPUResource   depthInput( SHADER_SLOT_0, RESOURCE_INPUT_DEPTH );
@@ -660,7 +664,8 @@ namespace ursine
                         AddResource( &viewBuffer ).
                         AddResource( &invProjection ).
                         AddResource( &lightConeModel ).
-                                     
+                        AddResource( &lightFalloff ).
+
                         AddResource( &depthInput ).
                         AddResource( &diffuseRT ).
                         AddResource( &normalRT ).
@@ -687,6 +692,7 @@ namespace ursine
                         AddResource( &viewBuffer ).
                         AddResource( &invProjection ).
                         AddResource( &lightSphereModel ).
+                        AddResource( &lightFalloff ).
 
                         AddResource( &depthInput ).
                         AddResource( &diffuseRT ).
@@ -714,6 +720,7 @@ namespace ursine
                         AddResource( &viewIdentity ).
                         AddResource( &fullscreenTransform ).
                         AddResource( &fullscreenModel ).
+                        AddResource( &lightFalloff ).
 
                         AddResource( &depthInput ).
                         AddResource( &diffuseRT ).
@@ -741,6 +748,7 @@ namespace ursine
                         AddResource( &viewIdentity ).
                         AddResource( &fullscreenTransform ).
                         AddResource( &fullscreenModel ).
+                        AddResource( &emissiveValue ).
 
                         AddResource( &depthInput ).
                         AddResource( &diffuseRT ).
@@ -1013,6 +1021,7 @@ namespace ursine
             PointGeometryBuffer pgb;
             TransformBuffer tb;
             invViewBuffer ivb;
+            FalloffBuffer fb;
 
             // viewBuffer(SHADERTYPE_VERTEX);
             // viewBufferGeom(SHADERTYPE_GEOMETRY);
@@ -1054,6 +1063,14 @@ namespace ursine
             ivb.invView = temp.ToD3D( );
             currentCamera.GetPlanes( ivb.nearPlane, ivb.farPlane );
             invProjection.Update( ivb );
+
+            // lightFalloff( SHADERTYPE_PIXEL );
+            fb.lightSteps = m_lightSteps;
+            fb.borderCutoff = m_borderValue;
+            lightFalloff.Update(fb, SHADER_SLOT_12);
+
+            fb.lightSteps = m_globalEmissive;
+            emissiveValue.Update(fb, SHADER_SLOT_12);
 
             // TARGET INPUTS //////////////////
             // input RTs

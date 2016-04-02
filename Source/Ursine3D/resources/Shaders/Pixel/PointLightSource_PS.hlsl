@@ -1,3 +1,5 @@
+#include "../Headers/Randomness_H.hlsl"
+
 //depth and color
 Texture2D gDepthTexture         : register(t0);
 Texture2D gColorSpecIntTexture  : register(t1);
@@ -106,28 +108,27 @@ float3 CalcPoint( float3 position, Material material )
     //////////////////////////////////////////////////////////
     //// NEW STUFF
 
-    float3 ToLight = lightPos.xyz - position;
-    float3 ToEye = -position;
-    float DistToLight = length(ToLight);
+    float3 toLight = lightPos.xyz - position;
+    float3 toEye = -position;
+    float DistToLight = length(toLight);
+    toLight /= DistToLight;
 
     // Phong diffuse
-
-    ToLight /= DistToLight; // Normalize
-    float NDotL = saturate(dot(ToLight, material.normal));
-    float3 finalColor = diffuseColor.rgb * NDotL;
+    float NDotL = saturate(dot(toLight, material.normal));
+    float3 finalColor = diffuseColor.rgb * intensity;
 
     // Blinn specular
-    ToEye = normalize(ToEye);
-    float3 HalfWay = normalize(ToEye + ToLight);
+    toEye = normalize(toEye);
+    float3 HalfWay = normalize(toEye + toLight);
     float NDotH = saturate(dot(HalfWay, material.normal));
-    finalColor += diffuseColor.rgb * pow(NDotH, material.specPow) *
-        material.specIntensity;
+    float specularValue = pow(NDotH, material.specPow) * material.specIntensity;
 
     // Attenuation
     float Attn = saturate(1.0f - (DistToLight / radius));
-    finalColor *= material.diffuseColor.xyz * Attn;
 
-    return finalColor * intensity;
+    float3 finalValue = ((finalColor * material.diffuseColor) + specularValue);
+
+    return Attn * NDotL * finalValue;
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -152,7 +153,7 @@ float4 main( DS_OUTPUT In ) : SV_TARGET
     //get the final color
     float4 finalColor;
     finalColor.xyz = CalcPoint(pos, mat);
-    finalColor.w = 1.0;
+    finalColor.w = 1.0; 
 
-    return finalColor;
+    return float4(finalColor.xyz, 1.0f);
 }

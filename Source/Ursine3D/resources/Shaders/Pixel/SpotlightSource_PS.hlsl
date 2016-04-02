@@ -24,6 +24,13 @@ cbuffer ShadowProj : register(b13)
     matrix lightProj;
 };
 
+cbuffer ShadowFalloff : register(b12)
+{
+    float lightStep;
+    float borderCutoff;
+    float2 buffer;
+}
+
 //buffer for light data
 cbuffer SpotLightBuffer : register(b11)
 {
@@ -188,50 +195,40 @@ SURFACE_DATA UnpackGBuffer(int2 location)
 
 float3 CalcPoint(float3 position, Material material)
 {
-    float3 toLight = -lightDirection;
-    float3 pixelToCamera = -position;
+    float3 toLight = normalize(-lightDirection);
+    float3 pixelToCamera = normalize(-position);
     float3 lightToPixel = position - lightPosition;
 
     // grab the length
     float distanceToPixel = length( lightToPixel );
-
-    // normalize vector from light to pixel
     lightToPixel /= distanceToPixel;
 
-    // get the angle from the ray to the pixel and our main direction
-    float angleInCone = dot(
-        lightToPixel, 
-        lightDirection
-    );
-
-    // calculate final attenuation for the angle
-    float angleAttenuation = (angleInCone - outerAngle) /
-                             (innerAngle  - outerAngle);
-
-    float distAttenuation = saturate( 1.0f - (distanceToPixel / lightSize) );
+    // phong diffuse
+    float NDotL = saturate(dot(toLight, material.normal));
+    float3 finalColor = diffuseColor.rgb * intensity;
 
     // Blinn specular
-    pixelToCamera = normalize( pixelToCamera );
-    float3 HalfWay = normalize( pixelToCamera + toLight );
-    float NDotH = saturate( dot(HalfWay, material.normal) );
-    float specularValue = max(pow( NDotH, material.specPow ), 0);
+    float3 HalfWay = normalize(pixelToCamera + toLight);
+    float NDotH = saturate(dot(HalfWay, material.normal));
+    float specularValue = max(pow(NDotH, material.specPow), 0) * material.specIntensity;
 
-    // diffuse scalar from normal
-    float normalScalar = max( 
-        dot(
-            material.normal, 
-            toLight
-        ), 
-        0
-    );
+    // angle attenuation
+    float angleInCone = dot( lightToPixel, lightDirection );
+    float angleAttenuation = (angleInCone - outerAngle) / (innerAngle  - outerAngle);
 
-    // calculate final light color
-    float3 finalLightColor = diffuseColor.rgb + specularValue * material.specIntensity;
+    // distance attenuation
+    float distAttenuation = saturate( 1.0f - (distanceToPixel / lightSize) );
 
-    // apply dotp, attenuation for distance and angle
-    finalLightColor *= material.diffuseColor.xyz * normalScalar * angleAttenuation * distAttenuation * intensity * SpotShadowPCF( position );
+    //float cellFalloff = (int)(normalScalar * lightStep) / lightStep;
 
-    return finalLightColor;
+    //cellFalloff = cellFalloff;
+
+    //if (abs(dot(material.normal, pixelToCamera) < borderCutoff))
+    //    return float3(0, 0, 0);
+
+    float3 finalValue = ((finalColor * material.diffuseColor) + specularValue);
+
+    return distAttenuation * angleAttenuation * NDotL * SpotShadowPCF(position) * finalValue;
 }
 
 float4 main(DS_OUTPUT In) : SV_TARGET

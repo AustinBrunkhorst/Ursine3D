@@ -47,6 +47,7 @@ namespace ursine
             BUFFER_PARTICLEDATA,
             BUFFER_SHADOWMAP,
             BUFFER_TEX_OFFSET,
+            BUFFER_LIGHT_FALLOFF,
 
             // non-default
             BUFFER_GLYPHDATA,   // 6
@@ -195,6 +196,13 @@ namespace ursine
         struct TextureUVOffset
         {
             DirectX::XMFLOAT2 uv;
+            DirectX::XMFLOAT2 buffer;
+        };
+
+        struct FalloffBuffer
+        {
+            float lightSteps;
+            float borderCutoff;
             DirectX::XMFLOAT2 buffer;
         };
     }

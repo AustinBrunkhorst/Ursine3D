@@ -66,7 +66,7 @@ PS_GBUFFER_OUT main(PS_INPUT input)
     float3 normal = input.normal.xyz;
 
     // sample
-    float3 normalValue = (gShaderTexture.Sample(SampleType, input.uv).xyz);
+    float3 normalValue = (gNormalMap.Sample(SampleType, input.uv).xyz);
 
     float3x3 texSpace = float3x3(input.tangent.xyz, input.bitangent.xyz, input.normal.xyz);
 

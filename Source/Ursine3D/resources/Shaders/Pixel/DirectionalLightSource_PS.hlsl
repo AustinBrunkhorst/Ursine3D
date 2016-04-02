@@ -23,6 +23,14 @@ cbuffer InvProj : register(b4)
     float farPlane;
 };
 
+cbuffer ShadowFalloff : register(b12)
+{
+    float lightStep;
+    float borderCutoff;
+    float2 buffer;
+}
+
+
 //specular power range
 static const float2 cSpecPowerRange = { 0.1, 250.0 };
 
@@ -55,6 +63,8 @@ struct Material
     float specPow;
     float emissive;
 };
+
+
 
 /////////////////////////////////////////////////////////////////////
 // FUNCTIONS
@@ -114,25 +124,29 @@ SURFACE_DATA UnpackGBuffer( int2 location )
 
 float3 CalcPoint( float3 position, Material material )
 {
-    float3 toLight = -lightDirection.xyz;
-    float3 pixelToCamera = -position;
+    float3 toLight = normalize(-lightDirection.xyz);
+    float3 pixelToCamera = normalize(-position);
+
+    // phong diffuse
+    float NDotL = saturate(dot(toLight, material.normal));
+    float3 finalColor = diffuseColor.rgb * intensity;
 
     // Blinn specular
-    pixelToCamera = normalize(pixelToCamera);
     float3 HalfWay = normalize(pixelToCamera + toLight);
     float NDotH = saturate(dot(HalfWay, material.normal));
-    float specularValue = saturate(pow(NDotH, material.specPow));
+    float specularValue = saturate(pow(NDotH, material.specPow)) * material.specIntensity;
 
-    // diffuse scalar from normal
-    float normalScalar = saturate(dot(material.normal, toLight));
+    //// diffuse scalar from normal
+    //float cellFalloff = (int)(normalScalar * lightStep) / lightStep;
 
-    // calculate final light color
-    float3 finalLightColor = (diffuseColor.rgb + specularValue * material.specIntensity);
+    //cellFalloff = cellFalloff;
 
-    // apply normal scalar
-    finalLightColor *= normalScalar;
+    //if(abs(dot(material.normal, pixelToCamera) < borderCutoff))
+    //    return float3(0, 0, 0);
 
-    return finalLightColor * material.diffuseColor.rgb * intensity;
+    float3 finalValue = ((finalColor * material.diffuseColor) + specularValue);
+
+    return NDotL * finalValue;
 }
 
 

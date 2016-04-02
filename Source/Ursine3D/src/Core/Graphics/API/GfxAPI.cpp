@@ -160,5 +160,25 @@ namespace ursine
         {
             return m_privates->gfxCore_->GetCurrentWorldPosition( cameraHandle );
         }
+
+        float GfxAPI::GetLightStepValue(void) const
+        {
+            return m_privates->gfxCore_->m_lightSteps;
+        }
+
+        void GfxAPI::SetLightStepValue(float steps)
+        {
+            m_privates->gfxCore_->m_lightSteps = steps;
+        }
+
+        float GfxAPI::GetGlobalEmissive() const
+        {
+            return m_privates->gfxCore_->m_globalEmissive;
+        }
+
+        void GfxAPI::SetGlobalEmissive(float value)
+        {
+            m_privates->gfxCore_->m_globalEmissive = value;
+        }
     }
 }
