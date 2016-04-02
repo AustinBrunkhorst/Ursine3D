@@ -15,6 +15,8 @@
 
 #include "AudioEmitterComponent.h"
 
+#include "AudioItemEventData.h"
+
 namespace ursine
 {
 	namespace ecs
@@ -81,7 +83,24 @@ namespace ursine
 				m_soundsFAF.push( sound );
 		}
 
-		ListenerIndex AudioEmitter::GetListeners(void)
+	    bool AudioEmitter::PlayEvent(const resources::ResourceReference &event)
+	    {
+            auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
+
+            if (!scene)
+                return false;
+
+            auto *data = event.Load<resources::AudioItemEventData>( scene->GetResourceManager( ) );
+
+            if (!data)
+                return false;
+
+            AddSoundToPlayQueue( data->GetEvent( ) );
+
+            return true;
+	    }
+
+	    ListenerIndex AudioEmitter::GetListeners(void)
 		{
 			return m_listeners;
 		}

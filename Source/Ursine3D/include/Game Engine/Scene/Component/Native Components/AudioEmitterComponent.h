@@ -65,6 +65,8 @@ namespace ursine
 			bool SoundsEmpty(void);
 			void AddSoundToPlayQueue(const std::string &sound);
 
+            bool PlayEvent(const resources::ResourceReference &event);
+
 			ListenerIndex GetListeners(void);
 
 		private:
