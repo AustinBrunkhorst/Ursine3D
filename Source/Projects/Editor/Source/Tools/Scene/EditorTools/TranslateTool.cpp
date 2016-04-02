@@ -424,7 +424,7 @@ void TranslateTool::updateHoverAxis(void)
     if(m_dragging)
         return;
 
-    if(entity == nullptr)
+    if(entity == nullptr || entity->IsDeleting( ))
     {
         m_hovering = false;
         m_axisType = -1;

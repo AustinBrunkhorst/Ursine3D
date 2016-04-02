@@ -211,8 +211,8 @@ namespace ursine
 
         #ifdef URSINE_WITH_EDITOR
 
-            physicsSettings->SetEnableDebugDraw( true );
-            SetEnableDebugDraw( true );
+            physicsSettings->SetEnableDebugDraw( false );
+            SetEnableDebugDraw( false );
 
         #else
 

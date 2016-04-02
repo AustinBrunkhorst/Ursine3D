@@ -37,6 +37,9 @@ public:
 
     std::string bossTopEntityName;
     std::string bossDoorEntityName;
+    /*std::string staticLighting;
+    std::string phase12Lighting;
+    std::string phase3Lighting; // Need something for left, right side and boss and center spot lights*/
 
 private:
     ursine::resources::ResourceReference m_worldToMerge;
