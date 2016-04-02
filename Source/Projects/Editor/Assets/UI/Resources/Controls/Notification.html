@@ -80,10 +80,14 @@
             },
 
             show: function(duration) {
-                var container;
-
                 switch (this.mode) {
                     case NotificationMode.Normal: {
+                        document.querySelector( '#notification-container' ).appendChild( this );
+
+                        setTimeout( function() {
+                            this.classList.add( 'active' );
+                        }.bind( this ), 10 );
+
                         if (duration == NotificationConfig.infiniteDuration)
                             return;
 
@@ -94,12 +98,6 @@
                             this.close.bind( this ),
                             duration || NotificationConfig.duration
                         );
-
-                        document.querySelector( '#notification-container' ).appendChild( this );
-
-                        setTimeout( function() {
-                            this.classList.add( 'active' );
-                        }.bind( this ), 10 );
 
                         break;
                     }
