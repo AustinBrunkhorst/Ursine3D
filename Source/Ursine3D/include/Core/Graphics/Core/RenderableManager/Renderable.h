@@ -305,6 +305,9 @@ namespace ursine
 
             const SMat4 &GetTransform(void) const;
             void SetTransform(const SMat4 &transform);
+
+            bool GetVelocityOrient(void) const;
+            void SetVelocityOrient(bool velocityOrient);
         private:
             // members
             unsigned m_backIndex;
@@ -318,6 +321,7 @@ namespace ursine
 
             bool m_useAdditive;
             bool m_worldSpace;
+            bool m_velocityOrient;
 
             SMat4 m_transform;
         };

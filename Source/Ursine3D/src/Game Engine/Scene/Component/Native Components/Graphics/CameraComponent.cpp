@@ -272,6 +272,11 @@ namespace ursine
             return m_graphics->GetMousedOverWorldPosition( m_handle );
         }
 
+        graphics::GfxHND Camera::GetCameraHandle() const
+        {
+            return m_handle;
+        }
+
         #if defined(URSINE_WITH_EDITOR)
 
         bool Camera::IsEditorCamera(void) const

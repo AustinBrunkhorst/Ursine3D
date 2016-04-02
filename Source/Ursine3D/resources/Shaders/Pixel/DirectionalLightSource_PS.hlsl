@@ -1,8 +1,8 @@
 //depth and color
-Texture2D DepthTexture : register(t0);
-Texture2D ColorSpecIntTexture: register(t1);
-Texture2D NormalTexture: register(t2);
-Texture2D SpecPowTexture: register(t3);
+Texture2D gDepthTexture : register(t0);
+Texture2D gColorSpecIntTexture: register(t1);
+Texture2D gNormalTexture: register(t2);
+Texture2D gSpecPowTexture: register(t3);
 
 //sample type
 SamplerState SampleType : register(s0);
@@ -24,7 +24,7 @@ cbuffer InvProj : register(b4)
 };
 
 //specular power range
-static const float2 g_SpecPowerRange = { 0.1, 250.0 };
+static const float2 cSpecPowerRange = { 0.1, 250.0 };
 
 /////////////////////////////////////////////////////////////////////
 // STRUCTS
@@ -89,15 +89,15 @@ SURFACE_DATA UnpackGBuffer( int2 location )
     int3 location3 = int3(location, 0);
 
     // Get the depth value and convert it to linear depth
-    float depth = DepthTexture.Load( location3 ).x;
+    float depth = gDepthTexture.Load( location3 ).x;
     Out.LinearDepth = ConvertDepthToLinear( depth );
 
     // Get the base color and specular intensity
-    float4 baseColor = ColorSpecIntTexture.Load( location3 );
+    float4 baseColor = gColorSpecIntTexture.Load( location3 );
     Out.Color = baseColor;
 
     // Sample the normal, convert it to the full range and noramalize it
-    float4 normalValue = NormalTexture.Load(location3);
+    float4 normalValue = gNormalTexture.Load(location3);
     Out.Normal = normalValue.xyz;
     Out.Normal = normalize( Out.Normal * 2.0 - 1.0 );
 
@@ -105,8 +105,8 @@ SURFACE_DATA UnpackGBuffer( int2 location )
     Out.Emissive = normalValue.w;
 
     // Scale the specular power back to the original range
-    float4 SpecPowerNorm = SpecPowTexture.Load(location3);
-    Out.SpecPow = g_SpecPowerRange.x + SpecPowerNorm.x * g_SpecPowerRange.y;
+    float4 SpecPowerNorm = gSpecPowTexture.Load(location3);
+    Out.SpecPow = cSpecPowerRange.x + SpecPowerNorm.x * cSpecPowerRange.y;
     Out.SpecInt = SpecPowerNorm.w;
 
     return Out;
@@ -114,26 +114,6 @@ SURFACE_DATA UnpackGBuffer( int2 location )
 
 float3 CalcPoint( float3 position, Material material )
 {
-    //float3 ToLight = -lightDirection.xyz;
-    //float3 ToEye = -position;
-
-    //// Phong diffuse
-    //float NDotL = saturate( dot( ToLight, material.normal ) );
-    //float3 finalColor = diffuseColor.rgb * (intensity) * material.diffuseColor.xyz;
-
-    //// Blinn specular
-    //ToEye = normalize( ToEye );
-    //float3 HalfWay = normalize( ToEye + ToLight );
-    //float NDotH = saturate( dot( HalfWay, material.normal ) );
-    //finalColor += diffuseColor.rgb * max( pow( NDotH, material.specPow ), 0 ) * material.specIntensity;
-
-    //finalColor *= NDotL;
-
-    //return finalColor * (1.f - material.emissive) + material.diffuseColor.xyz * material.emissive;
-
-    ///////////////////////////
-
-
     float3 toLight = -lightDirection.xyz;
     float3 pixelToCamera = -position;
 

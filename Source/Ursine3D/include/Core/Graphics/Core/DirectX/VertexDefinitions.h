@@ -52,6 +52,7 @@ namespace ursine
 		{
 			DirectX::XMFLOAT3	vPos;
 			DirectX::XMFLOAT3	vNor;
+            DirectX::XMFLOAT3	vTan;
 			DirectX::XMFLOAT2	vUv;
 			DirectX::XMFLOAT4	vBWeight;
 			BYTE				vBIdx[4];

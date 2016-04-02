@@ -113,10 +113,9 @@ namespace ursine
             {
                 //load shaders
                 shaderManager->LoadShader(SHADER_BASIC, "BasicModelShader");
-                shaderManager->LoadShader(SHADER_DIFFUSE, "DiffuseShader");
-                shaderManager->LoadShader(SHADER_NORMAL, "NormalShader");
-                shaderManager->LoadShader(SHADER_DEFFERED_TEXTURE, "DeferredTextureShader");
+                shaderManager->LoadShader(SHADER_OVERDRAW_MODEL, "DeferredDepth");
                 shaderManager->LoadShader(SHADER_DEFERRED_DEPTH, "DeferredDepth");
+                shaderManager->LoadShader(SHADER_DEFERRED_DEPTH_STATIC, "DeferredDepthStatic");
                 shaderManager->LoadShader(SHADER_DEFERRED_DEPTH_NORM, "DeferredDepthNormalMap");
                 shaderManager->LoadShader(SHADER_DIRECTIONAL_LIGHT, "DirectionalLightSource");
                 shaderManager->LoadShader(SHADER_SPOT_LIGHT, "SpotlightSource");
@@ -128,6 +127,7 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_SHADOW_PASS, "ShadowMapShader");
                 shaderManager->LoadShader(SHADER_BILLBOARD2D, "BillboardedSprite");
                 shaderManager->LoadShader(SHADER_PARTICLE, "ParticleShader");
+                shaderManager->LoadShader(SHADER_VELOCITY_PARTICLE, "VelocityParticle");
                 shaderManager->LoadShader(SHADER_EMISSIVE, "EmissiveShader");
                 shaderManager->LoadShader(SHADER_FORWARD, "ForwardRenderer");
                 shaderManager->LoadShader(SHADER_SPRITE_TEXT, "SpriteTextShader");
@@ -318,7 +318,7 @@ namespace ursine
                 drawCall.Index_ = render->Index_;
                 drawCall.Type_ = render->Type_;
                 drawCall.Overdraw_ = current->GetOverdraw();
-                drawCall.Shader_ = SHADER_PARTICLE;
+                drawCall.Shader_ = current->GetVelocityOrient( ) ? SHADER_VELOCITY_PARTICLE : SHADER_PARTICLE ;
             }
             break;
             case RENDERABLE_SPRITE_TEXT:
@@ -550,6 +550,7 @@ namespace ursine
             LineRendererPass    overdrawLinePass( true, "OverdrawLine" );
             PointRendererPass   overdrawPointPass( true, "OverdrawPoint" );
             RenderPass          particlePass( "ParticlePass" );
+            RenderPass          velocityParticlePass("VelocityParticlePass");
             RenderPass          billboardPass( "BillboardPass" );
             RenderPass          textPass( "SpriteTextPass" );
 
@@ -801,7 +802,7 @@ namespace ursine
                                 RENDER_TARGET_DEFERRED_SPECPOW
                             }
                         ).
-                        Set( SHADER_DEFERRED_DEPTH ).
+                        Set( SHADER_OVERDRAW_MODEL ).
                         Set( DEPTH_STENCIL_OVERDRAW ).
                         Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
@@ -863,6 +864,29 @@ namespace ursine
                     particlePass.
                         Set( { RENDER_TARGET_SWAPCHAIN } ).
                         Set( SHADER_PARTICLE ).
+                        Set( DEPTH_STENCIL_MAIN ).
+                        Set( DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL ).
+                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( RASTER_STATE_SOLID_NOCULL ).
+                        Set( BLEND_STATE_ADDITIVE ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &viewBuffer ).
+                        AddResource( &particleModel ).
+                        AddResource( &invView ).
+
+                        Accepts( RENDERABLE_PS ).
+                        Processes( &particleProcessor ).
+                        OverrideLayout( SHADER_OVERRIDE ).
+                    InitializePass();
+                }
+
+                /////////////////////////////////////////////////////////
+                // VELOCITY PARTICLE PASS
+                {
+                    velocityParticlePass.
+                        Set( { RENDER_TARGET_SWAPCHAIN } ).
+                        Set( SHADER_VELOCITY_PARTICLE ).
                         Set( DEPTH_STENCIL_MAIN ).
                         Set( DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
@@ -976,6 +1000,7 @@ namespace ursine
                 AddPrePass( &overdrawLinePass ).
                 AddPrePass( &overdrawPointPass ).
                 AddPrePass( &particlePass ).
+                AddPrePass( &velocityParticlePass ).
                 AddPrePass( &billboardPass ).
                 AddPrePass( &textPass ).
                 //AddPrePass(&debugPass).

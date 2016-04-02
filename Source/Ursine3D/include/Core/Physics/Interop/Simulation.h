@@ -27,6 +27,7 @@ namespace ursine
         class Entity;
         class Rigidbody;
         class Body;
+        class World;
     }
 
     namespace physics
@@ -61,7 +62,7 @@ namespace ursine
             void AddGhost(Ghost *ghost);
             void RemoveGhost(Ghost *ghost);
 
-            bool Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type);
+            bool Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type, ursine::ecs::World* world);
 
             bool Sweep(ColliderBase *collider, BodyBase *body, const SVec3 &velocity, 
                        float dt, SweepOutput &output, SweepType type, bool sorted = false);

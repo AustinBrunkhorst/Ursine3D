@@ -25,11 +25,9 @@
 #include "AudioEmitterComponent.h"
 #include "TrailComponent.h"
 #include "CritspotComponent.h"
-#include "WallComponent.h"
 #include <Core/Audio/AudioManager.h>
 #include "GameEvents.h"
 #include "GhostComponent.h"
-#include "AIMovementControllerComponent.h"
 #include "AIHordelingTypeComponent.h"
 
 ENTITY_SYSTEM_DEFINITION( BaseWeaponSystem );
@@ -471,7 +469,7 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon &weapon, Transfor
     {
         WeaponSystemUtils::ConstructRaycast( weapon, rayin.start, rayin.end );
 
-        if (m_physicsSystem->Raycast( rayin, rayout, physics::RAYCAST_ALL_HITS, weapon.m_debug, weapon.m_drawDuration, Color(1.0f, 0.0f, 0.0f, 1.0f), weapon.m_alwaysDraw ))
+        if (m_physicsSystem->Raycast( rayin, rayout, physics::RAYCAST_CLOSEST_NON_GHOST, weapon.m_debug, weapon.m_drawDuration, Color(1.0f, 0.0f, 0.0f, 1.0f), weapon.m_alwaysDraw ))
         {
             switch (weapon.m_raycastType)
             {
@@ -481,11 +479,7 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon &weapon, Transfor
             {
                     auto delta = rayin.end - rayin.start;
 
-                    EntityHandle objHit;
-
-                    size_t indexOfObjHit = FindNonGhost( objHit, rayout, m_world );
-
-                    if ( !RaycastClosestHitLogic((int)indexOfObjHit, objHit, delta, rayout, weapon) )
+                    if ( !RaycastClosestHitLogic( delta, rayout, weapon ) )
                         CreateTrail(weapon, rayin.end);
                 break;
             }
@@ -498,15 +492,14 @@ void HitscanWeaponSystem::CreateRaycasts(AbstractHitscanWeapon &weapon, Transfor
     }
 }
 
-bool HitscanWeaponSystem::RaycastClosestHitLogic(int indexOfObjHit, EntityHandle& objHit, SVec3 &raycastVec, physics::RaycastOutput &rayout, AbstractHitscanWeapon &weapon)
+bool HitscanWeaponSystem::RaycastClosestHitLogic(SVec3 &raycastVec, physics::RaycastOutput &rayout, AbstractHitscanWeapon &weapon)
 {
-    if ( indexOfObjHit < 0 )
-        return false;
-
     EntityHandle e;
 
+    EntityHandle objHit = m_world->GetEntity( rayout.entity[ 0 ] );
+
     // where did rayact collide at
-    SVec3 &collisionPoint = rayout.hit[ indexOfObjHit ];
+    SVec3 &collisionPoint = rayout.hit[ 0 ];
 
     // create shot particle
     e = m_world->CreateEntityFromArchetype( weapon.m_shotParticle );
