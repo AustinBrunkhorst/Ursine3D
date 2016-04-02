@@ -143,8 +143,6 @@ void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
         SVec3 bases[ 3 ] = { basisX, basisY, basisZ };
         SVec3 dir = bases[ m_axisType - 1 ];
 
-        std::cout << "DIR: " << dir.X( ) << ", " << dir.Y( ) << ", " << dir.Z( ) << std::endl;
-
         auto camera = m_editorCameraSystem->GetEditorCamera( );
         auto worldPos = m_graphics->GetMousedOverWorldPosition(camera->GetCameraHandle());
 
@@ -232,12 +230,6 @@ void TranslateTool::OnUpdate(KeyboardManager *kManager, MouseManager *mManager)
         disableAxis( );
         m_deleteGizmo = false;
     }
-
-    std::cout <<  std::endl;
-    std::cout << "IS HOVERING: " << m_hovering << std::endl;
-    std::cout << "IS DRAGGING: " << m_dragging << std::endl;
-    std::cout << "OFFSET: " << m_localOffset << std::endl;
-    std::cout << "AXIS: " << m_axisType << std::endl;
 
     //m_altDown = kManager->IsDown( KEY_LMENU );
 
@@ -567,5 +559,12 @@ void TranslateTool::getBasis(EntityHandle obj, ursine::SVec3 &pos, ursine::SVec3
         basisX = ursine::SVec3(1, 0, 0);
         basisY = ursine::SVec3(0, 1, 0);
         basisZ = ursine::SVec3(0, 0, 1);
+
+        if(m_local)
+        {
+            basisX = transform->ToWorld(basisX);
+            basisX = transform->ToWorld(basisY);
+            basisX = transform->ToWorld(basisZ);
+        }
     }
 }
