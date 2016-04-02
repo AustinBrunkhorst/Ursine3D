@@ -141,7 +141,10 @@ if (MSVC)
 
         # skip include only from build
         if (shader_type STREQUAL "_h")
+            list(REMOVE_ITEM URSINE_SHADER_FILES ${shader})
 
+            continue( )
+        endif( )
 
         # default to vertex shader
         set(vs_shader_type "Vertex")
