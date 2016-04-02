@@ -1,23 +1,23 @@
 //texture
-Texture2D colorTexture : register(t0);
+Texture2D gColorTexture : register(t0);
 Texture2D lightMap : register(t1);
 
 //sample type
 SamplerState SampleType : register(s0);
 
-struct PixelInputType
+struct PS_INPUT
 {
   float4 position : SV_POSITION;
   float2 uv : UV;
 };
 
-float4 main(PixelInputType input) : SV_TARGET
+float4 main(PS_INPUT input) : SV_TARGET
 {
   float4 lightColor;
   float4 textureColor;
 
   // Sample the pixel color from the texture using the sampler at this texture coordinate location.
-  textureColor = colorTexture.Load(int3(input.position.xy, 0));
+  textureColor = gColorTexture.Load(int3(input.position.xy, 0));
 
   //get the color of the light
   lightColor = lightMap.Load( int3(input.position.xy, 0) );

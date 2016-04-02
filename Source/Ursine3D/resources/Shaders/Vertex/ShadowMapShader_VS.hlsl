@@ -18,6 +18,7 @@ struct VS_INPUT
 {
     float3  Pos         : POSITION;
     float3  Nor         : NORMAL;
+    float3  Tan         : TANGENT;
     float2  Tex         : TEXCOORD;
     float4  BWeight     : BLENDWEIGHT;
     uint4   BIdx        : BLENDINDICES;

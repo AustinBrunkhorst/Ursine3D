@@ -61,7 +61,12 @@ namespace ursine
 
             updateRenderer( );
 
+
+        #if defined(URSINE_WITH_EDITOR)
+
             bindResourceModification( m_font, &SpriteText::invalidateFont );
+
+        #endif
         }
 
         void SpriteText::OnSceneReady(Scene *scene)

@@ -16,7 +16,6 @@
 #include <CoreSystem.h>
 
 #include <Windows.h>
-#include <ScreenManager.h>
 #include <AudioManager.h>
 #include <UIView.h>
 #include <Scene.h>
@@ -28,19 +27,16 @@ class GameLauncher : public ursine::core::CoreSystem
 
 public:
     Meta(Enable)
-    Retrospect(void);
-    ~Retrospect(void);
+    GameLauncher(void);
+    ~GameLauncher(void);
 
     void OnInitialize(void) override;
     void OnRemove(void) override;
 
-    ursine::ScreenManager *GetScreenManager(void) const;
     ursine::Window::Handle GetMainWindowHandle(void) const;
 
 private:
     ursine::graphics::GfxAPI *m_graphics;
-
-    ursine::ScreenManager *m_screenManager;
 
 	ursine::AudioManager *m_audioManager;
 

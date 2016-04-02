@@ -22,6 +22,7 @@
 #include "WorldProcessor.h"
 #include "ArchetypeProcessor.h"
 #include "UIScreenProcessor.h"
+#include "AudioItemProcessor.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Resource Types
@@ -56,3 +57,6 @@
 
 #include "UIScreenReader.h"
 #include "UIScreenData.h"
+
+#include "AudioItemEventReader.h"
+#include "AudioItemEventData.h"

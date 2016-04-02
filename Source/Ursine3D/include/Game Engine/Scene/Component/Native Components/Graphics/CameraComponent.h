@@ -156,6 +156,8 @@ namespace ursine
             // grabs object position from the gpu
             SVec3 GetMouseWorldPosition(void) const;
 
+            graphics::GfxHND GetCameraHandle(void) const;
+
             ///////////////////////////////////////////////////////////////////
             // Editor Specific Functionality
             ///////////////////////////////////////////////////////////////////
@@ -169,6 +171,8 @@ namespace ursine
 
             Meta(Disable)
             SVec3 focusPosition;
+
+            
 
             bool IsEditorCamera(void) const;
             void SetEditorCamera(bool editorCamera);

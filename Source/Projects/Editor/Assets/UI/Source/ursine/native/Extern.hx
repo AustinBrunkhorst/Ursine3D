@@ -19,6 +19,14 @@ class Extern {
         return untyped __js__( "GetNativeComponentDatabase()" );
     }
 
+    public static function ProjectSetFullScreen(fullscreen : Bool) {
+        return untyped __js__( "ProjectSetFullScreen(fullscreen)" );
+    }
+
+    public static inline function ProjectGetPreferences() {
+        return untyped __js__( "ProjectGetPreferences()" );
+    }
+
     public static inline function ProjectGetResourceTree() {
         return untyped __js__( "ProjectGetResourceTree()" );
     }

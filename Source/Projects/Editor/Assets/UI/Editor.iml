@@ -17,5 +17,16 @@
     <orderEntry type="jdk" jdkName="Haxe 3.2.1" jdkType="Haxe toolkit" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="ursine-lib" level="application" />
+    <orderEntry type="module-library">
+      <library name="haxelib|ursine-api">
+        <CLASSES>
+          <root url="C:\HaxeToolkit\haxe\lib\ursine-api/1,0,0/" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="C:\HaxeToolkit\haxe\lib\ursine-api/1,0,0/" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

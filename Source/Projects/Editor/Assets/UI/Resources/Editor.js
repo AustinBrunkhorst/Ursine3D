@@ -3152,10 +3152,11 @@ var ursine_editor_windows_SceneView = function() {
 	this.onViewportInvalidated();
 	this.window.addEventListener("resize",$bind(this,this.onWindowResize));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
-	this.m_fullScreen = false;
+	this.m_fullScreen = ProjectGetPreferences().fullScreen;
 	this.m_fullScreenItem = ursine_editor_Editor.instance.mainMenu.findItem("View").menu.findItem("Fullscreen Scene");
 	this.m_nonFullScreenContainer = this.window.container.parentNode;
 	this.m_fullScreenContainer = window.document.querySelector("#fullscreen-container");
+	if(this.m_fullScreen) this.onFullScreenChanged();
 };
 $hxClasses["ursine.editor.windows.SceneView"] = ursine_editor_windows_SceneView;
 ursine_editor_windows_SceneView.__name__ = ["ursine","editor","windows","SceneView"];
@@ -3163,6 +3164,10 @@ ursine_editor_windows_SceneView.__super__ = ursine_editor_NativeCanvasWindowHand
 ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWindowHandler.prototype,{
 	toggleFullscreen: function() {
 		this.m_fullScreen = !this.m_fullScreen;
+		ursine_native_Extern.ProjectSetFullScreen(this.m_fullScreen);
+		this.onFullScreenChanged();
+	}
+	,onFullScreenChanged: function() {
 		this.m_fullScreenItem.checked = this.m_fullScreen;
 		ursine_editor_Editor.instance.toggleStatusBar(!this.m_fullScreen);
 		if(this.m_fullScreen) {
@@ -3256,6 +3261,9 @@ ursine_native_Extern.__name__ = ["ursine","native","Extern"];
 ursine_native_Extern.ProcessOpen = function(path,relative) {
 	if(relative == null) relative = false;
 	return ProcessOpen(path, relative);
+};
+ursine_native_Extern.ProjectSetFullScreen = function(fullscreen) {
+	return ProjectSetFullScreen(fullscreen);
 };
 ursine_native_Extern.ProjectGetResourcesByType = function(type) {
 	return ProjectGetResourcesByType(type);

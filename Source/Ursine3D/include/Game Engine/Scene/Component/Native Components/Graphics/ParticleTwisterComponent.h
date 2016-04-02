@@ -88,8 +88,9 @@ namespace ursine
 
         }Meta(
             Enable,
-            DisplayName("ParticleTwister"),
-            RequiresComponents(typeof(ursine::ecs::ParticleSystem))
+            DisplayName( "ParticleTwister" )
+        ) EditorMeta( 
+            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )    
         );
     }
 }

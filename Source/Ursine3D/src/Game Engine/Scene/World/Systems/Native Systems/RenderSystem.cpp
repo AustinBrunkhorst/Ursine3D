@@ -26,6 +26,7 @@
 
 #include "GfxAPI.h"
 #include "RenderableComponentBase.h"
+#include "GraphicsSettingsComponent.h"
 
 namespace ursine
 {
@@ -76,6 +77,11 @@ namespace ursine
         void RenderSystem::OnSceneReady(Scene *scene)
         {
             m_worldConfig = m_world->GetSettings( )->GetComponent<WorldConfig>( );
+
+            auto levelSettings = m_world->GetSettings();
+
+            if (!levelSettings->HasComponent<GraphicsSettings>())
+                levelSettings->AddComponent<GraphicsSettings>();
         }
 
         bool RenderSystem::cameraSortPredicate(Component::Handle<Camera> a, Component::Handle<Camera> b)

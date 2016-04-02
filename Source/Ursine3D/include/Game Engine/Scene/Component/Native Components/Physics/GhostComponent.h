@@ -45,6 +45,12 @@ namespace ursine
                 SetEnableContactCallback
             );
 
+            EditorField(
+                bool enableRaycast,
+                GetEnableRaycast,
+                SetEnableRaycast
+                );
+
             Ghost(void);
             ~Ghost(void);
 
@@ -60,6 +66,9 @@ namespace ursine
             void SetEnableContactCallback(bool enable);
             bool GetEnableContactCallback(void) const;
 
+            void SetEnableRaycast(bool enable);
+            bool GetEnableRaycast(void) const;
+
             void SetAwake(void);
 
             Meta(Disable)
@@ -69,6 +78,8 @@ namespace ursine
             physics::Ghost m_ghost;
 
             bool m_enableContactCallback;
+
+            bool m_enableRaycast;
 
             void onTransformChange(EVENT_HANDLER(Entity));
 

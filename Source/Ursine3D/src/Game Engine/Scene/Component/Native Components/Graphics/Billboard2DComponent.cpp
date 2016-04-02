@@ -62,7 +62,11 @@ namespace ursine
             // set the unique id
             m_billboard->SetEntityID( owner->GetID( ) );
 
+        #if defined(URSINE_WITH_EDITOR)
+
             bindResourceModification( m_texture, &Billboard2D::onTextureReload );
+
+        #endif
         }
 
         void Billboard2D::OnSceneReady(Scene *scene)
@@ -188,7 +192,7 @@ namespace ursine
             {
                 auto handle = data->GetTextureHandle( );
 
-                if(unload)
+                if (unload)
                     m_graphics->ResourceMgr.UnloadTexture( m_billboard->GetTextureHandle( ) );
 
                 m_graphics->ResourceMgr.LoadTexture( handle );
@@ -197,10 +201,14 @@ namespace ursine
             }
         }
 
+        #if defined(URSINE_WITH_EDITOR)
+
         void Billboard2D::onTextureReload(void)
         {
             if (resourcesAreAvailable( ))
                 invalidateTexture( true );
         }
+
+        #endif
     }
 }

@@ -75,9 +75,13 @@ namespace ursine
         {
             RenderableComponentBase::OnInitialize( GetOwner( ) );
 
+        #if defined(URSINE_WITH_EDITOR)
+
             // make sure we are selected
             if (GetOwner( )->HasComponent<Selected>( ))
                 SetEditorSelectionMode( true );
+
+        #endif
         }
 
         void Camera::updateRenderer(void)
@@ -266,6 +270,11 @@ namespace ursine
         SVec3 Camera::GetMouseWorldPosition(void) const
         {
             return m_graphics->GetMousedOverWorldPosition( m_handle );
+        }
+
+        graphics::GfxHND Camera::GetCameraHandle() const
+        {
+            return m_handle;
         }
 
         #if defined(URSINE_WITH_EDITOR)

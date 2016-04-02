@@ -28,6 +28,7 @@ TranslateTool::TranslateTool(Editor *editor, World *world)
     , m_local( false )
     , m_archetype( editor_resources::ArchetypeTranslateTool )
     , m_toolResources( GetCoreSystem( Editor )->GetProject( )->GetBuiltInResourceManager( ) )
+    , m_captured( false )
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
     m_editorCameraSystem = m_world->GetEntitySystem<EditorCameraSystem>( );
@@ -69,62 +70,142 @@ void TranslateTool::OnDeselect(const EntityHandle &entity)
     m_deleteGizmo = true;
 }
 
+
 void TranslateTool::OnMouseDown(const MouseButtonArgs& args)
 {
-    if (m_hovering)
-        m_dragging = true;
+    // if not hovering to select a gizmo
+    if (!m_hovering || m_altDown)
+        return;
+
+    SVec3 pos, basisX, basisY, basisZ;
+
+    SVec3 rayStart, rayDir;
+
+    auto newID = m_graphics->GetMousedOverID( );
+    auto entity = m_world->GetEntity( newID );
+
+    if(entity == nullptr)
+        return;
+
+    auto camera = m_editorCameraSystem->GetEditorCamera( );
+    
+    auto worldPos = m_graphics->GetMousedOverWorldPosition( camera->GetCameraHandle( ) );
+
+    getBasis( entity, pos, basisX, basisY, basisZ );
+
+    SVec3 bases[3] = { basisX, basisY, basisZ };
+
+    m_planeNormal = bases[ (m_axisType) % 3 ];
+    SVec3 otherAxis = bases[ (m_axisType + 1) % 3 ];
+    SVec3 eyeDirection = camera->GetLook( );
+
+    float axisA = eyeDirection.Dot(m_planeNormal);
+    float axisB = eyeDirection.Dot( otherAxis );
+
+    if(abs(axisA) < abs(axisB))
+    {
+        float temp = axisB;
+        axisB = axisA;
+        axisA = temp;
+    }
+
+    // intersect with vector from camera to mouse, and the plane we just created
+    rayStart = m_editorCameraSystem->GetEditorCameraEntity( )->GetTransform( )->GetWorldPosition( );
+    rayDir = worldPos - rayStart;
+    rayDir.Normalize( );
+
+    float w = m_planeNormal.Dot( pos );
+    float time = (w - m_planeNormal.Dot(rayStart)) / m_planeNormal.Dot(rayDir);
+
+    m_localPoint = rayStart + rayDir * time;
+    m_captured = true;
+    m_localOffset = bases[m_axisType - 1].Dot( m_localPoint - pos );
+    m_dragging = true;
 }
 
 void TranslateTool::OnMouseUp(const MouseButtonArgs& args)
 {
-    if (m_dragging)
-        m_dragging = false;
+    m_captured = false;
+    m_dragging = false;
 }
 
 void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
 {
-    if (m_dragging && m_selected)
+    if(m_selected == nullptr || m_altDown)
+        return;
+
+    if(m_captured)
     {
-        // Project the delta vector onto the screen direction vector
-        auto b = args.positionDelta;
-        auto &a = m_screenDir;
+        SVec3 pos, basisX, basisY, basisZ;
 
-        // invert the Y
-        b.Y( ) = -b.Y( );
+        getBasis(m_selected, pos, basisX, basisY, basisZ);
 
-        float dot = a.Dot( b );
-        auto proj = ( dot / b.LengthSquared( ) ) * b;
-        auto dist = proj.Length( );
-        auto selected = m_selected->GetTransform( );
-        auto gizmo = m_gizmo->GetTransform( );
+        SVec3 bases[ 3 ] = { basisX, basisY, basisZ };
+        SVec3 dir = bases[ m_axisType - 1 ];
 
-        if (dot < 0.0f)
-            dist = -dist;
-        
-        // Multiply by an arbitrary value so that it feels nice.
-        // Ideally we would convert the screen space to a world space distance
-        // and then apply it to the world space direction vector.
-        dist *= 0.25f;
+        auto camera = m_editorCameraSystem->GetEditorCamera( );
+        auto worldPos = m_graphics->GetMousedOverWorldPosition(camera->GetCameraHandle());
 
-        auto newP = gizmo->GetWorldPosition( ) + m_worldDir * dist * sqrt(m_editorCameraSystem->GetCamZoom( ));
+        SVec3 rayStart, rayDir;
+        rayStart = m_editorCameraSystem->GetEditorCameraEntity( )->GetTransform( )->GetWorldPosition( );
+        rayDir = worldPos - rayStart;
+        rayDir.Normalize( );
 
-        gizmo->SetWorldPosition( newP );
+        float w = m_planeNormal.Dot( pos );
+        float time = (w - m_planeNormal.Dot(rayStart)) / m_planeNormal.Dot(rayDir);
 
-        if (m_snapping)
-        {
-            for (int i = 0; i < 3; ++i)
-            {
-                if (newP[ i ] > 0.0f)
-                    newP[ i ] = float(int(newP[ i ] * 2.0f + 0.5f)) / 2.0f;
-                else
-                    newP[ i ] = float(int(newP[ i ] * 2.0f - 0.5f)) / 2.0f;
-            }
+        SVec3 pt = rayStart + rayDir * time;
 
-            selected->SetWorldPosition( newP );
-        }
-        else
-            selected->SetWorldPosition( newP );
+        float offset = dir.Dot( pt - pos );
+
+        auto *selectedTransform = m_selected->GetTransform( );
+
+        auto position = selectedTransform->GetWorldPosition( );
+        position += dir * (offset - m_localOffset);
+        selectedTransform->SetWorldPosition( position );
     }
+    //if (m_dragging && m_selected)
+    //{
+    //    // Project the delta vector onto the screen direction vector
+    //    auto b = args.positionDelta;
+    //    auto &a = m_screenDir;
+
+    //    // invert the Y
+    //    b.Y( ) = -b.Y( );
+
+    //    float dot = a.Dot( b );
+    //    auto proj = ( dot / b.LengthSquared( ) ) * b;
+    //    auto dist = proj.Length( );
+    //    auto selected = m_selected->GetTransform( );
+    //    auto gizmo = m_gizmo->GetTransform( );
+
+    //    if (dot < 0.0f)
+    //        dist = -dist;
+    //    
+    //    // Multiply by an arbitrary value so that it feels nice.
+    //    // Ideally we would convert the screen space to a world space distance
+    //    // and then apply it to the world space direction vector.
+    //    dist *= 0.25f;
+
+    //    auto newP = gizmo->GetWorldPosition( ) + m_worldDir * dist * sqrt(m_editorCameraSystem->GetCamZoom( ));
+
+    //    gizmo->SetWorldPosition( newP );
+
+    //    if (m_snapping)
+    //    {
+    //        for (int i = 0; i < 3; ++i)
+    //        {
+    //            if (newP[ i ] > 0.0f)
+    //                newP[ i ] = float(int(newP[ i ] * 2.0f + 0.5f)) / 2.0f;
+    //            else
+    //                newP[ i ] = float(int(newP[ i ] * 2.0f - 0.5f)) / 2.0f;
+    //        }
+
+    //        selected->SetWorldPosition( newP );
+    //    }
+    //    else
+    //        selected->SetWorldPosition( newP );
+    //}
 }
 
 void TranslateTool::OnKeyDown(const KeyboardKeyArgs &args)
@@ -155,10 +236,8 @@ void TranslateTool::OnUpdate(KeyboardManager *kManager, MouseManager *mManager)
     updateAxis( );
     renderAxis( );
 
-    if (!m_dragging)
-    {
+    if(!m_altDown)
         updateHoverAxis( );
-    }
 }
 
 void TranslateTool::setDirectionVectors(const SVec3& basisVector, const EntityHandle &selected)
@@ -211,7 +290,7 @@ void TranslateTool::disableAxis(void)
 
 void TranslateTool::updateAxis(void)
 {
-    if (!m_selected|| !m_gizmo)
+    if (!m_selected || !m_gizmo)
         return;
 
     // update the size of the gizmo
@@ -338,9 +417,19 @@ void TranslateTool::updateHoverAxis(void)
     auto newID = m_graphics->GetMousedOverID( );
     auto entity = m_world->GetEntity( newID );
 
-    if (!entity || m_altDown)
+    /*if (!entity || m_altDown)
     {
         disableHover( );
+        return;
+    }*/
+
+    if(m_dragging)
+        return;
+
+    if(entity == nullptr || entity->IsDeleting( ))
+    {
+        m_hovering = false;
+        m_axisType = -1;
         return;
     }
 
@@ -407,6 +496,7 @@ void TranslateTool::updateHoverAxis(void)
             }
         }
 
+
         auto model = entity->GetComponent<Model3D>( );
 
         if (!model)
@@ -427,6 +517,12 @@ void TranslateTool::updateHoverAxis(void)
         m_axis->SetColor( Color::Yellow );
 
         m_hovering = true;
+    }
+    else
+    {
+        disableHover();
+        m_hovering = false;
+        m_axisType = -1;
     }
 }
 
@@ -450,4 +546,27 @@ void TranslateTool::setEntitySerializationToggle(bool toggle, const EntityHandle
     }
 
     entity->EnableSerialization( toggle );
+}
+
+void TranslateTool::getBasis(EntityHandle obj, ursine::SVec3 &pos, ursine::SVec3 &basisX, ursine::SVec3 &basisY, ursine::SVec3 &basisZ)
+{
+    if(obj == nullptr)
+        return;
+
+    auto *transform = obj->GetTransform( );
+
+    if(transform != nullptr)
+    {
+        pos = transform->GetWorldPosition( );
+        basisX = ursine::SVec3(1, 0, 0);
+        basisY = ursine::SVec3(0, 1, 0);
+        basisZ = ursine::SVec3(0, 0, 1);
+
+        if(m_local)
+        {
+            basisX = transform->ToWorld(basisX);
+            basisX = transform->ToWorld(basisY);
+            basisX = transform->ToWorld(basisZ);
+        }
+    }
 }

@@ -24,6 +24,7 @@ struct VS_INPUT
 {
     float3  Pos         : POSITION;
     float3  Nor         : NORMAL;
+    float3  Tan         : TANGENT;
     float2  Tex         : TEXCOORD;
     float4  BWeight     : BLENDWEIGHT;
     uint4   BIdx        : BLENDINDICES;
@@ -32,9 +33,9 @@ struct VS_INPUT
 
 struct VS_OUTPUT
 {
-    float4 Pos : SV_POSITION;
-    float4 normal : NORMAL;
-    float2 Tex : UV;
+    float4 Pos          : SV_POSITION;
+    float4 normal       : NORMAL;
+    float2 Tex          : UV;
 };
 
 VS_OUTPUT main(VS_INPUT input)
@@ -54,21 +55,23 @@ VS_OUTPUT main(VS_INPUT input)
     indices[ 3 ] = input.BIdx.w;
 
     float3 pos = float3(0.f, 0.f, 0.f);
-    float3 norm = float3(0.f, 0.f, 0.f);
+    float3 normal = float3(0.0f, 0.0f, 0.0f);
+    
     for (int i = 0; i < 4; ++i)
     {
         pos += weights[ i ] * mul(float4(input.Pos.xyz, 1.0f), matPal[ indices[ i ] ]).xyz;
-        norm += weights[ i ] * mul(float4(input.Nor.xyz, 0.0f), matPal[ indices[ i ] ]).xyz;
+        normal += weights[ i ] * mul(float4(input.Nor.xyz, 0.0f), matPal[ indices[ i ] ]).xyz;
     }
 
-    norm /= 4.0f;
+    normal = normalize(normal);
 
     output.Pos = mul(float4(pos.xyz, 1.f), World);
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
     output.Tex = input.Tex + textureOffset;
 
-    output.normal = mul(float4(norm.xyz, 0), World);
-    output.normal = mul(output.normal, View);
+    output.normal = mul(float4(input.Nor.xyz, 0), World);
+    output.normal = normalize(mul(output.normal, View));
+
     return output;
 }

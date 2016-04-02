@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -14,6 +14,8 @@
 #include "UrsinePrecompiled.h"
 
 #include "AudioEmitterComponent.h"
+
+#include "AudioItemEventData.h"
 
 namespace ursine
 {

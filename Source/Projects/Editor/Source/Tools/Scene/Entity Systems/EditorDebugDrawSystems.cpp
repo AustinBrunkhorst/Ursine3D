@@ -151,7 +151,7 @@ void CameraDebugDrawSystem::Process(const EntityHandle &entity)
     auto right = cam->GetRight( );
     auto up = cam->GetUp( );
     auto pos = entity->GetTransform( )->GetWorldPosition( );
-    auto fov = cam->GetFOV( );
+    auto fov = math::DegreesToRadians( cam->GetFOV( ) );
 
     auto viewSize = cam->GetViewportSize( );
     auto ratio = viewSize.Y( ) / viewSize.X( );

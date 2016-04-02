@@ -39,6 +39,11 @@ namespace ursine
                 "Reset Spawn Count"
             );
 
+            EditorButton(
+                destroyAllParticles,
+                "Reset All Particles"
+            );
+
             EditorField(
                 bool emitting,
                 GetEmitting,
@@ -210,6 +215,7 @@ namespace ursine
             int spawnParticle(void);
 
             void ResetSpawnCount(void);
+            
 
         private:
             // temporary updating
@@ -270,8 +276,9 @@ namespace ursine
             bool m_fastMovingEmitter;
         } Meta(
             Enable, 
-            DisplayName( "ParticleEmitter" ),
-            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )
+            DisplayName( "ParticleEmitter" )
+        ) EditorMeta( 
+            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )    
         );
     }
 }

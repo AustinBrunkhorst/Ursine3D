@@ -239,6 +239,9 @@ namespace ursine
             GfxHND GetShadowmapHandle(void) const;
             void SetShadowmapHandle(GfxHND handle);
 
+            bool GetRenderShadows(void) const;
+            void SetRenderShadows(bool renderShadows);
+
         private:
             void Uninitialize(GfxManager *mgr) override;
 
@@ -254,6 +257,7 @@ namespace ursine
 
             unsigned m_shadowmapWidth;
             GfxHND m_shadowmap;
+            bool m_renderShadows;
         };
 
         /////////////////////////////////////////////////////////////
@@ -305,6 +309,9 @@ namespace ursine
 
             const SMat4 &GetTransform(void) const;
             void SetTransform(const SMat4 &transform);
+
+            bool GetVelocityOrient(void) const;
+            void SetVelocityOrient(bool velocityOrient);
         private:
             // members
             unsigned m_backIndex;
@@ -318,6 +325,7 @@ namespace ursine
 
             bool m_useAdditive;
             bool m_worldSpace;
+            bool m_velocityOrient;
 
             SMat4 m_transform;
         };

@@ -48,7 +48,7 @@ class SceneView extends NativeCanvasWindowHandler {
         window.addEventListener( 'resize', onWindowResize );
         window.addEventListener( 'keydown', onWindowKeyDown );
 
-        m_fullScreen = false;
+        m_fullScreen = Extern.ProjectGetPreferences( ).fullScreen;
 
         m_fullScreenItem = Editor.instance.mainMenu
             .findItem( 'View' ).menu
@@ -56,11 +56,21 @@ class SceneView extends NativeCanvasWindowHandler {
 
         m_nonFullScreenContainer = cast window.container.parentNode;
         m_fullScreenContainer = cast js.Browser.document.querySelector( '#fullscreen-container' );
+
+        // everything is setup by default in non-fullscreen mode
+        if (m_fullScreen)
+            onFullScreenChanged( );
     }
 
     public function toggleFullscreen() {
         m_fullScreen = !m_fullScreen;
 
+        Extern.ProjectSetFullScreen( m_fullScreen );
+
+        onFullScreenChanged( );
+    }
+
+    public function onFullScreenChanged() {
         m_fullScreenItem.checked = m_fullScreen;
 
         Editor.instance.toggleStatusBar( !m_fullScreen );

@@ -323,9 +323,10 @@ void ScaleTool::updateHoverAxis(void)
     auto newID = m_graphics->GetMousedOverID( );
     auto entity = m_world->GetEntity( newID );
 
-    if (!entity || m_altDown)
+    if (!entity || entity->IsDeleting( ) || m_altDown)
     {
         disableHover( );
+
         return;
     }
 

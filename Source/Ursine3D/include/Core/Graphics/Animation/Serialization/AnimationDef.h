@@ -347,13 +347,13 @@ namespace ursine
             {
                 eLayout mLayout;
                 std::string name;
-                unsigned int vertexCnt;
-                unsigned int indexCnt;
-                unsigned int normalCnt;
-                unsigned int binormalCnt;
-                unsigned int tangentCnt;
-                unsigned int uvCnt;
-                unsigned int mtrlIndexCnt;
+                //unsigned int vertexCnt;
+                //unsigned int indexCnt;
+                //unsigned int normalCnt;
+                //unsigned int binormalCnt;
+                //unsigned int tangentCnt;
+                //unsigned int uvCnt;
+                //unsigned int mtrlIndexCnt;
                 int parentIndex;
 
                 FbxLayerElement::EMappingMode normalMode;
@@ -361,20 +361,21 @@ namespace ursine
                 FbxLayerElement::EMappingMode tangentMode;
                 SMat4 meshTM;
 
-                pseudodx::XMFLOAT3* vertices;
-                unsigned int* indices;
-                pseudodx::XMFLOAT3* normals;
-                pseudodx::XMFLOAT3* binormals;
-                pseudodx::XMFLOAT3* tangents;
-                pseudodx::XMFLOAT2* uvs;
-                unsigned int* materialIndices;
+                std::vector<pseudodx::XMFLOAT3> vertices;
+                std::vector<unsigned int> indices;
+                std::vector<pseudodx::XMFLOAT3> normals;
+                std::vector<pseudodx::XMFLOAT3> binormals;
+                std::vector<pseudodx::XMFLOAT3> tangents;
+                std::vector<pseudodx::XMFLOAT2> uvs;
+                std::vector<unsigned int> materialIndices;
 
                 // material
                 std::vector<FbxMaterial> fbxmaterials;
 
-                MeshData() : mLayout(NONE), vertexCnt(0), indexCnt(0), normalCnt(0), binormalCnt(0), tangentCnt(0), uvCnt(0),
-                    normalMode(FbxLayerElement::eNone), tangentMode(FbxLayerElement::eNone),
-                    vertices(nullptr), indices(nullptr), normals(nullptr), binormals(nullptr), tangents(nullptr), uvs(nullptr)
+                MeshData() : mLayout(NONE),
+                    normalMode(FbxLayerElement::eNone), 
+                    binormalMode(FbxLayerElement::eNone), 
+                    tangentMode(FbxLayerElement::eNone)
                 {
                 }
             };

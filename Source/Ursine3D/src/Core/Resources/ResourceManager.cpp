@@ -37,6 +37,13 @@ namespace ursine
             return cache->second;
         }
 
+        bool ResourceManager::ResourceExists(const GUID &guid) const
+        {
+            return m_database.find( guid ) != m_database.end( ) || exists( getResourceFileName( guid ) );
+        }
+
+        #if defined(URSINE_WITH_EDITOR)
+
         void ResourceManager::ReloadIfCached(const GUID &guid)
         {
             std::lock_guard<std::mutex> lock( m_databaseMutex );
@@ -45,10 +52,7 @@ namespace ursine
                 hardLoadResource( guid );
         }
 
-        bool ResourceManager::ResourceExists(const GUID &guid) const
-        {
-            return m_database.find( guid ) != m_database.end( ) || exists( getResourceFileName( guid ) );
-        }
+        #endif
 
         ResourceData::Handle ResourceManager::hardLoadResource(const GUID &guid)
         {

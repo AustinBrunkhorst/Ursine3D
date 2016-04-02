@@ -41,7 +41,6 @@ CORE_SYSTEM_DEFINITION( GameLauncher );
 
 GameLauncher::GameLauncher(void)
     : m_graphics( nullptr )
-    , m_screenManager( nullptr )
 	, m_audioManager( nullptr )
     , m_mainWindow( { nullptr } )
 {
@@ -53,11 +52,6 @@ GameLauncher::~GameLauncher(void)
 
 }
 
-ScreenManager *GameLauncher::GetScreenManager(void) const
-{
-    return m_screenManager;
-}
-
 Window::Handle GameLauncher::GetMainWindowHandle(void) const
 {
     return m_mainWindow.window;
@@ -65,57 +59,7 @@ Window::Handle GameLauncher::GetMainWindowHandle(void) const
 
 void GameLauncher::OnInitialize(void)
 {
-    auto *app = Application::Instance;
-
-    app->Connect( APP_UPDATE, this, &Retrospect::onAppUpdate );
-
-    auto *windowManager = GetCoreSystem( WindowManager );
-    auto *uiManager = GetCoreSystem( UIManager );
-
-    m_mainWindow.window = windowManager->AddWindow(
-        "Retrospect",
-        { 0, 0 },
-        { static_cast<float>( kDefaultWindowWidth ), static_cast<float>( kDefaultWindowHeight ) },
-        SDL_WINDOW_RESIZABLE
-    );
-
-    m_mainWindow.window->Listener( this )
-        .On( WINDOW_FOCUS_CHANGED, &Retrospect::onMainWindowFocusChanged )
-        .On( WINDOW_RESIZE, &Retrospect::onMainWindowResize );
-
-    m_mainWindow.window->SetLocationCentered( );
-
-    m_graphics = GetCoreSystem( graphics::GfxAPI );
-
-    initializeGraphics( );
-
-    m_mainWindow.ui = uiManager->CreateView( m_mainWindow.window, kEntryPoint );
-
-    m_mainWindow.ui->SetViewport( {
-        0, 0,
-        kDefaultWindowWidth, kDefaultWindowHeight
-    } );
-
-    m_screenManager = new ScreenManager( );
-    m_screenManager->SetUI( m_mainWindow.ui );
-
-    {
-        SDL_DisplayMode displayMode;
-
-        SDL_GetDesktopDisplayMode( 
-            m_mainWindow.window->GetDisplayIndex( ),
-            &displayMode 
-        );
-
-        m_mainWindow.window->SetSize( { 
-            static_cast<float>( displayMode.w ), 
-            static_cast<float>( displayMode.h ) 
-        } );
-    }
-    m_mainWindow.window->SetFullScreen( true );
-    m_mainWindow.window->Show( true );
-
-	m_audioManager = GetCoreSystem( AudioManager );
+    
 }
 
 void GameLauncher::OnRemove(void)
@@ -123,7 +67,7 @@ void GameLauncher::OnRemove(void)
     Application::Instance->Disconnect(
         APP_UPDATE,
         this,
-        &Retrospect::onAppUpdate
+        &GameLauncher::onAppUpdate
     );
 
     delete m_screenManager;
@@ -146,35 +90,7 @@ void GameLauncher::initializeGraphics(void)
 {
     graphics::GfxConfig config;
 
-    config.Fullscreen_ = false;
-
-    config.HandleToWindow_ =
-        static_cast<HWND>( m_mainWindow.window->GetPlatformHandle( ) );
-
-    config.ModelListPath_ = "Assets/Models/";
-    config.ShaderListPath_ = URSINE_SHADER_BUILD_DIRECTORY;
-    config.TextureListPath_ = "Assets/Textures/";
-    config.WindowWidth_ = kDefaultWindowWidth;
-    config.WindowHeight_ = kDefaultWindowHeight;
-
-    URSINE_TODO( "..." );
-
-    config.m_renderUI = true;
-    config.debug = false;
-
-    config.Profile_ = false;
-
     m_graphics->StartGraphics( config );
-    m_graphics->Resize( kDefaultWindowWidth, kDefaultWindowHeight );
-
-    auto handle = m_graphics->ViewportMgr.CreateViewport( kDefaultWindowWidth, kDefaultWindowHeight );
-
-    m_mainWindow.viewport = &m_graphics->ViewportMgr.GetViewport( handle );
-
-    m_mainWindow.viewport->SetPosition( 0, 0 );
-    m_mainWindow.viewport->SetBackgroundColor( 255.0f, 0.0f, 0.0f, 1.0f );
-
-    m_graphics->SetGameViewport( handle );
 }
 
 void GameLauncher::onAppUpdate(EVENT_HANDLER(ursine::Application))
