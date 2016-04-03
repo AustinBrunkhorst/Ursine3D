@@ -163,8 +163,6 @@ void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
         auto position = selectedTransform->GetWorldPosition( );
         position += dir * (offset - m_localOffset);
 
-        std::cout << offset << ", " << m_localOffset << std::endl;
-
         selectedTransform->SetWorldPosition( position );
     }
 }
@@ -529,7 +527,5 @@ void TranslateTool::getBasis(EntityHandle obj, ursine::SVec3 &pos, ursine::SVec3
             basisY = transform->GetUp( );
             basisZ = transform->GetForward( );
         }
-
-        std::cout << basisX.X( ) << ", " << basisX.Y( ) << ", " << basisX.Z( ) << std::endl;
     }
 }
