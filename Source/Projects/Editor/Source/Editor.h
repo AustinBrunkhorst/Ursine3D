@@ -38,7 +38,7 @@ public:
 
     const EditorWindow &GetMainWindow(void) const;
 
-    const EditorPreferences &GetPreferences(void) const;
+    EditorPreferences &GetPreferences(void);
     Project *GetProject(void);
 
     ///////////////////////////////////////////////////////////////////////////

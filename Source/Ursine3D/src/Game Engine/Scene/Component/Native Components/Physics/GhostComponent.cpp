@@ -28,6 +28,7 @@ namespace ursine
         Ghost::Ghost(void)
             : BaseComponent( )
             , m_enableContactCallback( false )
+            , m_enableRaycast( false )
         {
             
         }
@@ -73,6 +74,16 @@ namespace ursine
         bool Ghost::GetEnableContactCallback(void) const
         {
             return m_enableContactCallback;
+        }
+
+        void Ghost::SetEnableRaycast(bool enable)
+        {
+            m_enableRaycast = enable;
+        }
+
+        bool Ghost::GetEnableRaycast(void) const
+        {
+            return m_enableRaycast;
         }
 
         void Ghost::SetAwake(void)

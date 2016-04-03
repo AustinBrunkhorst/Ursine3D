@@ -28,7 +28,8 @@ namespace ursine
 
         } Meta(
             Enable, 
-            DisplayName( "Bone" ),
+            DisplayName( "Bone" )
+        ) EditorMeta(
             HiddenInSelector,
             DisableComponentRemoval
         );

@@ -34,7 +34,7 @@ namespace ursine
                 float dampening,
                 GetDampening,
                 SetDampening
-                );
+            );
 
             EditorField(
                 float growth,
@@ -87,8 +87,9 @@ namespace ursine
 
         } Meta(
             Enable,
-            DisplayName( "ParticleAnimator" ),
-            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )
+            DisplayName( "ParticleAnimator" )
+        ) EditorMeta(
+            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )    
         );
     }
 }

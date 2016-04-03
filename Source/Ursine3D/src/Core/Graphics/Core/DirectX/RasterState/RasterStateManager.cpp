@@ -174,7 +174,7 @@ namespace ursine
                 rasterDesc.FrontCounterClockwise = false;
                 rasterDesc.MultisampleEnable = true;
                 rasterDesc.ScissorEnable = false;
-                rasterDesc.SlopeScaledDepthBias = 1;
+                rasterDesc.SlopeScaledDepthBias = 1.0f;
 
                 //Create the rasterizer state from the description we just filled out.
                 result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_SHADOW_RENDER ]);

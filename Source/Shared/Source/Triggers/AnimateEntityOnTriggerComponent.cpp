@@ -66,9 +66,6 @@ void AnimateEntityOnTrigger::OnSceneReady(Scene *scene)
 {
     auto world = GetOwner( )->GetWorld( );
 
-    // find the entity
-    m_entity = world->GetEntityFromName( m_name );
-
     // subscribe to my collision events
     world->Listener( this )
         .On( WORLD_UPDATE, &AnimateEntityOnTrigger::onUpdate );
@@ -78,6 +75,14 @@ void AnimateEntityOnTrigger::OnSceneReady(Scene *scene)
 
 void AnimateEntityOnTrigger::onUpdate(EVENT_HANDLER(World))
 {
+    EVENT_SENDER(World, sender);
+
+    if (!m_entity)
+    {
+        // find the entity
+        m_entity = sender->GetEntityFromName( m_name );
+    }
+
     // get the ghost collider
     auto ghost = GetOwner( )->GetComponent<Ghost>( );
     std::vector<physics::GhostOverlappingItem> items;

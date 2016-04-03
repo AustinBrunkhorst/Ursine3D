@@ -11,9 +11,12 @@ cbuffer TransformBuffer : register(b1)
 
 struct VertexInputType
 {
-    float4 position : POSITION;
-    float4 normal : NORMAL;
-    float2 uv : UV;
+    float3  Pos         : POSITION;
+    float3  Nor         : NORMAL;
+    float3  Tan         : TANGENT;
+    float2  Tex         : TEXCOORD;
+    float4  BWeight     : BLENDWEIGHT;
+    uint4   BIdx        : BLENDINDICES;
 };
 
 struct PixelInputType
@@ -27,11 +30,8 @@ PixelInputType main( VertexInputType input )
 {
     PixelInputType output;
 
-    // 
-    input.position.w = 1.f;
-
     // Calculate the position of the vertex against the world, view, and projection matrices.
-    output.Position = mul( input.position, transform );
+    output.Position = mul( float4(input.Pos.xyz, 1.0f), transform );
     output.Position = mul( output.Position, viewMatrix );
     output.Position = mul( output.Position, projectionMatrix );
 

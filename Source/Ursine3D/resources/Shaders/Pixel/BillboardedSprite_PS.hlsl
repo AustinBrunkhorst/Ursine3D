@@ -1,5 +1,5 @@
 // texture
-Texture2D shaderTexture : register(t0);
+Texture2D gShaderTexture : register(t0);
 
 // sample type
 SamplerState SampleType : register(s0);
@@ -12,7 +12,7 @@ cbuffer MaterialBuffer : register(b10)
     int objID;
 };
 
-struct PixelInputType
+struct PS_INPUT
 {
     float4 position : SV_POSITION;
     float4 normal : NORMAL;
@@ -20,7 +20,7 @@ struct PixelInputType
 };
 
 // specular power range
-static const float2 g_SpecPowerRange = { 0.1, 250.0 };
+static const float2 cSpecPowerRange = { 0.1, 250.0 };
 
 // this is where we output to each render target
 struct PS_GBUFFER_OUT
@@ -41,7 +41,7 @@ PS_GBUFFER_OUT PackGBuffer(float4 BaseColor, float3 Normal, float
 {
     PS_GBUFFER_OUT Out;
     // Normalize the specular power
-    float SpecPowerNorm = (SpecPower - g_SpecPowerRange.x) / g_SpecPowerRange.y;
+    float SpecPowerNorm = (SpecPower - cSpecPowerRange.x) / cSpecPowerRange.y;
 
     // convert id into proper sizes
     int word1 = objID & 0xff;           //first 8 bits
@@ -57,9 +57,9 @@ PS_GBUFFER_OUT PackGBuffer(float4 BaseColor, float3 Normal, float
     return Out;
 } 
 
-PS_GBUFFER_OUT main(PixelInputType input)
+PS_GBUFFER_OUT main(PS_INPUT input)
 {
-    float4 baseColor = float4(shaderTexture.Sample(SampleType, input.uv));
+    float4 baseColor = float4(gShaderTexture.Sample(SampleType, input.uv));
     float3 normal = input.normal.xyz;
 
     if ( baseColor.w <= 0 )

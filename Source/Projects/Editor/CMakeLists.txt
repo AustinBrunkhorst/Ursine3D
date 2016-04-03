@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-set(EDITOR_VERSION "0.0alpha")
+set(EDITOR_VERSION "0.1alpha")
 
 add_definitions(
     # building with editor

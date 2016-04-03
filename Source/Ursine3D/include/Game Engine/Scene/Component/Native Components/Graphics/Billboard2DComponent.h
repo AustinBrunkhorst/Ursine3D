@@ -95,7 +95,12 @@ namespace ursine
             void updateRenderer(void);
 
             void invalidateTexture(bool unload = true);
+
+        #if defined(URSINE_WITH_EDITOR)
+
             void onTextureReload(void);
+
+        #endif
         } Meta(
             Enable, 
             WhiteListMethods, 

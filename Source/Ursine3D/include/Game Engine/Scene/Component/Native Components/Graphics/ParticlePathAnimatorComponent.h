@@ -96,8 +96,9 @@ namespace ursine
 
         } Meta(
             Enable,
-            DisplayName("ParticlePathAnimator"),
-            RequiresComponents(typeof(ursine::ecs::ParticleSystem))
+            DisplayName( "ParticlePathAnimator" )
+        ) EditorMeta(
+            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )
         );
     }
 }

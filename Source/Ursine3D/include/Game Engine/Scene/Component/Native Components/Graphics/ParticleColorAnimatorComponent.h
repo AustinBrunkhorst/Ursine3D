@@ -38,7 +38,6 @@ namespace ursine
             EditorField(Color color3, GetColor3, SetColor3);
             EditorField(Color color4, GetColor4, SetColor4);
 
-
             ParticleColorAnimator(void);
             ~ParticleColorAnimator(void);
 
@@ -76,8 +75,9 @@ namespace ursine
 
         } Meta(
             Enable,
-            DisplayName("ParticleColorAnimator"),
-            RequiresComponents(typeof(ursine::ecs::ParticleSystem))
+            DisplayName( "ParticleColorAnimator" )
+        ) EditorMeta( 
+            RequiresComponents( typeof( ursine::ecs::ParticleSystem ) )    
         );
     }
 }

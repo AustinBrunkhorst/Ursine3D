@@ -57,7 +57,7 @@ private:
 
     ursine::ecs::Component::Handle<ursine::ecs::Model3D> m_axis;
     ursine::Color m_axisOrigColor;
-    int m_axisType;
+    
 
     // Whether the user is holding down the snap to grid key or not
     bool m_snapping;
@@ -76,6 +76,13 @@ private:
     // The world direction projected onto screen coordinates
     ursine::Vec2 m_screenDir;
 
+    // NEW STUFF
+    ursine::SVec3 m_planeNormal;
+    ursine::SVec3 m_localPoint;
+    float m_localOffset;
+    bool m_captured;
+    int m_axisType;
+
     // Helper for setting world and screen directions
     void setDirectionVectors(const ursine::SVec3 &basisVector, const ursine::ecs::EntityHandle &selected);
 
@@ -92,4 +99,6 @@ private:
 
     // recursive helper functions
     void setEntitySerializationToggle(bool toggle, const ursine::ecs::EntityHandle &entity);
+
+    void getBasis(ursine::ecs::EntityHandle obj, ursine::SVec3 &pos, ursine::SVec3 &basisX, ursine::SVec3 &basisY, ursine::SVec3 &basisZ);
 };

@@ -347,6 +347,7 @@ namespace ursine
 
             m_shadowmap = 0;
             m_shadowmapWidth = 1024;
+            m_renderShadows = true;
 
             Renderable::Initialize();
         }
@@ -496,7 +497,7 @@ namespace ursine
             return SMat4( DirectX::XMMatrixPerspectiveFovLH(
                     math::DegreesToRadians( m_spotlightAngles.Y( ) ), 
                     1.0f,
-                    0.01f,
+                    1.0f,
                     m_radius
                 )
             );
@@ -516,9 +517,20 @@ namespace ursine
         {
             return m_shadowmap;
         }
+
         void Light::SetShadowmapHandle(GfxHND handle)
         {
             m_shadowmap = handle;
+        }
+
+        bool Light::GetRenderShadows(void) const
+        {
+            return m_renderShadows;
+        }
+
+        void Light::SetRenderShadows(bool renderShadows)
+        {
+            m_renderShadows = renderShadows;
         }
 
         /////////////////////////////////////////////////////////////
@@ -535,6 +547,7 @@ namespace ursine
             m_textureHandle = 0;
             m_useAdditive = true;
             m_worldSpace = true;
+            m_velocityOrient = false;
         }
 
         std::vector<Particle_GPU>& ParticleSystem::GetGPUParticleData(void)
@@ -662,6 +675,16 @@ namespace ursine
         void ParticleSystem::SetTransform(const SMat4& transform)
         {
             m_transform = transform;
+        }
+
+        bool ParticleSystem::GetVelocityOrient(void) const
+        {
+            return m_velocityOrient;
+        }
+
+        void ParticleSystem::SetVelocityOrient(bool velocityOrient)
+        {
+            m_velocityOrient = velocityOrient;
         }
 
         /////////////////////////////////////////////////////////////

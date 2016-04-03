@@ -48,7 +48,6 @@ namespace ursine
             SHADER_SLOT_11,
             SHADER_SLOT_12,
             SHADER_SLOT_13,
-            SHADER_SLOT_14,
 
             SHADER_SLOT_COUNT
         };

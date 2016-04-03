@@ -148,14 +148,19 @@ namespace ursine
             m_spawnCount = 0;
         }
 
-        #if defined(URSINE_WITH_EDITOR)
+        
+#if defined(URSINE_WITH_EDITOR)
 
         void ParticleEmitter::resetSpawnCount(void)
         {
             ResetSpawnCount( );
         }
 
-        #endif
+        void ParticleEmitter::destroyAllParticles(void)
+        {
+            m_particleComponent->DestroyAllParticles( );
+        }
+#endif
 
         // GETTER / SETTERS /////////////////////////////////////////
         bool ParticleEmitter::GetEmitting(void) const
@@ -448,10 +453,14 @@ namespace ursine
                     continue;
                 }
 
-                gpuData[ x ].rotation[ 0 ] -= cpuData[ x ].roll * dt;
-                //gpuData[ x ].rotation[ 0 ] = cpuData[ x ].velocity.X();
-                //gpuData[ x ].rotation[ 1 ] = cpuData[ x ].velocity.Y();
-                //gpuData[ x ].rotation[ 2 ] = cpuData[ x ].velocity.Z();
+                if(!m_particleComponent->GetVelocityOrient( ))
+                    gpuData[ x ].rotation[ 0 ] -= cpuData[ x ].roll * dt;
+                else
+                {
+                    gpuData[ x ].rotation[ 0 ] = cpuData[ x ].velocity.X( );
+                    gpuData[ x ].rotation[ 1 ] = cpuData[ x ].velocity.Y( );
+                    gpuData[ x ].rotation[ 2 ] = cpuData[ x ].velocity.Z( );
+                }
 
                 // update position with velocity
                 gpuData[ x ].position[ 0 ] += cpuData[ x ].velocity.X( ) * dt;

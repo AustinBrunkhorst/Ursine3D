@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Conversion.cpp
+** CFBXLoader.cpp
 **
 ** Author:
 ** - Park Hyung Jun - park.hyungjun@digipen.edu

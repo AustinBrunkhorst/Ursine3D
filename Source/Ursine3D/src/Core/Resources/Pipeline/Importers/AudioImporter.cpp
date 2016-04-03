@@ -3,6 +3,8 @@
 #include "AudioImporter.h"
 #include "AudioData.h"
 
+#include "BuiltInResourceConfig.h"
+
 #include <boost/regex.hpp>
 
 namespace
@@ -28,6 +30,7 @@ namespace ursine
     resources::ResourceData::Handle rp::AudioImporter::Import(ResourceImportContext &context)
     {
         auto &fileName = context.resource->GetSourceFileName( );
+        auto fileDirectory = fileName.parent_path( );
 
         // init bank file
         auto initBankFile = fileName / kWWiseInitBankName;
@@ -47,7 +50,22 @@ namespace ursine
 
         AudioData::EventList eventNames;
 
-        //extractBankEvents( bankFile, eventNames );
+        extractBankEvents( bankFile, eventNames );
+
+        for (auto &event : eventNames)
+        {
+            Json data = Json::object {
+                { "project", to_string( context.resource->GetGUID( ) ) },
+                { "event", event }
+            };
+
+            auto eventFileName = (fileDirectory / event)
+                .replace_extension( kResourceTypeAudioEventExtension );
+
+            fs::WriteAllText( eventFileName.string( ), data.dump( true ) );
+
+            context.AllocateGeneratedResource( eventFileName );
+        }
 
         BinaryData initData;
 
@@ -94,7 +112,7 @@ namespace
 
         std::string line;
 
-        static const boost::regex eventLineRegex( "^\\s+([a-zA-Z0-9_\\-]+)\\s+([^\\s]+)\\s+([a-zA-Z0-9_\\-]+)" );
+        static const boost::regex eventLineRegex( "^\t+([^\t]+)\t([^\t]+)\t{3}([^\t]+)\t" );
 
         while (getline( eventStream, line ))
         {

@@ -118,11 +118,11 @@ namespace ursine
             {
                 NotificationConfig config;
 
+                config.mode = NOTIFICATION_BLOCKING_MODAL;
                 config.type = NOTIFY_WARNING;
                 config.header = "Warning";
                 config.message = "This action will delete all of the FBXSceneRootNode's children. Continue?";
                 config.dismissible = false;
-                config.duration = 0;
 
                 NotificationButton yes, no;
 

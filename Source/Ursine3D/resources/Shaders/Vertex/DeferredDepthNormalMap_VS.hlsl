@@ -1,46 +1,83 @@
 cbuffer CameraBuffer : register(b0)
 {
-  matrix viewMatrix;
-  matrix projectionMatrix;
+    matrix View;
+    matrix Projection;
 };
 
 cbuffer TransformBuffer : register(b1)
 {
-  matrix transform;
+    matrix World;
 }
 
-struct VertexInputType
+cbuffer MatrixStack : register(b12)
 {
-  float4 position : POSITION;
-  float4 normal : NORMAL;
-  float2 uv : UV;
-  //@matt don't forget this
+    matrix matPal[ 96 ];
+}
+
+cbuffer TextureOffset : register(b13)
+{
+    float2 textureOffset;
+    float2 buffer;
+}
+
+struct VS_INPUT
+{
+    float3  Pos         : POSITION;
+    float3  Nor         : NORMAL;
+    float3  Tan         : TANGENT;
+    float2  Tex         : TEXCOORD;
+    float4  BWeight     : BLENDWEIGHT;
+    uint4   BIdx        : BLENDINDICES;
 };
 
-struct PixelInputType
+
+struct VS_OUTPUT
 {
-  float4 position : SV_POSITION;
-  float4 normal : NORMAL;
-  float2 uv : UV;
-  float4 depth : DEPTH;
+    float4 Pos          : SV_POSITION;
+    float4 normal       : NORMAL;
+    float4 tangent      : TANGENT;
+    float4 bitangent    : BITANGENT;
+    float2 Tex          : UV;
 };
 
-PixelInputType main( VertexInputType input )
+VS_OUTPUT main(VS_INPUT input)
 {
-  PixelInputType output;
+    VS_OUTPUT output;
 
-  // 
-  input.position.w = 1.f;
+    float weights[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    weights[ 0 ] = input.BWeight.x;
+    weights[ 1 ] = input.BWeight.y;
+    weights[ 2 ] = input.BWeight.z;
+    weights[ 3 ] = 1.0f - weights[ 0 ] - weights[ 1 ] - weights[ 2 ];
 
-  // Calculate the position of the vertex against the world, view, and projection matrices.
-  float4 worldPos = mul( input.position, transform );
-  float4 viewPos = mul( worldPos, viewMatrix );         //position wr2 the center of the world
-  output.depth = viewPos;                             //position wr2 the camera
-  output.position = mul( viewPos, projectionMatrix );   //get the screen pos
-  output.normal = mul( input.normal, transform );
-  output.normal = mul( output.normal, viewMatrix );
+    int indices[ 4 ] = { 0, 0, 0, 0 };
+    indices[ 0 ] = input.BIdx.x;
+    indices[ 1 ] = input.BIdx.y;
+    indices[ 2 ] = input.BIdx.z;
+    indices[ 3 ] = input.BIdx.w;
 
-  output.uv = input.uv;
+    float3 pos = float3(0.f, 0.f, 0.f);
 
-  return output;
+    for (int i = 0; i < 4; ++i)
+    {
+        pos += weights[ i ] * mul(float4(input.Pos.xyz, 1.0f), matPal[ indices[ i ] ]).xyz;
+    }
+
+    output.Pos = mul(float4(pos.xyz, 1.f), World);
+    output.Pos = mul(output.Pos, View);
+    output.Pos = mul(output.Pos, Projection);
+    output.Tex = input.Tex + textureOffset;
+
+    // move all vectors into world
+    output.normal       = mul(float4(input.Nor.xyz, 0), World);
+    output.tangent      = mul(float4(input.Tan.xyz, 0), World);
+
+    // move all vectors into view
+    output.normal       = normalize(mul(output.normal,  View));
+    output.tangent      = normalize(mul(output.tangent, View));
+
+    // calculate bitangent
+    output.bitangent = normalize(float4(cross(output.normal.xyz, output.tangent.xyz), 0));
+
+    return output;
 }

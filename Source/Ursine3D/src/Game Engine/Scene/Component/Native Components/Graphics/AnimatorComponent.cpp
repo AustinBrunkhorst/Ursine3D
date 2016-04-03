@@ -330,7 +330,7 @@ namespace ursine
                                    float currNoloopTimePos, float futNoloopTimePos,
                                    float &transFactor)
         {
-            if (!currSt || !(*(currSt)) || !futSt || !(*(futSt)) )
+            if (!currSt || !(*(currSt)) || !futSt || !(*(futSt)))
                 return;
 
             m_curStName = m_futStName;

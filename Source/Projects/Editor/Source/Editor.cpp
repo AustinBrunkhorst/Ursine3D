@@ -82,7 +82,7 @@ const EditorWindow &Editor::GetMainWindow(void) const
      
 ///////////////////////////////////////////////////////////////////////////////
 
-const EditorPreferences &Editor::GetPreferences(void) const
+EditorPreferences &Editor::GetPreferences(void)
 {
     return m_preferences;
 }
@@ -353,18 +353,22 @@ void Editor::initializeWindow(void)
 {
     auto *windowManager = GetCoreSystem( WindowManager );
 
-    m_mainWindow.m_window = windowManager->AddWindow(
+    auto window = m_mainWindow.m_window = windowManager->AddWindow(
         kWindowTitle,
         Vec2::Zero( ),
         m_startupConfig.windowSize,
         m_startupConfig.windowFlags
     );
 
-    m_mainWindow.m_window->Listener( this )
+    auto &size = window->GetSize( );
+
+    window->SetSize( size * window->GetDPIScaleFactor( ) );
+
+    window->Listener( this )
         .On( WINDOW_RESIZE, &Editor::onMainWindowResize );
     
-    m_mainWindow.m_window->SetLocationCentered( );
-    m_mainWindow.m_window->SetIcon( kWindowIcon );
+    window->SetLocationCentered( );
+    window->SetIcon( kWindowIcon );
 }  
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -377,14 +381,15 @@ void Editor::initializeGraphics(void)
 
     gfxConfig.fullscreen = false;
       
+    auto window = m_mainWindow.m_window;
+    auto &size = window->GetSize( );
+
     gfxConfig.handleToWindow =
-        static_cast<HWND>( m_mainWindow.m_window->GetPlatformHandle( ) );
+        static_cast<HWND>(window->GetPlatformHandle( ) );
        
-    gfxConfig.modelListPath = "Assets/Models/";
     gfxConfig.shaderListPath = URSINE_SHADER_BUILD_DIRECTORY;
-    gfxConfig.textureListPath = "Assets/Textures/";
-    gfxConfig.windowWidth = static_cast<unsigned>( m_startupConfig.windowSize.X( ) );
-    gfxConfig.windowHeight = static_cast<unsigned>( m_startupConfig.windowSize.Y( ) );
+    gfxConfig.windowWidth = static_cast<unsigned>( size.X( ) );
+    gfxConfig.windowHeight = static_cast<unsigned>( size.Y( ) );
     gfxConfig.enableDebugInfo = false;
     gfxConfig.enableProfiling = false;
 
@@ -408,8 +413,11 @@ void Editor::initializeUI(void)
 {   
     auto *uiManager = GetCoreSystem( UIManager );
 
+    auto window = m_mainWindow.m_window;
+    auto &size = window->GetSize( );
+
     m_mainWindow.m_ui = uiManager->CreateView( 
-        m_mainWindow.m_window, 
+        window, 
         m_startupConfig.uiEntryPoint 
     );
 
@@ -419,8 +427,8 @@ void Editor::initializeUI(void)
 
     m_mainWindow.m_ui->SetViewport( {
         0, 0,
-        static_cast<int>( m_startupConfig.windowSize.X( ) ), 
-        static_cast<int>( m_startupConfig.windowSize.Y( ) )
+        static_cast<int>( size.X( ) ), 
+        static_cast<int>( size.Y( ) )
     } );
 
     m_notificationManager.SetUI( m_mainWindow.m_ui );

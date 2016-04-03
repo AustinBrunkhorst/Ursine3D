@@ -34,7 +34,10 @@ namespace ursine
 
             explicit operator bool(void) const;
             bool operator==(const EntityHandle &rhs) const;
+            bool operator==(const Entity *rhs) const;
             bool operator!=(const EntityHandle &rhs) const;
+            bool operator!=(const Entity *rhs) const;
+
             Entity *operator->(void) const;
 
             static const EntityHandle &Invalid(void);

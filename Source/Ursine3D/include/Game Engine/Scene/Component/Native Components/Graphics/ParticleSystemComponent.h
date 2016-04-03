@@ -78,6 +78,12 @@ namespace ursine
             );
 
             EditorOnlyField(
+                bool orientToVelocity,
+                GetVelocityOrient,
+                SetVelocityOrient
+            );
+
+            EditorOnlyField(
                 bool updateInEditor,
                 UpdatesInEditor,
                 SetUpdatesInEditor
@@ -123,10 +129,15 @@ namespace ursine
             ursine::ecs::RenderMask GetRenderMask(void) const;
             void SetRenderMask(ursine::ecs::RenderMask mask);
 
+            void DestroyAllParticles(void);
+
         #if defined(URSINE_WITH_EDITOR)
 
             bool UpdatesInEditor(void) const;
             void SetUpdatesInEditor(bool updates);
+
+            bool GetVelocityOrient(void) const;
+            void SetVelocityOrient(bool velocityOrient);
 
         #endif
 

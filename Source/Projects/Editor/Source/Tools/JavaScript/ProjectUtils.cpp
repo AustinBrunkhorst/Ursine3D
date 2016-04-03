@@ -28,6 +28,36 @@ namespace
     Json serializeResource(rp::ResourceItem::Handle resource);
 }
 
+JSFunction(ProjectSetFullScreen)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto fullScreen = arguments[0]->GetBoolValue( );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetPreferences( ).fullScreen = fullScreen;
+
+    // @@@ TODO:
+    //editor->GetMainWindow( ).GetWindow( )->SetFullScreen( fullScreen );
+
+    return CefV8Value::CreateBool( true );
+}
+
+JSFunction(ProjectGetPreferences)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    auto &prefs = editor->GetPreferences( );
+
+    CefRefPtr<CefV8Value> obj;
+
+    JsonSerializer::Deserialize( meta::Type::SerializeJson( prefs ), obj );
+
+	return obj;
+}
+
 JSFunction(ProjectGetName)
 {
     auto *editor = GetCoreSystem( Editor );

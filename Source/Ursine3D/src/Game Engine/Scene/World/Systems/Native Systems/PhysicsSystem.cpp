@@ -119,7 +119,7 @@ namespace ursine
                                     physics::RaycastType type, bool debug, float drawDuration, 
                                     Color color, bool alwaysDrawLine)
         {
-            bool result = m_simulation.Raycast( input, output, type );
+            bool result = m_simulation.Raycast( input, output, type, m_world );
 
             // debug draw the raycast results
             if (result && debug)
@@ -211,8 +211,8 @@ namespace ursine
 
         #ifdef URSINE_WITH_EDITOR
 
-            physicsSettings->SetEnableDebugDraw( true );
-            SetEnableDebugDraw( true );
+            physicsSettings->SetEnableDebugDraw( false );
+            SetEnableDebugDraw( false );
 
         #else
 

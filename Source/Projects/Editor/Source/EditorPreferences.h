@@ -11,6 +11,7 @@ struct EditorPreferences
     ursine::Array<std::string> recentProjects;
 
     std::string lastOpenWorld;
+    bool fullScreen;
 
     EditorPreferences(void) = default;
 } Meta(Enable);

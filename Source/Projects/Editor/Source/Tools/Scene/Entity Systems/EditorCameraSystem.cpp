@@ -121,7 +121,7 @@ void EditorCameraSystem::OnSceneReady(Scene *scene)
 
         m_camera->lookZoomFactor = SVec3( -50, 50, -50 ).Length( );
         m_cameraEntity->GetTransform( )->LookAt( { 0.0f, 0.0f, 0.0f } );
-        m_camera->focusPosition = m_cameraEntity->GetTransform( )->GetWorldPosition( );
+        m_camera->focusPosition = SVec3( 0.0f, 0.0f, 0.0f );
     }
 
     m_camera->SetEditorCamera( true );

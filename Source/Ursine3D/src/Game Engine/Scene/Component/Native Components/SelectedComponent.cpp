@@ -13,6 +13,8 @@
 
 #include "UrsinePrecompiled.h"
 
+#if defined(URSINE_WITH_EDITOR)
+
 #include "SelectedComponent.h"
 #include "Model3DComponent.h"
 #include "CameraComponent.h"
@@ -82,3 +84,5 @@ namespace ursine
         }
     }
 }
+
+#endif // defined(URSINE_WITH_EDITOR)

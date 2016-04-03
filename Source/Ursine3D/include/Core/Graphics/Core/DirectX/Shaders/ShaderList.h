@@ -21,11 +21,9 @@ namespace ursine
         {
             SHADER_BASIC = 0,
             SHADER_QUAD,
-            SHADER_DIFFUSE,
-            SHADER_NORMAL,
-            SHADER_DEFFERED_TEXTURE,
             
             SHADER_DEFERRED_DEPTH,
+            SHADER_DEFERRED_DEPTH_STATIC,
             SHADER_DEFERRED_DEPTH_NORM,
             
             SHADER_UI,
@@ -41,6 +39,7 @@ namespace ursine
 
             // forward pass on particles and billboards
             SHADER_PARTICLE,
+            SHADER_VELOCITY_PARTICLE,
             SHADER_BILLBOARD2D,
             SHADER_SPRITE_TEXT,
 

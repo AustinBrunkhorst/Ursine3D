@@ -48,8 +48,9 @@ namespace ursine
         } Meta(
             Enable, 
             WhiteListMethods, 
-            DisableComponentRemoval, 
             DisplayName( "AudioConfig" )
+        ) EditorMeta(
+            DisableComponentRemoval
         );
     }
 }
