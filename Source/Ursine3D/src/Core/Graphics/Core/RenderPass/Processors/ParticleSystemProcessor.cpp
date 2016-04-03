@@ -20,7 +20,8 @@ namespace ursine
 {
     namespace graphics
     {
-        ParticleSystemProcessor::ParticleSystemProcessor(void)
+        ParticleSystemProcessor::ParticleSystemProcessor(bool renderVelocity)
+            : m_velocity(renderVelocity)
         {
             m_renderableType = RENDERABLE_PS;
         }
@@ -33,6 +34,14 @@ namespace ursine
 
             // if inactive
             if (!particleSystem.GetActive())
+                return true;
+
+            if(m_velocity)
+            {
+                if(!particleSystem.GetVelocityOrient( ))
+                    return true;
+            }
+            else if (particleSystem.GetVelocityOrient( ))
                 return true;
 
             // if culled by camera mask

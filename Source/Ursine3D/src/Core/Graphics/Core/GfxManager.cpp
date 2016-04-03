@@ -564,14 +564,15 @@ namespace ursine
             RenderPass          debugPass("debugPass");
 
             // create processors
-            auto modelProcessor     = Model3DProcessor( );
-            auto shadowProcessor    = Model3DProcessor( false );
-            auto slProcessor        = SpotLightProcessor( );
-            auto plProcessor        = PointLightProcessor( );
-            auto dlProcessor        = DirectionalLightProcessor( );
-            auto particleProcessor  = ParticleSystemProcessor( );
-            auto billboardPorcessor = Billboard2DProcessor( );
-            auto textProcessor      = SpriteTextProcessor( );
+            auto modelProcessor         = Model3DProcessor( );
+            auto shadowProcessor        = Model3DProcessor( false );
+            auto slProcessor            = SpotLightProcessor( );
+            auto plProcessor            = PointLightProcessor( );
+            auto dlProcessor            = DirectionalLightProcessor( );
+            auto particleProcessor      = ParticleSystemProcessor( );
+            auto velParticleProcessor   = ParticleSystemProcessor( true );
+            auto billboardPorcessor     = Billboard2DProcessor( );
+            auto textProcessor          = SpriteTextProcessor( );
 
             // CREATE GLOBALS
             GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBuffer( SHADERTYPE_VERTEX );
@@ -941,7 +942,7 @@ namespace ursine
                         AddResource( &invView ).
 
                         Accepts( RENDERABLE_PS ).
-                        Processes( &particleProcessor ).
+                        Processes( &velParticleProcessor ).
                         OverrideLayout( SHADER_OVERRIDE ).
                     InitializePass();
                 }
@@ -1044,7 +1045,7 @@ namespace ursine
                 AddPrePass( &velocityParticlePass ).
                 AddPrePass( &billboardPass ).
                 AddPrePass( &textPass ).
-                //AddPrePass(&debugPass).
+                // AddPrePass(&debugPass).
             InitializePass( );
 
             /////////////////////////////////////////////////////////
@@ -1126,7 +1127,7 @@ namespace ursine
 
             shadowmapDepth.Update( DEPTH_STENCIL_SHADOWMAP );
 
-            debugTarget.Update( RENDER_TARGET_DEFERRED_COLOR );
+            debugTarget.Update( RENDER_TARGET_DEFERRED_NORMAL );
 
             // TEXTURES AND MODELS /////////////
             lightConeModel.Update( INTERNAL_CONE );
