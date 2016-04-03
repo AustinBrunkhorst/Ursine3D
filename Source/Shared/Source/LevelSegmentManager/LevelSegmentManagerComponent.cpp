@@ -22,6 +22,7 @@
 #include "CombatBowl1IntroCinematicState.h"
 #include "RepositionPlayersAndCloseDoorState.h"
 #include "BossRoomTopAnimationState.h"
+#include "ToggleLightGroupState.h"
 #include "TriggerWaitState.h"
 #include "ToggleHudState.h"
 #include "CurrentSegmentCondition.h"
@@ -310,6 +311,37 @@ void LevelSegmentManager::initBossRoomLogic(void)
             LevelSegments::BossRoom_Introduction,
             LevelSegments::BossRoom_Phase1,
             LevelSegments::BossRoom_Phase2,
+            LevelSegments::BossRoom_Phase3,
+            LevelSegments::BossRoom_Phase4,
+            LevelSegments::BossRoom_Phase5
+        } );
+    }
+
+    // Turn phase 1 & 2 lights on
+    {
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phse 1 & 2 Lights On", this );
+        sm->SetInitialState(
+            sm->AddState<ToggleLightGroupState>( 
+                true, std::vector<std::string>{ resources->phase12Lighting } 
+            )
+        );
+        addSegmentLogic( sm, {
+            LevelSegments::BossRoom_Platforming,
+            LevelSegments::BossRoom_Introduction,
+            LevelSegments::BossRoom_Phase1,
+            LevelSegments::BossRoom_Phase2
+        } );
+    }
+
+    // Turn phase 1 & 2 lights off
+    {
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phse 1 & 2 Lights Off", this );
+        sm->SetInitialState(
+            sm->AddState<ToggleLightGroupState>( 
+                false, std::vector<std::string>{ resources->phase12Lighting } 
+            )
+        );
+        addSegmentLogic( sm, {
             LevelSegments::BossRoom_Phase3,
             LevelSegments::BossRoom_Phase4,
             LevelSegments::BossRoom_Phase5
