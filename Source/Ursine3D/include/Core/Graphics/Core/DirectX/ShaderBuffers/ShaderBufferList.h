@@ -143,6 +143,7 @@ namespace ursine
         struct MatrixPalBuffer
         {
             MatrixPalette matPal;
+            //MatrixPalette matPalIT;
         };
 
         struct MouseBuffer

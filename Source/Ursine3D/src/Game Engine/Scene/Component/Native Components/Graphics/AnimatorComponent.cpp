@@ -336,11 +336,11 @@ namespace ursine
             m_curStName = m_futStName;
             m_futStName = "";
 
-            // reset future time position as the first frame of it, 
-            // and change current state as future state
+            // change current state as future state
+            // reset current state's time position as the last frame of future state to prevent repeating twice
             // then change future state as null
-            (*futSt)->SetTimePosition(futloopTimePos);
             (*currSt) = (*futSt);
+            (*currSt)->SetTimePosition(futNoloopTimePos);
             (*futSt) = nullptr;
 
             transFactor = 0.0f;

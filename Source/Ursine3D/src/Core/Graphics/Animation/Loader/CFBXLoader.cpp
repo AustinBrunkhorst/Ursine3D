@@ -549,6 +549,8 @@ namespace ursine
                 meshTransform = meshTransform * geoTransform;
                 mConverter->ConvertMatrix(meshTransform);
 
+                newMesh.meshTM = FBXAMatrixToSMat4(&meshTransform);
+
                 // vertex, normal, tangent, texcoord, material
                 ProcessVertices(mesh, &newMesh);
                 ProcessNormals(mesh, &newMesh);
@@ -556,7 +558,6 @@ namespace ursine
                 ProcessTangent(mesh, &newMesh);
                 ProcessTexcoord(mesh, &newMesh);
                 ProcessMaterials(pNode, &newMesh);
-                m_Model->mMeshData.push_back(newMesh);
 
                 //go through all the control points(verticies) and multiply by the transformation
                 for (auto &iter : newMesh.vertices)
@@ -568,6 +569,39 @@ namespace ursine
                     vtx.mData[3] = 0.0f;
                     iter = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
                 }
+
+                SMat4 meshInvTM = FBXAMatrixToSMat4(&meshTransform.Inverse());
+
+                for (auto &iter : newMesh.normals)
+                {
+                    SVec3 newnormal = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newnormal.Normalize();
+                    iter.x = newnormal.X();
+                    iter.y = newnormal.Y();
+                    iter.z = newnormal.Z();
+                }
+
+                for (auto &iter : newMesh.binormals)
+                {
+                    SVec3 newbinormal = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newbinormal.Normalize();
+                    iter.x = newbinormal.X();
+                    iter.y = newbinormal.Y();
+                    iter.z = newbinormal.Z();
+                }
+
+                for (auto &iter : newMesh.tangents)
+                {
+                    SVec3 newtangent = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newtangent.Normalize();
+                    iter.x = newtangent.X();
+                    iter.y = newtangent.Y();
+                    iter.z = newtangent.Z();
+                }
+
+                m_Model->mMeshData.push_back(newMesh);
+
+                bMesh = true;
             }
             for (int i = 0; i < pNode->GetChildCount(); ++i)
             {
@@ -701,7 +735,9 @@ namespace ursine
                 case FbxGeometryElement::eByControlPoint:
                 {
                     unsigned binormalCount = pMesh->GetControlPointsCount();
+
                     pData->binormalMode = FbxGeometryElement::eByControlPoint;
+
                     pData->binormals.resize(binormalCount);
         
                     for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); ++lVertexIndex)
@@ -726,6 +762,7 @@ namespace ursine
                     unsigned binormalCount = pMesh->GetPolygonCount() * pMesh->GetPolygonSize(0);
         
                     pData->binormalMode = FbxGeometryElement::eByPolygonVertex;
+
                     pData->binormals.resize(binormalCount);
         
                     for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
@@ -1506,9 +1543,10 @@ namespace ursine
 
                 //Meshes have a separate geometry transform that also needs to be applied
                 FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
-
                 meshTransform = meshTransform * geoTransform;
                 mConverter->ConvertMatrix(meshTransform);
+
+                newMesh.meshTM = FBXAMatrixToSMat4(&meshTransform);
 
                 ProcessVertices(mesh, &newMesh);
                 ProcessNormals(mesh, &newMesh);
@@ -1527,6 +1565,36 @@ namespace ursine
                     vtx.mData[3] = 0.0f;
                     iter = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
                 }
+
+                SMat4 meshInvTM = FBXAMatrixToSMat4(&meshTransform.Inverse());
+
+                for (auto &iter : newMesh.normals)
+                {
+                    SVec3 newnormal = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newnormal.Normalize();
+                    iter.x = newnormal.X();
+                    iter.y = newnormal.Y();
+                    iter.z = newnormal.Z();
+                }
+
+                for (auto &iter : newMesh.binormals)
+                {
+                    SVec3 newbinormal = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newbinormal.Normalize();
+                    iter.x = newbinormal.X();
+                    iter.y = newbinormal.Y();
+                    iter.z = newbinormal.Z();
+                }
+                
+                for (auto &iter : newMesh.tangents)
+                {
+                    SVec3 newtangent = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newtangent.Normalize();
+                    iter.x = newtangent.X();
+                    iter.y = newtangent.Y();
+                    iter.z = newtangent.Z();
+                }
+
                 m_Model->mMeshData.push_back(newMesh);
 
                 bMesh = true;
@@ -1644,6 +1712,19 @@ namespace ursine
         {
             FbxMatrix * m = (FbxMatrix*)&pAMatrix;
             return m->MultNormalize(point);
+        }
+
+        void CFBXLoader::TransformWithInverseMeshTM(std::vector<pseudodx::XMFLOAT3> &Float3Vec, const FbxAMatrix &mat)
+        {
+            SMat4 inverse = FBXAMatrixToSMat4(&mat.Inverse());
+            for (auto &iter : Float3Vec )
+            {
+                SVec3 transformed = inverse.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                transformed.Normalize();
+                iter.x = transformed.X();
+                iter.y = transformed.Y();
+                iter.x = transformed.Z();
+            }
         }
 
         //reconstruct vertices and indices

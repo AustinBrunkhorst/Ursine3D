@@ -52,7 +52,7 @@ namespace ursine
 
             void updateAnimator(Animator *animator, float dt);
 
-            void debugDraw(Animator *animator, const AnimationRig *rig, const std::vector<SMat4> &vec);
+            void debugDraw(Animator *animator, const AnimationRig *rig, const std::vector<SMat4> &vec) const;
 
             std::vector<Animator*> m_animators;
 

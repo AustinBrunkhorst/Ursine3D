@@ -234,6 +234,7 @@ namespace ursine
 
             // Get the model's matrix palette
             auto &matrixPalette = animator->GetOwner( )->GetComponent<Model3D>( )->getMatrixPalette( );
+            auto &matrixPaletteIT = animator->GetOwner( )->GetComponent<Model3D>( )->getMatrixPaletteIT( );
 
             // blending / playing animation should take place in here
             animator->updateState( 
@@ -284,6 +285,11 @@ namespace ursine
                         parentTrans * 
                         bone->m_transform->GetLocalToWorldMatrix( ) *
                         offsetMatrices[ i ];
+
+                    SMat4 boneIT = matrixPalette[i];
+                    boneIT.Inverse();
+                    boneIT.Transpose();
+                    matrixPaletteIT[i] = boneIT;
                 }
             }
 
@@ -294,74 +300,74 @@ namespace ursine
                 debugDraw( animator, rig, bonePalette );
         }
 
-        void AnimatorSystem::debugDraw(Animator *animator, const AnimationRig *rig, const std::vector<SMat4> &vec)
+        void AnimatorSystem::debugDraw(Animator *animator, const AnimationRig *rig, const std::vector<SMat4> &vec) const
         {
             auto *graphics = GetCoreSystem(graphics::GfxAPI);
 
             URSINE_TODO("Remove this when we implement proper animation clips and stuf")
-
+            
             auto &hierarchy = rig->GetHierarchyTable( );
             auto &worldTransform = animator->GetOwner( )->GetTransform( )->GetLocalToWorldMatrix( );
-
+            
             int maxNodeDistance = 0;
-
+            
             size_t boneCount = hierarchy.size( );
-
+            
             // calculate max distance for colors, calculate bone position
             for (size_t x = 0; x < boneCount; ++x)
             {
                 // distance
                 int distance = 0;
                 int walker = hierarchy[x];
-
+            
                 while (walker != -1)
                 {
                     walker = hierarchy[walker];
                     distance++;
                 }
-
+            
                 if (distance > maxNodeDistance) maxNodeDistance = distance;
-
+            
                 // bone values
                 bonePoints[x] = worldTransform.TransformPoint(vec[x].TransformPoint(SVec3(0, 0, 0)));
             }
-
+            
             // render points
             graphics->DrawingMgr.SetOverdraw(true);
-
+            
             for (unsigned x = 0; x < boneCount; ++x)
             {
                 int distance = 0;
                 int walker = hierarchy[x];
-
+            
                 while (walker != -1)
                 {
                     walker = hierarchy[walker];
                     distance++;
                 }
-
+            
                 float interp = (float)distance / (float)maxNodeDistance;
                 //draw points
-
+            
                 graphics->DrawingMgr.SetColor(Color(1 * interp, (1.f - interp), 0, 1));
-
+            
                 if (distance == 0)
                     graphics->DrawingMgr.SetColor(0, 0, 1, 1);
-
+            
                 graphics->DrawingMgr.SetSize(10);
                 SVec3 &p = bonePoints[x];
                 graphics->DrawingMgr.DrawPoint(p);
             }
-
+            
             // render lines
             for (size_t x = boneCount - 1; x >= 1; --x)
             {
                 SVec3 &p1 = bonePoints[x];
                 SVec3 &p2 = bonePoints[hierarchy[x]];
-
+            
                 graphics->DrawingMgr.DrawLine(p1, p2);
             }
-
+            
             graphics->DrawingMgr.SetOverdraw(false);
         }
     }

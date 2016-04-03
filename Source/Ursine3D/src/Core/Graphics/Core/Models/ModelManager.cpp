@@ -150,6 +150,9 @@ namespace ursine
                 );
 
                 newMesh->SetVertexCount( 6 );
+                //newMesh->SetNormalCount( 6 );
+                //newMesh->SetBinormalCount( 6 );
+                //newMesh->SetTangentCount( 6 );
 
                 newMesh->SetIndexCount( 6 );
                 auto &indexArray = newMesh->GetRawIndices( );
@@ -541,7 +544,13 @@ namespace ursine
 
                 uint vertCount = currMesh.meshVtxInfoCount;
                 newMesh->SetVertexCount( vertCount );
+                //newMesh->SetNormalCount( vertCount );
+                //newMesh->SetBinormalCount( vertCount );
+                //newMesh->SetTangentCount( vertCount );
                 auto &meshVertArray = newMesh->GetRawVertices( );
+                //auto &meshNormArray = newMesh->GetRawNormals( );
+                //auto &meshBinormArray = newMesh->GetRawBinormals();
+                //auto &meshTangentArray = newMesh->GetRawTangent();
 
                 //Give the subresource structure a pointer to the vertex data. - need layout_type to determine if static or skinned
                 //can do this with skincount
@@ -555,6 +564,24 @@ namespace ursine
                         currMesh.meshVtxInfos[ i ].pos.y,
                         currMesh.meshVtxInfos[ i ].pos.z
                     );
+
+                    //meshNormArray[i] = Vec3(
+                    //    currMesh.meshVtxInfos[i].normal.x,
+                    //    currMesh.meshVtxInfos[i].normal.y,
+                    //    currMesh.meshVtxInfos[i].normal.z
+                    //    );
+                    //
+                    //meshBinormArray[i] = Vec3(
+                    //    currMesh.meshVtxInfos[i].binormal.x,
+                    //    currMesh.meshVtxInfos[i].binormal.y,
+                    //    currMesh.meshVtxInfos[i].binormal.z
+                    //    );
+                    //
+                    //meshTangentArray[i] = Vec3(
+                    //    currMesh.meshVtxInfos[i].tangent.x,
+                    //    currMesh.meshVtxInfos[i].tangent.y,
+                    //    currMesh.meshVtxInfos[i].tangent.z
+                    //    );
 
                     // transform these points from their global model space into their local space
                     SVec4 tempPosition = SVec4(
@@ -576,6 +603,7 @@ namespace ursine
                         currMesh.meshVtxInfos[ i ].normal.y,
                         currMesh.meshVtxInfos[ i ].normal.z
                     );
+
                     buffer[ i ].vUv = DirectX::XMFLOAT2(
                         currMesh.meshVtxInfos[ i ].uv.x,
                         currMesh.meshVtxInfos[ i ].uv.y
@@ -603,6 +631,9 @@ namespace ursine
                 }
 
                 newMesh->SetVertexCount( vertCount );
+                //newMesh->SetNormalCount( vertCount );
+                //newMesh->SetBinormalCount( vertCount );
+                //newMesh->SetTangentCount( vertCount );
 
                 /////////////////////////////////////////////////////////////////
                 // CREATE INDEX BUFFER //////////////////////////////////////////
@@ -614,12 +645,6 @@ namespace ursine
 
                 modelResource.AddMesh( newMesh );
             }
-
-            //for (auto &x : modelInfo->mMeshLvVec)
-            //    modelresource.AddMesh2Tree(x);
-            //
-            //for (auto &x : modelInfo->mRigLvVec)
-            //    modelresource.AddRig2Tree(x);
         }
 
         void ModelManager::loadModelToGPU(ModelResource &model)

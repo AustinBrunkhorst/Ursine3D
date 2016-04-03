@@ -201,6 +201,7 @@ namespace ursine
             void clearMatrixPalette(void);
 
             std::vector<SMat4> &getMatrixPalette(void);
+            std::vector<SMat4> &getMatrixPaletteIT(void);
         } Meta(Enable, WhiteListMethods, DisplayName( "Model3D" ));
     }
 }

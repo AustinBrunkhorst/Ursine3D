@@ -109,6 +109,7 @@ namespace ursine
         Model3D::Model3D(void)
         {
             m_matrixPalette.resize(MAX_BONE_COUNT);
+            m_matrixPaletteIT.resize(MAX_BONE_COUNT);
         }
 
         ///////////////////////////////////////////////////////////////////
@@ -249,6 +250,11 @@ namespace ursine
         std::vector<SMat4>& Model3D::GetMatrixPalette(void)
         {
             return m_matrixPalette;
+        }
+
+        std::vector<SMat4>& Model3D::GetMatrixPaletteIT(void)
+        {
+            return m_matrixPaletteIT;
         }
 
         int Model3D::GetMeshIndex(void) const
