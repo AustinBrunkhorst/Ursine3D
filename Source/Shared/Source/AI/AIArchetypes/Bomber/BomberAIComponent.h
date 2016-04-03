@@ -30,7 +30,8 @@ public:
         float ExplosionDelay,
         GetExplosionDelay,
         SetExplosionDelay
-        );
+    );
+
     /*
     EditorField(
         float damageOnAttack,
@@ -49,32 +50,32 @@ public:
         float AttackRange,
         GetAttackRange,
         SetAttackRange
-        );
+    );
 
     EditorField(
         float Cohesion,
         GetCohesionScale,
         SetCohesionScale
-        );
+    );
 
     EditorField(
         float Separation,
         GetSeparationScale,
         SetSeparationScale
-        );
+    );
 
     EditorField(
         float TotalBoidBehaviorScale,
         GetBoidScale,
         SetBoidScale
-        );
+    );
 
     EditorResourceField(
         ursine::resources::ArchetypeData,
         explosionObject,
         GetExplosionArchetype,
         SetExplosionArchetype
-        );
+    );
 
     BomberAI(void);
     ~BomberAI(void);
@@ -109,8 +110,7 @@ private:
 
     void onUpdate(EVENT_HANDLER(World));
 
-    Meta(Disable)
-        ursine::sm::BomberAIStateMachine m_stateMachine;
+    ursine::sm::BomberAIStateMachine m_stateMachine;
 
     // this gets passed to the explode state to be spawned on explosion
     ursine::resources::ResourceReference m_explosionObj;
@@ -129,4 +129,9 @@ private:
 
     float m_boidScale;
 
-} Meta(Enable, DisplayName("BomberAI"), RequiresComponents(typeof(ursine::ecs::AIMovementController)));
+} Meta(
+    Enable, 
+    DisplayName( "BomberAI" ), 
+) EditorMeta(
+    RequiresComponents( typeof( ursine::ecs::AIMovementController ) )    
+);

@@ -109,6 +109,7 @@ namespace ursine
         Model3D::Model3D(void)
         {
             m_matrixPalette.resize(MAX_BONE_COUNT);
+            m_matrixPaletteIT.resize(MAX_BONE_COUNT);
         }
 
         ///////////////////////////////////////////////////////////////////
@@ -118,6 +119,7 @@ namespace ursine
             Renderable::Initialize( );
 
             m_textureHandle = INTERNAL_BLANK_TEX;
+            m_normalHandle = INTERNAL_BLANK_TEX;
             m_modelHandle = 0;
 
             m_emissive = 0.0f;
@@ -159,6 +161,16 @@ namespace ursine
         void Model3D::SetTextureHandle(GfxHND handle)
         {
             m_textureHandle = handle;
+        }
+
+        GfxHND Model3D::GetNormalTextureHandle(void)
+        {
+            return m_normalHandle;
+        }
+
+        void Model3D::SetNormalTextureHandle(GfxHND handle)
+        {
+            m_normalHandle = handle;
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
@@ -249,6 +261,11 @@ namespace ursine
         std::vector<SMat4>& Model3D::GetMatrixPalette(void)
         {
             return m_matrixPalette;
+        }
+
+        std::vector<SMat4>& Model3D::GetMatrixPaletteIT(void)
+        {
+            return m_matrixPaletteIT;
         }
 
         int Model3D::GetMeshIndex(void) const

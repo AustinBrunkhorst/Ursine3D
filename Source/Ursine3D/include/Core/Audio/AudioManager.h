@@ -32,7 +32,7 @@ namespace ursine
 		Meta(Enable)
 		AudioManager(void) { }
 
-		~AudioManager(void);
+        ~AudioManager(void);
 
 		void OnInitialize(void) override;
 		void OnRemove(void) override;
@@ -41,7 +41,7 @@ namespace ursine
 
 		static void PlayGlobalEvent(const std::string &name);
 		static void StopGlobalEvent(const std::string &name);
-		static bool IsGlobalEventPlaying(const std::string &name);
+        static bool IsGlobalEventPlaying(const std::string &name);
 
 		static void PauseAudio(void);
 
@@ -63,7 +63,7 @@ namespace ursine
 
 		void FreeListener(ListenerIndex listener);
 
-		void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id,
+		void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, 
 			const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param);
 
 		ListenerIndex NextAvailableListener(void);

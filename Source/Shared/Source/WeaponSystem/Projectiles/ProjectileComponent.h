@@ -11,13 +11,14 @@
 #pragma once
 
 #include <Component.h>
+
 #include "RigidbodyComponent.h"
 
 class Projectile : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
-public:
 
+public:
     EditorField(
         float Speed,
         GetSpeed,
@@ -57,4 +58,9 @@ private:
 
     ursine::ecs::Transform* m_transform;
 
-} Meta( Enable, DisplayName( "Projectile" ), RequiresComponents( typeof( ursine::ecs::Rigidbody ) ) );
+} Meta(
+    Enable, 
+    DisplayName( "Projectile" )
+) EditorMeta(
+    RequiresComponents( typeof( ursine::ecs::Rigidbody ) )     
+);

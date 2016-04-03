@@ -29,8 +29,12 @@ EntityAnimatorSystem::EntityAnimatorSystem(World *world)
 
 void EntityAnimatorSystem::Initialize(void)
 {
+#if defined(URSINE_WITH_EDITOR)
+
     m_world->Listener( this )
         .On( WORLD_EDITOR_UPDATE, &FilterSystem::onUpdate );
+
+#endif
 }
 
 void EntityAnimatorSystem::Process(const EntityHandle &entity)

@@ -131,13 +131,13 @@ namespace ursine
 
             void DestroyAllParticles(void);
 
+            bool GetVelocityOrient(void) const;
+            void SetVelocityOrient(bool velocityOrient);
+
         #if defined(URSINE_WITH_EDITOR)
 
             bool UpdatesInEditor(void) const;
             void SetUpdatesInEditor(bool updates);
-
-            bool GetVelocityOrient(void) const;
-            void SetVelocityOrient(bool velocityOrient);
 
         #endif
 

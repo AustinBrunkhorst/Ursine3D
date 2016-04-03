@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Conversion.cpp
+** CFBXLoader.cpp
 **
 ** Author:
 ** - Park Hyung Jun - park.hyungjun@digipen.edu
@@ -127,7 +127,7 @@ namespace ursine
             // Getting Anim Pose
             m_Model->mAnimPose.resize(mScene->GetPoseCount());
             for (unsigned i = 0; i < m_Model->mAnimPose.size(); ++i)
-                m_Model->mAnimPose[i] = mScene->GetPose(i);
+                m_Model->mAnimPose[ i ] = mScene->GetPose(i);
 
             ProcessScene(mScene->GetRootNode());
 
@@ -207,7 +207,7 @@ namespace ursine
 
                 for (auto &iter : m_ModelInfo.mMeshInfoVec)
                 {
-                    FBX_DATA::MeshData& currMD = m_Model->mMeshData[i];
+                    FBX_DATA::MeshData& currMD = m_Model->mMeshData[ i ];
                     // name & counter initialization
                     iter.name = currMD.name.c_str();
 
@@ -221,7 +221,7 @@ namespace ursine
                     iter.meshVtxInfos.resize(iter.meshVtxInfoCount);
                     for (auto &iter2 : iter.meshVtxInfos)
                     {
-                        iter2 = rmvVec[j];
+                        iter2 = rmvVec[ j ];
                         ++j;
                     }
 
@@ -230,7 +230,7 @@ namespace ursine
                     iter.meshVtxIndices.resize(iter.meshVtxIdxCount);
                     for (auto &iter2 : iter.meshVtxIndices)
                     {
-                        iter2 = rIVec[j];
+                        iter2 = rIVec[ j ];
                         ++j;
                     }
 
@@ -243,53 +243,53 @@ namespace ursine
                 m_ModelInfo.mMtrlInfoVec.resize(m_ModelInfo.mmaterialCount);
                 for (auto &iter : m_ModelInfo.mMtrlInfoVec)
                 {
-                    iter.name = m_Model->mMaterials[i].name;
+                    iter.name = m_Model->mMaterials[ i ].name;
 
                     //ambi
                     j = 0;
-                    iter.ambitype = m_Model->mMaterials[i].ambient.type;
-                    iter.ambi_mcolor = m_Model->mMaterials[i].ambient.color;
-                    iter.ambi_mapCount = m_Model->mMaterials[i].ambient.textureSetArray.size();
+                    iter.ambitype = m_Model->mMaterials[ i ].ambient.type;
+                    iter.ambi_mcolor = m_Model->mMaterials[ i ].ambient.color;
+                    iter.ambi_mapCount = m_Model->mMaterials[ i ].ambient.textureSetArray.size();
                     iter.ambi_texNames.resize(iter.ambi_mapCount);
-                    for (auto &iter1 : m_Model->mMaterials[i].ambient.textureSetArray)
+                    for (auto &iter1 : m_Model->mMaterials[ i ].ambient.textureSetArray)
                     {
-                        iter.ambi_texNames[j] = iter1.second[j];
+                        iter.ambi_texNames[ j ] = iter1.second[ j ];
                         ++j;
                     }
 
                     //diff
                     j = 0;
-                    iter.difftype = m_Model->mMaterials[i].diffuse.type;
-                    iter.diff_mcolor = m_Model->mMaterials[i].diffuse.color;
-                    iter.diff_mapCount = m_Model->mMaterials[i].diffuse.textureSetArray.size();
+                    iter.difftype = m_Model->mMaterials[ i ].diffuse.type;
+                    iter.diff_mcolor = m_Model->mMaterials[ i ].diffuse.color;
+                    iter.diff_mapCount = m_Model->mMaterials[ i ].diffuse.textureSetArray.size();
                     iter.diff_texNames.resize(iter.diff_mapCount);
-                    for (auto &iter1 : m_Model->mMaterials[i].diffuse.textureSetArray)
+                    for (auto &iter1 : m_Model->mMaterials[ i ].diffuse.textureSetArray)
                     {
-                        iter.diff_texNames[j] = iter1.second[j];
+                        iter.diff_texNames[ j ] = iter1.second[ j ];
                         ++j;
                     }
 
                     //emit
                     j = 0;
-                    iter.emistype = m_Model->mMaterials[i].emissive.type;
-                    iter.emis_mcolor = m_Model->mMaterials[i].emissive.color;
-                    iter.emis_mapCount = m_Model->mMaterials[i].emissive.textureSetArray.size();
+                    iter.emistype = m_Model->mMaterials[ i ].emissive.type;
+                    iter.emis_mcolor = m_Model->mMaterials[ i ].emissive.color;
+                    iter.emis_mapCount = m_Model->mMaterials[ i ].emissive.textureSetArray.size();
                     iter.emis_texNames.resize(iter.emis_mapCount);
-                    for (auto &iter1 : m_Model->mMaterials[i].emissive.textureSetArray)
+                    for (auto &iter1 : m_Model->mMaterials[ i ].emissive.textureSetArray)
                     {
-                        iter.emis_texNames[j] = iter1.second[j];
+                        iter.emis_texNames[ j ] = iter1.second[ j ];
                         ++j;
                     }
 
                     //spec
                     j = 0;
-                    iter.spectype = m_Model->mMaterials[i].specular.type;
-                    iter.spec_mcolor = m_Model->mMaterials[i].specular.color;
-                    iter.spec_mapCount = m_Model->mMaterials[i].specular.textureSetArray.size();
+                    iter.spectype = m_Model->mMaterials[ i ].specular.type;
+                    iter.spec_mcolor = m_Model->mMaterials[ i ].specular.color;
+                    iter.spec_mapCount = m_Model->mMaterials[ i ].specular.textureSetArray.size();
                     iter.spec_texNames.resize(iter.spec_mapCount);
-                    for (auto &iter1 : m_Model->mMaterials[i].specular.textureSetArray)
+                    for (auto &iter1 : m_Model->mMaterials[ i ].specular.textureSetArray)
                     {
-                        iter.spec_texNames[j] = iter1.second[j];
+                        iter.spec_texNames[ j ] = iter1.second[ j ];
                         ++j;
                     }
 
@@ -303,14 +303,14 @@ namespace ursine
                 for (auto &iter : m_ModelInfo.mBoneInfoVec)
                 {
                     // skin info will use model's name
-                    iter.name = m_Model->mBoneData.mbonehierarchy[i].mName.c_str();
-                    iter.mParentIndex = m_Model->mBoneData.mbonehierarchy[i].mParentIndex;
-                    iter.bindPosition = m_Model->mBoneData.mbonehierarchy[i].bindPosition;
-                    iter.bindRotation = m_Model->mBoneData.mbonehierarchy[i].bindRotation;
-                    iter.bindScaling = m_Model->mBoneData.mbonehierarchy[i].bindScaling;
-                    iter.boneSpacePosition = m_Model->mBoneData.mbonehierarchy[i].boneSpacePosition;
-                    iter.boneSpaceRotation = m_Model->mBoneData.mbonehierarchy[i].boneSpaceRotation;
-                    iter.boneSpaceScaling = m_Model->mBoneData.mbonehierarchy[i].boneSpaceScaling;
+                    iter.name = m_Model->mBoneData.mbonehierarchy[ i ].mName.c_str();
+                    iter.mParentIndex = m_Model->mBoneData.mbonehierarchy[ i ].mParentIndex;
+                    iter.bindPosition = m_Model->mBoneData.mbonehierarchy[ i ].bindPosition;
+                    iter.bindRotation = m_Model->mBoneData.mbonehierarchy[ i ].bindRotation;
+                    iter.bindScaling = m_Model->mBoneData.mbonehierarchy[ i ].bindScaling;
+                    iter.boneSpacePosition = m_Model->mBoneData.mbonehierarchy[ i ].boneSpacePosition;
+                    iter.boneSpaceRotation = m_Model->mBoneData.mbonehierarchy[ i ].boneSpaceRotation;
+                    iter.boneSpaceScaling = m_Model->mBoneData.mbonehierarchy[ i ].boneSpaceScaling;
 
                     ++i;
                 }
@@ -322,7 +322,7 @@ namespace ursine
                 m_ModelInfo.mMeshLvVec.resize(m_ModelInfo.mmeshlvlCount);
                 for (auto &iter : m_ModelInfo.mMeshLvVec)
                 {
-                    FBX_DATA::MeshData& currMD = m_Model->mMeshData[i];
+                    FBX_DATA::MeshData& currMD = m_Model->mMeshData[ i ];
                     iter.meshName = currMD.name;
                     iter.meshTM = currMD.meshTM;
                     iter.mParentIndex = currMD.parentIndex;
@@ -336,8 +336,8 @@ namespace ursine
                 m_ModelInfo.mRigLvVec.resize(m_ModelInfo.mriglvlCount);
                 for (auto &iter : m_ModelInfo.mRigLvVec)
                 {
-                    iter.boneName = m_ModelInfo.mBoneInfoVec[i].name;
-                    iter.mParentIndex = m_ModelInfo.mBoneInfoVec[i].mParentIndex;
+                    iter.boneName = m_ModelInfo.mBoneInfoVec[ i ].name;
+                    iter.mParentIndex = m_ModelInfo.mBoneInfoVec[ i ].mParentIndex;
 
                     ++i;
                 }
@@ -361,7 +361,7 @@ namespace ursine
                     iter.keyframes.resize(m_AnimInfo.animCount);
 
                     // counts
-                    iter.clipCount = static_cast<unsigned int>(m_Model->mAnimationData[i].animations.size());
+                    iter.clipCount = static_cast<unsigned int>(m_Model->mAnimationData[ i ].animations.size());
 
                     /////////////////////////////////////////////////////
                     // Push back dummy value should includes specific time, not default
@@ -369,15 +369,15 @@ namespace ursine
                     // and then should cover all keyframe values with reasonable keyframe.
                     /////////////////////////////////////////////////////
                     URSINE_TODO("Jun! You should fix this!!!!");
-                    for (auto &iter1 : m_Model->mAnimationData[i].animations)
+                    for (auto &iter1 : m_Model->mAnimationData[ i ].animations)
                     {
                         // storing animation clip's name
                         iter.clipname = iter1.first.c_str();
 
                         // set keycount / keyframes
                         iter.boneCount = static_cast<unsigned int>(iter1.second.boneAnim.size());
-                        iter.keyIndices[i].resize(iter.boneCount);
-                        iter.keyframes[i].resize(iter.boneCount);
+                        iter.keyIndices[ i ].resize(iter.boneCount);
+                        iter.keyframes[ i ].resize(iter.boneCount);
 
                         // Unifying keyframes of each animation
                         unsigned int maxkfCount = 0;
@@ -393,15 +393,15 @@ namespace ursine
                         {
                             unsigned int kfCount = static_cast<unsigned int>(iter2.keyFrames.size());
 
-                            iter.keyIndices[i][j] = maxkfCount;
-                            iter.keyframes[i][j].resize(maxkfCount);
+                            iter.keyIndices[ i ][ j ] = maxkfCount;
+                            iter.keyframes[ i ][ j ].resize(maxkfCount);
 
                             for (k = 0; k < maxkfCount; ++k)
                             {
                                 if (k < maxkfCount && k < kfCount)
-                                    iter.keyframes[i][j][k] = iter1.second.boneAnim[j].keyFrames[k];
+                                    iter.keyframes[ i ][ j ][ k ] = iter1.second.boneAnim[ j ].keyFrames[ k ];
                                 else if (k >= kfCount)
-                                    iter.keyframes[i][j][k] = iter1.second.boneAnim[j].keyFrames[kfCount - 1];
+                                    iter.keyframes[ i ][ j ][ k ] = iter1.second.boneAnim[ j ].keyFrames[ kfCount - 1 ];
                             }
                             ++j;
                         }
@@ -549,6 +549,8 @@ namespace ursine
                 meshTransform = meshTransform * geoTransform;
                 mConverter->ConvertMatrix(meshTransform);
 
+                newMesh.meshTM = FBXAMatrixToSMat4(&meshTransform);
+
                 // vertex, normal, tangent, texcoord, material
                 ProcessVertices(mesh, &newMesh);
                 ProcessNormals(mesh, &newMesh);
@@ -556,18 +558,50 @@ namespace ursine
                 ProcessTangent(mesh, &newMesh);
                 ProcessTexcoord(mesh, &newMesh);
                 ProcessMaterials(pNode, &newMesh);
-                m_Model->mMeshData.push_back(newMesh);
 
                 //go through all the control points(verticies) and multiply by the transformation
                 for (auto &iter : newMesh.vertices)
                 {
                     FbxVector4 vtx;
-                    vtx.mData[0] = iter.x;
-                    vtx.mData[1] = iter.y;
-                    vtx.mData[2] = iter.z;
-                    vtx.mData[3] = 0.0f;
+                    vtx.mData[ 0 ] = iter.x;
+                    vtx.mData[ 1 ] = iter.y;
+                    vtx.mData[ 2 ] = iter.z;
+                    vtx.mData[ 3 ] = 0.0f;
                     iter = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
                 }
+
+                SMat4 meshInvTM = FBXAMatrixToSMat4(&meshTransform.Inverse());
+
+                for (auto &iter : newMesh.normals)
+                {
+                    SVec3 newnormal = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newnormal.Normalize();
+                    iter.x = newnormal.X();
+                    iter.y = newnormal.Y();
+                    iter.z = newnormal.Z();
+                }
+
+                for (auto &iter : newMesh.binormals)
+                {
+                    SVec3 newbinormal = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newbinormal.Normalize();
+                    iter.x = newbinormal.X();
+                    iter.y = newbinormal.Y();
+                    iter.z = newbinormal.Z();
+                }
+
+                for (auto &iter : newMesh.tangents)
+                {
+                    SVec3 newtangent = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newtangent.Normalize();
+                    iter.x = newtangent.X();
+                    iter.y = newtangent.Y();
+                    iter.z = newtangent.Z();
+                }
+
+                m_Model->mMeshData.push_back(newMesh);
+
+                bMesh = true;
             }
             for (int i = 0; i < pNode->GetChildCount(); ++i)
             {
@@ -591,7 +625,7 @@ namespace ursine
             {
                 FbxVector4 v = pMesh->GetControlPointAt(i);
                 mConverter->ConvertVector(v);
-                pData->vertices[i] = FBXVectorToXMFLOAT3(v);
+                pData->vertices[ i ] = FBXVectorToXMFLOAT3(v);
             }
 
             // indicies
@@ -601,7 +635,7 @@ namespace ursine
 
             for (unsigned int i = 0; i < indexCnt; ++i)
             {
-                pData->indices[i] = indexData[i];
+                pData->indices[ i ] = indexData[ i ];
                 // change index order abc->acb
                 // currently, only can control maya setting
                 Converter::Axis axis = mConverter->GetAxisStatus();
@@ -609,9 +643,9 @@ namespace ursine
                 {
                     if (2 == i % 3)
                     {
-                        unsigned int temp = pData->indices[i - 1];
-                        pData->indices[i - 1] = pData->indices[i];
-                        pData->indices[i] = temp;
+                        unsigned int temp = pData->indices[ i - 1 ];
+                        pData->indices[ i - 1 ] = pData->indices[ i ];
+                        pData->indices[ i ] = temp;
                     }
                 }
             }
@@ -645,7 +679,7 @@ namespace ursine
 
                         FbxVector4 lNormal = normalElement->GetDirectArray().GetAt(lNormalIndex);
                         mConverter->ConvertVector(lNormal);
-                        pData->normals[lVertexIndex] = FBXVectorToXMFLOAT3(lNormal);
+                        pData->normals[ lVertexIndex ] = FBXVectorToXMFLOAT3(lNormal);
                     }
                 }
                 break;
@@ -679,7 +713,7 @@ namespace ursine
 
                             FbxVector4 lNormal = normalElement->GetDirectArray().GetAt(lNormalIndex);
                             mConverter->ConvertVector(lNormal);
-                            pData->normals[lIndexByPolygonVertex] = FBXVectorToXMFLOAT3(lNormal);
+                            pData->normals[ lIndexByPolygonVertex ] = FBXVectorToXMFLOAT3(lNormal);
                             ++lIndexByPolygonVertex;
                         }
                     }
@@ -693,7 +727,7 @@ namespace ursine
         {
             //get the normal element attribute
             FbxGeometryElementBinormal* binormalElement = pMesh->GetElementBinormal();
-        
+
             if (binormalElement)
             {
                 switch (binormalElement->GetMappingMode())
@@ -701,54 +735,57 @@ namespace ursine
                 case FbxGeometryElement::eByControlPoint:
                 {
                     unsigned binormalCount = pMesh->GetControlPointsCount();
+
                     pData->binormalMode = FbxGeometryElement::eByControlPoint;
+
                     pData->binormals.resize(binormalCount);
-        
+
                     for (int lVertexIndex = 0; lVertexIndex < pMesh->GetControlPointsCount(); ++lVertexIndex)
                     {
                         int lBinormalIndex = 0;
-        
+
                         if (binormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
                             lBinormalIndex = lVertexIndex;
                         if (binormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
                             lBinormalIndex = binormalElement->GetIndexArray().GetAt(lVertexIndex);
-        
+
                         FbxVector4 lBinormal = binormalElement->GetDirectArray().GetAt(lBinormalIndex);
                         mConverter->ConvertVector(lBinormal);
-                        pData->binormals[lVertexIndex] = FBXVectorToXMFLOAT3(lBinormal.mData);
+                        pData->binormals[ lVertexIndex ] = FBXVectorToXMFLOAT3(lBinormal.mData);
                     }
                 }
                 break;
                 case FbxGeometryElement::eByPolygonVertex:
                 {
                     int lIndexByPolygonVertex = 0;
-        
+
                     unsigned binormalCount = pMesh->GetPolygonCount() * pMesh->GetPolygonSize(0);
-        
+
                     pData->binormalMode = FbxGeometryElement::eByPolygonVertex;
+
                     pData->binormals.resize(binormalCount);
-        
+
                     for (int lPolygonIndex = 0; lPolygonIndex < pMesh->GetPolygonCount(); ++lPolygonIndex)
                     {
                         int lPolygonSize = pMesh->GetPolygonSize(lPolygonIndex);
-        
+
                         UAssertCatchable(lPolygonSize == 3,
                             "Model is not triangulated.\npoly size: %i",
                             lPolygonSize
                             );
-        
+
                         for (int i = 0; i < lPolygonSize; ++i)
                         {
                             int lBinormalIndex = 0;
-        
+
                             if (binormalElement->GetReferenceMode() == FbxGeometryElement::eDirect)
                                 lBinormalIndex = lIndexByPolygonVertex;
                             if (binormalElement->GetReferenceMode() == FbxGeometryElement::eIndexToDirect)
                                 lBinormalIndex = binormalElement->GetIndexArray().GetAt(lIndexByPolygonVertex);
-        
+
                             FbxVector4 lBinormal = binormalElement->GetDirectArray().GetAt(lBinormalIndex);
                             mConverter->ConvertVector(lBinormal);
-                            pData->binormals[lIndexByPolygonVertex] = FBXVectorToXMFLOAT3(lBinormal.mData);
+                            pData->binormals[ lIndexByPolygonVertex ] = FBXVectorToXMFLOAT3(lBinormal.mData);
                             ++lIndexByPolygonVertex;
                         }
                     }
@@ -784,7 +821,7 @@ namespace ursine
 
                         FbxVector4 lTangent = tangentElement->GetDirectArray().GetAt(lTangentIndex);
                         mConverter->ConvertVector(lTangent);
-                        pData->tangents[lVertexIndex] = FBXVectorToXMFLOAT3(lTangent.mData);
+                        pData->tangents[ lVertexIndex ] = FBXVectorToXMFLOAT3(lTangent.mData);
                     }
                 }
                 break;
@@ -817,7 +854,7 @@ namespace ursine
 
                             FbxVector4 lTangent = tangentElement->GetDirectArray().GetAt(lTangentIndex);
                             mConverter->ConvertVector(lTangent);
-                            pData->tangents[lIndexByPolygonVertex] = FBXVectorToXMFLOAT3(lTangent.mData);
+                            pData->tangents[ lIndexByPolygonVertex ] = FBXVectorToXMFLOAT3(lTangent.mData);
                             ++lIndexByPolygonVertex;
                         }
                     }
@@ -872,13 +909,13 @@ namespace ursine
                             lUVIndex = lUVElement->GetIndexArray().GetAt(lVertexIndex);
 
                         FbxVector2 lUVValue = lUVElement->GetDirectArray().GetAt(lUVIndex);
-                        pData->uvs[lVertexIndex] = pseudodx::XMFLOAT2(static_cast<float>(lUVValue.mData[0]), static_cast<float>(lUVValue.mData[1]));
+                        pData->uvs[ lVertexIndex ] = pseudodx::XMFLOAT2(static_cast<float>(lUVValue.mData[ 0 ]), static_cast<float>(lUVValue.mData[ 1 ]));
 
                         if (2 == lVertexIndex % 3)
                         {
-                            pseudodx::XMFLOAT2 tmp = pData->uvs[lVertexIndex];
-                            pData->uvs[lVertexIndex] = pData->uvs[lVertexIndex - 1];
-                            pData->uvs[lVertexIndex - 1] = tmp;
+                            pseudodx::XMFLOAT2 tmp = pData->uvs[ lVertexIndex ];
+                            pData->uvs[ lVertexIndex ] = pData->uvs[ lVertexIndex - 1 ];
+                            pData->uvs[ lVertexIndex - 1 ] = tmp;
                         }
                     }
                 }
@@ -911,14 +948,14 @@ namespace ursine
                                 int lUVIndex = lUseIndex ? lUVElement->GetIndexArray().GetAt(lPolyIndexCounter) : lPolyIndexCounter;
 
                                 lUVValue = lUVElement->GetDirectArray().GetAt(lUVIndex);
-                                pData->uvs[lPolyIndexCounter] = pseudodx::XMFLOAT2(static_cast<float>(lUVValue.mData[0]), static_cast<float>(lUVValue.mData[1]));
+                                pData->uvs[ lPolyIndexCounter ] = pseudodx::XMFLOAT2(static_cast<float>(lUVValue.mData[ 0 ]), static_cast<float>(lUVValue.mData[ 1 ]));
 
                                 // for converting indicies for texture
                                 if (2 == lPolyIndexCounter % 3)
                                 {
-                                    pseudodx::XMFLOAT2 tmp = pData->uvs[lPolyIndexCounter];
-                                    pData->uvs[lPolyIndexCounter] = pData->uvs[lPolyIndexCounter - 1];
-                                    pData->uvs[lPolyIndexCounter - 1] = tmp;
+                                    pseudodx::XMFLOAT2 tmp = pData->uvs[ lPolyIndexCounter ];
+                                    pData->uvs[ lPolyIndexCounter ] = pData->uvs[ lPolyIndexCounter - 1 ];
+                                    pData->uvs[ lPolyIndexCounter - 1 ] = tmp;
                                 }
                                 lPolyIndexCounter++;
                             }
@@ -948,9 +985,9 @@ namespace ursine
                 double lFactor = lFactorProperty.Get<FbxDouble>();
                 if (lFactor != 1)
                 {
-                    lResult[0] *= lFactor;
-                    lResult[1] *= lFactor;
-                    lResult[2] *= lFactor;
+                    lResult[ 0 ] *= lFactor;
+                    lResult[ 1 ] *= lFactor;
+                    lResult[ 2 ] *= lFactor;
                 }
                 pElement->type = FBX_DATA::Material_Eles::Fac_Only_Color;
             }
@@ -971,7 +1008,7 @@ namespace ursine
                     FbxString uvsetName = lFileTexture->UVSet.Get();
                     std::string uvSetString = uvsetName.Buffer();
                     fs::path fName(lFileTexture->GetFileName());
-                    pElement->textureSetArray[uvSetString].push_back(fName.filename().string());
+                    pElement->textureSetArray[ uvSetString ].push_back(fName.filename().string());
                     ++existTextureCount;
                 }
 
@@ -991,7 +1028,7 @@ namespace ursine
                         FbxString uvsetName = lFileTexture->UVSet.Get();
                         std::string uvSetString = uvsetName.Buffer();
                         fs::path fName(lFileTexture->GetFileName());
-                        pElement->textureSetArray[uvSetString].push_back(fName.filename().string());
+                        pElement->textureSetArray[ uvSetString ].push_back(fName.filename().string());
                         ++existTextureCount;
                     }
                 }
@@ -1082,15 +1119,15 @@ namespace ursine
                     unsigned int i = 0;
                     for (auto &iter : pData->materialIndices)
                     {
-                        iter = materialIndicies[i];
+                        iter = materialIndicies[ i ];
                         ++i;
                     }
                 }
                 else if (materialElement->GetMappingMode() == FbxGeometryElement::eAllSame)
                 {
                     pData->materialIndices.resize(pData->indices.size() / pNode->GetMesh()->GetPolygonSize(0));
-                    for(auto &iter : pData->materialIndices)
-                        iter = materialIndicies[0];
+                    for (auto &iter : pData->materialIndices)
+                        iter = materialIndicies[ 0 ];
                 }
             }
         }
@@ -1146,16 +1183,16 @@ namespace ursine
 
                             FbxAMatrix inverse = bindPoseMatrix.Inverse();
 
-                            m_Model->mBoneData.mbonehierarchy[boneIdx].bindPosition = FBXVectorToXMFLOAT3(bindPoseMatrix.GetT());
-                            m_Model->mBoneData.mbonehierarchy[boneIdx].bindRotation = FBXQuaternionToXMLOAT4(bindPoseMatrix.GetQ());
-                            m_Model->mBoneData.mbonehierarchy[boneIdx].bindScaling = FBXVectorToXMFLOAT3(bindPoseMatrix.GetS());
+                            m_Model->mBoneData.mbonehierarchy[ boneIdx ].bindPosition = FBXVectorToXMFLOAT3(bindPoseMatrix.GetT());
+                            m_Model->mBoneData.mbonehierarchy[ boneIdx ].bindRotation = FBXQuaternionToXMLOAT4(bindPoseMatrix.GetQ());
+                            m_Model->mBoneData.mbonehierarchy[ boneIdx ].bindScaling = FBXVectorToXMFLOAT3(bindPoseMatrix.GetS());
 
-                            m_Model->mBoneData.mbonehierarchy[boneIdx].boneSpacePosition = FBXVectorToXMFLOAT3(inverse.GetT());
-                            m_Model->mBoneData.mbonehierarchy[boneIdx].boneSpaceRotation = FBXQuaternionToXMLOAT4(inverse.GetQ());
-                            m_Model->mBoneData.mbonehierarchy[boneIdx].boneSpaceScaling = FBXVectorToXMFLOAT3(inverse.GetS());
+                            m_Model->mBoneData.mbonehierarchy[ boneIdx ].boneSpacePosition = FBXVectorToXMFLOAT3(inverse.GetT());
+                            m_Model->mBoneData.mbonehierarchy[ boneIdx ].boneSpaceRotation = FBXQuaternionToXMLOAT4(inverse.GetQ());
+                            m_Model->mBoneData.mbonehierarchy[ boneIdx ].boneSpaceScaling = FBXVectorToXMFLOAT3(inverse.GetS());
 
                             SMat4 locTM = FBXAMatrixToSMat4(&bindPoseMatrix);
-                            m_Model->mBoneData.mboneLocalTM[boneIdx] = locTM;
+                            m_Model->mBoneData.mboneLocalTM[ boneIdx ] = locTM;
                         }
 
                         double* weights = cluster->GetControlPointWeights();
@@ -1170,11 +1207,11 @@ namespace ursine
                             FBX_DATA::BlendIdxWeight currBlendIdxWeight;
 
                             currBlendIdxWeight.mBlendingIndex = boneIdx;
-                            currBlendIdxWeight.mBlendingWeight = static_cast<float>(weights[i]);
+                            currBlendIdxWeight.mBlendingWeight = static_cast<float>(weights[ i ]);
 
-                            int ctrlPtIdx = indicies[i];
+                            int ctrlPtIdx = indicies[ i ];
 
-                            newCtrlPoints[ctrlPtIdx].mBlendingInfo.push_back(currBlendIdxWeight);
+                            newCtrlPoints[ ctrlPtIdx ].mBlendingInfo.push_back(currBlendIdxWeight);
                         }
                     }
 
@@ -1223,13 +1260,13 @@ namespace ursine
                     double sum = 0.0f;
 
                     for (int w = 0; w < 4; ++w)
-                        sum += iter.second.mBlendingInfo[w].mBlendingWeight;
+                        sum += iter.second.mBlendingInfo[ w ].mBlendingWeight;
 
                     if (0.0f == sum)
                         continue;
 
                     for (int w = 0; w < 4; ++w)
-                        iter.second.mBlendingInfo[w].mBlendingWeight /= sum;
+                        iter.second.mBlendingInfo[ w ].mBlendingWeight /= sum;
                 }
             }
         }
@@ -1238,7 +1275,7 @@ namespace ursine
         {
             for (unsigned int i = 0; i < m_Model->mBoneData.mbonehierarchy.size(); ++i)
             {
-                if (m_Model->mBoneData.mbonehierarchy[i].mName == inJointName)
+                if (m_Model->mBoneData.mbonehierarchy[ i ].mName == inJointName)
                     return i;
             }
             return -1;
@@ -1252,16 +1289,16 @@ namespace ursine
 
         bool CFBXLoader::CheckPositive(FbxVector4 scale)
         {
-            if (scale[0] < 0.0f || scale[1] < 0.0f || scale[2] < 0.0f)
+            if (scale[ 0 ] < 0.0f || scale[ 1 ] < 0.0f || scale[ 2 ] < 0.0f)
                 return false;
             return true;
         }
 
         bool CFBXLoader::CheckScaling(FbxVector4 scale)
         {
-            if (!IsEqualEpsilon((float)scale[0], (float)scale[1]) ||
-                !IsEqualEpsilon((float)scale[1], (float)scale[2]) ||
-                !IsEqualEpsilon((float)scale[0], (float)scale[2]))
+            if (!IsEqualEpsilon((float)scale[ 0 ], (float)scale[ 1 ]) ||
+                !IsEqualEpsilon((float)scale[ 1 ], (float)scale[ 2 ]) ||
+                !IsEqualEpsilon((float)scale[ 0 ], (float)scale[ 2 ]))
             {
                 return false;
             }
@@ -1381,7 +1418,7 @@ namespace ursine
             FBX_DATA::AnimationData animationData;
 
             //create the animation clip name of the animation
-            FBX_DATA::AnimationClip& animClip = animationData.animations[animStack->GetName()];
+            FBX_DATA::AnimationClip& animClip = animationData.animations[ animStack->GetName() ];
 
             //resize for each bone in the heirarchy
             animClip.boneAnim.resize(m_Model->mBoneData.mbonehierarchy.size());
@@ -1428,7 +1465,7 @@ namespace ursine
                 ProcessAnimation(curve, time, start, end);
 
                 if (boneindex < animClip.boneAnim.size())
-                    animClip.boneAnim[boneindex].keyFrames.resize(time.size());
+                    animClip.boneAnim[ boneindex ].keyFrames.resize(time.size());
                 else
                     return;
 
@@ -1444,11 +1481,11 @@ namespace ursine
                     if (!CheckScaling(s) || !CheckPositive(s))
                         localMatrix.SetS(FbxVector4(1, 1, 1));
 
-                    animClip.boneAnim[boneindex].keyFrames[i].time = static_cast<float>(iter->GetSecondDouble());
+                    animClip.boneAnim[ boneindex ].keyFrames[ i ].time = static_cast<float>(iter->GetSecondDouble());
                     // Scale keyframe translation interpolation by specified scale
-                    animClip.boneAnim[boneindex].keyFrames[i].trans = FBXVectorToXMFLOAT3(localMatrix.GetT());// *_scale;                    
-                    animClip.boneAnim[boneindex].keyFrames[i].rot = FBXQuaternionToXMLOAT4(localMatrix.GetQ());
-                    animClip.boneAnim[boneindex].keyFrames[i].scl = FBXVectorToXMFLOAT3(localMatrix.GetS());
+                    animClip.boneAnim[ boneindex ].keyFrames[ i ].trans = FBXVectorToXMFLOAT3(localMatrix.GetT());// *_scale;                    
+                    animClip.boneAnim[ boneindex ].keyFrames[ i ].rot = FBXQuaternionToXMLOAT4(localMatrix.GetQ());
+                    animClip.boneAnim[ boneindex ].keyFrames[ i ].scl = FBXVectorToXMFLOAT3(localMatrix.GetS());
                 }
                 time.clear();
                 ++boneindex;
@@ -1506,9 +1543,10 @@ namespace ursine
 
                 //Meshes have a separate geometry transform that also needs to be applied
                 FbxAMatrix geoTransform = GetGeometryTransformation(pNode);
-
                 meshTransform = meshTransform * geoTransform;
                 mConverter->ConvertMatrix(meshTransform);
+
+                newMesh.meshTM = FBXAMatrixToSMat4(&meshTransform);
 
                 ProcessVertices(mesh, &newMesh);
                 ProcessNormals(mesh, &newMesh);
@@ -1518,15 +1556,45 @@ namespace ursine
                 ProcessMaterials(pNode, &newMesh);
 
                 //go through all the control points(verticies) and multiply by the transformation
-                for (auto &iter: newMesh.vertices)
+                for (auto &iter : newMesh.vertices)
                 {
                     FbxVector4 vtx;
-                    vtx.mData[0] = iter.x;
-                    vtx.mData[1] = iter.y;
-                    vtx.mData[2] = iter.z;
-                    vtx.mData[3] = 0.0f;
+                    vtx.mData[ 0 ] = iter.x;
+                    vtx.mData[ 1 ] = iter.y;
+                    vtx.mData[ 2 ] = iter.z;
+                    vtx.mData[ 3 ] = 0.0f;
                     iter = FBXVectorToXMFLOAT3(Transform(meshTransform, vtx));
                 }
+
+                SMat4 meshInvTM = FBXAMatrixToSMat4(&meshTransform.Inverse());
+
+                for (auto &iter : newMesh.normals)
+                {
+                    SVec3 newnormal = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newnormal.Normalize();
+                    iter.x = newnormal.X();
+                    iter.y = newnormal.Y();
+                    iter.z = newnormal.Z();
+                }
+
+                for (auto &iter : newMesh.binormals)
+                {
+                    SVec3 newbinormal = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newbinormal.Normalize();
+                    iter.x = newbinormal.X();
+                    iter.y = newbinormal.Y();
+                    iter.z = newbinormal.Z();
+                }
+
+                for (auto &iter : newMesh.tangents)
+                {
+                    SVec3 newtangent = meshInvTM.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                    newtangent.Normalize();
+                    iter.x = newtangent.X();
+                    iter.y = newtangent.Y();
+                    iter.z = newtangent.Z();
+                }
+
                 m_Model->mMeshData.push_back(newMesh);
 
                 bMesh = true;
@@ -1646,22 +1714,36 @@ namespace ursine
             return m->MultNormalize(point);
         }
 
+        void CFBXLoader::TransformWithInverseMeshTM(std::vector<pseudodx::XMFLOAT3> &Float3Vec, const FbxAMatrix &mat)
+        {
+            SMat4 inverse = FBXAMatrixToSMat4(&mat.Inverse());
+
+            for (auto &iter : Float3Vec)
+            {
+                SVec3 transformed = inverse.TransformVector(SVec3(iter.x, iter.y, iter.z));
+                transformed.Normalize();
+                iter.x = transformed.X();
+                iter.y = transformed.Y();
+                iter.x = transformed.Z();
+            }
+        }
+
         //reconstruct vertices and indices
         void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& target_mvs, std::vector<unsigned int>& target_mis, const FBX_DATA::MeshData& md)
         {
             unsigned int i = 0;
-            for (auto &iter: md.indices)
+            for (auto &iter : md.indices)
             {
                 ufmt_loader::MeshVertex newMV;
 
-                newMV.pos = md.vertices[iter];
+                newMV.pos = md.vertices[ iter ];
 
                 if (!md.normals.empty())
                 {
                     if (md.normalMode == FbxGeometryElement::eByPolygonVertex)
-                        newMV.normal = md.normals[i];
+                        newMV.normal = md.normals[ i ];
                     else if (md.normalMode == FbxGeometryElement::eByControlPoint)
-                        newMV.normal = md.normals[iter];
+                        newMV.normal = md.normals[ iter ];
                 }
 
                 //if (!md.binormals.empty())
@@ -1675,32 +1757,32 @@ namespace ursine
                 if (!md.tangents.empty())
                 {
                     if (md.tangentMode == FbxGeometryElement::eByPolygonVertex)
-                        newMV.tangent = md.tangents[i];
+                        newMV.tangent = md.tangents[ i ];
                     else if (md.tangentMode == FbxGeometryElement::eByControlPoint)
-                        newMV.tangent = md.tangents[iter];
+                        newMV.tangent = md.tangents[ iter ];
                 }
 
                 if (!md.uvs.empty())
                 {
-                    newMV.uv = md.uvs[i];
+                    newMV.uv = md.uvs[ i ];
                     newMV.uv.y = 1.0f - newMV.uv.y;
                 }
 
                 // controls - maybe divide this part later if necessary
                 if (!m_Model->mCtrlPoints.empty())
                 {
-                    if (!m_Model->mCtrlPoints[meshIdx].empty())
+                    if (!m_Model->mCtrlPoints[ meshIdx ].empty())
                     {
                         // currently, just for using 1st control point vec
-                        newMV.ctrlBlendWeights.x = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[0].mBlendingWeight;
-                        newMV.ctrlBlendWeights.y = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[1].mBlendingWeight;
-                        newMV.ctrlBlendWeights.z = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[2].mBlendingWeight;
-                        newMV.ctrlBlendWeights.w = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[3].mBlendingWeight;
+                        newMV.ctrlBlendWeights.x = m_Model->mCtrlPoints[ meshIdx ].at(iter).mBlendingInfo[ 0 ].mBlendingWeight;
+                        newMV.ctrlBlendWeights.y = m_Model->mCtrlPoints[ meshIdx ].at(iter).mBlendingInfo[ 1 ].mBlendingWeight;
+                        newMV.ctrlBlendWeights.z = m_Model->mCtrlPoints[ meshIdx ].at(iter).mBlendingInfo[ 2 ].mBlendingWeight;
+                        newMV.ctrlBlendWeights.w = m_Model->mCtrlPoints[ meshIdx ].at(iter).mBlendingInfo[ 3 ].mBlendingWeight;
 
-                        newMV.ctrlIndices.x = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[0].mBlendingIndex;
-                        newMV.ctrlIndices.y = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[1].mBlendingIndex;
-                        newMV.ctrlIndices.z = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[2].mBlendingIndex;
-                        newMV.ctrlIndices.w = m_Model->mCtrlPoints[meshIdx].at(iter).mBlendingInfo[3].mBlendingIndex;
+                        newMV.ctrlIndices.x = m_Model->mCtrlPoints[ meshIdx ].at(iter).mBlendingInfo[ 0 ].mBlendingIndex;
+                        newMV.ctrlIndices.y = m_Model->mCtrlPoints[ meshIdx ].at(iter).mBlendingInfo[ 1 ].mBlendingIndex;
+                        newMV.ctrlIndices.z = m_Model->mCtrlPoints[ meshIdx ].at(iter).mBlendingInfo[ 2 ].mBlendingIndex;
+                        newMV.ctrlIndices.w = m_Model->mCtrlPoints[ meshIdx ].at(iter).mBlendingInfo[ 3 ].mBlendingIndex;
                     }
                 }
 
@@ -1708,7 +1790,7 @@ namespace ursine
                 unsigned int index = 0;
                 for (index = 0; index < target_mvs.size(); ++index)
                 {
-                    if (newMV == target_mvs[index])
+                    if (newMV == target_mvs[ index ])
                     {
                         bFound = true;
                         // if there is same MeshVertex, just add the index of it.

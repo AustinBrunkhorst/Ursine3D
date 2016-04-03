@@ -83,7 +83,7 @@ namespace ursine
 		}
 
 		void AudioEmitter::SetListenerMask(ListenerMask mask)
-		{
+	    {
 			m_listenerMask = mask;
 
 			m_maskChanged = true;

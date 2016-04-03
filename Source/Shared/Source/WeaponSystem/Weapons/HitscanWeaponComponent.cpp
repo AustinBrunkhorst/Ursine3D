@@ -17,7 +17,6 @@ NATIVE_COMPONENT_DEFINITION( HitscanWeapon ) ;
 
 using namespace ursine;
 
-
 HitscanWeapon::HitscanWeapon(void) :
     BaseComponent( ),
     AbstractHitscanWeapon( )
@@ -33,7 +32,6 @@ void HitscanWeapon::OnInitialize(void)
 {
     AbstractWeaponInit(HitscanWeapon, GetOwner( ));
 }
-
 
 void HitscanWeapon::RemoveMySelf(void)
 {

@@ -350,6 +350,8 @@ namespace ursine
             */
             FbxVector4 Transform(const FbxAMatrix& pAMatrix, const FbxVector4& point);
 
+            void TransformWithInverseMeshTM(std::vector<pseudodx::XMFLOAT3> &Float3Vec, const FbxAMatrix &mat);
+
             void CFBXLoader::Reconstruct(unsigned int meshIdx, std::vector<ufmt_loader::MeshVertex>& mvVec, std::vector<unsigned int>& miVec, const FBX_DATA::MeshData& md);
 
             /** @brief fbx loader get mesh data function

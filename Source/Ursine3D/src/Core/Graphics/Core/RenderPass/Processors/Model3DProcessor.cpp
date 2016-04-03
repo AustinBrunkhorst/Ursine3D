@@ -101,10 +101,16 @@ namespace ursine
             {
                 data.matPal.matPal[ index++ ] = x.ToD3D( );
             }
+
+            //index = 0;
+            //for (auto &x : model.GetMatrixPaletteIT())
+            //{
+            //    data.matPalIT.matPal[index++] = x.ToD3D();
+            //}
             m_manager->bufferManager->MapBuffer<BUFFER_MATRIX_PAL>(
-                &data, 
+                &data,
                 SHADERTYPE_VERTEX
-            );
+                );
 
             /////////////////////////////////////////////////////////
             // map texture offset
@@ -120,6 +126,7 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // map texture
             m_manager->textureManager->MapTextureByID( handle.Material_ );
+            m_manager->textureManager->MapTextureByID( static_cast<unsigned>(model.GetNormalTextureHandle( ) & 0xFFFF), 1 );
         }
 
         void Model3DProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)

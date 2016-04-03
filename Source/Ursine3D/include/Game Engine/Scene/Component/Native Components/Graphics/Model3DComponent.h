@@ -79,6 +79,13 @@ namespace ursine
                 SetTexture
             );
 
+            EditorResourceField(
+                ursine::resources::TextureData,
+                normalMap,
+                GetNormalTexture,
+                SetNormalTexture
+            );
+
             EditorMeta(BitMaskEditor)
             EditorField(
                 ursine::ecs::RenderMask renderMask,
@@ -130,6 +137,9 @@ namespace ursine
 
             const resources::ResourceReference &GetTexture(void) const;
             void SetTexture(const resources::ResourceReference &texture);
+
+            const resources::ResourceReference &GetNormalTexture(void) const;
+            void SetNormalTexture(const resources::ResourceReference &texture);
 
             // get the model resource to access the mesh
             const graphics::ModelResource *GetModelResource(void) const;
@@ -190,17 +200,21 @@ namespace ursine
             
             resources::ResourceReference m_modelResource;
             resources::ResourceReference m_textureResource;
+            resources::ResourceReference m_normalTextureResource;
 
             void updateRenderer(void);
 
             void invalidateTexture(bool unload = true);
+            void invalidateNormalTexture(bool unload = true);
             void invalidateModel(bool unload = true);
 
             void onTextureReload(void);
+            void onNormalTextureReload(void);
             void OnModelReload(void);
             void clearMatrixPalette(void);
 
             std::vector<SMat4> &getMatrixPalette(void);
+            std::vector<SMat4> &getMatrixPaletteIT(void);
         } Meta(Enable, WhiteListMethods, DisplayName( "Model3D" ));
     }
 }

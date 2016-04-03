@@ -172,8 +172,6 @@ namespace ursine
             Meta(Disable)
             SVec3 focusPosition;
 
-            
-
             bool IsEditorCamera(void) const;
             void SetEditorCamera(bool editorCamera);
 

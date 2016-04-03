@@ -171,7 +171,7 @@ namespace ursine
             m_privates->gfxCore_->m_lightSteps = steps;
         }
 
-        float GfxAPI::GetGlobalEmissive() const
+        float GfxAPI::GetGlobalEmissive(void) const
         {
             return m_privates->gfxCore_->m_globalEmissive;
         }
@@ -179,6 +179,16 @@ namespace ursine
         void GfxAPI::SetGlobalEmissive(float value)
         {
             m_privates->gfxCore_->m_globalEmissive = value;
+        }
+
+        GfxHND GfxAPI::GetLightMapTexture(void)
+        {
+            return m_privates->gfxCore_->m_lightMapTexture;
+        }
+
+        void GfxAPI::SetLightMapTexture(GfxHND handle)
+        {
+            m_privates->gfxCore_->m_lightMapTexture = handle;
         }
     }
 }

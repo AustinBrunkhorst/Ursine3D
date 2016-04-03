@@ -272,23 +272,9 @@ namespace ursine
             return m_graphics->GetMousedOverWorldPosition( m_handle );
         }
 
-        graphics::GfxHND Camera::GetCameraHandle() const
+        graphics::GfxHND Camera::GetCameraHandle(void) const
         {
             return m_handle;
-        }
-
-        #if defined(URSINE_WITH_EDITOR)
-
-        bool Camera::IsEditorCamera(void) const
-        {
-            return m_isEditorCamera;
-        }
-
-        void Camera::SetEditorCamera(bool editorCamera)
-        {
-            m_isEditorCamera = editorCamera;
-
-            SetRenderMask( static_cast<RenderMask>( m_renderMask ) );
         }
 
         const Color &Camera::GetClearColor(void) const
@@ -301,6 +287,20 @@ namespace ursine
             m_graphics->CameraMgr.GetCamera( m_handle ).SetClearColor( color );
 
             NOTIFY_COMPONENT_CHANGED( "clearColor", color );
+        }
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        bool Camera::IsEditorCamera(void) const
+        {
+            return m_isEditorCamera;
+        }
+
+        void Camera::SetEditorCamera(bool editorCamera)
+        {
+            m_isEditorCamera = editorCamera;
+
+            SetRenderMask( static_cast<RenderMask>( m_renderMask ) );
         }
 
         void Camera::SetEditorSelectionMode(bool selected)
@@ -357,6 +357,6 @@ namespace ursine
                 focusPosition = typeof( SVec3 ).DeserializeJson( focusObj ).GetValue<SVec3>( );
         }
 
-        #endif
+    #endif
     }
 }

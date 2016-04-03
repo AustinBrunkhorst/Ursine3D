@@ -213,6 +213,8 @@ namespace ursine
 
             bool GetJumping(void) const;
 
+            const SVec3 &GetControllerVelocity(void) const;
+
             // Tell the character controller what movement direction
             // it should move in for this next frame.
             // This is the only function needed to move the controller,

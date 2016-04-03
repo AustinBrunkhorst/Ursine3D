@@ -73,7 +73,7 @@ PS_GBUFFER_OUT main(PS_INPUT input)
     // calculate final normal based upon bitan tan and normal
     float3 finalNormal = normalize( mul(normalValue, texSpace) );
 
-    PS_GBUFFER_OUT buff = PackGBuffer(baseColor, finalNormal, specularIntensity, specularPower, emissive);
+    PS_GBUFFER_OUT buff = PackGBuffer(baseColor, normal, specularIntensity, specularPower, emissive);
 
 
     return buff;

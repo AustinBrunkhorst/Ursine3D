@@ -252,6 +252,11 @@ namespace ursine
             return m_jumping;
         }
 
+        const SVec3 &SweptController::GetControllerVelocity(void) const
+        {
+            return m_controllerVelocity;
+        }
+
         void SweptController::SetMovementDirection(const SVec3& movementDirection)
         {
             m_movementDirection = movementDirection;

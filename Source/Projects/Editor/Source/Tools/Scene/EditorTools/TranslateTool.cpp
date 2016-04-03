@@ -91,7 +91,7 @@ void TranslateTool::OnMouseDown(const MouseButtonArgs& args)
     
     auto worldPos = m_graphics->GetMousedOverWorldPosition( camera->GetCameraHandle( ) );
 
-    getBasis( entity, pos, basisX, basisY, basisZ );
+    getBasis( m_selected, pos, basisX, basisY, basisZ );
 
     SVec3 bases[3] = { basisX, basisY, basisZ };
 
@@ -162,50 +162,9 @@ void TranslateTool::OnMouseMove(const MouseMoveArgs &args)
 
         auto position = selectedTransform->GetWorldPosition( );
         position += dir * (offset - m_localOffset);
+
         selectedTransform->SetWorldPosition( position );
     }
-    //if (m_dragging && m_selected)
-    //{
-    //    // Project the delta vector onto the screen direction vector
-    //    auto b = args.positionDelta;
-    //    auto &a = m_screenDir;
-
-    //    // invert the Y
-    //    b.Y( ) = -b.Y( );
-
-    //    float dot = a.Dot( b );
-    //    auto proj = ( dot / b.LengthSquared( ) ) * b;
-    //    auto dist = proj.Length( );
-    //    auto selected = m_selected->GetTransform( );
-    //    auto gizmo = m_gizmo->GetTransform( );
-
-    //    if (dot < 0.0f)
-    //        dist = -dist;
-    //    
-    //    // Multiply by an arbitrary value so that it feels nice.
-    //    // Ideally we would convert the screen space to a world space distance
-    //    // and then apply it to the world space direction vector.
-    //    dist *= 0.25f;
-
-    //    auto newP = gizmo->GetWorldPosition( ) + m_worldDir * dist * sqrt(m_editorCameraSystem->GetCamZoom( ));
-
-    //    gizmo->SetWorldPosition( newP );
-
-    //    if (m_snapping)
-    //    {
-    //        for (int i = 0; i < 3; ++i)
-    //        {
-    //            if (newP[ i ] > 0.0f)
-    //                newP[ i ] = float(int(newP[ i ] * 2.0f + 0.5f)) / 2.0f;
-    //            else
-    //                newP[ i ] = float(int(newP[ i ] * 2.0f - 0.5f)) / 2.0f;
-    //        }
-
-    //        selected->SetWorldPosition( newP );
-    //    }
-    //    else
-    //        selected->SetWorldPosition( newP );
-    //}
 }
 
 void TranslateTool::OnKeyDown(const KeyboardKeyArgs &args)
@@ -558,15 +517,15 @@ void TranslateTool::getBasis(EntityHandle obj, ursine::SVec3 &pos, ursine::SVec3
     if(transform != nullptr)
     {
         pos = transform->GetWorldPosition( );
-        basisX = ursine::SVec3(1, 0, 0);
+        basisX = ursine::SVec3(1, 0, 0); 
         basisY = ursine::SVec3(0, 1, 0);
         basisZ = ursine::SVec3(0, 0, 1);
 
         if(m_local)
         {
-            basisX = transform->ToWorld(basisX);
-            basisX = transform->ToWorld(basisY);
-            basisX = transform->ToWorld(basisZ);
+            basisX = transform->GetRight( );
+            basisY = transform->GetUp( );
+            basisZ = transform->GetForward( );
         }
     }
 }

@@ -25,6 +25,8 @@ namespace ursine
             SHADER_DEFERRED_DEPTH,
             SHADER_DEFERRED_DEPTH_STATIC,
             SHADER_DEFERRED_DEPTH_NORM,
+
+            SHADER_OUTLINE,
             
             SHADER_UI,
 

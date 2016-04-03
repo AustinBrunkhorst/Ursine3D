@@ -120,15 +120,24 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
         auto strafe = transform->GetRight( ) * move.X( );
         auto accum = forward + strafe;
 
+        accum.Y( ) = 0.0f;
+
         if (controller->m_jump)
         {
-            URSINE_TODO("Fix sound hack for weapons");
-            GetCoreSystem(AudioManager)->PlayGlobalEvent("Player_Jump");
-            swept->Jump( );
+            if (swept->GetGrounded( ))
+            {
+                auto currVel = swept->GetControllerVelocity( );
+
+                swept->JumpDirectionally( currVel * controller->GetJumpDirectionScalar( ) );
+
+                URSINE_TODO("Fix sound hack for weapons");
+                GetCoreSystem(AudioManager)->PlayGlobalEvent("Player_Jump");
+            }
+
             controller->m_jump = false;
         }
 
-        swept->SetMovementDirection({ accum.X( ), 0.0f, accum.Z( ) });
+        swept->SetMovementDirection( accum );
     }
     // Reset the look direction
     controller->SetLookDirection( Vec2::Zero( ) );

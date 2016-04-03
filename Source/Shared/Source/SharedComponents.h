@@ -35,6 +35,7 @@
 #include "PlayerLogic/PlayerIdComponent.h"
 #include "PlayerLogic/PlayerSpawnPointComponent.h"
 #include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
+#include "PlayerLogic/AnimationControllers/PlayerGunAnimationControllerComponent.h"
 
 /////////////////////////////////
 //        Damage System        //
@@ -143,6 +144,7 @@
 #include "FX/AnimateParticleResetComponent.h"
 #include "FX/PlayClipOnAnimationFinishComponent.h"
 #include "FX/FaceBoneTowardsTargetComponent.h"
+#include "FX/LightingGroupComponent.h"
 
 /////////////////////////////////
 //             Misc            //
@@ -167,6 +169,7 @@
 #include "Triggers/SegmentChangeTriggerComponent.h"
 #include "Triggers/VisibilityTriggerComponent.h"
 #include "Triggers/AnimateEntityOnTriggerComponent.h"
+#include "Triggers/Phase3LightTriggerComponent.h"
 
 /////////////////////////////////
 //           UI                //

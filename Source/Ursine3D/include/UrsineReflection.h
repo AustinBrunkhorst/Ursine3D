@@ -68,8 +68,8 @@
 
 /// Utilities
 
-#include "Utilities/Timer/TimerManager.h"
-#include "Utilities/Tween/TweenManager.h"
+#include "TimerManager.h"
+#include "TweenManager.h"
 
 #include "JSKeyboardManager.h"
 #include "JSGamepadManager.h"
@@ -79,6 +79,7 @@
 
 #include "NativeComponents.h"
 #include "NativeEntitySystems.h"
+#include "GameSettings.h"
 
 // define it last
 #define URSINE_REFLECTION_INCLUDED

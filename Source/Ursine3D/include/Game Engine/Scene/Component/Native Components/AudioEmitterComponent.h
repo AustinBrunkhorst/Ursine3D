@@ -31,11 +31,11 @@ namespace ursine
 
 		public:
 			EditorMeta(BitMaskEditor)
-            EditorField(
+			EditorField(
 				ListenerMask listenerMask,
                 GetListenerMask,
                 SetListenerMask
-            );
+			);
 
             Meta(Enable)
 			AudioEmitter(void);
@@ -71,7 +71,7 @@ namespace ursine
 			std::queue<AudioEvent::Handle> m_events;
 			std::string m_testText;
 			bool m_maskChanged;
-
+			
 		} Meta(Enable, WhiteListMethods, DisplayName( "AudioEmitter" ));
 	}
 }

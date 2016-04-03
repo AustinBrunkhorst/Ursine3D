@@ -48,15 +48,15 @@ namespace ursine
             //@matt don't forget this
         };
 
-		struct AnimationVertex
-		{
-			DirectX::XMFLOAT3	vPos;
-			DirectX::XMFLOAT3	vNor;
+        struct AnimationVertex
+        {
+            DirectX::XMFLOAT3	vPos;
+            DirectX::XMFLOAT3	vNor;
             DirectX::XMFLOAT3	vTan;
-			DirectX::XMFLOAT2	vUv;
-			DirectX::XMFLOAT4	vBWeight;
-			BYTE				vBIdx[4];
-		};
+            DirectX::XMFLOAT2	vUv;
+            DirectX::XMFLOAT4	vBWeight;
+            BYTE				vBIdx[4];
+        };
 
         struct PrimitiveVertex
         {

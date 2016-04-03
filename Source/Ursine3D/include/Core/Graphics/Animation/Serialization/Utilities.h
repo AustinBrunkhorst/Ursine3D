@@ -166,4 +166,4 @@ namespace Utilities
     *  @return converted XMFLOAT4 result
     */
     pseudodx::XMFLOAT4 FBXVectorToXMFLOAT4(const FbxVector4& src);
-};
+}

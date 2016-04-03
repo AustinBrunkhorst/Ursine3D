@@ -267,6 +267,26 @@ void AbstractWeapon::SetFireParticle(const ursine::resources::ResourceReference&
     m_fireParticle = archetype;
 }
 
+const ursine::resources::ResourceReference& AbstractWeapon::GetShootSFX(void) const
+{
+    return m_shootSfx;
+}
+
+void AbstractWeapon::SetShootSFX(const ursine::resources::ResourceReference &sfx)
+{
+    m_shootSfx = sfx;
+}
+
+const ursine::resources::ResourceReference& AbstractWeapon::GetReloadSFX(void) const
+{
+    return m_reloadSfx;
+}
+
+void AbstractWeapon::SetReloadSFX(const ursine::resources::ResourceReference &sfx)
+{
+    m_reloadSfx = sfx;
+}
+
 // semi automatic
 bool AbstractWeapon::GetSemiAutomatic(void) const
 {

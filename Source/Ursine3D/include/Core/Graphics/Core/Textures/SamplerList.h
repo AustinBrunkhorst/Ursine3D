@@ -20,6 +20,7 @@ namespace ursine
         enum SAMPLER_STATES : unsigned
         {
             SAMPLER_STATE_WRAP_TEX = 0,
+            SAMPLER_STATE_NO_WRAP_TEX,
             SAMPLER_STATE_NO_FILTERING,
 
             SAMPLER_STATE_SHADOW,

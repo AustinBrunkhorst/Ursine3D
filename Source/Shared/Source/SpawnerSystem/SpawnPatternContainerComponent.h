@@ -29,7 +29,6 @@ class SpawnPatternContainer : public ursine::ecs::Component
     friend class Spawner;
 
 public:
-
     SpawnPatternContainer(void);
 
     // The level event these spawn patterns are for
@@ -39,7 +38,6 @@ public:
     ursine::Array<SpawnPattern> spawnPatterns;
 
 private:
-
     // An index into the spawn pattern array, letting us know
     // what pattern is the current one.
     int m_index;
@@ -53,4 +51,10 @@ private:
 
     void update(SpawnerGroup *group, Spawner *spawner);
 
-} Meta(Enable, HiddenInSelector, DisableComponentRemoval);
+} Meta(
+    Enable
+) EditorMeta(
+    HiddenInSelector, 
+    DisableComponentRemoval
+);
+ 

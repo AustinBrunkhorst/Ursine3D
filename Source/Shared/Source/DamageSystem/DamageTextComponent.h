@@ -32,9 +32,10 @@ private:
 
 } Meta(
     Enable,
-    DisplayName( "DamageText" ),
+    DisplayName( "DamageText" )
+) EditorMeta(
     RequiresComponents( 
-        typeof(ursine::ecs::SpriteText), 
-        typeof(EntityAnimator) 
-    )
+        typeof( ursine::ecs::SpriteText ), 
+        typeof( EntityAnimator ) 
+    )    
 );

@@ -20,7 +20,6 @@ class AnimateEntityOnTrigger : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
-
     AnimateEntityOnTrigger(void);
     ~AnimateEntityOnTrigger(void);
 
@@ -45,7 +44,6 @@ public:
     void OnSceneReady(ursine::Scene *scene) override;
 
 private:
-
     std::string m_name;
     bool m_destroyOnPlay;
 
@@ -55,4 +53,8 @@ private:
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 
-} Meta(Enable, RequiresComponents(typeof(ursine::ecs::Ghost)));
+} Meta(
+    Enable
+) EditorMeta(
+    RequiresComponents( typeof( ursine::ecs::Ghost ) )    
+);

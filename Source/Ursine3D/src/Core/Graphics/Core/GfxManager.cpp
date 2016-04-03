@@ -81,8 +81,9 @@ namespace ursine
             m_currentlyRendering = false;
             m_sceneActive = false;
             m_currentID = -1;
-            m_lightSteps = 20;
+            m_lightSteps = 6;
             m_borderValue = 0;
+            m_lightMapTexture = 1;
 
             RenderPass::SetGfxMgr(this);
             GraphicsEntityProcessor::SetGfxMgr(this);
@@ -133,6 +134,9 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_EMISSIVE, "EmissiveShader");
                 shaderManager->LoadShader(SHADER_FORWARD, "ForwardRenderer");
                 shaderManager->LoadShader(SHADER_SPRITE_TEXT, "SpriteTextShader");
+
+                shaderManager->LoadShader(SHADER_OUTLINE, "OutlineShader");
+                
 
                 //load compute
                 shaderManager->LoadShader(SHADER_MOUSEPOSITION, "MouseTypeID");
@@ -541,6 +545,7 @@ namespace ursine
 
             // define the passes
             RenderPass          deferredPass( "DeferredPass" );
+            RenderPass          outlinePass( "OutlinePass" );
             ShadowPass          shadowPass;
             RenderPass          spotlightPass( "SpotlightPass" );
             RenderPass          pointlightPass( "PointLightPass" );
@@ -559,14 +564,15 @@ namespace ursine
             RenderPass          debugPass("debugPass");
 
             // create processors
-            auto modelProcessor     = Model3DProcessor( );
-            auto shadowProcessor    = Model3DProcessor( false );
-            auto slProcessor        = SpotLightProcessor( );
-            auto plProcessor        = PointLightProcessor( );
-            auto dlProcessor        = DirectionalLightProcessor( );
-            auto particleProcessor  = ParticleSystemProcessor( );
-            auto billboardPorcessor = Billboard2DProcessor( );
-            auto textProcessor      = SpriteTextProcessor( );
+            auto modelProcessor         = Model3DProcessor( );
+            auto shadowProcessor        = Model3DProcessor( false );
+            auto slProcessor            = SpotLightProcessor( );
+            auto plProcessor            = PointLightProcessor( );
+            auto dlProcessor            = DirectionalLightProcessor( );
+            auto particleProcessor      = ParticleSystemProcessor( );
+            auto velParticleProcessor   = ParticleSystemProcessor( true );
+            auto billboardPorcessor     = Billboard2DProcessor( );
+            auto textProcessor          = SpriteTextProcessor( );
 
             // CREATE GLOBALS
             GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBuffer( SHADERTYPE_VERTEX );
@@ -597,7 +603,7 @@ namespace ursine
             GlobalGPUResource   lightSphereModel( SHADER_SLOT_0, RESOURCE_MODEL );
             GlobalGPUResource   fullscreenModel( SHADER_SLOT_0, RESOURCE_MODEL );
             GlobalGPUResource   particleModel( SHADER_SLOT_0, RESOURCE_MODEL );
-            GlobalGPUResource   fontTexture( SHADER_SLOT_0, RESOURCE_TEXTURE );
+            GlobalGPUResource   lightMap(SHADER_SLOT_5, RESOURCE_TEXTURE);
 
             /////////////////////////////////////////////////////////
             // DEFINING PIPELINE
@@ -613,11 +619,37 @@ namespace ursine
                                 RENDER_TARGET_DEFERRED_SPECPOW
                             }
                         ).
-                        Set( SHADER_DEFERRED_DEPTH ).
+                        Set( SHADER_DEFERRED_DEPTH_NORM ).
                         Set( DEPTH_STENCIL_MAIN ).
                         Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_BACKCULL ).
+                        Set( BLEND_STATE_COUNT ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &viewBuffer ).
+
+                        Accepts( RENDERABLE_MODEL3D ).
+                        Processes( &modelProcessor ).
+                    InitializePass( );
+                }
+
+                /////////////////////////////////////////////////////////
+                // OUTLINE PASS
+                {
+                    outlinePass.
+                        Set(
+                            {
+                                RENDER_TARGET_DEFERRED_COLOR,
+                                RENDER_TARGET_DEFERRED_NORMAL,
+                                RENDER_TARGET_DEFERRED_SPECPOW
+                            }
+                        ).
+                        Set( SHADER_OUTLINE ).
+                        Set( DEPTH_STENCIL_MAIN ).
+                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
+                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( RASTER_STATE_OUTLINE ).
                         Set( BLEND_STATE_COUNT ).
                         Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
 
@@ -655,7 +687,7 @@ namespace ursine
                         Set( SHADER_SPOT_LIGHT ).
                         Set( DEPTH_STENCIL_COUNT ).
                         Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX, 0).
+                        Set( SAMPLER_STATE_NO_WRAP_TEX, 0).
                         Set( SAMPLER_STATE_SHADOW, 1).
                         Set( RASTER_STATE_SOLID_BACKCULL ).
                         Set( BLEND_STATE_ADDITIVE ).
@@ -665,6 +697,7 @@ namespace ursine
                         AddResource( &invProjection ).
                         AddResource( &lightConeModel ).
                         AddResource( &lightFalloff ).
+                        AddResource( &lightMap ).
 
                         AddResource( &depthInput ).
                         AddResource( &diffuseRT ).
@@ -684,7 +717,7 @@ namespace ursine
                         Set( SHADER_POINT_LIGHT ).
                         Set( DEPTH_STENCIL_COUNT ).
                         Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( SAMPLER_STATE_NO_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_BACKCULL ).
                         Set( BLEND_STATE_ADDITIVE ).
                         Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
@@ -693,6 +726,7 @@ namespace ursine
                         AddResource( &invProjection ).
                         AddResource( &lightSphereModel ).
                         AddResource( &lightFalloff ).
+                        AddResource( &lightMap ).
 
                         AddResource( &depthInput ).
                         AddResource( &diffuseRT ).
@@ -712,7 +746,7 @@ namespace ursine
                         Set( SHADER_DIRECTIONAL_LIGHT ).
                         Set( DEPTH_STENCIL_MAIN ).
                         Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( SAMPLER_STATE_NO_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_BACKCULL ).
                         Set( BLEND_STATE_ADDITIVE ).
                         Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
@@ -721,6 +755,7 @@ namespace ursine
                         AddResource( &fullscreenTransform ).
                         AddResource( &fullscreenModel ).
                         AddResource( &lightFalloff ).
+                        AddResource( &lightMap ).
 
                         AddResource( &depthInput ).
                         AddResource( &diffuseRT ).
@@ -740,7 +775,7 @@ namespace ursine
                         Set( SHADER_EMISSIVE ).
                         Set( DEPTH_STENCIL_MAIN ).
                         Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( SAMPLER_STATE_NO_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_BACKCULL ).
                         Set( BLEND_STATE_ADDITIVE ).
                         Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
@@ -907,7 +942,7 @@ namespace ursine
                         AddResource( &invView ).
 
                         Accepts( RENDERABLE_PS ).
-                        Processes( &particleProcessor ).
+                        Processes( &velParticleProcessor ).
                         OverrideLayout( SHADER_OVERRIDE ).
                     InitializePass();
                 }
@@ -963,7 +998,6 @@ namespace ursine
                         AddResource( &viewBuffer ).
                         AddResource( &particleModel ).
                         AddResource( &invView ).
-                        AddResource( &fontTexture ).
 
                         Accepts( RENDERABLE_SPRITE_TEXT ).
                         Processes( &textProcessor ).
@@ -1011,7 +1045,7 @@ namespace ursine
                 AddPrePass( &velocityParticlePass ).
                 AddPrePass( &billboardPass ).
                 AddPrePass( &textPass ).
-                //AddPrePass(&debugPass).
+                // AddPrePass(&debugPass).
             InitializePass( );
 
             /////////////////////////////////////////////////////////
@@ -1093,7 +1127,7 @@ namespace ursine
 
             shadowmapDepth.Update( DEPTH_STENCIL_SHADOWMAP );
 
-            debugTarget.Update( RENDER_TARGET_DEFERRED_COLOR );
+            debugTarget.Update( RENDER_TARGET_DEFERRED_NORMAL );
 
             // TEXTURES AND MODELS /////////////
             lightConeModel.Update( INTERNAL_CONE );
@@ -1101,7 +1135,7 @@ namespace ursine
             fullscreenModel.Update( INTERNAL_QUAD );
             spriteModel.Update( INTERNAL_QUAD );
             particleModel.Update( INTERNAL_POINT_INDICES );
-            fontTexture.Update( 0 );
+            lightMap.Update( m_lightMapTexture & 0xFFFF );
 
             /////////////////////////////////////////////////////////
             // RENDER
