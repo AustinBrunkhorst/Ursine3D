@@ -59,6 +59,8 @@ namespace pseudodx
 
         XMFLOAT3() {}
         XMFLOAT3(float _x, float _y, float _z) : x(_x), y(_y), z(_z) {}
+        XMFLOAT3& operator+ (const XMFLOAT3& Float3) { x += Float3.x; y += Float3.y; z += Float3.z; return *this; }
+        XMFLOAT3& operator/ (const float& floatval) { x /= floatval; y /= floatval; z /= floatval; return *this; }
         XMFLOAT3& operator= (const XMFLOAT3& Float3) { x = Float3.x; y = Float3.y; z = Float3.z; return *this; }
         bool operator== (const XMFLOAT3& Float3) { return ( (x == Float3.x) && (y == Float3.y) && (z == Float3.z) ) ? true : false; }
         bool operator!= (const XMFLOAT3& Float3) { return ( !(*this == Float3) ); }
@@ -347,13 +349,6 @@ namespace ursine
             {
                 eLayout mLayout;
                 std::string name;
-                //unsigned int vertexCnt;
-                //unsigned int indexCnt;
-                //unsigned int normalCnt;
-                //unsigned int binormalCnt;
-                //unsigned int tangentCnt;
-                //unsigned int uvCnt;
-                //unsigned int mtrlIndexCnt;
                 int parentIndex;
 
                 FbxLayerElement::EMappingMode normalMode;
