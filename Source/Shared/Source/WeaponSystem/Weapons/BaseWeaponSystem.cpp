@@ -204,8 +204,6 @@ int WeaponSystemUtils::RemoveRoundsFromClip(AbstractWeapon &weapon)
 
 void WeaponSystemUtils::ReloadWeapon(AbstractWeapon &weapon, ursine::ecs::AudioEmitter *emitter)
 {
-    URSINE_TODO("Have to apply reload animation");
-
     if (Reload( weapon ))
     {
         // play sound

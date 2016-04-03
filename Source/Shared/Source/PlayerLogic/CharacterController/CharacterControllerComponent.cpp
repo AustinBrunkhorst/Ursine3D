@@ -36,7 +36,7 @@ CharacterController::CharacterController(void)
 CharacterController::~CharacterController(void)
 {
     GetOwner( )->Listener( this )
-        .Off(game::MOVEMENT_COMMAND, &CharacterController::SetMoveDirection)
+        .Off( game::MOVEMENT_COMMAND, &CharacterController::SetMoveDirection)
         .Off( game::LOOK_COMMAND, &CharacterController::SetLookDirection )
         .Off( game::JUMP_COMMAND, &CharacterController::Jump );
 }

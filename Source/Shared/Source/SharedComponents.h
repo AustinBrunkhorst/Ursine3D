@@ -35,6 +35,7 @@
 #include "PlayerLogic/PlayerIdComponent.h"
 #include "PlayerLogic/PlayerSpawnPointComponent.h"
 #include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
+#include "PlayerLogic/AnimationControllers/PlayerGunAnimationControllerComponent.h"
 
 /////////////////////////////////
 //        Damage System        //
