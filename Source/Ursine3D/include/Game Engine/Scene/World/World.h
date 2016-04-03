@@ -73,14 +73,18 @@ namespace ursine
             // Updates the world
             void Update(void);
 
-            // Updates the world in editor mode
-            void EditorUpdate(void);
-
             // Renders the world
             void Render(void);
 
+        #if defined(URSINE_WITH_EDITOR)
+
+            // Updates the world in editor mode
+            void EditorUpdate(void);
+
             // Renders the world in editor mode
             void EditorRender(void);
+
+        #endif
 
             const EntityHandle &GetSettings(void) const;
 
@@ -92,8 +96,6 @@ namespace ursine
 
             Scene *GetOwner(void) const;
             void SetOwner(Scene *owner);
-
-            void MessageUI(const std::string &message, const Json &data);
 
             void MergeWorld(
                 resources::ResourceManager &resourceManager, 

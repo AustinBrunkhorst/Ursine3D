@@ -58,9 +58,10 @@ namespace ursine
 
         } Meta(
             Enable, 
-            WhiteListMethods, 
-            DisableComponentRemoval, 
+            WhiteListMethods,
             DisplayName( "WorldConfig" )
+        ) EditorMeta(
+            DisableComponentRemoval
         );
     }
 }

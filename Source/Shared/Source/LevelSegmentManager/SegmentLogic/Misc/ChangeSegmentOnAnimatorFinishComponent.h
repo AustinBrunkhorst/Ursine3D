@@ -42,4 +42,8 @@ private:
 
     void onAnimationFinish(EVENT_HANDLER(EntityAnimator));
 
-} Meta(Enable, RequiresComponents(typeof(EntityAnimator)));
+} Meta(
+    Enable
+) EditorMeta(
+    RequiresComponents( typeof( EntityAnimator ) )    
+);

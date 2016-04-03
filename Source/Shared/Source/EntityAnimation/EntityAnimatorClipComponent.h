@@ -51,4 +51,4 @@ public:
 
     ursine::Array<EntityKeyFrame> keyFrames;
 
-} Meta(Enable, HiddenInSelector);
+} Meta(Enable) EditorMeta(HiddenInSelector);

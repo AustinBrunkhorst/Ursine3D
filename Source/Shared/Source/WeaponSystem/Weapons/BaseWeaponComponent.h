@@ -9,7 +9,6 @@
 **
 ** -------------------------------------------------------------------------*/
 
-
 #pragma once
 
 #include "AbstractProjWeapon.h"
@@ -18,10 +17,9 @@
 
 struct BaseWeapon : ursine::ecs::Component, AbstractProjWeapon
 {
-    NATIVE_COMPONENT
+    NATIVE_COMPONENT;
 
 public:
-
     PROJ_EDITOR_FIELDS( );
 
     BaseWeapon(void);
@@ -34,6 +32,7 @@ protected:
 
 } Meta(
     Enable, 
-    DisplayName("ProjectileWeapon"), 
-    RequiresComponents(typeof(ursine::ecs::AudioEmitter))
+    DisplayName( "ProjectileWeapon" ), 
+) EditorMeta(
+    RequiresComponents( typeof( ursine::ecs::AudioEmitter ) )
 );

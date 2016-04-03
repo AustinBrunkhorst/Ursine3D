@@ -26,9 +26,9 @@ struct WeaponPickup
     : ursine::ecs::Component
     , Interaction
 {
-    NATIVE_COMPONENT
-public:
+    NATIVE_COMPONENT;
 
+public:
     WeaponPickup(void);
     ~WeaponPickup(void);
 
@@ -110,7 +110,8 @@ private:
     void OnInitialize(void) override;
 } Meta(
     Enable, 
-    DisplayName( "WeaponPickup" ), 
-    RequiresComponents( typeof( Interactable ), typeof( ursine::ecs::Ghost) )
+    DisplayName( "WeaponPickup" )
+) EditorMeta(
+    RequiresComponents( typeof( Interactable ), typeof( ursine::ecs::Ghost ) )    
 );
 

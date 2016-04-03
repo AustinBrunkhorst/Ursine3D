@@ -109,4 +109,8 @@ private:
 
     void onUpdate(EVENT_HANDLER(World));
 
-} Meta(Enable, RequiresComponents(typeof(ursine::ecs::ParticleEmitter)));
+} Meta(
+    Enable
+) EditorMeta( 
+    RequiresComponents( typeof( ursine::ecs::ParticleEmitter ) )
+);

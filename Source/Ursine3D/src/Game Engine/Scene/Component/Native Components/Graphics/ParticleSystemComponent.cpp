@@ -192,7 +192,21 @@ namespace ursine
         {
             m_particleSystem->DestroyAllParticles( );
         }
-#if defined(URSINE_WITH_EDITOR)
+
+        bool ParticleSystem::GetVelocityOrient(void) const
+        {
+            return m_particleSystem->GetVelocityOrient( );
+        }
+
+        void ParticleSystem::SetVelocityOrient(bool velocityOrient)
+        {
+            m_particleSystem->SetVelocityOrient( velocityOrient );
+            m_particleSystem->DestroyAllParticles( );
+
+            NOTIFY_COMPONENT_CHANGED( "orientToVelocity", m_particleSystem->GetVelocityOrient( ) );
+        }
+
+    #if defined(URSINE_WITH_EDITOR)
 
         bool ParticleSystem::UpdatesInEditor(void) const
         {
@@ -206,18 +220,7 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "updateInEditor", m_updateInEditor );
         }
 
-        bool ParticleSystem::GetVelocityOrient() const
-        {
-            return m_particleSystem->GetVelocityOrient( );
-        }
-
-        void ParticleSystem::SetVelocityOrient(bool velocityOrient)
-        {
-            m_particleSystem->SetVelocityOrient( velocityOrient );
-            m_particleSystem->DestroyAllParticles( );
-        }
-
-        #endif
+    #endif
 
         void ParticleSystem::SetRenderMode(const RenderMode &renderMode)
         {

@@ -1,5 +1,3 @@
-#pragma once
-
 /* ---------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -11,17 +9,17 @@
 **
 ** -------------------------------------------------------------------------*/
 
+#pragma once
 
 #include <Component.h>
+
 #include "MadRaidTrigger.h"
-
-
 
 class EmpowerTrigger : public ursine::ecs::Component, public MadRaidTrigger
 {
-    NATIVE_COMPONENT
-public:
+    NATIVE_COMPONENT;
 
+public:
     MAD_RAID_TRIGGER_FIELDS( );
 
     EmpowerTrigger(void);
@@ -44,7 +42,9 @@ protected:
 
     bool m_disempowerActive;
     bool m_playerActive;
-
-
-} Meta( Enable, DisplayName( "EmpowerTrigger" ), RequiresComponents( typeof( Interactable ) ) );
-
+} Meta(
+    Enable, 
+    DisplayName( "EmpowerTrigger" )
+) EditorMeta(
+    RequiresComponents( typeof( Interactable ) )    
+);

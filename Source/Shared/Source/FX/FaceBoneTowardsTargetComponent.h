@@ -21,7 +21,6 @@ class FaceBoneTowardsTarget : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
-
     EditorButton(
         visualizeFOV,
         "Visualize Field Of View"
@@ -33,7 +32,7 @@ public:
         SetLocalForward
     );
 
-    Meta(InputRange(0.0f, 90.0f, 0.1f, "{{value.toFixed( 2 )}} deg"))
+    EditorMeta(InputRange(0.0f, 90.0f, 0.1f, "{{value.toFixed( 2 )}} deg"))
     EditorField(
         float maxViewAngle,
         GetMaxViewAngle,
@@ -54,7 +53,6 @@ public:
     void SetMaxViewAngle(float degrees);
 
 private:
-
     bool m_subscribed;
 
     float m_maxViewAngle;

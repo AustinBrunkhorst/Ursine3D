@@ -28,59 +28,57 @@ class CharacterController : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
-    friend class CharacterControllerSystem;
-
     CharacterController(void);
     ~CharacterController(void);
 
-    Meta(InputRange(0.0f, 15.0f, 0.01f))
+    EditorMeta(InputRange(0.0f, 15.0f, 0.01f))
     EditorField(
         float rotateSpeed,
         GetRotateSpeed,
         SetRotateSpeed
     );
 
-    Meta(InputRange(0.0f, 1.0f, 0.01f))
+    EditorMeta(InputRange(0.0f, 1.0f, 0.01f))
     EditorField(
         float deadZone,
         GetDeadZone,
         SetDeadZone
     );
 
-    Meta(InputRange(0.0f, 1.0f, 0.01f))
+    EditorMeta(InputRange(0.0f, 1.0f, 0.01f))
     EditorField(
         float deadZoneSnap,
         GetDeadZoneSnap,
         SetDeadZoneSnap
     );
 
-    Meta(InputRange(0.0f, 1.0f, 0.05f))
+    EditorMeta(InputRange(0.0f, 1.0f, 0.05f))
     EditorField(
         float MediumRotationFloor,
         GetMediumRotationFloor,
         SetMediumRotationFloor
-        );
+    );
 
-    Meta(InputRange(0.0f, 1.0f, 0.05f))
+    EditorMeta(InputRange(0.0f, 1.0f, 0.05f))
     EditorField(
         float HighRotationFloor,
         GetHighRotationFloor,
         SetHighRotationFloor
-        );
+    );
 
-    Meta(InputRange(0.0f, 1.0f, 0.05f))
+    EditorMeta(InputRange(0.0f, 1.0f, 0.05f))
     EditorField(
         float LowRotationFactor,
         GetLowRotationFactor,
         SetLowRotationFactor
-        );
+    );
 
-    Meta(InputRange(0.0f, 1.0f, 0.05f))
+    EditorMeta(InputRange(0.0f, 1.0f, 0.05f))
     EditorField(
         float MediumRotationFactor,
         GetMediumRotationFactor,
         SetMediumRotationFactor
-        );
+    );
 
     EditorField(
         bool lockMovement,
@@ -130,6 +128,7 @@ public:
     void OnInitialize(void) override;
 
 private:
+    friend class CharacterControllerSystem;
 
     void SetMoveDirection(EVENT_HANDLER(game::MOVEMENT_COMMAND));
     void SetLookDirection(EVENT_HANDLER(game::LOOK_COMMAND));
@@ -154,5 +153,9 @@ private:
     ursine::Vec2 m_moveDir;
     ursine::Vec2 m_lookDir;
 
-} Meta(Enable, DisplayName("CharacterController"), 
-       RequiresComponents(typeof(ursine::ecs::SweptController)));
+} Meta(
+    Enable, 
+    DisplayName( "CharacterController" ), 
+) EditorMeta(
+    RequiresComponents( typeof( ursine::ecs::SweptController ) )
+);

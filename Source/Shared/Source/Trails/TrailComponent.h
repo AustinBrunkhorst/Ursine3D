@@ -1,5 +1,3 @@
-#pragma once
-
 /* ---------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -10,6 +8,8 @@
 ** - Chad George - chad.george@digipen.edu
 **
 ** -------------------------------------------------------------------------*/
+
+#pragma once
 
 #include <Component.h>
 #include <SVec3.h>
@@ -76,10 +76,10 @@ private:
 
     // particles to spawn at each segment
     int m_particlesToSpawn;
-    
 } Meta(
     Enable, 
     WhiteListMethods,
-    RequiresComponents( typeof( ursine::ecs::ParticleEmitter ) ), 
     DisplayName( "TrailComponent" )
+) EditorMeta(
+    RequiresComponents( typeof( ursine::ecs::ParticleEmitter ) )    
 );

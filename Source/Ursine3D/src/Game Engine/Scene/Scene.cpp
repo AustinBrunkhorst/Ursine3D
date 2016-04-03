@@ -22,12 +22,22 @@
 
 #include "WorldData.h"
 
+#if defined(URSINE_WITH_EDITOR)
+
+#define SCENE_STARTING_STATE PS_EDITOR
+
+#else
+
+#define SCENE_STARTING_STATE PS_PLAYING
+
+#endif
+
 namespace ursine
 {
     Scene::Scene(void)
         : EventDispatcher( this )
         , m_gameContext( nullptr )
-        , m_playState( PS_EDITOR )
+        , m_playState( SCENE_STARTING_STATE )
         , m_viewport( 0 )
         , m_activeWorld( nullptr ) { }
 
@@ -131,10 +141,14 @@ namespace ursine
 
         switch (m_playState)
         {
+    #if defined(URSINE_WITH_EDITOR)
+
         case PS_PAUSED:
         case PS_EDITOR:
             m_activeWorld->EditorUpdate( );
             break;
+
+    #endif
         case PS_PLAYING:
             m_activeWorld->Update( );
             break;
@@ -148,10 +162,14 @@ namespace ursine
 
         switch (m_playState)
         {
+    #if defined(URSINE_WITH_EDITOR)
+
         case PS_PAUSED:
         case PS_EDITOR:
             m_activeWorld->EditorRender( );
             break;
+
+    #endif
         case PS_PLAYING:
             m_activeWorld->Render( );
             break;
@@ -172,13 +190,15 @@ namespace ursine
 
             auto type = meta::Type::GetFromName( system.type );
 
+        #if defined(URSINE_WITH_EDITOR)
+
             if (!type.IsValid( ))
             {
                 NotificationConfig error;
 
                 error.type = NOTIFY_ERROR;
                 error.header = "Play System";
-                error.message = "Unknown world play system configured.";
+                error.message = "Unknown world play system <strong class=\"highlight\">"+ system.type +"</strong> configured.";
 
                 EditorPostNotification( error );
 
@@ -197,6 +217,20 @@ namespace ursine
 
                 continue;
             }
+
+        #else
+
+            UAssert( type.IsValid( ),
+                "Unknown world play system '%s' configured.",
+                system.type.c_str( )
+            );
+
+            UAssert( !systemManager->HasSystem( type ),
+                "World play system '%s' already exists.",
+                type.GetName( ).c_str( )
+            );
+
+        #endif
 
             systemManager->AddSystem( type );
         }

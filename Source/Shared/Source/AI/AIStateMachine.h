@@ -19,7 +19,6 @@ namespace ursine
             ecs::EntityHandle GetEntity(void) const;
 
         protected:
-            //TODO: replace with the things austin is using now
             ecs::EntityHandle m_actorEntity;
         };
     }
