@@ -72,7 +72,7 @@ public:
 
     static int RemoveRoundsFromClip(AbstractWeapon &weapon);
 
-    static void ReloadWeapon(AbstractWeapon &weapon);
+    static void ReloadWeapon(AbstractWeapon &weapon, ursine::ecs::AudioEmitter *emitter);
 
     static void ResetIdleSequence(AbstractWeapon* weapon);
 };

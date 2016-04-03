@@ -23,8 +23,6 @@ namespace ursine
             : m_rootNode( nullptr )
             , m_meshArray( )
             , m_meshMap( )
-            , m_meshHierarchy( )
-            , m_rigHierarchy( )
             , m_onGPU( false )
             , m_referenceCount( 0 )
         {
@@ -45,7 +43,7 @@ namespace ursine
             m_meshArray.push_back(newMesh);
         }
 
-        Mesh *ModelResource::GetMesh(const unsigned index)
+        Mesh *ModelResource::GetMesh(const unsigned index) const
         {
             UAssert(index < m_meshArray.size(), "Tried to get mesh that does not exist!");
             return m_meshArray[index];
@@ -65,27 +63,7 @@ namespace ursine
         {
             return m_meshArray;
         }
-
-        const std::vector<ufmt_loader::MeshInLvl> &ModelResource::GetMeshLvlArray(void) const
-        {
-            return m_meshHierarchy;
-        }
-
-        const std::vector<ufmt_loader::RigInLvl> &ModelResource::GetRigLvlArray(void) const
-        {
-            return m_rigHierarchy;
-        }
-
-        void ModelResource::AddMesh2Tree(const ufmt_loader::MeshInLvl& meshLvl)
-        {
-            m_meshHierarchy.push_back(meshLvl);
-        }
-
-        void ModelResource::AddRig2Tree(const ufmt_loader::RigInLvl& rigLvl)
-        {
-            m_rigHierarchy.push_back(rigLvl);
-        }
-
+        
         void ModelResource::IncrementReference(void)
         {
             ++m_referenceCount;

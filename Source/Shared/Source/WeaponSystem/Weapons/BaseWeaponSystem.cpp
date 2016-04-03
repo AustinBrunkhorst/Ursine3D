@@ -161,9 +161,6 @@ int WeaponSystemUtils::Reload(AbstractWeapon &weapon)
     // set reload timer
     weapon.m_reloadTimer = weapon.m_reloadTime;
 
-    URSINE_TODO("Fix sound hack for weapons");
-    GetCoreSystem(AudioManager)->PlayGlobalEvent("Reload_Gun_Hand");
-
     return RELOAD_SUCCESS;
 }
 
@@ -205,11 +202,13 @@ int WeaponSystemUtils::RemoveRoundsFromClip(AbstractWeapon &weapon)
     return roundsRemoved;
 }
 
-void WeaponSystemUtils::ReloadWeapon(AbstractWeapon &weapon)
+void WeaponSystemUtils::ReloadWeapon(AbstractWeapon &weapon, ursine::ecs::AudioEmitter *emitter)
 {
-    URSINE_TODO("Have to apply reload animation");
-
-    if (Reload( weapon )) { }
+    if (Reload( weapon ))
+    {
+        // play sound
+        emitter->PlayEvent( weapon.GetReloadSFX( ) );
+    }
 }
 
 void WeaponSystemUtils::ResetIdleSequence(AbstractWeapon* weapon)
@@ -272,7 +271,7 @@ void BaseWeaponSystem::EvaluateProjectileWeapons(float dt)
             WeaponSystemUtils::DecrementReloadTimer( dt, *weapon );
             break;
         case MUST_RELOAD:
-            WeaponSystemUtils::ReloadWeapon( *weapon );
+            WeaponSystemUtils::ReloadWeapon( *weapon, m_emitters[ it.first ] );
             break;
         case FIRE_TIMER_SET:
             WeaponSystemUtils::DecrementFireTimer( dt, *weapon );
@@ -297,9 +296,8 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        URSINE_TODO("Fix sound hack for weapons");
-        GetCoreSystem(AudioManager)->PlayGlobalEvent( "Fire_Gun_Hand" );
-    
+        m_emitters[ entity ]->PlayEvent( weapon.GetShootSFX( ) );
+
         // reset firing sequence
         /*weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
         weapon.m_animatorHandle->SetTimeScalar(1.2f);
@@ -407,7 +405,7 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
             WeaponSystemUtils::DecrementReloadTimer( dt, *weapon );
             break;
         case MUST_RELOAD:
-            WeaponSystemUtils::ReloadWeapon( *weapon );
+            WeaponSystemUtils::ReloadWeapon( *weapon, m_emitters[ it.first ] );
             break;
         case FIRE_TIMER_SET:
             WeaponSystemUtils::DecrementFireTimer( dt, *weapon );
@@ -431,8 +429,8 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
     {
         weapon.m_fireTimer = weapon.m_fireRate;
 
-        URSINE_TODO("Fix sound hack for weapons");
-        GetCoreSystem(AudioManager)->PlayGlobalEvent("Fire_Gun_Hand");
+        // play sound
+        m_emitters[ entity ]->PlayEvent( weapon.GetShootSFX( ) );
 
         //// reset firing sequence
         //weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);

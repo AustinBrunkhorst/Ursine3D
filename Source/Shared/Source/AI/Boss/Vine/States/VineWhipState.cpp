@@ -63,6 +63,7 @@ void VineWhipState::Update(VineAIStateMachine *machine)
             // tell the animator to whip in
             if (!m_animating)
             {
+                animator->SetTimeScalar( 2.0f );
                 playAnimation( animator, "Swipe_In" );
 
                 auto aiTrans = ai->GetOwner( )->GetTransform( );
@@ -144,6 +145,11 @@ void VineWhipState::Exit(VineAIStateMachine *machine)
         machine->GetAI( )->GetWhipCooldown( )
     );
 
+    auto animator = machine->GetAI( )->GetAnimator( );
+
+    if (animator)
+        animator->SetTimeScalar( 1.0f );
+
     auto health = machine->GetAI( )->GetOwner( )->GetComponent<Health>( );
 
     health->Listener( this )
@@ -170,7 +176,10 @@ void VineWhipState::onAnimationFinished(EVENT_HANDLER(Entity))
         {
             m_state = WhipState::Rotate;
 
-            sender->GetComponent<Animator>( )->SetCurrentState( "Whip_Idle" );
+            auto animator = sender->GetComponent<Animator>( );
+
+            animator->SetTimeScalar( 1.0f );
+            animator->SetCurrentState( "Whip_Idle" );
 
             break;
         }

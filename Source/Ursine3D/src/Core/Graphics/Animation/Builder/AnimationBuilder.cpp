@@ -35,8 +35,8 @@ namespace ursine
     void AnimationBuilder::GenerateAnimationData(
         const AnimationState *currentState,
         const AnimationState *futureState,
-        AnimationRig* rig, 
-        std::vector<SMat4> &outputMatPal,
+        AnimationRig* rig,
+        std::vector<SMat4> &outputBoneMatrix,
         std::vector<SMat4> &outputBones,
         const float &transFactor
     )
@@ -117,7 +117,7 @@ namespace ursine
 
         for (unsigned x = 0; x < boneCount; ++x)
         {
-            outputMatPal[x] = (outputBones[x] * offsetMatrices[x]);
+            outputBoneMatrix[x] = (outputBones[x] * offsetMatrices[x]);
         }
     }
 

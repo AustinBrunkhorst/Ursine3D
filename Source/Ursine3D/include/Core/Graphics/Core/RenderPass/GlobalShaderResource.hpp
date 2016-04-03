@@ -20,14 +20,14 @@ inline void GlobalCBuffer<T, BufferType>::Update(const T& data, ShaderSlot slotI
 {
     m_bufferData = data;
 
-    if(slotIndex != static_cast<ShaderSlot>(6))
+    if(slotIndex != static_cast<ShaderSlot>(14))
         m_slotIndex = static_cast<ShaderSlot>(slotIndex);
 }
 
 template <typename T, BUFFER_LIST BufferType>
 inline void GlobalCBuffer<T, BufferType>::Map()
 {
-    if( m_slotIndex == static_cast<ShaderSlot>( 15 ) )
+    if( m_slotIndex == static_cast<ShaderSlot>( 14 ) )
         m_manager->bufferManager->MapBuffer<BufferType>(&m_bufferData, m_targetShader, BufferType);
     else
         m_manager->bufferManager->MapBuffer<BufferType>( &m_bufferData, m_targetShader, m_slotIndex );

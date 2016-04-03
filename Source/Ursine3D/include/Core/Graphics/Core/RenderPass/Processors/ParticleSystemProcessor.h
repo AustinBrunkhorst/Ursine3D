@@ -24,11 +24,13 @@ namespace ursine
         class ParticleSystemProcessor : public GraphicsEntityProcessor
         {
         public:
-            ParticleSystemProcessor(void);
+            ParticleSystemProcessor(bool renderVelocity = false);
         private:
             virtual bool cullOperation(_DRAWHND, Camera &currentCamera);
             virtual void prepOperation(_DRAWHND, SMat4 &view, SMat4 &proj, Camera &currentCamera);
             virtual void renderOperation(_DRAWHND handle, Camera &currentCamera);
+
+            bool m_velocity;
         };
     }
 }

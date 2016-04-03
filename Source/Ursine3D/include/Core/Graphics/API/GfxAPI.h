@@ -116,6 +116,15 @@ namespace ursine
 
             SVec3 GetMousedOverWorldPosition( const GfxHND &cameraHandle );
             
+            float GetLightStepValue(void) const;
+            void SetLightStepValue(float steps);
+
+            float GetGlobalEmissive(void) const;
+            void SetGlobalEmissive(float value);
+
+            GfxHND GetLightMapTexture(void);
+            void SetLightMapTexture(GfxHND handle);
+            
             // private members
         private:
             privateData *m_privates;

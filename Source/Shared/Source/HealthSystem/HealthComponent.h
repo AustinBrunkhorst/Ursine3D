@@ -93,9 +93,35 @@ public:
         SetInvulnerable
     );
 
+    EditorField(
+        bool hasShield,
+        GetHasShield,
+        SetHasShield
+    );
+
+    EditorField(
+        float shieldHealth,
+        GetShieldHealth,
+        SetShieldHealth
+    );
+
+    EditorField(
+        float shieldRechargeDelay,
+        GetShieldRechargeDelay,
+        SetShieldRechargeDelay
+    );
+
+    EditorField(
+        float shieldRechargeRate,
+        GetShieldRechargeRate,
+        SetShieldRechargeRate
+    );
+
     Meta(Enable)
     Health(void);
     ~Health(void);
+
+    void OnSceneReady(ursine::Scene *scene) override;
 
     HealthType GetHealthType(void) const;
     void SetHealthType(HealthType type);
@@ -116,6 +142,19 @@ public:
     bool GetInvulnerable(void) const;
     void SetInvulnerable(bool invulnerable);
 
+    bool GetHasShield(void) const;
+    void SetHasShield(bool toggle);
+
+    float GetShieldHealth(void) const;
+    void SetShieldHealth(float shield);
+    float GetMaxShieldHealth(void) const;
+
+    float GetShieldRechargeDelay(void) const;
+    void SetShieldRechargeDelay(float delay);
+
+    float GetShieldRechargeRate(void) const;
+    void SetShieldRechargeRate(float rate);
+
     void DealDamage(float damage);
     void DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit);
 
@@ -126,12 +165,22 @@ private:
     void OnInitialize(void) override;
     void sendDamageTextEvent(const ursine::SVec3& contact, float damage, bool crit);
 
-    void OnDeath(EVENT_HANDLER(ursine::ecs::Entity));
+    void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
+
+    void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 
     HealthType m_type;
 
     float m_health;
     float m_maxHealth;
+
+    float m_shield;
+    float m_maxShield;
+
+    float m_shieldRechargeDelay;
+    float m_shieldRechargeTimer;
+
+    float m_shieldRechargeRate;
 
     ursine::resources::ResourceReference m_objToSpawn;
 
@@ -144,5 +193,7 @@ private:
 
     // Flag letting us know if we're invulnerable
     bool m_invulnerable;
+
+    bool m_hasShield;
 
 } Meta(Enable, WhiteListMethods, DisplayName( "Health" ));

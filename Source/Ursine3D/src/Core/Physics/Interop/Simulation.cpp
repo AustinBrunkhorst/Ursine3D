@@ -397,8 +397,6 @@ namespace ursine
 
         void Simulation::DispatchCollisionEvents(void)
         {
-            CollisionEventArgs args;
-
         #ifdef BULLET_PHYSICS
 
             auto *dispatcher = m_dynamicsWorld->getDispatcher( );

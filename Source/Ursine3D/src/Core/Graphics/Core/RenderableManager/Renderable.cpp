@@ -109,6 +109,7 @@ namespace ursine
         Model3D::Model3D(void)
         {
             m_matrixPalette.resize(MAX_BONE_COUNT);
+            m_matrixPaletteIT.resize(MAX_BONE_COUNT);
         }
 
         ///////////////////////////////////////////////////////////////////
@@ -118,6 +119,7 @@ namespace ursine
             Renderable::Initialize( );
 
             m_textureHandle = INTERNAL_BLANK_TEX;
+            m_normalHandle = INTERNAL_BLANK_TEX;
             m_modelHandle = 0;
 
             m_emissive = 0.0f;
@@ -159,6 +161,16 @@ namespace ursine
         void Model3D::SetTextureHandle(GfxHND handle)
         {
             m_textureHandle = handle;
+        }
+
+        GfxHND Model3D::GetNormalTextureHandle(void)
+        {
+            return m_normalHandle;
+        }
+
+        void Model3D::SetNormalTextureHandle(GfxHND handle)
+        {
+            m_normalHandle = handle;
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)
@@ -251,6 +263,11 @@ namespace ursine
             return m_matrixPalette;
         }
 
+        std::vector<SMat4>& Model3D::GetMatrixPaletteIT(void)
+        {
+            return m_matrixPaletteIT;
+        }
+
         int Model3D::GetMeshIndex(void) const
         {
             return m_meshIndex;
@@ -341,6 +358,7 @@ namespace ursine
 
             m_shadowmap = 0;
             m_shadowmapWidth = 1024;
+            m_renderShadows = true;
 
             Renderable::Initialize();
         }
@@ -510,9 +528,20 @@ namespace ursine
         {
             return m_shadowmap;
         }
+
         void Light::SetShadowmapHandle(GfxHND handle)
         {
             m_shadowmap = handle;
+        }
+
+        bool Light::GetRenderShadows(void) const
+        {
+            return m_renderShadows;
+        }
+
+        void Light::SetRenderShadows(bool renderShadows)
+        {
+            m_renderShadows = renderShadows;
         }
 
         /////////////////////////////////////////////////////////////

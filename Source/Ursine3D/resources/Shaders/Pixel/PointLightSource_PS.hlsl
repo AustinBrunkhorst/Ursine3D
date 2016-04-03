@@ -1,8 +1,5 @@
-//depth and color
-Texture2D gDepthTexture         : register(t0);
-Texture2D gColorSpecIntTexture  : register(t1);
-Texture2D gNormalTexture        : register(t2);
-Texture2D gSpecPowTexture       : register(t3);
+#include "../Headers/Randomness_H.hlsl"
+#include "../Headers/LightingCommon_H.hlsl"
 
 //buffer for light data
 cbuffer PointLightBuffer : register(b3)
@@ -13,126 +10,46 @@ cbuffer PointLightBuffer : register(b3)
     float   intensity       : packoffset(c1.w);
 }
 
-cbuffer invProj : register(b4)
-{
-    matrix  InvProj;
-    float   nearPlane;
-    float   farPlane;
-};
-
 //specular power range
-static const float2 cSpecPowerRange = { 0.1, 250.0 };
 
 /////////////////////////////////////////////////////////////////////
 // STRUCTS
 //input 
-struct DS_OUTPUT
+struct PS_INPUT
 {
     float4 Position : SV_POSITION;
     float4 cpPos    : TEXCOORD0;
 };
 
-//data from the buffers
-struct SURFACE_DATA
-{
-    float   depth;
-    float4  Color;
-    float3  Normal;
-    float   SpecInt;
-    float   SpecPow;
-    float   Emissive;
-};
-
-//material data
-struct Material
-{
-    float3 normal;
-    float4 diffuseColor;
-    float specIntensity;
-    float specPow;
-    float emissive;
-};
-
 /////////////////////////////////////////////////////////////////////
 // FUNCTIONS
-//calculating view position
-float3 CalcWorldPos( float2 csPos, float depth )
-{
-    float4 position;
-    position.xy = csPos.xy;
-    position.z = depth;
-    position.w = 1.0;
-    position = mul( position, InvProj );
-    position.xyz /= position.w;
-    return position.xyz;
-}
-
-//unpack the g buffer from our textures
-SURFACE_DATA UnpackGBuffer(int2 location)
-{
-    SURFACE_DATA Out;
-
-    // Cast to 3 component for the load function
-    int3 location3 = int3(location, 0);
-
-    // Get the depth value and convert it to linear depth
-    float depth = gDepthTexture.Load(location3).x;
-    Out.depth = depth;
-
-    // Get the base color and specular intensity
-    float4 baseColor = gColorSpecIntTexture.Load(location3);
-    Out.Color = baseColor;
-    Out.SpecInt;
-
-    // Sample the normal, convert it to the full range and noramalize it
-    float4 normalValue = gNormalTexture.Load(location3);
-    Out.Normal = normalValue.xyz;
-    Out.Normal = normalize(Out.Normal * 2.0 - 1.0);
-
-    //grab emissive value
-    Out.Emissive = normalValue.w;
-
-    // Scale the specular power back to the original range
-    float4 SpecPowerNorm = gSpecPowTexture.Load(location3);
-    Out.SpecPow = cSpecPowerRange.x + SpecPowerNorm.x * cSpecPowerRange.y;
-    Out.SpecInt = SpecPowerNorm.w;
-
-    return Out;
-}
-
 
 float3 CalcPoint( float3 position, Material material )
 {
-    //////////////////////////////////////////////////////////
-    //// NEW STUFF
-
-    float3 ToLight = lightPos.xyz - position;
-    float3 ToEye = -position;
-    float DistToLight = length(ToLight);
+    float3 toLight = lightPos.xyz - position;
+    float3 toEye = normalize(-position);
+    float DistToLight = length(toLight);
+    toLight /= DistToLight;
 
     // Phong diffuse
-
-    ToLight /= DistToLight; // Normalize
-    float NDotL = saturate(dot(ToLight, material.normal));
-    float3 finalColor = diffuseColor.rgb * NDotL;
+    float NDotL;
+    float3 diffuse = CalcDiffuseValue(toLight, material.normal, diffuseColor.rgb, NDotL); 
 
     // Blinn specular
-    ToEye = normalize(ToEye);
-    float3 HalfWay = normalize(ToEye + ToLight);
-    float NDotH = saturate(dot(HalfWay, material.normal));
-    finalColor += diffuseColor.rgb * pow(NDotH, material.specPow) *
-        material.specIntensity;
+    float3 HalfWay = normalize(toEye + toLight);
+    float specularValue = CalcSpecularValue(HalfWay, material.normal, material);
 
     // Attenuation
     float Attn = saturate(1.0f - (DistToLight / radius));
-    finalColor *= material.diffuseColor.xyz * Attn;
 
-    return finalColor * intensity;
+    // calculate final color
+    return CalculateLightmapResponse(toLight, -toLight, toEye, material) * Attn * diffuseColor.xyz;
+    // return CalcFinalLightValue(Attn * NDotL * intensity, diffuse, specularValue, material);
 }
 
 /////////////////////////////////////////////////////////////////////
 // MAIN
-float4 main( DS_OUTPUT In ) : SV_TARGET
+float4 main(PS_INPUT In ) : SV_TARGET
 {
     // Unpack the GBuffer
     SURFACE_DATA gbd = UnpackGBuffer(In.Position.xy);
@@ -147,12 +64,12 @@ float4 main( DS_OUTPUT In ) : SV_TARGET
 
     //calculate world position
     In.cpPos.xy /= In.cpPos.w;
-    float3 pos = CalcWorldPos(In.cpPos.xy, gbd.depth);
+    float3 pos = CalcViewPos(In.cpPos.xy, gbd.LinearDepth);
 
     //get the final color
     float4 finalColor;
     finalColor.xyz = CalcPoint(pos, mat);
-    finalColor.w = 1.0;
+    finalColor.w = 1.0; 
 
-    return finalColor;
+    return float4(finalColor.xyz, 1.0f);
 }

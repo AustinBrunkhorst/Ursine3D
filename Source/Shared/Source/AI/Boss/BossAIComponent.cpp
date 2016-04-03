@@ -18,6 +18,7 @@
 #include "BossPollinateState.h"
 #include "BossSludgeshotState.h"
 #include "BossSpawnState.h"
+#include "BossUndergroundState.h"
 #include "BossInvulnerableToggleState.h"
 #include "BossDazedState.h"
 #include "BossChangePhaseState.h"
@@ -541,9 +542,13 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
-        /*auto goUnderground = sm->AddState<BossGoUndergroundState>( );
-        auto spotlightAndTriggers = sm->AddState<Phase3TriggersState>( );
+        auto goUnderground = sm->AddState<BossUndergroundState>( );
+        /*auto spotlightAndTriggers = sm->AddState<Phase3TriggersState>( );
         auto wackamoleState = sm->AddState<Phase3WhackAMolee>( );*/
+
+        sm->SetInitialState( goUnderground );
+
+        m_bossLogic[ 2 ].push_back( sm );
     }
     // TESTING: Pollinate
     /*{

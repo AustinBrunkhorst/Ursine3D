@@ -41,6 +41,7 @@
 #include "ParticleTwisterComponent.h"
 #include "ParticlePathAnimatorComponent.h"
 #include "SpriteTextComponent.h"
+#include "GraphicsSettingsComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics

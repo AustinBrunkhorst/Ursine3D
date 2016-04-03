@@ -106,6 +106,11 @@ namespace ursine
 
             GfxInfo *gfxInfo;
 
+            float m_lightSteps;
+            float m_borderValue;
+            float m_globalEmissive;
+            GfxHND m_lightMapTexture;
+
             //thred stuff
         private:
             struct threadData
