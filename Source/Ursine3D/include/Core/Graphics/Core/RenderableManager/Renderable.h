@@ -118,6 +118,7 @@ namespace ursine
             void SetColor(const Color color);
 
             std::vector<SMat4> &GetMatrixPalette(void);
+            std::vector<SMat4> &GetMatrixPaletteIT(void);
 
             int GetMeshIndex(void) const;
             void SetMeshIndex(const int index);
@@ -141,6 +142,7 @@ namespace ursine
 
             float m_animationTime;
             std::vector<SMat4> m_matrixPalette;
+            std::vector<SMat4> m_matrixPaletteIT;
 
             Vec2 m_textureUVOffset;
 

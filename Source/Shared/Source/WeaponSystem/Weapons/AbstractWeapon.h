@@ -15,6 +15,7 @@
 #include "DamageOnCollideComponent.h"
 
 #include <ArchetypeData.h>
+#include <AudioItemEventData.h>
 
 #define UNLIMITED_AMMO  MAXINT
 #define UNLIMITED_CLIP  MAXINT
@@ -34,80 +35,93 @@
 #define MAX_AMMO false
 #define AMMO_USED true
 
-#define AbstractWeaponFields( )            \
-    EditorField(                           \
-        bool SemiAutomatic,                \
-        GetSemiAutomatic,                  \
-        SetSemiAutomatic                   \
-    );                                     \
-                                           \
-    EditorField(                           \
-        float FireDelay,                   \
-        GetFireRate,                       \
-        SetFireRate                        \
-    );                                     \
-                                           \
-    EditorField(                           \
-        float ReloadTime,                  \
-        GetReloadTime,                     \
-        SetReloadTime                      \
-    );                                     \
-                                           \
-    EditorField(                           \
-        float RecoilAngle,                 \
-        GetRecoilAngle,                    \
-        SetRecoilAngle                     \
-    );                                     \
-                                           \
-    EditorField(                           \
-        float Range,                       \
-        GetMaxRange,                       \
-        SetMaxRange                        \
-    );                                     \
-                                           \
-    EditorField(                           \
-        float Accuracy,                    \
-        GetAccuracy,                       \
-        SetAccuracy                        \
-    );                                     \
-                                           \
-    EditorField(                           \
-        float SpreadFactor,                \
-        GetSpreadFactor,                   \
-        SetSpreadFactor                    \
-    );                                     \
-                                           \
-    EditorField(                           \
-        int MaxAmmoCount,                  \
-        GetMaxAmmoCount,                   \
-        SetMaxAmmoCount                    \
-    );                                     \
-                                           \
-    EditorField(                           \
-        int ClipSize,                      \
-        GetClipSize,                       \
-        SetClipSize                        \
-    );                                     \
-                                           \
-    EditorField(                           \
-        int ProjectileFireCount,           \
-        GetProjFireCount,                  \
-        SetProjFireCount                   \
-    );                                     \
-                                           \
-    EditorField(                           \
-        WeaponType WeaponTier,             \
-        GetWeaponType,                     \
-        SetWeaponType                      \
-    );                                     \
-                                           \
-    EditorResourceField(                   \
-        ursine::resources::ArchetypeData,  \
-        MuzzleParticle,                    \
-        GetFireParticle,                   \
-        SetFireParticle                    \
-    );                                     
-
+#define AbstractWeaponFields( )                \
+    EditorField(                               \
+        bool SemiAutomatic,                    \
+        GetSemiAutomatic,                      \
+        SetSemiAutomatic                       \
+    );                                         \
+                                               \
+    EditorField(                               \
+        float FireDelay,                       \
+        GetFireRate,                           \
+        SetFireRate                            \
+    );                                         \
+                                               \
+    EditorField(                               \
+        float ReloadTime,                      \
+        GetReloadTime,                         \
+        SetReloadTime                          \
+    );                                         \
+                                               \
+    EditorField(                               \
+        float RecoilAngle,                     \
+        GetRecoilAngle,                        \
+        SetRecoilAngle                         \
+    );                                         \
+                                               \
+    EditorField(                               \
+        float Range,                           \
+        GetMaxRange,                           \
+        SetMaxRange                            \
+    );                                         \
+                                               \
+    EditorField(                               \
+        float Accuracy,                        \
+        GetAccuracy,                           \
+        SetAccuracy                            \
+    );                                         \
+                                               \
+    EditorField(                               \
+        float SpreadFactor,                    \
+        GetSpreadFactor,                       \
+        SetSpreadFactor                        \
+    );                                         \
+                                               \
+    EditorField(                               \
+        int MaxAmmoCount,                      \
+        GetMaxAmmoCount,                       \
+        SetMaxAmmoCount                        \
+    );                                         \
+                                               \
+    EditorField(                               \
+        int ClipSize,                          \
+        GetClipSize,                           \
+        SetClipSize                            \
+    );                                         \
+                                               \
+    EditorField(                               \
+        int ProjectileFireCount,               \
+        GetProjFireCount,                      \
+        SetProjFireCount                       \
+    );                                         \
+                                               \
+    EditorField(                               \
+        WeaponType WeaponTier,                 \
+        GetWeaponType,                         \
+        SetWeaponType                          \
+    );                                         \
+                                               \
+    EditorResourceField(                       \
+        ursine::resources::ArchetypeData,      \
+        MuzzleParticle,                        \
+        GetFireParticle,                       \
+        SetFireParticle                        \
+    );                                         \
+                                               \
+    EditorResourceField(                       \
+        ursine::resources::AudioItemEventData, \
+        ShootSFX,                              \
+        GetShootSFX,                           \
+        SetShootSFX                            \
+    );                                         \
+                                               \
+    EditorResourceField(                       \
+        ursine::resources::AudioItemEventData, \
+        ReloadSFX,                             \
+        GetReloadSFX,                          \
+        SetReloadSFX                           \
+    );                                         \
 
 #define AbstractWeaponConnect( Obj )                            \
     GetOwner( )->Listener( this )                               \
@@ -212,6 +226,12 @@ public:
     const ursine::resources::ResourceReference &GetFireParticle(void) const;
     void SetFireParticle(const ursine::resources::ResourceReference &archetype);
 
+    const ursine::resources::ResourceReference &GetShootSFX(void) const;
+    void SetShootSFX(const ursine::resources::ResourceReference &sfx);
+
+    const ursine::resources::ResourceReference &GetReloadSFX(void) const;
+    void SetReloadSFX(const ursine::resources::ResourceReference &sfx);
+
     bool GetSemiAutomatic(void) const;
     void SetSemiAutomatic(bool semi);
 
@@ -283,6 +303,10 @@ protected:
 
     // Particle to spawn at tip of gun when shot
     ursine::resources::ResourceReference m_fireParticle;
+
+    // SFX to play when shooting and reloading
+    ursine::resources::ResourceReference m_shootSfx;
+    ursine::resources::ResourceReference m_reloadSfx;
 
     // is weapon a semi-automatic
     bool m_semiAutomatic;

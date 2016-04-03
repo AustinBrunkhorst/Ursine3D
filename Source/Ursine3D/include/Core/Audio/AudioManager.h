@@ -38,112 +38,112 @@
 namespace AK
 {
 #ifdef WIN32
-	inline void * AllocHook(size_t in_size)
-	{
-		return malloc(in_size);
-	}
-	inline void FreeHook(void * in_ptr)
-	{
-		free(in_ptr);
-	}
-	// Note: VirtualAllocHook() may be used by I/O pools of the default implementation
-	// of the Stream Manager, to allow "true" unbuffered I/O (using FILE_FLAG_NO_BUFFERING
-	// - refer to the Windows SDK documentation for more details). This is NOT mandatory;
-	// you may implement it with a simple malloc().
-	inline void * VirtualAllocHook(
-		void * in_pMemAddress,
-		size_t in_size,
-		DWORD in_dwAllocationType,
-		DWORD in_dwProtect
-		)
-	{
-		return VirtualAlloc(in_pMemAddress, in_size, in_dwAllocationType, in_dwProtect);
-	}
-	inline void VirtualFreeHook(
-		void * in_pMemAddress,
-		size_t in_size,
-		DWORD in_dwFreeType
-		)
-	{
-		VirtualFree(in_pMemAddress, in_size, in_dwFreeType);
-	}
+    inline void * AllocHook(size_t in_size)
+    {
+        return malloc(in_size);
+    }
+    inline void FreeHook(void * in_ptr)
+    {
+        free(in_ptr);
+    }
+    // Note: VirtualAllocHook() may be used by I/O pools of the default implementation
+    // of the Stream Manager, to allow "true" unbuffered I/O (using FILE_FLAG_NO_BUFFERING
+    // - refer to the Windows SDK documentation for more details). This is NOT mandatory;
+    // you may implement it with a simple malloc().
+    inline void * VirtualAllocHook(
+        void * in_pMemAddress,
+        size_t in_size,
+        DWORD in_dwAllocationType,
+        DWORD in_dwProtect
+        )
+    {
+        return VirtualAlloc(in_pMemAddress, in_size, in_dwAllocationType, in_dwProtect);
+    }
+    inline void VirtualFreeHook(
+        void * in_pMemAddress,
+        size_t in_size,
+        DWORD in_dwFreeType
+        )
+    {
+        VirtualFree(in_pMemAddress, in_size, in_dwFreeType);
+    }
 #endif
 }
 
 namespace ursine
 {
-	struct ListenerNode
-	{
-		ListenerNode* next;
-		ListenerIndex listener;
-		bool available;
-	};
+    struct ListenerNode
+    {
+        ListenerNode* next;
+        ListenerIndex listener;
+        bool available;
+    };
 
-	class AudioManager : public core::CoreSystem
-	{
-		CORE_SYSTEM;
+    class AudioManager : public core::CoreSystem
+    {
+        CORE_SYSTEM;
 
-	public:
-		Meta(Enable)
-		AudioManager(void) { }
+    public:
+        Meta(Enable)
+        AudioManager(void) { }
         ~AudioManager(void);
 
-		void OnInitialize(void) override;
-		void OnRemove(void) override;
+        void OnInitialize(void) override;
+        void OnRemove(void) override;
 
-		void PlayEvent(const std::string name, AkGameObjectID obj);
+        void PlayEvent(const std::string name, AkGameObjectID obj);
 
-		static void PlayGlobalEvent(const std::string &name);
-		static void StopGlobalEvent(const std::string &name);
+        static void PlayGlobalEvent(const std::string &name);
+        static void StopGlobalEvent(const std::string &name);
         static bool IsGlobalEventPlaying(const std::string &name);
         static void SetGlobalVolume();
         static void ResetGlobalVolume();
 
-		static void PauseAudio();
+        static void PauseAudio();
 
-		static void StopSound(std::string name, AkGameObjectID id);
+        static void StopSound(std::string name, AkGameObjectID id);
 
-		static void ResumeAudio();
+        static void ResumeAudio();
 
-		void LoadBank(const std::string &bankName, AkBankID &bankID);
-		void LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank);
+        void LoadBank(const std::string &bankName, AkBankID &bankID);
+        void LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank);
 
-		void UnloadBank(const std::string &bankName);
-		void UnloadBank(const resources::AudioData &data);
+        void UnloadBank(const std::string &bankName);
+        void UnloadBank(const resources::AudioData &data);
 
-		void RegisterObject(AkGameObjectID obj, int listener);
+        void RegisterObject(AkGameObjectID obj, int listener);
 
-		void UnRegisterObject(AkGameObjectID obj);
+        void UnRegisterObject(AkGameObjectID obj);
 
         URSINE_TODO("@Jason you need to implement this.");
-		// void GetEventStrings(const AkBankID);
+        // void GetEventStrings(const AkBankID);
 
-		ListenerIndex GetListener();
+        ListenerIndex GetListener();
 
-		void FreeListener(ListenerIndex listener);
+        void FreeListener(ListenerIndex listener);
 
-		void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, 
-			const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param);
+        void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, 
+            const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param);
 
         Meta(Disable)
-		CAkFilePackageLowLevelIOBlocking g_lowLevelIO;
+        CAkFilePackageLowLevelIOBlocking g_lowLevelIO;
 
-	private:
-		AkInitSettings m_initSettings;
-		AkPlatformInitSettings m_platSettings;
+    private:
+        AkInitSettings m_initSettings;
+        AkPlatformInitSettings m_platSettings;
 
-		ListenerNode* m_head;
+        ListenerNode* m_head;
 
-		void onAppUpdate(EVENT_HANDLER(Application));
+        void onAppUpdate(EVENT_HANDLER(Application));
 
-		void PopulateList();
+        void PopulateList();
 
-		void DestroyList();
+        void DestroyList();
 
-		void Init(AkInitSettings* in_pSettings, 
-			AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
+        void Init(AkInitSettings* in_pSettings, 
+            AkPlatformInitSettings* in_pPlatformSettings, const AkOSChar* path);
 
-	} Meta(Enable, WhiteListMethods);
+    } Meta(Enable, WhiteListMethods);
 }
 
 // Global JavaScript methods

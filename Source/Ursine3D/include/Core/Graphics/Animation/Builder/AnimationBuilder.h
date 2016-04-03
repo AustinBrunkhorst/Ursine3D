@@ -39,7 +39,7 @@ namespace ursine
             const AnimationState *currentState,
             const AnimationState *futureState,
             AnimationRig *rig,
-            std::vector<SMat4> &outputMatPal,
+            std::vector<SMat4> &outputBoneMatrix,
             std::vector<SMat4> &outputBones,
             const float &transFactor
         );

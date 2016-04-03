@@ -54,7 +54,7 @@ namespace ursine
 
             m_model->SetDebug(false);
 
-           m_graphics->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
+            m_graphics->RenderableMgr.DestroyRenderable( m_base->GetHandle( ) );
 
             // release resource - need to call unload model, texture.
             m_graphics->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
@@ -342,11 +342,21 @@ namespace ursine
             {
                 x = SMat4::Identity();
             }
+
+            for (auto &x : m_model->GetMatrixPaletteIT())
+            {
+                x = SMat4::Identity();
+            }
         }
 
         std::vector<SMat4> &Model3D::getMatrixPalette(void)
         {
             return m_model->GetMatrixPalette( );
+        }
+
+        std::vector<SMat4> &Model3D::getMatrixPaletteIT(void)
+        {
+            return m_model->GetMatrixPaletteIT( );
         }
 
         void Model3D::OnSerialize(Json::object &output) const

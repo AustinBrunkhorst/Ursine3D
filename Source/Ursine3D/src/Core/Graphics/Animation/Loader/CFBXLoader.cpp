@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Conversion.cpp
+** CFBXLoader.cpp
 **
 ** Author:
 ** - Park Hyung Jun - park.hyungjun@digipen.edu
@@ -1717,6 +1717,7 @@ namespace ursine
         void CFBXLoader::TransformWithInverseMeshTM(std::vector<pseudodx::XMFLOAT3> &Float3Vec, const FbxAMatrix &mat)
         {
             SMat4 inverse = FBXAMatrixToSMat4(&mat.Inverse());
+
             for (auto &iter : Float3Vec)
             {
                 SVec3 transformed = inverse.TransformVector(SVec3(iter.x, iter.y, iter.z));
