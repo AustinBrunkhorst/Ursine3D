@@ -27,6 +27,7 @@ namespace ursine
             RASTER_STATE_WIREFRAME_NOCULL,
             RASTER_STATE_LINE_RENDERING,
             RASTER_STATE_SHADOW_RENDER,
+            RASTER_STATE_OUTLINE,
             RASTER_STATE_UI,
             RASTER_STATE_COUNT
         };

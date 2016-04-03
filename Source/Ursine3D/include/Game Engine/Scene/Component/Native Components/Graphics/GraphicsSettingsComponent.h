@@ -14,6 +14,8 @@
 #pragma once
 
 #include "Component.h"
+#include "TextureData.h"
+#include "ResourceData.h"
 
 namespace ursine
 {
@@ -38,11 +40,21 @@ namespace ursine
                 SetLightStepValue
             );
 
+            EditorResourceField(
+                ursine::resources::TextureData,
+                lightMap,
+                GetLightMapTexture,
+                SetLightMapTexture
+            );
+
+
             Meta(Enable)
             GraphicsSettings(void);
             ~GraphicsSettings(void);
 
             void OnInitialize(void) override;
+
+            void OnSceneReady(Scene *scene) override;
 
             float GetGlobalEmissive(void) const;
             void SetGlobalEmissive(float value);
@@ -50,7 +62,14 @@ namespace ursine
             float GetLightStepValue(void) const;
             void SetLightStepValue(float value);
 
+            const resources::ResourceReference &GetLightMapTexture(void) const;
+            void SetLightMapTexture(const resources::ResourceReference &texture);
+
         private:
-        } Meta(Enable, DisplayName("GraphicsSettings"));
+            resources::ResourceReference m_lightMap;
+
+            void invalidateLightmap(bool unload = true);
+
+        } Meta(Enable, WhiteListMethods, DisplayName("GraphicsSettings"));
     }
 }

@@ -107,6 +107,25 @@ namespace ursine
             result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_WRAP_TEX ]);
             UAssert(result == S_OK, "Failed to make sampler state!");
 
+            // Texture Wrap /////////////////////////////////////////////////
+            samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+            samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+            samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+            samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+            samplerDesc.MipLODBias = 0.0f;
+            samplerDesc.MaxAnisotropy = 16;
+            samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+            samplerDesc.BorderColor[ 0 ] = 0;
+            samplerDesc.BorderColor[ 1 ] = 0;
+            samplerDesc.BorderColor[ 2 ] = 0;
+            samplerDesc.BorderColor[ 3 ] = 0;
+            samplerDesc.MinLOD = 0;
+            samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+            //Create the texture sampler state.
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_NO_WRAP_TEX ]);
+            UAssert(result == S_OK, "Failed to make sampler state!");
+
             // no sampling //////////////////////////////////////////////////
             samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
             samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;

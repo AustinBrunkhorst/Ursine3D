@@ -109,6 +109,7 @@ namespace ursine
             float m_lightSteps;
             float m_borderValue;
             float m_globalEmissive;
+            GfxHND m_lightMapTexture;
 
             //thred stuff
         private:

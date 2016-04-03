@@ -118,6 +118,7 @@ namespace ursine
             Renderable::Initialize( );
 
             m_textureHandle = INTERNAL_BLANK_TEX;
+            m_normalHandle = INTERNAL_BLANK_TEX;
             m_modelHandle = 0;
 
             m_emissive = 0.0f;
@@ -159,6 +160,16 @@ namespace ursine
         void Model3D::SetTextureHandle(GfxHND handle)
         {
             m_textureHandle = handle;
+        }
+
+        GfxHND Model3D::GetNormalTextureHandle(void)
+        {
+            return m_normalHandle;
+        }
+
+        void Model3D::SetNormalTextureHandle(GfxHND handle)
+        {
+            m_normalHandle = handle;
         }
 
         void Model3D::SetMaterialData(float emiss, float pow, float intensity)

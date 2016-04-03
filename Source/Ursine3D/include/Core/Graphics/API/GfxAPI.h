@@ -121,6 +121,9 @@ namespace ursine
 
             float GetGlobalEmissive(void) const;
             void SetGlobalEmissive(float value);
+
+            GfxHND GetLightMapTexture(void);
+            void SetLightMapTexture(GfxHND handle);
             
             // private members
         private:

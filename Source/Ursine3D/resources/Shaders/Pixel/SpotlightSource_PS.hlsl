@@ -1,21 +1,10 @@
-//depth and color
-Texture2D gDepthTexture : register(t0);
-Texture2D gColorSpecIntTexture: register(t1);
-Texture2D gNormalTexture: register(t2);
-Texture2D gSpecPowTexture: register(t3);
+#include "../Headers/LightingCommon_H.hlsl"
+
+// shadowmap
 Texture2D gShadowmapTexture: register(t4);
 
 //sample type
-SamplerState SampleType : register(s0);
 SamplerComparisonState PCFSampler : register(s1);
-
-//inv projection 
-cbuffer invView : register(b4)
-{
-    float4x4 invProj;
-    float nearPlane;
-    float farPlane;
-};
 
 cbuffer ShadowProj : register(b13)
 {
@@ -24,106 +13,52 @@ cbuffer ShadowProj : register(b13)
     matrix lightProj;
 };
 
-cbuffer ShadowFalloff : register(b12)
-{
-    float lightStep;
-    float borderCutoff;
-    float2 buffer;
-}
-
 //buffer for light data
 cbuffer SpotLightBuffer : register(b11)
 {
     float3 lightPosition    : packoffset(c0);
-    float intensity         : packoffset(c0.w);
+    float intensity : packoffset(c0.w);
     float3 lightDirection   : packoffset(c1);
-    float innerAngle        : packoffset(c1.w);
+    float innerAngle : packoffset(c1.w);
     float3 diffuseColor     : packoffset(c2);
-    float outerAngle        : packoffset(c2.w);
+    float outerAngle : packoffset(c2.w);
     float3 falloffValues    : packoffset(c3);
-    float lightSize         : packoffset(c3.w);
+    float lightSize : packoffset(c3.w);
 }
-
-//specular power range
-static const float2 cSpecPowerRange = { 0.1, 250.0 };
 
 /////////////////////////////////////////////////////////////////////
 // STRUCTS
 //input 
-struct DS_OUTPUT
+struct PS_INPUT
 {
     float4 Position : SV_POSITION;
     float4 cpPos    : TEXCOORD0;
 };
 
-//data from the buffers
-struct SURFACE_DATA
-{
-    float   LinearDepth;
-    float4  Color;
-    float3  Normal;
-    float   SpecInt;
-    float   SpecPow;
-    float   Emissive;
-};
-
-//material data
-struct Material
-{
-    float3  normal;
-    float4  diffuseColor;
-    float   specIntensity;
-    float   specPow;
-    float   emissive;
-};
-
 /////////////////////////////////////////////////////////////////////
 // FUNCTIONS
-
-float LinearizeDepth(float depth)
-{
-    return (2.f * nearPlane) / (farPlane + nearPlane - depth * (farPlane - nearPlane));
-}
-
-//calculating world position
-float3 CalcViewPos(
-    float2 csPos, 
-    float linearDepth
-)
-{
-    float4 position;
-    position.xy = csPos.xy;
-    position.z = linearDepth;
-    position.w = 1.0;
-    position = mul(
-        position, 
-        invProj
-    );
-    position.xyz /= position.w;
-    return position.xyz;
-}
 
 float SpotShadowPCF(float3 position)
 {
     // Transform the view position to world space
     float4 worldSpace = mul(
         float4(
-            position, 
+            position,
             1.0
-        ), 
+            ),
         invCamView
-    );
+        );
 
     // transform world space into light projected space
     float4 posShadowMap = mul(
-        worldSpace, 
+        worldSpace,
         lightView
-    );
+        );
 
     posShadowMap = mul(
-        posShadowMap, 
+        posShadowMap,
         lightProj
-    );
+        );
 
     // Transform the position to shadow clip space
     float3 UVD = posShadowMap.xyz / posShadowMap.w;
@@ -141,11 +76,11 @@ float SpotShadowPCF(float3 position)
     //    for (x = -1.5; x <= 1.5; x += 1.5)
     //        sum += 
 
-    return gShadowmapTexture.SampleCmpLevelZero(
-        PCFSampler, 
-        UVD.xy, 
+    return saturate(gShadowmapTexture.SampleCmpLevelZero(
+        PCFSampler,
+        UVD.xy,
         UVD.z
-    );
+        ));
 
     /*
     return (gShadowmapTexture.SampleCmpLevelZero(PCFSampler, UVD.xy + float2(-1.5f, 0.5f) * offsetY, UVD.z) +
@@ -157,100 +92,55 @@ float SpotShadowPCF(float3 position)
     //return gShadowmapTexture.SampleCmpLevelZero(PCFSampler, UVD.xy, UVD.z);
 }
 
-//unpack the g buffer from our textures
-SURFACE_DATA UnpackGBuffer(int2 location)
-{
-    SURFACE_DATA Out;
-
-    // Cast to 3 component for the load function
-    int3 location3 = int3(
-        location, 
-        0
-    );
-
-    // Get the depth value and convert it to linear depth
-    float depth = gDepthTexture.Load( location3 ).x;
-    Out.LinearDepth = depth;
-
-    // Get the base color and specular intensity
-    float4 baseColor = gColorSpecIntTexture.Load( location3 );
-    Out.Color = baseColor;
-    Out.SpecInt;
-
-    // Sample the normal, convert it to the full range and noramalize it
-    float4 normalValue = gNormalTexture.Load( location3 );
-    Out.Normal = normalValue.xyz;
-    Out.Normal = normalize( Out.Normal * 2.0 - 1.0 );
-
-    //grab emissive value
-    Out.Emissive = normalValue.w;
-
-    // Scale the specular power back to the original range
-    float4 SpecPowerNorm = gSpecPowTexture.Load( location3 );
-    Out.SpecPow = cSpecPowerRange.x + SpecPowerNorm.x * cSpecPowerRange.y;
-    Out.SpecInt = SpecPowerNorm.w;
-
-    return Out;
-}
-
 float3 CalcPoint(float3 position, Material material)
 {
-    float3 toLight = normalize(-lightDirection);
-    float3 pixelToCamera = normalize(-position);
+    float3 toLight = normalize(lightPosition - position);
+    float3 toEye = normalize(-position);
     float3 lightToPixel = position - lightPosition;
 
     // grab the length
-    float distanceToPixel = length( lightToPixel );
+    float distanceToPixel = length(lightToPixel);
     lightToPixel /= distanceToPixel;
 
-    // phong diffuse
-    float NDotL = saturate(dot(toLight, material.normal));
-    float3 finalColor = diffuseColor.rgb * intensity;
+    // Phong diffuse
+    float NDotL;
+    float3 diffuse = CalcDiffuseValue(toLight, material.normal, diffuseColor.rgb, NDotL);
 
     // Blinn specular
-    float3 HalfWay = normalize(pixelToCamera + toLight);
-    float NDotH = saturate(dot(HalfWay, material.normal));
-    float specularValue = max(pow(NDotH, material.specPow), 0) * material.specIntensity;
+    float3 HalfWay = normalize(toEye + toLight);
+    float specularValue = CalcSpecularValue(HalfWay, material.normal, material);
 
     // angle attenuation
-    float angleInCone = dot( lightToPixel, lightDirection );
-    float angleAttenuation = (angleInCone - outerAngle) / (innerAngle  - outerAngle);
+    float angleInCone = dot(lightToPixel, lightDirection);
+    float angleAttenuation = saturate((angleInCone - outerAngle) / (innerAngle - outerAngle));
 
     // distance attenuation
-    float distAttenuation = saturate( 1.0f - (distanceToPixel / lightSize) );
+    float Attn = saturate(1.0f - (distanceToPixel / lightSize));
 
-    //float cellFalloff = (int)(normalScalar * lightStep) / lightStep;
-
-    //cellFalloff = cellFalloff;
-
-    //if (abs(dot(material.normal, pixelToCamera) < borderCutoff))
-    //    return float3(0, 0, 0);
-
-    float3 finalValue = ((finalColor * material.diffuseColor) + specularValue);
-
-    return distAttenuation * angleAttenuation * NDotL * SpotShadowPCF(position) * finalValue;
+    return CalculateLightmapResponse(toLight, lightDirection, toEye, material) * Attn * angleAttenuation;
+    // return CalcFinalLightValue(angleAttenuation * Attn * NDotL * intensity * SpotShadowPCF(position), diffuse, specularValue, material);
 }
 
-float4 main(DS_OUTPUT In) : SV_TARGET
+float4 main(PS_INPUT In) : SV_TARGET
 {
     // Unpack the GBuffer
-    SURFACE_DATA gbd = UnpackGBuffer( In.Position.xy );
+    SURFACE_DATA gbd = UnpackGBuffer(In.Position.xy);
 
-    // Convert the data into the material structure
-    Material mat;
-    mat.normal          = gbd.Normal;
-    mat.diffuseColor    = gbd.Color;
-    mat.specPow         = gbd.SpecPow;
-    mat.specIntensity   = gbd.SpecInt;
-    mat.emissive        = gbd.Emissive;
+// Convert the data into the material structure
+Material mat;
+mat.normal = gbd.Normal;
+mat.diffuseColor = gbd.Color;
+mat.specPow = gbd.SpecPow;
+mat.specIntensity = gbd.SpecInt;
+mat.emissive = gbd.Emissive;
 
-    //calculate view position
-    In.cpPos.xy /= In.cpPos.w;
-    float3 position = CalcViewPos(
-        In.cpPos.xy, 
-        gbd.LinearDepth
+//calculate view position
+In.cpPos.xy /= In.cpPos.w;
+float3 position = CalcViewPos(
+    In.cpPos.xy,
+    gbd.LinearDepth
     );
 
-    //get the final color, return
-    return float4(CalcPoint(position, mat), 1.0f);
+//get the final color, return
+return float4(CalcPoint(position, mat), 1.0f);
 }

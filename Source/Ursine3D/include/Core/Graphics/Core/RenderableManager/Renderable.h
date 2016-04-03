@@ -96,6 +96,9 @@ namespace ursine
             GfxHND GetTextureHandle(void);
             void SetTextureHandle(GfxHND handle);
 
+            GfxHND GetNormalTextureHandle(void);
+            void SetNormalTextureHandle(GfxHND handle);
+
             void GetMaterialData(float &emiss, float &pow, float &intensity) const;
             void SetMaterialData(float emiss, float pow, float intensity);
 
@@ -134,6 +137,7 @@ namespace ursine
 
             GfxHND m_modelHandle;
             GfxHND m_textureHandle;
+            GfxHND m_normalHandle;
 
             float m_animationTime;
             std::vector<SMat4> m_matrixPalette;

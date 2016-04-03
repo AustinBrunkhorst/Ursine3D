@@ -78,6 +78,7 @@ namespace ursine
         {
             invalidateModel( false );
             invalidateTexture( false );
+            invalidateNormalTexture( false );
         }
 
         const resources::ResourceReference& Model3D::GetModel(void) const
@@ -112,6 +113,23 @@ namespace ursine
             invalidateTexture( );
 
             NOTIFY_COMPONENT_CHANGED( "texture", m_textureResource );
+        }
+
+        const resources::ResourceReference& Model3D::GetNormalTexture(void) const
+        {
+            return m_normalTextureResource;
+        }
+
+        void Model3D::SetNormalTexture(const resources::ResourceReference &texture)
+        {
+            m_normalTextureResource = texture;
+
+            if (!resourcesAreAvailable())
+                return;
+
+            invalidateNormalTexture();
+
+            NOTIFY_COMPONENT_CHANGED("normalMap", m_normalTextureResource);
         }
 
         const graphics::ModelResource *Model3D::GetModelResource(void) const
@@ -271,6 +289,28 @@ namespace ursine
                 m_graphics->ResourceMgr.LoadTexture( handle );
 
                 m_model->SetTextureHandle(handle);
+            }
+        }
+
+        void Model3D::invalidateNormalTexture(bool unload)
+        {
+            auto data = loadResource<resources::TextureData>(m_normalTextureResource);
+
+            if (data == nullptr)
+            {
+                // default
+                m_model->SetTextureHandle(1);
+            }
+            else
+            {
+                auto handle = data->GetTextureHandle();
+
+                if (unload)
+                    m_graphics->ResourceMgr.UnloadTexture(m_model->GetTextureHandle());
+
+                m_graphics->ResourceMgr.LoadTexture(handle);
+
+                m_model->SetNormalTextureHandle(handle);
             }
         }
 

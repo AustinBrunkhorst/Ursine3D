@@ -120,6 +120,7 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // map texture
             m_manager->textureManager->MapTextureByID( handle.Material_ );
+            m_manager->textureManager->MapTextureByID( static_cast<unsigned>(model.GetNormalTextureHandle( ) & 0xFFFF), 1 );
         }
 
         void Model3DProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
