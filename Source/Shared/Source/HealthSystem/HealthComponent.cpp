@@ -60,6 +60,12 @@ Health::~Health(void)
 {
     GetOwner( )->Listener(this)
         .Off( ursine::ecs::ENTITY_REMOVED, &Health::onDeath );
+
+    auto world = GetOwner( )->GetWorld( );
+
+    if (world)
+        world->Listener( this )
+            .Off( WORLD_UPDATE, &Health::onUpdate );
 }
 
 void Health::OnSceneReady(Scene *scene)
