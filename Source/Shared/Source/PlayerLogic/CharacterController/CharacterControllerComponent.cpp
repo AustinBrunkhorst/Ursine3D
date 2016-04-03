@@ -29,6 +29,7 @@ CharacterController::CharacterController(void)
     , m_highRotationFloor( 1.0f )
     , m_lowRotationFactor( 0.0f )
     , m_mediumRotationFactor( 1.0f )
+    , m_jumpDirectionScalar( 0.2f )
     , m_lockMovement( false )
     , m_lockLooking( false ) { }
 
@@ -156,6 +157,18 @@ void CharacterController::SetLockLooking(bool flag)
         GetOwner( )->Dispatch( game::CEASE_FIRE, nullptr );
     else
         GetOwner( )->Dispatch( game::FIRE_AT_WILL, nullptr );
+}
+
+float CharacterController::GetJumpDirectionScalar(void) const
+{
+    return 1.0f + m_jumpDirectionScalar;
+}
+
+void CharacterController::SetJumpDirectionScalar(float scalar)
+{
+    m_jumpDirectionScalar = scalar;
+
+    NOTIFY_COMPONENT_CHANGED( "jumpDirectionScalar", m_jumpDirectionScalar );
 }
 
 void CharacterController::OnInitialize(void)
