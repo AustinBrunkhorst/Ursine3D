@@ -35,7 +35,7 @@ float3 CalcPoint( float3 position, Material material )
     float specularValue = CalcSpecularValue(HalfWay, material.normal, material);
 
     // calculate final color
-    return CalculateLightmapResponse(toLight, -toLight, toEye, material);
+    return CalculateLightmapResponse(toLight, -toLight, toEye, material) * diffuseColor.xyz;
     // return CalcFinalLightValue(NDotL * intensity, diffuse, specularValue, material);
 }
 
