@@ -168,6 +168,7 @@
 #include "Triggers/SegmentChangeTriggerComponent.h"
 #include "Triggers/VisibilityTriggerComponent.h"
 #include "Triggers/AnimateEntityOnTriggerComponent.h"
+#include "Triggers/Phase3LightTriggerComponent.h"
 
 /////////////////////////////////
 //           UI                //

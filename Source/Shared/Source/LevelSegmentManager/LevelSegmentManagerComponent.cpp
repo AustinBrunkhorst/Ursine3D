@@ -348,6 +348,41 @@ void LevelSegmentManager::initBossRoomLogic(void)
         } );
     }
 
+    // Turn phase 3 lights on
+    {
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase 3 Lights On", this );
+        sm->SetInitialState(
+            sm->AddState<ToggleLightGroupState>(
+                true, std::vector<std::string>{ resources->phase3CenterLights }
+            )
+        );
+        addSegmentLogic( sm, {
+            LevelSegments::BossRoom_Phase3
+        } );
+    }
+
+    // Turn phase 3 lights off
+    {
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase 3 Lights Off", this );
+        sm->SetInitialState(
+            sm->AddState<ToggleLightGroupState>(
+                false, std::vector<std::string>{ 
+                    resources->phase3CenterLights,
+                    resources->phase3BossLights,
+                    resources->phase3LeftLights,
+                    resources->phase3RightLights
+                }
+            )
+        );
+        addSegmentLogic( sm, {
+            LevelSegments::BossRoom_Platforming,
+            LevelSegments::BossRoom_Introduction,
+            LevelSegments::BossRoom_Phase1,
+            LevelSegments::BossRoom_Phase2,
+            LevelSegments::BossRoom_Phase4,
+            LevelSegments::BossRoom_Phase5
+        } );
+    }
 
     // Setup logic for the introduction cinematic
     {

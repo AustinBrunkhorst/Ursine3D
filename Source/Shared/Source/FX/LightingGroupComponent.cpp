@@ -17,6 +17,7 @@
 
 #include <EntityEvent.h>
 #include <LightComponent.h>
+#include <ParticleEmitterComponent.h>
 
 NATIVE_COMPONENT_DEFINITION(LightingGroup);
 
@@ -53,6 +54,13 @@ void LightingGroup::ToggleGroupLights(bool toggle)
     for (auto &light : lights)
     {
         light->SetIsActive( toggle );
+    }
+
+    auto emitters = GetOwner( )->GetComponentsInChildren<ParticleEmitter>( );
+
+    for (auto &emitter : emitters)
+    {
+        emitter->SetEmitting( toggle );
     }
 }
 

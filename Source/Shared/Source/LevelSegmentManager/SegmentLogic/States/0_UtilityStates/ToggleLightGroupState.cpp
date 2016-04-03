@@ -30,6 +30,8 @@ void ToggleLightGroupState::Enter(SegmentLogicStateMachine *machine)
     {
         auto group = world->GetEntityFromName( groupName );
 
+        UAssert( group, "Error: The entity name " + groupName + " does not exist in the world." );
+
         auto lightingGroup = group->GetComponent<LightingGroup>( );
 
         UAssert( lightingGroup, "Error: The entity specified is missing it's lighting group component." );
