@@ -1,0 +1,12 @@
+-lib ursine-api
+
+# compile as JavaScript
+-js ../Game.js
+-D noEmbedJS
+-D js-es5
+
+# dead code elimination
+-dce full
+
+# entry point class
+-main Game

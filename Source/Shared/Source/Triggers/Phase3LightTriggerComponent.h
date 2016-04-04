@@ -30,7 +30,6 @@ class Phase3LightTrigger : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
-
     EditorField(
         std::string leftSideLights,
         GetLeftSideLights,
@@ -55,7 +54,6 @@ public:
     void OnSceneReady(ursine::Scene *scene) override;
 
 private:
-
     std::string m_left;
     std::string m_right;
 
@@ -67,5 +65,8 @@ private:
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 
     void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
-
-} Meta(Enable, RequiresComponents(typeof(ursine::ecs::Ghost), typeof(EntityAnimator)));
+} Meta(
+    Enable
+) EditorMeta(
+    RequiresComponents( typeof( ursine::ecs::Ghost ), typeof( EntityAnimator ) )
+);

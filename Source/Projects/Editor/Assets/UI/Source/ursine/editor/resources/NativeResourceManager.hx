@@ -1,6 +1,7 @@
 package ursine.editor.resources;
 
 import ursine.native.Extern;
+import ursine.api.native.NativeBroadcastManager;
 
 import ursine.editor.windows.OutputLog;
 

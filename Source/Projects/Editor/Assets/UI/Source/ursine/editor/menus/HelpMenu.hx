@@ -2,7 +2,7 @@ package ursine.editor.menus;
 
 import ursine.native.Extern;
 
-@menuIndex( 7 )
+@menuIndex( 8 )
 class HelpMenu extends MenuItemHandler {
     @mainMenuItem( "Help/Editor Documentation" )
     static function doOpenGettingStarted() {

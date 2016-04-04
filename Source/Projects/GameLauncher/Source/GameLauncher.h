@@ -26,12 +26,11 @@ class GameLauncher : public ursine::core::CoreSystem
 public:
     Meta(Enable)
     GameLauncher(void);
+    GameLauncher(const GameLauncher &rhs);
     ~GameLauncher(void);
 
-    void OnInitialize(void) override;
-    void OnRemove(void) override;
-
-    ursine::Window::Handle GetMainWindowHandle(void) const;
+    ursine::Scene &GetScene(void);
+    ursine::UIView::Handle GetUI(void);
 
 private:
     ursine::graphics::GfxAPI *m_graphics;
@@ -46,10 +45,15 @@ private:
         ursine::graphics::Viewport *viewport;
     } m_window;
 
-    void initializeSettings(void);
-    void initializeWindow(void);
-    void initializeGraphics(void);
-    void initalizeUI(void);
+    GameLauncher &operator=(const GameLauncher &rhs) = delete;
+
+    void OnInitialize(void) override;
+    void OnRemove(void) override;
+
+    void initSettings(void);
+    void initWindow(void);
+    void initGraphics(void);
+    void initUI(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 

@@ -339,8 +339,17 @@ namespace
         auto data = ecs::WorldSerializer::Serialize( world );
 
         UAssert( fs::WriteAllText( path.string( ), data.dump( true ) ),
-        "Unable to save world.\nfile: %s",
+            "Unable to save world.\nfile: %s",
             path.string( ).c_str( )
         );
+
+        NotificationConfig config;
+
+        config.type = NOTIFY_INFO;
+        config.header = "Action Complete";
+        config.message = "World saved.";
+        config.dismissible = true;
+
+        EditorPostNotification( config );
     }
 }

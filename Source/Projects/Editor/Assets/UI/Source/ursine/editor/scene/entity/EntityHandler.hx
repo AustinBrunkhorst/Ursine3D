@@ -10,6 +10,8 @@ extern class EntityHandler {
     function isRemovalEnabled() : Bool;
     function isHierarchyChangeEnabled() : Bool;
     function isVisibleInEditor() : Bool;
+    function setVisibleInEditor(visible : Bool) : Void;
+    function enableSerialization(enable : Bool) : Void;
 
     function remove() : Void;
 

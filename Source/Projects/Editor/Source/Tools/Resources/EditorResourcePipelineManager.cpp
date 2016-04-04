@@ -17,6 +17,13 @@ namespace
 
     namespace events
     {
+        namespace project
+        {
+            const auto BuildStart = "ProjectBuildStart";
+            const auto BuildProgress = "ProjectBuildProgress";
+            const auto BuildComplete = "ProjectBuildComplete";
+        }
+
         namespace pipeline
         {
             const auto ResourceBuildStart = "ResourceBuildStart";
@@ -34,8 +41,14 @@ namespace
 
 EditorResourcePipelineManager::EditorResourcePipelineManager(Project *project)
     : m_editor( GetCoreSystem( Editor ) )
+    , m_gameBuilder( project->GetGameBuilder( ) )
     , m_pipeline( project->GetResourcePipeline( ) )
 {
+    m_gameBuilder.Listener(this)
+        .On( PGB_BUILD_START, &EditorResourcePipelineManager::onProjectBuildStart )
+        .On( PGB_BUILD_PROGRESS, &EditorResourcePipelineManager::onProjectBuildProgress )
+        .On( PGB_BUILD_COMPLETE, &EditorResourcePipelineManager::onProjectBuildComplete );
+
     m_pipeline.Listener( this )
         .On( rp::RP_BUILD_RESOURCE_START, &EditorResourcePipelineManager::onResourceBuildStart )
         .On( rp::RP_BUILD_RESOURCE_COMPLETE, &EditorResourcePipelineManager::onResourceBuildComplete )
@@ -54,6 +67,40 @@ EditorResourcePipelineManager::~EditorResourcePipelineManager(void)
         .Off( rp::RP_RESOURCE_MODIFIED, &EditorResourcePipelineManager::onResourceModified )
         .Off( rp::RP_RESOURCE_REMOVED, &EditorResourcePipelineManager::onResourceRemoved )
         .Off( rp::RP_RESOURCE_RENAMED, &EditorResourcePipelineManager::onResourceRenamed );
+
+    m_gameBuilder.Listener(this)
+        .Off( PGB_BUILD_START, &EditorResourcePipelineManager::onProjectBuildStart )
+        .Off( PGB_BUILD_PROGRESS, &EditorResourcePipelineManager::onProjectBuildProgress )
+        .Off( PGB_BUILD_COMPLETE, &EditorResourcePipelineManager::onProjectBuildComplete );
+}
+
+void EditorResourcePipelineManager::onProjectBuildStart(EVENT_HANDLER(ProjectGameBuilder))
+{
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST,
+        channel::ResourcePipeline,
+        events::project::BuildStart,
+        nullptr
+    );
+}
+
+void EditorResourcePipelineManager::onProjectBuildProgress(EVENT_HANDLER(ProjectGameBuilder))
+{
+    Json data = Json::object {
+        { "progress", 0.0f }
+    };
+
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST,
+        channel::ResourcePipeline,
+        events::project::BuildProgress,
+        data
+    );
+}
+
+void EditorResourcePipelineManager::onProjectBuildComplete(EVENT_HANDLER(ProjectGameBuilder))
+{
+    
 }
 
 void EditorResourcePipelineManager::onResourceBuildStart(EVENT_HANDLER(rp::ResourcePipelineManager))

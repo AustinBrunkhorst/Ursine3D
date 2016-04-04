@@ -36,12 +36,12 @@ namespace ursine
 {
     UIScreenManager *JSGetGlobalScreenManager(void)
     {
-        return nullptr;
+        return &GetCoreSystem( GameLauncher )->GetScene( ).GetScreenManager( );
     }
 
     CefRefPtr<CefBrowser> JSGetGlobalBrowser(void)
     {
-        return nullptr;
+        return GetCoreSystem( GameLauncher )->GetUI( )->GetBrowser( );
     }
 }
 
@@ -49,27 +49,42 @@ CORE_SYSTEM_DEFINITION( GameLauncher );
 
 GameLauncher::GameLauncher(void)
     : m_graphics( nullptr )
-    , m_window( { nullptr } )
-{
-    
-}
+    , m_window( { nullptr } ) { }
+
+
+GameLauncher::GameLauncher(const GameLauncher &rhs)
+    : m_graphics( nullptr )
+    , m_window( { nullptr } ) { }
 
 GameLauncher::~GameLauncher(void)
 {
 
 }
 
-Window::Handle GameLauncher::GetMainWindowHandle(void) const
+Scene &GameLauncher::GetScene(void)
 {
-    return m_window.window;
+    return m_scene;
+}
+
+UIView::Handle GameLauncher::GetUI(void)
+{
+    return m_window.ui;
 }
 
 void GameLauncher::OnInitialize(void)
 {
     m_scene.GetResourceManager( ).SetResourceDirectory( kGameResourcesPath );
 
-    initializeSettings( );
-    initializeGraphics( );
+    //initSettings( );
+    initWindow( );
+    initGraphics( );
+    initUI( );
+
+    Application::Instance->Connect(
+        APP_UPDATE,
+        this,
+        &GameLauncher::onAppUpdate
+    );
 }
 
 void GameLauncher::OnRemove(void)
@@ -90,7 +105,7 @@ void GameLauncher::OnRemove(void)
     m_window.window = nullptr;
 }
 
-void GameLauncher::initializeSettings(void)
+void GameLauncher::initSettings(void)
 {
     std::string configJson;
     std::string configJsonError;
@@ -109,7 +124,7 @@ void GameLauncher::initializeSettings(void)
     m_settings = meta::Type::DeserializeJson<GameSettings>( jsonData );
 }
 
-void GameLauncher::initializeWindow(void)
+void GameLauncher::initWindow(void)
 {
     auto *windowManager = GetCoreSystem( WindowManager );
 
@@ -128,9 +143,13 @@ void GameLauncher::initializeWindow(void)
 
     if (fs::exists( kGameIconFile ))
         window->SetIcon( kGameIconFile );
+
+    SDL_ShowCursor( false );
+
+    window->Show( true );
 }
 
-void GameLauncher::initializeGraphics(void)
+void GameLauncher::initGraphics(void)
 {
     m_graphics = GetCoreSystem( graphics::GfxAPI );
 
@@ -142,7 +161,7 @@ void GameLauncher::initializeGraphics(void)
     auto &size = window->GetSize( );
 
     gfxConfig.handleToWindow =
-        static_cast<HWND>(window->GetPlatformHandle( ) );
+        static_cast<HWND>( window->GetPlatformHandle( ) );
        
     gfxConfig.shaderListPath = URSINE_SHADER_BUILD_DIRECTORY;
     gfxConfig.windowWidth = static_cast<unsigned>( size.X( ) );
@@ -164,7 +183,7 @@ void GameLauncher::initializeGraphics(void)
     m_graphics->SetGameViewport( viewport );
 }
 
-void GameLauncher::initalizeUI(void)
+void GameLauncher::initUI(void)
 {
     auto *uiManager = GetCoreSystem( UIManager );
 
@@ -187,7 +206,7 @@ void GameLauncher::onAppUpdate(EVENT_HANDLER(ursine::Application))
 {
     EVENT_ATTRS(Application, EventArgs);
 
-    SDL_ShowCursor( false );
+    m_window.ui->DrawMain( );
 }
 
 void GameLauncher::onWindowFocusChanged(EVENT_HANDLER(ursine::Window))

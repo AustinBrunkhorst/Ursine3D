@@ -38,7 +38,8 @@ namespace
 }
 
 Project::Project(void)
-    : m_gameContext( nullptr )
+    : m_gameBuilder( m_resourcePipeline )
+    , m_gameContext( nullptr )
     , m_sceneManager( nullptr )
     , m_entityManager( nullptr )
     , m_pipelineManager( nullptr )
@@ -69,9 +70,24 @@ Project::~Project(void)
     delete m_pipelineManager;
 }
 
-const ProjectConfig &Project::GetConfig(void) const
+ProjectConfig &Project::GetConfig(void)
 {
     return m_config;
+}
+
+void Project::WriteConfig(void)
+{
+    auto data = meta::Type::SerializeJson<ProjectConfig>( m_config );
+
+    UAssert( fs::WriteAllText( m_config.projectFile.string( ), data.dump( true ) ),
+        "Unable to write project configuration.\nfile: %s",
+        m_config.projectFile.string( ).c_str( )
+    );
+}
+
+ProjectGameBuilder &Project::GetGameBuilder(void)
+{
+    return m_gameBuilder;
 }
 
 rp::ResourcePipelineManager &Project::GetResourcePipeline(void)
@@ -142,17 +158,19 @@ void Project::initialize(const ProjectConfig &config)
 {
     m_config = config;
 
+    auto rootDirectory = m_config.projectFile.parent_path( );
+
     rp::ResourcePipelineConfig resourceConfig;
 
-    resourceConfig.resourceDirectory = config.rootDirectory / config.resourceDirectory;
+    resourceConfig.resourceDirectory = rootDirectory / config.resourceDirectory;
 
-    resourceConfig.tempDirectory = config.rootDirectory / config.buildDirectory;
+    resourceConfig.tempDirectory = rootDirectory / config.buildDirectory;
     {
         // add the temp directory
         resourceConfig.tempDirectory /= kResourcesTempDirectory;
     }
 
-    resourceConfig.buildDirectory = config.rootDirectory / config.buildDirectory;
+    resourceConfig.buildDirectory = rootDirectory / config.buildDirectory;
     {
         // add the resource directory
         resourceConfig.buildDirectory /= kResourcesBuildDirectory;

@@ -14,6 +14,7 @@
 #pragma once
 
 #include "ProjectConfig.h"
+#include "ProjectGameBuilder.h"
 
 #include "EditorGameContext.h"
 
@@ -31,7 +32,10 @@ public:
     Project(void);
     ~Project(void);
 
-    const ProjectConfig &GetConfig(void) const;
+    ProjectConfig &GetConfig(void);
+    void WriteConfig(void);
+
+    ProjectGameBuilder &GetGameBuilder(void);
 
     ursine::rp::ResourcePipelineManager &GetResourcePipeline(void);
     ursine::resources::ResourceManager &GetBuiltInResourceManager(void);
@@ -63,6 +67,8 @@ private:
 
     ursine::rp::ResourcePipelineManager m_resourcePipeline;
     ursine::resources::ResourceManager m_builtInResourceManager;
+
+    ProjectGameBuilder m_gameBuilder;
 
     ursine::Scene m_scene;
     ursine::Json m_worldCache;
