@@ -29,13 +29,13 @@ public:
     GameLauncher(const GameLauncher &rhs);
     ~GameLauncher(void);
 
-    ursine::Scene &GetScene(void);
+    ursine::Scene *GetScene(void);
     ursine::UIView::Handle GetUI(void);
 
 private:
     ursine::graphics::GfxAPI *m_graphics;
 
-    ursine::Scene m_scene;
+    ursine::Scene *m_scene;
     ursine::GameSettings m_settings;
 
     struct
@@ -54,6 +54,7 @@ private:
     void initWindow(void);
     void initGraphics(void);
     void initUI(void);
+    void initStartingWorld(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 

@@ -32,7 +32,9 @@
 
             _invalidateProgress: function() {
                 var range = this.max - this.min;
-                var percent = (this.value - this.min) / range;
+                var value = Math.min( Math.max( this.value, this.min ), this.max );
+
+                var percent = (value - this.min) / range;
 
                 this.$.progress.style.width = (percent * 100) +'%';
             }

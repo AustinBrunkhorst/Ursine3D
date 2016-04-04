@@ -1181,37 +1181,49 @@ ursine_editor_menus_ViewMenu.prototype = $extend(ursine_editor_MenuItemHandler.p
 	__class__: ursine_editor_menus_ViewMenu
 });
 var ursine_editor_resources_NativeBuildManager = function(broadcastManager) {
-	var _g = this;
 	this.m_menuBuildItem = ursine_editor_Editor.instance.mainMenu.findItem("Project").menu.findItem("Build");
 	broadcastManager.getChannel("ResourcePipeline").on("ProjectBuildStart",$bind(this,this.onResourceBuildStart)).on("ProjectBuildProgress",$bind(this,this.onResourceBuildProgress)).on("ProjectBuildComplete",$bind(this,this.onResourceBuildComplete));
-	var progress = new NotificationControl(3,"","Building Game");
-	progress.dismissible = false;
-	var progressBar = new ProgressBarControl();
-	progressBar.value = 50;
-	progress.messageContainer.appendChild(progressBar);
-	var btnCancel = new ButtonControl();
-	btnCancel.text = "Cancel";
-	btnCancel.addEventListener("click",function() {
-		_g.m_menuBuildItem.disabled = false;
-		progress.close();
-	});
-	progress.buttonsContainer.appendChild(btnCancel);
-	progress.show(0);
 };
 $hxClasses["ursine.editor.resources.NativeBuildManager"] = ursine_editor_resources_NativeBuildManager;
 ursine_editor_resources_NativeBuildManager.__name__ = ["ursine","editor","resources","NativeBuildManager"];
 ursine_editor_resources_NativeBuildManager.prototype = {
 	onResourceBuildStart: function(e) {
-		var resource = ursine_native_Extern.ProjectGetResource(e.guid);
-		if(resource == null) throw new js__$Boot_HaxeError("Failed to get resource from GUID " + e.guid);
-		ursine_editor_windows_OutputLog.log("Building " + resource.relativePathDisplayName + "...");
+		this.m_menuBuildItem.disabled = true;
+		this.m_lastStartDate = new Date();
+		if(this.m_progressNotification != null) {
+			this.m_progressNotification.close();
+			this.m_progressNotification = null;
+		}
+		this.m_progressNotification = new NotificationControl(3,"","Building Game");
+		this.m_progressNotification.dismissible = false;
+		this.m_progressBar = new ProgressBarControl();
+		this.m_progressNotification.messageContainer.appendChild(this.m_progressBar);
+		var btnCancel = new ButtonControl();
+		btnCancel.text = "Cancel";
+		btnCancel.addEventListener("click",function() {
+			ProjectBuildCancel();
+		});
+		this.m_progressNotification.buttonsContainer.appendChild(btnCancel);
+		this.m_progressNotification.show(0);
 	}
 	,onResourceBuildProgress: function(e) {
+		if(this.m_progressBar != null) this.m_progressBar.value = e.progress * 100;
 	}
 	,onResourceBuildComplete: function(e) {
-		var resource = ursine_native_Extern.ProjectGetResource(e.guid);
-		if(resource == null) throw new js__$Boot_HaxeError("Failed to get resource from GUID " + e.guid);
-		if(e.successful) ursine_editor_windows_OutputLog.log("Built in " + e.duration + " ms: " + resource.relativePathDisplayName); else ursine_editor_windows_OutputLog.log("Build Failed: " + resource.relativePathDisplayName + "<br>Reason: " + e.error.message);
+		this.m_menuBuildItem.disabled = false;
+		this.m_progressNotification.close();
+		this.m_progressNotification = null;
+		this.m_progressBar = null;
+		var notification;
+		if(e.successful) {
+			notification = new NotificationControl(3,"","Build Successful");
+			var duration = new Date().getTime() - this.m_lastStartDate.getTime();
+			ursine_editor_windows_OutputLog.log("Build Completed in " + duration + " ms");
+		} else {
+			notification = new NotificationControl(2,"Check output console for more info.","Build Failed");
+			ursine_editor_windows_OutputLog.log("Build Failed: " + e.error);
+		}
+		notification.show();
 	}
 	,__class__: ursine_editor_resources_NativeBuildManager
 };
@@ -2866,9 +2878,21 @@ var ursine_editor_windows_OutputLog = function() {
 $hxClasses["ursine.editor.windows.OutputLog"] = ursine_editor_windows_OutputLog;
 ursine_editor_windows_OutputLog.__name__ = ["ursine","editor","windows","OutputLog"];
 ursine_editor_windows_OutputLog.log = function(info) {
-	ursine_editor_windows_OutputLog.instance.m_logContainer.appendChild(ursine_editor_windows_OutputLog.instance.createLogElement(info));
+	var time = ursine_editor_windows_OutputLog.createTimeString();
+	console.log("" + time + ": " + info);
+	ursine_editor_windows_OutputLog.instance.m_logContainer.appendChild(ursine_editor_windows_OutputLog.instance.createLogElement(time,info));
 	var lastLine = info.split("\n")[0];
 	ursine_editor_Editor.instance.setStatusText(lastLine);
+};
+ursine_editor_windows_OutputLog.createTimeString = function() {
+	var date = new Date();
+	var hours = date.getHours();
+	var h = hours % 12 + 1;
+	var m = StringTools.lpad(date.getMinutes(),"0",2);
+	var s = StringTools.lpad(date.getSeconds(),"0",2);
+	var z;
+	if(hours < 12) z = "AM"; else z = "PM";
+	return "" + h + ":" + m + ":" + s + " " + z;
 };
 ursine_editor_windows_OutputLog.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_OutputLog.prototype = $extend(ursine_editor_WindowHandler.prototype,{
@@ -2878,26 +2902,19 @@ ursine_editor_windows_OutputLog.prototype = $extend(ursine_editor_WindowHandler.
 		this.window.container.appendChild(this.m_logContainer);
 		window.document.querySelector("#status-bar").addEventListener("click",$bind(this,this.onStatusBarClick));
 	}
-	,createLogElement: function(info) {
+	,createLogElement: function(timeText,infoText) {
 		var element;
 		var _this = window.document;
 		element = _this.createElement("div");
 		var time;
 		var _this1 = window.document;
 		time = _this1.createElement("span");
-		var date = new Date();
-		var hours = date.getHours();
-		var h = hours % 12 + 1;
-		var m = StringTools.lpad(date.getMinutes(),"0",2);
-		var s = StringTools.lpad(date.getSeconds(),"0",2);
-		var z;
-		if(hours < 12) z = "AM"; else z = "PM";
-		time.innerText = "" + h + ":" + m + ":" + s + " " + z;
+		time.innerText = timeText;
 		element.appendChild(time);
 		var contents;
 		var _this2 = window.document;
 		contents = _this2.createElement("span");
-		contents.innerHTML = info;
+		contents.innerHTML = infoText;
 		element.appendChild(contents);
 		return element;
 	}

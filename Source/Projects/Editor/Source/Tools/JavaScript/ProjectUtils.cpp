@@ -82,6 +82,20 @@ JSFunction(ProjectBuildStart)
 	return CefV8Value::CreateBool( true );
 }
 
+JSFunction(ProjectBuildCancel)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    auto &builder = editor->GetProject( )->GetGameBuilder( );
+
+    if (!builder.IsBuilding( ))
+        return CefV8Value::CreateBool( false );
+
+    builder.Cancel( );
+
+	return CefV8Value::CreateBool( true );
+}
+
 JSFunction(ProjectSetFullScreen)
 {
     if (arguments.size( ) != 1)

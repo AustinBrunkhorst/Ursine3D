@@ -35,6 +35,8 @@ namespace ursine
             return m_listenerMask;
         }
 
+    #if defined(URSINE_WITH_EDITOR)
+
         void AudioEmitter::PushTestSound(void)
         {
             auto event = std::make_shared<AudioGeneric>( );
@@ -43,6 +45,8 @@ namespace ursine
             
             m_events.push( event );
         }
+
+    #endif
 
         const std::string& AudioEmitter::GetText(void) const
         {

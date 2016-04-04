@@ -1,4 +1,3 @@
-
 ursine_project(Shared
     FOLDER "Shared"
     TYPE LIB

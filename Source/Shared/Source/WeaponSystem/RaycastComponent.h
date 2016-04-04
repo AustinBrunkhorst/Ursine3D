@@ -1,6 +1,3 @@
-#pragma once
-
-
 /* ---------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -12,17 +9,18 @@
 **
 ** -------------------------------------------------------------------------*/
 
+#pragma once
 
 #include <Component.h>
+
 #include "EntityHandle.h"
 #include "CharacterControllerComponent.h"
 
-
 class RaycastComponent : public ursine::ecs::Component
 {
-    NATIVE_COMPONENT
-public:
+    NATIVE_COMPONENT;
 
+public:
     RaycastComponent(void);
     ~RaycastComponent(void);
 
@@ -30,7 +28,8 @@ public:
         float StickyAimRange,
         GetRange,
         SetRange
-        );
+    );
+
     float GetRange(void) const;
     void SetRange(float range);
 
@@ -38,28 +37,28 @@ public:
         float StickyAimModifier,
         GetRotationModifier,
         SetRotationModifier
-        );
+    );
+
     float GetRotationModifier(void) const;
     void SetRotationModifier(float range);
 
-    const ursine::ecs::EntityHandle& GetEntityHit(void) const;
+    const ursine::ecs::EntityHandle &GetEntityHit(void) const;
 
-    ursine::ecs::Transform* GetCameraTransform(void) const;
+    ursine::ecs::Transform *GetCameraTransform(void) const;
 
     EditorField(
-        bool Debug ,
+        bool Debug,
         GetDebug,
         SetDebug
-        );
+    );
+
     bool GetDebug(void) const;
     void SetDebug(bool debug);
 
 protected:
-    
     void OnInitialize(void) override;
 
 private:
-
     float m_range;
 
     float m_rotationModifier;
@@ -71,8 +70,10 @@ private:
 
     bool m_debug;
 
-    Meta(Disable)
     void OnHeirachyFinished(EVENT_HANDLER(ursine::ecs::Entity));
-
-} Meta(Enable, DisplayName("RaycastComponent"), RequiresComponents(typeof(CharacterController)));
-
+} Meta(
+    Enable, 
+    DisplayName( "RaycastComponent" )
+) EditorMeta(
+    RequiresComponents( typeof( CharacterController ) )
+);

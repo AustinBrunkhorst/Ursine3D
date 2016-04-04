@@ -12,7 +12,7 @@ namespace
 {
     const auto kDefaultOpenTitle = "Open File";
     const auto kDefaultSaveTitle = "Save File";
-    const auto kDefaultFolderTitle = "Browse For Folder";
+    const auto kDefaultFolderTitle = WIDEN( "Browse For Folder" );
 
     std::string getCompiledFilter(const std::vector<fs::FileDialogFilter> &filters);
 
@@ -313,70 +313,55 @@ namespace
 
     void runOpenFolderDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output)
     {
-        char dirBuffer[ MAX_PATH + 1 ] { 0 };
+        IFileDialog *dialog;
 
-        BROWSEINFO browseInfo { 0 };
-
-        browseInfo.hwndOwner = static_cast<HWND>(
-            config.parentWindow ? config.parentWindow->GetPlatformHandle( ) : nullptr
-        );
-
-        browseInfo.pszDisplayName = dirBuffer;
-        browseInfo.ulFlags = BIF_USENEWUI | BIF_RETURNONLYFSDIRS;
-
-        browseInfo.lpszTitle = config.windowTitle.empty( ) ?
-                kDefaultSaveTitle : config.windowTitle.c_str( );
-
-        auto initialPath = config.initialPath.string( );
-
-        if (!initialPath.empty( ))
+        if (SUCCEEDED( CoCreateInstance( CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS( &dialog ) ) ) )
         {
-            // highlight the current value
-            browseInfo.lParam = reinterpret_cast<LPARAM>( initialPath.c_str( ) );
-            browseInfo.lpfn = &folderBrowserCallback;
-        }
+            DWORD dwOptions;
 
-        auto list = SHBrowseForFolder( &browseInfo );
+            if (SUCCEEDED( dialog->GetOptions( &dwOptions ) ))
+                dialog->SetOptions( dwOptions | FOS_PICKFOLDERS );
 
-        if (list)
-        {
-            STRRET outDirBuffer;
+            auto owner = static_cast<HWND>(
+                config.parentWindow ? config.parentWindow->GetPlatformHandle( ) : nullptr
+            );
 
-            ZeroMemory( &outDirBuffer, sizeof( outDirBuffer ) );
-
-            outDirBuffer.uType = STRRET_WSTR;
-
-            IShellFolder *shellFolder;
-
-            if (SHGetDesktopFolder( &shellFolder ) == NOERROR)
+            if (!config.initialPath.empty( ))
             {
-                HRESULT hr = shellFolder->GetDisplayNameOf(
-                    list,
-                    SHGDN_FORPARSING,
-                    &outDirBuffer
+                IShellItem *defaultFolder;
+
+	            auto result = SHCreateItemFromParsingName( 
+                    config.initialPath.c_str( ), 
+                    nullptr, 
+                    IID_PPV_ARGS( &defaultFolder ) 
                 );
 
-                if (SUCCEEDED( hr ) && outDirBuffer.uType == STRRET_WSTR)
-                {
-                    output.selectedFiles.emplace_back( outDirBuffer.pOleStr );
-
-                    CoTaskMemFree( outDirBuffer.pOleStr );
-                }
-                else
-                {
-                    // use old way if we don't get what we want
-                    char oldOutDirBuffer[ MAX_PATH + 1 ];
-
-                    if (SHGetPathFromIDList( list, oldOutDirBuffer ))
-                    {
-                        output.selectedFiles.emplace_back( oldOutDirBuffer );
-                    }
-                }
-
-                shellFolder->Release( );
+ 	            if (SUCCEEDED( result ))
+		            dialog->SetFolder( defaultFolder );
             }
 
-            CoTaskMemFree( list );
+            auto title = config.windowTitle.empty( ) ?
+                kDefaultFolderTitle : 
+                std::wstring( config.windowTitle.begin( ), config.windowTitle.end( ) );
+
+            dialog->SetTitle( title.c_str( ) );
+
+            if (SUCCEEDED( dialog->Show( owner ) ))
+            {
+                IShellItem *shellItem;
+
+                if (SUCCEEDED( dialog->GetResult( &shellItem ) ))
+                {
+                    LPWSTR selectedPath;
+
+                    if (SUCCEEDED( shellItem->GetDisplayName( SIGDN_FILESYSPATH, &selectedPath )))
+                        output.selectedFiles.emplace_back( selectedPath );
+
+                    shellItem->Release( );
+                }
+            }
+
+            dialog->Release( );
         }
     }
 

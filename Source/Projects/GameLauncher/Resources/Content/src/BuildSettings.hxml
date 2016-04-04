@@ -1,7 +1,7 @@
 -lib ursine-api
 
 # compile as JavaScript
--js ../Game.js
+-js ../Launcher.js
 -D noEmbedJS
 -D js-es5
 

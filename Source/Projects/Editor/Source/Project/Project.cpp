@@ -38,7 +38,7 @@ namespace
 }
 
 Project::Project(void)
-    : m_gameBuilder( m_resourcePipeline )
+    : m_gameBuilder( this )
     , m_gameContext( nullptr )
     , m_sceneManager( nullptr )
     , m_entityManager( nullptr )

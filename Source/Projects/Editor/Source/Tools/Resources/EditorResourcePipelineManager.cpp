@@ -86,8 +86,10 @@ void EditorResourcePipelineManager::onProjectBuildStart(EVENT_HANDLER(ProjectGam
 
 void EditorResourcePipelineManager::onProjectBuildProgress(EVENT_HANDLER(ProjectGameBuilder))
 {
+    EVENT_ATTRS(ProjectGameBuilder, ProjectGameBuildProgressArgs);
+
     Json data = Json::object {
-        { "progress", 0.0f }
+        { "progress", args->progress }
     };
 
     m_editor->GetMainWindow( ).GetUI( )->Message(
@@ -100,7 +102,21 @@ void EditorResourcePipelineManager::onProjectBuildProgress(EVENT_HANDLER(Project
 
 void EditorResourcePipelineManager::onProjectBuildComplete(EVENT_HANDLER(ProjectGameBuilder))
 {
-    
+    EVENT_ATTRS(ProjectGameBuilder, ProjectGameBuildCompleteArgs);
+
+    auto data = Json::object {
+        { "successful", args->successful }
+    };
+
+    if (!args->successful)
+        data[ "error" ] = args->error;
+
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST,
+        channel::ResourcePipeline,
+        events::project::BuildComplete,
+        data
+    );
 }
 
 void EditorResourcePipelineManager::onResourceBuildStart(EVENT_HANDLER(rp::ResourcePipelineManager))

@@ -23,9 +23,9 @@ using namespace ursine;
 
 namespace
 {
-    const auto kUIEntryPoint = "file:///Resources/UI/Main.html";
+    const auto kUIEntryPoint = "file:///Resources/Content/Launcher.html";
 
-    const auto kGameSettingsFile = "Resources/Game.config";
+    const auto kGameSettingsFile = "Resources/Launcher.config";
     const auto kGameIconFile = "Resources/Icon.png";
     const auto kGameResourcesPath = "Resources/Content";
 
@@ -36,7 +36,7 @@ namespace ursine
 {
     UIScreenManager *JSGetGlobalScreenManager(void)
     {
-        return &GetCoreSystem( GameLauncher )->GetScene( ).GetScreenManager( );
+        return &GetCoreSystem( GameLauncher )->GetScene( )->GetScreenManager( );
     }
 
     CefRefPtr<CefBrowser> JSGetGlobalBrowser(void)
@@ -49,11 +49,13 @@ CORE_SYSTEM_DEFINITION( GameLauncher );
 
 GameLauncher::GameLauncher(void)
     : m_graphics( nullptr )
+    , m_scene( nullptr )
     , m_window( { nullptr } ) { }
 
 
 GameLauncher::GameLauncher(const GameLauncher &rhs)
     : m_graphics( nullptr )
+    , m_scene( nullptr )
     , m_window( { nullptr } ) { }
 
 GameLauncher::~GameLauncher(void)
@@ -61,7 +63,7 @@ GameLauncher::~GameLauncher(void)
 
 }
 
-Scene &GameLauncher::GetScene(void)
+Scene *GameLauncher::GetScene(void)
 {
     return m_scene;
 }
@@ -73,12 +75,15 @@ UIView::Handle GameLauncher::GetUI(void)
 
 void GameLauncher::OnInitialize(void)
 {
-    m_scene.GetResourceManager( ).SetResourceDirectory( kGameResourcesPath );
+    m_scene = new Scene( );
 
-    //initSettings( );
+    m_scene->GetResourceManager( ).SetResourceDirectory( kGameResourcesPath );
+
+    initSettings( );
     initWindow( );
     initGraphics( );
     initUI( );
+    initStartingWorld( );
 
     Application::Instance->Connect(
         APP_UPDATE,
@@ -103,6 +108,8 @@ void GameLauncher::OnRemove(void)
     m_window.ui = nullptr;
     
     m_window.window = nullptr;
+
+    delete m_scene;
 }
 
 void GameLauncher::initSettings(void)
@@ -128,17 +135,32 @@ void GameLauncher::initWindow(void)
 {
     auto *windowManager = GetCoreSystem( WindowManager );
 
+    ursine::uint32 flags = 0;
+
+    if (m_settings.windowResizable)
+        utils::FlagSet( flags, SDL_WINDOW_RESIZABLE );
+
     auto window = m_window.window = windowManager->AddWindow(
-        m_settings.title,
+        m_settings.windowTitle,
         Vec2::Zero( ),
         kDefaultWindowDimensions,
-        0
+        flags
     );
 
-    window->Listener( this )
-        .On( WINDOW_RESIZE, &GameLauncher::onWindowResize )
-        .On( WINDOW_FOCUS_CHANGED, &GameLauncher::onWindowFocusChanged );
-    
+    if (m_settings.windowFullScreen)
+    {
+        SDL_DisplayMode fullScreenMode;
+
+        SDL_GetDesktopDisplayMode( window->GetDisplayIndex( ), &fullScreenMode );
+
+        window->SetSize( {
+            static_cast<float>( fullScreenMode.w ),
+            static_cast<float>( fullScreenMode.h )
+        } );
+
+        window->SetFullScreen( true );
+    }
+
     window->SetLocationCentered( );
 
     if (fs::exists( kGameIconFile ))
@@ -147,6 +169,10 @@ void GameLauncher::initWindow(void)
     SDL_ShowCursor( false );
 
     window->Show( true );
+
+    window->Listener( this )
+        .On( WINDOW_RESIZE, &GameLauncher::onWindowResize )
+        .On( WINDOW_FOCUS_CHANGED, &GameLauncher::onWindowFocusChanged );
 }
 
 void GameLauncher::initGraphics(void)
@@ -155,7 +181,7 @@ void GameLauncher::initGraphics(void)
 
     graphics::GfxConfig gfxConfig;
 
-    gfxConfig.fullscreen = false;
+    gfxConfig.fullscreen = m_settings.windowFullScreen;
       
     auto window = m_window.window;
     auto &size = window->GetSize( );
@@ -172,15 +198,20 @@ void GameLauncher::initGraphics(void)
     m_graphics->StartGraphics( gfxConfig );
     m_graphics->Resize( gfxConfig.windowWidth, gfxConfig.windowHeight );
       
-    auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
+    auto viewport = m_graphics->ViewportMgr.CreateViewport( 
+        gfxConfig.windowWidth, 
+        gfxConfig.windowHeight 
+    );
        
     auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
         
     handle.SetPosition( 0, 0 );
       
-    m_scene.SetViewport( viewport );
+    m_scene->SetViewport( viewport );
      
     m_graphics->SetGameViewport( viewport );
+
+    m_window.viewport = &handle;
 }
 
 void GameLauncher::initUI(void)
@@ -202,9 +233,31 @@ void GameLauncher::initUI(void)
     } );
 }
 
+void GameLauncher::initStartingWorld(void)
+{
+    resources::ResourceReference worldRef;
+    
+    try
+    {
+        worldRef = GUIDStringGenerator( )( m_settings.startingWorld );    
+    }
+    catch (...)
+    {
+        worldRef = kNullGUID;
+    }
+
+    UAssert( m_scene->SetActiveWorld( worldRef, false ),
+        "Unable to load starting world.\nguid: %s",
+        m_settings.startingWorld.c_str( )
+    );
+}
+
 void GameLauncher::onAppUpdate(EVENT_HANDLER(ursine::Application))
 {
     EVENT_ATTRS(Application, EventArgs);
+
+    m_scene->Update( sender->GetDeltaTime( ) );
+    m_scene->Render( );
 
     m_window.ui->DrawMain( );
 }
