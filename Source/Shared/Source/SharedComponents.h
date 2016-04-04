@@ -74,6 +74,7 @@
 #include "WeaponSystem/Weapons/WeaponPosComponent.h"
 #include "WeaponSystem/Inventory/InventoryComponent.h"
 #include "WeaponSystem/Projectiles/ProjectileComponent.h"
+#include "WeaponSystem/RaycastComponent.h"
 
 /////////////////////////////////
 //        Trails System        //
