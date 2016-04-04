@@ -48,4 +48,6 @@ private:
     void playAnimation(ursine::ecs::Animator *animator, const std::string &clip);
 
     void onAnimationFinished(EVENT_HANDLER(ursine::ecs::Entity));
+
+    void onVineDeath(EVENT_HANDLER(ursine::ecs::Entity));
 };

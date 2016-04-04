@@ -537,13 +537,16 @@ void BossAI::OnInitialize(void)
     // - Boss goes under ground
     // - Spot light on the bosses home location
     // - Wait till both players are in the trigger zone
-    // - When both players are in the center, spawn boss and vines in outer spawn locations
-    // Then other things, come back to this after other shit is done
+    // - Start spawning vines.  Spawn boss when event is received.
+    // - Send event when boss is done spawning for the start of the segment.
+    // - Go into a loop for the different shit to happen
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
+        // All I need to do now is just spawn the vines and boss, then transition after a timer,
+        // then make the wackamole state for swapping spawn positions, and also have the boss sludge shot and what not.
         auto goUnderground = sm->AddState<BossUndergroundState>( );
-        /*auto spotlightAndTriggers = sm->AddState<Phase3TriggersState>( );
+        /*auto spawnVinesAndBoss = sm->AddState<Phase3SpawnVinesAndBoss>( );
         auto wackamoleState = sm->AddState<Phase3WhackAMolee>( );*/
 
         sm->SetInitialState( goUnderground );
@@ -559,7 +562,7 @@ void BossAI::OnInitialize(void)
         sm->SetInitialState( pollinate );
 
         m_bossLogic[ 2 ].push_back( sm );
-    }
+    }*/
 
     // TESTING: Sludgeshot
     {
@@ -570,7 +573,7 @@ void BossAI::OnInitialize(void)
         sm->SetInitialState( sludgeshot );
 
         m_bossLogic[ 3 ].push_back( sm );
-    }*/
+    }
 }
 
 void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))

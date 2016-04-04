@@ -24,6 +24,7 @@ namespace ursine
             std::string m_event;
 
             meta::Type GetReaderType(void) override;
-        } Meta( Register );
+
+        } Meta(Register);
     }
 }

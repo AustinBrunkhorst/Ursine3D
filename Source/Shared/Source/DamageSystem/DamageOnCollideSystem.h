@@ -37,12 +37,6 @@ protected:
 
 private:
 
-    // entity's components changed
-    void OnComponentAdded(EVENT_HANDLER(World));
-
-    // entity removed
-    void OnEntityRemoved(EVENT_HANDLER(World));
-
     std::unordered_map<ursine::ecs::EntityHandle, DamageOnCollide*> m_damage;
 } Meta(Enable);
 

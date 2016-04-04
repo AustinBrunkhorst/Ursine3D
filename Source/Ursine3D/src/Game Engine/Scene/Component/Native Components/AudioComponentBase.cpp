@@ -28,13 +28,13 @@ namespace ursine
 		return m_handle;
 	}
 
-	void AudioComponentBase::OnInitialize(ecs::Entity* owner)
+	void AudioComponentBase::OnInitialize(const ecs::EntityHandle &owner)
 	{
 		owner->Listener(this)
 			.On(ecs::ENTITY_TRANSFORM_DIRTY, &AudioComponentBase::onTransformChange);
 	}
 
-	void AudioComponentBase::OnRemove(ecs::Entity *owner)
+	void AudioComponentBase::OnRemove(const ecs::EntityHandle &owner)
 	{
 		owner->Listener(this)
 			.Off(ecs::ENTITY_TRANSFORM_DIRTY, &AudioComponentBase::onTransformChange);

@@ -85,6 +85,9 @@ namespace ursine
 
         bool SystemManager::HasSystem(const meta::Type &systemType)
         {
+			if (!systemType.IsValid( ))
+				return false;
+
             auto systemID = systemType.GetStaticField( "SystemID" )
                 .GetValue( )
                 .GetValue<SystemTypeID>( );
@@ -94,6 +97,10 @@ namespace ursine
 
         void SystemManager::AddSystem(const meta::Type &systemType)
         {
+			UAssert( systemType.IsValid( ),
+				"Attempting to add invalid system type."
+			);
+
             auto systemID = systemType.GetStaticField( "SystemID" )
                 .GetValue( )
                 .GetValue<SystemTypeID>( );

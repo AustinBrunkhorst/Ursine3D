@@ -40,8 +40,6 @@ using namespace ecs;
 
 namespace
 {
-    const std::string kFireGun = "FIRE_GUN_HAND";
-    const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
     const Randomizer random;
 
     size_t FindNonGhost(EntityHandle& entityToSet, physics::RaycastOutput& rayout, World* world)
@@ -207,7 +205,7 @@ void WeaponSystemUtils::ReloadWeapon(AbstractWeapon &weapon, ursine::ecs::AudioE
     if (Reload( weapon ))
     {
         // play sound
-        emitter->PlayEvent( weapon.GetReloadSFX( ) );
+        emitter->PushEvent( weapon.GetReloadSFX( ) );
     }
 }
 
@@ -296,7 +294,7 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        m_emitters[ entity ]->PlayEvent( weapon.GetShootSFX( ) );
+        m_emitters[ entity ]->PushEvent( weapon.GetShootSFX( ) );
 
         // reset firing sequence
         /*weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
@@ -430,7 +428,7 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        m_emitters[ entity ]->PlayEvent( weapon.GetShootSFX( ) );
+        m_emitters[ entity ]->PushEvent( weapon.GetShootSFX( ) );
 
         //// reset firing sequence
         //weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);

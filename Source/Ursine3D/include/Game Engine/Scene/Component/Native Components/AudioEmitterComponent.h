@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -16,6 +16,8 @@
 #include "Component.h"
 #include "AudioComponentBase.h"
 #include "ListenerMasks.h"
+#include "AudioEventInfo.h"
+
 #include <queue>
 
 namespace ursine
@@ -29,54 +31,49 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
-            EditorMeta(InputRange( 0.0f, 100.0f, 1, "{{value}}%" ))
+            EditorMeta(BitMaskEditor)
             EditorField(
-                float Volume,
-                GetVolume,
-                SetVolume
-            );
-
-            EditorField(
-                bool Loop,
-                GetLoop,
-                SetLoop
-            );
-
-            EditorField(
-                bool Mute,
-                GetMute,
-                SetMute
+                ListenerMask listenerMask,
+                GetListenerMask,
+                SetListenerMask
             );
 
             Meta(Enable)
             AudioEmitter(void);
 
-            float GetVolume(void) const;
-            void SetVolume(float volume);
+            EditorField(
+                std::string test,
+                GetText,
+                SetText
+            );
 
-            bool GetLoop(void) const;
-            void SetLoop(bool loop);
+            EditorButton(
+                PushTestSound,
+                "Play Sound"
+            );
 
-            bool GetMute(void) const;
-            void SetMute(bool mute);
+            ListenerMask GetListenerMask(void) const;
+            void SetListenerMask(ListenerMask mask);
 
-            std::string GetFrontSound(void);
-            void PopFrontSound(void);
-            bool SoundsEmpty(void);
-            void AddSoundToPlayQueue(const std::string &sound);
+            const std::string &GetText(void) const;
+            void SetText(const std::string &text);
 
-            bool PlayEvent(const resources::ResourceReference &event);
+            void PushEvent(const AudioEvent::Handle event);
+            void PushEvent(const resources::ResourceReference &eventResource);
 
-            ListenerIndex GetListeners(void);
+            AudioEvent::Handle GetEvent(void);
+            void PopEvent(void);
+            bool EmptyEvent(void);
+
+            bool checkMask(void);
+            void ResetMaskFlag(void);
 
         private:
-            bool m_loop;
-            bool m_mute;
-            ListenerIndex m_listeners;
-            float m_volume;
+            ListenerMask m_listenerMask;
+            std::queue<AudioEvent::Handle> m_events;
+            std::string m_testText;
+            bool m_maskChanged;
             
-            // fire and forget
-            std::queue<std::string> m_soundsFAF;
-        } Meta(Enable, WhiteListMethods, DisplayName( "Audio Emitter" ));
+        } Meta(Enable, WhiteListMethods, DisplayName( "AudioEmitter" ));
     }
 }

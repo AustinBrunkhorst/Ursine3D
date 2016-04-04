@@ -102,6 +102,9 @@ public:
     float GetRotateSpeed(void) const;
     void SetRotateSpeed(float rotateSpeed);
 
+    float GetRotationModifier(void) const;
+    void SetRotationModifier(float modifier);
+
     float GetDeadZone(void) const;
     void SetDeadZone(float deadZone);
 
@@ -146,6 +149,8 @@ private:
 
     float m_rotateSpeed;
     
+    float m_rotationModifier;
+
     float m_deadZone;
 
     float m_deadZoneSnap;
