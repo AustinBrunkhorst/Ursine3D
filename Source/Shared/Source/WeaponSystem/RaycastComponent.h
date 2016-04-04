@@ -56,7 +56,7 @@ public:
 
 protected:
     
-    void Initialize(void);
+    void OnInitialize(void) override;
 
 private:
 

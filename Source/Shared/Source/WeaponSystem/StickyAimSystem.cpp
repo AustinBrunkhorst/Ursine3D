@@ -85,7 +85,7 @@ void StickyAimSystem::onUpdate(EVENT_HANDLER(World))
             entity = m_world->GetEntity( rayout.entity[ 0 ] );
 
             // if enemy then apply a modifier to players rotation
-            if ( entity->HasComponent< AIHordelingType >( ) )
+            if ( entity->GetRoot( )->HasComponent< AIHordelingType >( ) )
                 m_charControllers[ rayComps.first ]->SetRotationModifier( raycastComp->GetRotationModifier( ) );
 
             else

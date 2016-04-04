@@ -23,6 +23,7 @@ using namespace ursine;
 RaycastComponent::RaycastComponent(void) :
     BaseComponent( ),
     m_range( 100.0f ),
+    m_rotationModifier( 1.0f ),
     m_debug( false )
 {
 }
@@ -73,10 +74,10 @@ void RaycastComponent::SetDebug(bool debug)
     m_debug = debug;
 }
 
-void RaycastComponent::Initialize(void)
+void RaycastComponent::OnInitialize(void)
 {
     GetOwner( )->Listener(this)
-        .On(ursine::ecs::ENTITY_HIERARCHY_SERIALIZED, &RaycastComponent::OnHeirachyFinished);
+        .On( ursine::ecs::ENTITY_HIERARCHY_SERIALIZED, &RaycastComponent::OnHeirachyFinished );
 }
 
 void RaycastComponent::OnHeirachyFinished(EVENT_HANDLER(ursine::ecs::Entity))
