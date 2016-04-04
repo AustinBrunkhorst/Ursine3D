@@ -91,5 +91,8 @@ void StickyAimSystem::onUpdate(EVENT_HANDLER(World))
             else
                 m_charControllers[ rayComps.first ]->SetRotationModifier( 1.0f );
         }
+
+        else
+            m_charControllers[ rayComps.first ]->SetRotationModifier( 1.0f );
     }
 }
