@@ -18,6 +18,7 @@
 #include <AudioManager.h>
 #include <WindowManager.h>
 #include <UIManager.h>
+#include <UIResourceHandler.h>
 
 using namespace ursine;
 
@@ -30,6 +31,26 @@ namespace
     const auto kGameResourcesPath = "Resources/Content";
 
     const Vec2 kDefaultWindowDimensions { 1280, 720 };
+
+    class UIResourceHandlerFactory : public CefSchemeHandlerFactory
+    {
+        CefRefPtr<CefResourceHandler> Create(
+            CefRefPtr<CefBrowser> browser,
+            CefRefPtr<CefFrame> frame,
+            const CefString &schemeName,
+            CefRefPtr<CefRequest> request
+            ) override
+        {
+            auto *launcher = GetCoreSystem( GameLauncher );
+
+            return new UIResourceHandler(
+                kUIGameResourceDomain,
+                &launcher->GetScene( )->GetResourceManager( )
+            );
+        }
+
+        IMPLEMENT_REFCOUNTING(UIResourceHandlerFactory);
+    };
 }
 
 namespace ursine
@@ -76,7 +97,6 @@ UIView::Handle GameLauncher::GetUI(void)
 void GameLauncher::OnInitialize(void)
 {
     m_scene = new Scene( );
-
     m_scene->GetResourceManager( ).SetResourceDirectory( kGameResourcesPath );
 
     initSettings( );
@@ -221,6 +241,13 @@ void GameLauncher::initUI(void)
     auto window = m_window.window;
     auto &size = window->GetSize( );
 
+    // create the UI resource factory
+    CefRegisterSchemeHandlerFactory( 
+        "http", 
+        kUIGameResourceDomain, 
+        new UIResourceHandlerFactory( ) 
+    );
+
     m_window.ui = uiManager->CreateView( 
         window, 
         kUIEntryPoint 
@@ -231,6 +258,8 @@ void GameLauncher::initUI(void)
         static_cast<int>( size.X( ) ), 
         static_cast<int>( size.Y( ) )
     } );
+
+    m_scene->GetScreenManager( ).SetUI( m_window.ui );
 }
 
 void GameLauncher::initStartingWorld(void)

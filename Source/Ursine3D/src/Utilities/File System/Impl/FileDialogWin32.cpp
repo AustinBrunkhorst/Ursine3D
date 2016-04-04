@@ -22,7 +22,6 @@ namespace
     void runSaveFileDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output);
 
     void runOpenFolderDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output);
-    int CALLBACK folderBrowserCallback(HWND window, UINT message, LPARAM parameter, LPARAM data);
 
     class WorkingDirectorySaver
     {
@@ -363,18 +362,6 @@ namespace
 
             dialog->Release( );
         }
-    }
-
-    int CALLBACK folderBrowserCallback(HWND window, UINT message, LPARAM parameter, LPARAM data)
-    {
-        if (message == BFFM_INITIALIZED)
-        {
-            // WParam is TRUE since passing a path.
-            // data lParam member of the BROWSEINFO structure.
-            SendMessage( window, BFFM_SETSELECTION, true, static_cast<LPARAM>( data ) );
-        }
-
-        return 0;
     }
 }
 
