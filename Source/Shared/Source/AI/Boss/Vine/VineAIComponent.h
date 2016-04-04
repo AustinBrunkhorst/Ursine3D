@@ -191,6 +191,7 @@ public:
 
     // Tell the vine to go back to it's home location
     void GoToHomeLocation(void);
+    void JumpToHomeLocation(void);
     bool IsHome(void);
 
     void PursueTarget(void);

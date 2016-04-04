@@ -29,7 +29,8 @@ BossSpawnState::BossSpawnState(float playback)
 
 void BossSpawnState::Enter(BossAIStateMachine *machine)
 {
-    auto boss = machine->GetBoss( )->GetOwner( );
+    auto ai = machine->GetBoss( );
+    auto boss = ai->GetOwner( );
 
     auto animator = boss->GetComponentInChildren<Animator>( );
 
@@ -48,6 +49,10 @@ void BossSpawnState::Enter(BossAIStateMachine *machine)
     {
         m_finished = true;
     }
+
+    ai->SetHomeLocation(
+        boss->GetTransform( )->GetWorldPosition( )
+    );
 }
 
 void BossSpawnState::onAnimationFinished(EVENT_HANDLER(Entity))

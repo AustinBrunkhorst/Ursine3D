@@ -252,6 +252,11 @@ public:
 
     void SetVineHealthThresholdCallback(const std::function<void(VineAI*)> &callback);
 
+    void SetHomeLocation(const ursine::SVec3 &homeLocation);
+    const ursine::SVec3 &GetHomeLocation(void) const;
+
+    void JumpToHomeLocation(void);
+
 private:
 
     void OnInitialize(void) override;
@@ -268,6 +273,8 @@ private:
     void updateHealth(void);
 
     void updateVineCount(void);
+
+    void setJumpToHomeLocationBools(void);
 
     // Seedshot variables
     float m_turnSpeed;
@@ -336,6 +343,8 @@ private:
 
     typedef std::vector<BossAIStateMachine::Handle> StateMachines;
     StateMachines m_bossLogic[5];
+
+    ursine::SVec3 m_homeLocation;
 
 } Meta(
     Enable,
