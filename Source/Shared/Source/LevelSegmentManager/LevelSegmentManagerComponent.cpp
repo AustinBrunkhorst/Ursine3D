@@ -25,6 +25,10 @@
 #include "ToggleLightGroupState.h"
 #include "TriggerWaitState.h"
 #include "ToggleHudState.h"
+#include "Phase3WaitForTriggerState.h"
+#include "ToggleCameraActiveState.h"
+#include "PlayEntityAnimatorState.h"
+
 #include "CurrentSegmentCondition.h"
 
 #include "TutorialResourcesComponent.h"
@@ -453,6 +457,41 @@ void LevelSegmentManager::initBossRoomLogic(void)
             LevelSegments::BossRoom_Phase2
         } );
     }
+
+    // Setup logic for phase3 cinematic
+    {
+        // Wait for the event to be sent
+        // // When sent, Turn on cinematic camera and start the anim, slide viewports out and lock players
+        // // on finish, slide viewports back in, unlcok players, send event for phase3 start?
+
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase3 Cinematic", this );
+
+        auto waitForTrig = sm->AddState<Phase3WaitForTriggerState>( );
+        auto turnOnCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase3CinematicCamera, true );
+        auto playCinematicCam = sm->AddState<PlayEntityAnimatorState>( resources->phase3CinematicCamera, true );
+        auto tweenOut = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
+        auto tweenIn = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
+        auto toggleHudOn = sm->AddState<ToggleHudState>( true );
+        auto toggleHudOff = sm->AddState<ToggleHudState>( false );
+        auto lockPlayers = sm->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
+        auto unlockPlayers = sm->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+
+        waitForTrig->AddTransition( turnOnCinematicCam, "Turn On Cam" );
+        turnOnCinematicCam->AddTransition( lockPlayers, "Lock Players" );
+        lockPlayers->AddTransition( toggleHudOff, "Turn Off Hud" );
+        toggleHudOff->AddTransition( tweenOut, "Tween Out" );
+        tweenOut->AddTransition( playCinematicCam, "Play Cinematic" );
+        playCinematicCam->AddTransition( tweenIn, "Tween Back In" )
+                        ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 9.0f ) );
+        tweenIn->AddTransition( toggleHudOn, "Hud On" );
+        toggleHudOn->AddTransition( unlockPlayers, "Unlock Players" );
+
+        sm->SetInitialState( waitForTrig );
+
+        addSegmentLogic(sm, {
+            LevelSegments::BossRoom_Phase3
+        } );
+    }
 }
 
 SegmentLogicStateMachine::Handle LevelSegmentManager::createSegmentLogic(const std::string &name, LevelSegments segment)
@@ -474,9 +513,6 @@ void LevelSegmentManager::onUpdate(EVENT_HANDLER(World))
 {
     if (m_segment == LevelSegments::Empty)
         return;
-
-    // TODO: Remove this, using it to try and find a weird bug.
-    // std::cout << (m_segment == LevelSegments::BossRoom_Introduction ? "Intro" : m_segment == LevelSegments::BossRoom_Phase1 ? "Phase1" : "Other") << std::endl;
 
     // Update all state machines
     for (auto &logic : m_segmentLogic[ m_segment ])
