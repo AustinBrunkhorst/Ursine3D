@@ -17,61 +17,63 @@
 #include "AudioComponentBase.h"
 #include "ListenerMasks.h"
 #include "AudioEventInfo.h"
+
 #include <queue>
 
 namespace ursine
 {
-	namespace ecs
-	{
-		class AudioEmitter 
+    namespace ecs
+    {
+        class AudioEmitter 
             : public Component
             , public AudioComponentBase
-		{
-			NATIVE_COMPONENT;
+        {
+            NATIVE_COMPONENT;
 
-		public:
-			EditorMeta(BitMaskEditor)
-			EditorField(
-				ListenerMask listenerMask,
+        public:
+            EditorMeta(BitMaskEditor)
+            EditorField(
+                ListenerMask listenerMask,
                 GetListenerMask,
                 SetListenerMask
-			);
+            );
 
             Meta(Enable)
-			AudioEmitter(void);
+            AudioEmitter(void);
 
-			EditorField(
-				std::string test,
-				GetText,
-				SetText
-			);
+            EditorField(
+                std::string test,
+                GetText,
+                SetText
+            );
 
-			EditorButton(
-				PushTestSound,
-				"Play Sound"
-			);
+            EditorButton(
+                PushTestSound,
+                "Play Sound"
+            );
 
-			ListenerMask GetListenerMask(void) const;
-			void SetListenerMask(ListenerMask mask);
+            ListenerMask GetListenerMask(void) const;
+            void SetListenerMask(ListenerMask mask);
 
-			const std::string &GetText(void) const;
-			void SetText(const std::string &text);
+            const std::string &GetText(void) const;
+            void SetText(const std::string &text);
 
-			void PushEvent(const AudioEvent::Handle event);
+            void PushEvent(const AudioEvent::Handle event);
+            void PushEvent(const resources::ResourceReference &eventResource);
 
-			AudioEvent::Handle GetEvent(void);
-			void PopEvent(void);
-			bool EmptyEvent(void);
+            AudioEvent::Handle GetEvent(void);
+            void PopEvent(void);
+            bool EmptyEvent(void);
 
-			bool checkMask(void);
-			void ResetMaskFlag(void);
+            bool checkMask(void);
+            void ResetMaskFlag(void);
 
-		private:
-			ListenerMask m_listenerMask;
-			std::queue<AudioEvent::Handle> m_events;
-			std::string m_testText;
-			bool m_maskChanged;
-			
-		} Meta(Enable, WhiteListMethods, DisplayName( "AudioEmitter" ));
-	}
+        private:
+            ListenerMask m_listenerMask;
+            std::queue<AudioEvent::Handle> m_events;
+            std::string m_testText;
+            bool m_maskChanged;
+            
+        } Meta(Enable, WhiteListMethods, DisplayName( "AudioEmitter" ));
+    }
 }

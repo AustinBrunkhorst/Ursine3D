@@ -19,76 +19,102 @@
 
 namespace ursine
 {
-	namespace ecs
-	{
-		NATIVE_COMPONENT_DEFINITION(AudioEmitter);
+    using namespace resources;
 
-		AudioEmitter::AudioEmitter(void)
-			: BaseComponent( )
-			, m_maskChanged( false )
-		    , m_listenerMask( ListenerMask::None )  { }
+    namespace ecs
+    {
+        NATIVE_COMPONENT_DEFINITION(AudioEmitter);
 
-		ListenerMask AudioEmitter::GetListenerMask(void) const
-		{
-			return m_listenerMask;
-		}
+        AudioEmitter::AudioEmitter(void)
+            : BaseComponent( )
+            , m_maskChanged( false )
+            , m_listenerMask( ListenerMask::None )  { }
 
-		void AudioEmitter::PushTestSound(void)
-		{
-			auto event = std::make_shared<AudioGeneric>( );
+        ListenerMask AudioEmitter::GetListenerMask(void) const
+        {
+            return m_listenerMask;
+        }
 
-			event->name = m_testText;
-			
-			m_events.push( event );
-		}
+        void AudioEmitter::PushTestSound(void)
+        {
+            auto event = std::make_shared<AudioGeneric>( );
 
-		const std::string& AudioEmitter::GetText(void) const
-		{
-			return m_testText;
-		}
+            event->name = m_testText;
+            
+            m_events.push( event );
+        }
 
-		void AudioEmitter::SetText(const std::string& text)
-		{
-			m_testText = text;
-		}
+        const std::string& AudioEmitter::GetText(void) const
+        {
+            return m_testText;
+        }
 
-		void AudioEmitter::PushEvent(const AudioEvent::Handle event)
-		{
-			m_events.push( event );
-		}
+        void AudioEmitter::SetText(const std::string& text)
+        {
+            m_testText = text;
+        }
 
-		AudioEvent::Handle AudioEmitter::GetEvent(void)
-		{
-			return m_events.front( );
-		}
+        void AudioEmitter::PushEvent(const AudioEvent::Handle event)
+        {
+            m_events.push( event );
+        }
 
-		void AudioEmitter::PopEvent(void)
-		{
-			m_events.pop( );
-		}
+        void AudioEmitter::PushEvent(const resources::ResourceReference &eventResource)
+        {
+            auto world = GetOwner( )->GetWorld( );
 
-		bool AudioEmitter::EmptyEvent()
-		{
-			return m_events.empty( );
-		}
+            if (!world)
+                return;
 
-		bool AudioEmitter::checkMask()
-		{
-			return m_maskChanged;
-		}
+            auto scene = world->GetOwner( );
 
-		void AudioEmitter::ResetMaskFlag()
-		{
-			m_maskChanged = false;
-		}
+            if (!scene)
+                return;
 
-		void AudioEmitter::SetListenerMask(ListenerMask mask)
-	    {
-			m_listenerMask = mask;
+            auto event = eventResource.Load<AudioItemEventData>( scene->GetResourceManager( ) );
 
-			m_maskChanged = true;
+            if (!event)
+                return;
 
-			NOTIFY_COMPONENT_CHANGED( "listenerMask", m_listenerMask );
-		}
-	}
+            auto newEvent = std::make_shared<AudioGeneric>( );
+
+            newEvent->name = event->GetEvent( );
+
+            PushEvent( newEvent );
+        }
+
+        AudioEvent::Handle AudioEmitter::GetEvent(void)
+        {
+            return m_events.front( );
+        }
+
+        void AudioEmitter::PopEvent(void)
+        {
+            m_events.pop( );
+        }
+
+        bool AudioEmitter::EmptyEvent()
+        {
+            return m_events.empty( );
+        }
+
+        bool AudioEmitter::checkMask()
+        {
+            return m_maskChanged;
+        }
+
+        void AudioEmitter::ResetMaskFlag()
+        {
+            m_maskChanged = false;
+        }
+
+        void AudioEmitter::SetListenerMask(ListenerMask mask)
+        {
+            m_listenerMask = mask;
+
+            m_maskChanged = true;
+
+            NOTIFY_COMPONENT_CHANGED( "listenerMask", m_listenerMask );
+        }
+    }
 }
