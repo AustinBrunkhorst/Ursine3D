@@ -22,6 +22,7 @@ NATIVE_COMPONENT_DEFINITION( CharacterController );
 CharacterController::CharacterController(void)
     : BaseComponent( )
     , m_rotateSpeed( 4.0f )
+    , m_rotationModifier( 1.0f )
     , m_jump( false )
     , m_deadZone( 0.0f )
     , m_deadZoneSnap( 0.0f )
@@ -52,6 +53,16 @@ void CharacterController::SetRotateSpeed(float rotateSpeed)
         return;
 
     m_rotateSpeed = rotateSpeed;
+}
+
+float CharacterController::GetRotationModifier(void) const
+{
+    return m_rotationModifier;
+}
+
+void CharacterController::SetRotationModifier(float modifier)
+{
+    m_rotationModifier = modifier;
 }
 
 float CharacterController::GetDeadZone(void) const

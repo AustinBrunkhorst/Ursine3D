@@ -14,8 +14,11 @@
 #pragma once
 
 #include "EntitySystem.h"
+
 #include "AudioManager.h"
+
 #include "AudioID.h"
+#include "AudioEventInfo.h"
 
 namespace ursine
 {
@@ -36,15 +39,16 @@ namespace ursine
 
             void DeleteAudioObject(AkGameObjectID& id);
 
-            static void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
-
-            void AssignListener(AkGameObjectID obj, ListenerIndex listeners);
+            void AssignListener(AkGameObjectID obj, ListenerMask listeners);
 
             void SetListener3DPosition(const AkVector orientation_forward,
-                const AkVector orientation_up, const AkVector position, const ListenerIndex listeners);
+                const AkVector orientation_up, const AkVector position, const ListenerMask listeners);
 
             void SetListener3DPosition(const SVec3 orientation_forward,
-                const SVec3 orientation_up, const SVec3 position, const ListenerIndex listeners);
+                const SVec3 orientation_up, const SVec3 position, const ListenerMask listeners);
+
+			void SetListener3DPosition(const SVec3 orientation_forward,
+				const SVec3 orientation_up, const SVec3 position, const ListenerIndex listeners);
 
             void SetObject3DPosition(AkGameObjectID obj, const AkSoundPosition position);
 
@@ -56,11 +60,19 @@ namespace ursine
             void SetSoundObstructionAndOcclusion(AkGameObjectID obstruction,
                 const AkUInt32 listeners, const AkReal32 obstruction_level, const AkReal32 occlusion_level);
 
-            static void SetGameState(const std::string name, const std::string state);
-            
-            static void SetObjectSwitch(const std::string name, const std::string state, AkGameObjectID obj);
+			bool ChangeAssignedListener(ListenerIndex oldIndex, ListenerIndex newIndex);
 
-            static void SetTrigger(const std::string name, AkGameObjectID obj);
+            static void SetGameState(const std::string &name, const std::string &state);
+            
+            static void SetObjectSwitch(const std::string &name, const std::string &state, AkGameObjectID obj);
+
+            static void SetTrigger(const std::string &name, AkGameObjectID obj);
+
+			static void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
+
+			static void PostAudioEvent(const std::string param, AkGameObjectID id = AUDIO_GLOBAL_OBJECT_ID);
+
+			void PostAudioEventInfo(AudioEvent::Handle e, AkGameObjectID id);
 
         private:
             AudioManager *m_audioMan;

@@ -30,16 +30,15 @@ namespace ursine
 		friend class ecs::AudioSystem;
 
 		AudioComponentBase(void);
-		AkGameObjectID GetHandle();
+		AkGameObjectID GetHandle(void);
 
-		void OnInitialize(ecs::Entity *owner);
-		void OnRemove(ecs::Entity *owner);
+		void OnInitialize(const ecs::EntityHandle &owner);
+		void OnRemove(const ecs::EntityHandle &owner);
 
 	protected:
 
 		AkGameObjectID m_handle;
 
-		// lets us know if we need to update the matrix in the renderer
 		bool m_dirty;
 
 		void onTransformChange(EVENT_HANDLER(ecs::Entity));
