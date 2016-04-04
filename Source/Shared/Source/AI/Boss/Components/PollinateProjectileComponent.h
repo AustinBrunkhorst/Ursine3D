@@ -23,7 +23,6 @@ class PollinateProjectile : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
-
     PollinateProjectile(void);
 
     void OnSceneReady(ursine::Scene *scene) override;
@@ -38,7 +37,6 @@ public:
     void SetLifeTime(float lifeTime);
 
 private:
-
     ursine::SVec3 m_direction;
 
     float m_gravity;
@@ -57,11 +55,12 @@ private:
     void onUpdate(EVENT_HANDLER(World));
 
 } Meta(
-    Enable, 
+    Enable
+) EditorMeta(
     RequiresComponents(
-        typeof(DamageOnCollide),
-        typeof(ursine::ecs::Rigidbody),
-        typeof(ursine::ecs::SphereCollider),
-        typeof(ursine::ecs::ParticleEmitter)
-    )
+        typeof( DamageOnCollide ),
+        typeof( ursine::ecs::Rigidbody ),
+        typeof( ursine::ecs::SphereCollider ),
+        typeof( ursine::ecs::ParticleEmitter )
+    )    
 );

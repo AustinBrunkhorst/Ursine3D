@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -19,90 +19,76 @@
 
 namespace ursine
 {
-    namespace ecs
-    {
-        NATIVE_COMPONENT_DEFINITION(AudioEmitter);
+	namespace ecs
+	{
+		NATIVE_COMPONENT_DEFINITION(AudioEmitter);
 
-        AudioEmitter::AudioEmitter(void)
-            : BaseComponent( )
-            , m_loop( false )
-            , m_mute( false )
-            , m_listeners( ListenerIndex::One )
-            , m_volume( 100.0f )  { }
+		AudioEmitter::AudioEmitter(void)
+			: BaseComponent( )
+			, m_maskChanged( false )
+		    , m_listenerMask( ListenerMask::None )  { }
 
-        float AudioEmitter::GetVolume(void) const
-        {
-            return m_volume;
-        }
+		ListenerMask AudioEmitter::GetListenerMask(void) const
+		{
+			return m_listenerMask;
+		}
 
-        void AudioEmitter::SetVolume(float volume)
-        {
-            m_volume = math::Clamp( volume, 0.0f, 100.0f );
+		void AudioEmitter::PushTestSound(void)
+		{
+			auto event = std::make_shared<AudioGeneric>( );
 
-            NOTIFY_COMPONENT_CHANGED( "Volume", m_volume );
-        }
+			event->name = m_testText;
+			
+			m_events.push( event );
+		}
 
-        bool AudioEmitter::GetMute(void) const
-        {
-            return m_mute;
-        }
+		const std::string& AudioEmitter::GetText(void) const
+		{
+			return m_testText;
+		}
 
-        void AudioEmitter::SetMute(bool mute)
-        {
-            m_mute = mute;
-        }
+		void AudioEmitter::SetText(const std::string& text)
+		{
+			m_testText = text;
+		}
 
-        bool AudioEmitter::GetLoop(void) const
-        {
-            return m_loop;
-        }
+		void AudioEmitter::PushEvent(const AudioEvent::Handle event)
+		{
+			m_events.push( event );
+		}
 
-        void AudioEmitter::SetLoop(bool loop)
-        {
-            m_loop = loop;
-        }
+		AudioEvent::Handle AudioEmitter::GetEvent(void)
+		{
+			return m_events.front( );
+		}
 
-        std::string AudioEmitter::GetFrontSound(void)
-        {
-            return m_soundsFAF.front( );
-        }
+		void AudioEmitter::PopEvent(void)
+		{
+			m_events.pop( );
+		}
 
-        void AudioEmitter::PopFrontSound(void)
-        {
-            m_soundsFAF.pop( );
-        }
+		bool AudioEmitter::EmptyEvent()
+		{
+			return m_events.empty( );
+		}
 
-        bool AudioEmitter::SoundsEmpty(void)
-        {
-            return m_soundsFAF.empty( );
-        }
+		bool AudioEmitter::checkMask()
+		{
+			return m_maskChanged;
+		}
 
-        void AudioEmitter::AddSoundToPlayQueue(const std::string &sound)
-        {
-            if (!m_mute)
-                m_soundsFAF.push( sound );
-        }
+		void AudioEmitter::ResetMaskFlag()
+		{
+			m_maskChanged = false;
+		}
 
-        bool AudioEmitter::PlayEvent(const resources::ResourceReference &event)
-        {
-            auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
+		void AudioEmitter::SetListenerMask(ListenerMask mask)
+	    {
+			m_listenerMask = mask;
 
-            if (!scene)
-                return false;
+			m_maskChanged = true;
 
-            auto *data = event.Load<resources::AudioItemEventData>( scene->GetResourceManager( ) );
-
-            if (!data)
-                return false;
-
-            AddSoundToPlayQueue( data->GetEvent( ) );
-
-            return true;
-        }
-
-        ListenerIndex AudioEmitter::GetListeners(void)
-        {
-            return m_listeners;
-        }
-    }
+			NOTIFY_COMPONENT_CHANGED( "listenerMask", m_listenerMask );
+		}
+	}
 }

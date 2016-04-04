@@ -22,7 +22,6 @@ class SludgeshotProjectile : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
-
     SludgeshotProjectile(void);
     ~SludgeshotProjectile(void);
 
@@ -34,7 +33,6 @@ public:
     void InitializeComponents(void);
 
 private:
-
     ursine::SVec3 m_target;
 
     float m_time;
@@ -42,13 +40,13 @@ private:
     float m_emitionRate;
 
     void onAnimationCompleted(EVENT_HANDLER(EntityAnimator));
-
 } Meta(
     Enable,
+) EditorMeta(
     RequiresComponents(
-        typeof(DamageOnCollide),
-        typeof(EntityAnimator),
-        typeof(Health),
-        typeof(ursine::ecs::ParticleEmitter)
+        typeof( DamageOnCollide ),
+        typeof( EntityAnimator ),
+        typeof( Health ),
+        typeof( ursine::ecs::ParticleEmitter )
     )
 );

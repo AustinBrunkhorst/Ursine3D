@@ -256,14 +256,15 @@ void Health::DealDamage(float damage)
         Dispatch( HEALTH_DAMAGE_TAKEN, &args );
 
         // dispacth to ui if player
-        if ( owner->HasComponent< PlayerID >( ) )
+        if (owner->HasComponent<PlayerID>( ) )
         {
-            ursine::Json message = ursine::Json::object {
+            URSINE_TODO( "Create health event" );
+            /*ursine::Json message = ursine::Json::object {
                 { "playerID", owner->GetComponent< PlayerID >( )->GetID( ) },
                 { "healthPercent", percentage }
             };
 
-            GetOwner( )->GetWorld( )->MessageUI( gameUIEvents::UI_HealthComponentStats, message );
+            GetOwner( )->GetWorld( )->MessageUI( gameUIEvents::UI_HealthComponentStats, message );*/
         }
     }
 }

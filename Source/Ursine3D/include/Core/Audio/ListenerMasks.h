@@ -15,17 +15,28 @@
 
 namespace ursine
 {
-    enum class ListenerIndex
+	enum class ListenerIndex
+	{
+		L1,
+		L2,
+		L3,
+		L4,
+		L5,
+		L6,
+		L7,
+		LG
+    } Meta(Enable);
+
+	enum class ListenerMask
     {
-        Meta(Disable)
-        None,
-        One = 1 << 0u,
-        Two = 1 << 1u,
-        Three = 1 << 2u,
-        Four = 1 << 3u,
-        Five = 1 << 4u,
-        Six = 1 << 5u,
-        Seven = 1 << 6u,
-        Eight = 1 << 7u
+        None = 0,
+        L1 = 1 << 0u,
+        L2 = 1 << 1u,
+        L3 = 1 << 2u,
+        L4 = 1 << 3u,
+        L5 = 1 << 4u,
+        L6 = 1 << 5u,
+        L7 = 1 << 6u,
+        L8 = 1 << 7u
     } Meta(Enable, BitMaskEditor);
 }

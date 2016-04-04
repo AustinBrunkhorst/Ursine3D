@@ -42,7 +42,6 @@ class VineAI
     NATIVE_COMPONENT;
 
 public:
-
     EditorButton(
         drawRange,
         "Draw Range"
@@ -239,6 +238,7 @@ private:
     int m_currentHealthThreshold;
 
 } Meta(
-    Enable,
-    RequiresComponents(typeof(Health))
+    Enable
+) EditorMeta(
+    RequiresComponents( typeof( Health ) )
 );

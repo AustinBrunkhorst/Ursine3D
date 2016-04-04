@@ -40,10 +40,7 @@ namespace ursine
             const std::vector<Node> &GetNodesList(void) const;
 
         private:
-            Meta(Disable)
             std::vector<Node> m_nodes;
-
-            Meta(Disable)
             std::list<Node *> m_closed;
 
         } Meta(Enable, DisplayName( "Waypoint Agent" ));

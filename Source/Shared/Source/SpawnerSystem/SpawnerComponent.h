@@ -30,7 +30,6 @@ class Spawner : public ursine::ecs::Component
     friend class SpawnPattern;
 
 public:
-
     // Button for adding a pattern (for a level + sub level event)
     EditorButton(
         createPattern,
@@ -57,7 +56,6 @@ public:
     void OnDeserialize(const ursine::Json &input) override;
 
 private:
-
     ursine::resources::ResourceReference m_archetype;
 
     AIArchetype m_enemyType;
@@ -74,5 +72,9 @@ private:
     void onLevelSegmentChange(LevelSegments segment);
 
     ursine::ecs::EntityHandle spawnEnemy(SpawnerGroup *group, const ursine::SVec3 &worldPosition);
-
-} Meta(Enable, HiddenInSelector, DisableComponentRemoval);
+} Meta(
+    Enable
+) EditorMeta(
+    HiddenInSelector, 
+    DisableComponentRemoval
+);

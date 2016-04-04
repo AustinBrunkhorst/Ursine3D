@@ -43,4 +43,8 @@ private:
 
     void onUpdate(EVENT_HANDLER(World));
 
-} Meta(Enable, RequiresComponents(typeof(EntityAnimator)));
+} Meta(
+    Enable
+) EditorMeta(
+    RequiresComponents( typeof( EntityAnimator ) )
+);

@@ -63,7 +63,7 @@ private:
 } Meta(
     Enable,
     WhiteListMethods,
-    DisplayName( "Interactable" ), 
-    RequiresComponents( typeof( ursine::ecs::BoxCollider ) )
+    DisplayName( "Interactable" )
+) EditorMeta(
+    RequiresComponents( typeof( ursine::ecs::BoxCollider ) )    
 );
-

@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Retrospect.cpp
+** GameLauncher.cpp
 **
 ** Author:
 ** - Austin Brunkhorst - a.brunkhorst@digipen.edu
@@ -15,36 +15,43 @@
 
 #include "GameLauncher.h"
 
-#include <Application.h>
-
+#include <AudioManager.h>
 #include <WindowManager.h>
 #include <UIManager.h>
-#include <ScreenManager.h>
-#include <Timer.h>
-
-#include <Color.h>
-#include <Vec3.h>
-#include <CameraComponent.h>
-#include <LightComponent.h>
-#include <WorldSerializer.h>
-
-#include <AudioManager.h>
 
 using namespace ursine;
 
 namespace
 {
-    const auto kEntryPoint = "file:///Assets/UI/Resources/Main.html";
+    const auto kUIEntryPoint = "file:///Resources/UI/Main.html";
+
+    const auto kGameSettingsFile = "Resources/Game.config";
+    const auto kGameIconFile = "Resources/Icon.png";
+    const auto kGameResourcesPath = "Resources/Content";
+
+    const Vec2 kDefaultWindowDimensions { 1280, 720 };
+}
+
+namespace ursine
+{
+    UIScreenManager *JSGetGlobalScreenManager(void)
+    {
+        return nullptr;
+    }
+
+    CefRefPtr<CefBrowser> JSGetGlobalBrowser(void)
+    {
+        return nullptr;
+    }
 }
 
 CORE_SYSTEM_DEFINITION( GameLauncher );
 
 GameLauncher::GameLauncher(void)
     : m_graphics( nullptr )
-	, m_audioManager( nullptr )
-    , m_mainWindow( { nullptr } )
+    , m_window( { nullptr } )
 {
-
+    
 }
 
 GameLauncher::~GameLauncher(void)
@@ -54,12 +61,15 @@ GameLauncher::~GameLauncher(void)
 
 Window::Handle GameLauncher::GetMainWindowHandle(void) const
 {
-    return m_mainWindow.window;
+    return m_window.window;
 }
 
 void GameLauncher::OnInitialize(void)
 {
-    
+    m_scene.GetResourceManager( ).SetResourceDirectory( kGameResourcesPath );
+
+    initializeSettings( );
+    initializeGraphics( );
 }
 
 void GameLauncher::OnRemove(void)
@@ -70,41 +80,117 @@ void GameLauncher::OnRemove(void)
         &GameLauncher::onAppUpdate
     );
 
-    delete m_screenManager;
+    m_window.window->Listener( this )
+        .Off( WINDOW_FOCUS_CHANGED, &GameLauncher::onWindowFocusChanged )
+        .Off( WINDOW_RESIZE, &GameLauncher::onWindowResize );
 
-    m_screenManager = nullptr;
-
-    m_mainWindow.window->Listener( this )
-        .Off( WINDOW_FOCUS_CHANGED, &GameLauncher::onMainWindowFocusChanged )
-        .Off( WINDOW_RESIZE, &GameLauncher::onMainWindowResize );
-
-    m_mainWindow.ui->Close( );
-    m_mainWindow.ui = nullptr;
+    m_window.ui->Close( );
+    m_window.ui = nullptr;
     
-    m_mainWindow.window = nullptr;
+    m_window.window = nullptr;
+}
 
-	m_audioManager = nullptr;
+void GameLauncher::initializeSettings(void)
+{
+    std::string configJson;
+    std::string configJsonError;
+
+    UAssert( fs::LoadAllText( kGameSettingsFile, configJson ),
+        "Unable to load game configuration file."
+    );
+
+    auto jsonData = Json::parse( configJson, configJsonError );
+
+    UAssert( configJsonError.empty( ),
+        "Error parsing game configuration JSON.\nerror: %s",
+        configJsonError.c_str( )
+    );
+
+    m_settings = meta::Type::DeserializeJson<GameSettings>( jsonData );
+}
+
+void GameLauncher::initializeWindow(void)
+{
+    auto *windowManager = GetCoreSystem( WindowManager );
+
+    auto window = m_window.window = windowManager->AddWindow(
+        m_settings.title,
+        Vec2::Zero( ),
+        kDefaultWindowDimensions,
+        0
+    );
+
+    window->Listener( this )
+        .On( WINDOW_RESIZE, &GameLauncher::onWindowResize )
+        .On( WINDOW_FOCUS_CHANGED, &GameLauncher::onWindowFocusChanged );
+    
+    window->SetLocationCentered( );
+
+    if (fs::exists( kGameIconFile ))
+        window->SetIcon( kGameIconFile );
 }
 
 void GameLauncher::initializeGraphics(void)
 {
-    graphics::GfxConfig config;
+    m_graphics = GetCoreSystem( graphics::GfxAPI );
 
-    m_graphics->StartGraphics( config );
+    graphics::GfxConfig gfxConfig;
+
+    gfxConfig.fullscreen = false;
+      
+    auto window = m_window.window;
+    auto &size = window->GetSize( );
+
+    gfxConfig.handleToWindow =
+        static_cast<HWND>(window->GetPlatformHandle( ) );
+       
+    gfxConfig.shaderListPath = URSINE_SHADER_BUILD_DIRECTORY;
+    gfxConfig.windowWidth = static_cast<unsigned>( size.X( ) );
+    gfxConfig.windowHeight = static_cast<unsigned>( size.Y( ) );
+    gfxConfig.enableDebugInfo = false;
+    gfxConfig.enableProfiling = false;
+
+    m_graphics->StartGraphics( gfxConfig );
+    m_graphics->Resize( gfxConfig.windowWidth, gfxConfig.windowHeight );
+      
+    auto viewport = m_graphics->ViewportMgr.CreateViewport( 0, 0 );
+       
+    auto &handle = m_graphics->ViewportMgr.GetViewport( viewport );
+        
+    handle.SetPosition( 0, 0 );
+      
+    m_scene.SetViewport( viewport );
+     
+    m_graphics->SetGameViewport( viewport );
+}
+
+void GameLauncher::initalizeUI(void)
+{
+    auto *uiManager = GetCoreSystem( UIManager );
+
+    auto window = m_window.window;
+    auto &size = window->GetSize( );
+
+    m_window.ui = uiManager->CreateView( 
+        window, 
+        kUIEntryPoint 
+    );
+
+    m_window.ui->SetViewport( {
+        0, 0,
+        static_cast<int>( size.X( ) ), 
+        static_cast<int>( size.Y( ) )
+    } );
 }
 
 void GameLauncher::onAppUpdate(EVENT_HANDLER(ursine::Application))
 {
     EVENT_ATTRS(Application, EventArgs);
 
-    auto dt = sender->GetDeltaTime( );
-
-    m_screenManager->Update( );
-
     SDL_ShowCursor( false );
 }
 
-void GameLauncher::onMainWindowFocusChanged(EVENT_HANDLER(ursine::Window))
+void GameLauncher::onWindowFocusChanged(EVENT_HANDLER(ursine::Window))
 {
     EVENT_ATTRS(Window, WindowFocusArgs);
 
@@ -120,14 +206,14 @@ void GameLauncher::onMainWindowFocusChanged(EVENT_HANDLER(ursine::Window))
     Application::Instance->SetActive( args->focused );
 }
 
-void GameLauncher::onMainWindowResize(EVENT_HANDLER(ursine::Window))
+void GameLauncher::onWindowResize(EVENT_HANDLER(ursine::Window))
 {
     EVENT_ATTRS(Window, WindowResizeArgs);
 
     m_graphics->Resize( args->width, args->height );
-    m_mainWindow.viewport->SetDimensions( args->width, args->height );
+    m_window.viewport->SetDimensions( args->width, args->height );
 
-    m_mainWindow.ui->SetViewport( {
+    m_window.ui->SetViewport( {
         0, 0,
         args->width, args->height
     } );

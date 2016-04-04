@@ -16,16 +16,25 @@
 #include "BinaryData.h"
 
 #include <boost/filesystem.hpp>
+#include <unordered_set>
+
+#if defined(URSINE_DEPENDENCY_FileWatcher)
+
 #include <FileWatcher.h>
 
-#include <unordered_set>
+#endif
 
 namespace ursine
 {
     namespace fs
     {
         using namespace boost::filesystem;
+
+#if defined(URSINE_DEPENDENCY_FileWatcher)
+
         using namespace efsw;
+
+#endif
         
         typedef boost::hash<path> PathHasher;
         typedef std::vector<path> PathList;

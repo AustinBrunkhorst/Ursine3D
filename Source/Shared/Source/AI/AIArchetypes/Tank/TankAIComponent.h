@@ -23,48 +23,47 @@ class TankAI : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
-
     EditorField(
         float SlamDelay,
         GetSlamDelay,
         SetSlamDelay
-        );
+    );
 
     EditorField(
         float damageOnAttack,
         GetDamage,
         SetDamage
-        );
+    );
 
     EditorField(
         float AttackRange,
         GetAttackRange,
         SetAttackRange
-        );
+    );
 
     EditorField(
         float AttackRadius,
         GetAttackRadius,
         SetAttackRadius
-        );
+    );
 
     EditorField(
         float Cohesion,
         GetCohesionScale,
         SetCohesionScale
-        );
+    );
 
     EditorField(
         float Separation,
         GetSeparationScale,
         SetSeparationScale
-        );
+    );
 
     EditorField(
         float TotalBoidBehaviorScale,
         GetBoidScale,
         SetBoidScale
-        );
+    );
 
     TankAI(void);
     ~TankAI(void);
@@ -91,15 +90,13 @@ public:
     void SetBoidScale(float newScale);
 
 private:
-
     void OnInitialize(void) override;
 
     void onUpdate(EVENT_HANDLER(World));
 
     void onCollide(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 
-    Meta(Disable)
-        ursine::sm::TankAIStateMachine m_stateMachine;
+    ursine::sm::TankAIStateMachine m_stateMachine;
 
     float m_slamDelay;
 
@@ -115,4 +112,9 @@ private:
 
     float m_boidScale;
 
-} Meta(Enable, DisplayName("TankAI"), RequiresComponents(typeof(ursine::ecs::AIMovementController)));
+} Meta(
+    Enable, 
+    DisplayName( "TankAI" )
+) EditorMeta(
+    RequiresComponents( typeof( ursine::ecs::AIMovementController ) )
+);

@@ -552,15 +552,19 @@ namespace ursine
             // throw message box
             if (!rig)
             {
+            #if defined(URSINE_WITH_EDITOR)
+
                 NotificationConfig config;
 
                 config.type = NOTIFY_ERROR;
                 config.header = "Error";
                 config.message = "The Model is static mesh. There's no matching rig or animation for this.";
                 config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds(5.0f);
+                config.duration = TimeSpan::FromSeconds( 5.0f );
 
-                EditorPostNotification(config);
+                EditorPostNotification( config );
+
+            #endif
 
                 return;
             }

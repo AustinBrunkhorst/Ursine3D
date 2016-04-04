@@ -22,7 +22,6 @@ class AnimateTutorialText : public ursine::ecs::Component
 	NATIVE_COMPONENT;
 
 public:
-
 	AnimateTutorialText(void);
 	~AnimateTutorialText(void);
 
@@ -33,7 +32,6 @@ public:
 	float lineEndCooldown;
 
 private:
-
 	void OnInitialize(void) override;
 
 	void onUpdate(EVENT_HANDLER(World));
@@ -49,5 +47,8 @@ private:
 	int m_index;
 	TypeState m_state;
 	ursine::ecs::SpriteText *m_spriteText;
-
-} Meta(Enable, RequiresComponents(typeof(ursine::ecs::SpriteText)));
+} Meta(
+    Enable
+) EditorMeta(
+    RequiresComponents( typeof( ursine::ecs::SpriteText ) )
+);

@@ -24,8 +24,7 @@ class SpawnPattern
     friend class SpawnPatternContainer;
 
 public:
-
-    Meta(MultiLineEditor)
+    EditorMeta(MultiLineEditor)
     std::string notes;
 
     EditorField(
@@ -100,7 +99,7 @@ public:
         SetSpawnDirection
     );
 
-    Meta(InputRange(0.0f, 180.0f, 0.1f, "{{value.toFixed( 2 )}} deg"))
+    EditorMeta(InputRange(0.0f, 180.0f, 0.1f, "{{value.toFixed( 2 )}} deg"))
     EditorField(
         float spawnAngleVariance,
         GetSpawnAngleVariance,
@@ -152,7 +151,6 @@ public:
     void Update(SpawnerGroup *group, Spawner *spawner, SpawnPatternContainer *container);
 
 private:
-
     // When checked, the pattern will be used by it's spawner
     bool m_active : 1; // CHECK
 

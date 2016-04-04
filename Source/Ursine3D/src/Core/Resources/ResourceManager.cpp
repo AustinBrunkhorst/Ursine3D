@@ -81,6 +81,8 @@ namespace ursine
             }
             catch (AssertionException &e)
             {
+                URSINE_UNUSED( e );
+
                 UWarning( "Failed to load resource '%s'.\nerror: %s\nfunction: %s\nfile: %s\nline: %i",
                     to_string( guid ).c_str( ),
                     e.GetErrorMessage( ).c_str( ),

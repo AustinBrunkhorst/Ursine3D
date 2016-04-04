@@ -40,5 +40,9 @@ public:
 private:
     ursine::SVec3 m_force;
 
-} Meta(Enable, DisplayName("ForceComponent"), RequiresComponents(typeof(ursine::physics::BoxCollider)));
-
+} Meta(
+    Enable, 
+    DisplayName( "ForceComponent" )
+) EditorMeta(
+    RequiresComponents( typeof( ursine::physics::BoxCollider ) )    
+);

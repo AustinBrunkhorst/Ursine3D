@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** Retrospect.h
+** GameLauncher.h
 **
 ** Author:
 ** - Austin Brunkhorst - a.brunkhorst@digipen.edu
@@ -15,11 +15,9 @@
 
 #include <CoreSystem.h>
 
-#include <Windows.h>
-#include <AudioManager.h>
 #include <UIView.h>
 #include <Scene.h>
-#include <NativeJSFunction.h>
+#include <GameSettings.h>
 
 class GameLauncher : public ursine::core::CoreSystem
 {
@@ -38,19 +36,23 @@ public:
 private:
     ursine::graphics::GfxAPI *m_graphics;
 
-	ursine::AudioManager *m_audioManager;
+    ursine::Scene m_scene;
+    ursine::GameSettings m_settings;
 
     struct
     {
         ursine::Window::Handle window;
         ursine::UIView::Handle ui;
         ursine::graphics::Viewport *viewport;
-    } m_mainWindow;
+    } m_window;
 
+    void initializeSettings(void);
+    void initializeWindow(void);
     void initializeGraphics(void);
+    void initalizeUI(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 
-    void onMainWindowFocusChanged(EVENT_HANDLER(ursine::Window));
-    void onMainWindowResize(EVENT_HANDLER(ursine::Window));
+    void onWindowFocusChanged(EVENT_HANDLER(ursine::Window));
+    void onWindowResize(EVENT_HANDLER(ursine::Window));
 } Meta(Enable, WhiteListMethods);

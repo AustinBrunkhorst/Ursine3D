@@ -147,6 +147,13 @@ namespace ursine
             Dispatch( WORLD_UPDATE, EventArgs::Empty );
         }
 
+        void World::Render(void)
+        {
+            Dispatch( WORLD_RENDER, EventArgs::Empty );
+        }
+
+    #if defined(URSINE_WITH_EDITOR)
+
         void World::EditorUpdate(void)
         {
             clearDeletionQueue( );
@@ -154,15 +161,12 @@ namespace ursine
             Dispatch( WORLD_EDITOR_UPDATE, EventArgs::Empty );
         }
 
-        void World::Render(void)
-        {
-            Dispatch( WORLD_RENDER, EventArgs::Empty );
-        }
-
         void World::EditorRender(void)
         {
             Dispatch( WORLD_EDITOR_RENDER, EventArgs::Empty );
         }
+
+    #endif
 
         const EntityHandle &World::GetSettings(void) const
         {
@@ -263,11 +267,6 @@ namespace ursine
 
                 return EntityHandle::Invalid( );
             }
-        }
-
-        void World::MessageUI(const std::string &message, const Json &data)
-        {
-            URSINE_TODO( "Message Scene ScreenManager" );
         }
     }
 }

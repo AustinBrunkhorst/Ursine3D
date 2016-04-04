@@ -26,7 +26,6 @@ class BossAI : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
-
     EditorButton(
         visualizePollinateSpread,
         "Visualize Pollinate Spread"
@@ -88,7 +87,7 @@ public:
         SetPollinateLocalForward
     );
 
-    Meta(InputRange(0.0f, 90.0f, 0.1f, "{{value.toFixed( 2 )}} deg"))
+    EditorMeta(InputRange(0.0f, 90.0f, 0.1f, "{{value.toFixed( 2 )}} deg"))
     EditorField(
         float maxPollinateSpreadAngle,
         GetMaxPollinateSpreadAngle,
@@ -145,7 +144,7 @@ public:
         SetVineArchetype
     );
 
-    Meta(InputRange(0.0f, 100.0f, 0.1f, "{{value.toFixed( 2 )}} %"))
+    EditorMeta(InputRange(0.0f, 100.0f, 0.1f, "{{value.toFixed( 2 )}} %"))
     EditorField(
         float phase1HealthTransitionThreshold,
         GetPhase1HealthTransitionThreshold,
@@ -158,7 +157,7 @@ public:
         SetPhase1DazedResetTimer
     );
 
-    Meta(InputRange(0.0f, 100.0f, 0.1f, "{{value.toFixed( 2 )}} %"))
+    EditorMeta(InputRange(0.0f, 100.0f, 0.1f, "{{value.toFixed( 2 )}} %"))
     EditorField(
         float phase2HealthTransitionThreshold,
         GetPhase2HealthTransitionThreshold,
@@ -171,6 +170,7 @@ public:
         SetPhase2DazedResetTimer
     );
 
+    Meta(Enable)
     BossAI(void);
 
     const std::string &GetSeedshotEntityName(void) const;
@@ -248,8 +248,6 @@ public:
     ursine::ecs::EntityHandle GetInvulnerableEmitterEntity(void);
 
     void AddSpawnedVine(ursine::ecs::EntityHandle vine);
-
-    Meta(Disable)
     const std::vector<ursine::ecs::EntityHandle> &GetVines(void) const;
 
     void SetVineHealthThresholdCallback(const std::function<void(VineAI*)> &callback);
@@ -339,4 +337,9 @@ private:
     typedef std::vector<BossAIStateMachine::Handle> StateMachines;
     StateMachines m_bossLogic[5];
 
-} Meta(Enable, RequiresComponents(typeof(Health)));
+} Meta(
+    Enable,
+    WhiteListMethods
+) EditorMeta(
+    RequiresComponents( typeof( Health ) )
+);

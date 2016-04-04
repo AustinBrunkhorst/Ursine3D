@@ -95,4 +95,9 @@ private:
 
     void Clear(void);
 
-}Meta(Enable, DisplayName("InputController"), RequiresComponents(typeof(PlayerID)));
+} Meta(
+    Enable, 
+    DisplayName( "InputController" )
+) EditorMeta( 
+    RequiresComponents( typeof( PlayerID ) )
+);

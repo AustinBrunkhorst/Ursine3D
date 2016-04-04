@@ -37,7 +37,7 @@ namespace ursine
         {
         }
 
-        const resources::ResourceReference& FBXSceneRootNode::GetModel(void) const
+        const resources::ResourceReference &FBXSceneRootNode::GetModel(void) const
         {
             return m_modelResource;
         }
@@ -46,17 +46,17 @@ namespace ursine
         {
             m_modelResource = model;
 
-            if (!resourcesAreAvailable())
+            if (!resourcesAreAvailable( ))
                 return;
 
-            NOTIFY_COMPONENT_CHANGED("sceneModel", m_modelResource);
+            NOTIFY_COMPONENT_CHANGED( "sceneModel", m_modelResource );
         }
 
     #if defined(URSINE_WITH_EDITOR)
 
         void FBXSceneRootNode::importScene(void)
         {
-            invalidateModel();
+            invalidateModel( );
 
             auto data = loadResource<ursine::resources::ModelData>( m_modelResource );
 
@@ -179,7 +179,7 @@ namespace ursine
         {
             auto models = GetOwner( )->GetComponentsInChildren<Model3D>( );
 
-            Timer::Create( 0 ).Completed( [=] {
+            Application::PostMainThread( [=] {
                 for (auto &model : models)
                 {
                     auto entity = model->GetOwner( );
@@ -194,23 +194,21 @@ namespace ursine
             } );
         }
 
-    #endif
-
-
         void FBXSceneRootNode::invalidateModel(bool unload)
         {
-            auto data = loadResource<resources::ModelData>(m_modelResource);
+            auto data = loadResource<resources::ModelData>( m_modelResource );
 
             if (data != nullptr)
             {
-                auto handle = data->GetModelHandle();
+                auto handle = data->GetModelHandle( );
 
-                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.UnloadModel( m_modelHandle );
-                GetCoreSystem(graphics::GfxAPI)->ResourceMgr.LoadModel( handle );
+                GetCoreSystem( graphics::GfxAPI )->ResourceMgr.UnloadModel( m_modelHandle );
+                GetCoreSystem( graphics::GfxAPI )->ResourceMgr.LoadModel( handle );
 
                 m_modelHandle = handle;
             }
         }
 
+    #endif
     }
 }

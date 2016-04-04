@@ -12,7 +12,7 @@ include_directories(${Shared_INCLUDE_DIRS})
 ursine_project(GameLauncher
     FOLDER "Projects"
     TYPE EXE
-    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX FileWatcher
     COPY_SHADERS "Resources/Shaders/"
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
