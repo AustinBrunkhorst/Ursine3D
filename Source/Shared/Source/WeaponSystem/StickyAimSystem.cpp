@@ -18,7 +18,7 @@
 #include "Raycasting.h"
 #include "PhysicsSystem.h"
 #include "TransformComponent.h"
-#include "AIHordelingTypeComponent.h"
+#include "HealthComponent.h"
 
 
 ENTITY_SYSTEM_DEFINITION( StickyAimSystem ) ;
@@ -85,7 +85,7 @@ void StickyAimSystem::onUpdate(EVENT_HANDLER(World))
             entity = m_world->GetEntity( rayout.entity[ 0 ] );
 
             // if enemy then apply a modifier to players rotation
-            if ( entity->GetRoot( )->HasComponent< AIHordelingType >( ) )
+            if ( entity->GetRoot( )->HasComponent< Health >( ) && entity->GetRoot( )->GetComponent< Health >( )->GetHealthType( ) == HealthType::ENEMY_HEALTH )
                 m_charControllers[ rayComps.first ]->SetRotationModifier( raycastComp->GetRotationModifier( ) );
 
             else
