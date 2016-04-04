@@ -154,6 +154,7 @@
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/ChangeSegmentOnAnimatorFinishComponent.h"
 #include "Misc/DeathTriggerGroupComponent.h"
+#include "Misc/PingTestComponent.h"
 
 /////////////////////////////////
 //           Physics           //

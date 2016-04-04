@@ -207,7 +207,11 @@ void WeaponSystemUtils::ReloadWeapon(AbstractWeapon &weapon, ursine::ecs::AudioE
     if (Reload( weapon ))
     {
         // play sound
-        emitter->PlayEvent( weapon.GetReloadSFX( ) );
+		
+
+		// This is no longer how we use the emitter
+
+        //emitter->PlayEvent( weapon.GetReloadSFX( ) );
     }
 }
 
@@ -296,7 +300,11 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        m_emitters[ entity ]->PlayEvent( weapon.GetShootSFX( ) );
+
+
+		// Change this too!!!!!!
+
+        //m_emitters[ entity ]->PlayEvent( weapon.GetShootSFX( ) );
 
         // reset firing sequence
         /*weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
@@ -430,7 +438,10 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        m_emitters[ entity ]->PlayEvent( weapon.GetShootSFX( ) );
+
+		//Change this trooooooooooooooooooooooooooooooooooooo!!!!!
+
+        //m_emitters[ entity ]->PlayEvent( weapon.GetShootSFX( ) );
 
         //// reset firing sequence
         //weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
