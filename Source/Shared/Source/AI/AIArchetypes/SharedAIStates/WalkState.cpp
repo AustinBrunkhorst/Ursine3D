@@ -220,7 +220,7 @@ namespace ursine
 
         void WalkState::setTargetDirectionWaypoints(const SVec3& target)
         {
-
+            
         }
 
         void WalkState::setTargetDirectionMovement(const SVec3& target)

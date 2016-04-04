@@ -38,11 +38,15 @@ namespace ursine
         private:
             std::unordered_map<EntityHandle, Component::Handle<Waypoint>> m_waypoints;
 
+            std::vector<WaypointAgent *> m_agents;
+
             void OnInitialize(void) override;
             void OnRemove(void) override;
 
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));
+
+            void onUpdate(EVENT_HANDLER(World));
 
             static float CalculateHeurisitic(const Vec3 &pos, const Vec3 &goal);
 
