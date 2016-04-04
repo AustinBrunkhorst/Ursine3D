@@ -45,7 +45,7 @@ PS_GBUFFER_OUT PackGBuffer( float4 BaseColor, float3 Normal, float
 
     // convert id into proper sizes
     int word1 = objID & 0xff;           //first 8 bits
-    int word2 = (objID >> 8) & 0xff;  //second 8 bits
+    int word2 = (objID >> 8) & 0xff;    //second 8 bits
 
     // Pack all the data into the GBuffer structure
     Out.ColorSpecInt = float4(BaseColor);
