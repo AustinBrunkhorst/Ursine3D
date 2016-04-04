@@ -1,22 +1,24 @@
 /* ---------------------------------------------------------------------------
 ** Team Bear King
-** ?2016 DigiPen Institute of Technology, All Rights Reserved.
+** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** BossSpawnState.h
+** BossPhase3WaitTillTriggerState.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
 **
+** Contributors:
+** - <list in same format as author if applicable>
 ** -------------------------------------------------------------------------*/
 
 #pragma once
 
 #include "BossAIState.h"
 
-class BossSpawnState : public BossAIState
+class BossPhase3WaitTillTriggerState : public BossAIState
 {
 public:
-    BossSpawnState(float playback = 1.0f);
+    BossPhase3WaitTillTriggerState(void);
 
     bool CanExit(void) override { return m_finished; }
 
@@ -25,7 +27,6 @@ public:
 private:
 
     bool m_finished;
-    float m_playback;
 
-    void onAnimationFinished(EVENT_HANDLER(ursine::ecs::Entity));
+    void onTrigger(EVENT_HANDLER(ursine::ecs::World));
 };

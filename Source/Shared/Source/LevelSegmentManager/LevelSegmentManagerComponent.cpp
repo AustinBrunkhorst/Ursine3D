@@ -468,6 +468,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
         auto waitForTrig = sm->AddState<Phase3WaitForTriggerState>( );
         auto turnOnCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase3CinematicCamera, true );
+        auto playCinematicFocalP = sm->AddState<PlayEntityAnimatorState>( resources->phase3CinematicFocalPoint, false );
         auto playCinematicCam = sm->AddState<PlayEntityAnimatorState>( resources->phase3CinematicCamera, true );
         auto tweenOut = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
         auto tweenIn = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
@@ -475,14 +476,19 @@ void LevelSegmentManager::initBossRoomLogic(void)
         auto toggleHudOff = sm->AddState<ToggleHudState>( false );
         auto lockPlayers = sm->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
         auto unlockPlayers = sm->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+        auto turnBossLightOn = sm->AddState<ToggleLightGroupState>( true, std::vector<std::string>{ resources->phase3BossLights } );
 
         waitForTrig->AddTransition( turnOnCinematicCam, "Turn On Cam" );
         turnOnCinematicCam->AddTransition( lockPlayers, "Lock Players" );
         lockPlayers->AddTransition( toggleHudOff, "Turn Off Hud" );
         toggleHudOff->AddTransition( tweenOut, "Tween Out" );
-        tweenOut->AddTransition( playCinematicCam, "Play Cinematic" );
-        playCinematicCam->AddTransition( tweenIn, "Tween Back In" )
-                        ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 9.0f ) );
+        tweenOut->AddTransition( playCinematicFocalP, "Play Cinematic" );
+        playCinematicFocalP->AddTransition( playCinematicCam, "Play Cinematic Cam" )
+                           ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 7.0f ) );
+        playCinematicCam->AddTransition( turnBossLightOn, "Turn On Lights" )
+                        ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 5.0f ) );
+        turnBossLightOn->AddTransition( tweenIn, "Tween Back In" )
+                       ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 4.0f ) );
         tweenIn->AddTransition( toggleHudOn, "Hud On" );
         toggleHudOn->AddTransition( unlockPlayers, "Unlock Players" );
 

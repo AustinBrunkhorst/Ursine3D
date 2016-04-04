@@ -73,7 +73,7 @@ void SludgeshotProjectile::InitializeComponents(void)
     auto start = owner->GetTransform( )->GetWorldPosition( );
     auto end = m_target;
     auto dir = end - start;
-    auto middle = start + SVec3( dir.X( ) * 0.8f, dir.Y( ) * 0.2f, dir.X( ) * 0.8f );
+    auto middle = start + SVec3( dir.X( ) * 0.8f, -dir.Y( ) * 0.2f, dir.X( ) * 0.8f );
 
     auto &keyFrames = animator->keyFrames;
 

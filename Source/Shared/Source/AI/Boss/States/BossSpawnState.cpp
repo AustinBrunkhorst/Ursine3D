@@ -22,9 +22,10 @@
 using namespace ursine;
 using namespace ecs;
 
-BossSpawnState::BossSpawnState(void)
+BossSpawnState::BossSpawnState(float playback)
     : BossAIState( "Boss Spawn" )
-    , m_finished( false ) { }
+    , m_finished( false )
+    , m_playback( playback ) { }
 
 void BossSpawnState::Enter(BossAIStateMachine *machine)
 {
@@ -39,6 +40,7 @@ void BossSpawnState::Enter(BossAIStateMachine *machine)
 
         animator->SetCurrentState( "Spike_Up" );
         animator->SetPlaying( true );
+        animator->SetTimeScalar( m_playback );
 
         m_finished = false;
     }
@@ -58,7 +60,10 @@ void BossSpawnState::onAnimationFinished(EVENT_HANDLER(Entity))
     auto animator = sender->GetComponent<Animator>( );
 
     if (animator)
+    {
         animator->SetCurrentState( "Idle" );
+        animator->SetTimeScalar( 1.0f );
+    }
 
     m_finished = true;
 }

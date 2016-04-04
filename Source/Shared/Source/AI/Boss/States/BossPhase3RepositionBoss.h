@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** BossSpawnState.h
+** BossPhase3RepositionBoss.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,19 +13,10 @@
 
 #include "BossAIState.h"
 
-class BossSpawnState : public BossAIState
+class BossPhase3RepositionBoss : public BossAIState
 {
 public:
-    BossSpawnState(float playback = 1.0f);
-
-    bool CanExit(void) override { return m_finished; }
+    BossPhase3RepositionBoss(void);
 
     void Enter(BossAIStateMachine *machine) override;
-
-private:
-
-    bool m_finished;
-    float m_playback;
-
-    void onAnimationFinished(EVENT_HANDLER(ursine::ecs::Entity));
 };

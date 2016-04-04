@@ -25,6 +25,7 @@ public:
     bool CanExit(void) override { return m_finished; }
 
     void Enter(BossAIStateMachine *machine) override;
+    void Update(BossAIStateMachine *machine) override;
     void Exit(BossAIStateMachine *machine) override;
 
 private:
@@ -33,8 +34,12 @@ private:
     void onAnimationFinish(EVENT_HANDLER(ursine::ecs::Entity));
 
     void shootSludge(void);
+    void findTarget(void);
+    void rotateTowardsTarget(void);
 
     BossAI *m_boss;
+
+    ursine::ecs::EntityHandle m_target;
 
     bool m_finished;
 };

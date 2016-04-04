@@ -24,6 +24,8 @@
 #include "BossChangePhaseState.h"
 #include "BossEnrageState.h"
 #include "BossPhase2VineHandlerState.h"
+#include "BossPhase3WaitTillTriggerState.h"
+#include "BossPhase3RepositionBoss.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -546,13 +548,32 @@ void BossAI::OnInitialize(void)
         // All I need to do now is just spawn the vines and boss, then transition after a timer,
         // then make the wackamole state for swapping spawn positions, and also have the boss sludge shot and what not.
         auto goUnderground = sm->AddState<BossUndergroundState>( );
-        /*auto spawnVinesAndBoss = sm->AddState<Phase3SpawnVinesAndBoss>( );
-        auto wackamoleState = sm->AddState<Phase3WhackAMolee>( );*/
+        auto waitTillTrigger = sm->AddState<BossPhase3WaitTillTriggerState>( );
+        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase3, 1.75f );
+        auto repositionBoss = sm->AddState<BossPhase3RepositionBoss>( );
+        auto blankState = sm->AddState<BossPhase3RepositionBoss>( );
+        auto spawnBoss = sm->AddState<BossSpawnState>( 0.5f );
+        auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
+        auto sludgeshot = sm->AddState<BossSludgeshotState>( );
+
+        /*auto wackamoleState = sm->AddState<Phase3WhackAMolee>( );*/
+
+        goUnderground->AddTransition( waitTillTrigger, "To Waiting For Trigger" );
+        waitTillTrigger->AddTransition( repositionBoss, "To Reposition Boss" );
+        repositionBoss->AddTransition( spawnVines, "Spawn Vines" )
+                      ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
+        spawnVines->AddTransition( blankState, "Pause" )
+                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 13.0f ) );
+        blankState->AddTransition( spawnBoss, "Spawn Boss" );
+        spawnBoss->AddTransition( invulnerable, "Invulneralbe" )
+                 ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 2.0f ) );
+        invulnerable->AddTransition( sludgeshot, "Sludgeshot" );
 
         sm->SetInitialState( goUnderground );
 
         m_bossLogic[ 2 ].push_back( sm );
     }
+
     // TESTING: Pollinate
     /*{
         auto sm = std::make_shared<BossAIStateMachine>( this );
