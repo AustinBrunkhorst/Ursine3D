@@ -79,13 +79,13 @@ float VineStateUtils::FindYPosition(VineAI *ai, const SVec3 &aiPosition)
 
 bool VineStateUtils::AtTarget(VineAI *ai, float distance)
 {
-    auto targetTrans = ai->GetTarget( )->GetTransform( );
-    auto aiTrans = ai->GetOwner( )->GetTransform( );
+    auto targetPos = ai->GetTarget( )->GetTransform( )->GetWorldPosition( );
+    auto aiPos = ai->GetOwner( )->GetTransform( )->GetWorldPosition( );
 
-    float dist = SVec3::Distance( 
-        targetTrans->GetWorldPosition( ), 
-        aiTrans->GetWorldPosition( ) 
-    );
+    targetPos.Y( ) = 0.0f;
+    aiPos.Y( ) = 0.0f;
+
+    float dist = SVec3::Distance( targetPos, aiPos );
 
     return dist <= distance;
 }
