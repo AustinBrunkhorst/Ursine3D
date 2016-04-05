@@ -52,7 +52,6 @@ Health::Health(void)
     , m_shieldRechargeRate( 10 )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
-    , m_dead( false )
     , m_invulnerable( false )
     , m_hasShield( false ) { }
 
@@ -206,14 +205,11 @@ void Health::SetShieldRechargeRate(float rate)
 
 void Health::DealDamage(float damage)
 {
-    if (m_dead || m_invulnerable)
+    if ( m_health <= 0 || m_invulnerable )
         return;
 
     auto owner = GetOwner( );
 
-    // early out if we've already "died"
-    if (m_health < 0)
-        return;
 
     // Check to see if we have a shield
     if (m_hasShield && m_shield > 0.0f)
@@ -242,8 +238,6 @@ void Health::DealDamage(float damage)
 
         if (m_deleteOnZero)
             GetOwner( )->Delete( );
-
-        m_dead = true;
 
         m_hasShield = false;
     }
@@ -280,7 +274,7 @@ void Health::DealDamage(const ursine::SVec3& contactPoint, float damage, bool cr
 bool Health::CanDamage(DamageOnCollide *damage) const
 {
     auto type = damage->GetDamageType( );
-
+	
     return type == DAMAGE_ALL || type == m_type;
 }
 

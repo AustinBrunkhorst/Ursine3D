@@ -406,6 +406,11 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
         if (!weapon->m_active)
             continue;
 
+        if ( weapon->m_reload )
+        {
+            
+        }
+
         // Can weapon be fired
         switch (weapon->CanFire( ))
         {
@@ -525,7 +530,8 @@ bool HitscanWeaponSystem::RaycastClosestHitLogic(SVec3 &raycastVec, physics::Ray
         damage *= weapon.m_critModifier;
 
         // find actual hit position on obj hit
-        SpawnCollisionParticle( collisionPoint, raycastVec, objHit );
+        if ( objHit->GetComponent< CritSpot >( )->GetSearch( ) )
+            SpawnCollisionParticle( collisionPoint, raycastVec, objHit );
     }
 
     if ( e )

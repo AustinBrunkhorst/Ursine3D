@@ -17,7 +17,8 @@ NATIVE_COMPONENT_DEFINITION( CritSpot ) ;
 
 
 CritSpot::CritSpot(void) :
-    BaseComponent( )
+    BaseComponent( ),
+    m_search( false )
 {
 }
 
@@ -25,6 +26,19 @@ CritSpot::~CritSpot(void)
 {
 }
 
+bool CritSpot::GetSearch(void) const
+{
+    return m_search;
+}
+
+void CritSpot::SetSearch(bool search)
+{
+    m_search = search;
+}
+
+
 void CritSpot::OnInitialize(void)
 {
 }
+
+

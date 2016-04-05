@@ -187,10 +187,6 @@ private:
     bool m_deleteOnZero;
     bool m_spawnOnDeath;
 
-    // A flag letting us know if we're dead or not.
-    // This solves the problem of dealing damage after it's already dead.
-    bool m_dead;
-
     // Flag letting us know if we're invulnerable
     bool m_invulnerable;
 

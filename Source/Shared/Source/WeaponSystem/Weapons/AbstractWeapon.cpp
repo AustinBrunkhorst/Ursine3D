@@ -34,6 +34,7 @@ AbstractWeapon::AbstractWeapon(void)
     , m_firePosHandle( nullptr )
     , m_semiAutomatic( false )
     , m_triggerPulled( false )
+    , m_reload( false )
     , m_active( false )
 {   
     m_ammoCount = m_maxAmmoCount;
@@ -79,25 +80,32 @@ int AbstractWeapon::FireLogic(void)
     return 1;
 }
 
-int AbstractWeapon::CanFire(void) const
+int AbstractWeapon::CanFire(void)
 {
+    int retVal = 0;
+
     // check fire timer
     if ( m_fireTimer > 0.0f )
-        return FIRE_TIMER_SET;
+        retVal = FIRE_TIMER_SET;
 
     // check if reloading
-    if ( m_reloadTimer > 0.0f )
-        return RELOAD_IN_PROCESS;
+    else if ( m_reloadTimer > 0.0f )
+        retVal = RELOAD_IN_PROCESS;
 
     // check clip
-    if ( m_clipCount == 0 && m_clipSize != UNLIMITED_CLIP )
-        return MUST_RELOAD;
+    else if ( ( m_clipCount == 0 && m_clipSize != UNLIMITED_CLIP ) || m_reload )
+        retVal = MUST_RELOAD;
 
     // check if trigger pulled
-    if ( !m_triggerPulled )
-        return TRIGGER_NOT_PULLED;
+    else if ( !m_triggerPulled )
+        retVal = TRIGGER_NOT_PULLED;
 
-    return CAN_FIRE;
+    else
+        retVal = CAN_FIRE;
+
+    m_reload = false;
+
+    return retVal;
 }
 
 ///////////////////////////////
@@ -335,6 +343,14 @@ void AbstractWeapon::TriggerReleased( EVENT_HANDLER(game::FIRE_END))
         m_fireTimer = 0.0f;
 }
 
+void AbstractWeapon::Reload(EVENT_HANDLER(game::RELOAD_COMMAND))
+{
+    if ( m_triggerPulled || m_clipCount == m_clipSize )
+        return;
+
+    m_reload = true;
+}
+
 void AbstractWeapon::ActivateWeapon(const ecs::EntityHandle &whoToConnect, ecs::Transform* camHandle, int ammo, int clip)
 {
     // allow firing
@@ -347,8 +363,9 @@ void AbstractWeapon::ActivateWeapon(const ecs::EntityHandle &whoToConnect, ecs::
     m_boss->Listener( this )
         .On( game::FIRE_START, &AbstractWeapon::TriggerPulled )
         .On( game::FIRE_END, &AbstractWeapon::TriggerReleased )
-        .On(game::CEASE_FIRE, &AbstractWeapon::CeaseFire)
-        .On(game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill);
+        .On( game::CEASE_FIRE, &AbstractWeapon::CeaseFire )
+        .On( game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill )
+        .On( game::RELOAD_COMMAND, &AbstractWeapon::Reload );
 
     // connect to owner for cease and fire at will
     m_owner->Listener( this )
@@ -391,8 +408,9 @@ void AbstractWeapon::DetachWeapon(void)
     m_boss->Listener( this )
         .Off( game::FIRE_START, &AbstractWeapon::TriggerPulled )
         .Off( game::FIRE_END, &AbstractWeapon::TriggerReleased )
-        .Off(game::CEASE_FIRE, &AbstractWeapon::CeaseFire)
-        .Off(game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill);
+        .Off( game::CEASE_FIRE, &AbstractWeapon::CeaseFire )
+        .Off( game::FIRE_AT_WILL, &AbstractWeapon::FireAtWill )
+        .Off( game::RELOAD_COMMAND, &AbstractWeapon::Reload );
 
     // disconnect to owner for cease and fire at will
     m_owner->Listener(this)

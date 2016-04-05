@@ -94,10 +94,10 @@ void DamageTextManager::onDamageText(EVENT_HANDLER(World))
     EntityHandle damageText;
 
     // load valid damage text archetype
-    if (args->crit)
-        damageText = sender->CreateEntityFromArchetype( m_critText );
-    else if (args->invulnerable)
-        damageText = sender->CreateEntityFromArchetype( m_invulnerableText );
+    if ( args->invulnerable )
+        damageText = sender->CreateEntityFromArchetype(m_invulnerableText);
+    else if (args->crit)
+        damageText = sender->CreateEntityFromArchetype( m_critText ); 
     else
         damageText = sender->CreateEntityFromArchetype( m_damageText );
 

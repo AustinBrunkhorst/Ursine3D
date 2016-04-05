@@ -181,7 +181,7 @@ public:
     ////  Weapon Fire Logic  ////
     /////////////////////////////
     virtual int FireLogic(void);
-    virtual int CanFire(void) const;
+    virtual int CanFire(void);
 
 
     ///////////////////////////////
@@ -314,6 +314,8 @@ protected:
     // Is trigger being pulled
     bool m_triggerPulled;
 
+    bool m_reload;
+
     // can i shoot?
     bool m_active;
 
@@ -330,6 +332,8 @@ protected:
     void DeactivateWeapon(EVENT_HANDLER(game::DEACTIVATE_WEAPON));
 
     void PickUpAmmo(EVENT_HANDLER(ursine::ecs::PICKUP_AMMO));
+
+    void Reload(EVENT_HANDLER(game::RELOAD_COMMAND));
 
     void CeaseFire(EVENT_HANDLER(game::CEASE_FIRE));
     void FireAtWill(EVENT_HANDLER(game::FIRE_AT_WILL));
