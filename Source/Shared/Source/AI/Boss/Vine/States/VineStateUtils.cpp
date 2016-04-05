@@ -26,7 +26,7 @@ float VineStateUtils::FindYPosition(VineAI *ai, const SVec3 &aiPosition)
     auto world = aiOwner->GetWorld( );
     auto physics = world->GetEntitySystem<PhysicsSystem>( );
 
-    auto startPos = aiPosition - SVec3::UnitY( ) * 50.0f;
+    auto startPos = aiPosition - SVec3::UnitY( ) * 200.0f;
     auto dir = SVec3::UnitY( ) * 1000.0f;
 
     physics::RaycastInput input( startPos, dir );
