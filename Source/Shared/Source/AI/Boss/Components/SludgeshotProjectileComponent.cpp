@@ -50,9 +50,9 @@ void SludgeshotProjectile::InitializeComponents(void)
     auto owner = GetOwner( );
 
     // Make sure the child has a collider
-    auto ghost = owner->GetComponentInChildren<Ghost>( );
+    /*auto ghost = owner->GetComponentInChildren<Ghost>( );
 
-    UAssert( ghost, "Error: A child entity must have a ghost component." );
+    UAssert( ghost, "Error: A child entity must have a ghost component." );*/
 
     // Make sure the child has an emitter
     auto emitter = owner->GetComponentInChildren<ParticleEmitter>( );
