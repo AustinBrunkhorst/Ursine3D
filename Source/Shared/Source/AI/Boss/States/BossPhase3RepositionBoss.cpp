@@ -16,28 +16,64 @@
 #include "Phase3BossSpawnComponent.h"
 #include "BossAIStateMachine.h"
 #include "BossAIComponent.h"
+#include "VineSpawnerComponent.h"
 
 #include <World.h>
 
 using namespace ursine;
 using namespace ecs;
 
-BossPhase3RepositionBoss::BossPhase3RepositionBoss(void)
-    : BossAIState( "Reposition Boss" ) { }
+BossPhase3RepositionBoss::BossPhase3RepositionBoss(bool onlyBossSpawn)
+    : BossAIState( "Reposition Boss" )
+    , m_onlyBossSpawn( onlyBossSpawn ) { }
 
 void BossPhase3RepositionBoss::Enter(BossAIStateMachine *machine)
 {
-    auto boss = machine->GetBoss( )->GetOwner( )->GetTransform( );
+    auto ai = machine->GetBoss( );
+    auto boss = ai->GetOwner( )->GetTransform( );
     auto world = boss->GetOwner( )->GetWorld( );
 
-    auto spawnPoints = world->GetEntitiesFromFilter( Filter( ).All<Phase3BossSpawn>( ) );
+    if (m_onlyBossSpawn)
+    {
+        auto spawnPoints = world->GetEntitiesFromFilter( Filter( ).All<Phase3BossSpawn>( ) );
 
-    UAssert( spawnPoints.size( ), "Error: There isn't a spawn point." );
+        UAssert( spawnPoints.size( ), "Error: There isn't a spawn point." );
 
-    auto trans = spawnPoints[ 0 ]->GetTransform( );
-    auto position = trans->GetWorldPosition( );
-    auto rotation = trans->GetWorldRotation( );
+        auto trans = spawnPoints[ 0 ]->GetTransform( );
+        auto position = trans->GetWorldPosition( );
+        auto rotation = trans->GetWorldRotation( );
 
-    boss->SetWorldPosition( position );
-    boss->SetWorldRotation( rotation );
+        boss->SetWorldPosition( position );
+        boss->SetWorldRotation( rotation );
+    }
+    else
+    {
+        auto spawners = world->GetEntitiesFromFilter( Filter( ).All<VineSpawner>( ) );
+        std::vector<Transform *> spawnPoints;
+
+        for (auto &spawner : spawners)
+        {
+            if (spawner->GetComponent<VineSpawner>( )->GetSpawnSegment( ) != LevelSegments::BossRoom_Phase3)
+                continue;
+
+            spawnPoints.push_back( spawner->GetTransform( ) );
+        }
+
+        bool found = false;
+
+        do
+        {
+            auto point = spawnPoints[ rand( ) % spawnPoints.size( ) ];
+            auto position = point->GetWorldPosition( );
+
+            if (position == ai->GetHomeLocation( ))
+                continue;
+
+            boss->SetWorldPosition( position );
+            boss->SetWorldRotation( point->GetWorldRotation( ) );
+
+            found = true;
+
+        } while (!found);
+    }
 }

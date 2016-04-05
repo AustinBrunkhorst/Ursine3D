@@ -597,6 +597,15 @@ void BossAI::OnInitialize(void)
         auto goUnderground2 = sm->AddState<BossUndergroundState>( );
         auto jumpToHome = sm->AddState<BossJumpToHomeLocationState>( );
         auto spawn = sm->AddState<BossSpawnState>( );
+        auto goUnderground3 = sm->AddState<BossUndergroundState>( );
+        auto repositionBoss2 = sm->AddState<BossPhase3RepositionBoss>( );
+        auto spawn2 = sm->AddState<BossSpawnState>( 0.5f );
+        auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
+        auto enraged = sm->AddState<BossEnrageState>( );
+        auto sludgeshot = sm->AddState<BossSludgeshotState>( );
+        auto goUnderground4 = sm->AddState<BossUndergroundState>( );
+        auto reposition3 = sm->AddState<BossPhase3RepositionBoss>( false );
+        auto spawn3 = sm->AddState<BossSpawnState>( );
 
         goUnderground->AddTransition( waitTillTrigger, "To Waiting For Trigger" );
         waitTillTrigger->AddTransition( repositionBoss, "To Reposition Boss" );
@@ -607,12 +616,24 @@ void BossAI::OnInitialize(void)
         blankState->AddTransition( spawnBoss, "Spawn Boss" );
         spawnBoss->AddTransition( invulnerable, "Invulneralbe" )
                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 2.0f ) );
-        invulnerable->AddTransition( seedshot, "Seedshot" );
+        invulnerable->AddTransition( seedshot, "Seedshot" )
+                    ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
         seedshot->AddTransition( goUnderground2, "Go Underground" )
                 ->AddCondition<sm::BoolCondition>( BossAIStateMachine::GoHome, true );
         goUnderground2->AddTransition( jumpToHome, "Jump to new home" );
         jumpToHome->AddTransition( spawn, "Spawn Again" );
         spawn->AddTransition( seedshot, "Attack again" );
+        seedshot->AddTransition( vulnerable, "Vulnerable" )
+                ->AddCondition<sm::IntCondition>( BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 );
+        vulnerable->AddTransition( goUnderground3, "Go Underground" );
+        goUnderground3->AddTransition( repositionBoss2, "Reposition" );
+        repositionBoss2->AddTransition( spawn2, "Spawn on pedistal" );
+        spawn2->AddTransition( enraged, "Enraged that mother fucker" );
+        enraged->AddTransition( sludgeshot, "Sludgeshot" );
+        sludgeshot->AddTransition( goUnderground4, "Go Underground" );
+        goUnderground4->AddTransition( reposition3, "Reposition" );
+        reposition3->AddTransition( spawn3, "Spawn again" );
+        spawn3->AddTransition( sludgeshot, "Sludgeshot" );
 
         sm->SetInitialState( goUnderground );
 
