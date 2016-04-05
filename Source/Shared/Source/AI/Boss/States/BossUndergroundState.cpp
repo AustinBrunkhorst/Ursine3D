@@ -46,6 +46,8 @@ void BossUndergroundState::Enter(BossAIStateMachine *machine)
     {
         m_finished = true;
     }
+
+    machine->GetBoss( )->SetUnderground( true );
 }
 
 void BossUndergroundState::onAnimationFinished(EVENT_HANDLER(Entity))

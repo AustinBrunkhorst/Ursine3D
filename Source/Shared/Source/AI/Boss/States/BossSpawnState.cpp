@@ -47,6 +47,8 @@ void BossSpawnState::Enter(BossAIStateMachine *machine)
     }
     else
     {
+        machine->GetBoss( )->SetUnderground( false );
+
         m_finished = true;
     }
 
@@ -69,6 +71,8 @@ void BossSpawnState::onAnimationFinished(EVENT_HANDLER(Entity))
         animator->SetCurrentState( "Idle" );
         animator->SetTimeScalar( 1.0f );
     }
+
+    sender->GetComponentInParent<BossAI>( )->SetUnderground( false );
 
     m_finished = true;
 }

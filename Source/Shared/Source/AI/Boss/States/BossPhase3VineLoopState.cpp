@@ -32,8 +32,60 @@ void BossPhase3VineLoopState::Enter(BossAIStateMachine *machine)
     ) );
 }
 
+void BossPhase3VineLoopState::Update(BossAIStateMachine *machine)
+{
+    // get the vines
+    auto &vines = machine->GetBoss( )->GetVines( );
+
+    if (m_boss->IsUnderground( ))
+        return;
+
+    // check to see how many are away from home
+    int numAwayFromHome = 0;
+    std::vector<VineAI *> homeVines;
+
+    for (auto &vine : vines)
+    {
+        auto vineAI = vine->GetComponent<VineAI>( );
+
+        if (!vineAI->IsHome( ))
+            ++numAwayFromHome;
+        else
+            homeVines.push_back( vineAI );
+    }
+
+    // if there are less than two away from home, send one out
+    if (numAwayFromHome < 2 && homeVines.size( ) > 0)
+    {
+        // Find the vine that has been sitting at home the longest
+        TimeSpan latestTime = homeVines[ 0 ]->GetTimeOfLastPursue( );
+        int index = 0;
+
+        for (int i = 1; i < homeVines.size( ); ++i)
+        {
+            auto &time = homeVines[ i ]->GetTimeOfLastPursue( );
+
+            if (time < latestTime)
+            {
+                index = i;
+                latestTime = time;
+            }
+        }
+
+        homeVines[ index ]->PursueTarget( );
+    }
+}
+
 void BossPhase3VineLoopState::onThresholdHit(VineAI *vine)
 {
+    // Firstly, check to see if the vine is at it's home location and not pursueing anything
+    if (!vine->IsHome( ))
+    {
+        vine->GoToHomeLocation( );
+
+        return;
+    }
+
     // set boss's new spawn position to that vine's current home location
     m_boss->SetHomeLocation( vine->GetHomeLocation( ) );
 
@@ -67,6 +119,10 @@ void BossPhase3VineLoopState::onThresholdHit(VineAI *vine)
                 position
             );
         }
+        else
+        {
+            m_boss->SetSpawnOrientation( location->GetWorldRotation( ) );
+        }
     }
 
     // tell them all to go under ground
@@ -77,4 +133,3 @@ void BossPhase3VineLoopState::onThresholdHit(VineAI *vine)
 
     m_boss->JumpToHomeLocation( );
 }
-

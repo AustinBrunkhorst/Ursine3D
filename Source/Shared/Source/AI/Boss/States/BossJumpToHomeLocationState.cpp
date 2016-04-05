@@ -22,9 +22,14 @@ BossJumpToHomeLocationState::BossJumpToHomeLocationState(void)
 void BossJumpToHomeLocationState::Enter(BossAIStateMachine *machine)
 {
     auto boss = machine->GetBoss( );
+    auto trans = boss->GetOwner( )->GetTransform( );
 
-    boss->GetOwner( )->GetTransform( )->SetWorldPosition(
+    trans->SetWorldPosition(
         boss->GetHomeLocation( )
+    );
+
+    trans->SetWorldRotation(
+        boss->GetSpawnOrientation( )
     );
 
     machine->SetBool( BossAIStateMachine::GoHome, false );

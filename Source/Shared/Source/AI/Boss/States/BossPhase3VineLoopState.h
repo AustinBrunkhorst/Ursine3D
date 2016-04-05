@@ -22,9 +22,11 @@ public:
     BossPhase3VineLoopState(void);
 
     void Enter(BossAIStateMachine *machine) override;
+    void Update(BossAIStateMachine *machine) override;
 
 private:
     void onThresholdHit(VineAI *vine);
 
     BossAI *m_boss;
+
 };

@@ -257,6 +257,12 @@ public:
 
     void JumpToHomeLocation(void);
 
+    void SetSpawnOrientation(const ursine::SQuat &orientation);
+    const ursine::SQuat &GetSpawnOrientation(void) const;
+
+    bool IsUnderground(void) const;
+    void SetUnderground(bool flag);
+
 private:
 
     void OnInitialize(void) override;
@@ -345,6 +351,9 @@ private:
     StateMachines m_bossLogic[5];
 
     ursine::SVec3 m_homeLocation;
+    ursine::SQuat m_spawnOrientation;
+
+    bool m_underground;
 
 } Meta(
     Enable,

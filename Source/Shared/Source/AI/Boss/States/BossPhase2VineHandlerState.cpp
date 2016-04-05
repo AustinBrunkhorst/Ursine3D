@@ -82,19 +82,12 @@ void BossPhase2VineHandlerState::Exit(BossAIStateMachine *machine)
     machine->GetBoss( )->SetVineHealthThresholdCallback( nullptr );
 }
 
-#include <iostream>
 void BossPhase2VineHandlerState::onHealthThresholdReached(VineAI *vine)
 {
     // If the vine has taken damage to make it's health threshold go to a certain point, 
     // tell it to go back home or pursue a target
     if (vine->IsHome( ))
-    {
         vine->PursueTarget( );
-        std::cout << "Pursue Enemy" << std::endl;
-    }
     else
-    {
         vine->GoToHomeLocation( );
-        std::cout << "Go Home" << std::endl;
-    }
 }

@@ -86,7 +86,8 @@ BossAI::BossAI(void)
     , m_vineCount( 0 ) 
     , m_phase1HealthThreshold( 75.0f )
     , m_phase1DazedResetTimer( 5.0f )
-    , m_segment( LevelSegments::Empty ) { }
+    , m_segment( LevelSegments::Empty )
+    , m_underground( false ) { }
 
 const std::string &BossAI::GetSeedshotEntityName(void) const
 {
@@ -420,6 +421,26 @@ const SVec3 &BossAI::GetHomeLocation(void) const
 void BossAI::JumpToHomeLocation(void)
 {
     setJumpToHomeLocationBools( );
+}
+
+void BossAI::SetSpawnOrientation(const ursine::SQuat &orientation)
+{
+    m_spawnOrientation = orientation;
+}
+
+const SQuat &BossAI::GetSpawnOrientation(void) const
+{
+    return m_spawnOrientation;
+}
+
+bool BossAI::IsUnderground(void) const
+{
+    return m_underground;
+}
+
+void BossAI::SetUnderground(bool flag)
+{
+    m_underground = flag;
 }
 
 void BossAI::OnInitialize(void)

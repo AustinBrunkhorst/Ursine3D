@@ -105,7 +105,7 @@ void Phase3LightTrigger::onUpdate(EVENT_HANDLER(ursine::ecs::World))
 
     for (auto &pair : pairs)
     {
-        if (pair.component->GetOwner( )->GetRoot( )->GetComponent<PlayerID>( ))
+        if (pair.component->GetOwner( )->GetRoot( )->HasComponent<PlayerID>( ))
             ++numPlayers;
     }
 
@@ -142,7 +142,7 @@ void Phase3LightTrigger::onAnimationFinished(EVENT_HANDLER(EntityAnimator))
     EVENT_SENDER(EntityAnimator, sender);
 
     sender->Listener( this )
-        .On( EntityAnimatorEvent::FinishedAnimating, &Phase3LightTrigger::onAnimationFinished );
+        .Off( EntityAnimatorEvent::FinishedAnimating, &Phase3LightTrigger::onAnimationFinished );
 
     m_animated = true;
 }
