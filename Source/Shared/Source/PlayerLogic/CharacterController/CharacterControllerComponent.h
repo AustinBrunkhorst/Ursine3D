@@ -92,7 +92,7 @@ public:
         SetLockLooking
     );
 
-    EditorMeta(InputRange(0.0f, 1.0f, 0.1f, "{{(value * 100.0).toFixed( 2 )}} %"))
+    EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{(value * 100.0).toFixed( 2 )}} %"))
     EditorField(
         float jumpDirectionScalar,
         GetJumpDirectionScalar,
