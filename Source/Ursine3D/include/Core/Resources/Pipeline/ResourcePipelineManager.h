@@ -23,6 +23,8 @@ namespace ursine
                 , public fs::FileWatchListener
             {
             public:
+                typedef std::unordered_map<GUID, ResourceItem::Handle, GUIDHasher> Database;
+
                 ResourcePipelineManager(void);
                 ~ResourcePipelineManager(void);
 
@@ -42,6 +44,7 @@ namespace ursine
                 void InvalidateResourceMeta(ResourceItem::Handle resource);
                 void InvalidateResourceCache(ResourceItem::Handle resource);
 
+                const Database &GetDatabase(void) const;
                 ResourceItem::Handle GetItem(const GUID &guid) const;
                 ResourceItem::Handle GetItem(const fs::path &sourceFile) const;
                 ResourceItem::List GetItemsByType(const meta::Type &type) const;
@@ -68,7 +71,7 @@ namespace ursine
 
                 ResourcePipelineConfig m_config;
 
-                std::unordered_map<GUID, ResourceItem::Handle, GUIDHasher> m_database;
+                Database m_database;
                 fs::PathMap<ResourceItem::Handle> m_pathToResource;
 
                 ResourceDirectoryNode *m_rootDirectory;

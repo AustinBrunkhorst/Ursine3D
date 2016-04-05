@@ -18,6 +18,7 @@
 #include "BossAIStateMachine.h"
 #include "BossAIComponent.h"
 #include "SludgeshotProjectileComponent.h"
+#include "PlayerIDComponent.h"
 
 #include <AnimatorComponent.h>
 #include <EntityEvent.h>
@@ -47,6 +48,14 @@ void BossSludgeshotState::Enter(BossAIStateMachine *machine)
 
     // Set Finish to false
     m_finished = false;
+}
+
+void BossSludgeshotState::Update(BossAIStateMachine *machine)
+{
+    if (!m_target)
+        findTarget( );
+
+    rotateTowardsTarget( );
 }
 
 void BossSludgeshotState::Exit(BossAIStateMachine *machine)
@@ -83,6 +92,9 @@ void BossSludgeshotState::shootSludge(void)
     if (!sludgeshotEntity)
         return;
 
+    if (!m_target)
+        findTarget( );
+
     auto sludgeshotTrans = sludgeshotEntity->GetTransform( );
     auto sludgeshotPosition = sludgeshotTrans->GetWorldPosition( );
 
@@ -109,12 +121,49 @@ void BossSludgeshotState::shootSludge(void)
 
     auto sludgeshot = projectile->GetComponent<SludgeshotProjectile>( );
 
-    // TODO: make this an actual target
     sludgeshot->SetTargetPosition( 
-        m_boss->GetOwner( )->GetTransform( )->GetWorldPosition( ) + SVec3::UnitX( ) * 50.0f 
+        m_target->GetTransform( )->GetWorldPosition( )
     );
 
     sludgeshot->SetTotalTimeOfAnimation( m_boss->GetSludgeshotAnimationTime( ) );
 
     sludgeshot->InitializeComponents( );
+
+    // Find new target
+    findTarget( );
+}
+
+void BossSludgeshotState::findTarget(void)
+{
+    auto world = m_boss->GetOwner( )->GetWorld( );
+    auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+    float minHealth = std::numeric_limits<float>( ).max( );
+
+    // find the player with the lowest health
+    for (auto &player : players)
+    {
+        auto health = player->GetComponent<Health>( )->GetHealth( );
+
+        if (health < minHealth)
+        {
+            minHealth = health;
+            m_target = player;
+        }
+    }
+}
+
+void BossSludgeshotState::rotateTowardsTarget(void)
+{
+    if (!m_target)
+        return;
+
+    auto bossTrans = m_boss->GetOwner( )->GetTransform( );
+    auto targetTrans = m_target->GetTransform( );
+
+    auto targetPos = targetTrans->GetWorldPosition( );
+    auto bossPos = bossTrans->GetWorldPosition( );
+
+    targetPos.Y( ) = bossPos.Y( );
+
+    bossTrans->LookAt( targetPos, m_boss->GetSeedshotTurnSpeed( ) );
 }

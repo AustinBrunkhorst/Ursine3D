@@ -465,7 +465,7 @@ void Editor::initializeProject(const std::string &fileName)
 
     auto project = meta::Type::DeserializeJson<ProjectConfig>( projectJson );
 
-    project.rootDirectory = projectFileName.parent_path( );
+    project.projectFile = projectFileName;
 
     m_project->initialize( project );
          

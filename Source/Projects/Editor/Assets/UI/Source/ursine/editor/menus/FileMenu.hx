@@ -23,10 +23,12 @@ class FileMenu extends MenuItemHandler {
 
     @mainMenuItem( "File/Save Project", true, false )
     static function doSaveProject() {
+        Extern.ProjectSave( );
+
         var notification = new Notification(
             NotificationType.Info,
-            "Thanks for saving fella, but this doesn't do anything right now.",
-            "Save Project"
+            "Project saved.",
+            "Action Complete"
         );
 
         notification.show( );

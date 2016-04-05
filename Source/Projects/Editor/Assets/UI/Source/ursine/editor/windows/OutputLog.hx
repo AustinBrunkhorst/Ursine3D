@@ -18,8 +18,13 @@ class OutputLog extends WindowHandler {
     }
 
     public static function log(info : String) {
+        var time = createTimeString( );
+
+        // @@@TODO: remove when UI level console implemented
+        trace( '${time}: ${info}' );
+
         instance.m_logContainer.appendChild(
-            instance.createLogElement( info )
+            instance.createLogElement( time, info )
         );
 
         var lastLine = info.split( '\n' )[ 0 ];
@@ -37,33 +42,37 @@ class OutputLog extends WindowHandler {
             .addEventListener( 'click', onStatusBarClick );
     }
 
-    private function createLogElement(info : String) {
+    private function createLogElement(timeText : String, infoText : String) {
         var element = js.Browser.document.createDivElement( );
 
         var time = js.Browser.document.createSpanElement( );
         {
-            var date = Date.now( );
-
-            var hours = date.getHours( );
-
-            var h = (hours % 12) + 1;
-            var m = StringTools.lpad( cast date.getMinutes( ), '0', 2 );
-            var s = StringTools.lpad( cast date.getSeconds( ), '0', 2 );
-            var z = (hours < 12) ? 'AM' : 'PM';
-
-            time.innerText = '${h}:${m}:${s} ${z}';
+            time.innerText = timeText;
 
             element.appendChild( time );
         }
 
         var contents = js.Browser.document.createSpanElement( );
         {
-            contents.innerHTML = info;
+            contents.innerHTML = infoText;
 
             element.appendChild( contents );
         }
 
         return element;
+    }
+
+    private static function createTimeString() : String {
+        var date = Date.now( );
+
+        var hours = date.getHours( );
+
+        var h = (hours % 12) + 1;
+        var m = StringTools.lpad( cast date.getMinutes( ), '0', 2 );
+        var s = StringTools.lpad( cast date.getSeconds( ), '0', 2 );
+        var z = (hours < 12) ? 'AM' : 'PM';
+
+        return '${h}:${m}:${s} ${z}';
     }
 
     private function onStatusBarClick(e : js.html.MouseEvent) {

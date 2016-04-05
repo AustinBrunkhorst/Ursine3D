@@ -50,6 +50,9 @@ public:
     std::string phase3RightLights;
     std::string phase3BossLights;
 
+    std::string phase3CinematicCamera;
+    std::string phase3CinematicFocalPoint;
+
 private:
     ursine::resources::ResourceReference m_worldToMerge;
 

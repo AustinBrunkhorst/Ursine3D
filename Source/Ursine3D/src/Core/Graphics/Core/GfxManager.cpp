@@ -135,7 +135,7 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_FORWARD, "ForwardRenderer");
                 shaderManager->LoadShader(SHADER_SPRITE_TEXT, "SpriteTextShader");
 
-                shaderManager->LoadShader(SHADER_OUTLINE, "OutlineShader");
+                shaderManager->LoadShader(SHADER_OUTLINE, "EdgeDetectionShader");
                 
 
                 //load compute
@@ -594,6 +594,7 @@ namespace ursine
             GlobalGPUResource   debugInput( SHADER_SLOT_0, RESOURCE_INPUT_RT );
             GlobalGPUResource   lightmapRT( SHADER_SLOT_1, RESOURCE_INPUT_RT );
             GlobalGPUResource   shadowmapDepth( SHADER_SLOT_4, RESOURCE_INPUT_DEPTH );
+            GlobalGPUResource   idTarget(SHADER_SLOT_1, RESOURCE_INPUT_RT);
 
             GlobalGPUResource   debugTarget(SHADER_SLOT_0, RESOURCE_INPUT_RT);
 
@@ -624,32 +625,6 @@ namespace ursine
                         Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_BACKCULL ).
-                        Set( BLEND_STATE_COUNT ).
-                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
-
-                        AddResource( &viewBuffer ).
-
-                        Accepts( RENDERABLE_MODEL3D ).
-                        Processes( &modelProcessor ).
-                    InitializePass( );
-                }
-
-                /////////////////////////////////////////////////////////
-                // OUTLINE PASS
-                {
-                    outlinePass.
-                        Set(
-                            {
-                                RENDER_TARGET_DEFERRED_COLOR,
-                                RENDER_TARGET_DEFERRED_NORMAL,
-                                RENDER_TARGET_DEFERRED_SPECPOW
-                            }
-                        ).
-                        Set( SHADER_OUTLINE ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_OUTLINE ).
                         Set( BLEND_STATE_COUNT ).
                         Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
 
@@ -789,6 +764,32 @@ namespace ursine
                         AddResource( &diffuseRT ).
                         AddResource( &normalRT ).
                         AddResource( &specPowRT ).
+
+                        IsFullscreenPass( true ).
+                    InitializePass( );
+                }
+
+                /////////////////////////////////////////////////////////
+                // OUTLINE PASS
+                {
+                    outlinePass.
+                         Set( { RENDER_TARGET_SWAPCHAIN } ).
+                        Set( SHADER_OUTLINE ).
+                        Set( DEPTH_STENCIL_COUNT ).
+                        Set( DEPTH_STATE_COUNT ).
+                        Set( SAMPLER_STATE_NO_WRAP_TEX ).
+                        Set( RASTER_STATE_SOLID_BACKCULL ).
+                        Set( BLEND_STATE_DEFAULT ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &viewIdentity ).
+                        AddResource( &invProjection ).
+                        AddResource( &fullscreenTransform ).
+                        AddResource( &fullscreenModel ).
+                        AddResource( &lightFalloff ).
+
+                        AddResource( &depthInput ).
+                        AddResource( &idTarget ).
 
                         IsFullscreenPass( true ).
                     InitializePass( );
@@ -1036,6 +1037,7 @@ namespace ursine
                 AddPrePass( &pointlightPass ).
                 AddPrePass( &directionalLightPass ).
                 AddPrePass( &emissivePass ).
+                AddPrePass( &outlinePass ).
                 AddPrePass( &lineRenderPass ).
                 AddPrePass( &pointRenderPass ).
                 AddPrePass( &overdrawPass ).
@@ -1127,6 +1129,7 @@ namespace ursine
 
             shadowmapDepth.Update( DEPTH_STENCIL_SHADOWMAP );
 
+            idTarget.Update( RENDER_TARGET_DEFERRED_SPECPOW );
             debugTarget.Update( RENDER_TARGET_DEFERRED_NORMAL );
 
             // TEXTURES AND MODELS /////////////

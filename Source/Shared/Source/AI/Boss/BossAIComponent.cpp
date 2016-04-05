@@ -24,6 +24,10 @@
 #include "BossChangePhaseState.h"
 #include "BossEnrageState.h"
 #include "BossPhase2VineHandlerState.h"
+#include "BossPhase3WaitTillTriggerState.h"
+#include "BossPhase3RepositionBoss.h"
+#include "BossJumpToHomeLocationState.h"
+#include "BossPhase3VineLoopState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -33,6 +37,7 @@
 #include <DebugSystem.h>
 #include <SystemManager.h>
 #include <TimerCondition.h>
+#include <BoolCondition.h>
 #include <FloatCondition.h>
 
 NATIVE_COMPONENT_DEFINITION( BossAI );
@@ -402,6 +407,21 @@ void BossAI::SetVineHealthThresholdCallback(const std::function<void(VineAI*)> &
     m_vineHealthThresholdCallback = callback;
 }
 
+void BossAI::SetHomeLocation(const SVec3 &location)
+{
+    m_homeLocation = location;
+}
+
+const SVec3 &BossAI::GetHomeLocation(void) const
+{
+    return m_homeLocation;
+}
+
+void BossAI::JumpToHomeLocation(void)
+{
+    setJumpToHomeLocationBools( );
+}
+
 void BossAI::OnInitialize(void)
 {
     GetOwner( )->GetWorld( )->Listener( this )
@@ -537,19 +557,55 @@ void BossAI::OnInitialize(void)
     // - Boss goes under ground
     // - Spot light on the bosses home location
     // - Wait till both players are in the trigger zone
-    // - When both players are in the center, spawn boss and vines in outer spawn locations
-    // Then other things, come back to this after other shit is done
+    // - Start spawning vines.  Spawn boss when event is received.
+    // - Send event when boss is done spawning for the start of the segment.
+    // - Go into a loop for the different shit to happen
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
+        // All I need to do now is just spawn the vines and boss, then transition after a timer,
+        // then make the wackamole state for swapping spawn positions, and also have the boss sludge shot and what not.
         auto goUnderground = sm->AddState<BossUndergroundState>( );
-        /*auto spotlightAndTriggers = sm->AddState<Phase3TriggersState>( );
-        auto wackamoleState = sm->AddState<Phase3WhackAMolee>( );*/
+        auto waitTillTrigger = sm->AddState<BossPhase3WaitTillTriggerState>( );
+        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase3, 1.75f );
+        auto repositionBoss = sm->AddState<BossPhase3RepositionBoss>( );
+        auto blankState = sm->AddState<BossPhase3RepositionBoss>( );
+        auto spawnBoss = sm->AddState<BossSpawnState>( 0.5f );
+        auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
+        auto seedshot = sm->AddState<BossSeedshotState>( );
+        auto goUnderground2 = sm->AddState<BossUndergroundState>( );
+        auto jumpToHome = sm->AddState<BossJumpToHomeLocationState>( );
+        auto spawn = sm->AddState<BossSpawnState>( );
+
+        goUnderground->AddTransition( waitTillTrigger, "To Waiting For Trigger" );
+        waitTillTrigger->AddTransition( repositionBoss, "To Reposition Boss" );
+        repositionBoss->AddTransition( spawnVines, "Spawn Vines" )
+                      ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
+        spawnVines->AddTransition( blankState, "Pause" )
+                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 13.0f ) );
+        blankState->AddTransition( spawnBoss, "Spawn Boss" );
+        spawnBoss->AddTransition( invulnerable, "Invulneralbe" )
+                 ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 2.0f ) );
+        invulnerable->AddTransition( seedshot, "Seedshot" );
+        seedshot->AddTransition( goUnderground2, "Go Underground" )
+                ->AddCondition<sm::BoolCondition>( BossAIStateMachine::GoHome, true );
+        goUnderground2->AddTransition( jumpToHome, "Jump to new home" );
+        jumpToHome->AddTransition( spawn, "Spawn Again" );
+        spawn->AddTransition( seedshot, "Attack again" );
 
         sm->SetInitialState( goUnderground );
 
         m_bossLogic[ 2 ].push_back( sm );
+
+        auto loop = std::make_shared<BossAIStateMachine>( this );
+
+        loop->SetInitialState(
+            loop->AddState<BossPhase3VineLoopState>( )
+        );
+
+        m_bossLogic[ 2 ].push_back( loop );
     }
+
     // TESTING: Pollinate
     /*{
         auto sm = std::make_shared<BossAIStateMachine>( this );
@@ -559,7 +615,7 @@ void BossAI::OnInitialize(void)
         sm->SetInitialState( pollinate );
 
         m_bossLogic[ 2 ].push_back( sm );
-    }
+    }*/
 
     // TESTING: Sludgeshot
     {
@@ -570,7 +626,7 @@ void BossAI::OnInitialize(void)
         sm->SetInitialState( sludgeshot );
 
         m_bossLogic[ 3 ].push_back( sm );
-    }*/
+    }
 }
 
 void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
@@ -675,6 +731,17 @@ void BossAI::updateVineCount(void)
         for (auto &machine : m_bossLogic[ i ])
         {
             machine->SetInt( BossAIStateMachine::VineCount, m_vineCount );
+        }
+    }
+}
+
+void BossAI::setJumpToHomeLocationBools(void)
+{
+    for (int i = 0; i < kPhaseNumber; ++i)
+    {
+        for (auto &machine : m_bossLogic[ i ])
+        {
+            machine->SetBool( BossAIStateMachine::GoHome, true );
         }
     }
 }

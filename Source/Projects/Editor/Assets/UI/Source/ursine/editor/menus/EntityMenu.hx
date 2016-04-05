@@ -1,6 +1,6 @@
 package ursine.editor.menus;
 
-@menuIndex( 3 )
+@menuIndex( 4 )
 class EntityMenu extends MenuItemHandler {
     @mainMenuItem( "Entity/Create/Empty" )
     static function doCreateEmpty() {

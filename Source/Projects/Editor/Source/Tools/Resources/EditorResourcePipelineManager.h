@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include "ProjectGameBuilder.h"
+
 #include <ResourcePipelineManager.h>
 
 class Editor;
@@ -26,7 +28,16 @@ public:
 
 private:
     Editor *m_editor;
+    ProjectGameBuilder &m_gameBuilder;
     ursine::rp::ResourcePipelineManager &m_pipeline;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Project Build Events
+    ///////////////////////////////////////////////////////////////////////////
+
+    void onProjectBuildStart(EVENT_HANDLER(ProjectGameBuilder));
+    void onProjectBuildProgress(EVENT_HANDLER(ProjectGameBuilder));
+    void onProjectBuildComplete(EVENT_HANDLER(ProjectGameBuilder));
 
     ///////////////////////////////////////////////////////////////////////////
     // Resource Events

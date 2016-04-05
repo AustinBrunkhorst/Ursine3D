@@ -169,6 +169,14 @@ x-main-menu, x-context-menu {
       &.checkmark {
         @include icon-half( $icon-half-ok, $context-menu-icon-size );
       }
+
+      &.settings {
+        @include icon-half( $icon-half-cog, $context-menu-icon-size );
+      }
+
+      &.export {
+        @include icon-half( $icon-half-export, $context-menu-icon-size );
+      }
     }
   }
 }

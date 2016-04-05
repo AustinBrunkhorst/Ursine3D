@@ -129,7 +129,7 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
             {
                 auto currVel = swept->GetControllerVelocity( );
 
-                swept->JumpDirectionally( currVel * controller->GetJumpDirectionScalar( ) );
+                swept->JumpDirectionally( currVel * ( 1.0f + controller->GetJumpDirectionScalar( ) ) );
 
                 URSINE_TODO("Fix sound hack for weapons");
                 GetCoreSystem(AudioManager)->PlayGlobalEvent("Player_Jump");

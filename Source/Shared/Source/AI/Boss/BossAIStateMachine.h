@@ -26,6 +26,8 @@ public:
     static const std::string VineCount;
     static const std::string Health;
 
+    static const std::string GoHome;
+
     BossAIStateMachine(BossAI *boss);
 
     void Update(void) override;

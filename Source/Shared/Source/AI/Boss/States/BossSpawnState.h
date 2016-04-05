@@ -16,7 +16,7 @@
 class BossSpawnState : public BossAIState
 {
 public:
-    BossSpawnState(void);
+    BossSpawnState(float playback = 1.0f);
 
     bool CanExit(void) override { return m_finished; }
 
@@ -25,6 +25,7 @@ public:
 private:
 
     bool m_finished;
+    float m_playback;
 
     void onAnimationFinished(EVENT_HANDLER(ursine::ecs::Entity));
 };

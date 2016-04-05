@@ -33,6 +33,8 @@ public:
     JSMethod(isRemovalEnabled);
     JSMethod(isHierarchyChangeEnabled);
     JSMethod(isVisibleInEditor);
+    JSMethod(setVisibleInEditor);
+    JSMethod(enableSerialization);
 
     JSMethod(remove);
 

@@ -1,6 +1,7 @@
 package ursine.editor;
 
 import ursine.native.Extern;
+import ursine.api.native.NativeBroadcastManager;
 
 import ursine.controls.Button;
 import ursine.controls.Notification;

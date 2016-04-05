@@ -85,7 +85,6 @@ public:
     void SetShootEndState(const std::string &state);
 
 private:
-
     std::string m_idleState;
     std::string m_jumpState;
     std::string m_runState;
@@ -109,8 +108,9 @@ private:
     void onEndShoot(EVENT_HANDLER(ursine::ecs::Entity));
 
 } Meta(
-    Enable, 
+    Enable,
+) EditorMeta(
     RequiresComponents(
-        typeof(ursine::ecs::Animator)
-    )
+        typeof( ursine::ecs::Animator )
+    )    
 );

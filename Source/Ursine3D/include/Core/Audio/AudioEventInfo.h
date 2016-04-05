@@ -17,53 +17,53 @@
 
 namespace ursine
 {
-	namespace ecs
-	{
-		struct AudioEvent
-		{
-			typedef std::shared_ptr<AudioEvent> Handle;
+    namespace ecs
+    {
+        struct AudioEvent
+        {
+            typedef std::shared_ptr<AudioEvent> Handle;
 
-			virtual ~AudioEvent(void) { }
+            virtual ~AudioEvent(void) { }
 
-			virtual void ApplyParams(AkGameObjectID id) = 0;
-		};
+            virtual void ApplyParams(AkGameObjectID id) = 0;
+        };
 
-		struct AudioSwitch : AudioEvent
-		{
-			std::string switchGroup;
-			std::string switchState;
+        struct AudioSwitch : AudioEvent
+        {
+            std::string switchGroup;
+            std::string switchState;
 
-			void ApplyParams(AkGameObjectID id) override;
-		};
+            void ApplyParams(AkGameObjectID id) override;
+        };
 
-		struct AudioState : AudioEvent
-		{
-			std::string stateGroup;
-			std::string audioState;
+        struct AudioState : AudioEvent
+        {
+            std::string stateGroup;
+            std::string audioState;
 
-			void ApplyParams(AkGameObjectID id) override;
-		};
+            void ApplyParams(AkGameObjectID id) override;
+        };
 
-		struct AudioRTPC : AudioEvent
-		{
-			std::string parameter;
-			float val;
+        struct AudioRTPC : AudioEvent
+        {
+            std::string parameter;
+            float val;
 
-			void ApplyParams(AkGameObjectID id) override;
-		};
+            void ApplyParams(AkGameObjectID id) override;
+        };
 
-		struct AudioTrigger : AudioEvent
-		{
-			std::string name;
+        struct AudioTrigger : AudioEvent
+        {
+            std::string name;
 
-			void ApplyParams(AkGameObjectID id) override;
-		};
+            void ApplyParams(AkGameObjectID id) override;
+        };
 
-		struct AudioGeneric : AudioEvent
-		{
-			std::string name;
+        struct AudioGeneric : AudioEvent
+        {
+            std::string name;
 
-			void ApplyParams(AkGameObjectID id) override;
-		};
-	}
+            void ApplyParams(AkGameObjectID id) override;
+        };
+    }
 }

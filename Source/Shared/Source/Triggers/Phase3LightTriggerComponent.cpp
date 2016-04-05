@@ -61,8 +61,12 @@ void Phase3LightTrigger::SetRightSideLights(const std::string &entity)
 
 void Phase3LightTrigger::OnSceneReady(Scene *scene)
 {
-    if (scene->GetPlayState() == PS_EDITOR)
+#if defined(URSINE_WITH_EDITOR)
+
+    if (scene->GetPlayState( ) == PS_EDITOR)
         return;
+
+#endif
 
     auto world = GetOwner( )->GetWorld( );
 

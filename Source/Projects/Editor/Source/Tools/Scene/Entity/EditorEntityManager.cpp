@@ -44,6 +44,7 @@ namespace
             const auto Removed = "EntityRemoved";
             const auto NameChanged = "EntityNameChanged";
             const auto ParentChanged = "EntityParentChanged";
+            const auto VisibilityChanged = "EntityEditorVisibilityChanged";
         }
 
         namespace component
@@ -89,6 +90,7 @@ void EditorEntityManager::initWorldEvents(ecs::World *world)
         .On( ecs::WORLD_ENTITY_REMOVED, &EditorEntityManager::onEntityRemoved )
         .On( ecs::WORLD_EDITOR_ENTITY_NAME_CHANGED, &EditorEntityManager::onEntityNameChanged )
         .On( ecs::WORLD_EDITOR_ENTITY_PARENT_CHANGED, &EditorEntityManager::onEntityParentChanged )
+        .On( ecs::WORLD_EDITOR_ENTITY_VISIBILITY_CHANGED, &EditorEntityManager::onEntityVisibilityChanged )
         .On( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorEntityManager::onComponentAdded )
         .On( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
         .On( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged )
@@ -107,6 +109,7 @@ void EditorEntityManager::clearWorldEvents(ecs::World *world)
         .Off( ecs::WORLD_ENTITY_REMOVED, &EditorEntityManager::onEntityRemoved )
         .Off( ecs::WORLD_EDITOR_ENTITY_NAME_CHANGED, &EditorEntityManager::onEntityNameChanged )
         .Off( ecs::WORLD_EDITOR_ENTITY_PARENT_CHANGED, &EditorEntityManager::onEntityParentChanged )
+        .Off( ecs::WORLD_EDITOR_ENTITY_VISIBILITY_CHANGED, &EditorEntityManager::onEntityVisibilityChanged )
         .Off( ecs::WORLD_ENTITY_COMPONENT_ADDED, &EditorEntityManager::onComponentAdded )
         .Off( ecs::WORLD_ENTITY_COMPONENT_REMOVED, &EditorEntityManager::onComponentRemoved )
         .Off( ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &EditorEntityManager::onComponentChanged )
@@ -225,6 +228,29 @@ void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
         UI_CMD_BROADCAST, 
         channel::EntityManager, 
         events::entity::ParentChanged,
+        message
+    );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+void EditorEntityManager::onEntityVisibilityChanged(EVENT_HANDLER(ecs::World))
+{
+    EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
+
+    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING && 
+        !args->entity->HasComponent<ecs::Selected>( ))
+        return;
+
+    Json message = Json::object {
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
+        { "visible", args->entity->IsVisibleInEditor( ) },
+    };
+
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST, 
+        channel::EntityManager, 
+        events::entity::VisibilityChanged,
         message
     );
 }

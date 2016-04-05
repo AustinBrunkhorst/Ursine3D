@@ -50,10 +50,19 @@ namespace
         
         auto file = files[ 0 ].string( );
 
-        if (!fs::WriteAllText( file, data.dump( true ) ))
+        if (fs::WriteAllText( file, data.dump( true ) ))
         {
-            auto *editor = GetCoreSystem( Editor );
+            NotificationConfig success;
 
+            success.type = NOTIFY_INFO;
+            success.header = "Action Complete";
+            success.message = "Archetype saved.";
+            success.dismissible = true;
+
+            EditorPostNotification( success );
+        }
+        else
+        {
             UWarning( "Could not write to archetype file.\nfile: %s",
                 file.c_str( )
             );
@@ -69,7 +78,7 @@ namespace
                 { "Open Error Log", doOpenErrorLog }
             };
 
-            editor->PostNotification( error );
+            EditorPostNotification( error );
         }
     }
 
@@ -167,6 +176,54 @@ JSMethod(EntityHandler::isVisibleInEditor)
 }
 
 ///////////////////////////////////////////////////////////////////////////////
+
+JSMethod(EntityHandler::setVisibleInEditor)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto &handle = getHandle( );
+
+    if (!handle)
+        return CefV8Value::CreateBool( false );
+
+    auto visible = arguments[ 0 ]->GetBoolValue( );
+
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
+
+        if (newHandle)
+            newHandle->SetVisibleInEditor( visible );
+    } );
+
+    return CefV8Value::CreateBool( true );
+}
+
+///////////////////////////////////////////////////////////////////////////////
+
+JSMethod(EntityHandler::enableSerialization)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto &handle = getHandle( );
+
+    if (!handle)
+        return CefV8Value::CreateBool( false );
+
+    auto serialization = arguments[ 0 ]->GetBoolValue( );
+
+    Application::PostMainThread( [=] {
+        auto &newHandle = getHandle( );
+
+        if (newHandle)
+            newHandle->EnableSerialization( serialization );
+    } );
+
+    return CefV8Value::CreateBool( true );
+}
+
+///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
 JSMethod(EntityHandler::remove)
@@ -252,7 +309,7 @@ JSMethod(EntityHandler::inspect)
 JSMethod(EntityHandler::inspectComponent)
 {
     if (arguments.size( ) != 1)
-        JSThrow( "Invalid constructor arguments.", nullptr );
+        JSThrow( "Invalid arguments.", nullptr );
 
     auto &handle = getHandle( );
 

@@ -19,31 +19,31 @@
 
 namespace ursine
 {
-	namespace ecs
-	{
-		void AudioSwitch::ApplyParams(AkGameObjectID id)
-		{
-			AudioSystem::SetObjectSwitch( switchGroup, switchState, id );
-		}
+    namespace ecs
+    {
+        void AudioSwitch::ApplyParams(AkGameObjectID id)
+        {
+            AudioSystem::SetObjectSwitch( switchGroup, switchState, id );
+        }
 
-		void AudioState::ApplyParams(AkGameObjectID id)
-		{
-			AudioSystem::SetGameState( stateGroup, audioState );
-		}
+        void AudioState::ApplyParams(AkGameObjectID id)
+        {
+            AudioSystem::SetGameState( stateGroup, audioState );
+        }
 
-		void AudioRTPC::ApplyParams(AkGameObjectID id)
-		{
-			AudioSystem::SetRealTimeParameter( parameter, val, id );
-		}
+        void AudioRTPC::ApplyParams(AkGameObjectID id)
+        {
+            AudioSystem::SetRealTimeParameter( parameter, val, id );
+        }
 
-		void AudioTrigger::ApplyParams(AkGameObjectID id)
-		{
-			AudioSystem::SetTrigger( name, id );
-		}
+        void AudioTrigger::ApplyParams(AkGameObjectID id)
+        {
+            AudioSystem::SetTrigger( name, id );
+        }
 
-		void AudioGeneric::ApplyParams(AkGameObjectID id)
-		{
-			AudioSystem::PostAudioEvent( name, id );
-		}
-	}
+        void AudioGeneric::ApplyParams(AkGameObjectID id)
+        {
+            AudioSystem::PostAudioEvent( name, id );
+        }
+    }
 }

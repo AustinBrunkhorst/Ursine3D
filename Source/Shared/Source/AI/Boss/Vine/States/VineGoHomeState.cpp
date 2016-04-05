@@ -68,6 +68,13 @@ void VineGoHomeState::Update(VineAIStateMachine *machine)
             // move towards the target in the x-z plane.
             auto lookAtPosition = ai->GetHomeLocation( );
 
+            if (machine->GetBool( VineAIStateMachine::JumpToHome ))
+            {
+                aiTrans->SetWorldPosition( lookAtPosition );
+                m_state = GoHomeState::Uprooting;
+                return;
+            }
+
             lookAtPosition.Y( ) = aiPos.Y( );
 
             // Turn towards the target

@@ -234,7 +234,16 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(const GUID &guid) const
+    const rp::ResourcePipelineManager::Database &rp::ResourcePipelineManager::GetDatabase(void) const
+    {
+        return m_database;
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(
+        const GUID &guid
+    ) const
     {
         auto search = m_database.find( guid );
 
@@ -243,7 +252,9 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(const fs::path &sourceFile) const
+    rp::ResourceItem::Handle rp::ResourcePipelineManager::GetItem(
+        const fs::path &sourceFile
+    ) const
     {
         auto search = m_pathToResource.find( sourceFile );
 
@@ -252,7 +263,9 @@ namespace ursine
 
     ///////////////////////////////////////////////////////////////////////////
 
-    rp::ResourceItem::List rp::ResourcePipelineManager::GetItemsByType(const meta::Type &type) const
+    rp::ResourceItem::List rp::ResourcePipelineManager::GetItemsByType(
+        const meta::Type &type
+    ) const
     {
         ResourceItem::List matched;
 

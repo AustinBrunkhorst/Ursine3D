@@ -33,7 +33,7 @@ namespace ursine
                 SetGlobalEmissive
             );
 
-            EditorMeta(InputRange(1.0f, 100.0f, 1.0f, "{{value.toPrecision( 2 )}}"))
+            EditorMeta(InputRange(1.0f, 1000.0f, 1.0f, "{{value.toPrecision( 2 )}}"))
             EditorField(
                 float lightStepValue,
                 GetLightStepValue,
