@@ -172,7 +172,7 @@ void CharacterController::SetLockLooking(bool flag)
 
 float CharacterController::GetJumpDirectionScalar(void) const
 {
-    return 1.0f + m_jumpDirectionScalar;
+    return m_jumpDirectionScalar;
 }
 
 void CharacterController::SetJumpDirectionScalar(float scalar)
