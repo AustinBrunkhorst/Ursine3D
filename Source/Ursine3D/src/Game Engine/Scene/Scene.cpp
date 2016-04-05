@@ -80,6 +80,10 @@ namespace ursine
 
         m_activeWorld = worldData->GetData( );
 
+        UAssert( m_activeWorld,
+            "Resource world data was null."    
+        );
+
         m_activeWorld->setOwner( this );
 
         Dispatch( SCENE_WORLD_CHANGED, &e );

@@ -560,6 +560,7 @@ namespace ursine
             RenderPass          velocityParticlePass("VelocityParticlePass");
             RenderPass          billboardPass( "BillboardPass" );
             RenderPass          textPass( "SpriteTextPass" );
+            RenderPass          overdrawTextPass("SpriteTextOverdrawPass");
 
             RenderPass          debugPass("debugPass");
 
@@ -573,6 +574,7 @@ namespace ursine
             auto velParticleProcessor   = ParticleSystemProcessor( true );
             auto billboardPorcessor     = Billboard2DProcessor( );
             auto textProcessor          = SpriteTextProcessor( );
+            auto overdrawProcessor      = SpriteTextProcessor( true );
 
             // CREATE GLOBALS
             GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBuffer( SHADERTYPE_VERTEX );
@@ -1006,7 +1008,38 @@ namespace ursine
                     InitializePass( );
                 }
 
-                 {
+                /////////////////////////////////////////////////////////
+                // OVERDRAW SPRITE TEXT PASS
+                {
+                    overdrawTextPass.
+                        Set( 
+                            {
+                                RENDER_TARGET_SWAPCHAIN,
+                                RENDER_TARGET_DEFERRED_NORMAL,
+                                RENDER_TARGET_DEFERRED_SPECPOW
+                            }
+                        ).
+                        Set( SHADER_SPRITE_TEXT ).
+                        Set( DEPTH_STENCIL_COUNT ).
+                        Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
+                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( RASTER_STATE_SOLID_NOCULL ).
+                        Set( BLEND_STATE_DEFAULT ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &viewBuffer ).
+                        AddResource( &particleModel ).
+                        AddResource( &invView ).
+
+                        Accepts( RENDERABLE_SPRITE_TEXT ).
+                        Processes( &overdrawProcessor ).
+                        OverrideLayout( SHADER_OVERRIDE ).
+                    InitializePass( );
+                }
+
+                /////////////////////////////////////////////////////////
+                // DEBUG PASS
+                {
                     debugPass.
                         Set( { RENDER_TARGET_SWAPCHAIN } ).
                         Set( SHADER_QUAD ).
@@ -1047,6 +1080,7 @@ namespace ursine
                 AddPrePass( &velocityParticlePass ).
                 AddPrePass( &billboardPass ).
                 AddPrePass( &textPass ).
+                AddPrePass( &overdrawTextPass ).
                 // AddPrePass(&debugPass).
             InitializePass( );
 

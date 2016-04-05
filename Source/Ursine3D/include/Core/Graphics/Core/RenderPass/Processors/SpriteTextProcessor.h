@@ -24,13 +24,15 @@ namespace ursine
         class SpriteTextProcessor : public GraphicsEntityProcessor
         {
         public:
-            SpriteTextProcessor(void);
+            SpriteTextProcessor(bool overdraw = false);
         private:
              bool cullOperation(_DRAWHND, Camera &currentCamera) override;
              void prepOperation(_DRAWHND, SMat4 &view, SMat4 &proj, Camera &currentCamera) override;
              void renderOperation(_DRAWHND handle, Camera &currentCamera) override;
 
              void mapSpriteTextBuffer(_DRAWHND handle);
+
+             bool m_overdraw;
         };
     }
 }

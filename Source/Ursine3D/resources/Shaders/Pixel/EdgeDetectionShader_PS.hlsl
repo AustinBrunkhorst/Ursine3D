@@ -58,66 +58,82 @@ struct PS_INPUT
 
 float4 main(PS_INPUT In) : SV_TARGET
 {
-    // offsets into texture
-    float2 offsets[ 4 ] = {
-        { -1, 0 },
-        { 1, 0 },
-        { 0, 1 },
-        { 0, -1 }
-};
+    // top left is 0, 0 on screen
 
-float samples[ 4 ];
+    float2 offsets[ 8 ] = {
+        { -1,-1 }, // tl
+        { 0, -1 }, // top
+        { 1, -1 }, // tr
+        { -1, 0 }, // l
+                   // center not used
+        { 1,  0 }, // right
+        { -1,  1 }, // bl
+        { 0,  1 }, // bottom
+        { 1,  1 } // bottom right
+    };
 
-// DEPTH INFO
-float currentPixel = LinearizeDepth(gDepthTexture.Load(int3(In.Position.xy, 0)).x);
+    float weights[8] = 
+    {
+        2,
+        2, 
+        2,
+        2,
+        2,
+        2,
+        2,
+        2
+    };
 
-for (int x = 0; x < 2; ++x)
-{
-    samples[ x ] = LinearizeDepth(gDepthTexture.Load(int3(In.Position.xy + offsets[ x ] * 2, 0)).x);
-}
+    float samples[8];
 
-for (int x = 2; x < 4; ++x)
-{
-    samples[ x ] = LinearizeDepth(gDepthTexture.Load(int3(In.Position.xy + offsets[ x ] * 2, 0)).x);
-}
+    float base = LinearizeDepth(gDepthTexture.Load(int3(In.Position.xy, 0)).x);
 
-float widthMax = max(abs(samples[ 0 ] - currentPixel), abs(samples[ 1 ] - currentPixel));
-float heightMax = max(abs(samples[ 2 ] - currentPixel), abs(samples[ 2 ] - currentPixel));
+    // first, to save sampling we sample the 8 pixels surrounding base pixel
+    for (int x = 0; x < 8; ++x)
+    {
+        samples[x] = LinearizeDepth(gDepthTexture.Load(int3(In.Position.xy + offsets[ x ] * weights[x], 0)).x);
+    }
 
-float finalMax = max(widthMax, heightMax);
+    // Sobel operator is defined as the magnitude of the gradient sampled by the masks, 
+    // M = sqrt( xMask^2 + yMask^2 )
 
-// ID INFO
+    // 0 1 2
+    // 3 x 4 
+    // 5 6 7
 
-int IDs[ 4 ];
-for (int x = 0; x < 2; ++x)
-{
-    IDs[ x ] = GetIDFromTex(gIDTex.Load(int3(In.Position.xy + offsets[ x ] * 2, 0)));
-}
+    // the x mask is:
+    // -1 0 +1
+    // -2 0 +2
+    // -1 0 +1
+    float sX = -samples[0] + samples[2] - 2 * samples[3] + 2 * samples[4] - samples[5] + samples[7];
 
-for (int x = 2; x < 4; ++x)
-{
-    IDs[ x ] = GetIDFromTex(gIDTex.Load(int3(In.Position.xy + offsets[ x ] * 2, 0)));
-}
+    // y mask is rotated 90 degrees
+    float sY = samples[0] + 2 * samples[1] + samples[2] - (samples[5] + 2 * samples[6] + samples[7]);
 
-// if id matches
-if (IDs[ 0 ] != IDs[ 1 ])
-{
-    // if object is close enough, forgive them
+    float mag = sqrt(sX * sX + sY * sY);
 
-    if (widthMax < gLightStep / 10000.0f)
-        return float4(0, 0, 0, 0);
+    if (mag > 0.072 + base / 10.0f)
+        return float4(0, 0, 0, 1);
 
-    return float4(0, 0, 0, 1);
-}
+    /////////////////////////////////////////////////////////////////
+    // LAPLACIAN GAUSSIAN
 
-if (IDs[ 2 ] != IDs[ 3 ])
-{
-    if (heightMax < gLightStep / 10000.0f)
-        return float4(0, 0, 0, 0);
+    // mask is as follows:
+    // 1 4 1
+    // 4 -20 4
+    // 1 4 1
 
-    return float4(0, 0, 0, 1);
-}
+    float sides = 1;
+    float corners = 0;
+    float main = -4;
 
+    float lapGauss = 
+        main * base + 
+        samples[0] * corners + samples[ 2 ] * corners + samples[ 5 ] * corners + samples[ 7 ] * corners +
+        samples[ 1 ] * sides + samples[ 3 ] * sides + samples[ 4 ] * sides + samples[ 6 ] * sides;
 
-return float4(0, 0, 0, 0);
+    //if (lapGauss > gLightStep / 10000.0f)
+        //return float4(0, 0, 0, 1);
+
+    return float4(0, 0, 0, 0);
 }

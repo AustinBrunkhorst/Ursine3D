@@ -117,7 +117,7 @@ float3 CalcPoint(float3 position, Material material)
     // distance attenuation
     float Attn = saturate(1.0f - (distanceToPixel / lightSize));
 
-    return CalculateLightmapResponse(toLight, -toLight, toEye, material) * Attn * angleAttenuation * diffuseColor.xyz  * SpotShadowPCF(position);
+    return CalculateLightmapResponse(toLight, -toLight, toEye, material) * Attn * angleAttenuation * diffuseColor.xyz  * SpotShadowPCF(position) * intensity;
     // return CalcFinalLightValue(angleAttenuation * Attn * NDotL * intensity * SpotShadowPCF(position), diffuse, specularValue, material);
 }
 
