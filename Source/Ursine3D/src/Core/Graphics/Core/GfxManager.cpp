@@ -598,7 +598,7 @@ namespace ursine
             GlobalGPUResource   shadowmapDepth( SHADER_SLOT_4, RESOURCE_INPUT_DEPTH );
             GlobalGPUResource   idTarget(SHADER_SLOT_1, RESOURCE_INPUT_RT);
 
-            GlobalGPUResource   debugTarget(SHADER_SLOT_0, RESOURCE_INPUT_RT);
+            GlobalGPUResource   debugTarget( SHADER_SLOT_1, RESOURCE_TEXTURE );
 
             // other resources
             GlobalGPUResource   spriteModel( SHADER_SLOT_0, RESOURCE_MODEL );
@@ -791,7 +791,7 @@ namespace ursine
                         AddResource( &lightFalloff ).
 
                         AddResource( &depthInput ).
-                        AddResource( &idTarget ).
+                        AddResource( &debugTarget ).
 
                         IsFullscreenPass( true ).
                     InitializePass( );
@@ -1164,7 +1164,7 @@ namespace ursine
             shadowmapDepth.Update( DEPTH_STENCIL_SHADOWMAP );
 
             idTarget.Update( RENDER_TARGET_DEFERRED_SPECPOW );
-            debugTarget.Update( RENDER_TARGET_DEFERRED_NORMAL );
+            debugTarget.Update( m_lightMapTexture & 0xFFFF );
 
             // TEXTURES AND MODELS /////////////
             lightConeModel.Update( INTERNAL_CONE );
