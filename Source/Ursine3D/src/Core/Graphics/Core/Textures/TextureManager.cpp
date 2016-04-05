@@ -190,12 +190,6 @@ namespace ursine
             internalID = m_textureCache.size( );
             m_textureCache.emplace_back( );
 
-            std::cout << "CREATE: " << internalID << std::endl;
-            std::cout << "   W: " << width << std::endl;
-            std::cout << "   H: " << height << std::endl;
-            std::cout << "   SIZE: " << binarySize << std::endl;
-
-
             // load it up into CPU memory
             InitalizeTexture(
                 binaryData,
@@ -226,10 +220,6 @@ namespace ursine
             RELEASE_RESOURCE(texture.m_shaderResource);
             RELEASE_RESOURCE(texture.m_texture2d);
 
-            std::cout << "DESTROY: " << id << std::endl;
-            std::cout << "   " << texture.m_width << std::endl;
-            std::cout << "   " << texture.m_height << std::endl;
-
             delete[] texture.m_binaryData;
             texture.m_binarySize = 0;
             texture.m_width = 0;
@@ -259,7 +249,6 @@ namespace ursine
             // if it doesn't exist on the GPU, load it up
             if (m_textureCache[ id ].m_referenceCount == 0)
             {
-                std::cout << "LOAD TO GPU: " << id << std::endl;
                 LoadTextureToGPU(m_textureCache[ id ]);
             }
 
