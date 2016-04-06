@@ -21,7 +21,7 @@
 #include "CollisionEventArgs.h"
 #include "DamageOnCollideComponent.h"
 #include "AbstractHitscanWeapon.h"
-
+#include "RevivePlayerComponent.h"
 #include <Application.h>
 
 NATIVE_COMPONENT_DEFINITION( Health );
@@ -50,11 +50,14 @@ Health::Health(void)
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
     , m_invulnerable( false )
-    , m_hasShield( false ) { }
+    , m_hasShield( false )
+    , m_dead( false ) 
+{ }
 
 Health::~Health(void)
 {
     GetOwner( )->Listener(this)
+        .Off( HEALTH_REVIVE, &Health::onRevive)
         .Off( ursine::ecs::ENTITY_REMOVED, &Health::onDeath );
 
     auto world = GetOwner( )->GetWorld( );
@@ -222,7 +225,9 @@ void Health::DealDamage(float damage)
         if (m_deleteOnZero)
             GetOwner( )->Delete( );
 
-        m_hasShield = false;
+        // if player then they will enter downed state
+        if ( m_type == PLAYER_HEALTH )
+            GetOwner( )->AddComponent< RevivePlayer >( );
     }
     else
     {
@@ -275,6 +280,7 @@ void Health::OnInitialize(void)
     m_maxShield = m_shield;
 
     GetOwner( )->Listener(this)
+        .On( HEALTH_REVIVE, &Health::onRevive )
         .On( ENTITY_REMOVED, &Health::onDeath );
 }
 
@@ -301,4 +307,9 @@ void Health::onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 void Health::onUpdate(EVENT_HANDLER(World))
 {
 
+}
+
+void Health::onRevive(EVENT_HANDLER(ursine::ecs::Entity))
+{
+    AddHealth( m_maxHealth );
 }

@@ -31,6 +31,7 @@ enum HealthEvents
 {
     HEALTH_DAMAGE_TAKEN,
     HEALTH_DAMAGED,
+    HEALTH_REVIVE,
     HEALTH_ZERO
 };
 
@@ -138,12 +139,6 @@ public:
     void SetShieldHealth(float shield);
     float GetMaxShieldHealth(void) const;
 
-    float GetShieldRechargeDelay(void) const;
-    void SetShieldRechargeDelay(float delay);
-
-    float GetShieldRechargeRate(void) const;
-    void SetShieldRechargeRate(float rate);
-
     void AddHealth(float healthToAdd);
     void AddShieldHealth(float healthToAdd);
 
@@ -160,6 +155,8 @@ private:
     void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
+
+    void onRevive(EVENT_HANDLER(ursine::ecs::Entity));
 
     HealthType m_type;
 
@@ -178,5 +175,8 @@ private:
     bool m_invulnerable;
 
     bool m_hasShield;
+
+    Meta(Disable)
+    bool m_dead;
 
 } Meta(Enable, WhiteListMethods, DisplayName( "Health" ));

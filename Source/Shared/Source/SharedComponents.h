@@ -63,6 +63,7 @@
 
 #include "InteractionSystem/RaidTriggers/EmpowerTriggerComponent.h"
 #include "InteractionSystem/RaidTriggers/DisempowerTriggerComponent.h"
+#include "InteractionSystem/Triggers/RevivePlayerComponent.h"
 
 /////////////////////////////////
 //        Weapon System        //
