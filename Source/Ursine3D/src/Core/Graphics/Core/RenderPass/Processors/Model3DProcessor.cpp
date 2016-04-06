@@ -36,6 +36,7 @@ namespace ursine
             if ( !model.GetActive() )
                 return true;
 
+            // skip non shadow casters, if a shadow pass
             if( !m_shadowPass )
             {
                 if(!model.GetShadowCaster( ))
@@ -116,8 +117,6 @@ namespace ursine
             // map texture offset
             TextureUVOffset offset;
             offset.uv = DirectX::XMFLOAT2(model.GetTextureUVOffset( ).X( ), model.GetTextureUVOffset( ).Y( ));
-
-            model.SetTextureUVOffset(model.GetTextureUVOffset() + Vec2(0, 0.0001f));
 
             m_manager->bufferManager->MapBuffer<BUFFER_TEX_OFFSET>(
                 &offset,

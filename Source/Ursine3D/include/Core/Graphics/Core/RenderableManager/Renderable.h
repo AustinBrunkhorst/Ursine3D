@@ -84,6 +84,31 @@ namespace ursine
         {
             friend class RenderableManager;
         public:
+            struct FragmentData
+            {
+                // global times
+                float time;
+                float maxTime;
+
+                // forces
+                float verticalForce;
+                float horizontalForce;
+                float outwardForce;
+                float gravityForce;
+                float randomForce;
+
+                // etc
+                // pulse rate
+                float pulseSpeed;
+                float fadeAmount;
+                float transparencyThreshold;
+                float normalOffset;
+                float spinScalar;
+
+                float xUV, yUV;
+            };
+
+        public:
             Model3D(void);
             void Initialize(void);
 
@@ -95,6 +120,9 @@ namespace ursine
 
             GfxHND GetTextureHandle(void);
             void SetTextureHandle(GfxHND handle);
+
+            GfxHND GetFragmentTextureHandle(void);
+            void SetFragmentTextureHandle(GfxHND handle);
 
             GfxHND GetNormalTextureHandle(void);
             void SetNormalTextureHandle(GfxHND handle);
@@ -129,6 +157,14 @@ namespace ursine
             const Vec2 &GetTextureUVOffset(void) const;
             void SetTextureUVOffset(const Vec2 &offset);
 
+            bool GetDoesFragment(void) const;
+            void SetDoesFragment(bool doesFragment);
+
+            float GetFragTime(void) const;
+            void SetFragTime(float time);
+
+            FragmentData &GetFragmentData(void);
+
         private:
             float m_emissive;
             float m_specPow;
@@ -138,6 +174,7 @@ namespace ursine
 
             GfxHND m_modelHandle;
             GfxHND m_textureHandle;
+            GfxHND m_fragmentTextureHandle;
             GfxHND m_normalHandle;
 
             float m_animationTime;
@@ -150,6 +187,10 @@ namespace ursine
             int m_meshIndex;
 
             bool m_shadowCaster;
+
+            bool m_doesFragment;
+
+            FragmentData m_fragData;
         };
 
         /////////////////////////////////////////////////////////////////

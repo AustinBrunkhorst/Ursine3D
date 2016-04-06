@@ -30,6 +30,7 @@
 #include "PointLightProcessor.h"
 #include "SpotLightProcessor.h"
 #include "SpriteTextProcessor.h"
+#include "FragmentationProcessor.h"
 
 #include "RenderPass.h"
 
@@ -136,6 +137,7 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_SPRITE_TEXT, "SpriteTextShader");
 
                 shaderManager->LoadShader(SHADER_OUTLINE, "EdgeDetectionShader");
+                shaderManager->LoadShader(SHADER_FRAGMENTATION, "FragmentationShader");
                 
 
                 //load compute
@@ -561,6 +563,7 @@ namespace ursine
             RenderPass          billboardPass( "BillboardPass" );
             RenderPass          textPass( "SpriteTextPass" );
             RenderPass          overdrawTextPass("SpriteTextOverdrawPass");
+            RenderPass          fragmentationPass("FragPass");
 
             RenderPass          debugPass("debugPass");
 
@@ -575,6 +578,7 @@ namespace ursine
             auto billboardPorcessor     = Billboard2DProcessor( );
             auto textProcessor          = SpriteTextProcessor( );
             auto overdrawProcessor      = SpriteTextProcessor( true );
+            auto fragProcessor          = FragmentationProcessor( );
 
             // CREATE GLOBALS
             GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBuffer( SHADERTYPE_VERTEX );
@@ -1042,6 +1046,26 @@ namespace ursine
                 }
 
                 /////////////////////////////////////////////////////////
+                // FRAG PASS
+                {
+                    fragmentationPass.
+                        Set( { RENDER_TARGET_SWAPCHAIN } ).
+                        Set( SHADER_FRAGMENTATION ).
+                        Set( DEPTH_STENCIL_MAIN ).
+                        Set( DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL ).
+                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( RASTER_STATE_SOLID_NOCULL ).
+                        Set( BLEND_STATE_ADDITIVE ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &viewBufferGeom ).
+
+                        Accepts( RENDERABLE_MODEL3D ).
+                        Processes( &fragProcessor ).
+                    InitializePass( );
+                }
+
+                /////////////////////////////////////////////////////////
                 // DEBUG PASS
                 {
                     debugPass.
@@ -1082,6 +1106,7 @@ namespace ursine
                 AddPrePass( &overdrawPointPass ).
                 AddPrePass( &particlePass ).
                 AddPrePass( &velocityParticlePass ).
+                AddPrePass( &fragmentationPass ).
                 AddPrePass( &billboardPass ).
                 AddPrePass( &textPass ).
                 AddPrePass( &overdrawTextPass ).

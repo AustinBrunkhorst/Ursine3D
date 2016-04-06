@@ -23,6 +23,7 @@
 #include "CameraComponent.h"
 #include "ParticleSystemComponent.h"
 #include "SpriteTextComponent.h"
+#include "FragmentationComponent.h"
 
 #include "GfxAPI.h"
 #include "RenderableComponentBase.h"
@@ -123,6 +124,10 @@ namespace ursine
             {
                 addRenderable( args->entity, static_cast<SpriteText*>( component )->m_base.get( ) );
             }
+            else if(component->Is<ModelFragmenter>( ))
+            {
+                m_fragmenters.push_back( static_cast<ModelFragmenter*>(component) );
+            }
         }
 
         void RenderSystem::onComponentRemoved(EVENT_HANDLER(World))
@@ -153,6 +158,17 @@ namespace ursine
                 removeRenderable( args->entity, static_cast<ParticleSystem*>( component )->m_base );
             else if (component->Is<SpriteText>( ))
                 removeRenderable( args->entity, static_cast<SpriteText*>( component )->m_base.get( ) );
+            else if(component->Is<ModelFragmenter>( ))
+            {
+                auto search = std::find(
+                    m_fragmenters.begin( ),
+                    m_fragmenters.end( ),
+                    static_cast<ModelFragmenter*>( component )
+                );
+
+                if (search != m_fragmenters.end( ))
+                    m_fragmenters.erase( search );
+            }
         }
 
         void RenderSystem::onRender(EVENT_HANDLER(World))
@@ -230,6 +246,11 @@ namespace ursine
                     m_graphics->RenderObject( rend->m_handle );
                 }
             }
+
+            float dt = Application::Instance->GetDeltaTime( );
+
+            for(auto &fragmenter : m_fragmenters) 
+                fragmenter->Update( dt );
         }
 
         void RenderSystem::renderCamera(Component::Handle<Camera> camera, RenderHookArgs &args, RenderSystemEventType hook)

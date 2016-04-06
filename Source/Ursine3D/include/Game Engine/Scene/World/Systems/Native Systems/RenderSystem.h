@@ -31,6 +31,7 @@ namespace ursine
         class WorldConfig;
         class Camera;
         class Animator;
+        class ModelFragmenter;
 
         enum RenderSystemEventType
         {
@@ -62,6 +63,9 @@ namespace ursine
         private:
             typedef std::vector<RenderableComponentBase *> RenderableVector;
             typedef std::unordered_map<EntityID, RenderableVector> RenderableMap;
+            typedef std::vector<RenderableComponentBase *> RenderableVector;
+
+            std::vector<Component::Handle<ModelFragmenter>> m_fragmenters;
 
             graphics::GfxAPI *m_graphics;
             Component::Handle<WorldConfig> m_worldConfig;

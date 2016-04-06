@@ -58,6 +58,10 @@ namespace ursine
                 MakeBuffer<TextureUVOffset>(BUFFER_TEX_OFFSET);
                 MakeBuffer<FalloffBuffer>(BUFFER_LIGHT_FALLOFF);
 
+                MakeBuffer<FragmentationVSBuffer>( BUFFER_FRAG_VS );
+                MakeBuffer<FragmentationGSBuffer>( BUFFER_FRAG_GS );
+                MakeBuffer<FragmentationPSBuffer>( BUFFER_FRAG_PS );
+
                 // COMPUTE SHADERS //////////////////////////////////
                 //GPU-readonly buffer that can only be written to by the CPU 
                 MakeStructuredBuffer<MouseBuffer>(1, COMPUTE_BUFFER_MOUSEPOS, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE);

@@ -1,3 +1,5 @@
+#include "../Headers/Randomness_H.hlsl"
+
 cbuffer CameraBuffer : register(b0)
 {
   matrix viewMatrix;
@@ -9,116 +11,166 @@ cbuffer TransformBuffer : register(b1)
   matrix transform;
 }
 
-cbuffer PrimColorBuffer : register(b5)
+cbuffer FragData : register(b11)
 {
-  float4 color;
+    // vertical force value
+    float verticalForce;
+
+    // horizontal force value
+    float horizontalForce;
+
+    // outward force value
+    float outwardForce;
+
+    // gravity force value
+    float gravityForce;
+
+    // time
+    float time;
+
+    float randomForce;
+
+    float spinSpeed;
 }
 
-struct PixelInputType
+struct GS_INPUT
 {
   float4 position : SV_POSITION;
+  float4 basePos : BASE_POS;
   float4 normal : NORMAL;
   float2 uv : UV;
-  float4 depth : DEPTH;
 };
 
-float rand_1_05( float2 uv )
+struct GS_OUTPUT
 {
-  float2 noise = (frac( sin( dot( uv * 20, float2(12.9898, 78.233)*2.0 ) ) * 43758.5453 ));
-  return abs( noise.x + noise.y ) * 0.5;
+    float4 position : SV_POSITION;
+    float4 normal : NORMAL;
+    float2 uv : UV;
+    float4 color : COLOR;
+};
+
+float RandomNormFloat(float2 xy)
+{
+    return (random(xy, 2.0) - 0.5f) * 2.0f;
 }
+
+float rand_1_05(float2 uv)
+{
+    float2 noise = (frac(sin(dot(uv * 20, float2(12.9898, 78.233)*2.0)) * 43758.5453));
+    return (noise.x + noise.y) * 0.5;
+}
+
 
 [maxvertexcount(3)]
 void main(
-    triangle PixelInputType input[3] : SV_POSITION,
-    inout TriangleStream< PixelInputType > output
+    triangle GS_INPUT input[3] : SV_POSITION,
+    inout TriangleStream< GS_OUTPUT > output
 )
 {
-  float4 target = float4(4.5 + (sin( color.z * 10) * 3), 4.5 , -cos( color.z * 10 ) * 3 , 1);
+    /////////////////////////////////////////////////////////////////////////////////////
+    //Get the average positions
+    //average the three positions
+    float4 averagePos = input[ 0 ].basePos + input[ 1 ].basePos + input[ 2 ].basePos;
+    averagePos /= 3;
 
-  //1. Get the average position
-  //average the three positions
-  float4 averagePos = input[ 0 ].position + input[ 1 ].position + input[ 2 ].position;
-  averagePos /= 3;
+    float4 averageTruePos = input[ 0 ].position + input[ 1 ].position + input[ 2 ].position;
+    averageTruePos /= 3;
 
-  //check if we should skip
-  float4 worldPos = mul( averagePos, transform );
-  float dist = length( target - worldPos );
+    // pregenerate random values to optimize calls
+    float randXY = RandomNormFloat(averagePos.xy);
+    float randYZ = RandomNormFloat(averagePos.yz);
+    float randXZ = RandomNormFloat(averagePos.xz);
 
-  float scalar = 1;
+    // calculate the required vectors for up and side trajectories
+    float4 upVec        = normalize( mul(
+                                    float4(0, averagePos.y, 0, 0), 
+                                    transform
+                                ) 
+                            );
 
-  //dist is distance to point, color.y is the radius
-  scalar = max(color.y - dist, 0);
+    float4 sideVec      = normalize( mul(
+                                    float4(averagePos.x, 0, averagePos.z, 0), 
+                                    transform
+                                ) 
+                            );
 
-  //Find the rotation
-  //face rotation
-  float angle = (rand_1_05(input[0].uv) + color.z * 0.2f) * scalar;
-  matrix rotation = 
-  { cos( angle ), -sin( angle ), 0, 0,
-    sin( angle ), cos( angle ), 0, 0,
-    0, 0, 1, 0,
-    0, 0, 0, 1 };
+    float4 outVec       = normalize( mul(
+                                    float4(averagePos.xyz, 0), 
+                                    transform
+                                ) 
+                            );
 
-  float angle2 = (rand_1_05( input[ 1 ].uv ) + color.z * 0.2f) * scalar;
-  matrix rotation2 =
-  { cos( angle2 ), 0, -sin( angle2 ), 0,
-    0, 1, 0, 0,
-    sin( angle2 ), 0, cos( angle2 ), 0,
-    0, 0, 0, 1 };
+    float4 randomVec    = normalize( float4( randYZ, randXZ, randXY, 0 ) );
 
-  float angle3 = (rand_1_05( input[ 2 ].uv ) + color.z * 0.2f) * scalar;
-  matrix rotation3 =
-  { 
-    1, 0, 0, 0,
-    0, cos( angle3 ), -sin( angle3 ), 0,
-    0, sin( angle3 ), cos( angle3 ), 0,
-    0, 0, 0, 1 };
+    /////////////////////////////////////////////////////////////////////////////////////
+    // generate rotations
+    float angleScalar = time * 0.5f * spinSpeed;
+    float angle = (averagePos.x * randXY) * angleScalar;
+    float2x2 rotation =
+    { 
+        cos( angle ), -sin( angle ),
+        sin( angle ),  cos( angle ) 
+    };
 
-  //Transform face back, rotation, translate back
-  for (int y = 0; y < 3; ++y)
-  {
-    input[ y ].position -= averagePos;
-    input[ y ].position = mul( input[ y ].position, rotation );
-    input[ y ].position = mul( input[ y ].position, rotation2 );
-    input[ y ].position = mul( input[ y ].position, rotation3 );
-    input[ y ].position += averagePos;
-  }
+    float angle2 = -(averagePos.y * randYZ) * angleScalar;
+    float2x2 rotation2 =
+    { 
+        cos( angle2 ), -sin( angle2 ),
+        sin( angle2 ),  cos( angle2 )
+    };
 
-  //2. Find the offset for inflation, vector to target
-  averagePos = input[ 0 ].position + input[ 1 ].position + input[ 2 ].position;
-  averagePos /= 3;
+    float angle3 = (averagePos.z * randXZ) * angleScalar;
+    float2x2 rotation3 =
+    { 
+        cos( angle3 ), -sin( angle3 ),
+        sin( angle3 ),  cos( angle3 ) 
+    };
 
-  //transform
-  for (int z = 0; z < 3; ++z)
-  {
-    input[ z ].position = mul( input[ z ].position, transform );
-  }
+    //Transform face to origin, rotate, translate back
+    for (int y = 0; y < 3; ++y)
+    {
+      input[ y ].position -= averageTruePos;
+      input[ y ].position.xy = mul( input[ y ].position.xy, rotation );
+      input[ y ].position.xz = mul( input[ y ].position.xz, rotation2 );
+      input[ y ].position.yz = mul( input[ y ].position.yz, rotation3 );
+      input[ y ].position += averageTruePos;
 
-  //2. Find the offset for vector to target
-  averagePos = input[ 0 ].position + input[ 1 ].position + input[ 2 ].position;
-  averagePos /= 3;
-  
-  float4 vec = normalize( target - averagePos ) * color.x;
+      input[ y ].normal.xy = normalize(mul(input[ y ].normal.xy, rotation));
+      input[ y ].normal.xz = normalize(mul(input[ y ].normal.xz, rotation2));
+      input[ y ].normal.yz = normalize(mul(input[ y ].normal.yz, rotation3));
+    }
 
-  //5. add the vector to target
-  [unroll]
-  for (int x = 0; x < 3; ++x)
-  {
-    //modify stuff
-    input[ x ].position += vec * (scalar);
+    /////////////////////////////////////////////////////////////////////////////////////
+    // apply trajectories to this triangle
+    float upTime = (-time * time * gravityForce + time) * verticalForce;
 
-    //calculate regular stuff
-    PixelInputType outputV;
+    //transform
+    [ unroll ]
+    for (int z = 0; z < 3; ++z)
+    {
+        input[ z ].position = mul(input[ z ].position, transform);
+        input[ z ].position +=  ( abs(upVec) * upTime                   ) + // up vec
+                                ( sideVec   * time * horizontalForce    ) + // horizontal force
+                                ( outVec    * time * outwardForce       ) + // outward force
+                                ( randomVec * time * randomForce        );  // random force
+    }
 
-    float4 worldPos = input[ x ].position;
-    float4 viewPos = mul(worldPos, viewMatrix);         //position wr2 the center of the world
-    outputV.depth = viewPos;                             //position wr2 the camera
-    outputV.position = mul(viewPos, projectionMatrix);   //get the screen pos
-    outputV.normal = mul( input[ x ].normal, transform);
-    outputV.normal = mul(outputV.normal, viewMatrix);
+    /////////////////////////////////////////////////////////////////////////////////////
+    // add the vector to target
+    [ unroll ]
+    for (int x = 0; x < 3; ++x)
+    {
+        //calculate regular stuff
+        GS_OUTPUT outputV;
 
-    outputV.uv = input[ x ].uv;
+        float4 worldPos = input[ x ].position;
+        float4 viewPos = mul(worldPos, viewMatrix);             //position wr2 the center of the world
+        outputV.position = mul(viewPos, projectionMatrix);      //get the screen pos
+        outputV.normal = mul(input[ x ].normal, transform);
+        outputV.normal = mul(outputV.normal, viewMatrix);
+        outputV.color = averagePos;
+        outputV.uv = input[ x ].uv;
 
-    output.Append( outputV );
-  }
+        output.Append(outputV);
+    }
 }

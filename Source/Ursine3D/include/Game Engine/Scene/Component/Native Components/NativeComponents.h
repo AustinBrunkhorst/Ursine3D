@@ -42,6 +42,7 @@
 #include "ParticlePathAnimatorComponent.h"
 #include "SpriteTextComponent.h"
 #include "GraphicsSettingsComponent.h"
+#include "FragmentationComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics

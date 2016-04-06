@@ -131,6 +131,22 @@ namespace ursine
             m_meshIndex = -1;
             m_shadowCaster = true;
             m_textureUVOffset = Vec2(0, 0);
+
+            m_doesFragment = false;
+
+            m_fragData.normalOffset = 1.0f;
+            
+            m_fragData.verticalForce = 250.0f;
+            m_fragData.horizontalForce = 200;
+            m_fragData.outwardForce = 100;
+            m_fragData.gravityForce = 300.f;
+            m_fragData.randomForce = 150.0f;
+            m_fragData.time = 0;
+            
+            m_fragData.pulseSpeed = 1.0f;
+            m_fragData.fadeAmount = 0.5f;
+            m_fragData.maxTime = 5;
+            m_fragData.transparencyThreshold = 0.0f;
         }
 
         const char *Model3D::GetModelName(void)
@@ -161,6 +177,16 @@ namespace ursine
         void Model3D::SetTextureHandle(GfxHND handle)
         {
             m_textureHandle = handle;
+        }
+
+        GfxHND Model3D::GetFragmentTextureHandle(void)
+        {
+            return m_fragmentTextureHandle;
+        }
+
+        void Model3D::SetFragmentTextureHandle(GfxHND handle)
+        {
+            m_fragmentTextureHandle = handle;
         }
 
         GfxHND Model3D::GetNormalTextureHandle(void)
@@ -246,6 +272,31 @@ namespace ursine
         void Model3D::SetTextureUVOffset(const Vec2 &offset)
         {
             m_textureUVOffset = offset;
+        }
+
+        bool Model3D::GetDoesFragment(void) const
+        {
+            return m_doesFragment;
+        }
+
+        void Model3D::SetDoesFragment(bool doesFragment)
+        {
+            m_doesFragment = doesFragment;
+        }
+
+        float Model3D::GetFragTime(void) const
+        {
+            return m_fragData.time;
+        }
+
+        void Model3D::SetFragTime(float time)
+        {
+            m_fragData.time = time;
+        }
+
+        Model3D::FragmentData &Model3D::GetFragmentData(void)
+        {
+            return m_fragData;
         }
 
         const Color &Model3D::GetColor(void) const
