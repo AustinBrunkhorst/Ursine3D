@@ -391,7 +391,7 @@ void Editor::initializeGraphics(void)
     gfxConfig.windowWidth = static_cast<unsigned>( size.X( ) );
     gfxConfig.windowHeight = static_cast<unsigned>( size.Y( ) );
     gfxConfig.enableDebugInfo = false;
-    gfxConfig.enableProfiling = true;
+    gfxConfig.enableProfiling = false;
 
     m_graphics->StartGraphics( gfxConfig );
     m_graphics->Resize( gfxConfig.windowWidth, gfxConfig.windowHeight );
