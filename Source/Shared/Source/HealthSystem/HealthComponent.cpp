@@ -47,9 +47,6 @@ Health::Health(void)
     , m_maxHealth( 100 )
     , m_shield( 100 )
     , m_maxShield( 100 )
-    , m_shieldRechargeDelay( 10 )
-    , m_shieldRechargeTimer( 0 )
-    , m_shieldRechargeRate( 10 )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
     , m_invulnerable( false )
@@ -92,7 +89,7 @@ float Health::GetHealth(void) const
 
 void Health::SetHealth(const float health)
 {
-    m_health = health;
+    m_health = math::Max(health, 0.0f);;
 
     NOTIFY_COMPONENT_CHANGED( "EntityHealth", m_health );
 }
@@ -169,7 +166,7 @@ float Health::GetShieldHealth(void) const
 
 void Health::SetShieldHealth(float shield)
 {
-    m_shield = shield;
+    m_shield = math::Max(shield, 0.0f);
 
     NOTIFY_COMPONENT_CHANGED( "shieldHealth", m_shield );
 }
@@ -177,30 +174,6 @@ void Health::SetShieldHealth(float shield)
 float Health::GetMaxShieldHealth(void) const
 {
     return m_maxShield;
-}
-
-float Health::GetShieldRechargeDelay(void) const
-{
-    return m_shieldRechargeDelay;
-}
-
-void Health::SetShieldRechargeDelay(float delay)
-{
-    m_shieldRechargeDelay = delay;
-
-    NOTIFY_COMPONENT_CHANGED( "shieldRechargeDelay", m_shieldRechargeDelay );
-}
-
-float Health::GetShieldRechargeRate(void) const
-{
-    return m_shieldRechargeRate;
-}
-
-void Health::SetShieldRechargeRate(float rate)
-{
-    m_shieldRechargeRate = rate;
-
-    NOTIFY_COMPONENT_CHANGED( "shieldRechargeRate", m_shieldRechargeRate );
 }
 
 void Health::AddHealth(float healthToAdd)
@@ -222,20 +195,22 @@ void Health::DealDamage(float damage)
 
     auto owner = GetOwner( );
 
+    owner->Dispatch(HEALTH_DAMAGED, ursine::ecs::EntityEventArgs::Empty);
 
     // Check to see if we have a shield
     if (m_hasShield && m_shield > 0.0f)
     {
-        // reset the recharge timer
-        m_shieldRechargeTimer = m_shieldRechargeDelay;
-
         // deal the damage to the shield
         SetShieldHealth( m_shield - damage );
+
+        // early out while shield is still up
+        if ( m_shield > 0.0f )
+            return;
 
         // carry over the damage to the health
         damage = -m_shield;
 
-        m_shield = 0.0f;
+        SetShieldHealth( 0.0f );
     }
 
     SetHealth( GetHealth( ) - damage );
@@ -325,18 +300,5 @@ void Health::onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 
 void Health::onUpdate(EVENT_HANDLER(World))
 {
-    //// update the recharging of the shield
-    //if (m_hasShield && m_shield < m_maxShield)
-    //{
-    //    auto dt = Application::Instance->GetDeltaTime( );
 
-    //    if (m_shieldRechargeTimer <= 0.0f)
-    //    {
-    //        SetShieldHealth( math::Min( m_shield + dt * m_shieldRechargeRate, m_maxShield ) );
-    //    }
-    //    else
-    //    {
-    //        m_shieldRechargeTimer -= dt;
-    //    }
-    //}
 }

@@ -30,6 +30,7 @@ struct AbstractHitscanWeapon;
 enum HealthEvents
 {
     HEALTH_DAMAGE_TAKEN,
+    HEALTH_DAMAGED,
     HEALTH_ZERO
 };
 
@@ -105,18 +106,6 @@ public:
         SetShieldHealth
     );
 
-    EditorField(
-        float shieldRechargeDelay,
-        GetShieldRechargeDelay,
-        SetShieldRechargeDelay
-    );
-
-    EditorField(
-        float shieldRechargeRate,
-        GetShieldRechargeRate,
-        SetShieldRechargeRate
-    );
-
     Meta(Enable)
     Health(void);
     ~Health(void);
@@ -179,11 +168,6 @@ private:
 
     float m_shield;
     float m_maxShield;
-
-    float m_shieldRechargeDelay;
-    float m_shieldRechargeTimer;
-
-    float m_shieldRechargeRate;
 
     ursine::resources::ResourceReference m_objToSpawn;
 

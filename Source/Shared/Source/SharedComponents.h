@@ -19,6 +19,7 @@
 
 #include "HealthSystem/HealthComponent.h"
 #include "HealthSystem/WallComponent.h"
+#include "HealthSystem/HealthRegenComponent.h"
 
 /////////////////////////////////
 //        Miscelaneous         //
