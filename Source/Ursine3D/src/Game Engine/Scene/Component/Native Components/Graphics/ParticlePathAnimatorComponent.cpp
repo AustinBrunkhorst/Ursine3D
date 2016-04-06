@@ -142,9 +142,12 @@ namespace ursine
                 gpuData[ x ].position[ 1 ] += finalVec.Y() * finalScalar;
                 gpuData[ x ].position[ 2 ] += finalVec.Z() * finalScalar;
 
-                //gpuData[ x ].rotation[ 0 ] = finalVec.X( );
-                //gpuData[ x ].rotation[ 1 ] = finalVec.Y( );
-                //gpuData[ x ].rotation[ 2 ] = finalVec.Z( );
+                if(particleSystem->GetVelocityOrient( ))
+                {
+                    gpuData[ x ].rotation[ 0 ] = finalVec.X( );
+                    gpuData[ x ].rotation[ 1 ] = finalVec.Y( );
+                    gpuData[ x ].rotation[ 2 ] = finalVec.Z( );
+                }
 
                 if (m_renderCurve)
                 {
@@ -243,6 +246,8 @@ namespace ursine
                {
                    auto childEntity = GetOwner()->GetWorld()->GetEntity((*children)[ x ]);
                    m_pointArray[ x + 1 ] = childEntity->GetTransform()->GetLocalPosition();
+
+                   //m_pointArray[ x + 1 ] = GetOwner( )->GetTransform( )->GetWorldRotation( ).Rotate(m_pointArray[ x + 1 ]);
                }
            }
         }

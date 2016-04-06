@@ -46,6 +46,9 @@ void BossPhase3VineLoopState::Update(BossAIStateMachine *machine)
 
     for (auto &vine : vines)
     {
+        if (!vine)
+            continue;
+
         auto vineAI = vine->GetComponent<VineAI>( );
 
         if (!vineAI->IsHome( ))

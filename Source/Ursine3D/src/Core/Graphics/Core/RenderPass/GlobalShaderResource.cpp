@@ -21,44 +21,44 @@ namespace ursine
 {
     namespace graphics
     {
-         GfxManager *GlobalShaderResource::m_manager;
+        GfxManager *GlobalShaderResource::m_manager;
 
-         static char *slotNames[ 15 ] = {
-             "SHADER_SLOT_0",
-             "SHADER_SLOT_1",
-             "SHADER_SLOT_2",
-             "SHADER_SLOT_3",
-             "SHADER_SLOT_4",
-             "SHADER_SLOT_5",
-             "SHADER_SLOT_6",
-             "SHADER_SLOT_7",
-             "SHADER_SLOT_8",
-             "SHADER_SLOT_9",
-             "SHADER_SLOT_10",
-             "SHADER_SLOT_11",
-             "SHADER_SLOT_12",
-             "SHADER_SLOT_13",
-             "SHADER_SLOT_14"
-         };
+        static char *slotNames[ 15 ] = {
+            "SHADER_SLOT_0",
+            "SHADER_SLOT_1",
+            "SHADER_SLOT_2",
+            "SHADER_SLOT_3",
+            "SHADER_SLOT_4",
+            "SHADER_SLOT_5",
+            "SHADER_SLOT_6",
+            "SHADER_SLOT_7",
+            "SHADER_SLOT_8",
+            "SHADER_SLOT_9",
+            "SHADER_SLOT_10",
+            "SHADER_SLOT_11",
+            "SHADER_SLOT_12",
+            "SHADER_SLOT_13",
+            "SHADER_SLOT_14"
+        };
 
-         static char *resourceTypeNames[6] = {
-             "RESOURCE_CBUFFER",
-             "RESOURCE_MODEL",         
-             "RESOURCE_TEXTURE",       
-             "RESOURCE_INPUT_RT",      
-             "RESOURCE_INPUT_DEPTH",                  
-             "RESOURCE_COUNT"
-         };
+        static char *resourceTypeNames[ 6 ] = {
+            "RESOURCE_CBUFFER",
+            "RESOURCE_MODEL",
+            "RESOURCE_TEXTURE",
+            "RESOURCE_INPUT_RT",
+            "RESOURCE_INPUT_DEPTH",
+            "RESOURCE_COUNT"
+        };
 
         ///////////////////////////////////////////////////////////////////////
         GlobalShaderResource::GlobalShaderResource(
-            ShaderSlot slotIndex, 
+            ShaderSlot slotIndex,
             ResourceType resourceType,
             SHADERTYPE targetShader
-        )
-            : m_slotIndex( slotIndex)
-            , m_resourceType( resourceType )
-            , m_targetShader( targetShader )
+            )
+            : m_slotIndex(slotIndex)
+            , m_resourceType(resourceType)
+            , m_targetShader(targetShader)
         {
         }
 
@@ -72,6 +72,13 @@ namespace ursine
 
         bool GlobalShaderResource::operator=(const GlobalShaderResource & rhs) const
         {
+            // check to make sure we aren't depth target or something
+            if ((m_resourceType & rhs.m_resourceType) != 0)
+            {
+                return (m_slotIndex == rhs.m_slotIndex) &&
+                    (m_targetShader == rhs.m_targetShader);
+            }
+
             // if we collide on shader, resource, and index, return true
             return (m_slotIndex == rhs.m_slotIndex) &&
                    (m_resourceType == rhs.m_resourceType) && 

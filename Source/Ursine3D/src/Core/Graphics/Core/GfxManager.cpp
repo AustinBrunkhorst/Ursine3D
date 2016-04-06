@@ -587,6 +587,7 @@ namespace ursine
             GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invProjection( SHADERTYPE_PIXEL );
             GlobalCBuffer<FalloffBuffer, BUFFER_LIGHT_FALLOFF>      lightFalloff( SHADERTYPE_PIXEL, SHADER_SLOT_12 );
             GlobalCBuffer<FalloffBuffer, BUFFER_LIGHT_FALLOFF>      emissiveValue(SHADERTYPE_PIXEL, SHADER_SLOT_12);
+            GlobalCBuffer<BillboardSpriteBuffer, BUFFER_BILLBOARDSPRITE> particleFadeBuffer( SHADERTYPE_PIXEL, SHADER_SLOT_4 );
 
             // input RTs
             GlobalGPUResource   depthInput( SHADER_SLOT_0, RESOURCE_INPUT_DEPTH );
@@ -598,7 +599,7 @@ namespace ursine
             GlobalGPUResource   shadowmapDepth( SHADER_SLOT_4, RESOURCE_INPUT_DEPTH );
             GlobalGPUResource   idTarget(SHADER_SLOT_1, RESOURCE_INPUT_RT);
 
-            GlobalGPUResource   debugTarget(SHADER_SLOT_0, RESOURCE_INPUT_RT);
+            GlobalGPUResource   debugTarget( SHADER_SLOT_1, RESOURCE_TEXTURE );
 
             // other resources
             GlobalGPUResource   spriteModel( SHADER_SLOT_0, RESOURCE_MODEL );
@@ -791,7 +792,7 @@ namespace ursine
                         AddResource( &lightFalloff ).
 
                         AddResource( &depthInput ).
-                        AddResource( &idTarget ).
+                        AddResource( &debugTarget ).
 
                         IsFullscreenPass( true ).
                     InitializePass( );
@@ -910,8 +911,8 @@ namespace ursine
                     particlePass.
                         Set( { RENDER_TARGET_SWAPCHAIN } ).
                         Set( SHADER_PARTICLE ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL ).
+                        Set( DEPTH_STENCIL_COUNT ).
+                        Set( DEPTH_STATE_COUNT ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_NOCULL ).
                         Set( BLEND_STATE_ADDITIVE ).
@@ -920,6 +921,9 @@ namespace ursine
                         AddResource( &viewBuffer ).
                         AddResource( &particleModel ).
                         AddResource( &invView ).
+                        AddResource( &particleFadeBuffer ).
+
+                        AddResource( &depthInput ).
 
                         Accepts( RENDERABLE_PS ).
                         Processes( &particleProcessor ).
@@ -1092,6 +1096,7 @@ namespace ursine
             TransformBuffer tb;
             invViewBuffer ivb;
             FalloffBuffer fb;
+            BillboardSpriteBuffer bsb;
 
             // viewBuffer(SHADERTYPE_VERTEX);
             // viewBufferGeom(SHADERTYPE_GEOMETRY);
@@ -1142,6 +1147,9 @@ namespace ursine
             fb.lightSteps = m_globalEmissive;
             emissiveValue.Update(fb, SHADER_SLOT_12);
 
+            currentCamera.GetPlanes(bsb.width, bsb.height);
+            particleFadeBuffer.Update(bsb, SHADER_SLOT_4);
+
             // TARGET INPUTS //////////////////
             // input RTs
             // depthInput(SHADER_SLOT_0, RESOURCE_INPUT_DEPTH);
@@ -1164,7 +1172,7 @@ namespace ursine
             shadowmapDepth.Update( DEPTH_STENCIL_SHADOWMAP );
 
             idTarget.Update( RENDER_TARGET_DEFERRED_SPECPOW );
-            debugTarget.Update( RENDER_TARGET_DEFERRED_NORMAL );
+            debugTarget.Update( m_lightMapTexture & 0xFFFF );
 
             // TEXTURES AND MODELS /////////////
             lightConeModel.Update( INTERNAL_CONE );

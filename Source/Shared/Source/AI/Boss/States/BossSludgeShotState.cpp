@@ -40,6 +40,7 @@ void BossSludgeshotState::Enter(BossAIStateMachine *machine)
     auto animator = m_boss->GetOwner( )->GetComponentInChildren<Animator>( );
 
     animator->SetCurrentState( "Sludgeshot" );
+    animator->SetTimeScalar( 1.0f );
 
     // subscribe to the OnAnimationFinish and OnAnimationEvent
     animator->GetOwner( )->Listener( this )
@@ -62,8 +63,6 @@ void BossSludgeshotState::Exit(BossAIStateMachine *machine)
 {
     // play idle
     auto animator = m_boss->GetOwner( )->GetComponentInChildren<Animator>( );
-
-    animator->SetCurrentState( "Idle" );
 
     // unsubscribe from everything
     animator->GetOwner( )->Listener( this )
