@@ -203,6 +203,18 @@ void Health::SetShieldRechargeRate(float rate)
     NOTIFY_COMPONENT_CHANGED( "shieldRechargeRate", m_shieldRechargeRate );
 }
 
+void Health::AddHealth(float healthToAdd)
+{
+    // make sure not to exceed max health
+    SetHealth( math::Min( m_health + healthToAdd, m_maxHealth ) );
+}
+
+void Health::AddShieldHealth(float shieldToAdd)
+{
+    // make sure not to exceed max shield
+    SetShieldHealth( math::Min( m_shield + shieldToAdd, m_maxShield ) );
+}
+
 void Health::DealDamage(float damage)
 {
     if ( m_health <= 0 || m_invulnerable )
@@ -219,10 +231,6 @@ void Health::DealDamage(float damage)
 
         // deal the damage to the shield
         SetShieldHealth( m_shield - damage );
-
-        // Early out so we don't deal any health damage
-        if (m_shield > 0.0f)
-            return;
 
         // carry over the damage to the health
         damage = -m_shield;
@@ -317,18 +325,18 @@ void Health::onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 
 void Health::onUpdate(EVENT_HANDLER(World))
 {
-    // update the recharging of the shield
-    if (m_hasShield && m_shield < m_maxShield)
-    {
-        auto dt = Application::Instance->GetDeltaTime( );
+    //// update the recharging of the shield
+    //if (m_hasShield && m_shield < m_maxShield)
+    //{
+    //    auto dt = Application::Instance->GetDeltaTime( );
 
-        if (m_shieldRechargeTimer <= 0.0f)
-        {
-            SetShieldHealth( math::Min( m_shield + dt * m_shieldRechargeRate, m_maxShield ) );
-        }
-        else
-        {
-            m_shieldRechargeTimer -= dt;
-        }
-    }
+    //    if (m_shieldRechargeTimer <= 0.0f)
+    //    {
+    //        SetShieldHealth( math::Min( m_shield + dt * m_shieldRechargeRate, m_maxShield ) );
+    //    }
+    //    else
+    //    {
+    //        m_shieldRechargeTimer -= dt;
+    //    }
+    //}
 }

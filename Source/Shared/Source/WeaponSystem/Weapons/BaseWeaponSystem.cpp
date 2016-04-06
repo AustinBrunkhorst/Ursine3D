@@ -396,11 +396,6 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
         if (!weapon->m_active)
             continue;
 
-        if ( weapon->m_reload )
-        {
-            
-        }
-
         // Can weapon be fired
         switch (weapon->CanFire( ))
         {

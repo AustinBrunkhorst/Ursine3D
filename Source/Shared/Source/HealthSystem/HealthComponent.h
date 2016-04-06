@@ -155,6 +155,9 @@ public:
     float GetShieldRechargeRate(void) const;
     void SetShieldRechargeRate(float rate);
 
+    void AddHealth(float healthToAdd);
+    void AddShieldHealth(float healthToAdd);
+
     void DealDamage(float damage);
     void DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit);
 
