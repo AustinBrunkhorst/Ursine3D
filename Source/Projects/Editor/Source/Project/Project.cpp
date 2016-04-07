@@ -39,6 +39,7 @@ namespace
 
 Project::Project(void)
     : m_gameBuilder( this )
+    , m_gameInstaller( this )
     , m_gameContext( nullptr )
     , m_sceneManager( nullptr )
     , m_entityManager( nullptr )
@@ -88,6 +89,11 @@ void Project::WriteConfig(void)
 ProjectGameBuilder &Project::GetGameBuilder(void)
 {
     return m_gameBuilder;
+}
+
+ProjectGameInstaller &Project::GetGameInstaller(void)
+{
+    return m_gameInstaller;
 }
 
 rp::ResourcePipelineManager &Project::GetResourcePipeline(void)

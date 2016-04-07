@@ -25,6 +25,9 @@ Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectBuildCancel);
 
 Meta(Enable, ExposeJavaScript)
+JSFunction(ProjectInstallStart);
+
+Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectSetFullScreen);
 
 Meta(Enable, ExposeJavaScript)

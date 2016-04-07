@@ -177,6 +177,10 @@ x-main-menu, x-context-menu {
       &.export {
         @include icon-half( $icon-half-export, $context-menu-icon-size );
       }
+
+      &.installer {
+        @include icon-half( $icon-half-compressed, $context-menu-icon-size );
+      }
     }
   }
 }

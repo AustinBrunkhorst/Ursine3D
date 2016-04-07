@@ -1,5 +1,7 @@
 #pragma once
 
+#include "ProjectInstallSettings.h"
+
 #include <FileSystem.h>
 #include <GameSettings.h>
 
@@ -11,6 +13,7 @@ struct ProjectConfig
 
     bool launchAfterBuild;
     ursine::GameSettings buildSettings;
+    ProjectInstallSettings installSettings;
 
     Meta(Disable)
     ursine::fs::path projectFile;

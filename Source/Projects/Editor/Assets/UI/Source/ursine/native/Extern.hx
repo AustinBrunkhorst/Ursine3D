@@ -31,6 +31,10 @@ class Extern {
         return untyped __js__( "ProjectBuildCancel()" );
     }
 
+    public static inline function ProjectInstallStart() {
+        return untyped __js__( "ProjectInstallStart()" );
+    }
+
     public static function ProjectSetFullScreen(fullscreen : Bool) {
         return untyped __js__( "ProjectSetFullScreen(fullscreen)" );
     }

@@ -818,6 +818,7 @@ var ursine_editor_Editor = function() {
 	this.m_notificationManager = new ursine_editor_NativeNotificationManager(this.broadcastManager);
 	this.m_resourceManager = new ursine_editor_resources_NativeResourceManager(this.broadcastManager);
 	this.m_buildManager = new ursine_editor_resources_NativeBuildManager(this.broadcastManager);
+	this.m_installManager = new ursine_editor_resources_NativeInstallManager(this.broadcastManager);
 	this.m_statusTextContainer = window.document.querySelector("#status-bar span");
 	window.document.querySelector("#header-toolbar").appendChild(this.mainMenu);
 	this.initSimulationPlayback();
@@ -1138,6 +1139,13 @@ ursine_editor_menus_ProjectMenu.doEditBuildSettings = function() {
 ursine_editor_menus_ProjectMenu.doBuild = function() {
 	ProjectBuildStart();
 };
+ursine_editor_menus_ProjectMenu.doEditInstallerSettings = function() {
+	var settings = ursine_editor_menus_ProjectMenu.getInstallSettingsEntity();
+	settings.select();
+};
+ursine_editor_menus_ProjectMenu.doInstall = function() {
+	ProjectInstallStart();
+};
 ursine_editor_menus_ProjectMenu.getBuildSettingsEntity = function() {
 	if(ursine_editor_menus_ProjectMenu.m_buildSettingsEntity == null || !ursine_editor_menus_ProjectMenu.m_buildSettingsEntity.isValid()) {
 		ursine_editor_menus_ProjectMenu.m_buildSettingsEntity = ursine_editor_scene_entity_Entity.create();
@@ -1146,6 +1154,15 @@ ursine_editor_menus_ProjectMenu.getBuildSettingsEntity = function() {
 		ursine_editor_menus_ProjectMenu.m_buildSettingsEntity.m_handler.addComponent("ProjectBuildSettings");
 	}
 	return ursine_editor_menus_ProjectMenu.m_buildSettingsEntity;
+};
+ursine_editor_menus_ProjectMenu.getInstallSettingsEntity = function() {
+	if(ursine_editor_menus_ProjectMenu.m_installSettingsEntity == null || !ursine_editor_menus_ProjectMenu.m_buildSettingsEntity.isValid()) {
+		ursine_editor_menus_ProjectMenu.m_installSettingsEntity = ursine_editor_scene_entity_Entity.create();
+		ursine_editor_menus_ProjectMenu.m_installSettingsEntity.setVisibleInEditor(false);
+		ursine_editor_menus_ProjectMenu.m_installSettingsEntity.m_handler.enableSerialization(false);
+		ursine_editor_menus_ProjectMenu.m_installSettingsEntity.m_handler.addComponent("ProjectInstallerSettings");
+	}
+	return ursine_editor_menus_ProjectMenu.m_installSettingsEntity;
 };
 ursine_editor_menus_ProjectMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_ProjectMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
@@ -1226,6 +1243,41 @@ ursine_editor_resources_NativeBuildManager.prototype = {
 		notification.show();
 	}
 	,__class__: ursine_editor_resources_NativeBuildManager
+};
+var ursine_editor_resources_NativeInstallManager = function(broadcastManager) {
+	this.m_menuInstallItem = ursine_editor_Editor.instance.mainMenu.findItem("Project").menu.findItem("Build Installer");
+	broadcastManager.getChannel("ResourcePipeline").on("ProjectInstallStart",$bind(this,this.onInstallStart)).on("ProjectInstallComplete",$bind(this,this.onInstallComplete));
+};
+$hxClasses["ursine.editor.resources.NativeInstallManager"] = ursine_editor_resources_NativeInstallManager;
+ursine_editor_resources_NativeInstallManager.__name__ = ["ursine","editor","resources","NativeInstallManager"];
+ursine_editor_resources_NativeInstallManager.prototype = {
+	onInstallStart: function(e) {
+		this.m_menuInstallItem.disabled = true;
+		this.m_lastStartDate = new Date();
+		if(this.m_progressNotification != null) {
+			this.m_progressNotification.close();
+			this.m_progressNotification = null;
+		}
+		this.m_progressNotification = new NotificationControl(5,"This may take a while.","Building Installer");
+		this.m_progressNotification.dismissible = false;
+		this.m_progressNotification.show(0);
+	}
+	,onInstallComplete: function(e) {
+		this.m_menuInstallItem.disabled = false;
+		this.m_progressNotification.close();
+		this.m_progressNotification = null;
+		var notification;
+		if(e.successful) {
+			notification = new NotificationControl(3,"","Install Build Successful");
+			var duration = new Date().getTime() - this.m_lastStartDate.getTime();
+			ursine_editor_windows_OutputLog.log("Install Build Completed in " + duration + " ms");
+		} else {
+			notification = new NotificationControl(2,"Check output console for more info.","Install Build Failed");
+			ursine_editor_windows_OutputLog.log("Install Build Failed: " + e.error);
+		}
+		notification.show();
+	}
+	,__class__: ursine_editor_resources_NativeInstallManager
 };
 var ursine_editor_resources_NativeResourceManager = function(broadcastManager) {
 	broadcastManager.getChannel("ResourcePipeline").on("ResourceBuildStart",$bind(this,this.onResourceBuildStart)).on("ResourceBuildComplete",$bind(this,this.onResourceBuildComplete));
@@ -3419,7 +3471,7 @@ ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { 
 ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNewWorld : { mainMenuItem : ["File/New World",false,true]}, doSaveWorld : { mainMenuItem : ["File/Save World",false,false]}, doSaveWorldAs : { mainMenuItem : ["File/Save World As",false,false]}, doSaveProject : { mainMenuItem : ["File/Save Project",true,false]}, doOpenProject : { mainMenuItem : ["File/Open Project",false,false]}}};
 ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [8]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
-ursine_editor_menus_ProjectMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditBuildSettings : { mainMenuItem : ["Project/Edit Build Settings",false,false,"settings"]}, doBuild : { mainMenuItem : ["Project/Build",true,false,"export"]}}};
+ursine_editor_menus_ProjectMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditBuildSettings : { mainMenuItem : ["Project/Edit Build Settings",false,false,"settings"]}, doBuild : { mainMenuItem : ["Project/Build",false,false,"export"]}, doEditInstallerSettings : { mainMenuItem : ["Project/Edit Install Settings",true,false,"settings"]}, doInstall : { mainMenuItem : ["Project/Build Installer",false,false,"installer"]}}};
 ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [7]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
 ursine_editor_menus_ViewMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doFullscreenToggle : { mainMenuItem : ["View/Fullscreen Scene"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";

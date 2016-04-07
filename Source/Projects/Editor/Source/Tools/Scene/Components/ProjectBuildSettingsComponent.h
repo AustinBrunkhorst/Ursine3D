@@ -54,13 +54,16 @@ public:
     ProjectBuildSettings(void);
     ~ProjectBuildSettings(void);
     
-    EditorButton(Save, "Save Settings");
+    EditorButton( Save, "Save Settings" );
 
+    EditorAnnotate( "Runs the built executable after complete" )
     DECLARE_SETTING( bool, launchAfterBuild );
 
     DECLARE_SETTING( std::string, windowTitle );
     DECLARE_SETTING( bool, windowFullScreen );
     DECLARE_SETTING( bool, windowResizable );
+
+    EditorAnnotate( "Initial world run in the built game" )
     DECLARE_RESOURCE_SETTING( ursine::resources::WorldData, startingWorld );
 
 private:
