@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** PlayAnimationState.h
+** PlayEntityAnimationClipState.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -15,27 +15,24 @@
 
 #include "AnimatorControllerState.h"
 
-class PlayAnimationState : public AnimatorControllerState
+#include "EntityAnimatorComponent.h"
+
+class PlayEntityAnimationClipState : public AnimatorControllerState
 {
 public:
-    PlayAnimationState(
-        const std::string &stateName,
-        bool blocking = false,
-        float playback = 1.0f,
-        bool disableBoneManip = false
+    PlayEntityAnimationClipState(
+        const std::string &clipName,
+        bool blocking = false
     );
 
     bool CanExit(void) override { return m_finished; }
 
     void Enter(AnimatorControllerStateMachine *machine) override;
-    void Exit(AnimatorControllerStateMachine *machine) override;
 
 private:
-    std::string m_stateName;
+    std::string m_clipName;
     bool m_blocking;
-    bool m_disableBoneManip;
     bool m_finished;
-    float m_playback;
 
-    void onAnimationFinish(EVENT_HANDLER(ursine::ecs::Entity));
+    void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 };
