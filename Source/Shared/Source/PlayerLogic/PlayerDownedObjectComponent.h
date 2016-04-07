@@ -1,5 +1,3 @@
-#pragma once
-
 /* ---------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -11,6 +9,7 @@
 **
 ** -------------------------------------------------------------------------*/
 
+#pragma once
 
 #include <Component.h>
 #include "HealthComponent.h"
@@ -19,33 +18,42 @@
 class PlayerDownedObject : public ursine::ecs::Component
 {
     NATIVE_COMPONENT
+
 public:
 
-    PlayerDownedObject(void);
-    ~PlayerDownedObject(void);
+    EditorButton(
+        sendReviveEvent,
+        "Send Revive Event [Debugging]"
+    );
 
     EditorResourceField(
         ursine::resources::ArchetypeData,
         ReviveObject,
         GetReviveObject,
         SetReviveObject
-        );
+    );
+
+    PlayerDownedObject(void);
+    ~PlayerDownedObject(void);
+
     const ursine::resources::ResourceReference& GetReviveObject(void) const;
     void SetReviveObject(const ursine::resources::ResourceReference& archetype);
 
-protected:
+private:
 
     void OnInitialize(void) override;
 
-private:
     void onHeirarchy(EVENT_HANDLER(ursine::ecs::Entity));
     void onZeroHealth(EVENT_HANDLER(ursine::ecs::Entity));
+    void onRevive(EVENT_HANDLER(ursine::ecs::Entity));
 
     ursine::resources::ResourceReference m_reviveObject;
 
 } Meta(
     Enable,
-    DisplayName("PlayerDownedObject")
+    DisplayName( "PlayerDownedObject" )
 ) EditorMeta(
-    RequiresComponents(typeof(Health))
+    RequiresComponents(
+        typeof( Health )
+    )
 );
