@@ -21,6 +21,7 @@ namespace ursine
     StateBlender::StateBlender(void)
         : m_currState( "" )
         , m_futState( "" )
+        , m_transTime( 1.0f )
         , m_ctrnsRate( 1.f )
         , m_ftrnsRate( 0.f )
         , m_ctrnsFrm( 0 )
@@ -44,6 +45,16 @@ namespace ursine
     void StateBlender::SetfutState(const std::string &fstate)
     {
         m_futState = fstate;
+    }
+
+    const float &StateBlender::GetTransitionTime(void) const
+    {
+        return m_transTime;
+    }
+
+    void StateBlender::SetTranstionTime(const float& transTime)
+    {
+        m_transTime = transTime;
     }
 
     const float &StateBlender::GetcurrTransPosRatio(void) const
