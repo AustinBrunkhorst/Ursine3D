@@ -73,7 +73,9 @@ void RevivePlayer::StartInteraction(const ursine::ecs::EntityHandle& entity)
     }
 
     m_queues[ entity ] = entity->GetComponent< CommandQueue >( );
-    m_times[ entity ] = 0.0f;
+
+    if (m_times.find( entity ) == m_times.end( ))
+        m_times[ entity ] = 0.0f;
 }
 
 void RevivePlayer::Interact(const ursine::ecs::EntityHandle& entity)
@@ -95,19 +97,13 @@ void RevivePlayer::Interact(const ursine::ecs::EntityHandle& entity)
             InteractionComplete( );
         }
     }
-
-    // player is not trying to revive down player so reset revive time
-    else
-    {
-        m_times[ entity ] = 0.0f;
-    }
     
 }
 
 void RevivePlayer::StopInteraction(const ursine::ecs::EntityHandle& entity)
 {
-    m_times.erase( entity );
-    m_queues.erase( entity );
+    if (entity && m_times.find( entity ) != m_times.end( ))
+        m_times[ entity ] = 0.0f;
 }
 
 void RevivePlayer::InteractionComplete(void)

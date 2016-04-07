@@ -82,7 +82,7 @@ private:
     // weapon actions
     Binding m_pullTrigger,
             m_reload,
-            m_swap,
+            //m_swap,
             m_jump;
 
     // is user using keyboard
