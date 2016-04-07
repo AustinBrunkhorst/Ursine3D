@@ -26,10 +26,11 @@
 using namespace ursine;
 using namespace ecs;
 
-BossSludgeshotState::BossSludgeshotState(void)
+BossSludgeshotState::BossSludgeshotState(float playback)
     : BossAIState( "Boss Sludgeshot" )
     , m_boss( nullptr )
-    , m_finished( false ) { }
+    , m_finished( false )
+    , m_playback( playback ) { }
 
 void BossSludgeshotState::Enter(BossAIStateMachine *machine)
 {
@@ -40,7 +41,7 @@ void BossSludgeshotState::Enter(BossAIStateMachine *machine)
     auto animator = m_boss->GetOwner( )->GetComponentInChildren<Animator>( );
 
     animator->SetCurrentState( "Sludgeshot" );
-    animator->SetTimeScalar( 1.0f );
+    animator->SetTimeScalar( m_playback );
 
     // subscribe to the OnAnimationFinish and OnAnimationEvent
     animator->GetOwner( )->Listener( this )
@@ -68,6 +69,8 @@ void BossSludgeshotState::Exit(BossAIStateMachine *machine)
     animator->GetOwner( )->Listener( this )
         .Off( ENTITY_ANIMATION_STATE_EVENT, &BossSludgeshotState::onAnimationEvent )
         .Off( ENTITY_ANIMATION_FINISH, &BossSludgeshotState::onAnimationFinish );
+
+    animator->SetTimeScalar( 1.0f );
 }
 
 void BossSludgeshotState::onAnimationEvent(EVENT_HANDLER(Entity))

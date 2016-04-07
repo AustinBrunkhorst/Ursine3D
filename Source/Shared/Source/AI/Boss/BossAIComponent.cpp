@@ -603,10 +603,10 @@ void BossAI::OnInitialize(void)
         auto spawn2 = sm->AddState<BossSpawnState>( 0.5f );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
         auto enraged = sm->AddState<BossEnrageState>( );
-        auto sludgeshot = sm->AddState<BossSludgeshotState>( );
+        auto sludgeshot = sm->AddState<BossSludgeshotState>( 0.5f );
         auto goUnderground4 = sm->AddState<BossUndergroundState>( );
         auto reposition3 = sm->AddState<BossPhase3RepositionBoss>( false );
-        auto spawn3 = sm->AddState<BossSpawnState>( );
+        auto spawn3 = sm->AddState<BossSpawnState>( 1.0f, false );
 
         goUnderground->AddTransition( waitTillTrigger, "To Waiting For Trigger" );
         waitTillTrigger->AddTransition( repositionBoss, "To Reposition Boss" );
