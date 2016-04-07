@@ -35,6 +35,7 @@
 
 #include "PlayerLogic/PlayerIdComponent.h"
 #include "PlayerLogic/PlayerSpawnPointComponent.h"
+#include "PlayerLogic/PlayerDownedObjectComponent.h"
 #include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerGunAnimationControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerAnimationControllerComponent.h"
@@ -65,6 +66,7 @@
 
 #include "InteractionSystem/RaidTriggers/EmpowerTriggerComponent.h"
 #include "InteractionSystem/RaidTriggers/DisempowerTriggerComponent.h"
+#include "InteractionSystem/Triggers/RevivePlayerComponent.h"
 
 /////////////////////////////////
 //        Weapon System        //

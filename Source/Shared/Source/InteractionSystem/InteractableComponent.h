@@ -26,6 +26,7 @@ struct Interactable : ursine::ecs::Component
 public:
     Meta(Enable)
     Interactable(void);
+    ~Interactable(void);
 
     // Called when object enters collider
     void StartInteraction(const ursine::ecs::EntityHandle &entity);
@@ -50,6 +51,9 @@ public:
 
     InteractType GetInteractType(void) const;
 
+protected:
+    void OnInitialize(void) override;
+
 private:
     Interaction* m_interaction;
     
@@ -60,10 +64,10 @@ private:
 
     InteractType m_type;
 
+    void onCollision(EVENT_HANDLER(ursine::ecs::Entity));
+
 } Meta(
     Enable,
     WhiteListMethods,
     DisplayName( "Interactable" )
-) EditorMeta(
-    RequiresComponents( typeof( ursine::ecs::BoxCollider ) )    
 );
