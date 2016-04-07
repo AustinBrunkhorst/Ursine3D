@@ -38,6 +38,7 @@
 #include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerGunAnimationControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerAnimationControllerComponent.h"
+#include "PlayerLogic/AnimationControllers/FacePlayerBoneTowardsMeComponent.h"
 
 /////////////////////////////////
 //        Damage System        //

@@ -61,8 +61,8 @@ void PlayerAnimationController::OnSceneReady(Scene *scene)
     auto runL = m_controller->AddState<PlayAnimationState>( m_runLeftState );
     auto jump = m_controller->AddState<PlayAnimationState>( m_jumpState );
     auto jumpC = m_controller->AddState<PlayAnimationState>( m_jumpCycleState );
-    auto die = m_controller->AddState<PlayAnimationState>( m_dieState );
-    auto win = m_controller->AddState<PlayAnimationState>( m_winState );
+    auto die = m_controller->AddState<PlayAnimationState>( m_dieState, false, 1.0f, true );
+    auto win = m_controller->AddState<PlayAnimationState>( m_winState, false, 1.0f, true );
 
     // Add the variables
     m_controller->AddBool( kRun, false );
