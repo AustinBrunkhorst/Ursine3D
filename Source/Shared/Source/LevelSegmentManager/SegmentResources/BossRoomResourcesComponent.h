@@ -37,6 +37,8 @@ public:
 
     std::string bossTopEntityName;
     std::string bossDoorEntityName;
+    std::string bossIntroCinCameraName;
+    std::string bossTransitionCameraName;
 
     // Lighting that stays on no matter what
     std::string staticLighting;
