@@ -21,8 +21,8 @@
 #include "CollisionEventArgs.h"
 #include "DamageOnCollideComponent.h"
 #include "AbstractHitscanWeapon.h"
-
 #include <Application.h>
+#include "GameEvents.h"
 
 NATIVE_COMPONENT_DEFINITION( Health );
 
@@ -47,18 +47,16 @@ Health::Health(void)
     , m_maxHealth( 100 )
     , m_shield( 100 )
     , m_maxShield( 100 )
-    , m_shieldRechargeDelay( 10 )
-    , m_shieldRechargeTimer( 0 )
-    , m_shieldRechargeRate( 10 )
     , m_deleteOnZero( false )
     , m_spawnOnDeath( false )
-    , m_dead( false )
     , m_invulnerable( false )
-    , m_hasShield( false ) { }
+    , m_hasShield( false )
+{ }
 
 Health::~Health(void)
 {
     GetOwner( )->Listener(this)
+        .Off( game::REVIVE_PLAYER, &Health::onRevive )
         .Off( ursine::ecs::ENTITY_REMOVED, &Health::onDeath );
 
     auto world = GetOwner( )->GetWorld( );
@@ -93,7 +91,7 @@ float Health::GetHealth(void) const
 
 void Health::SetHealth(const float health)
 {
-    m_health = health;
+    m_health = math::Max(health, 0.0f);
 
     NOTIFY_COMPONENT_CHANGED( "EntityHealth", m_health );
 }
@@ -101,6 +99,14 @@ void Health::SetHealth(const float health)
 float Health::GetMaxHealth(void) const
 {
     return m_maxHealth;
+}
+
+void Health::SetMaxHealth(float health)
+{
+    m_maxHealth = health;
+
+    SetHealth( math::Min( m_health, m_maxHealth ) );
+    NOTIFY_COMPONENT_CHANGED( "MaxHealth", m_maxHealth );
 }
 
 const ursine::resources::ResourceReference &Health::GetArchetypeOnDeath(void) const
@@ -170,9 +176,9 @@ float Health::GetShieldHealth(void) const
 
 void Health::SetShieldHealth(float shield)
 {
-    m_shield = shield;
+    m_shield = math::Max(shield, 0.0f);
 
-    NOTIFY_COMPONENT_CHANGED( "shieldHealth", m_shield );
+    NOTIFY_COMPONENT_CHANGED( "ShieldHealth", m_shield );
 }
 
 float Health::GetMaxShieldHealth(void) const
@@ -180,58 +186,50 @@ float Health::GetMaxShieldHealth(void) const
     return m_maxShield;
 }
 
-float Health::GetShieldRechargeDelay(void) const
+void Health::SetMaxShieldHealth(float shield)
 {
-    return m_shieldRechargeDelay;
+    m_maxShield = shield;
+
+    SetShieldHealth( math::Min( shield, m_shield ) );
+
+    NOTIFY_COMPONENT_CHANGED( "MaxShieldHealth", m_maxShield );
 }
 
-void Health::SetShieldRechargeDelay(float delay)
+void Health::AddHealth(float healthToAdd)
 {
-    m_shieldRechargeDelay = delay;
-
-    NOTIFY_COMPONENT_CHANGED( "shieldRechargeDelay", m_shieldRechargeDelay );
+    // make sure not to exceed max health
+    SetHealth( math::Min( m_health + healthToAdd, m_maxHealth ) );
 }
 
-float Health::GetShieldRechargeRate(void) const
+void Health::AddShieldHealth(float shieldToAdd)
 {
-    return m_shieldRechargeRate;
-}
-
-void Health::SetShieldRechargeRate(float rate)
-{
-    m_shieldRechargeRate = rate;
-
-    NOTIFY_COMPONENT_CHANGED( "shieldRechargeRate", m_shieldRechargeRate );
+    // make sure not to exceed max shield
+    SetShieldHealth( math::Min( m_shield + shieldToAdd, m_maxShield ) );
 }
 
 void Health::DealDamage(float damage)
 {
-    if (m_dead || m_invulnerable)
+    if ( m_health <= 0 || m_invulnerable )
         return;
 
     auto owner = GetOwner( );
 
-    // early out if we've already "died"
-    if (m_health < 0)
-        return;
+    owner->Dispatch(HEALTH_DAMAGED, ursine::ecs::EntityEventArgs::Empty);
 
     // Check to see if we have a shield
     if (m_hasShield && m_shield > 0.0f)
     {
-        // reset the recharge timer
-        m_shieldRechargeTimer = m_shieldRechargeDelay;
-
         // deal the damage to the shield
         SetShieldHealth( m_shield - damage );
 
-        // Early out so we don't deal any health damage
-        if (m_shield > 0.0f)
+        // early out while shield is still up
+        if ( m_shield > 0.0f )
             return;
 
         // carry over the damage to the health
         damage = -m_shield;
 
-        m_shield = 0.0f;
+        SetShieldHealth( 0.0f );
     }
 
     SetHealth( GetHealth( ) - damage );
@@ -242,10 +240,6 @@ void Health::DealDamage(float damage)
 
         if (m_deleteOnZero)
             GetOwner( )->Delete( );
-
-        m_dead = true;
-
-        m_hasShield = false;
     }
     else
     {
@@ -280,7 +274,7 @@ void Health::DealDamage(const ursine::SVec3& contactPoint, float damage, bool cr
 bool Health::CanDamage(DamageOnCollide *damage) const
 {
     auto type = damage->GetDamageType( );
-
+	
     return type == DAMAGE_ALL || type == m_type;
 }
 
@@ -298,6 +292,7 @@ void Health::OnInitialize(void)
     m_maxShield = m_shield;
 
     GetOwner( )->Listener(this)
+        .On( game::REVIVE_PLAYER, &Health::onRevive )
         .On( ENTITY_REMOVED, &Health::onDeath );
 }
 
@@ -323,18 +318,10 @@ void Health::onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
 
 void Health::onUpdate(EVENT_HANDLER(World))
 {
-    // update the recharging of the shield
-    if (m_hasShield && m_shield < m_maxShield)
-    {
-        auto dt = Application::Instance->GetDeltaTime( );
 
-        if (m_shieldRechargeTimer <= 0.0f)
-        {
-            SetShieldHealth( math::Min( m_shield + dt * m_shieldRechargeRate, m_maxShield ) );
-        }
-        else
-        {
-            m_shieldRechargeTimer -= dt;
-        }
-    }
+}
+
+void Health::onRevive(EVENT_HANDLER(ursine::ecs::Entity))
+{
+    AddHealth( m_maxHealth );
 }

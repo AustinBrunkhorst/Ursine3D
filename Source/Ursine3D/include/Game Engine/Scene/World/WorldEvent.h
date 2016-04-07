@@ -48,6 +48,8 @@ namespace ursine
             WORLD_EDITOR_ENTITY_NAME_CHANGED = 0x100,
             // An entity's parent has changed
             WORLD_EDITOR_ENTITY_PARENT_CHANGED,
+            // An entity's visibilty to the editor has changed
+            WORLD_EDITOR_ENTITY_VISIBILITY_CHANGED,
             // A component's field has changed
             WORLD_EDITOR_ENTITY_COMPONENT_CHANGED,
             // A component's array field has been modified

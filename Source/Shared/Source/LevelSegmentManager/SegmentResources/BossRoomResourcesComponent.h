@@ -37,6 +37,8 @@ public:
 
     std::string bossTopEntityName;
     std::string bossDoorEntityName;
+    std::string bossIntroCinCameraName;
+    std::string bossTransitionCameraName;
 
     // Lighting that stays on no matter what
     std::string staticLighting;
@@ -49,6 +51,9 @@ public:
     std::string phase3LeftLights;
     std::string phase3RightLights;
     std::string phase3BossLights;
+
+    std::string phase3CinematicCamera;
+    std::string phase3CinematicFocalPoint;
 
 private:
     ursine::resources::ResourceReference m_worldToMerge;

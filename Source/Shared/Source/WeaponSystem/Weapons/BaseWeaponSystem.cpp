@@ -40,8 +40,6 @@ using namespace ecs;
 
 namespace
 {
-    const std::string kFireGun = "FIRE_GUN_HAND";
-    const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
     const Randomizer random;
 
     size_t FindNonGhost(EntityHandle& entityToSet, physics::RaycastOutput& rayout, World* world)
@@ -175,6 +173,9 @@ void WeaponSystemUtils::DecrementFireTimer(float dt, AbstractWeapon &weapon)
 void WeaponSystemUtils::DecrementReloadTimer(float dt, AbstractWeapon &weapon)
 {
     weapon.m_reloadTimer -= dt;
+
+    if (weapon.m_reloadTimer <= 0.0f)
+        weapon.m_owner->GetRoot( )->Dispatch( game::RELOAD_END, EventArgs::Empty );
 }
 
 // Tries to remove the number of rounds specified from the clip
@@ -207,11 +208,8 @@ void WeaponSystemUtils::ReloadWeapon(AbstractWeapon &weapon, ursine::ecs::AudioE
     if (Reload( weapon ))
     {
         // play sound
-		
-
-		// This is no longer how we use the emitter
-
-        //emitter->PlayEvent( weapon.GetReloadSFX( ) );
+        emitter->PushEvent( weapon.GetReloadSFX( ) );
+        weapon.m_owner->GetRoot( )->Dispatch( game::RELOAD_START, EventArgs::Empty );
     }
 }
 
@@ -300,11 +298,7 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-
-
-		// Change this too!!!!!!
-
-        //m_emitters[ entity ]->PlayEvent( weapon.GetShootSFX( ) );
+        m_emitters[ entity ]->PushEvent( weapon.GetShootSFX( ) );
 
         // reset firing sequence
         /*weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
@@ -438,10 +432,7 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-
-		//Change this trooooooooooooooooooooooooooooooooooooo!!!!!
-
-        //m_emitters[ entity ]->PlayEvent( weapon.GetShootSFX( ) );
+        m_emitters[ entity ]->PushEvent( weapon.GetShootSFX( ) );
 
         //// reset firing sequence
         //weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
@@ -525,7 +516,8 @@ bool HitscanWeaponSystem::RaycastClosestHitLogic(SVec3 &raycastVec, physics::Ray
         damage *= weapon.m_critModifier;
 
         // find actual hit position on obj hit
-        SpawnCollisionParticle( collisionPoint, raycastVec, objHit );
+        if ( objHit->GetComponent< CritSpot >( )->GetSearch( ) )
+            SpawnCollisionParticle( collisionPoint, raycastVec, objHit );
     }
 
     if ( e )

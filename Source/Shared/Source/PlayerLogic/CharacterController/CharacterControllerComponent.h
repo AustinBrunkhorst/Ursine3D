@@ -92,7 +92,7 @@ public:
         SetLockLooking
     );
 
-    EditorMeta(InputRange(0.0f, 1.0f, 0.1f, "{{(value * 100.0).toFixed( 2 )}} %"))
+    EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{(value * 100.0).toFixed( 2 )}} %"))
     EditorField(
         float jumpDirectionScalar,
         GetJumpDirectionScalar,
@@ -101,6 +101,9 @@ public:
 
     float GetRotateSpeed(void) const;
     void SetRotateSpeed(float rotateSpeed);
+
+    float GetRotationModifier(void) const;
+    void SetRotationModifier(float modifier);
 
     float GetDeadZone(void) const;
     void SetDeadZone(float deadZone);
@@ -146,6 +149,8 @@ private:
 
     float m_rotateSpeed;
     
+    float m_rotationModifier;
+
     float m_deadZone;
 
     float m_deadZoneSnap;

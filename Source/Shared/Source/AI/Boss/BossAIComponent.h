@@ -19,9 +19,17 @@
 #include "HealthComponent.h"
 #include "VineAIComponent.h"
 
+enum class BossAIEvents
+{
+    ShieldUp,
+    ShieldDown
+};
+
 class Health;
 
-class BossAI : public ursine::ecs::Component
+class BossAI 
+    : public ursine::ecs::Component
+    , public ursine::EventDispatcher<BossAIEvents>
 {
     NATIVE_COMPONENT;
 
@@ -252,6 +260,17 @@ public:
 
     void SetVineHealthThresholdCallback(const std::function<void(VineAI*)> &callback);
 
+    void SetHomeLocation(const ursine::SVec3 &homeLocation);
+    const ursine::SVec3 &GetHomeLocation(void) const;
+
+    void JumpToHomeLocation(void);
+
+    void SetSpawnOrientation(const ursine::SQuat &orientation);
+    const ursine::SQuat &GetSpawnOrientation(void) const;
+
+    bool IsUnderground(void) const;
+    void SetUnderground(bool flag);
+
 private:
 
     void OnInitialize(void) override;
@@ -268,6 +287,8 @@ private:
     void updateHealth(void);
 
     void updateVineCount(void);
+
+    void setJumpToHomeLocationBools(void);
 
     // Seedshot variables
     float m_turnSpeed;
@@ -336,6 +357,11 @@ private:
 
     typedef std::vector<BossAIStateMachine::Handle> StateMachines;
     StateMachines m_bossLogic[5];
+
+    ursine::SVec3 m_homeLocation;
+    ursine::SQuat m_spawnOrientation;
+
+    bool m_underground;
 
 } Meta(
     Enable,

@@ -50,6 +50,7 @@ class SceneOutline extends WindowHandler {
             .on( EntityEvent.EntityRemoved, onEntityRemoved )
             .on( EntityEvent.EntityNameChanged, onEntityNameChanged )
             .on( EntityEvent.EntityParentChanged, onEntityParentChanged )
+            .on( EntityEvent.EntityEditorVisibilityChanged, onEntityVisibilityChanged )
             .on( EntityEvent.ComponentAdded, onComponentAdded )
             .on( EntityEvent.ComponentRemoved, onComponentRemoved );
 
@@ -191,6 +192,15 @@ class SceneOutline extends WindowHandler {
                 targetContainer.insertBefore( item, children[ index ] );
             }
         }
+    }
+
+    private function onEntityVisibilityChanged(e) {
+        var item : TreeViewItem = m_entityItems[ e.uniqueID ];
+
+        if (item == null)
+            return;
+
+        item.classList.toggle( 'hidden', !e.visible );
     }
 
     private function onComponentAdded(e) {

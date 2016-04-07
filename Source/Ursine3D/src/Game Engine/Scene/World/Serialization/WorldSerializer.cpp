@@ -169,26 +169,26 @@ namespace ursine
             {
                 auto systemType = meta::Type::GetFromName( newSystem.type );
 
-			#if defined(URSINE_WITH_EDITOR)
+            #if defined(URSINE_WITH_EDITOR)
 
-				if (!systemType.IsValid( ))
-				{
-					UWarning( 
-						"Attempting to import unknown system '%s'.",
-						newSystem.type.c_str( )
-					);
+                if (!systemType.IsValid( ))
+                {
+                    UWarning( 
+                        "Attempting to import unknown system '%s'.",
+                        newSystem.type.c_str( )
+                    );
 
-					continue;
-				}
+                    continue;
+                }
 
-			#else
+            #else
 
-				UAssert( systemType.IsValid( ),
-					"Attempting to import unknown system '%s'.",
-					newSystem.type.c_str( )
-				);
+                UAssert( systemType.IsValid( ),
+                    "Attempting to import unknown system '%s'.",
+                    newSystem.type.c_str( )
+                );
 
-			#endif
+            #endif
 
                 // If the new system isn't found, add it to the current systems
                 if (!toSystemManager->HasSystem( systemType ))

@@ -4,12 +4,15 @@
 
 #include "FileDialog.h"
 
+#include <shlobj.h>
+
 using namespace ursine;
 
 namespace
 {
     const auto kDefaultOpenTitle = "Open File";
     const auto kDefaultSaveTitle = "Save File";
+    const auto kDefaultFolderTitle = WIDEN( "Browse For Folder" );
 
     std::string getCompiledFilter(const std::vector<fs::FileDialogFilter> &filters);
 
@@ -17,6 +20,8 @@ namespace
     void runMultiOpenFileDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output);
 
     void runSaveFileDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output);
+
+    void runOpenFolderDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output);
 
     class WorkingDirectorySaver
     {
@@ -44,17 +49,18 @@ namespace ursine
 
             switch (config.mode)
             {
-            case FDM_OPEN:
-                if (config.allowMultipleFiles)
-                    runMultiOpenFileDialog( config, result );
-                else
-                    runOpenFileDialog( config, result );
-                break;
-            case FDM_SAVE:
-                runSaveFileDialog( config, result );
-                break;
-            default:
-                break;
+                case FDM_OPEN:
+                    if (config.allowMultipleFiles)
+                        runMultiOpenFileDialog( config, result );
+                    else
+                        runOpenFileDialog( config, result );
+                    break;
+                case FDM_SAVE:
+                    runSaveFileDialog( config, result );
+                    break;
+                case FDM_DIRECTORY:
+                    runOpenFolderDialog( config, result );
+                    break;
             }
 
             return result;
@@ -87,7 +93,7 @@ namespace
             utils::Join( filter.extensions, ";", extensions );
             utils::Join( filter.extensions, ", ", extensionsDisplay );
 
-            auto title = filter.title +" ("+ extensionsDisplay +")";
+            auto title = filter.title + " (" + extensionsDisplay + ")";
 
             // append to the output with null bytes
             output.append( title.c_str( ), title.size( ) + 1 );
@@ -100,7 +106,7 @@ namespace
         return output;
     }
 
-    void runOpenFileDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output) 
+    void runOpenFileDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output)
     {
         OPENFILENAME ofn;
 
@@ -120,8 +126,8 @@ namespace
         if (!config.initialPath.empty( ))
             ofn.lpstrInitialDir = config.initialPath.string( ).c_str( );
 
-        ofn.lpstrTitle = config.windowTitle.empty( ) ? 
-            kDefaultOpenTitle : config.windowTitle.c_str( );
+        ofn.lpstrTitle = config.windowTitle.empty( ) ?
+                kDefaultOpenTitle : config.windowTitle.c_str( );
 
         ofn.Flags = OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR | OFN_EXPLORER |
                     OFN_ENABLESIZING | OFN_NOTESTFILECREATE;
@@ -131,7 +137,7 @@ namespace
 
         auto filter = getCompiledFilter( config.filters );
 
-        if (!filter.empty( )) 
+        if (!filter.empty( ))
         {
             ofn.lpstrFilter = filter.c_str( );
 
@@ -147,7 +153,7 @@ namespace
             success = !!GetOpenFileName( &ofn );
         }
 
-        if (success) 
+        if (success)
         {
             output.selectedFilterIndex = ofn.nFilterIndex == 0 ? 0 : ofn.nFilterIndex - 1;
             output.selectedFiles.emplace_back( filename );
@@ -171,13 +177,13 @@ namespace
         *filename = 0;
 
         ofn.lpstrFile = filename.get( );
-        ofn.nMaxFile = UNICODE_STRING_MAX_CHARS;
+        ofn.nMaxFile = UNICODE_STRING_MAX_CHARS ;
 
         if (!config.initialPath.empty( ))
             ofn.lpstrInitialDir = config.initialPath.string( ).c_str( );
 
-        ofn.lpstrTitle = config.windowTitle.empty( ) ? 
-            kDefaultOpenTitle : config.windowTitle.c_str( );
+        ofn.lpstrTitle = config.windowTitle.empty( ) ?
+                kDefaultOpenTitle : config.windowTitle.c_str( );
 
         ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_EXPLORER |
                     OFN_ALLOWMULTISELECT | OFN_ENABLESIZING | OFN_NOTESTFILECREATE;
@@ -187,7 +193,7 @@ namespace
 
         auto filter = getCompiledFilter( config.filters );
 
-        if (!filter.empty( )) 
+        if (!filter.empty( ))
         {
             ofn.lpstrFilter = filter.c_str( );
 
@@ -203,15 +209,15 @@ namespace
             success = !!GetOpenFileName( &ofn );
         }
 
-        if (success) 
+        if (success)
         {
             fs::PathList files;
 
             auto *selection = ofn.lpstrFile;
 
             // empty string indicates end of list
-            while (*selection) 
-            {  
+            while (*selection)
+            {
                 files.emplace_back( selection );
 
                 // skip over filename and null-terminator
@@ -222,12 +228,12 @@ namespace
             {
                 success = false;
             }
-            else if (files.size( ) == 1) 
+            else if (files.size( ) == 1)
             {
                 // when there is one file, it contains the path and filename
                 output.selectedFiles.swap( files );
             }
-            else 
+            else
             {
                 // otherwise, the first string is the path, and the remainder
                 // are filenames
@@ -249,7 +255,7 @@ namespace
         ZeroMemory( &ofn, sizeof( ofn ) );
 
         ofn.lStructSize = sizeof( ofn );
-        
+
         ofn.hwndOwner = static_cast<HWND>(
             config.parentWindow ? config.parentWindow->GetPlatformHandle( ) : nullptr
         );
@@ -262,11 +268,11 @@ namespace
         if (!config.initialPath.empty( ))
             ofn.lpstrInitialDir = config.initialPath.string( ).c_str( );
 
-        ofn.lpstrTitle = config.windowTitle.empty( ) ? 
-            kDefaultSaveTitle : config.windowTitle.c_str( );
+        ofn.lpstrTitle = config.windowTitle.empty( ) ?
+                kDefaultSaveTitle : config.windowTitle.c_str( );
 
         ofn.Flags = OFN_EXPLORER | OFN_ENABLESIZING | OFN_NOCHANGEDIR |
-                    OFN_PATHMUSTEXIST | OFN_NOTESTFILECREATE;
+                                   OFN_PATHMUSTEXIST | OFN_NOTESTFILECREATE;
 
         if (config.hideReadOnlyFiles)
             ofn.Flags |= OFN_HIDEREADONLY;
@@ -276,7 +282,7 @@ namespace
 
         auto filter = getCompiledFilter( config.filters );
 
-        if (!filter.empty( )) 
+        if (!filter.empty( ))
         {
             ofn.lpstrFilter = filter.c_str( );
 
@@ -296,13 +302,68 @@ namespace
             success = !!GetSaveFileName( &ofn );
         }
 
-        if (success) 
+        if (success)
         {
             output.selectedFilterIndex = ofn.nFilterIndex == 0 ? 0 : ofn.nFilterIndex - 1;
 
             output.selectedFiles.emplace_back( filename );
         }
     }
+
+    void runOpenFolderDialog(const fs::FileDialogConfig &config, fs::FileDialogResult &output)
+    {
+        IFileDialog *dialog;
+
+        if (SUCCEEDED( CoCreateInstance( CLSID_FileOpenDialog, nullptr, CLSCTX_INPROC_SERVER, IID_PPV_ARGS( &dialog ) ) ) )
+        {
+            DWORD dwOptions;
+
+            if (SUCCEEDED( dialog->GetOptions( &dwOptions ) ))
+                dialog->SetOptions( dwOptions | FOS_PICKFOLDERS );
+
+            auto owner = static_cast<HWND>(
+                config.parentWindow ? config.parentWindow->GetPlatformHandle( ) : nullptr
+            );
+
+            if (!config.initialPath.empty( ))
+            {
+                IShellItem *defaultFolder;
+
+	            auto result = SHCreateItemFromParsingName( 
+                    config.initialPath.c_str( ), 
+                    nullptr, 
+                    IID_PPV_ARGS( &defaultFolder ) 
+                );
+
+ 	            if (SUCCEEDED( result ))
+		            dialog->SetFolder( defaultFolder );
+            }
+
+            auto title = config.windowTitle.empty( ) ?
+                kDefaultFolderTitle : 
+                std::wstring( config.windowTitle.begin( ), config.windowTitle.end( ) );
+
+            dialog->SetTitle( title.c_str( ) );
+
+            if (SUCCEEDED( dialog->Show( owner ) ))
+            {
+                IShellItem *shellItem;
+
+                if (SUCCEEDED( dialog->GetResult( &shellItem ) ))
+                {
+                    LPWSTR selectedPath;
+
+                    if (SUCCEEDED( shellItem->GetDisplayName( SIGDN_FILESYSPATH, &selectedPath )))
+                        output.selectedFiles.emplace_back( selectedPath );
+
+                    shellItem->Release( );
+                }
+            }
+
+            dialog->Release( );
+        }
+    }
 }
 
 #endif // defined(PLATFORM_WINDOWS)
+

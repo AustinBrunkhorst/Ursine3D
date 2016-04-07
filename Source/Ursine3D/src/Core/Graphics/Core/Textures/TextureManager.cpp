@@ -183,7 +183,6 @@ namespace ursine
             // if this texture already exists and we are updating it, release the prior resource, keep old ID
             size_t internalID;
 
-            std::cout << "CREATE" << std::endl;
 
             GfxHND handle;
             _RESOURCEHND *id = HND_RSRCE( handle );
@@ -221,8 +220,6 @@ namespace ursine
             RELEASE_RESOURCE(texture.m_shaderResource);
             RELEASE_RESOURCE(texture.m_texture2d);
 
-            std::cout << "DESTROY" << std::endl;
-
             delete[] texture.m_binaryData;
             texture.m_binarySize = 0;
             texture.m_width = 0;
@@ -252,7 +249,6 @@ namespace ursine
             // if it doesn't exist on the GPU, load it up
             if (m_textureCache[ id ].m_referenceCount == 0)
             {
-                std::cout << "LOAD TO GPU: " << id << std::endl;
                 LoadTextureToGPU(m_textureCache[ id ]);
             }
 

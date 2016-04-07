@@ -17,6 +17,16 @@ namespace
 
     namespace events
     {
+        namespace project
+        {
+            const auto BuildStart = "ProjectBuildStart";
+            const auto BuildProgress = "ProjectBuildProgress";
+            const auto BuildComplete = "ProjectBuildComplete";
+
+            const auto InstallStart = "ProjectInstallStart";
+            const auto InstallComplete = "ProjectInstallComplete";
+        }
+
         namespace pipeline
         {
             const auto ResourceBuildStart = "ResourceBuildStart";
@@ -34,8 +44,19 @@ namespace
 
 EditorResourcePipelineManager::EditorResourcePipelineManager(Project *project)
     : m_editor( GetCoreSystem( Editor ) )
+    , m_gameBuilder( project->GetGameBuilder( ) )
+    , m_gameInstaller( project->GetGameInstaller( ) )
     , m_pipeline( project->GetResourcePipeline( ) )
 {
+    m_gameBuilder.Listener(this)
+        .On( PGB_BUILD_START, &EditorResourcePipelineManager::onProjectBuildStart )
+        .On( PGB_BUILD_PROGRESS, &EditorResourcePipelineManager::onProjectBuildProgress )
+        .On( PGB_BUILD_COMPLETE, &EditorResourcePipelineManager::onProjectBuildComplete );    
+    
+    m_gameInstaller.Listener(this)
+        .On( PIB_BUILD_START, &EditorResourcePipelineManager::onInstallStart )
+        .On( PIB_BUILD_COMPLETE, &EditorResourcePipelineManager::onInstallComplete );
+
     m_pipeline.Listener( this )
         .On( rp::RP_BUILD_RESOURCE_START, &EditorResourcePipelineManager::onResourceBuildStart )
         .On( rp::RP_BUILD_RESOURCE_COMPLETE, &EditorResourcePipelineManager::onResourceBuildComplete )
@@ -54,6 +75,89 @@ EditorResourcePipelineManager::~EditorResourcePipelineManager(void)
         .Off( rp::RP_RESOURCE_MODIFIED, &EditorResourcePipelineManager::onResourceModified )
         .Off( rp::RP_RESOURCE_REMOVED, &EditorResourcePipelineManager::onResourceRemoved )
         .Off( rp::RP_RESOURCE_RENAMED, &EditorResourcePipelineManager::onResourceRenamed );
+
+    m_gameInstaller.Listener(this)
+        .Off( PIB_BUILD_START, &EditorResourcePipelineManager::onInstallStart )
+        .Off( PIB_BUILD_COMPLETE, &EditorResourcePipelineManager::onInstallComplete );
+
+    m_gameBuilder.Listener(this)
+        .Off( PGB_BUILD_START, &EditorResourcePipelineManager::onProjectBuildStart )
+        .Off( PGB_BUILD_PROGRESS, &EditorResourcePipelineManager::onProjectBuildProgress )
+        .Off( PGB_BUILD_COMPLETE, &EditorResourcePipelineManager::onProjectBuildComplete );
+}
+
+void EditorResourcePipelineManager::onProjectBuildStart(EVENT_HANDLER(ProjectGameBuilder))
+{
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST,
+        channel::ResourcePipeline,
+        events::project::BuildStart,
+        nullptr
+    );
+}
+
+void EditorResourcePipelineManager::onProjectBuildProgress(EVENT_HANDLER(ProjectGameBuilder))
+{
+    EVENT_ATTRS(ProjectGameBuilder, ProjectGameBuildProgressArgs);
+
+    Json data = Json::object {
+        { "progress", args->progress }
+    };
+
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST,
+        channel::ResourcePipeline,
+        events::project::BuildProgress,
+        data
+    );
+}
+
+void EditorResourcePipelineManager::onProjectBuildComplete(EVENT_HANDLER(ProjectGameBuilder))
+{
+    EVENT_ATTRS(ProjectGameBuilder, ProjectGameBuildCompleteArgs);
+
+    auto data = Json::object {
+        { "successful", args->successful }
+    };
+
+    if (!args->successful)
+        data[ "error" ] = args->error;
+
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST,
+        channel::ResourcePipeline,
+        events::project::BuildComplete,
+        data
+    );
+}
+
+void EditorResourcePipelineManager::onInstallStart(EVENT_HANDLER(ProjectGameInstaller))
+{
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST,
+        channel::ResourcePipeline,
+        events::project::InstallStart,
+        nullptr
+    );
+}
+
+void EditorResourcePipelineManager::onInstallComplete(EVENT_HANDLER(ProjectGameInstaller))
+{
+    EVENT_ATTRS(ProjectGameInstaller, ProjectGameInstallerBuildCompleteArgs);
+
+    auto data = Json::object {
+        { "successful", args->successful }
+    };
+
+    if (!args->successful)
+        data[ "error" ] = args->error;
+
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST,
+        channel::ResourcePipeline,
+        events::project::InstallComplete,
+        data
+    );
 }
 
 void EditorResourcePipelineManager::onResourceBuildStart(EVENT_HANDLER(rp::ResourcePipelineManager))

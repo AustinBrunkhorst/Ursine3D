@@ -46,6 +46,7 @@
 #include "WeaponSystem/Weapons/BaseWeaponSystem.h"
 #include "WeaponSystem/Projectiles/ProjectileSystem.h"
 #include "WeaponSystem/Inventory/InventorySystem.h"
+#include "WeaponSystem/StickyAimSystem.h"
 
 /////////////////////////////////
 //        Trails System        //
@@ -86,3 +87,11 @@
 
 #include "DamageSystem/DamageTextSystem.h"
 #include "DamageSystem/DamageOnCollideSystem.h"
+
+/////////////////////////////////
+//       Health System         //
+/////////////////////////////////
+
+#include "HealthSystem/HealthRegenSystem.h"
+
+

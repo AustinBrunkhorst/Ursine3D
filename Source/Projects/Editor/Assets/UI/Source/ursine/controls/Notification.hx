@@ -15,6 +15,7 @@ abstract NotificationType(Int) {
     inline var Error = 2;
     inline var Info = 3;
     inline var Question = 4;
+    inline var Loading = 5;
 }
 
 @:native( "NotificationControl" )

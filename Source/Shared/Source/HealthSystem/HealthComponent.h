@@ -30,6 +30,8 @@ struct AbstractHitscanWeapon;
 enum HealthEvents
 {
     HEALTH_DAMAGE_TAKEN,
+    HEALTH_DAMAGED,
+    HEALTH_REVIVE,
     HEALTH_ZERO
 };
 
@@ -68,6 +70,12 @@ public:
         SetHealth
     );
 
+    EditorField(
+        float MaxHealth,
+        GetMaxHealth,
+        SetMaxHealth
+        );
+
     EditorResourceField(
         ursine::resources::ArchetypeData,
         archetypeToSpawnOnDeath,
@@ -100,22 +108,16 @@ public:
     );
 
     EditorField(
-        float shieldHealth,
+        float ShieldHealth,
         GetShieldHealth,
         SetShieldHealth
     );
 
     EditorField(
-        float shieldRechargeDelay,
-        GetShieldRechargeDelay,
-        SetShieldRechargeDelay
-    );
-
-    EditorField(
-        float shieldRechargeRate,
-        GetShieldRechargeRate,
-        SetShieldRechargeRate
-    );
+        float MaxShieldHealth,
+        GetMaxShieldHealth,
+        SetMaxShieldHealth
+        );
 
     Meta(Enable)
     Health(void);
@@ -128,7 +130,9 @@ public:
 
     float GetHealth(void) const;
     void SetHealth(float health);
+
     float GetMaxHealth(void) const;
+    void SetMaxHealth(float health);
 
     const ursine::resources::ResourceReference &GetArchetypeOnDeath(void) const;
     void SetArchetypeOnDeath(const ursine::resources::ResourceReference &objToSpawn);
@@ -147,13 +151,12 @@ public:
 
     float GetShieldHealth(void) const;
     void SetShieldHealth(float shield);
+
     float GetMaxShieldHealth(void) const;
+    void SetMaxShieldHealth(float shield);
 
-    float GetShieldRechargeDelay(void) const;
-    void SetShieldRechargeDelay(float delay);
-
-    float GetShieldRechargeRate(void) const;
-    void SetShieldRechargeRate(float rate);
+    void AddHealth(float healthToAdd);
+    void AddShieldHealth(float healthToAdd);
 
     void DealDamage(float damage);
     void DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit);
@@ -169,6 +172,8 @@ private:
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 
+    void onRevive(EVENT_HANDLER(ursine::ecs::Entity));
+
     HealthType m_type;
 
     float m_health;
@@ -177,19 +182,10 @@ private:
     float m_shield;
     float m_maxShield;
 
-    float m_shieldRechargeDelay;
-    float m_shieldRechargeTimer;
-
-    float m_shieldRechargeRate;
-
     ursine::resources::ResourceReference m_objToSpawn;
 
     bool m_deleteOnZero;
     bool m_spawnOnDeath;
-
-    // A flag letting us know if we're dead or not.
-    // This solves the problem of dealing damage after it's already dead.
-    bool m_dead;
 
     // Flag letting us know if we're invulnerable
     bool m_invulnerable;

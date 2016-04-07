@@ -50,9 +50,9 @@ void SludgeshotProjectile::InitializeComponents(void)
     auto owner = GetOwner( );
 
     // Make sure the child has a collider
-    auto ghost = owner->GetComponentInChildren<Ghost>( );
+    /*auto ghost = owner->GetComponentInChildren<Ghost>( );
 
-    UAssert( ghost, "Error: A child entity must have a ghost component." );
+    UAssert( ghost, "Error: A child entity must have a ghost component." );*/
 
     // Make sure the child has an emitter
     auto emitter = owner->GetComponentInChildren<ParticleEmitter>( );
@@ -73,7 +73,7 @@ void SludgeshotProjectile::InitializeComponents(void)
     auto start = owner->GetTransform( )->GetWorldPosition( );
     auto end = m_target;
     auto dir = end - start;
-    auto middle = start + SVec3( dir.X( ) * 0.8f, dir.Y( ) * 0.2f, dir.X( ) * 0.8f );
+    auto middle = start + SVec3( dir.X( ) * 0.8f, -dir.Y( ) * 0.2f, dir.X( ) * 0.8f );
 
     auto &keyFrames = animator->keyFrames;
 

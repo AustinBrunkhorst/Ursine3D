@@ -19,9 +19,10 @@ class PlayAnimationState : public AnimatorControllerState
 {
 public:
     PlayAnimationState(
-        const std::string &stateName, 
-        bool blocking = false, 
-        float playback = 1.0f
+        const std::string &stateName,
+        bool blocking = false,
+        float playback = 1.0f,
+        bool disableBoneManip = false
     );
 
     bool CanExit(void) override { return m_finished; }
@@ -32,8 +33,9 @@ public:
 private:
     std::string m_stateName;
     bool m_blocking;
-    float m_playback;
+    bool m_disableBoneManip;
     bool m_finished;
+    float m_playback;
 
     void onAnimationFinish(EVENT_HANDLER(ursine::ecs::Entity));
 };

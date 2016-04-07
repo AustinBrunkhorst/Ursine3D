@@ -69,7 +69,6 @@ namespace ursine
                 ID3D11Texture2D *backBufferPtr;
                 D3D_FEATURE_LEVEL finalFeatureLevel;
                 D3D_FEATURE_LEVEL FeatureLevelArray[ 10 ] = {
-                    D3D_FEATURE_LEVEL_11_1,
                     D3D_FEATURE_LEVEL_11_0,
                     D3D_FEATURE_LEVEL_10_0
                 };
@@ -84,7 +83,7 @@ namespace ursine
                         nullptr, 
                         D3D11_CREATE_DEVICE_SINGLETHREADED | D3D11_CREATE_DEVICE_DEBUG, 
                         FeatureLevelArray, 
-                        3, 
+                        2, 
                         D3D11_SDK_VERSION,
                         &m_device, 
                         &finalFeatureLevel, 
@@ -121,7 +120,7 @@ namespace ursine
                         nullptr, 
                         D3D11_CREATE_DEVICE_SINGLETHREADED,
                         FeatureLevelArray,
-                        3, 
+                        2, 
                         D3D11_SDK_VERSION,
                         &m_device, 
                         &finalFeatureLevel,

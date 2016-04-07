@@ -117,7 +117,7 @@ float3 CalcPoint(float3 position, Material material)
     // distance attenuation
     float Attn = saturate(1.0f - (distanceToPixel / lightSize));
 
-    return CalculateLightmapResponse(toLight, -toLight, toEye, material) * Attn * angleAttenuation * diffuseColor.xyz  * SpotShadowPCF(position);
+    return CalculateLightmapResponse(toLight, -toLight, toEye, material) * Attn * angleAttenuation * diffuseColor.xyz  * SpotShadowPCF(position) * intensity;
     // return CalcFinalLightValue(angleAttenuation * Attn * NDotL * intensity * SpotShadowPCF(position), diffuse, specularValue, material);
 }
 
@@ -126,21 +126,21 @@ float4 main(PS_INPUT In) : SV_TARGET
     // Unpack the GBuffer
     SURFACE_DATA gbd = UnpackGBuffer(In.Position.xy);
 
-// Convert the data into the material structure
-Material mat;
-mat.normal = gbd.Normal;
-mat.diffuseColor = gbd.Color;
-mat.specPow = gbd.SpecPow;
-mat.specIntensity = gbd.SpecInt;
-mat.emissive = gbd.Emissive;
+    // Convert the data into the material structure
+    Material mat;
+    mat.normal = gbd.Normal;
+    mat.diffuseColor = gbd.Color;
+    mat.specPow = gbd.SpecPow;
+    mat.specIntensity = gbd.SpecInt;
+    mat.emissive = gbd.Emissive;
 
-//calculate view position
-In.cpPos.xy /= In.cpPos.w;
-float3 position = CalcViewPos(
-    In.cpPos.xy,
-    gbd.LinearDepth
+    //calculate view position
+    In.cpPos.xy /= In.cpPos.w;
+    float3 position = CalcViewPos(
+        In.cpPos.xy,
+        gbd.LinearDepth
     );
 
-//get the final color, return
-return float4(CalcPoint(position, mat), 1.0f);
+    //get the final color, return
+    return float4(CalcPoint(position, mat), 1.0f);
 }

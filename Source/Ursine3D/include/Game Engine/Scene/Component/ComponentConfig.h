@@ -56,15 +56,17 @@
 
 #if defined(URSINE_WITH_EDITOR)
 
-#define NOTIFY_COMPONENT_CHANGED(displayName, value)                                              \
-    auto &__owner = GetOwner( );                                                                  \
-    if (__owner)                                                                                  \
-    {                                                                                             \
-        ursine::ecs::EditorComponentChangedArgs __e {                                             \
-            ursine::ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, __owner, this, displayName, value \
-        };                                                                                        \
-        __owner->GetWorld( )->Dispatch( __e.type, &__e );                                         \
-    }                                                                                                
+#define NOTIFY_COMPONENT_CHANGED(displayName, value)                                                    \
+    {                                                                                                   \
+        auto &__owner = GetOwner( );                                                                    \
+        if (__owner)                                                                                    \
+        {                                                                                               \
+            ursine::ecs::EditorComponentChangedArgs __e {                                               \
+                ursine::ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, __owner, this, displayName, value   \
+            };                                                                                          \
+            __owner->GetWorld( )->Dispatch( __e.type, &__e );                                           \
+        }                                                                                               \
+    }                                                                                                   
 
 #else
 

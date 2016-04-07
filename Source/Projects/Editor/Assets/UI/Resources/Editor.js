@@ -632,6 +632,27 @@ ursine_api_events_EventManager.prototype = {
 var ursine_api_events_IEventContainer = function() { };
 $hxClasses["ursine.api.events.IEventContainer"] = ursine_api_events_IEventContainer;
 ursine_api_events_IEventContainer.__name__ = ["ursine","api","events","IEventContainer"];
+var ursine_api_native_NativeBroadcastManager = function() {
+	this.m_channels = new haxe_ds_StringMap();
+	ursine_api_native_NativeBroadcastManager.instance = this;
+	window.NativeBroadcast = ursine_api_native_NativeBroadcastManager.onBroadcast;
+};
+$hxClasses["ursine.api.native.NativeBroadcastManager"] = ursine_api_native_NativeBroadcastManager;
+ursine_api_native_NativeBroadcastManager.__name__ = ["ursine","api","native","NativeBroadcastManager"];
+ursine_api_native_NativeBroadcastManager.onBroadcast = function(target,message,data) {
+	ursine_api_native_NativeBroadcastManager.instance.getChannel(target).trigger(message,data);
+};
+ursine_api_native_NativeBroadcastManager.prototype = {
+	getChannel: function(name) {
+		var channel = this.m_channels.get(name);
+		if(channel == null) {
+			channel = new ursine_api_events_EventManager();
+			this.m_channels.set(name,channel);
+		}
+		return channel;
+	}
+	,__class__: ursine_api_native_NativeBroadcastManager
+};
 var ursine_api_timers_Timer = function() { };
 $hxClasses["ursine.api.timers.Timer"] = ursine_api_timers_Timer;
 ursine_api_timers_Timer.__name__ = ["ursine","api","timers","Timer"];
@@ -789,13 +810,15 @@ ursine_api_ui_ScreenManager.prototype = {
 var ursine_editor_Editor = function() {
 	ursine_editor_Editor.instance = this;
 	this.mainMenu = new MainMenuControl();
-	this.broadcastManager = new ursine_editor_NativeBroadcastManager();
+	this.broadcastManager = new ursine_api_native_NativeBroadcastManager();
 	this.outputWindow = new ursine_editor_windows_OutputLog();
 	this.broadcastManager.getChannel("SceneManager").on("PlayStateChanged",$bind(this,this.onScenePlayStateChanged));
 	this.componentDatabase = new ursine_editor_scene_component_ComponentDatabase(GetNativeComponentDatabase());
+	this.buildMenus();
 	this.m_notificationManager = new ursine_editor_NativeNotificationManager(this.broadcastManager);
 	this.m_resourceManager = new ursine_editor_resources_NativeResourceManager(this.broadcastManager);
-	this.buildMenus();
+	this.m_buildManager = new ursine_editor_resources_NativeBuildManager(this.broadcastManager);
+	this.m_installManager = new ursine_editor_resources_NativeInstallManager(this.broadcastManager);
 	this.m_statusTextContainer = window.document.querySelector("#status-bar span");
 	window.document.querySelector("#header-toolbar").appendChild(this.mainMenu);
 	this.initSimulationPlayback();
@@ -918,27 +941,6 @@ ursine_editor_Editor.prototype = {
 var ursine_editor_MenuItemHandler = function() { };
 $hxClasses["ursine.editor.MenuItemHandler"] = ursine_editor_MenuItemHandler;
 ursine_editor_MenuItemHandler.__name__ = ["ursine","editor","MenuItemHandler"];
-var ursine_editor_NativeBroadcastManager = function() {
-	this.m_channels = new haxe_ds_StringMap();
-	ursine_editor_NativeBroadcastManager.m_instance = this;
-	window.NativeBroadcast = ursine_editor_NativeBroadcastManager.onBroadcast;
-};
-$hxClasses["ursine.editor.NativeBroadcastManager"] = ursine_editor_NativeBroadcastManager;
-ursine_editor_NativeBroadcastManager.__name__ = ["ursine","editor","NativeBroadcastManager"];
-ursine_editor_NativeBroadcastManager.onBroadcast = function(target,message,data) {
-	ursine_editor_NativeBroadcastManager.m_instance.getChannel(target).trigger(message,data);
-};
-ursine_editor_NativeBroadcastManager.prototype = {
-	getChannel: function(name) {
-		var channel = this.m_channels.get(name);
-		if(channel == null) {
-			channel = new ursine_api_events_EventManager();
-			this.m_channels.set(name,channel);
-		}
-		return channel;
-	}
-	,__class__: ursine_editor_NativeBroadcastManager
-};
 var ursine_editor_WindowHandler = function() {
 	this.window = new EditorWindowControl();
 };
@@ -1106,7 +1108,8 @@ ursine_editor_menus_FileMenu.doSaveWorldAs = function() {
 	SceneSaveWorldAs();
 };
 ursine_editor_menus_FileMenu.doSaveProject = function() {
-	var notification = new NotificationControl(3,"Thanks for saving fella, but this doesn't do anything right now.","Save Project");
+	ProjectSave();
+	var notification = new NotificationControl(3,"Project saved.","Action Complete");
 	notification.show();
 };
 ursine_editor_menus_FileMenu.doOpenProject = function() {
@@ -1125,6 +1128,45 @@ ursine_editor_menus_HelpMenu.doOpenGettingStarted = function() {
 ursine_editor_menus_HelpMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_HelpMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
 	__class__: ursine_editor_menus_HelpMenu
+});
+var ursine_editor_menus_ProjectMenu = function() { };
+$hxClasses["ursine.editor.menus.ProjectMenu"] = ursine_editor_menus_ProjectMenu;
+ursine_editor_menus_ProjectMenu.__name__ = ["ursine","editor","menus","ProjectMenu"];
+ursine_editor_menus_ProjectMenu.doEditBuildSettings = function() {
+	var settings = ursine_editor_menus_ProjectMenu.getBuildSettingsEntity();
+	settings.select();
+};
+ursine_editor_menus_ProjectMenu.doBuild = function() {
+	ProjectBuildStart();
+};
+ursine_editor_menus_ProjectMenu.doEditInstallerSettings = function() {
+	var settings = ursine_editor_menus_ProjectMenu.getInstallSettingsEntity();
+	settings.select();
+};
+ursine_editor_menus_ProjectMenu.doInstall = function() {
+	ProjectInstallStart();
+};
+ursine_editor_menus_ProjectMenu.getBuildSettingsEntity = function() {
+	if(ursine_editor_menus_ProjectMenu.m_buildSettingsEntity == null || !ursine_editor_menus_ProjectMenu.m_buildSettingsEntity.isValid()) {
+		ursine_editor_menus_ProjectMenu.m_buildSettingsEntity = ursine_editor_scene_entity_Entity.create();
+		ursine_editor_menus_ProjectMenu.m_buildSettingsEntity.setVisibleInEditor(false);
+		ursine_editor_menus_ProjectMenu.m_buildSettingsEntity.m_handler.enableSerialization(false);
+		ursine_editor_menus_ProjectMenu.m_buildSettingsEntity.m_handler.addComponent("ProjectBuildSettings");
+	}
+	return ursine_editor_menus_ProjectMenu.m_buildSettingsEntity;
+};
+ursine_editor_menus_ProjectMenu.getInstallSettingsEntity = function() {
+	if(ursine_editor_menus_ProjectMenu.m_installSettingsEntity == null || !ursine_editor_menus_ProjectMenu.m_buildSettingsEntity.isValid()) {
+		ursine_editor_menus_ProjectMenu.m_installSettingsEntity = ursine_editor_scene_entity_Entity.create();
+		ursine_editor_menus_ProjectMenu.m_installSettingsEntity.setVisibleInEditor(false);
+		ursine_editor_menus_ProjectMenu.m_installSettingsEntity.m_handler.enableSerialization(false);
+		ursine_editor_menus_ProjectMenu.m_installSettingsEntity.m_handler.addComponent("ProjectInstallerSettings");
+	}
+	return ursine_editor_menus_ProjectMenu.m_installSettingsEntity;
+};
+ursine_editor_menus_ProjectMenu.__super__ = ursine_editor_MenuItemHandler;
+ursine_editor_menus_ProjectMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
+	__class__: ursine_editor_menus_ProjectMenu
 });
 var ursine_editor_menus_ToolsMenu = function() { };
 $hxClasses["ursine.editor.menus.ToolsMenu"] = ursine_editor_menus_ToolsMenu;
@@ -1155,6 +1197,88 @@ ursine_editor_menus_ViewMenu.__super__ = ursine_editor_MenuItemHandler;
 ursine_editor_menus_ViewMenu.prototype = $extend(ursine_editor_MenuItemHandler.prototype,{
 	__class__: ursine_editor_menus_ViewMenu
 });
+var ursine_editor_resources_NativeBuildManager = function(broadcastManager) {
+	this.m_menuBuildItem = ursine_editor_Editor.instance.mainMenu.findItem("Project").menu.findItem("Build");
+	broadcastManager.getChannel("ResourcePipeline").on("ProjectBuildStart",$bind(this,this.onResourceBuildStart)).on("ProjectBuildProgress",$bind(this,this.onResourceBuildProgress)).on("ProjectBuildComplete",$bind(this,this.onResourceBuildComplete));
+};
+$hxClasses["ursine.editor.resources.NativeBuildManager"] = ursine_editor_resources_NativeBuildManager;
+ursine_editor_resources_NativeBuildManager.__name__ = ["ursine","editor","resources","NativeBuildManager"];
+ursine_editor_resources_NativeBuildManager.prototype = {
+	onResourceBuildStart: function(e) {
+		this.m_menuBuildItem.disabled = true;
+		this.m_lastStartDate = new Date();
+		if(this.m_progressNotification != null) {
+			this.m_progressNotification.close();
+			this.m_progressNotification = null;
+		}
+		this.m_progressNotification = new NotificationControl(3,"","Building Game");
+		this.m_progressNotification.dismissible = false;
+		this.m_progressBar = new ProgressBarControl();
+		this.m_progressNotification.messageContainer.appendChild(this.m_progressBar);
+		var btnCancel = new ButtonControl();
+		btnCancel.text = "Cancel";
+		btnCancel.addEventListener("click",function() {
+			ProjectBuildCancel();
+		});
+		this.m_progressNotification.buttonsContainer.appendChild(btnCancel);
+		this.m_progressNotification.show(0);
+	}
+	,onResourceBuildProgress: function(e) {
+		if(this.m_progressBar != null) this.m_progressBar.value = e.progress * 100;
+	}
+	,onResourceBuildComplete: function(e) {
+		this.m_menuBuildItem.disabled = false;
+		this.m_progressNotification.close();
+		this.m_progressNotification = null;
+		this.m_progressBar = null;
+		var notification;
+		if(e.successful) {
+			notification = new NotificationControl(3,"","Build Successful");
+			var duration = new Date().getTime() - this.m_lastStartDate.getTime();
+			ursine_editor_windows_OutputLog.log("Build Completed in " + duration + " ms");
+		} else {
+			notification = new NotificationControl(2,"Check output console for more info.","Build Failed");
+			ursine_editor_windows_OutputLog.log("Build Failed: " + e.error);
+		}
+		notification.show();
+	}
+	,__class__: ursine_editor_resources_NativeBuildManager
+};
+var ursine_editor_resources_NativeInstallManager = function(broadcastManager) {
+	this.m_menuInstallItem = ursine_editor_Editor.instance.mainMenu.findItem("Project").menu.findItem("Build Installer");
+	broadcastManager.getChannel("ResourcePipeline").on("ProjectInstallStart",$bind(this,this.onInstallStart)).on("ProjectInstallComplete",$bind(this,this.onInstallComplete));
+};
+$hxClasses["ursine.editor.resources.NativeInstallManager"] = ursine_editor_resources_NativeInstallManager;
+ursine_editor_resources_NativeInstallManager.__name__ = ["ursine","editor","resources","NativeInstallManager"];
+ursine_editor_resources_NativeInstallManager.prototype = {
+	onInstallStart: function(e) {
+		this.m_menuInstallItem.disabled = true;
+		this.m_lastStartDate = new Date();
+		if(this.m_progressNotification != null) {
+			this.m_progressNotification.close();
+			this.m_progressNotification = null;
+		}
+		this.m_progressNotification = new NotificationControl(5,"This may take a while.","Building Installer");
+		this.m_progressNotification.dismissible = false;
+		this.m_progressNotification.show(0);
+	}
+	,onInstallComplete: function(e) {
+		this.m_menuInstallItem.disabled = false;
+		this.m_progressNotification.close();
+		this.m_progressNotification = null;
+		var notification;
+		if(e.successful) {
+			notification = new NotificationControl(3,"","Install Build Successful");
+			var duration = new Date().getTime() - this.m_lastStartDate.getTime();
+			ursine_editor_windows_OutputLog.log("Install Build Completed in " + duration + " ms");
+		} else {
+			notification = new NotificationControl(2,"Check output console for more info.","Install Build Failed");
+			ursine_editor_windows_OutputLog.log("Install Build Failed: " + e.error);
+		}
+		notification.show();
+	}
+	,__class__: ursine_editor_resources_NativeInstallManager
+};
 var ursine_editor_resources_NativeResourceManager = function(broadcastManager) {
 	broadcastManager.getChannel("ResourcePipeline").on("ResourceBuildStart",$bind(this,this.onResourceBuildStart)).on("ResourceBuildComplete",$bind(this,this.onResourceBuildComplete));
 };
@@ -1308,7 +1432,7 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__name__ = [
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.__interfaces__ = [ursine_editor_scene_component_inspectors_IFieldInspectionOwner];
 ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = {
 	copyInstance: function() {
-		return this.entity.inspectComponent(this.component.type);
+		return this.entity.m_handler.inspectComponent(this.component.type);
 	}
 	,updateField: function(name,value) {
 		this.component.value[name] = value;
@@ -1345,7 +1469,7 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = 
 		element.classList.add("x-component-inspector");
 		element.text = button.text;
 		element.addEventListener("click",function() {
-			_g.entity.componentButtonInvoke(_g.component.type,button.name);
+			_g.entity.m_handler.componentButtonInvoke(_g.component.type,button.name);
 		});
 		this.inspector.buttons.appendChild(element);
 	}
@@ -1378,7 +1502,7 @@ ursine_editor_scene_component_inspectors_ComponentInspectionHandler.prototype = 
 		return handlers;
 	}
 	,notifyChanged: function(handler,field,value) {
-		this.entity.componentFieldUpdate(this.component.type,field.name,value);
+		this.entity.m_handler.componentFieldUpdate(this.component.type,field.name,value);
 	}
 	,ownerNotifyChanged: function(handler,field,value) {
 		this.notifyChanged(handler,field,value);
@@ -1543,7 +1667,7 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 			e.stopImmediatePropagation();
 		});
 		container.addEventListener("item-removed",function() {
-			_g.m_owner.entity.componentFieldArrayRemove(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex);
+			_g.m_owner.entity.m_handler.componentFieldArrayRemove(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex);
 		});
 		this.m_arrayItems.splice(index,0,container);
 		if((function($this) {
@@ -1613,7 +1737,7 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		return handlers;
 	}
 	,ownerNotifyChanged: function(handler,field,value) {
-		this.m_owner.entity.componentFieldArrayUpdate(this.m_owner.component.type,field.name,handler.arrayIndex,value);
+		this.m_owner.entity.m_handler.componentFieldArrayUpdate(this.m_owner.component.type,field.name,handler.arrayIndex,value);
 	}
 	,inspectItem: function(value) {
 		var database = ursine_editor_Editor.instance.componentDatabase;
@@ -1624,18 +1748,18 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		var _g = this;
 		var menu = new ContextMenuControl();
 		var moveUp = menu.addItem("Move Up",function() {
-			_g.m_owner.entity.componentFieldArraySwap(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex,handler.arrayIndex - 1);
+			_g.m_owner.entity.m_handler.componentFieldArraySwap(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex,handler.arrayIndex - 1);
 		});
 		moveUp.icon = "arrow-up";
 		moveUp.disabled = handler.arrayIndex == 0;
 		var moveDown = menu.addItem("Move Down",function() {
-			_g.m_owner.entity.componentFieldArraySwap(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex,handler.arrayIndex + 1);
+			_g.m_owner.entity.m_handler.componentFieldArraySwap(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex,handler.arrayIndex + 1);
 		});
 		moveDown.icon = "arrow-down";
 		moveDown.disabled = handler.arrayIndex == this.m_arrayItems.length - 1;
 		menu.addSeparator();
 		var $delete = menu.addItem("Delete",function() {
-			_g.m_owner.entity.componentFieldArrayRemove(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex);
+			_g.m_owner.entity.m_handler.componentFieldArrayRemove(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex);
 		});
 		$delete.icon = "remove";
 		menu.open(e.clientX,e.clientY);
@@ -2122,6 +2246,14 @@ ursine_editor_scene_entity_Entity.prototype = {
 	}
 	,isVisibleInEditor: function() {
 		return this.m_handler.isVisibleInEditor();
+	}
+	,setVisibleInEditor: function(visible) {
+		this.m_handler.setVisibleInEditor(visible);
+		this.events.trigger("EntityEditorVisibilityChanged",{ entity : this, visibile : visible});
+	}
+	,enableSerialization: function(enable) {
+		this.m_handler.enableSerialization(enable);
+		return;
 	}
 	,remove: function() {
 		this.m_handler.remove();
@@ -2646,7 +2778,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		this.m_headerToolbar.style.display = "block";
 		this.m_btnAddComponent.style.display = "block";
 		this.m_inspectedEntity.events.on("ComponentAdded",$bind(this,this.onInspectedEntityComponentAdded)).on("ComponentRemoved",$bind(this,this.onInspectedEntityComponentRemoved)).on("ComponentChanged",$bind(this,this.onInspectedEntityComponentChanged)).on("ComponentArrayInserted",$bind(this,this.onInspectedEntityComponentArrayInserted)).on("ComponentArraySet",$bind(this,this.onInspectedEntityComponentArrayItemSet)).on("ComponentArrayRemove",$bind(this,this.onInspectedEntityComponentArrayItemRemoved));
-		var inspection = this.m_inspectedEntity.inspect();
+		var inspection = this.m_inspectedEntity.m_handler.inspect();
 		var _g = 0;
 		while(_g < inspection.length) {
 			var component = inspection[_g];
@@ -2704,7 +2836,7 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		return db.getComponentTypes().filter(function(type) {
 			var componentType = db.getComponentType(type);
 			var isHidden = Object.prototype.hasOwnProperty.call(componentType.meta,"HiddenInInspector") || Object.prototype.hasOwnProperty.call(componentType.meta,"HiddenInSelector");
-			return !entity.hasComponent(type) && !isHidden;
+			return !entity.m_handler.hasComponent(type) && !isHidden;
 		});
 	}
 	,createComponentContextMenu: function(inspector,e) {
@@ -2717,19 +2849,19 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		}).icon = "copy";
 		var clipboard = this.m_componentClipboard.get(inspector.component.type);
 		var paste = menu.addItem("Paste",function() {
-			inspector.entity.componentSet(inspector.component.type,clipboard.value);
+			inspector.entity.m_handler.componentSet(inspector.component.type,clipboard.value);
 		});
 		paste.icon = "paste";
 		paste.disabled = clipboard == null;
 		menu.open(e.clientX,e.clientY);
 	}
 	,onArchetypeSaveClicked: function(e) {
-		this.m_inspectedEntity.saveAsArchetype();
+		this.m_inspectedEntity.m_handler.saveAsArchetype();
 	}
 	,onCopyEntityClicked: function(e) {
 		ursine_editor_windows_SceneOutline.instance.clearSelectedEntities();
-		var entity = this.m_inspectedEntity.clone();
-		entity.setName(ursine_editor_scene_entity_Entity.createCopyName(this.m_inspectedEntity.getName()));
+		var entity = new ursine_editor_scene_entity_Entity(this.m_inspectedEntity.m_handler.clone());
+		entity.setName(ursine_editor_scene_entity_Entity.createCopyName(this.m_inspectedEntity.m_handler.getName()));
 		entity.select();
 	}
 	,onAddComponentClicked: function(e) {
@@ -2740,17 +2872,17 @@ ursine_editor_windows_EntityInspector.prototype = $extend(ursine_editor_WindowHa
 		selector.show(e.clientX,e.clientY);
 	}
 	,onRemoveComponentClicked: function(component,e) {
-		this.m_inspectedEntity.removeComponent(component.type);
+		this.m_inspectedEntity.m_handler.removeComponent(component.type);
 		e.stopPropagation();
 	}
 	,onAddComponentTypeSelected: function(e) {
 		var componentType = e.detail.item;
-		if(this.m_inspectedEntity.hasComponent(componentType)) {
+		if(this.m_inspectedEntity.m_handler.hasComponent(componentType)) {
 			var notification = new NotificationControl(2,"Entity already has component type <strong class=\"highlight\">" + componentType + "</strong>","Error");
 			notification.show();
 			return;
 		}
-		this.m_inspectedEntity.addComponent(componentType);
+		this.m_inspectedEntity.m_handler.addComponent(componentType);
 	}
 	,onOpenChanged: function(component,e) {
 		var v = e.detail.open;
@@ -2798,9 +2930,21 @@ var ursine_editor_windows_OutputLog = function() {
 $hxClasses["ursine.editor.windows.OutputLog"] = ursine_editor_windows_OutputLog;
 ursine_editor_windows_OutputLog.__name__ = ["ursine","editor","windows","OutputLog"];
 ursine_editor_windows_OutputLog.log = function(info) {
-	ursine_editor_windows_OutputLog.instance.m_logContainer.appendChild(ursine_editor_windows_OutputLog.instance.createLogElement(info));
+	var time = ursine_editor_windows_OutputLog.createTimeString();
+	console.log("" + time + ": " + info);
+	ursine_editor_windows_OutputLog.instance.m_logContainer.appendChild(ursine_editor_windows_OutputLog.instance.createLogElement(time,info));
 	var lastLine = info.split("\n")[0];
 	ursine_editor_Editor.instance.setStatusText(lastLine);
+};
+ursine_editor_windows_OutputLog.createTimeString = function() {
+	var date = new Date();
+	var hours = date.getHours();
+	var h = hours % 12 + 1;
+	var m = StringTools.lpad(date.getMinutes(),"0",2);
+	var s = StringTools.lpad(date.getSeconds(),"0",2);
+	var z;
+	if(hours < 12) z = "AM"; else z = "PM";
+	return "" + h + ":" + m + ":" + s + " " + z;
 };
 ursine_editor_windows_OutputLog.__super__ = ursine_editor_WindowHandler;
 ursine_editor_windows_OutputLog.prototype = $extend(ursine_editor_WindowHandler.prototype,{
@@ -2810,26 +2954,19 @@ ursine_editor_windows_OutputLog.prototype = $extend(ursine_editor_WindowHandler.
 		this.window.container.appendChild(this.m_logContainer);
 		window.document.querySelector("#status-bar").addEventListener("click",$bind(this,this.onStatusBarClick));
 	}
-	,createLogElement: function(info) {
+	,createLogElement: function(timeText,infoText) {
 		var element;
 		var _this = window.document;
 		element = _this.createElement("div");
 		var time;
 		var _this1 = window.document;
 		time = _this1.createElement("span");
-		var date = new Date();
-		var hours = date.getHours();
-		var h = hours % 12 + 1;
-		var m = StringTools.lpad(date.getMinutes(),"0",2);
-		var s = StringTools.lpad(date.getSeconds(),"0",2);
-		var z;
-		if(hours < 12) z = "AM"; else z = "PM";
-		time.innerText = "" + h + ":" + m + ":" + s + " " + z;
+		time.innerText = timeText;
 		element.appendChild(time);
 		var contents;
 		var _this2 = window.document;
 		contents = _this2.createElement("span");
-		contents.innerHTML = info;
+		contents.innerHTML = infoText;
 		element.appendChild(contents);
 		return element;
 	}
@@ -2905,7 +3042,7 @@ var ursine_editor_windows_SceneOutline = function() {
 	this.window.container.appendChild(this.m_rootView);
 	this.resetScene();
 	ursine_editor_Editor.instance.broadcastManager.getChannel("SceneManager").on("WorldChanged",$bind(this,this.resetScene)).on("PlayStateChanged",$bind(this,this.onPlaystateChanged));
-	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on("RefreshEntities",$bind(this,this.refresh)).on("EntityAdded",$bind(this,this.onEntityAdded)).on("EntityRemoved",$bind(this,this.onEntityRemoved)).on("EntityNameChanged",$bind(this,this.onEntityNameChanged)).on("EntityParentChanged",$bind(this,this.onEntityParentChanged)).on("ComponentAdded",$bind(this,this.onComponentAdded)).on("ComponentRemoved",$bind(this,this.onComponentRemoved));
+	ursine_editor_Editor.instance.broadcastManager.getChannel("EntityManager").on("RefreshEntities",$bind(this,this.refresh)).on("EntityAdded",$bind(this,this.onEntityAdded)).on("EntityRemoved",$bind(this,this.onEntityRemoved)).on("EntityNameChanged",$bind(this,this.onEntityNameChanged)).on("EntityParentChanged",$bind(this,this.onEntityParentChanged)).on("EntityEditorVisibilityChanged",$bind(this,this.onEntityVisibilityChanged)).on("ComponentAdded",$bind(this,this.onComponentAdded)).on("ComponentRemoved",$bind(this,this.onComponentRemoved));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
 };
 $hxClasses["ursine.editor.windows.SceneOutline"] = ursine_editor_windows_SceneOutline;
@@ -3001,10 +3138,15 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		if(targetContainer != null) {
 			var children = targetContainer.children;
 			if(children.length == 0) targetContainer.appendChild(item); else {
-				var index = Math.clamp(entity.getSiblingIndex(),0,children.length - 1);
+				var index = Math.clamp(entity.m_handler.getSiblingIndex(),0,children.length - 1);
 				targetContainer.insertBefore(item,children[index]);
 			}
 		}
+	}
+	,onEntityVisibilityChanged: function(e) {
+		var item = this.m_entityItems.h[e.uniqueID];
+		if(item == null) return;
+		item.classList.toggle("hidden",!e.visible);
 	}
 	,onComponentAdded: function(e) {
 		if(e.component == "Selected") {
@@ -3021,13 +3163,13 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	,addEntity: function(entity) {
 		if(this.m_entityItems.h[entity.uniqueID] != null) return;
 		var item = this.createEntityItem(entity);
-		if(!entity.isVisibleInEditor()) item.classList.add("hidden");
+		if(!entity.m_handler.isVisibleInEditor()) item.classList.add("hidden");
 		var parent = entity.getParent();
 		if(parent == null) this.m_rootView.appendChild(item); else {
 			var parentItem = this.m_entityItems.h[parent.uniqueID];
 			if(parentItem != null) parentItem.child.appendChild(item);
 		}
-		if(entity.hasComponent("Selected")) this.selectEntity(item);
+		if(entity.m_handler.hasComponent("Selected")) this.selectEntity(item);
 	}
 	,createEntityItem: function(entity) {
 		var _g = this;
@@ -3042,12 +3184,12 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		item.addEventListener("drag-start",function(e1) {
 			e1.stopPropagation();
 			e1.stopImmediatePropagation();
-			e1.preventStart = !entity.isHierarchyChangeEnabled();
+			e1.preventStart = !entity.m_handler.isHierarchyChangeEnabled();
 		});
 		item.addEventListener("drag-drop",function(e2) {
 			e2.stopPropagation();
 			e2.stopImmediatePropagation();
-			if(!entity.isHierarchyChangeEnabled()) {
+			if(!entity.m_handler.isHierarchyChangeEnabled()) {
 				e2.preventDrop = true;
 				return;
 			}
@@ -3061,15 +3203,15 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 				e2.preventDrop = e2.detail.newParent;
 				return;
 			}
-			entity.setParent(target);
+			entity.m_handler.setParent(target == null?null:target.uniqueID);
 		});
 		item.addEventListener("drag-drop-after",function(e3) {
 			e3.stopPropagation();
 			e3.stopImmediatePropagation();
 			var childIndex = ElementUtils.childIndex(item);
-			entity.setSiblingIndex(childIndex);
+			entity.m_handler.setSiblingIndex(childIndex);
 		});
-		ToolTip.bind(item.textContentElement,entity.getName());
+		ToolTip.bind(item.textContentElement,entity.m_handler.getName());
 		item.textContentElement.addEventListener("dblclick",function(e4) {
 			_g.startRenamingEntity(item);
 		});
@@ -3083,9 +3225,9 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 		});
 		item.textContentElement.addEventListener("blur",function() {
 			item.textContentElement.contentEditable = "false";
-			entity.setName(item.textContentElement.innerText);
+			entity.m_handler.setName(item.textContentElement.innerText);
 		});
-		item.text = entity.getName();
+		item.text = entity.m_handler.getName();
 		item.entity = entity;
 		item.textElement.addEventListener("click",function(e6) {
 			if(item.entity.hasComponent("Selected")) return;
@@ -3152,7 +3294,7 @@ var ursine_editor_windows_SceneView = function() {
 	this.onViewportInvalidated();
 	this.window.addEventListener("resize",$bind(this,this.onWindowResize));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
-	this.m_fullScreen = ProjectGetPreferences().fullScreen;
+	this.m_fullScreen = ProjectGetEditorPreferences().fullScreen;
 	this.m_fullScreenItem = ursine_editor_Editor.instance.mainMenu.findItem("View").menu.findItem("Fullscreen Scene");
 	this.m_nonFullScreenContainer = this.window.container.parentNode;
 	this.m_fullScreenContainer = window.document.querySelector("#fullscreen-container");
@@ -3324,12 +3466,13 @@ var Enum = { };
 var __map_reserved = {}
 js_Boot.__toStr = {}.toString;
 ursine_editor_NativeCanvasWindowHandler.m_forwardedEvents = ["focus","blur","mouseover","mouseout"];
-ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
+ursine_editor_menus_DebugMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { doEditorReload : { mainMenuItem : ["Debug/Editor UI/Reload"]}, doEditorDebugTools : { mainMenuItem : ["Debug/Editor UI/Inspect"]}}};
 ursine_editor_menus_EditMenu.__meta__ = { obj : { menuIndex : [1]}, statics : { doUndo : { mainMenuItem : ["Edit/Undo"]}, doRedo : { mainMenuItem : ["Edit/Redo"]}}};
-ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
+ursine_editor_menus_EntityMenu.__meta__ = { obj : { menuIndex : [4]}, statics : { doCreateEmpty : { mainMenuItem : ["Entity/Create/Empty"]}, doCreatePlane : { mainMenuItem : ["Entity/Create/Plane",true]}, doCreateBox : { mainMenuItem : ["Entity/Create/Box"]}, doCreateCylinder : { mainMenuItem : ["Entity/Create/Cylinder"]}, doCreateSphere : { mainMenuItem : ["Entity/Create/Sphere"]}, doCreatePointLight : { mainMenuItem : ["Entity/Create/Point Light",true]}, doCreateSpotLight : { mainMenuItem : ["Entity/Create/Spot Light"]}, doCreateDirectionalLight : { mainMenuItem : ["Entity/Create/Directional Light"]}}};
 ursine_editor_menus_FileMenu.__meta__ = { obj : { menuIndex : [0]}, statics : { doNewWorld : { mainMenuItem : ["File/New World",false,true]}, doSaveWorld : { mainMenuItem : ["File/Save World",false,false]}, doSaveWorldAs : { mainMenuItem : ["File/Save World As",false,false]}, doSaveProject : { mainMenuItem : ["File/Save Project",true,false]}, doOpenProject : { mainMenuItem : ["File/Open Project",false,false]}}};
-ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [7]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
-ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [5]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
+ursine_editor_menus_HelpMenu.__meta__ = { obj : { menuIndex : [8]}, statics : { doOpenGettingStarted : { mainMenuItem : ["Help/Editor Documentation"]}}};
+ursine_editor_menus_ProjectMenu.__meta__ = { obj : { menuIndex : [3]}, statics : { doEditBuildSettings : { mainMenuItem : ["Project/Edit Build Settings",false,false,"settings"]}, doBuild : { mainMenuItem : ["Project/Build",false,false,"export"]}, doEditInstallerSettings : { mainMenuItem : ["Project/Edit Install Settings",true,false,"settings"]}, doInstall : { mainMenuItem : ["Project/Build Installer",false,false,"installer"]}}};
+ursine_editor_menus_ToolsMenu.__meta__ = { obj : { menuIndex : [7]}, statics : { uniConnector : { mainMenuItem : ["Tools/Waypoint Connector/Unidirectional Connections"]}, biConnector : { mainMenuItem : ["Tools/Waypoint Connector/Bidirectional Connections"]}, enableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Enable"]}, disableLines : { mainMenuItem : ["Tools/Waypoint Connector/Debug Lines/Disable"]}}};
 ursine_editor_menus_ViewMenu.__meta__ = { obj : { menuIndex : [2]}, statics : { doFullscreenToggle : { mainMenuItem : ["View/Fullscreen Scene"]}}};
 ursine_editor_scene_component_ComponentDatabase.m_componentInspectorMeta = "componentInspector";
 ursine_editor_scene_component_ComponentDatabase.m_fieldInspectorMeta = "fieldInspector";

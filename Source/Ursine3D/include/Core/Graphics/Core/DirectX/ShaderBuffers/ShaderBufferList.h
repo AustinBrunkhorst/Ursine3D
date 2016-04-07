@@ -49,6 +49,10 @@ namespace ursine
             BUFFER_TEX_OFFSET,
             BUFFER_LIGHT_FALLOFF,
 
+            BUFFER_FRAG_VS,
+            BUFFER_FRAG_GS,
+            BUFFER_FRAG_PS,
+
             // non-default
             BUFFER_GLYPHDATA,   // 6
             BUFFER_TEXTDATA,    // 7
@@ -204,6 +208,54 @@ namespace ursine
         {
             float lightSteps;
             float borderCutoff;
+            DirectX::XMFLOAT2 buffer;
+        };
+
+        struct FragmentationVSBuffer
+        {
+            // normal offset scalar
+            float normalOffset;
+            DirectX::XMFLOAT3 buffer;
+        };
+
+        struct FragmentationGSBuffer
+        {
+            // vertical force value
+            float verticalForce;
+
+            // horizontal force value
+            float horizontalForce;
+
+            // outward force value
+            float outwardForce;
+
+            // gravity force value
+            float gravityForce;
+
+            // time
+            float time;
+
+            DirectX::XMFLOAT3 buffer;
+        };
+
+        struct FragmentationPSBuffer
+        {
+            // pulse rate
+            float pulseSpeed;
+
+            // fade
+            float fadeAmount;
+
+            // time
+            float time;
+
+            // start/end time
+            float startTime;
+            float endTime;
+
+            // normal transparency
+            float transparencyThreshold;
+
             DirectX::XMFLOAT2 buffer;
         };
     }

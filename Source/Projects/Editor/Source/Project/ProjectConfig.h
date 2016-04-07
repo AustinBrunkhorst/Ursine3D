@@ -1,6 +1,9 @@
 #pragma once
 
+#include "ProjectInstallSettings.h"
+
 #include <FileSystem.h>
+#include <GameSettings.h>
 
 struct ProjectConfig
 {
@@ -8,8 +11,12 @@ struct ProjectConfig
     std::string resourceDirectory;
     std::string buildDirectory;
 
+    bool launchAfterBuild;
+    ursine::GameSettings buildSettings;
+    ProjectInstallSettings installSettings;
+
     Meta(Disable)
-    ursine::fs::path rootDirectory;
+    ursine::fs::path projectFile;
 
     ProjectConfig(void) = default;
 

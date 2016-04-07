@@ -7,6 +7,7 @@ abstract EntityEvent(String) {
     public static inline var EntityRemoved = "EntityRemoved";
     public static inline var EntityNameChanged = "EntityNameChanged";
     public static inline var EntityParentChanged = "EntityParentChanged";
+    public static inline var EntityEditorVisibilityChanged = "EntityEditorVisibilityChanged";
 
     public static inline var ComponentAdded = "ComponentAdded";
     public static inline var ComponentRemoved = "ComponentRemoved";

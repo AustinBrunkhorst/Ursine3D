@@ -25,6 +25,10 @@
 #include "ToggleLightGroupState.h"
 #include "TriggerWaitState.h"
 #include "ToggleHudState.h"
+#include "Phase3WaitForTriggerState.h"
+#include "ToggleCameraActiveState.h"
+#include "PlayEntityAnimatorState.h"
+
 #include "CurrentSegmentCondition.h"
 
 #include "TutorialResourcesComponent.h"
@@ -142,7 +146,7 @@ void LevelSegmentManager::initTutorialLogic(void)
     // After players are spawned tween their viewports
     auto introCin = lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
 
-    introCin->AddCondition<sm::TimerCondition>(TimeSpan::FromSeconds(10.0f));
+    introCin->AddCondition<sm::TimerCondition>(TimeSpan::FromSeconds(16.0f));
 
     // Unlock players
     tweenState->AddTransition( unlockCCState, "Go To Unlocking Player Controller" );
@@ -393,6 +397,8 @@ void LevelSegmentManager::initBossRoomLogic(void)
         auto unlockPlayers = cinematicStateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
         auto repositionAndClose = cinematicStateM->AddState<RepositionPlayersAndCloseDoorState>( );
         auto changeSegment = cinematicStateM->AddState<ChangeSegmentState>( LevelSegments::BossRoom_Phase1 );
+        auto turnCinCamOn = cinematicStateM->AddState<ToggleCameraActiveState>( resources->bossIntroCinCameraName, true );
+        auto turnCinCamOff = cinematicStateM->AddState<ToggleCameraActiveState>( resources->bossIntroCinCameraName, false );
         auto tweenOut = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
         auto tweenIn = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
         auto toggleHudOn = cinematicStateM->AddState<ToggleHudState>( true );
@@ -405,7 +411,9 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
         lockPlayers->AddTransition( toggleHudOff, "Toggle Hud Off" );
 
-        toggleHudOff->AddTransition( tweenOut, "Tween Out" );
+        toggleHudOff->AddTransition( turnCinCamOn, "Turn Cin Camera On" );
+
+        turnCinCamOn->AddTransition( tweenOut, "Tween Out" );
 
         tweenOut->AddTransition( repositionAndClose, "Reposition Players" )
                 ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
@@ -417,7 +425,9 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
         tweenIn->AddTransition( toggleHudOn2, "Go To Hud On" );
 
-        toggleHudOn2->AddTransition( unlockPlayers, "Unlock Players" );
+        toggleHudOn2->AddTransition( turnCinCamOff, "Turn Cin Camera Off" );
+
+        turnCinCamOff->AddTransition( unlockPlayers, "Unlock Players" );
 
         cinematicStateM->SetInitialState( createPlayers );
 
@@ -436,21 +446,68 @@ void LevelSegmentManager::initBossRoomLogic(void)
         auto unlockPlayers = p1to2StateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
         auto toggleHudOn = p1to2StateM->AddState<ToggleHudState>( true );
         auto toggleHudOff = p1to2StateM->AddState<ToggleHudState>( false );
+        auto turnCamOn = p1to2StateM->AddState<ToggleCameraActiveState>( resources->bossTransitionCameraName, true );
+        auto turnCamOff = p1to2StateM->AddState<ToggleCameraActiveState>( resources->bossTransitionCameraName, false );
         auto tweenOut = p1to2StateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
         auto tweenIn = p1to2StateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
 
         createPlayers->AddTransition( lockPlayers, "Lock Players" );
         lockPlayers->AddTransition( toggleHudOff, "Toggle Hud Off" ); 
-        toggleHudOff->AddTransition( tweenOut, "Tween Out" );
+        toggleHudOff->AddTransition( turnCamOn, "Turn Cam On" );
+        turnCamOn->AddTransition( tweenOut, "Tween Out" );
         tweenOut->AddTransition( tweenIn, "Tween In" )
                 ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
         tweenIn->AddTransition( toggleHudOn, "Toggle Hud On" );
-        toggleHudOn->AddTransition( unlockPlayers, "Unlock Players" );
+        toggleHudOn->AddTransition( turnCamOff, "Turn Cam Off" );
+        turnCamOff->AddTransition( unlockPlayers, "Unlock Players" );
 
         p1to2StateM->SetInitialState( createPlayers );
 
         addSegmentLogic( p1to2StateM, {
             LevelSegments::BossRoom_Phase2
+        } );
+    }
+
+    // Setup logic for phase3 cinematic
+    {
+        // Wait for the event to be sent
+        // // When sent, Turn on cinematic camera and start the anim, slide viewports out and lock players
+        // // on finish, slide viewports back in, unlcok players, send event for phase3 start?
+
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase3 Cinematic", this );
+
+        auto waitForTrig = sm->AddState<Phase3WaitForTriggerState>( );
+        auto turnOnCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase3CinematicCamera, true );
+        auto turnOffCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase3CinematicCamera, false );
+        auto playCinematicFocalP = sm->AddState<PlayEntityAnimatorState>( resources->phase3CinematicFocalPoint, false );
+        auto playCinematicCam = sm->AddState<PlayEntityAnimatorState>( resources->phase3CinematicCamera, true );
+        auto tweenOut = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
+        auto tweenIn = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
+        auto toggleHudOn = sm->AddState<ToggleHudState>( true );
+        auto toggleHudOff = sm->AddState<ToggleHudState>( false );
+        auto lockPlayers = sm->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
+        auto unlockPlayers = sm->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+        auto turnBossLightOn = sm->AddState<ToggleLightGroupState>( true, std::vector<std::string>{ resources->phase3BossLights } );
+
+        waitForTrig->AddTransition( turnOnCinematicCam, "Turn On Cam" );
+        turnOnCinematicCam->AddTransition( lockPlayers, "Lock Players" );
+        lockPlayers->AddTransition( toggleHudOff, "Turn Off Hud" );
+        toggleHudOff->AddTransition( tweenOut, "Tween Out" );
+        tweenOut->AddTransition( playCinematicFocalP, "Play Cinematic" );
+        playCinematicFocalP->AddTransition( playCinematicCam, "Play Cinematic Cam" )
+                           ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 7.0f ) );
+        playCinematicCam->AddTransition( turnBossLightOn, "Turn On Lights" )
+                        ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 5.0f ) );
+        turnBossLightOn->AddTransition( tweenIn, "Tween Back In" )
+                       ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 4.0f ) );
+        tweenIn->AddTransition( toggleHudOn, "Hud On" );
+        toggleHudOn->AddTransition( turnOffCinematicCam, "Turn Cam Off" );
+        turnOffCinematicCam->AddTransition( unlockPlayers, "Unlock Players" );
+
+        sm->SetInitialState( waitForTrig );
+
+        addSegmentLogic(sm, {
+            LevelSegments::BossRoom_Phase3
         } );
     }
 }
@@ -474,9 +531,6 @@ void LevelSegmentManager::onUpdate(EVENT_HANDLER(World))
 {
     if (m_segment == LevelSegments::Empty)
         return;
-
-    // TODO: Remove this, using it to try and find a weird bug.
-    // std::cout << (m_segment == LevelSegments::BossRoom_Introduction ? "Intro" : m_segment == LevelSegments::BossRoom_Phase1 ? "Phase1" : "Other") << std::endl;
 
     // Update all state machines
     for (auto &logic : m_segmentLogic[ m_segment ])

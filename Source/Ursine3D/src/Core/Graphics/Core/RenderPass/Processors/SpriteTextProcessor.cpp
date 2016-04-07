@@ -20,7 +20,8 @@ namespace ursine
 {
     namespace graphics
     {
-        SpriteTextProcessor::SpriteTextProcessor(void)
+        SpriteTextProcessor::SpriteTextProcessor(bool overdraw)
+            : m_overdraw( overdraw )
         {
             m_renderableType = RENDERABLE_SPRITE_TEXT;
         }
@@ -39,10 +40,16 @@ namespace ursine
             if (currentCamera.CheckMask( spriteText.GetRenderMask( ) ))
                 return true;
 
+            // if no text
             if (spriteText.GetText( ).length( ) <= 0)
                 return true;
 
+            // if no font
             if(spriteText.GetFontHandle( ) == 0)
+                return true;
+
+            // if not matching overdraw
+            if(spriteText.GetOverdraw( ) != m_overdraw)
                 return true;
 
             // return false as in DO NOT CULL ME

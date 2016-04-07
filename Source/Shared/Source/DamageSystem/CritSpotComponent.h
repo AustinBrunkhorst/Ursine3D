@@ -22,6 +22,19 @@ public:
     CritSpot(void);
     ~CritSpot(void);
 
+    EditorField(
+        bool SearchForObject,
+        GetSearch,
+        SetSearch
+        );
+    bool GetSearch(void) const;
+    void SetSearch(bool);
+
+protected:
     void OnInitialize(void) override;
+
+private:
+
+    bool m_search;
 
 } Meta(Enable, DisplayName("CritSpot"));

@@ -47,6 +47,8 @@ void Ping::OnInitialize(void)
 {
 }
 
+#if defined(URSINE_WITH_EDITOR)
+
 void Ping::PlayPingas(void)
 {
 	auto *emitter = GetOwner( )->GetComponent<ursine::ecs::AudioEmitter>( );
@@ -93,6 +95,8 @@ void Ping::PlayBlip(void)
 
 	emitter->PushEvent( event );
 }
+
+#endif
 
 float Ping::GetSize(void) const
 {

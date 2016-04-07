@@ -43,7 +43,7 @@ float3 CalcPoint( float3 position, Material material )
     float Attn = saturate(1.0f - (DistToLight / radius));
 
     // calculate final color
-    return CalculateLightmapResponse(toLight, -toLight, toEye, material) * Attn * diffuseColor.xyz;
+    return CalculateLightmapResponse(toLight, -toLight, toEye, material) * Attn * diffuseColor.xyz * intensity;
     // return CalcFinalLightValue(Attn * NDotL * intensity, diffuse, specularValue, material);
 }
 

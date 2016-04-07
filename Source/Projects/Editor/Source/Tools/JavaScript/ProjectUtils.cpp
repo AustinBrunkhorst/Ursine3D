@@ -24,8 +24,119 @@ using namespace ursine;
 
 namespace
 {
+    fs::path gLastSelectedLauncherBuildDir;
+    fs::path gLastSelectedOutputDir;
+    fs::path gLastSelectedInstallOutputDir;
+
     void buildResourceDirectory(rp::ResourceDirectoryNode *node, Json::object &obj);
     Json serializeResource(rp::ResourceItem::Handle resource);
+}
+
+JSFunction(ProjectSave)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetProject( )->WriteConfig( );
+
+	return CefV8Value::CreateBool( true );
+}
+
+JSFunction(ProjectBuildStart)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    auto &builder = editor->GetProject( )->GetGameBuilder( );
+
+    if (builder.IsBuilding( ))
+        return CefV8Value::CreateBool( false );
+
+    fs::FileDialog folderDialog;
+
+    folderDialog.config.mode = fs::FDM_DIRECTORY;
+    folderDialog.config.initialPath = gLastSelectedLauncherBuildDir;
+    folderDialog.config.windowTitle = "Select Launcher Build Directory";
+    folderDialog.config.parentWindow = editor->GetMainWindow( ).GetWindow( );
+
+    auto launcherResult = folderDialog.Open( );
+
+    if (!launcherResult)
+        return CefV8Value::CreateBool( false );
+
+    auto &launcherDir = launcherResult.selectedFiles[ 0 ];
+
+    gLastSelectedLauncherBuildDir = launcherDir;
+
+    folderDialog.config.initialPath = gLastSelectedOutputDir;
+    folderDialog.config.windowTitle = "Select Output Directory";
+
+    auto outputResult = folderDialog.Open( );
+
+    if (!outputResult)
+        return CefV8Value::CreateBool( false );
+
+    auto &outputDir = outputResult.selectedFiles[ 0 ];
+
+    gLastSelectedOutputDir = outputDir;
+
+    builder.Build( launcherDir, outputDir );
+
+	return CefV8Value::CreateBool( true );
+}
+
+JSFunction(ProjectBuildCancel)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    auto &builder = editor->GetProject( )->GetGameBuilder( );
+
+    if (!builder.IsBuilding( ))
+        return CefV8Value::CreateBool( false );
+
+    builder.Cancel( );
+
+	return CefV8Value::CreateBool( true );
+}
+
+JSFunction(ProjectInstallStart)
+{
+    auto *editor = GetCoreSystem( Editor );
+
+    auto &installer = editor->GetProject( )->GetGameInstaller( );
+
+    if (installer.IsBuilding( ))
+        return CefV8Value::CreateBool( false );
+
+    fs::FileDialog folderDialog;
+
+    folderDialog.config.mode = fs::FDM_DIRECTORY;
+    folderDialog.config.initialPath = gLastSelectedOutputDir;
+    folderDialog.config.windowTitle = "Select Build Directory";
+    folderDialog.config.parentWindow = editor->GetMainWindow( ).GetWindow( );
+
+    auto buildResult = folderDialog.Open( );
+
+    if (!buildResult)
+        return CefV8Value::CreateBool( false );
+
+    auto &buildDir = buildResult.selectedFiles[ 0 ];
+
+    gLastSelectedOutputDir = buildDir;
+
+    folderDialog.config.initialPath = gLastSelectedInstallOutputDir;
+    folderDialog.config.windowTitle = "Select Output Directory";
+
+    auto outputResult = folderDialog.Open( );
+
+    if (!outputResult)
+        return CefV8Value::CreateBool( false );
+
+    auto &outputDir = outputResult.selectedFiles[ 0 ];
+
+    gLastSelectedInstallOutputDir = outputDir;
+
+    installer.Build( buildDir, outputDir );
+
+	return CefV8Value::CreateBool( true );
 }
 
 JSFunction(ProjectSetFullScreen)
@@ -33,7 +144,7 @@ JSFunction(ProjectSetFullScreen)
     if (arguments.size( ) != 1)
         JSThrow( "Invalid arguments.", nullptr );
 
-    auto fullScreen = arguments[0]->GetBoolValue( );
+    auto fullScreen = arguments[ 0 ]->GetBoolValue( );
 
     auto *editor = GetCoreSystem( Editor );
 
@@ -45,7 +156,7 @@ JSFunction(ProjectSetFullScreen)
     return CefV8Value::CreateBool( true );
 }
 
-JSFunction(ProjectGetPreferences)
+JSFunction(ProjectGetEditorPreferences)
 {
     auto *editor = GetCoreSystem( Editor );
 

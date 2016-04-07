@@ -38,6 +38,7 @@ void BossUndergroundState::Enter(BossAIStateMachine *machine)
             .On( ENTITY_ANIMATION_FINISH, &BossUndergroundState::onAnimationFinished );
 
         animator->SetCurrentState( "Spike_Down" );
+        animator->SetTimeScalar( 1.0f );
         animator->SetPlaying( true );
 
         m_finished = false;
@@ -46,6 +47,8 @@ void BossUndergroundState::Enter(BossAIStateMachine *machine)
     {
         m_finished = true;
     }
+
+    machine->GetBoss( )->SetUnderground( true );
 }
 
 void BossUndergroundState::onAnimationFinished(EVENT_HANDLER(Entity))

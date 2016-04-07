@@ -230,6 +230,13 @@ void VineAI::GoToHomeLocation(void)
     m_stateMachine.SetBool( VineAIStateMachine::PursueTarget, false );
 }
 
+void VineAI::JumpToHomeLocation(void)
+{
+    m_stateMachine.SetBool( VineAIStateMachine::GoHome, true );
+    m_stateMachine.SetBool( VineAIStateMachine::JumpToHome, true );
+    m_stateMachine.SetBool( VineAIStateMachine::PursueTarget, false );
+}
+
 bool VineAI::IsHome(void)
 {
     return m_stateMachine.GetBool( VineAIStateMachine::IsHome );

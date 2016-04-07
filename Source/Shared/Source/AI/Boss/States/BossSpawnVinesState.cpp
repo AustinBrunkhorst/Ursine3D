@@ -17,6 +17,7 @@
 #include "BossAIComponent.h"
 
 #include "VineSpawnerComponent.h"
+#include "Phase3BossSpawnComponent.h"
 
 #include <World.h>
 #include <Application.h>
@@ -43,7 +44,8 @@ void BossSpawnVinesState::Enter(BossAIStateMachine *machine)
 
     for (auto &spawner : spawners)
     {
-        if (spawner->GetComponent<VineSpawner>( )->GetSpawnSegment( ) != m_spawnSegment)
+        if (spawner->GetComponent<VineSpawner>( )->GetSpawnSegment( ) != m_spawnSegment ||
+            spawner->HasComponent<Phase3BossSpawn>( ))
             continue;
 
         m_spawners.push_back( spawner );

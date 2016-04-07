@@ -46,6 +46,11 @@ void VineUprootState::Enter(VineAIStateMachine *machine)
     m_animating = false;
     m_state = UprootState::Burrowing;
     machine->SetBool( VineAIStateMachine::IsHome, false );
+
+    auto health = machine->GetAI( )->GetOwner( )->GetComponent<Health>( );
+
+    health->Listener( this )
+        .On( HEALTH_ZERO, &VineUprootState::onVineDeath );
 }
 
 void VineUprootState::Update(VineAIStateMachine *machine)
@@ -144,6 +149,17 @@ void VineUprootState::Exit(VineAIStateMachine *machine)
         VineAIStateMachine::UprootCooldown,
         machine->GetAI( )->GetUprootCooldown( )
     );
+
+    auto health = machine->GetAI( )->GetOwner( )->GetComponent<Health>( );
+
+    health->Listener( this )
+        .Off( HEALTH_ZERO, &VineUprootState::onVineDeath );
+
+    auto animator = machine->GetAI( )->GetAnimator( );
+    
+    if (animator)
+        animator->GetOwner( )->Listener( this )
+            .Off( ENTITY_ANIMATION_FINISH, &VineUprootState::onAnimationFinished );
 }
 
 void VineUprootState::playAnimation(Animator *animator, const std::string &clip)
@@ -186,3 +202,9 @@ void VineUprootState::onAnimationFinished(EVENT_HANDLER(Entity))
     sender->Listener( this )
         .Off( ENTITY_ANIMATION_FINISH, &VineUprootState::onAnimationFinished );
 }
+
+void VineUprootState::onVineDeath(EVENT_HANDLER(Health))
+{
+    m_finished = true;
+}
+

@@ -41,7 +41,7 @@ namespace ursine
         ecs::World *GetActiveWorld(void) const;
 
         void SetActiveWorld(ecs::World::Handle world);
-        bool SetActiveWorld(const resources::ResourceReference &reference);
+        bool SetActiveWorld(const resources::ResourceReference &reference, bool ignoreCache = true);
 
         graphics::GfxHND GetViewport(void) const;
         void SetViewport(graphics::GfxHND viewport);

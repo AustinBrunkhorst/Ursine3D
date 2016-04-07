@@ -68,6 +68,13 @@ namespace ursine
 
             m_fontCache.erase( search );
 
+            auto texSearch = m_textureCache.find( hnd->Index_ );
+
+            if(texSearch != m_textureCache.end( ))
+            {
+                m_textureCache.erase( texSearch );
+            }
+
             fontHandle = 0;
         }
 

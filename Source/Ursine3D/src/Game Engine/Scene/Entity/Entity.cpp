@@ -154,6 +154,14 @@ namespace ursine
         void Entity::SetVisibleInEditor(bool visible)
         {
             m_visibleInEditor = visible;
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            EntityEventArgs e( WORLD_EDITOR_ENTITY_VISIBILITY_CHANGED, this );
+
+            GetWorld( )->Dispatch( e.type, &e );
+
+        #endif
         }
 
         World *Entity::GetWorld(void) const

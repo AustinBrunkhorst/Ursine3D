@@ -86,7 +86,7 @@ namespace ursine
             );
 
             // SET TEXTURE //////////////////////////////////////////
-            m_manager->textureManager->MapTextureByID( handle.Material_ );
+            m_manager->textureManager->MapTextureByID( handle.Material_, 1 );
         }
 
         void ParticleSystemProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)

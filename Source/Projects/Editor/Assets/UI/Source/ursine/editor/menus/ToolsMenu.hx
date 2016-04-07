@@ -1,7 +1,7 @@
 package ursine.editor.menus;
 import ursine.native.Extern;
 
-@menuIndex( 5 )
+@menuIndex( 7 )
 class ToolsMenu extends MenuItemHandler {
     @mainMenuItem( "Tools/Waypoint Connector/Unidirectional Connections" )
     static function uniConnector() {

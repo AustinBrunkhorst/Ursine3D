@@ -30,6 +30,7 @@
 #include "PointLightProcessor.h"
 #include "SpotLightProcessor.h"
 #include "SpriteTextProcessor.h"
+#include "FragmentationProcessor.h"
 
 #include "RenderPass.h"
 
@@ -135,7 +136,8 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_FORWARD, "ForwardRenderer");
                 shaderManager->LoadShader(SHADER_SPRITE_TEXT, "SpriteTextShader");
 
-                shaderManager->LoadShader(SHADER_OUTLINE, "OutlineShader");
+                shaderManager->LoadShader(SHADER_OUTLINE, "EdgeDetectionShader");
+                shaderManager->LoadShader(SHADER_FRAGMENTATION, "FragmentationShader");
                 
 
                 //load compute
@@ -560,6 +562,8 @@ namespace ursine
             RenderPass          velocityParticlePass("VelocityParticlePass");
             RenderPass          billboardPass( "BillboardPass" );
             RenderPass          textPass( "SpriteTextPass" );
+            RenderPass          overdrawTextPass("SpriteTextOverdrawPass");
+            RenderPass          fragmentationPass("FragPass");
 
             RenderPass          debugPass("debugPass");
 
@@ -573,6 +577,8 @@ namespace ursine
             auto velParticleProcessor   = ParticleSystemProcessor( true );
             auto billboardPorcessor     = Billboard2DProcessor( );
             auto textProcessor          = SpriteTextProcessor( );
+            auto overdrawProcessor      = SpriteTextProcessor( true );
+            auto fragProcessor          = FragmentationProcessor( );
 
             // CREATE GLOBALS
             GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBuffer( SHADERTYPE_VERTEX );
@@ -585,6 +591,7 @@ namespace ursine
             GlobalCBuffer<invViewBuffer, BUFFER_INV_PROJ>           invProjection( SHADERTYPE_PIXEL );
             GlobalCBuffer<FalloffBuffer, BUFFER_LIGHT_FALLOFF>      lightFalloff( SHADERTYPE_PIXEL, SHADER_SLOT_12 );
             GlobalCBuffer<FalloffBuffer, BUFFER_LIGHT_FALLOFF>      emissiveValue(SHADERTYPE_PIXEL, SHADER_SLOT_12);
+            GlobalCBuffer<BillboardSpriteBuffer, BUFFER_BILLBOARDSPRITE> particleFadeBuffer( SHADERTYPE_PIXEL, SHADER_SLOT_4 );
 
             // input RTs
             GlobalGPUResource   depthInput( SHADER_SLOT_0, RESOURCE_INPUT_DEPTH );
@@ -594,8 +601,9 @@ namespace ursine
             GlobalGPUResource   debugInput( SHADER_SLOT_0, RESOURCE_INPUT_RT );
             GlobalGPUResource   lightmapRT( SHADER_SLOT_1, RESOURCE_INPUT_RT );
             GlobalGPUResource   shadowmapDepth( SHADER_SLOT_4, RESOURCE_INPUT_DEPTH );
+            GlobalGPUResource   idTarget(SHADER_SLOT_1, RESOURCE_INPUT_RT);
 
-            GlobalGPUResource   debugTarget(SHADER_SLOT_0, RESOURCE_INPUT_RT);
+            GlobalGPUResource   debugTarget( SHADER_SLOT_1, RESOURCE_TEXTURE );
 
             // other resources
             GlobalGPUResource   spriteModel( SHADER_SLOT_0, RESOURCE_MODEL );
@@ -624,32 +632,6 @@ namespace ursine
                         Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_BACKCULL ).
-                        Set( BLEND_STATE_COUNT ).
-                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
-
-                        AddResource( &viewBuffer ).
-
-                        Accepts( RENDERABLE_MODEL3D ).
-                        Processes( &modelProcessor ).
-                    InitializePass( );
-                }
-
-                /////////////////////////////////////////////////////////
-                // OUTLINE PASS
-                {
-                    outlinePass.
-                        Set(
-                            {
-                                RENDER_TARGET_DEFERRED_COLOR,
-                                RENDER_TARGET_DEFERRED_NORMAL,
-                                RENDER_TARGET_DEFERRED_SPECPOW
-                            }
-                        ).
-                        Set( SHADER_OUTLINE ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
-                        Set( SAMPLER_STATE_WRAP_TEX ).
-                        Set( RASTER_STATE_OUTLINE ).
                         Set( BLEND_STATE_COUNT ).
                         Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
 
@@ -795,6 +777,32 @@ namespace ursine
                 }
 
                 /////////////////////////////////////////////////////////
+                // OUTLINE PASS
+                {
+                    outlinePass.
+                         Set( { RENDER_TARGET_SWAPCHAIN } ).
+                        Set( SHADER_OUTLINE ).
+                        Set( DEPTH_STENCIL_COUNT ).
+                        Set( DEPTH_STATE_COUNT ).
+                        Set( SAMPLER_STATE_NO_WRAP_TEX ).
+                        Set( RASTER_STATE_SOLID_BACKCULL ).
+                        Set( BLEND_STATE_DEFAULT ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &viewIdentity ).
+                        AddResource( &invProjection ).
+                        AddResource( &fullscreenTransform ).
+                        AddResource( &fullscreenModel ).
+                        AddResource( &lightFalloff ).
+
+                        AddResource( &depthInput ).
+                        AddResource( &debugTarget ).
+
+                        IsFullscreenPass( true ).
+                    InitializePass( );
+                }
+
+                /////////////////////////////////////////////////////////
                 // LINE RENDER PASS
                 {
                     lineRenderPass.
@@ -907,8 +915,8 @@ namespace ursine
                     particlePass.
                         Set( { RENDER_TARGET_SWAPCHAIN } ).
                         Set( SHADER_PARTICLE ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL ).
+                        Set( DEPTH_STENCIL_COUNT ).
+                        Set( DEPTH_STATE_COUNT ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_NOCULL ).
                         Set( BLEND_STATE_ADDITIVE ).
@@ -917,6 +925,9 @@ namespace ursine
                         AddResource( &viewBuffer ).
                         AddResource( &particleModel ).
                         AddResource( &invView ).
+                        AddResource( &particleFadeBuffer ).
+
+                        AddResource( &depthInput ).
 
                         Accepts( RENDERABLE_PS ).
                         Processes( &particleProcessor ).
@@ -1005,7 +1016,58 @@ namespace ursine
                     InitializePass( );
                 }
 
-                 {
+                /////////////////////////////////////////////////////////
+                // OVERDRAW SPRITE TEXT PASS
+                {
+                    overdrawTextPass.
+                        Set( 
+                            {
+                                RENDER_TARGET_SWAPCHAIN,
+                                RENDER_TARGET_DEFERRED_NORMAL,
+                                RENDER_TARGET_DEFERRED_SPECPOW
+                            }
+                        ).
+                        Set( SHADER_SPRITE_TEXT ).
+                        Set( DEPTH_STENCIL_COUNT ).
+                        Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
+                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( RASTER_STATE_SOLID_NOCULL ).
+                        Set( BLEND_STATE_DEFAULT ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &viewBuffer ).
+                        AddResource( &particleModel ).
+                        AddResource( &invView ).
+
+                        Accepts( RENDERABLE_SPRITE_TEXT ).
+                        Processes( &overdrawProcessor ).
+                        OverrideLayout( SHADER_OVERRIDE ).
+                    InitializePass( );
+                }
+
+                /////////////////////////////////////////////////////////
+                // FRAG PASS
+                {
+                    fragmentationPass.
+                        Set( { RENDER_TARGET_SWAPCHAIN } ).
+                        Set( SHADER_FRAGMENTATION ).
+                        Set( DEPTH_STENCIL_MAIN ).
+                        Set( DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL ).
+                        Set( SAMPLER_STATE_WRAP_TEX ).
+                        Set( RASTER_STATE_SOLID_NOCULL ).
+                        Set( BLEND_STATE_ADDITIVE ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &viewBufferGeom ).
+
+                        Accepts( RENDERABLE_MODEL3D ).
+                        Processes( &fragProcessor ).
+                    InitializePass( );
+                }
+
+                /////////////////////////////////////////////////////////
+                // DEBUG PASS
+                {
                     debugPass.
                         Set( { RENDER_TARGET_SWAPCHAIN } ).
                         Set( SHADER_QUAD ).
@@ -1036,6 +1098,7 @@ namespace ursine
                 AddPrePass( &pointlightPass ).
                 AddPrePass( &directionalLightPass ).
                 AddPrePass( &emissivePass ).
+                AddPrePass( &outlinePass ).
                 AddPrePass( &lineRenderPass ).
                 AddPrePass( &pointRenderPass ).
                 AddPrePass( &overdrawPass ).
@@ -1043,8 +1106,10 @@ namespace ursine
                 AddPrePass( &overdrawPointPass ).
                 AddPrePass( &particlePass ).
                 AddPrePass( &velocityParticlePass ).
+                AddPrePass( &fragmentationPass ).
                 AddPrePass( &billboardPass ).
                 AddPrePass( &textPass ).
+                AddPrePass( &overdrawTextPass ).
                 // AddPrePass(&debugPass).
             InitializePass( );
 
@@ -1056,6 +1121,7 @@ namespace ursine
             TransformBuffer tb;
             invViewBuffer ivb;
             FalloffBuffer fb;
+            BillboardSpriteBuffer bsb;
 
             // viewBuffer(SHADERTYPE_VERTEX);
             // viewBufferGeom(SHADERTYPE_GEOMETRY);
@@ -1106,6 +1172,9 @@ namespace ursine
             fb.lightSteps = m_globalEmissive;
             emissiveValue.Update(fb, SHADER_SLOT_12);
 
+            currentCamera.GetPlanes(bsb.width, bsb.height);
+            particleFadeBuffer.Update(bsb, SHADER_SLOT_4);
+
             // TARGET INPUTS //////////////////
             // input RTs
             // depthInput(SHADER_SLOT_0, RESOURCE_INPUT_DEPTH);
@@ -1127,7 +1196,8 @@ namespace ursine
 
             shadowmapDepth.Update( DEPTH_STENCIL_SHADOWMAP );
 
-            debugTarget.Update( RENDER_TARGET_DEFERRED_NORMAL );
+            idTarget.Update( RENDER_TARGET_DEFERRED_SPECPOW );
+            debugTarget.Update( m_lightMapTexture & 0xFFFF );
 
             // TEXTURES AND MODELS /////////////
             lightConeModel.Update( INTERNAL_CONE );

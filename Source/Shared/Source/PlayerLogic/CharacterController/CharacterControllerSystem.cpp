@@ -39,6 +39,7 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
     auto *controller = entity->GetComponent<CharacterController>( );
     auto *swept = entity->GetComponent<SweptController>( );
     auto rotateSpeed = controller->GetRotateSpeed( );
+    auto rotationModifier = controller->GetRotationModifier( );
 
     auto transform = entity->GetTransform( );
     auto rigidbody = entity->GetComponent<Rigidbody>( );
@@ -71,7 +72,7 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
         else if (lookDir.Length( ) < highRotationFloor)
             lookDir = lookDir * mediumRotationFactor;
 
-        auto lookAngle = lookDir * rotateSpeed;
+        auto lookAngle = lookDir * rotateSpeed * rotationModifier;
 
         if (cam)
         {
@@ -128,7 +129,7 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
             {
                 auto currVel = swept->GetControllerVelocity( );
 
-                swept->JumpDirectionally( currVel * controller->GetJumpDirectionScalar( ) );
+                swept->JumpDirectionally( currVel * ( 1.0f + controller->GetJumpDirectionScalar( ) ) );
 
                 URSINE_TODO("Fix sound hack for weapons");
                 GetCoreSystem(AudioManager)->PlayGlobalEvent("Player_Jump");

@@ -1,6 +1,8 @@
 package ursine.editor;
 
+import ursine.editor.resources.NativeInstallManager;
 import haxe.rtti.Meta;
+import ursine.api.native.NativeBroadcastManager;
 import ursine.native.Extern;
 import ursine.controls.Menu;
 import ursine.controls.MainMenu;
@@ -10,6 +12,7 @@ import ursine.controls.docking.DockContainer;
 import ursine.editor.MenuItemHandler;
 import ursine.editor.windows.OutputLog;
 import ursine.editor.resources.NativeResourceManager;
+import ursine.editor.resources.NativeBuildManager;
 import ursine.editor.scene.component.ComponentDatabase;
 import ursine.editor.scene.ScenePlayState;
 
@@ -29,6 +32,8 @@ class Editor {
 
     private var m_notificationManager : NativeNotificationManager;
     private var m_resourceManager : NativeResourceManager;
+    private var m_buildManager : NativeBuildManager;
+    private var m_installManager : NativeInstallManager;
 
     private var m_statusTextContainer : js.html.DivElement;
 
@@ -54,11 +59,13 @@ class Editor {
             Extern.GetNativeComponentDatabase( )
         );
 
-        m_notificationManager = new NativeNotificationManager( broadcastManager );
-        m_resourceManager = new NativeResourceManager( broadcastManager );
-
         buildMenus( );
 
+        m_notificationManager = new NativeNotificationManager( broadcastManager );
+        m_resourceManager = new NativeResourceManager( broadcastManager );
+        m_buildManager = new NativeBuildManager( broadcastManager );
+        m_installManager = new NativeInstallManager( broadcastManager );
+        
         m_statusTextContainer = cast js.Browser.document.querySelector( '#status-bar span' );
 
         js.Browser.document

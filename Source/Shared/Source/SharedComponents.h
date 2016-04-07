@@ -19,6 +19,7 @@
 
 #include "HealthSystem/HealthComponent.h"
 #include "HealthSystem/WallComponent.h"
+#include "HealthSystem/HealthRegenComponent.h"
 
 /////////////////////////////////
 //        Miscelaneous         //
@@ -34,8 +35,12 @@
 
 #include "PlayerLogic/PlayerIdComponent.h"
 #include "PlayerLogic/PlayerSpawnPointComponent.h"
+#include "PlayerLogic/PlayerDownedObjectComponent.h"
+#include "PlayerLogic/PlayerDeathCameraAnimatorComponent.h"
 #include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerGunAnimationControllerComponent.h"
+#include "PlayerLogic/AnimationControllers/PlayerAnimationControllerComponent.h"
+#include "PlayerLogic/AnimationControllers/FacePlayerBoneTowardsMeComponent.h"
 
 /////////////////////////////////
 //        Damage System        //
@@ -62,6 +67,7 @@
 
 #include "InteractionSystem/RaidTriggers/EmpowerTriggerComponent.h"
 #include "InteractionSystem/RaidTriggers/DisempowerTriggerComponent.h"
+#include "InteractionSystem/Triggers/RevivePlayerComponent.h"
 
 /////////////////////////////////
 //        Weapon System        //
@@ -74,6 +80,7 @@
 #include "WeaponSystem/Weapons/WeaponPosComponent.h"
 #include "WeaponSystem/Inventory/InventoryComponent.h"
 #include "WeaponSystem/Projectiles/ProjectileComponent.h"
+#include "WeaponSystem/RaycastComponent.h"
 
 /////////////////////////////////
 //        Trails System        //
@@ -151,8 +158,10 @@
 /////////////////////////////////
 
 #include "Misc/AnimateTutorialTextComponent.h"
+#include "Misc/DeathTriggerGroupComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/ChangeSegmentOnAnimatorFinishComponent.h"
+#include "LevelSegmentManager/SegmentLogic/Misc/Phase3BossSpawnComponent.h"
 #include "Misc/DeathTriggerGroupComponent.h"
 #include "Misc/PingTestComponent.h"
 

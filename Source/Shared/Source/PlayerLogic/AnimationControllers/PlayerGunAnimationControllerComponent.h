@@ -5,7 +5,7 @@
 ** PlayerGunAnimationControllerComponent.h
 **
 ** Author:
-** - Chad George - chad.george@digipen.edu
+** - Jordan Ellis - j.ellis@digipen.edu
 **
 ** --------------------------------------------------------------------------*/
 
@@ -61,6 +61,12 @@ public:
         SetShootEndState
     );
 
+    EditorField(
+        std::string reloadClip,
+        GetReloadClip,
+        SetReloadClip
+    );
+
     PlayerGunAnimationController(void);
     ~PlayerGunAnimationController(void);
 
@@ -84,8 +90,10 @@ public:
     const std::string &GetShootEndState(void) const;
     void SetShootEndState(const std::string &state);
 
-private:
+    const std::string &GetReloadClip(void) const;
+    void SetReloadClip(const std::string &clip);
 
+private:
     std::string m_idleState;
     std::string m_jumpState;
     std::string m_runState;
@@ -93,6 +101,9 @@ private:
     std::string m_shootBeginState;
     std::string m_shootLoopState;
     std::string m_shootEndState;
+
+    std::string m_reloadClip;
+    float m_reloadTime;
 
     AnimatorControllerStateMachine::Handle m_controller;
 
@@ -108,9 +119,13 @@ private:
     void onStartShoot(EVENT_HANDLER(ursine::ecs::Entity));
     void onEndShoot(EVENT_HANDLER(ursine::ecs::Entity));
 
+    void onStartReload(EVENT_HANDLER(ursine::ecs::Entity));
+    void onEndReload(EVENT_HANDLER(ursine::ecs::Entity));
+
 } Meta(
-    Enable, 
+    Enable,
+) EditorMeta(
     RequiresComponents(
-        typeof(ursine::ecs::Animator)
-    )
+        typeof( ursine::ecs::Animator )
+    )    
 );

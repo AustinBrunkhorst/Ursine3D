@@ -69,9 +69,9 @@ namespace ursine
         Dispatch( SCENE_WORLD_CHANGED, &e );
     }
 
-    bool Scene::SetActiveWorld(const resources::ResourceReference &reference)
+    bool Scene::SetActiveWorld(const resources::ResourceReference &reference, bool ignoreCache /*= true*/)
     {
-        auto *worldData = reference.Load<resources::WorldData>( m_resourceManager, true );
+        auto *worldData = reference.Load<resources::WorldData>( m_resourceManager, ignoreCache );
 
         if (!worldData)
             return false;
@@ -79,6 +79,10 @@ namespace ursine
         SceneWorldChangedArgs e( m_activeWorld, &reference );
 
         m_activeWorld = worldData->GetData( );
+
+        UAssert( m_activeWorld,
+            "Resource world data was null."    
+        );
 
         m_activeWorld->setOwner( this );
 
