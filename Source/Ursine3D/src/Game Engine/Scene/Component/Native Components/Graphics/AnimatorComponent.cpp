@@ -206,7 +206,11 @@ namespace ursine
 
             if ((*currSt)->GetTimePosition() > curr_lastFrame.length)
             {
-                (*currSt)->SetTimePosition(curr_lastFrame.length);
+                if ((*currSt)->IsLooping())
+                    (*currSt)->SetTimePosition(curr_firstFrame.length);
+                else
+                    (*currSt)->SetTimePosition(curr_lastFrame.length);
+
                 bCurrEnd = true;
             }
             
@@ -278,27 +282,42 @@ namespace ursine
             {
                 // if blending is true, start transitioning from this state to that state
                 (*futSt)->IncrementTimePosition(dt * m_speedScalar);
-
-                transFactor += dt  *m_speedScalar;
-
-                if (transFactor > 1.0f)
-                    transFactor = 1.0f;
-
+                
+                bool bTransEnd = false;
                 if (stateBlender)
-                {                    
+                {
+                    float transitionTime = stateBlender->GetTransitionTime();
+                    transFactor += (dt * m_speedScalar) / transitionTime;
+
+                    if (transFactor > 1.0f)
+                    {
+                        bTransEnd = true;
+                        transFactor = 1.0f;
+                    }
+
                     if ((*futSt)->GetTimePosition( ) > fut_lastFrame.length)
-                    {                    
-                        changeState(currSt, futSt,
-                            curr_firstFrame.length,
-                            (*futAni)->GetKeyframe( stateBlender->GetfutTransFrm( ), 0 ).length,
-                            curr_lastFrame.length,
-                            fut_lastFrame.length,
-                            transFactor
-                        );
+                    {
+                        if (bTransEnd)
+                        {
+                            changeState(currSt, futSt,
+                                curr_firstFrame.length,
+                                (*futAni)->GetKeyframe(stateBlender->GetfutTransFrm(), 0).length,
+                                curr_lastFrame.length,
+                                fut_lastFrame.length,
+                                transFactor
+                                );
+                        }
+                        else
+                            (*futSt)->SetTimePosition(fut_firstFrame.length);
                     }
                 }
                 else
                 {
+                    transFactor += dt * m_speedScalar;
+
+                    if (transFactor > 1.0f)
+                        transFactor = 1.0f;
+
                     if ((*futSt)->GetTimePosition() > fut_lastFrame.length)
                     {
                         changeState(currSt, futSt,
@@ -309,18 +328,6 @@ namespace ursine
                             transFactor
                             );
                     }
-                }
-            }
-            // if the blending didn't started
-            else
-            {
-                // if current state reached at the end
-                if (bCurrEnd)
-                {
-                    if ((*currSt)->IsLooping())
-                        (*currSt)->SetTimePosition(curr_firstFrame.length);
-                    else
-                        (*currSt)->SetTimePosition(curr_lastFrame.length);
                 }
             }
         }
