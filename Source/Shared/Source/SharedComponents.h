@@ -38,6 +38,7 @@
 #include "PlayerLogic/PlayerDownedObjectComponent.h"
 #include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerGunAnimationControllerComponent.h"
+#include "PlayerLogic/AnimationControllers/PlayerAnimationControllerComponent.h"
 
 /////////////////////////////////
 //        Damage System        //

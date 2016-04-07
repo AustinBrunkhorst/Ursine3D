@@ -5,7 +5,7 @@
 ** PlayerGunAnimationControllerComponent.h
 **
 ** Author:
-** - Chad George - chad.george@digipen.edu
+** - Jordan Ellis - j.ellis@digipen.edu
 **
 ** --------------------------------------------------------------------------*/
 

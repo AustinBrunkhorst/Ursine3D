@@ -31,6 +31,8 @@ cbuffer FragData : register(b11)
     float randomForce;
 
     float spinSpeed;
+
+    float seed;
 }
 
 struct GS_INPUT
@@ -51,7 +53,7 @@ struct GS_OUTPUT
 
 float RandomNormFloat(float2 xy)
 {
-    return (random(xy, 2.0) - 0.5f) * 2.0f;
+    return (random(xy, seed) - 0.5f) * 2.0f;
 }
 
 float rand_1_05(float2 uv)

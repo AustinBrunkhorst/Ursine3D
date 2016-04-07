@@ -135,8 +135,8 @@ namespace ursine
 
             if(!(m_numberOfTargets + 1 <= MAX_PROFILER_TARGETS))
             {
-                std::cout << start << ", " << end << std::endl;
-                UWarning("Out of gpu profiler targets!");
+                //std::cout << start << ", " << end << std::endl;
+                //UWarning("Out of gpu profiler targets!");
                 return;
             }
 
