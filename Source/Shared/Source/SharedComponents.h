@@ -36,6 +36,7 @@
 #include "PlayerLogic/PlayerIdComponent.h"
 #include "PlayerLogic/PlayerSpawnPointComponent.h"
 #include "PlayerLogic/PlayerDownedObjectComponent.h"
+#include "PlayerLogic/PlayerDeathCameraAnimatorComponent.h"
 #include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerGunAnimationControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerAnimationControllerComponent.h"

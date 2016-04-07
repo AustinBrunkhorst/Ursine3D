@@ -353,7 +353,8 @@ void PlayerAnimationController::connectToEvents(bool toggle)
     {
         root->Listener( this )
             .On( game::JUMP_COMMAND, &PlayerAnimationController::onJump )
-            .On( game::MOVEMENT_COMMAND, &PlayerAnimationController::onMove );
+            .On( game::MOVEMENT_COMMAND, &PlayerAnimationController::onMove )
+            .On( game::REVIVE_PLAYER, &PlayerAnimationController::onRevive );
 
         root->GetComponent<Health>( )->Listener( this )
             .On( HEALTH_ZERO, &PlayerAnimationController::onDeath );
@@ -364,7 +365,8 @@ void PlayerAnimationController::connectToEvents(bool toggle)
     {
         root->Listener( this )
             .Off( game::JUMP_COMMAND, &PlayerAnimationController::onJump )
-            .Off( game::MOVEMENT_COMMAND, &PlayerAnimationController::onMove );
+            .Off( game::MOVEMENT_COMMAND, &PlayerAnimationController::onMove )
+            .Off( game::REVIVE_PLAYER, &PlayerAnimationController::onRevive );
 
         root->GetComponent<Health>( )->Listener( this )
             .Off( HEALTH_ZERO, &PlayerAnimationController::onDeath );
@@ -405,4 +407,9 @@ void PlayerAnimationController::onMove(EVENT_HANDLER(ursine::ecs::Entity))
 void PlayerAnimationController::onDeath(EVENT_HANDLER(Health))
 {
     m_controller->SetBool( kDead, true );
+}
+
+void PlayerAnimationController::onRevive(EVENT_HANDLER(Entity))
+{
+    m_controller->SetBool( kDead, false );
 }

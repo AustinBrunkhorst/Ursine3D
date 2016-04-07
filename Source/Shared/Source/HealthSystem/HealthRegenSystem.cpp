@@ -77,7 +77,6 @@ void HealthRegenSystem::onUpdate(EVENT_HANDLER(World))
             }
 
             regenComp->IncrementTimer( dt );
-            printf("wiating\n");
         }
 
         // wait timer has finished
@@ -85,14 +84,12 @@ void HealthRegenSystem::onUpdate(EVENT_HANDLER(World))
         {
             // add health
             healthComp->AddShieldHealth( regenComp->GetShieldToAdd( ) * dt );
-            printf("Regening\n");
         }
 
         // shield is at full health
         else if ( healthComp->GetHealth( ) < healthComp->GetMaxHealth( ) )
         {
             healthComp->AddHealth( regenComp->GetHealthToAdd( ) * dt );
-            printf("healing\n");
         }
 
     }
