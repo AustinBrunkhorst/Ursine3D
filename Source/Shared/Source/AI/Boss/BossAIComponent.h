@@ -19,9 +19,17 @@
 #include "HealthComponent.h"
 #include "VineAIComponent.h"
 
+enum class BossAIEvents
+{
+    ShieldUp,
+    ShieldDown
+};
+
 class Health;
 
-class BossAI : public ursine::ecs::Component
+class BossAI 
+    : public ursine::ecs::Component
+    , public ursine::EventDispatcher<BossAIEvents>
 {
     NATIVE_COMPONENT;
 

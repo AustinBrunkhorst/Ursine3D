@@ -72,6 +72,7 @@ namespace
 
 BossAI::BossAI(void)
     : BaseComponent( )
+    , EventDispatcher<BossAIEvents>( this )
     , m_turnSpeed( 90.0f )
     , m_seedshotInterval( 2.0f )
     , m_seedshotCooldown( 2.0f )
