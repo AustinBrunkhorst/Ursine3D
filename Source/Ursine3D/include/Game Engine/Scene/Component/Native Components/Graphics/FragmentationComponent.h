@@ -57,6 +57,13 @@ namespace ursine
                 SetTexture
             );
 
+            EditorMeta(InputRange(0.0f, 1.0f, 0.1f, "{{value.toPrecision( 3 )}}"))
+            EditorField(
+                float timeSlider,
+                GetTimeSliderValue,
+                SetTimeSliderValue
+            );
+
             EditorField(
                 float time,
                 GetTime,
@@ -189,7 +196,13 @@ namespace ursine
 
             void Update(float dt);
 
+            void ResetFragmentation(void);
+
+            float GetTimeSliderValue(void) const;
+            void SetTimeSliderValue(float value);
+
         private:
+
             graphics::GfxAPI *m_graphics;
 
             // This model component's model in the renderer
