@@ -105,6 +105,8 @@ namespace ursine
                 float normalOffset;
                 float spinScalar;
 
+                float seed;
+
                 float xUV, yUV;
             };
 

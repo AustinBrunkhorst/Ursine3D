@@ -53,8 +53,6 @@ namespace ursine
         {
             Model3D &model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
 
-            model.GetFragmentData( ).time += 0.016f;
-
             /////////////////////////////////////////////////////////
             // map transform
             m_manager->bufferManager->MapTransformBuffer( model.GetWorldMatrix( ), SHADERTYPE_GEOMETRY );
@@ -76,6 +74,7 @@ namespace ursine
             fgb.time                    = fragData.time;
             fgb.buffer.x                = fragData.randomForce;
             fgb.buffer.y                = fragData.spinScalar;
+            fgb.buffer.z                = fragData.seed;
 
             fpb.pulseSpeed              = fragData.pulseSpeed;
             fpb.fadeAmount              = fragData.fadeAmount;

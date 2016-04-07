@@ -31,6 +31,7 @@ enum HealthEvents
 {
     HEALTH_DAMAGE_TAKEN,
     HEALTH_DAMAGED,
+    HEALTH_REVIVE,
     HEALTH_ZERO
 };
 
@@ -69,6 +70,12 @@ public:
         SetHealth
     );
 
+    EditorField(
+        float MaxHealth,
+        GetMaxHealth,
+        SetMaxHealth
+        );
+
     EditorResourceField(
         ursine::resources::ArchetypeData,
         archetypeToSpawnOnDeath,
@@ -101,10 +108,16 @@ public:
     );
 
     EditorField(
-        float shieldHealth,
+        float ShieldHealth,
         GetShieldHealth,
         SetShieldHealth
     );
+
+    EditorField(
+        float MaxShieldHealth,
+        GetMaxShieldHealth,
+        SetMaxShieldHealth
+        );
 
     Meta(Enable)
     Health(void);
@@ -117,7 +130,9 @@ public:
 
     float GetHealth(void) const;
     void SetHealth(float health);
+
     float GetMaxHealth(void) const;
+    void SetMaxHealth(float health);
 
     const ursine::resources::ResourceReference &GetArchetypeOnDeath(void) const;
     void SetArchetypeOnDeath(const ursine::resources::ResourceReference &objToSpawn);
@@ -136,13 +151,9 @@ public:
 
     float GetShieldHealth(void) const;
     void SetShieldHealth(float shield);
+
     float GetMaxShieldHealth(void) const;
-
-    float GetShieldRechargeDelay(void) const;
-    void SetShieldRechargeDelay(float delay);
-
-    float GetShieldRechargeRate(void) const;
-    void SetShieldRechargeRate(float rate);
+    void SetMaxShieldHealth(float shield);
 
     void AddHealth(float healthToAdd);
     void AddShieldHealth(float healthToAdd);
@@ -160,6 +171,8 @@ private:
     void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
+
+    void onRevive(EVENT_HANDLER(ursine::ecs::Entity));
 
     HealthType m_type;
 

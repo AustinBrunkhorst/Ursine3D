@@ -47,15 +47,10 @@ InteractionBay::InteractionBay(void) :
 InteractionBay::~InteractionBay(void)
 {
     Clear( );
-
-    GetOwner( )->Listener( this )
-         .Off( ursine::ecs::ENTITY_COLLISION_PERSISTED, &InteractionBay::OnCollision );
 }
 
 void InteractionBay::OnInitialize(void)
 {
-    GetOwner( )->Listener( this )
-        .On( ursine::ecs::ENTITY_COLLISION_PERSISTED, &InteractionBay::OnCollision );
 }
 
 void InteractionBay::OnCollision(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED))
@@ -69,6 +64,20 @@ void InteractionBay::OnCollision(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PER
         m_interactQueue.push( std::make_pair( distSqu, args->otherEntity->GetComponent< Interactable >( ) ) );
     }
 
+}
+
+void InteractionBay::AddInteractable(float distSquared, Interactable* interactable)
+{
+    m_interactQueue.push( std::make_pair( distSquared, interactable ) );
+}
+
+void InteractionBay::Update(void)
+{
+    m_prevInteractables = m_currInteractables;
+
+    m_currInteractables.clear( );
+
+    Clear( );
 }
 
 void InteractionBay::Clear(void)

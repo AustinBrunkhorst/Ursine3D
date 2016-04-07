@@ -16,10 +16,14 @@
 #include "FragmentationComponent.h"
 #include "Model3DComponent.h"
 
+#include "Randomizer.h"
+
 namespace ursine
 {
     namespace ecs
     {
+        static Randomizer randomizer = Randomizer(-100, 100);
+
         NATIVE_COMPONENT_DEFINITION(ModelFragmenter)
 
         ModelFragmenter::ModelFragmenter(void)
@@ -33,6 +37,7 @@ namespace ursine
             m_model->SetDoesFragment( false );
         }
 
+#ifdef URSINE_WITH_EDITOR
         void ModelFragmenter::Play(void)
         {
             m_isPlaying = true;
@@ -46,8 +51,12 @@ namespace ursine
         void ModelFragmenter::Restart(void)
         {
             m_isPlaying = true;
-            m_model->GetFragmentData( ).time = 0;
+            ResetFragmentation( );
+
+            NOTIFY_COMPONENT_CHANGED("time", m_model->GetFragmentData( ).time);
+            NOTIFY_COMPONENT_CHANGED("timeSlider", m_model->GetFragmentData( ).time / m_model->GetFragmentData( ).maxTime);
         }
+#endif
 
         void ModelFragmenter::OnInitialize(void)
         {
@@ -56,6 +65,8 @@ namespace ursine
             m_graphics = GetCoreSystem( graphics::GfxAPI );
 
             m_model->SetDoesFragment( true );
+
+            m_model->GetFragmentData( ).seed = randomizer.GetValue( );
         }
 
         void ModelFragmenter::OnSceneReady(Scene *scene)
@@ -73,7 +84,7 @@ namespace ursine
             m_model->SetDoesFragment( isActive );
         }
 
-        const resources::ResourceReference &ModelFragmenter::GetTexture() const
+        const resources::ResourceReference &ModelFragmenter::GetTexture( ) const
         {
             return m_textureResource;
         }
@@ -98,6 +109,9 @@ namespace ursine
         void ModelFragmenter::SetTime(float value)
         {
             m_model->GetFragmentData( ).time = value;
+
+            NOTIFY_COMPONENT_CHANGED("time", m_model->GetFragmentData( ).time);
+            NOTIFY_COMPONENT_CHANGED("timeSlider", m_model->GetFragmentData( ).time / m_model->GetFragmentData( ).maxTime);
         }
 
         float ModelFragmenter::GetMaxTime(void) const
@@ -108,6 +122,8 @@ namespace ursine
         void ModelFragmenter::SetMaxTime(float value)
         {
             m_model->GetFragmentData( ).maxTime = value;
+
+            NOTIFY_COMPONENT_CHANGED("timeSlider", m_model->GetFragmentData( ).time / m_model->GetFragmentData( ).maxTime);
         }
 
         float ModelFragmenter::GetVerticalForce(void) const
@@ -225,6 +241,23 @@ namespace ursine
         {
             if(m_isPlaying)
                 m_model->GetFragmentData( ).time += dt;
+        }
+
+        void ModelFragmenter::ResetFragmentation(void)
+        {
+            m_model->GetFragmentData( ).seed = randomizer.GetValue( );
+            m_model->GetFragmentData( ).time = 0;
+        }
+
+        float ModelFragmenter::GetTimeSliderValue() const
+        {
+            return m_model->GetFragmentData( ).time / m_model->GetFragmentData( ).maxTime;
+        }
+
+        void ModelFragmenter::SetTimeSliderValue(float value)
+        {
+            m_model->GetFragmentData().time = value * m_model->GetFragmentData( ).maxTime;
+            NOTIFY_COMPONENT_CHANGED("time", m_model->GetFragmentData().time);
         }
 
         void ModelFragmenter::invalidateTexture(bool unload)

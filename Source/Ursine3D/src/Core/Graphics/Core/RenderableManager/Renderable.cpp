@@ -139,7 +139,7 @@ namespace ursine
             m_fragData.verticalForce = 250.0f;
             m_fragData.horizontalForce = 200;
             m_fragData.outwardForce = 100;
-            m_fragData.gravityForce = 300.f;
+            m_fragData.gravityForce = 1.0f;
             m_fragData.randomForce = 150.0f;
             m_fragData.time = 0;
             
@@ -147,6 +147,7 @@ namespace ursine
             m_fragData.fadeAmount = 0.5f;
             m_fragData.maxTime = 5;
             m_fragData.transparencyThreshold = 0.0f;
+            m_fragData.spinScalar = 4.0f;
         }
 
         const char *Model3D::GetModelName(void)
