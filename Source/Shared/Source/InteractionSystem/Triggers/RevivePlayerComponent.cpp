@@ -15,6 +15,7 @@
 #include "PlayerIdCOmponent.h"
 #include "CommandQueueComponent.h"
 #include "HealthComponent.h"
+#include "GameEvents.h"
 
 NATIVE_COMPONENT_DEFINITION( RevivePlayer ) ;
 
@@ -66,7 +67,7 @@ void RevivePlayer::StartInteraction(const ursine::ecs::EntityHandle& entity)
 
     // make sure player is alive
     if ( entity->HasComponent< Health >( ) && 
-        entity->GetComponent< Health >( )->GetHealth( ) <= 0.0f )
+         entity->GetComponent< Health >( )->GetHealth( ) <= 0.0f )
     {
         return;
     }
@@ -105,10 +106,12 @@ void RevivePlayer::Interact(const ursine::ecs::EntityHandle& entity)
 
 void RevivePlayer::StopInteraction(const ursine::ecs::EntityHandle& entity)
 {
-    
+    m_times.erase( entity );
+    m_queues.erase( entity );
 }
 
 void RevivePlayer::InteractionComplete(void)
 {
-    GetOwner( )->Dispatch( HealthEvents::HEALTH_REVIVE, ursine::ecs::EntityEventArgs::Empty );
+    GetOwner( )->GetRoot( )->Dispatch( game::REVIVE_PLAYER, ursine::ecs::EntityEventArgs::Empty );
+    GetOwner( )->Delete( );
 }

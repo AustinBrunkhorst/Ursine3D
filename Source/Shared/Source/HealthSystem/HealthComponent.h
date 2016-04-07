@@ -70,6 +70,12 @@ public:
         SetHealth
     );
 
+    EditorField(
+        float MaxHealth,
+        GetMaxHealth,
+        SetMaxHealth
+        );
+
     EditorResourceField(
         ursine::resources::ArchetypeData,
         archetypeToSpawnOnDeath,
@@ -102,10 +108,16 @@ public:
     );
 
     EditorField(
-        float shieldHealth,
+        float ShieldHealth,
         GetShieldHealth,
         SetShieldHealth
     );
+
+    EditorField(
+        float MaxShieldHealth,
+        GetMaxShieldHealth,
+        SetMaxShieldHealth
+        );
 
     Meta(Enable)
     Health(void);
@@ -118,7 +130,9 @@ public:
 
     float GetHealth(void) const;
     void SetHealth(float health);
+
     float GetMaxHealth(void) const;
+    void SetMaxHealth(float health);
 
     const ursine::resources::ResourceReference &GetArchetypeOnDeath(void) const;
     void SetArchetypeOnDeath(const ursine::resources::ResourceReference &objToSpawn);
@@ -137,7 +151,9 @@ public:
 
     float GetShieldHealth(void) const;
     void SetShieldHealth(float shield);
+
     float GetMaxShieldHealth(void) const;
+    void SetMaxShieldHealth(float shield);
 
     void AddHealth(float healthToAdd);
     void AddShieldHealth(float healthToAdd);
@@ -175,8 +191,5 @@ private:
     bool m_invulnerable;
 
     bool m_hasShield;
-
-    Meta(Disable)
-    bool m_dead;
 
 } Meta(Enable, WhiteListMethods, DisplayName( "Health" ));

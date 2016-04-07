@@ -61,6 +61,10 @@ void HealthRegenSystem::onUpdate(EVENT_HANDLER(World))
     for ( auto regenIt : m_healthRegens )
     {
         healthComp = m_healthComps[ regenIt.first ];
+
+        if ( healthComp->GetHealth( ) <= 0.0f )
+            continue;
+
         regenComp  = regenIt.second;
 
         // should be looking to regen shield

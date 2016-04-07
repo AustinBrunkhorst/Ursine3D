@@ -72,7 +72,6 @@ private:
     // texture to display
     ursine::resources::ResourceReference m_texture;
 
-
 } Meta(Enable,
     DisplayName( "RevivePlayer" )
 ) EditorMeta(

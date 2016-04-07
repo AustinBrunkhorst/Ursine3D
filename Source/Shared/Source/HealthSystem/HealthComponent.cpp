@@ -21,8 +21,8 @@
 #include "CollisionEventArgs.h"
 #include "DamageOnCollideComponent.h"
 #include "AbstractHitscanWeapon.h"
-#include "RevivePlayerComponent.h"
 #include <Application.h>
+#include "GameEvents.h"
 
 NATIVE_COMPONENT_DEFINITION( Health );
 
@@ -51,13 +51,12 @@ Health::Health(void)
     , m_spawnOnDeath( false )
     , m_invulnerable( false )
     , m_hasShield( false )
-    , m_dead( false ) 
 { }
 
 Health::~Health(void)
 {
     GetOwner( )->Listener(this)
-        .Off( HEALTH_REVIVE, &Health::onRevive)
+        .Off( game::REVIVE_PLAYER, &Health::onRevive )
         .Off( ursine::ecs::ENTITY_REMOVED, &Health::onDeath );
 
     auto world = GetOwner( )->GetWorld( );
@@ -92,7 +91,7 @@ float Health::GetHealth(void) const
 
 void Health::SetHealth(const float health)
 {
-    m_health = math::Max(health, 0.0f);;
+    m_health = math::Max(health, 0.0f);
 
     NOTIFY_COMPONENT_CHANGED( "EntityHealth", m_health );
 }
@@ -100,6 +99,14 @@ void Health::SetHealth(const float health)
 float Health::GetMaxHealth(void) const
 {
     return m_maxHealth;
+}
+
+void Health::SetMaxHealth(float health)
+{
+    m_maxHealth = health;
+
+    SetHealth( math::Min( m_health, m_maxHealth ) );
+    NOTIFY_COMPONENT_CHANGED( "MaxHealth", m_maxHealth );
 }
 
 const ursine::resources::ResourceReference &Health::GetArchetypeOnDeath(void) const
@@ -171,12 +178,21 @@ void Health::SetShieldHealth(float shield)
 {
     m_shield = math::Max(shield, 0.0f);
 
-    NOTIFY_COMPONENT_CHANGED( "shieldHealth", m_shield );
+    NOTIFY_COMPONENT_CHANGED( "ShieldHealth", m_shield );
 }
 
 float Health::GetMaxShieldHealth(void) const
 {
     return m_maxShield;
+}
+
+void Health::SetMaxShieldHealth(float shield)
+{
+    m_maxShield = shield;
+
+    SetShieldHealth( math::Min( shield, m_shield ) );
+
+    NOTIFY_COMPONENT_CHANGED( "MaxShieldHealth", m_maxShield );
 }
 
 void Health::AddHealth(float healthToAdd)
@@ -224,10 +240,6 @@ void Health::DealDamage(float damage)
 
         if (m_deleteOnZero)
             GetOwner( )->Delete( );
-
-        // if player then they will enter downed state
-        if ( m_type == PLAYER_HEALTH )
-            GetOwner( )->AddComponent< RevivePlayer >( );
     }
     else
     {
@@ -280,7 +292,7 @@ void Health::OnInitialize(void)
     m_maxShield = m_shield;
 
     GetOwner( )->Listener(this)
-        .On( HEALTH_REVIVE, &Health::onRevive )
+        .On( game::REVIVE_PLAYER, &Health::onRevive )
         .On( ENTITY_REMOVED, &Health::onDeath );
 }
 
