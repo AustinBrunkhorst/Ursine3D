@@ -118,8 +118,6 @@ void PlayerGunAnimationController::OnSceneReady(Scene *scene)
     // Subscribe to update and hierarchy serialized
     GetOwner( )->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &PlayerGunAnimationController::onUpdate );
-
-    m_controller->EnableDebugOutput( &std::cout );
 }
 
 const std::string &PlayerGunAnimationController::GetIdleState(void) const
