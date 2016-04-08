@@ -87,6 +87,13 @@ namespace ursine
                 SetShadowmapSize
             );
 
+             EditorField(
+                unsigned castShadows,
+                GetCastShadows,
+                SetCastShadows
+            );
+
+
             Light(void);
             ~Light(void);
 
@@ -128,6 +135,9 @@ namespace ursine
 
             bool GetIsActive(void) const;
             void SetIsActive(bool isActive);
+
+            bool GetCastShadows(void) const;
+            void SetCastShadows(bool doesCastShadows);
 
             //private methods
         private:
