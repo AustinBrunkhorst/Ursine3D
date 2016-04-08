@@ -163,6 +163,7 @@
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/ChangeSegmentOnAnimatorFinishComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/Phase3BossSpawnComponent.h"
+#include "LevelSegmentManager/SegmentLogic/Misc/BossBattleMusicManagerComponent.h"
 #include "Misc/DeathTriggerGroupComponent.h"
 #include "Misc/PingTestComponent.h"
 
