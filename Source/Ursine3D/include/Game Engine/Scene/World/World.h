@@ -97,9 +97,9 @@ namespace ursine
             Scene *GetOwner(void) const;
             void SetOwner(Scene *owner);
 
-            void MergeWorld(
+            void ImportWorld(
                 resources::ResourceManager &resourceManager, 
-                resources::ResourceReference &worldResource
+                const resources::ResourceReference &worldResource
             );
 
         private:

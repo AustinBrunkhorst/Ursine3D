@@ -1,5 +1,7 @@
 package ursine.editor.resources;
 
+import ursine.utils.Utils;
+
 import ursine.native.Extern;
 import ursine.api.native.NativeBroadcastManager;
 
@@ -63,7 +65,7 @@ class NativeInstallManager {
 
             var duration = Date.now( ).getTime( ) - m_lastStartDate.getTime( );
 
-            OutputLog.log( 'Install Build Completed in ${duration} ms' );
+            OutputLog.log( 'Install build completed in ${Utils.formatDuration( duration )}' );
         } else {
             notification = new Notification(
                 NotificationType.Error,
@@ -71,7 +73,7 @@ class NativeInstallManager {
                 'Install Build Failed'
             );
 
-            OutputLog.log( 'Install Build Failed: ${e.error}' );
+            OutputLog.log( 'Install build failed: ${e.error}' );
         }
 
         notification.show( );

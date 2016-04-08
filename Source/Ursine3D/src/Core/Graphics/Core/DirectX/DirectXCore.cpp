@@ -172,6 +172,8 @@ namespace ursine
                     (void **)&pIDXGIFactory
                     );
 
+                pIDXGIFactory->MakeWindowAssociation( hWindow, DXGI_MWA_NO_ALT_ENTER );
+
                 // INITIALIZE DESCRIPTION /////////////////////////////////////
                 //Initialize the swap chain description.
                 DXGI_SWAP_CHAIN_DESC swapChainDesc;
@@ -213,7 +215,7 @@ namespace ursine
                 LogMessage("Sample Quality: %i", 2, swapChainDesc.SampleDesc.Quality);
 
                 //set swap chain flags
-                swapChainDesc.Windowed = true; // this is like this for a reason
+                swapChainDesc.Windowed = !fullscreen; // this is like this for a reason
                 swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
                 //Set the scan line ordering and scaling to unspecified.

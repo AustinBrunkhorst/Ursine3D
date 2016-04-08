@@ -8,7 +8,17 @@
 
 namespace ui_event
 {
+    namespace global
+    {
+        const auto GameplayStarted = "GameplayStarted";
+    }
+
     UI_EVENT( ToggleHUD,
         bool toggled;
+    );
+
+    UI_EVENT( PlayerHealthUpdated,
+        int playerID;
+        float percent;
     );
 }

@@ -49,7 +49,7 @@ ProjectGameInstaller::ProjectGameInstaller(Project *project)
 
 void ProjectGameInstaller::Build(
     const fs::path &buildDir,
-    const fs::path &outputDir
+    const fs::path &outputFile
 )
 {
     if (m_building)
@@ -58,7 +58,7 @@ void ProjectGameInstaller::Build(
     m_building = true;
 
     m_buildDir = buildDir;
-    m_outputDir = outputDir;
+    m_outputFile = outputFile;
 
     m_buildWorkerThread = std::thread( &ProjectGameInstaller::doBuild, this );
 
@@ -106,11 +106,8 @@ void ProjectGameInstaller::doBuild(void)
             executableFile.string( ).c_str( )
         );
 
-        auto outputInstaller = (m_outputDir / (kInstallerPrefix + displayName))
-            .replace_extension( kExecutableExtension );
-
         scriptData[ "executableFile" ] = executableFile.string( );
-        scriptData[ "outputInstaller" ] = outputInstaller.string( );
+        scriptData[ "outputInstaller" ] = m_outputFile.string( );
         scriptData[ "configBuildDirectory" ] = m_buildDir.string( );
         scriptData[ "configGameName" ] = settings.gameName;
         scriptData[ "configPublisher" ] = settings.publisherName;

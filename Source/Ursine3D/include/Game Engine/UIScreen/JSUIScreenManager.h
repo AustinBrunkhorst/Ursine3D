@@ -32,6 +32,9 @@ namespace ursine
 
         JSMethod(screenHasFocus);
 
+        JSMethod(messageOwner);
+        JSMethod(messageGlobal);
+
     private:
         UIScreenManager *m_manager;
 

@@ -24,6 +24,18 @@ UIScreensConfig::UIScreensConfig(void)
     : BaseComponent( ) { }
 
 
+const resources::ResourceReference &UIScreensConfig::GetStartingGameplayWorld(void)
+{
+    return m_startingGameplayWorld;
+}
+
+void UIScreensConfig::SetStartingGameplayWorld(const resources::ResourceReference &world)
+{
+    m_startingGameplayWorld = world;
+
+    NOTIFY_COMPONENT_CHANGED( "startingGameplayWorld", m_startingGameplayWorld );
+}
+
 UIScreen *UIScreensConfig::addScreen(
     const resources::ResourceReference &reference, 
     const UIScreenConfig &config, 

@@ -17,32 +17,123 @@
 
 #include "UIScreensConfigComponent.h"
 
-#include "UIScreen.h"
+#include "UIEvents.h"
+
+#include <Scene.h>
+#include <UIScreenManager.h>
+
+#if defined(URSINE_WITH_EDITOR)
+
+#include <Notification.h>
+
+#endif
+
+using namespace ursine;
 
 ENTITY_SYSTEM_DEFINITION( GameEntryPointSystem );
 
-GameEntryPointSystem::GameEntryPointSystem(ursine::ecs::World *world)
+GameEntryPointSystem::GameEntryPointSystem(ecs::World *world)
     : EntitySystem( world )
 {
-    
+
 }
 
 void GameEntryPointSystem::OnInitialize(void)
 {
-    
+
 }
 
-void GameEntryPointSystem::OnSceneReady(ursine::Scene *scene)
+void GameEntryPointSystem::OnSceneReady(Scene *scene)
 {
-    auto *uiScreens = m_world->GetSettings( )->GetComponent<UIScreensConfig>( );
+    scene->GetScreenManager( ).Listener( this )
+        .On( ui_event::global::GameplayStarted, &GameEntryPointSystem::onGameplayStarted );
 
-    if (!uiScreens)
+    auto *ui = m_world->GetSettings( )->GetComponent<UIScreensConfig>( );
+
+#if defined(URSINE_WITH_EDITOR)
+
+    if (!ui)
+    {
+        NotificationConfig warning;
+
+        warning.type = NOTIFY_WARNING;
+        warning.header = "Warning";
+        warning.message = "World settings missing <strong class=\"highlight\">UIScreensConfig</strong> component.";
+            
+        EditorPostNotification( warning );
+
         return;
+    }
 
-    uiScreens->AddSplash( );
+#else
+
+    UAssert( ui != nullptr,
+        "World settings missing UIScreensConfig component."    
+    );
+
+#endif
+
+    auto *splash = ui->AddSplash( );
+
+#if defined(URSINE_WITH_EDITOR)
+
+    if (!splash)
+    {
+        NotificationConfig warning;
+
+        warning.type = NOTIFY_WARNING;
+        warning.header = "Warning";
+        warning.message = "UI Screen <strong class=\"highlight\">Splash</strong> invalid or not configured.";
+            
+        EditorPostNotification( warning );
+    }
+
+#else
+
+    UAssert( splash != nullptr,
+        "UIScreen 'Splash' invalid or not configured."    
+    );
+
+#endif
 }
 
 void GameEntryPointSystem::OnRemove(void)
 {
-    
+    m_world->GetOwner( )->GetScreenManager( ).Listener( this )
+        .Off( ui_event::global::GameplayStarted, &GameEntryPointSystem::onGameplayStarted );
+}
+
+void GameEntryPointSystem::onGameplayStarted(EVENT_HANDLER(UIScreenManager))
+{
+    EVENT_ATTRS(UIScreenManager, UIScreenMessageArgs);
+
+    auto *ui = m_world->GetSettings( )->GetComponent<UIScreensConfig>( );
+
+#if defined(URSINE_WITH_EDITOR)
+
+    if (!ui)
+    {
+        NotificationConfig warning;
+
+        warning.type = NOTIFY_WARNING;
+        warning.header = "Warning";
+        warning.message = "World settings missing <strong class=\"highlight\">UIScreensConfig</strong> component.";
+            
+        EditorPostNotification( warning );
+
+        return;
+    }
+
+#else
+
+    UAssert( ui != nullptr,
+        "World settings missing UIScreensConfig component."    
+    );
+
+#endif
+
+    m_world->ImportWorld( 
+        m_world->GetOwner( )->GetResourceManager( ), 
+        ui->GetStartingGameplayWorld( ) 
+    );
 }

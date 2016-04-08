@@ -70,4 +70,38 @@ namespace ursine
 
         return CefV8Value::CreateBool( screen ? screen->HasInputFocus( ) : false );
     }
+
+    JSMethod(JSUIScreenManager::messageOwner)
+    {
+        if (arguments.size( ) != 3)
+            JSThrow( "Invalid arguments.", nullptr );
+
+        auto id = static_cast<UIScreenID>( arguments[ 0 ]->GetUIntValue( ) );
+
+        auto screen = m_manager->GetScreen( id );
+
+        if (!screen)
+            return CefV8Value::CreateBool( false );
+
+        m_manager->MessageScreenNative(
+            screen, 
+            arguments[ 1 ]->GetStringValue( ),
+            JsonSerializer::Serialize( arguments[ 2 ] )
+        );
+
+        return CefV8Value::CreateBool( true );
+    }
+
+    JSMethod(JSUIScreenManager::messageGlobal)
+    {
+        if (arguments.size( ) != 2)
+            JSThrow( "Invalid arguments.", nullptr );
+
+        m_manager->MessageGlobalNative(
+            arguments[ 0 ]->GetStringValue( ),
+            JsonSerializer::Serialize( arguments[ 1 ] )
+        );
+
+        return CefV8Value::CreateBool( true );
+    }
 }

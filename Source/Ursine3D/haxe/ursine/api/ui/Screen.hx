@@ -70,6 +70,14 @@ class Screen implements IEventContainer {
         };
     }
 
+    public function messageNativeOwner(event : String, data : Dynamic) {
+        m_owner.messageNativeOwner( this, event, data );
+    }
+
+    public function messageNativeGlobal(event : String, data : Dynamic) {
+        m_owner.messageNativeGlobal( event, data );
+    }
+
     public function addLocalScreen(path : String, initData : Dynamic = null, inputBlocking : Bool = false, priority : Int = 0) : ScreenID {
         return m_owner.addScreen( '${m_project}/${path}', initData, inputBlocking, priority );
     }

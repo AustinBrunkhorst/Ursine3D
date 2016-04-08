@@ -65,7 +65,7 @@ class Editor {
         m_resourceManager = new NativeResourceManager( broadcastManager );
         m_buildManager = new NativeBuildManager( broadcastManager );
         m_installManager = new NativeInstallManager( broadcastManager );
-        
+
         m_statusTextContainer = cast js.Browser.document.querySelector( '#status-bar span' );
 
         js.Browser.document

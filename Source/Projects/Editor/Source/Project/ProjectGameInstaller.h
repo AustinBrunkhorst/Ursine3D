@@ -17,7 +17,7 @@ public:
 
     void Build(
         const ursine::fs::path &buildDir, 
-        const ursine::fs::path &outputDir
+        const ursine::fs::path &outputFile
     );
 
     bool IsBuilding(void) const;
@@ -30,7 +30,7 @@ private:
     Project *m_project;
 
     ursine::fs::path m_buildDir;
-    ursine::fs::path m_outputDir;
+    ursine::fs::path m_outputFile;
 
     ursine::fs::PathList m_buildFiles;
     ursine::fs::PathList m_buildDirectories;

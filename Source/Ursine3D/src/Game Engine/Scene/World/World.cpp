@@ -214,9 +214,9 @@ namespace ursine
             m_deleted.emplace_back( EntityHandle( entity ) );
         }
 
-        void World::MergeWorld(
+        void World::ImportWorld(
             resources::ResourceManager &resourceManager,
-            resources::ResourceReference &worldResource
+            const resources::ResourceReference &worldResource
         )
         {
             auto data = worldResource.Load<resources::WorldData>( resourceManager );

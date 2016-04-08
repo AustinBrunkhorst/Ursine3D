@@ -28,7 +28,7 @@ namespace
 {
     fs::path gLastSelectedLauncherBuildDir;
     fs::path gLastSelectedOutputDir;
-    fs::path gLastSelectedInstallOutputDir;
+    fs::path gLastSelectedInstallExecutable;
 
     void buildResourceDirectory(rp::ResourceDirectoryNode *node, Json::object &obj);
     Json serializeResource(rp::ResourceItem::Handle resource);
@@ -124,19 +124,24 @@ JSFunction(ProjectInstallStart)
 
     gLastSelectedOutputDir = buildDir;
 
-    folderDialog.config.initialPath = gLastSelectedInstallOutputDir;
-    folderDialog.config.windowTitle = "Select Output Directory";
+    fs::FileDialog fileDialog;
 
-    auto outputResult = folderDialog.Open( );
+    fileDialog.config.mode = fs::FDM_SAVE;
+    fileDialog.config.initialPath = gLastSelectedInstallExecutable;
+    fileDialog.config.windowTitle = "Select Installer Executable";
+    fileDialog.config.filters = { { "Executable Files", { "exe" } } };
+    fileDialog.config.parentWindow = editor->GetMainWindow( ).GetWindow( );
+
+    auto outputResult = fileDialog.Open( );
 
     if (!outputResult)
         return CefV8Value::CreateBool( false );
 
-    auto &outputDir = outputResult.selectedFiles[ 0 ];
+    auto &outputFile = outputResult.selectedFiles[ 0 ];
 
-    gLastSelectedInstallOutputDir = outputDir;
+    gLastSelectedInstallExecutable = outputFile;
 
-    installer.Build( buildDir, outputDir );
+    installer.Build( buildDir, outputFile );
 
 	return CefV8Value::CreateBool( true );
 }
