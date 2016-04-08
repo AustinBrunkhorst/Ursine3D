@@ -137,7 +137,7 @@ namespace ursine
 					SetListener3DPosition( trans->GetForward( ), trans->GetUp( ),
                     trans->GetWorldPosition( ), index );
 			}
-            }
+
 			// walk through all emitters
 			// update positions
 			// Post Events
