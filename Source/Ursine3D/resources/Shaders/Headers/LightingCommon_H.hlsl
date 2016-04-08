@@ -23,8 +23,8 @@ SamplerState SampleType             : register(s0);
 cbuffer InverseProjection           : register(b4)
 {
     float4x4    gInvProj;
-    float       gNearPlane;
-    float       gFarPlane;
+    float       gAValue;
+    float       gBValue;
 };
 
 // cel shading data
@@ -64,8 +64,7 @@ struct Material
 // convert given depth value from exponential to linear
 float LinearizeDepth(float depth)
 {
-    return (2.0f * gNearPlane) / 
-        (gFarPlane + gNearPlane - depth * (gFarPlane - gNearPlane));
+    return gBValue / (depth - gAValue);
 }
 
 // calculate view-space position, given depth

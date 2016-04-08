@@ -93,9 +93,12 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             aiTrans->SetWorldPosition( aiPos + aiTrans->GetForward( ) * ai->GetDigSpeed( ) * dt );
 
             // Tell the particle emitter to play
-            auto emitter = aiOwner->GetChildByName( ai->GetDigParticleEmitterName( ) );
+            auto entity = aiOwner->GetChildByName( ai->GetDigParticleEmitterName( ) );
 
-            emitter->GetComponent<ecs::ParticleEmitter>( )->SetEmitRate( 200 );
+            auto emitters = entity->GetComponentsInChildren<ParticleEmitter>( );
+
+            for (auto &emitter : emitters)
+                emitter->SetEmitting( true );
 
             // Check to see if we've reached a valid distance
             if (VineStateUtils::AtTarget( ai, ai->GetUprootDistance( ) ))
@@ -108,19 +111,12 @@ void VineUprootState::Update(VineAIStateMachine *machine)
         }
         case UprootState::UprootDelay:
         {
-            // When in this state, tell a particle emitter to amp up
-            auto emitter = aiOwner->GetChildByName( ai->GetDigParticleEmitterName( ) );
-            auto particleEmitter = emitter->GetComponent<ecs::ParticleEmitter>( );
-
-            particleEmitter->SetVelocityRange( SVec3( 5.0f, 20.0f, 5.0f ) );
-
             // decrement a timer
             m_delayTimer -= Application::Instance->GetDeltaTime( );
 
             // switch to uproot when timer is up
             if (m_delayTimer <= 0.0f)
             {
-                particleEmitter->SetEmitRate( 0 );
                 m_state = UprootState::Uprooting;
             }
 
@@ -137,6 +133,14 @@ void VineUprootState::Update(VineAIStateMachine *machine)
 
             // Update the vine's "time of last pursue"
             ai->m_timeOfLastPursue = Application::Instance->GetTimeSinceStartup( );
+
+            // turn off the emitters
+            auto entity = aiOwner->GetChildByName( ai->GetDigParticleEmitterName( ) );
+
+            auto emitters = entity->GetComponentsInChildren<ParticleEmitter>( );
+
+            for (auto &emitter : emitters)
+                emitter->SetEmitting( false );
 
             break;
         }

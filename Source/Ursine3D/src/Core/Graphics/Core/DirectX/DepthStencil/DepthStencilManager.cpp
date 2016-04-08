@@ -35,18 +35,18 @@ namespace ursine
                     DEPTH_STENCIL_MAIN, 
                     width, 
                     height, 
-                    DXGI_FORMAT_R24G8_TYPELESS, 
-                    DXGI_FORMAT_D24_UNORM_S8_UINT, 
-                    DXGI_FORMAT_R24_UNORM_X8_TYPELESS
+                    DXGI_FORMAT_R32_TYPELESS,
+                    DXGI_FORMAT_D32_FLOAT,
+                    DXGI_FORMAT_R32_FLOAT
                 );
 
                 createInternalDepthTarget(
                     DEPTH_STENCIL_OVERDRAW, 
                     width, 
                     height, 
-                    DXGI_FORMAT_R24G8_TYPELESS, 
-                    DXGI_FORMAT_D24_UNORM_S8_UINT, 
-                    DXGI_FORMAT_R24_UNORM_X8_TYPELESS
+                    DXGI_FORMAT_R32_TYPELESS,
+                    DXGI_FORMAT_D32_FLOAT,
+                    DXGI_FORMAT_R32_FLOAT
                 );
 
                 createInternalDepthTarget(
