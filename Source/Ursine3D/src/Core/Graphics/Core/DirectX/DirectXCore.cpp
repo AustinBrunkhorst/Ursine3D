@@ -172,8 +172,6 @@ namespace ursine
                     (void **)&pIDXGIFactory
                     );
 
-                pIDXGIFactory->MakeWindowAssociation( hWindow, DXGI_MWA_NO_ALT_ENTER );
-
                 // INITIALIZE DESCRIPTION /////////////////////////////////////
                 //Initialize the swap chain description.
                 DXGI_SWAP_CHAIN_DESC swapChainDesc;
@@ -190,7 +188,7 @@ namespace ursine
                 swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
                 //Set the refresh rate of the back buffer.
-                if (true) //@Matt change this to properly do vsync
+                if (false) //@Matt change this to properly do vsync
                 {
                     swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
                     swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
@@ -233,6 +231,8 @@ namespace ursine
                 );
 
                 UAssert(result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage(result));
+
+                pIDXGIFactory->MakeWindowAssociation(hWindow, DXGI_MWA_NO_ALT_ENTER);
 
                 RELEASE_RESOURCE(pIDXGIFactory);
                 RELEASE_RESOURCE(pDXGIAdapter);
