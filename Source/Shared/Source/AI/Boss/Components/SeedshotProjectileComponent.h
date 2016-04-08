@@ -63,8 +63,9 @@ private:
     void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
 
 } Meta(
-    Enable,
+    Enable
+) EditorMeta(
     RequiresComponents(
-        typeof(ursine::ecs::AudioEmitter)
+        typeof( ursine::ecs::AudioEmitter )
     )
 );

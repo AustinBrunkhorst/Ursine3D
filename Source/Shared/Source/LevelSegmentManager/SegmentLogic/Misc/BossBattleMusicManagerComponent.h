@@ -60,7 +60,8 @@ private:
     ursine::resources::ResourceReference m_stopMusic;
 
 } Meta(
-    Enable,
+    Enable
+) EditorMeta(
     RequiresComponents(
         typeof( ursine::ecs::AudioEmitter )
     )
