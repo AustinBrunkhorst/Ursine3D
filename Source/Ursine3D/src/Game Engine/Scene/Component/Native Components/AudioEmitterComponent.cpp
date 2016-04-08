@@ -30,6 +30,16 @@ namespace ursine
             , m_maskChanged( false )
             , m_listenerMask( ListenerMask::None )  { }
 
+        AudioEmitter::~AudioEmitter(void)
+        {
+            AudioComponentBase::OnRemove( GetOwner( ) );
+        }
+
+        void AudioEmitter::OnInitialize(void)
+        {
+            AudioComponentBase::OnInitialize( GetOwner( ) );
+        }
+
         ListenerMask AudioEmitter::GetListenerMask(void) const
         {
             return m_listenerMask;
@@ -39,24 +49,10 @@ namespace ursine
 
         void AudioEmitter::PushTestSound(void)
         {
-            auto event = std::make_shared<AudioGeneric>( );
-
-            event->name = m_testText;
-            
-            m_events.push( event );
+            PushEvent( m_testEvent );
         }
 
     #endif
-
-        const std::string& AudioEmitter::GetText(void) const
-        {
-            return m_testText;
-        }
-
-        void AudioEmitter::SetText(const std::string& text)
-        {
-            m_testText = text;
-        }
 
         void AudioEmitter::PushEvent(const AudioEvent::Handle event)
         {
@@ -119,6 +115,18 @@ namespace ursine
             m_maskChanged = true;
 
             NOTIFY_COMPONENT_CHANGED( "listenerMask", m_listenerMask );
+        }
+
+        const ResourceReference &AudioEmitter::GetTestEvent(void) const
+        {
+            return m_testEvent;
+        }
+
+        void AudioEmitter::SetTestEvent(const ResourceReference &audioEvent)
+        {
+            m_testEvent = audioEvent;
+
+            NOTIFY_COMPONENT_CHANGED( "TestEvent", m_testEvent );
         }
     }
 }

@@ -19,29 +19,29 @@
 
 namespace ursine
 {
-	AudioComponentBase::AudioComponentBase(void)
-		: m_handle(AUDIO_UNALLOCATED_ID) 
-	    , m_dirty(false) { }
+    AudioComponentBase::AudioComponentBase(void)
+        : m_handle( AUDIO_UNALLOCATED_ID ) 
+        , m_dirty( true ) { }
 
-	AkGameObjectID AudioComponentBase::GetHandle()
-	{
-		return m_handle;
-	}
+    AkGameObjectID AudioComponentBase::GetHandle()
+    {
+        return m_handle;
+    }
 
-	void AudioComponentBase::OnInitialize(const ecs::EntityHandle &owner)
-	{
-		owner->Listener(this)
-			.On(ecs::ENTITY_TRANSFORM_DIRTY, &AudioComponentBase::onTransformChange);
-	}
+    void AudioComponentBase::OnInitialize(const ecs::EntityHandle &owner)
+    {
+        owner->Listener(this)
+            .On(ecs::ENTITY_TRANSFORM_DIRTY, &AudioComponentBase::onTransformChange);
+    }
 
-	void AudioComponentBase::OnRemove(const ecs::EntityHandle &owner)
-	{
-		owner->Listener(this)
-			.Off(ecs::ENTITY_TRANSFORM_DIRTY, &AudioComponentBase::onTransformChange);
-	}
+    void AudioComponentBase::OnRemove(const ecs::EntityHandle &owner)
+    {
+        owner->Listener(this)
+            .Off(ecs::ENTITY_TRANSFORM_DIRTY, &AudioComponentBase::onTransformChange);
+    }
 
-	void AudioComponentBase::onTransformChange(EVENT_HANDLER(ecs::Entity))
-	{
-		m_dirty = true;
-	}
+    void AudioComponentBase::onTransformChange(EVENT_HANDLER(ecs::Entity))
+    {
+        m_dirty = true;
+    }
 }

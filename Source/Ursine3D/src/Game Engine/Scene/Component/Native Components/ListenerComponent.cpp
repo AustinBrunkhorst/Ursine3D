@@ -26,97 +26,97 @@
 
 namespace ursine
 {
-	namespace ecs
-	{
-		NATIVE_COMPONENT_DEFINITION( AudioListener );
+    namespace ecs
+    {
+        NATIVE_COMPONENT_DEFINITION( AudioListener );
 
-		AudioListener::AudioListener(void)
-			: BaseComponent( )
-			, m_mask( ListenerMask::L1 )
-			, m_listenerIndex( ListenerIndex::L1 ) { }
+        AudioListener::AudioListener(void)
+            : BaseComponent( )
+            , m_mask( ListenerMask::L1 )
+            , m_listenerIndex( ListenerIndex::L1 ) { }
 
-		AudioListener::~AudioListener(void)
-		{
+        AudioListener::~AudioListener(void)
+        {
+            AudioComponentBase::OnRemove( GetOwner( ) );
+        }
 
-		}
+        void AudioListener::OnInitialize(void)
+        {
+            AudioComponentBase::OnInitialize( GetOwner( ) );
+        }
 
-		void AudioListener::OnInitialize(void)
-		{
+        ListenerIndex AudioListener::GetListenerIndex(void) const
+        {
+            return m_listenerIndex;
+        }
 
-		}
+        void AudioListener::SetListenerIndex(ListenerIndex index)
+        {
+        #if defined(URSINE_WITH_EDITOR)
 
-		ListenerIndex AudioListener::GetListenerIndex(void) const
-		{
-			return m_listenerIndex;
-		}
+            auto audioSys = GetOwner( )->GetWorld( )->GetEntitySystem<AudioSystem>( );
 
-		void AudioListener::SetListenerIndex(ListenerIndex index)
-		{
-		#if defined(URSINE_WITH_EDITOR)
+            bool success = audioSys->ChangeAssignedListener( m_listenerIndex, index );
 
-			auto audioSys = GetOwner( )->GetWorld( )->GetEntitySystem<AudioSystem>( );
+            // TODO: determine if this index is already being used 
+            if (!success)
+            {
+                NotificationConfig config;
 
-			bool success = audioSys->ChangeAssignedListener( m_listenerIndex, index );
+                config.type = NOTIFY_ERROR;
+                config.dismissible = true;
+                config.header = "Audio Listener";
+                config.message = "This guy is already used brother.";
 
-			// TODO: determine if this index is already being used 
-			if (!success)
-			{
-				NotificationConfig config;
+                EditorPostNotification( config );
+                return;
+            }
 
-				config.type = NOTIFY_ERROR;
-				config.dismissible = true;
-				config.header = "Audio Listener";
-				config.message = "This guy is already used brother.";
+        #endif
 
-				EditorPostNotification( config );
-				return;
-			}
+            m_listenerIndex = index;
 
-		#endif
+            indexToMask( );
 
-			m_listenerIndex = index;
+            m_dirty = true;
 
-			indexToMask( );
+            NOTIFY_COMPONENT_CHANGED( "listener", m_listenerIndex );
+        }
 
-			m_dirty = true;
+        ListenerMask AudioListener::GetListenerMask(void)
+        {
+            return m_mask;
+        }
 
-			NOTIFY_COMPONENT_CHANGED( "listener", m_listenerIndex );
-		}
-
-		ListenerMask AudioListener::GetListenerMask(void)
-		{
-			return m_mask;
-		}
-
-		void AudioListener::indexToMask(void)
-		{
-			switch (m_listenerIndex)
-			{
-			case ListenerIndex::L1:
-				m_mask = ListenerMask::L1;
-				break;
-			case ListenerIndex::L2:
-				m_mask = ListenerMask::L2;
-				break;
-			case ListenerIndex::L3:
-				m_mask = ListenerMask::L3;
-				break;
-			case ListenerIndex::L4:
-				m_mask = ListenerMask::L4;
-				break;
-			case ListenerIndex::L5:
-				m_mask = ListenerMask::L5;
-				break;
-			case ListenerIndex::L6:
-				m_mask = ListenerMask::L6;
-				break;
-			case ListenerIndex::L7:
-				m_mask = ListenerMask::L7;
-				break;
-			case ListenerIndex::LG:
-				m_mask = ListenerMask::L8;
-				break;
-			}
-		}
-	}
+        void AudioListener::indexToMask(void)
+        {
+            switch (m_listenerIndex)
+            {
+            case ListenerIndex::L1:
+                m_mask = ListenerMask::L1;
+                break;
+            case ListenerIndex::L2:
+                m_mask = ListenerMask::L2;
+                break;
+            case ListenerIndex::L3:
+                m_mask = ListenerMask::L3;
+                break;
+            case ListenerIndex::L4:
+                m_mask = ListenerMask::L4;
+                break;
+            case ListenerIndex::L5:
+                m_mask = ListenerMask::L5;
+                break;
+            case ListenerIndex::L6:
+                m_mask = ListenerMask::L6;
+                break;
+            case ListenerIndex::L7:
+                m_mask = ListenerMask::L7;
+                break;
+            case ListenerIndex::LG:
+                m_mask = ListenerMask::L8;
+                break;
+            }
+        }
+    }
 }

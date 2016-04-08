@@ -19,6 +19,9 @@
 #include "HealthComponent.h"
 #include "VineAIComponent.h"
 
+#include <AudioItemEventData.h>
+#include <AudioEmitterComponent.h>
+
 enum class BossAIEvents
 {
     ShieldUp,
@@ -178,6 +181,13 @@ public:
         SetPhase2DazedResetTimer
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        introScream,
+        GetIntroScream,
+        SetIntroScream
+    );
+
     Meta(Enable)
     BossAI(void);
 
@@ -246,6 +256,9 @@ public:
 
     float GetPhase2DazedResetTimer(void) const;
     void SetPhase2DazedResetTimer(float timer);
+
+    const ursine::resources::ResourceReference &GetIntroScream(void) const;
+    void SetIntroScream(const ursine::resources::ResourceReference &audioEvent);
 
     ursine::ecs::EntityHandle GetSeedshotEntity(void);
 
@@ -363,9 +376,15 @@ private:
 
     bool m_underground;
 
+    // Sfxs
+    ursine::resources::ResourceReference m_introScream;
+
 } Meta(
     Enable,
     WhiteListMethods
 ) EditorMeta(
-    RequiresComponents( typeof( Health ) )
+    RequiresComponents( 
+        typeof( Health ),
+        typeof( ursine::ecs::AudioEmitter ) 
+    )
 );
