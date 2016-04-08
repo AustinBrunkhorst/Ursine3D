@@ -41,7 +41,7 @@ namespace ursine
             m_world->Listener(this)
                 .On(WORLD_ENTITY_COMPONENT_ADDED, &WaypointConnectorSystem::onComponentAdded)
                 .On(WORLD_ENTITY_COMPONENT_REMOVED, &WaypointConnectorSystem::onComponentRemoved)
-                .On(WORLD_UPDATE, &WaypointConnectorSystem::onUpdate);
+                .On(WORLD_EDITOR_UPDATE, &WaypointConnectorSystem::onUpdate);
 
             m_keyboardManager->Listener(this)
                 .On(KM_KEY_DOWN, &WaypointConnectorSystem::onKeyDown)
@@ -58,7 +58,7 @@ namespace ursine
             m_world->Listener(this)
                 .Off(WORLD_ENTITY_COMPONENT_ADDED, &WaypointConnectorSystem::onComponentAdded)
                 .Off(WORLD_ENTITY_COMPONENT_REMOVED, &WaypointConnectorSystem::onComponentRemoved)
-                .Off(WORLD_UPDATE, &WaypointConnectorSystem::onUpdate);
+                .Off(WORLD_EDITOR_UPDATE, &WaypointConnectorSystem::onUpdate);
 
             m_keyboardManager->Listener(this)
                 .Off(KM_KEY_DOWN, &WaypointConnectorSystem::onKeyDown)

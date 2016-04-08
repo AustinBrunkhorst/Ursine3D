@@ -2,6 +2,7 @@
 
 #include <EntitySystem.h>
 #include <WaypointComponent.h>
+#include <KeyboardManager.h>
 #include <GfxAPI.h>
 #include <Vec4.h>
 
@@ -64,6 +65,6 @@ namespace ursine
 
             bool m_showLines;
 
-        } Meta(Enable);
+        } Meta(Enable, AutoAddEntitySystem);
     }
 }
