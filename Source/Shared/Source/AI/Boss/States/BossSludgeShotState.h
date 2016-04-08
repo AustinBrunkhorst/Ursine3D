@@ -20,7 +20,7 @@ class BossAI;
 class BossSludgeshotState : public BossAIState
 {
 public:
-    BossSludgeshotState(void);
+    BossSludgeshotState(float playback = 1.0f);
 
     bool CanExit(void) override { return m_finished; }
 
@@ -42,4 +42,6 @@ private:
     ursine::ecs::EntityHandle m_target;
 
     bool m_finished;
+
+    float m_playback;
 };

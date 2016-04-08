@@ -16,7 +16,10 @@
 class BossPhase3RepositionBoss : public BossAIState
 {
 public:
-    BossPhase3RepositionBoss(void);
+    BossPhase3RepositionBoss(bool onlyBossSpawn = true);
 
     void Enter(BossAIStateMachine *machine) override;
+
+private:
+    bool m_onlyBossSpawn;
 };

@@ -36,6 +36,7 @@ namespace ursine
             if ( !model.GetActive() )
                 return true;
 
+            // skip non shadow casters, if a shadow pass
             if( !m_shadowPass )
             {
                 if(!model.GetShadowCaster( ))

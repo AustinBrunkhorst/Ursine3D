@@ -173,6 +173,9 @@ void WeaponSystemUtils::DecrementFireTimer(float dt, AbstractWeapon &weapon)
 void WeaponSystemUtils::DecrementReloadTimer(float dt, AbstractWeapon &weapon)
 {
     weapon.m_reloadTimer -= dt;
+
+    if (weapon.m_reloadTimer <= 0.0f)
+        weapon.m_owner->GetRoot( )->Dispatch( game::RELOAD_END, EventArgs::Empty );
 }
 
 // Tries to remove the number of rounds specified from the clip
@@ -206,6 +209,7 @@ void WeaponSystemUtils::ReloadWeapon(AbstractWeapon &weapon, ursine::ecs::AudioE
     {
         // play sound
         emitter->PushEvent( weapon.GetReloadSFX( ) );
+        weapon.m_owner->GetRoot( )->Dispatch( game::RELOAD_START, EventArgs::Empty );
     }
 }
 
@@ -395,11 +399,6 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
 
         if (!weapon->m_active)
             continue;
-
-        if ( weapon->m_reload )
-        {
-            
-        }
 
         // Can weapon be fired
         switch (weapon->CanFire( ))

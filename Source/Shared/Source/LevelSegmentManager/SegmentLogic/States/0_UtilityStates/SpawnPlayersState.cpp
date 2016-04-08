@@ -88,6 +88,9 @@ void SpawnPlayersState::Enter(SegmentLogicStateMachine *machine)
 
             player = atype->Instantiate( world );
 
+            UAssert( player, "Error: Set up the correct archetype for the players." );
+            UAssert( player->HasComponent<PlayerID>( ), "Wtf you doing, make sure the player has this fucker." );
+
             if (player->GetComponent<PlayerID>( )->GetID( ) == 0)
             {
                 segmentManager->m_player1 = player;

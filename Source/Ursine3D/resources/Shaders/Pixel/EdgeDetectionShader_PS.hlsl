@@ -88,6 +88,7 @@ float4 main(PS_INPUT In) : SV_TARGET
 
     float base = LinearizeDepth(gDepthTexture.Load(int3(In.Position.xy, 0)).x);
 
+
     // first, to save sampling we sample the 8 pixels surrounding base pixel
     for (int x = 0; x < 8; ++x)
     {
@@ -112,7 +113,7 @@ float4 main(PS_INPUT In) : SV_TARGET
 
     float mag = sqrt(sX * sX + sY * sY);
 
-    if (mag > 0.072 + base / 10.0f)
+    if (mag > 0.052)
         return float4(0, 0, 0, 1);
 
     /////////////////////////////////////////////////////////////////
@@ -132,8 +133,8 @@ float4 main(PS_INPUT In) : SV_TARGET
         samples[0] * corners + samples[ 2 ] * corners + samples[ 5 ] * corners + samples[ 7 ] * corners +
         samples[ 1 ] * sides + samples[ 3 ] * sides + samples[ 4 ] * sides + samples[ 6 ] * sides;
 
-    //if (lapGauss > gLightStep / 10000.0f)
-        //return float4(0, 0, 0, 1);
+    //if (mag > 0.062 + base / 10.0f)
+    //    return float4(0, 0, 0, 1);
 
     return float4(0, 0, 0, 0);
 }

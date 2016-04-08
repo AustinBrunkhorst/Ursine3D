@@ -28,6 +28,7 @@
 #include "BossPhase3RepositionBoss.h"
 #include "BossJumpToHomeLocationState.h"
 #include "BossPhase3VineLoopState.h"
+#include "BossPlayAudioEventState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -72,6 +73,7 @@ namespace
 
 BossAI::BossAI(void)
     : BaseComponent( )
+    , EventDispatcher<BossAIEvents>( this )
     , m_turnSpeed( 90.0f )
     , m_seedshotInterval( 2.0f )
     , m_seedshotCooldown( 2.0f )
@@ -355,6 +357,30 @@ void BossAI::SetPhase2DazedResetTimer(float timer)
     NOTIFY_COMPONENT_CHANGED( "phase2DazedResetTimer", m_phase2DazedResetTimer );
 }
 
+const ResourceReference &BossAI::GetIntroScream(void) const
+{
+    return m_introScream;
+}
+
+void BossAI::SetIntroScream(const ResourceReference &audioEvent)
+{
+    m_introScream = audioEvent;
+
+    NOTIFY_COMPONENT_CHANGED( "introScream", m_introScream );
+}
+
+const ResourceReference &BossAI::GetHurtSfx(void) const
+{
+    return m_hurtSfx;
+}
+
+void BossAI::SetHurtSfx(const ResourceReference &hurtSfx)
+{
+    m_hurtSfx = hurtSfx;
+
+    NOTIFY_COMPONENT_CHANGED( "hurtSfx", m_hurtSfx );
+}
+
 EntityHandle BossAI::GetSeedshotEntity(void)
 {
     return GetOwner( )->GetChildByName( m_seedshotEntity );
@@ -475,6 +501,7 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
+        auto playScream = sm->AddState<BossPlayAudioEventState>( m_introScream );
         auto spawnBoss = sm->AddState<BossSpawnState>( );
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
         auto spawnVines2 = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 0.5f );
@@ -485,6 +512,7 @@ void BossAI::OnInitialize(void)
         auto dazed = sm->AddState<BossDazedState>( );
         auto changePhaseState = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase2 );
 
+        playScream->AddTransition( spawnBoss, "Spawn Boss" );
         spawnBoss->AddTransition( spawnVines, "To Spawn Vines" );
         spawnVines->AddTransition( invulnerable, "To Invulnerable" );
         invulnerable->AddTransition( seedshot, "To Seedshot" )
@@ -514,7 +542,7 @@ void BossAI::OnInitialize(void)
              );
 
 
-        sm->SetInitialState( spawnBoss );
+        sm->SetInitialState( playScream );
 
         m_bossLogic[ 0 ].push_back( sm );
     }
@@ -597,6 +625,15 @@ void BossAI::OnInitialize(void)
         auto goUnderground2 = sm->AddState<BossUndergroundState>( );
         auto jumpToHome = sm->AddState<BossJumpToHomeLocationState>( );
         auto spawn = sm->AddState<BossSpawnState>( );
+        auto goUnderground3 = sm->AddState<BossUndergroundState>( );
+        auto repositionBoss2 = sm->AddState<BossPhase3RepositionBoss>( );
+        auto spawn2 = sm->AddState<BossSpawnState>( 0.5f );
+        auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
+        auto enraged = sm->AddState<BossEnrageState>( );
+        auto sludgeshot = sm->AddState<BossSludgeshotState>( 0.5f );
+        auto goUnderground4 = sm->AddState<BossUndergroundState>( );
+        auto reposition3 = sm->AddState<BossPhase3RepositionBoss>( false );
+        auto spawn3 = sm->AddState<BossSpawnState>( 1.0f, false );
 
         goUnderground->AddTransition( waitTillTrigger, "To Waiting For Trigger" );
         waitTillTrigger->AddTransition( repositionBoss, "To Reposition Boss" );
@@ -607,12 +644,24 @@ void BossAI::OnInitialize(void)
         blankState->AddTransition( spawnBoss, "Spawn Boss" );
         spawnBoss->AddTransition( invulnerable, "Invulneralbe" )
                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 2.0f ) );
-        invulnerable->AddTransition( seedshot, "Seedshot" );
+        invulnerable->AddTransition( seedshot, "Seedshot" )
+                    ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
         seedshot->AddTransition( goUnderground2, "Go Underground" )
                 ->AddCondition<sm::BoolCondition>( BossAIStateMachine::GoHome, true );
         goUnderground2->AddTransition( jumpToHome, "Jump to new home" );
         jumpToHome->AddTransition( spawn, "Spawn Again" );
         spawn->AddTransition( seedshot, "Attack again" );
+        seedshot->AddTransition( vulnerable, "Vulnerable" )
+                ->AddCondition<sm::IntCondition>( BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 );
+        vulnerable->AddTransition( goUnderground3, "Go Underground" );
+        goUnderground3->AddTransition( repositionBoss2, "Reposition" );
+        repositionBoss2->AddTransition( spawn2, "Spawn on pedistal" );
+        spawn2->AddTransition( enraged, "Enraged that mother fucker" );
+        enraged->AddTransition( sludgeshot, "Sludgeshot" );
+        sludgeshot->AddTransition( goUnderground4, "Go Underground" );
+        goUnderground4->AddTransition( reposition3, "Reposition" );
+        reposition3->AddTransition( spawn3, "Spawn again" );
+        spawn3->AddTransition( sludgeshot, "Sludgeshot" );
 
         sm->SetInitialState( goUnderground );
 
@@ -660,6 +709,9 @@ void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
 
     if (seedshotEntity)
         seedshotEntity->Dispatch( game::ACTIVATE_WEAPON, &args );
+
+    GetOwner( )->GetComponent<Health>( )->Listener( this )
+        .On( HEALTH_DAMAGE_TAKEN, &BossAI::onDamageTaken );
 }
 
 void BossAI::onUpdate(EVENT_HANDLER(World))
@@ -676,6 +728,11 @@ void BossAI::onUpdate(EVENT_HANDLER(World))
 
     for (auto &machine : stateMachines)
         machine->Update( );
+}
+
+void BossAI::onDamageTaken(EVENT_HANDLER(Health))
+{
+    GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent( m_hurtSfx );
 }
 
 void BossAI::onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager))

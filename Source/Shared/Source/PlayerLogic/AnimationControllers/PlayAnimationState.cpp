@@ -25,13 +25,14 @@ using namespace ecs;
 
 PlayAnimationState::PlayAnimationState(
     const std::string &stateName,
-    bool blocking, float playback
+    bool blocking, float playback, bool disableBoneManip
 )
     : AnimatorControllerState( "Play Animation State: " + stateName )
     , m_stateName( stateName )
     , m_blocking( blocking )
     , m_playback( playback )
-    , m_finished( !blocking ) { }
+    , m_finished( !blocking )
+    , m_disableBoneManip( disableBoneManip ) { }
 
 void PlayAnimationState::Enter(AnimatorControllerStateMachine *machine)
 {
@@ -40,6 +41,9 @@ void PlayAnimationState::Enter(AnimatorControllerStateMachine *machine)
     animator->SetCurrentState( m_stateName );
     animator->SetPlaying( true );
     animator->SetTimeScalar( m_playback );
+
+    if (m_disableBoneManip)
+        animator->SetEnableBoneManipulation( false );
 
     if (m_blocking)
     {
@@ -55,6 +59,9 @@ void PlayAnimationState::Exit(AnimatorControllerStateMachine *machine)
     auto animator = machine->GetAnimator( );
 
     animator->SetTimeScalar( 1.0f );
+
+    if (m_disableBoneManip)
+        animator->SetEnableBoneManipulation( true );
 }
 
 void PlayAnimationState::onAnimationFinish(EVENT_HANDLER(Entity))

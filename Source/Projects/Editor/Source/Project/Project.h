@@ -15,6 +15,9 @@
 
 #include "ProjectConfig.h"
 #include "ProjectGameBuilder.h"
+#include "ProjectGameInstaller.h"
+
+#include "ProjectPreferenceStore.h"
 
 #include "EditorGameContext.h"
 
@@ -35,7 +38,10 @@ public:
     ProjectConfig &GetConfig(void);
     void WriteConfig(void);
 
+    ProjectPreferenceStore &GetPreferenceStore(void);
+
     ProjectGameBuilder &GetGameBuilder(void);
+    ProjectGameInstaller &GetGameInstaller(void);
 
     ursine::rp::ResourcePipelineManager &GetResourcePipeline(void);
     ursine::resources::ResourceManager &GetBuiltInResourceManager(void);
@@ -65,10 +71,13 @@ private:
 
     ProjectConfig m_config;
 
+    ProjectPreferenceStore m_preferences;
+
     ursine::rp::ResourcePipelineManager m_resourcePipeline;
     ursine::resources::ResourceManager m_builtInResourceManager;
 
     ProjectGameBuilder m_gameBuilder;
+    ProjectGameInstaller m_gameInstaller;
 
     ursine::Scene m_scene;
     ursine::Json m_worldCache;

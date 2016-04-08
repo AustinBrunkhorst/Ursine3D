@@ -19,38 +19,34 @@
 
 namespace ursine
 {
-	namespace ecs
-	{
-		class AudioListener 
+    namespace ecs
+    {
+        class AudioListener 
             : public Component
             , public AudioComponentBase
-		{
-			NATIVE_COMPONENT;
+        {
+            NATIVE_COMPONENT;
 
-		public:
-			EditorField(
-				ListenerIndex listener,
-				GetListenerIndex, 
-				SetListenerIndex
-			);
+        public:
+            EditorField(
+                ListenerIndex listener,
+                GetListenerIndex, 
+                SetListenerIndex
+            );
 
             Meta(Enable)
-			AudioListener(void);
-			~AudioListener(void);
+            AudioListener(void);
+            ~AudioListener(void);
 
-			void OnInitialize(void) override;
+            void OnInitialize(void) override;
 
-			ListenerIndex GetListenerIndex(void) const;
-			void SetListenerIndex(ListenerIndex index);
+            ListenerIndex GetListenerIndex(void) const;
+            void SetListenerIndex(ListenerIndex index);
 
-			ListenerMask GetListenerMask(void);
+        private:
+             ListenerIndex m_listenerIndex;
 
-		private:
-			 ListenerIndex m_listenerIndex;
-			 ListenerMask m_mask;
 
-			 void indexToMask(void);
-
-		} Meta(Enable, WhiteListMethods, DisplayName( "AudioListener" ));
-	}
+        } Meta(Enable, WhiteListMethods, DisplayName( "AudioListener" ));
+    }
 }

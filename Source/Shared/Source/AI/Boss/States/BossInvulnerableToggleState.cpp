@@ -39,4 +39,9 @@ void BossInvulnerableToggleState::Enter(BossAIStateMachine *machine)
 
     if (emitter)
         emitter->GetComponent<ParticleEmitter>( )->SetEmitting( m_toggle );
+
+    if (m_toggle)
+        boss->Dispatch( BossAIEvents::ShieldUp, EventArgs::Empty );
+    else
+        boss->Dispatch( BossAIEvents::ShieldDown, EventArgs::Empty );
 }

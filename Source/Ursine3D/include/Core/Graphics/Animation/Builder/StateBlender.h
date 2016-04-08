@@ -34,6 +34,14 @@ namespace ursine
         );
 
         //Slider
+        EditorMeta(InputRange(0.01f, 5.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
+        EditorField(
+            float transtionTime,
+            GetTransitionTime,
+            SetTranstionTime
+            );
+
+        //Slider
         // blending starting position of current state
         EditorMeta(InputRange(0.0f, 1.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
         EditorField(
@@ -59,6 +67,9 @@ namespace ursine
 
         const std::string &GetfutState(void) const;
         void SetfutState(const std::string& fstate);
+        
+        const float &GetTransitionTime(void) const;
+        void SetTranstionTime(const float& transTime);
 
         const float &GetcurrTransPosRatio(void) const;
         void SetcurrTransPosRatio(const float& tPos);
@@ -80,6 +91,9 @@ namespace ursine
 
         // name of future state
         std::string m_futState;
+
+        //time that takes for transitioning
+        float m_transTime;
 
         // these reperesent the position of the keyframe 
         // ratio = 1 / total keyframe number.

@@ -1,57 +1,55 @@
 //texture
-Texture2D gShaderTexture : register(t0);
+Texture2D gColorTexture : register(t0);
 
 //sample type
 SamplerState SampleType : register(s0);
 
-cbuffer MaterialBuffer : register(b10)
+cbuffer TextureOffset : register(b13)
 {
-    float emissive;
-    float specularPower;
-    float specularIntensity;
-    float buffer;
-};
+    float2 textureOffset;
+    float2 buffer;
+}
+
+
+cbuffer FragData : register(b11)
+{
+    // pulse rate
+    float pulseSpeed;
+
+    // fade
+    float fadeAmount;
+
+    // time
+    float time;
+
+    // start/end time
+    float startTime;
+    float endTime;
+
+    // normal transparency
+    float transparencyThreshold;
+}
 
 struct PS_INPUT
 {
     float4 position : SV_POSITION;
     float4 normal : NORMAL;
     float2 uv : UV;
+    float4 color : COLOR;
 };
 
-//specular power range
-static const float2 cSpecPowerRange = { 0.1, 250.0 };
-
-//this is where we output to each render target
-struct PS_GBUFFER_OUT
+float4 main( PS_INPUT input ) : SV_TARGET
 {
-    float4 ColorSpecInt: SV_TARGET0;
-    float4 Normal : SV_TARGET1;
-    float4 SpecPow: SV_TARGET2;
-};
-
-//func to pack
-PS_GBUFFER_OUT PackGBuffer( float3 BaseColor, float3 Normal, float
-    SpecIntensity, float SpecPower, float emissive )
-{
-    PS_GBUFFER_OUT Out;
-    // Normalize the specular power
-    float SpecPowerNorm = (SpecPower - cSpecPowerRange.x) / cSpecPowerRange.y;
-
-    // Pack all the data into the GBuffer structure
-    Out.ColorSpecInt = float4(BaseColor.rgb, SpecIntensity);
-    Out.Normal = float4(Normal.xyz * 0.5 + 0.5, 0.0);
-    Out.SpecPow = float4(SpecPowerNorm, emissive, 0.0, 0.0);
-    return Out;
-}
-
-PS_GBUFFER_OUT main( PS_INPUT input )
-{
-    float3 baseColor = gShaderTexture.Sample( SampleType, input.uv ).xyz;
+    float4 baseColor = gColorTexture.Sample( SampleType, input.uv );
     float3 normal = input.normal.xyz;
 
-    PS_GBUFFER_OUT buff = PackGBuffer( baseColor, normal, specularIntensity, specularPower, emissive );
+    float texLength = length(textureOffset);
+    float offset = cos((time) * pulseSpeed) * fadeAmount;
 
+    // at time = 50, we need to be 0
+    // (50 - time) / 50;
 
-    return buff;
+    float dotp = saturate( (1 - abs(dot(normal, float3(0, 0, 1))) / (8.0f)) + transparencyThreshold + offset) * ((endTime - time) / endTime);
+
+    return float4(baseColor.xyz * dotp, 1.0f);
 }

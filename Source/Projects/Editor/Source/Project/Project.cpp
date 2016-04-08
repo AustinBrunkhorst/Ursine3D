@@ -33,12 +33,15 @@ namespace
 {
     const auto kBuiltInResourcesDirectory = "Resources/EditorTools";
 
+    const auto kPreferencesDirectory = "Preferences";
     const auto kResourcesTempDirectory = "Temp";
     const auto kResourcesBuildDirectory = "Resources";
 }
 
 Project::Project(void)
-    : m_gameBuilder( this )
+    : m_preferences( this )
+    , m_gameBuilder( this )
+    , m_gameInstaller( this )
     , m_gameContext( nullptr )
     , m_sceneManager( nullptr )
     , m_entityManager( nullptr )
@@ -85,9 +88,19 @@ void Project::WriteConfig(void)
     );
 }
 
+ProjectPreferenceStore &Project::GetPreferenceStore(void)
+{
+    return m_preferences;
+}
+
 ProjectGameBuilder &Project::GetGameBuilder(void)
 {
     return m_gameBuilder;
+}
+
+ProjectGameInstaller &Project::GetGameInstaller(void)
+{
+    return m_gameInstaller;
 }
 
 rp::ResourcePipelineManager &Project::GetResourcePipeline(void)
@@ -159,6 +172,11 @@ void Project::initialize(const ProjectConfig &config)
     m_config = config;
 
     auto rootDirectory = m_config.projectFile.parent_path( );
+
+    m_config.preferencesDirectory = rootDirectory / config.buildDirectory / kPreferencesDirectory;
+
+    if (!exists( m_config.preferencesDirectory ))
+        create_directories( m_config.preferencesDirectory );
 
     rp::ResourcePipelineConfig resourceConfig;
 

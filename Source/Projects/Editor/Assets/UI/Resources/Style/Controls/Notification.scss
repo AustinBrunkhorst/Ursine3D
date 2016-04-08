@@ -4,6 +4,24 @@
 
 $icon-size: 22px;
 
+@keyframes loading {
+  0% {
+    border: 0 solid #48484d;
+  }
+
+  20% {
+    border: 8px solid #48484d;
+    width: 0;
+    height: 0;
+  }
+
+  100% {
+    border: 8px solid #48484d;
+    width: 100%;
+    height: 100%;
+  }
+}
+
 :host {
   position: relative;
   display: block;
@@ -64,6 +82,30 @@ $icon-size: 22px;
     .icon {
       color: #96d582;
       @include icon-half( $icon-half-question-sign, $icon-size );
+    }
+  }
+
+  // loading
+  &[type="5"] {
+    .icon {
+      position: relative;
+      width: $icon-size;
+      height: $icon-size;
+      margin-right: 3px;
+      background-color: $color-accent;
+      border-radius: 50%;
+
+      &:after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        border: 0 solid #48484d;
+        transform: translate(-50%, -50%);
+        animation: loading 1000ms ease-out forwards infinite;
+      }
+
     }
   }
 

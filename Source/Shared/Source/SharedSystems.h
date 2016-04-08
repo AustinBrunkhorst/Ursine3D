@@ -87,3 +87,11 @@
 
 #include "DamageSystem/DamageTextSystem.h"
 #include "DamageSystem/DamageOnCollideSystem.h"
+
+/////////////////////////////////
+//       Health System         //
+/////////////////////////////////
+
+#include "HealthSystem/HealthRegenSystem.h"
+
+

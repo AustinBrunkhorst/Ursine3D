@@ -1,5 +1,7 @@
 package ursine.editor.resources;
 
+import ursine.utils.Utils;
+
 import ursine.native.Extern;
 import ursine.api.native.NativeBroadcastManager;
 
@@ -23,12 +25,12 @@ class NativeBuildManager {
             .findItem( 'Build' );
 
         broadcastManager.getChannel( 'ResourcePipeline' )
-            .on( 'ProjectBuildStart', onResourceBuildStart )
-            .on( 'ProjectBuildProgress', onResourceBuildProgress )
-            .on( 'ProjectBuildComplete', onResourceBuildComplete );
+            .on( 'ProjectBuildStart', onBuildStart )
+            .on( 'ProjectBuildProgress', onBuildProgress )
+            .on( 'ProjectBuildComplete', onBuildComplete );
     }
 
-    private function onResourceBuildStart(e) {
+    private function onBuildStart(e) {
         m_menuBuildItem.disabled = true;
 
         m_lastStartDate = Date.now( );
@@ -65,12 +67,12 @@ class NativeBuildManager {
         m_progressNotification.show( 0 );
     }
 
-    private function onResourceBuildProgress(e) {
+    private function onBuildProgress(e) {
         if (m_progressBar != null)
             m_progressBar.value = e.progress * 100;
     }
 
-    private function onResourceBuildComplete(e) {
+    private function onBuildComplete(e) {
         m_menuBuildItem.disabled = false;
 
         m_progressNotification.close( );
@@ -88,7 +90,7 @@ class NativeBuildManager {
 
             var duration = Date.now( ).getTime( ) - m_lastStartDate.getTime( );
 
-            OutputLog.log( 'Build Completed in ${duration} ms' );
+            OutputLog.log( 'Build completed in ${Utils.formatDuration( duration )}' );
         } else {
             notification = new Notification(
                 NotificationType.Error,
@@ -96,7 +98,7 @@ class NativeBuildManager {
                 'Build Failed'
             );
 
-            OutputLog.log( 'Build Failed: ${e.error}' );
+            OutputLog.log( 'Build failed: ${e.error}' );
         }
 
         notification.show( );

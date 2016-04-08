@@ -22,6 +22,7 @@ namespace ursine
 {
     namespace graphics
     {
+        static int start = 0, end = 0;
         void GfxProfiler::Initialize(ID3D11Device *device, ID3D11DeviceContext *devCon, bool run)
         {
             m_run = run;
@@ -97,6 +98,8 @@ namespace ursine
             for ( auto &x : m_profiled )
                 x = false;
 
+
+            start++;
             m_devCon->Begin(m_disjointedQueries[ m_frame ]);
 
             m_numberOfTargets = 0;
@@ -114,7 +117,7 @@ namespace ursine
 
 
             Stamp("FRC");
-
+            end++;
             m_devCon->End(m_disjointedQueries[ m_frame ]);
 
             //alternate frames
@@ -132,7 +135,8 @@ namespace ursine
 
             if(!(m_numberOfTargets + 1 <= MAX_PROFILER_TARGETS))
             {
-                UWarning("Out of gpu profiler targets!");
+                //std::cout << start << ", " << end << std::endl;
+                //UWarning("Out of gpu profiler targets!");
                 return;
             }
 

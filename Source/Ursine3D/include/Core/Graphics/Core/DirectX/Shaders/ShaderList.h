@@ -21,6 +21,8 @@ namespace ursine
         {
             SHADER_BASIC = 0,
             SHADER_QUAD,
+
+            SHADER_FRAGMENTATION,
             
             SHADER_DEFERRED_DEPTH,
             SHADER_DEFERRED_DEPTH_STATIC,

@@ -23,13 +23,13 @@ namespace ursine
         
         enum ResourceType : unsigned
         {
-            RESOURCE_CBUFFER,
-            RESOURCE_MODEL,         // vert and index buff as a models
-            RESOURCE_TEXTURE,       // texture buffer
-            RESOURCE_INPUT_RT,      // render target as texture
-            RESOURCE_INPUT_DEPTH,   // depth target as texture
-            RESOURCE_SHADOWMAP,
-            RESOURCE_COUNT
+            RESOURCE_CBUFFER        = 0,
+            RESOURCE_MODEL          = 1,                // vert and index buff as a models
+            RESOURCE_TEXTURE        = 66,    // texture buffer
+            RESOURCE_INPUT_RT       = 68,    // render target as texture
+            RESOURCE_INPUT_DEPTH    = 76,    // depth target as texture
+            RESOURCE_SHADOWMAP      = 16,
+            RESOURCE_COUNT          = 7
         };
 
         enum ShaderSlot : unsigned

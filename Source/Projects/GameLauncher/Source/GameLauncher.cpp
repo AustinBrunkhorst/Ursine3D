@@ -279,6 +279,8 @@ void GameLauncher::initStartingWorld(void)
         "Unable to load starting world.\nguid: %s",
         m_settings.startingWorld.c_str( )
     );
+
+    m_scene->LoadConfiguredSystems( );
 }
 
 void GameLauncher::onAppUpdate(EVENT_HANDLER(ursine::Application))

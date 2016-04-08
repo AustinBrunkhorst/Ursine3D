@@ -72,6 +72,14 @@ namespace ursine
             m_model->SetEntityID( GetOwner( )->GetID( ) );
 
             updateRenderer( );
+
+            #if defined(URSINE_WITH_EDITOR)
+            
+                bindResourceModification( m_modelResource, &Model3D::onTextureReload );
+                bindResourceModification( m_textureResource, &Model3D::onTextureReload );
+                bindResourceModification( m_normalTextureResource, &Model3D::onNormalTextureReload );
+            
+            #endif
         }
 
         void Model3D::OnSceneReady(Scene *scene)
@@ -334,6 +342,21 @@ namespace ursine
 
                 m_model->SetModelHandle( handle );
             }
+        }
+
+        void Model3D::onTextureReload()
+        {
+            invalidateModel( false );
+        }
+
+        void Model3D::onNormalTextureReload()
+        {
+            invalidateTexture( false );
+        }
+
+        void Model3D::OnModelReload()
+        {
+            invalidateModel( false );
         }
 
         void Model3D::clearMatrixPalette(void)

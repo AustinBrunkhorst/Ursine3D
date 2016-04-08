@@ -1,5 +1,7 @@
 package ursine.editor.resources;
 
+import ursine.utils.Utils;
+
 import ursine.native.Extern;
 import ursine.api.native.NativeBroadcastManager;
 
@@ -42,9 +44,9 @@ class NativeResourceManager {
             throw 'Failed to get resource from GUID ${e.guid}';
 
         if (e.successful) {
-            OutputLog.log( 'Built in ${e.duration} ms: ${resource.relativePathDisplayName}' );
+            OutputLog.log( 'Built in ${Utils.formatDuration( e.duration )}: ${resource.relativePathDisplayName}' );
         } else {
-            OutputLog.log( 'Build Failed: ${resource.relativePathDisplayName}<br>Reason: ${e.error.message}' );
+            OutputLog.log( 'Build failed: ${resource.relativePathDisplayName}<br>Reason: ${e.error.message}' );
         }
     }
 }
