@@ -44,9 +44,6 @@ namespace ursine
             void SetListener3DPosition(const AkVector orientation_forward,
                 const AkVector orientation_up, const AkVector position, const ListenerMask listeners);
 
-            void SetListener3DPosition(const SVec3 orientation_forward,
-                const SVec3 orientation_up, const SVec3 position, const ListenerMask listeners);
-
 			void SetListener3DPosition(const SVec3 orientation_forward,
 				const SVec3 orientation_up, const SVec3 position, const ListenerIndex listeners);
 
@@ -59,8 +56,6 @@ namespace ursine
 
             void SetSoundObstructionAndOcclusion(AkGameObjectID obstruction,
                 const AkUInt32 listeners, const AkReal32 obstruction_level, const AkReal32 occlusion_level);
-
-			bool ChangeAssignedListener(ListenerIndex oldIndex, ListenerIndex newIndex);
 
             static void SetGameState(const std::string &name, const std::string &state);
             

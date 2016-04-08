@@ -116,12 +116,6 @@ namespace ursine
 
 		init( &m_initSettings, &m_platSettings );
 
-		// Init all Listeners
-		initAllListeners( );
-
-		// Create the global listener
-		//setGlobalListeners( );
-
 		// Subscribe to update
 		Application::Instance->Connect( APP_UPDATE, this, &AudioManager::onAppUpdate );
 	}
@@ -282,30 +276,6 @@ namespace ursine
 		}
 	}
 
-	bool AudioManager::GetListenerAvailablility(ListenerIndex index)
-	{
-		return m_listeners[ static_cast<unsigned>( index ) ];
-	}
-
-	bool AudioManager::SetListener(ListenerIndex index)
-	{
-		auto& status = m_listeners[ static_cast<unsigned>( index ) ];
-		if (status)
-		{
-			return false;
-		}
-		else
-		{
-			status = true;
-			return true;
-		}
-	}
-
-	void AudioManager::FreeListener(ListenerIndex listener)
-	{
-		m_listeners[ static_cast<unsigned>( listener ) ] = false;
-	}
-
 	void AudioManager::UnRegisterObject(AkGameObjectID obj)
 	{
 		if (AK::SoundEngine::UnregisterGameObj( obj ) != AK_Success)
@@ -320,53 +290,6 @@ namespace ursine
 		{
 			UWarning( "Wwise: Cannot Register Plugin" );
 		}
-	}
-
-	ListenerIndex AudioManager::NextAvailableListener()
-	{
-		int i = 0;
-		for (auto lis : m_listeners)
-		{
-			if (!lis)
-				return static_cast<ListenerIndex>( i );
-		}
-		return ListenerIndex::L1;
-	}
-
-	void AudioManager::setGlobalListeners(void)
-	{
-		// create an object that emits to all listeners
-		RegisterObject( AUDIO_GLOBAL_OBJECT_ID, static_cast<AkUInt32>( ListenerMask::L8 ) );
-
-		// set position of the listener and the emitter to (0,0,0)
-		AkSoundPosition pos;
-		AkListenerPosition lpos;
-
-		pos.Position.X = pos.Position.Y = pos.Position.Z = 0.0f;
-		lpos.Position = pos.Position;
-		pos.Orientation.X = pos.Orientation.Y = 0.0f;
-		pos.Orientation.Z = -1.0f;
-		lpos.OrientationFront = pos.Orientation;
-		lpos.OrientationTop.X = lpos.OrientationTop.Z = 0.0f;
-		lpos.OrientationTop.Y = 1.0f;
-
-		if (AK::SoundEngine::SetPosition( AUDIO_GLOBAL_OBJECT_ID, pos ) != AK_Success)
-		{
-			UWarning( "Wwise: Cannot Set Object 3D Position" ) ;
-		}
-
-		if (AK::SoundEngine::SetListenerPosition( lpos, static_cast<AkUInt32>( ListenerMask::L8 ) ) != AK_Success)
-		{
-			UWarning( "Wwise: Cannot Set Listener Postion" ) ;
-		}
-
-		m_listeners[ static_cast<int>( ListenerIndex::LG ) ] = true;
-	}
-
-	void AudioManager::initAllListeners(void)
-	{
-		m_listeners.fill( false );
-		m_listeners[ 0 ] = true;
 	}
 
 	void AudioManager::init(AkInitSettings *in_pSettings, AkPlatformInitSettings *in_pPlatformSettings)

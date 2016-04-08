@@ -57,29 +57,16 @@ namespace ursine
 
 		void UnRegisterObject(AkGameObjectID obj);
 
-		bool GetListenerAvailablility(ListenerIndex index);
-
-		bool SetListener(ListenerIndex index);
-
-		void FreeListener(ListenerIndex listener);
-
 		void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, 
 			const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param);
-
-		ListenerIndex NextAvailableListener(void);
 	private:
 		AkInitSettings m_initSettings;
 		AkPlatformInitSettings m_platSettings;
-
-		std::array<bool, 8> m_listeners;
 
 		void onAppUpdate(EVENT_HANDLER(Application));
 
 		void init(AkInitSettings *in_pSettings, AkPlatformInitSettings *in_pPlatformSettings);
 
-		void setGlobalListeners(void);
-
-		void initAllListeners(void);
 	} Meta(Enable, WhiteListMethods);
 }
 

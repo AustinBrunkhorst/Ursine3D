@@ -28,7 +28,7 @@ namespace ursine
         AudioEmitter::AudioEmitter(void)
             : BaseComponent( )
             , m_maskChanged( false )
-            , m_listenerMask( ListenerMask::None )  { }
+            , m_listenerMask( ListenerMask::NONE )  { }
 
         ListenerMask AudioEmitter::GetListenerMask(void) const
         {
