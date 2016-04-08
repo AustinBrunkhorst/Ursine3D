@@ -560,8 +560,8 @@ namespace ursine
             return SMat4( DirectX::XMMatrixPerspectiveFovLH(
                     math::DegreesToRadians( m_spotlightAngles.Y( ) ), 
                     1.0f,
-                    1.0f,
-                    m_radius
+                    m_radius,
+                    1.0f
                 )
             );
         }

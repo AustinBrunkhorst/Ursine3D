@@ -351,9 +351,9 @@ namespace ursine
 
             void DirectXCore::ClearDepthBuffers(void)
             {
-                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_OVERDRAW), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
+                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
+                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_OVERDRAW), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
             }
 
             void DirectXCore::ClearSwapchain(void)

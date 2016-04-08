@@ -1158,10 +1158,14 @@ namespace ursine
 
             // invProjection( SHADERTYPE_PIXEL );
             temp = currentCamera.GetProjMatrix( );
+
+            ivb.nearPlane = temp.GetColumn(2).Z( );
+            ivb.farPlane = temp.GetColumn(3).Z( );
+
             temp.Transpose( );
             temp.Inverse( );
             ivb.invView = temp.ToD3D( );
-            currentCamera.GetPlanes( ivb.nearPlane, ivb.farPlane );
+            //currentCamera.GetPlanes( ivb.nearPlane, ivb.farPlane );
             invProjection.Update( ivb );
 
             // lightFalloff( SHADERTYPE_PIXEL );
@@ -1172,7 +1176,8 @@ namespace ursine
             fb.lightSteps = m_globalEmissive;
             emissiveValue.Update(fb, SHADER_SLOT_12);
 
-            currentCamera.GetPlanes(bsb.width, bsb.height);
+            bsb.width = ivb.nearPlane;
+            bsb.height = ivb.farPlane;
             particleFadeBuffer.Update(bsb, SHADER_SLOT_4);
 
             // TARGET INPUTS //////////////////
