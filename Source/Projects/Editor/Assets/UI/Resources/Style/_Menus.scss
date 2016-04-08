@@ -181,6 +181,10 @@ x-main-menu, x-context-menu {
       &.installer {
         @include icon-half( $icon-half-compressed, $context-menu-icon-size );
       }
+
+      &.invalid {
+        @include icon-half( $icon-half-ban-circle, $context-menu-icon-size );
+      }
     }
   }
 }

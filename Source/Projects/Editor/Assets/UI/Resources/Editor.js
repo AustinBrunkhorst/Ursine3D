@@ -2073,6 +2073,13 @@ var ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector =
 		window.document.body.appendChild(selector);
 		selector.show(e.clientX,e.clientY);
 	});
+	this.m_displayText.addEventListener("contextmenu",function(e1) {
+		var menu = new ContextMenuControl();
+		menu.addItem("Make Invalid",function() {
+			_g.notifyChanged(_g.m_field,{ guid : null});
+		}).icon = "invalid";
+		menu.open(e1.clientX,e1.clientY);
+	});
 	this.m_displayText.addEventListener("resource-drag",$bind(this,this.onResourceDrag));
 	this.m_displayText.addEventListener("resource-drop",$bind(this,this.onResourceDrop));
 	this.inspector.container.appendChild(this.m_displayText);
@@ -3294,7 +3301,7 @@ var ursine_editor_windows_SceneView = function() {
 	this.onViewportInvalidated();
 	this.window.addEventListener("resize",$bind(this,this.onWindowResize));
 	this.window.addEventListener("keydown",$bind(this,this.onWindowKeyDown));
-	this.m_fullScreen = ProjectGetEditorPreferences().fullScreen;
+	this.m_fullScreen = ProjectGetGlobalPreferences().fullScreen;
 	this.m_fullScreenItem = ursine_editor_Editor.instance.mainMenu.findItem("View").menu.findItem("Fullscreen Scene");
 	this.m_nonFullScreenContainer = this.window.container.parentNode;
 	this.m_fullScreenContainer = window.document.querySelector("#fullscreen-container");

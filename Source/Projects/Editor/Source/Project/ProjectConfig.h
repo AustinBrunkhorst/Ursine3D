@@ -18,6 +18,9 @@ struct ProjectConfig
     Meta(Disable)
     ursine::fs::path projectFile;
 
+    Meta(Disable)
+    ursine::fs::path preferencesDirectory;
+
     ProjectConfig(void) = default;
 
     static ProjectConfig CreateDefault(const std::string &title);

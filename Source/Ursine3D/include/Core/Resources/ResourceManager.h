@@ -25,6 +25,8 @@ namespace ursine
             ResourceReference CreateReference(const GUID &guid);
             ResourceData::Handle LoadReference(const ResourceReference &reference, bool ignoreCache = false);
 
+            void UnloadReference(const ResourceReference &reference);
+
             bool ResourceExists(const GUID &guid) const;
 
         #if defined(URSINE_WITH_EDITOR)

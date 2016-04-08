@@ -33,12 +33,14 @@ namespace
 {
     const auto kBuiltInResourcesDirectory = "Resources/EditorTools";
 
+    const auto kPreferencesDirectory = "Preferences";
     const auto kResourcesTempDirectory = "Temp";
     const auto kResourcesBuildDirectory = "Resources";
 }
 
 Project::Project(void)
-    : m_gameBuilder( this )
+    : m_preferences( this )
+    , m_gameBuilder( this )
     , m_gameInstaller( this )
     , m_gameContext( nullptr )
     , m_sceneManager( nullptr )
@@ -84,6 +86,11 @@ void Project::WriteConfig(void)
         "Unable to write project configuration.\nfile: %s",
         m_config.projectFile.string( ).c_str( )
     );
+}
+
+ProjectPreferenceStore &Project::GetPreferenceStore(void)
+{
+    return m_preferences;
 }
 
 ProjectGameBuilder &Project::GetGameBuilder(void)
@@ -165,6 +172,11 @@ void Project::initialize(const ProjectConfig &config)
     m_config = config;
 
     auto rootDirectory = m_config.projectFile.parent_path( );
+
+    m_config.preferencesDirectory = rootDirectory / config.buildDirectory / kPreferencesDirectory;
+
+    if (!exists( m_config.preferencesDirectory ))
+        create_directories( m_config.preferencesDirectory );
 
     rp::ResourcePipelineConfig resourceConfig;
 
