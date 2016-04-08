@@ -136,6 +136,14 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
         return hasFocus( ) && m_nativeManager.screenHasFocus( screen.getID( ) );
     }
 
+    public function messageNativeOwner(screen : Screen, message : String, data : Dynamic) : Void {
+        m_nativeManager.messageOwner( screen.getID( ), message, data );
+    }
+
+    public function messageNativeGlobal(message : String, data : Dynamic) : Void {
+        m_nativeManager.messageGlobal( message, data );
+    }
+
     public function clearScreens() {
         m_container.innerHTML = '';
         m_screens = new Map<ScreenID, Screen>( );

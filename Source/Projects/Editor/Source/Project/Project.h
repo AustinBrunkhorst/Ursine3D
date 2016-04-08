@@ -72,6 +72,7 @@ private:
 
     ursine::Scene m_scene;
     ursine::Json m_worldCache;
+    ursine::resources::ResourceReference m_playedWorld;
 
     EditorGameContext *m_gameContext;
     EditorSceneManager *m_sceneManager;

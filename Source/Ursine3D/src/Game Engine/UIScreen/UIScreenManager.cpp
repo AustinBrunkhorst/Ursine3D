@@ -44,7 +44,8 @@ namespace
 namespace ursine
 {
     UIScreenManager::UIScreenManager(void)
-        : m_ui( nullptr )
+        : EventDispatcher( this )
+        , m_ui( nullptr )
         , m_nextID( 0 ) { }
 
     UIScreenManager::~UIScreenManager(void)
@@ -178,6 +179,13 @@ namespace ursine
         };
 
         messageUI( events::screen::Messaged, messageData );
+    }
+
+    void UIScreenManager::MessageGlobalNative(const std::string &message, const Json &data)
+    {
+        UIScreenMessageArgs args( message, data );
+
+        Dispatch( message, &args );
     }
 
     void UIScreenManager::ClearScreens(void)

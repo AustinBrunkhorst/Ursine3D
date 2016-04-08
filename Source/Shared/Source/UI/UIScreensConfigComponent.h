@@ -13,11 +13,13 @@
 
 #include <Component.h>
 
+#include "UIEvents.h"
+
 #include <UIScreen.h>
 #include <UIScreenManager.h>
 #include <UIScreenData.h>
 
-#include "UIEvents.h"
+#include <WorldData.h>
 
 #define DECLARE_SCREEN(screenName)                                                                                           \
 public:                                                                                                                      \
@@ -69,8 +71,20 @@ public:
     DECLARE_SCREEN( Credits );
     DECLARE_SCREEN( PlayerHUD );
 
+    EditorResourceField(
+        ursine::resources::WorldData,
+        startingGameplayWorld,
+        GetStartingGameplayWorld,
+        SetStartingGameplayWorld
+    );
+
+    const ursine::resources::ResourceReference &GetStartingGameplayWorld(void);
+    void SetStartingGameplayWorld(const ursine::resources::ResourceReference &world);
+
 private:
     std::unordered_map<ursine::GUID, ursine::UIScreenID, ursine::GUIDHasher> m_created;
+
+    ursine::resources::ResourceReference m_startingGameplayWorld;
 
     ursine::UIScreen *addScreen(
         const ursine::resources::ResourceReference &reference,

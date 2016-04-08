@@ -62,7 +62,7 @@ class Editor {
         m_notificationManager = new NativeNotificationManager( broadcastManager );
         m_resourceManager = new NativeResourceManager( broadcastManager );
         m_buildManager = new NativeBuildManager( broadcastManager );
-        
+
         m_statusTextContainer = cast js.Browser.document.querySelector( '#status-bar span' );
 
         js.Browser.document
