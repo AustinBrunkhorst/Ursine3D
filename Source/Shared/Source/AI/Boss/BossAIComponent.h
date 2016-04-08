@@ -188,6 +188,13 @@ public:
         SetIntroScream
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        hurtSfx,
+        GetHurtSfx,
+        SetHurtSfx
+    );
+
     Meta(Enable)
     BossAI(void);
 
@@ -260,6 +267,9 @@ public:
     const ursine::resources::ResourceReference &GetIntroScream(void) const;
     void SetIntroScream(const ursine::resources::ResourceReference &audioEvent);
 
+    const ursine::resources::ResourceReference &GetHurtSfx(void) const;
+    void SetHurtSfx(const ursine::resources::ResourceReference &hurtSfx);
+
     ursine::ecs::EntityHandle GetSeedshotEntity(void);
 
     ursine::ecs::EntityHandle GetSludgeshotEntity(void);
@@ -290,6 +300,8 @@ private:
     void onHierachyConstructed(EVENT_HANDLER(ursine::ecs::Entity));
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
+
+    void onDamageTaken(EVENT_HANDLER(Health));
 
     void onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager));
 
@@ -378,6 +390,7 @@ private:
 
     // Sfxs
     ursine::resources::ResourceReference m_introScream;
+    ursine::resources::ResourceReference m_hurtSfx;
 
 } Meta(
     Enable,
@@ -385,6 +398,6 @@ private:
 ) EditorMeta(
     RequiresComponents( 
         typeof( Health ),
-        typeof( ursine::ecs::AudioEmitter ) 
+        typeof( ursine::ecs::AudioEmitter )
     )
 );

@@ -67,6 +67,7 @@ void VineUprootState::Update(VineAIStateMachine *machine)
         case UprootState::Burrowing:
         {
             playAnimation( animator, "Spike_Down" );
+            aiOwner->GetComponent<AudioEmitter>( )->PushEvent( ai->GetBurrowSfx( ) );
             break;
         }
         case UprootState::Digging:
@@ -137,6 +138,8 @@ void VineUprootState::Update(VineAIStateMachine *machine)
 
             // Update the vine's "time of last pursue"
             ai->m_timeOfLastPursue = Application::Instance->GetTimeSinceStartup( );
+
+            aiOwner->GetComponent<AudioEmitter>( )->PushEvent( ai->GetEmergeSfx( ) );
 
             break;
         }

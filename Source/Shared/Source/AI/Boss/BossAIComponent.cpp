@@ -369,6 +369,18 @@ void BossAI::SetIntroScream(const ResourceReference &audioEvent)
     NOTIFY_COMPONENT_CHANGED( "introScream", m_introScream );
 }
 
+const ResourceReference &BossAI::GetHurtSfx(void) const
+{
+    return m_hurtSfx;
+}
+
+void BossAI::SetHurtSfx(const ResourceReference &hurtSfx)
+{
+    m_hurtSfx = hurtSfx;
+
+    NOTIFY_COMPONENT_CHANGED( "hurtSfx", m_hurtSfx );
+}
+
 EntityHandle BossAI::GetSeedshotEntity(void)
 {
     return GetOwner( )->GetChildByName( m_seedshotEntity );
@@ -697,6 +709,9 @@ void BossAI::onHierachyConstructed(EVENT_HANDLER(Entity))
 
     if (seedshotEntity)
         seedshotEntity->Dispatch( game::ACTIVATE_WEAPON, &args );
+
+    GetOwner( )->GetComponent<Health>( )->Listener( this )
+        .On( HEALTH_DAMAGE_TAKEN, &BossAI::onDamageTaken );
 }
 
 void BossAI::onUpdate(EVENT_HANDLER(World))
@@ -713,6 +728,11 @@ void BossAI::onUpdate(EVENT_HANDLER(World))
 
     for (auto &machine : stateMachines)
         machine->Update( );
+}
+
+void BossAI::onDamageTaken(EVENT_HANDLER(Health))
+{
+    GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent( m_hurtSfx );
 }
 
 void BossAI::onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager))

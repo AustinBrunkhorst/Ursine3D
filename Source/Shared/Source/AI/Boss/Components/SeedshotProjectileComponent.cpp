@@ -56,7 +56,21 @@ void SeedshotProjectile::SetSeedshotEndSfx(const ResourceReference &seedshotEndS
     NOTIFY_COMPONENT_CHANGED( "seedshotEndSfx", m_seedshotEndSfx );
 }
 
+const ResourceReference &SeedshotProjectile::GetGooDamageSfx(void) const
+{
+    return m_gooDamageSfx;
+}
+
+void SeedshotProjectile::SetGooDamageSfx(const ResourceReference &gooDamageSfx)
+{
+    m_gooDamageSfx = gooDamageSfx;
+
+    NOTIFY_COMPONENT_CHANGED( "gooDamageSfx", m_gooDamageSfx );
+}
+
 void SeedshotProjectile::onDeath(EVENT_HANDLER(Entity))
 {
-    GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent( m_seedshotEndSfx );
+    auto emitter = GetOwner( )->GetComponent<AudioEmitter>( );
+    emitter->PushEvent( m_seedshotEndSfx );
+    emitter->PushEvent( m_gooDamageSfx );
 }

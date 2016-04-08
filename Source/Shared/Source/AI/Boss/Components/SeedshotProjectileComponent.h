@@ -35,6 +35,13 @@ public:
         SetSeedshotEndSfx
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        gooDamageSfx,
+        GetGooDamageSfx,
+        SetGooDamageSfx
+    );
+
     SeedshotProjectile(void);
 
     void OnSceneReady(ursine::Scene *scene) override;
@@ -45,9 +52,13 @@ public:
     const ursine::resources::ResourceReference &GetSeedshotEndSfx(void) const;
     void SetSeedshotEndSfx(const ursine::resources::ResourceReference &seedshotEndSfx);
 
+    const ursine::resources::ResourceReference &GetGooDamageSfx(void) const;
+    void SetGooDamageSfx(const ursine::resources::ResourceReference &gooDamageSfx);
+
 private:
     ursine::resources::ResourceReference m_seedshotSfx;
     ursine::resources::ResourceReference m_seedshotEndSfx;
+    ursine::resources::ResourceReference m_gooDamageSfx;
 
     void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
 
