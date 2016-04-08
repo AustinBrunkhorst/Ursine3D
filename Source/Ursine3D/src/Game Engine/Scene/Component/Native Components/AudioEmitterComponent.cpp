@@ -17,6 +17,8 @@
 
 #include "AudioItemEventData.h"
 
+#include <AK/SoundEngine/Common/AkSoundEngine.h>
+
 namespace ursine
 {
     using namespace resources;
@@ -28,7 +30,8 @@ namespace ursine
         AudioEmitter::AudioEmitter(void)
             : BaseComponent( )
             , m_maskChanged( false )
-            , m_listenerMask( ListenerMask::NONE )  { }
+            , m_listenerMask( ListenerMask::NONE )
+            , m_attenuationScalar( 1.0f ) { }
 
         AudioEmitter::~AudioEmitter(void)
         {
@@ -38,6 +41,8 @@ namespace ursine
         void AudioEmitter::OnInitialize(void)
         {
             AudioComponentBase::OnInitialize( GetOwner( ) );
+
+            AK::SoundEngine::SetAttenuationScalingFactor( m_handle, m_attenuationScalar );
         }
 
         ListenerMask AudioEmitter::GetListenerMask(void) const
@@ -127,6 +132,20 @@ namespace ursine
             m_testEvent = audioEvent;
 
             NOTIFY_COMPONENT_CHANGED( "TestEvent", m_testEvent );
+        }
+
+        float AudioEmitter::GetAttenuationScalingFactor(void) const
+        {
+            return m_attenuationScalar;
+        }
+
+        void AudioEmitter::SetAttenuationScalingFactor(float scalar)
+        {
+            m_attenuationScalar = scalar;
+
+            NOTIFY_COMPONENT_CHANGED( "attenuationScalingFactor", m_attenuationScalar );
+
+            AK::SoundEngine::SetAttenuationScalingFactor( m_handle, m_attenuationScalar );
         }
     }
 }

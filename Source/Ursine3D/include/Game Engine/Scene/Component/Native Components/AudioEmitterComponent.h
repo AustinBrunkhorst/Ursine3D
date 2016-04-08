@@ -56,11 +56,20 @@ namespace ursine
                 "Play Sound"
             );
 
+            EditorField(
+                float attenuationScalingFactor,
+                GetAttenuationScalingFactor,
+                SetAttenuationScalingFactor
+            );
+
             ListenerMask GetListenerMask(void) const;
             void SetListenerMask(ListenerMask mask);
 
             const ursine::resources::ResourceReference &GetTestEvent(void) const;
             void SetTestEvent(const ursine::resources::ResourceReference &audioEvent);
+
+            float GetAttenuationScalingFactor(void) const;
+            void SetAttenuationScalingFactor(float scalar);
 
             void PushEvent(const AudioEvent::Handle event);
             void PushEvent(const resources::ResourceReference &eventResource);
@@ -77,6 +86,8 @@ namespace ursine
             std::queue<AudioEvent::Handle> m_events;
             ursine::resources::ResourceReference m_testEvent;
             bool m_maskChanged;
+
+            float m_attenuationScalar;
 
             void OnInitialize(void) override;
             

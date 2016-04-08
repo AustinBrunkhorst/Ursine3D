@@ -17,6 +17,10 @@
 #include "BossAIComponent.h"
 
 #include <AudioEmitterComponent.h>
+#include <AudioManager.h>
+#include <AudioItemEventData.h>
+#include <World.h>
+#include <Scene.h>
 
 using namespace ursine;
 using namespace ecs;

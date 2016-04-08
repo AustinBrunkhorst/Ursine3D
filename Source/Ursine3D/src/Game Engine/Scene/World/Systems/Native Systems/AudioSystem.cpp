@@ -80,10 +80,13 @@ namespace ursine
                     static_cast<AudioEmitter*>( const_cast<Component*>( args->component ) )
                 );
 
-                auto &handle = m_emitters[ args->entity ]->m_handle;
+                auto emitter = m_emitters[ args->entity ];
+                auto &handle = emitter->m_handle;
 
                 CreateAudioObject( handle );
                 AssignListener( handle, m_emitters[ args->entity ]->GetListenerMask( ) );
+
+                emitter->SetAttenuationScalingFactor( emitter->GetAttenuationScalingFactor( ) );
             }
 
             else if (args->component->Is<AudioListener>( ))
@@ -105,7 +108,18 @@ namespace ursine
 
                 if (search != m_emitters.end( ))
                 {
-                    DeleteAudioObject( m_emitters[ args->entity ]->m_handle );
+                    auto &emitter = m_emitters[ args->entity ];
+                    auto handle = emitter->m_handle;
+
+                    // post all remaining events
+                    while (!emitter->EmptyEvent( ))
+                    {
+                        auto postedEvent = emitter->GetEvent( );
+                        PostAudioEventInfo( postedEvent, handle );
+                        emitter->PopEvent( );
+                    }
+
+                    DeleteAudioObject( handle );
                     m_emitters.erase( search );
                 }
             }
