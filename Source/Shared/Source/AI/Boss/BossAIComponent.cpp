@@ -28,6 +28,7 @@
 #include "BossPhase3RepositionBoss.h"
 #include "BossJumpToHomeLocationState.h"
 #include "BossPhase3VineLoopState.h"
+#include "BossPlayAudioEventState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -356,6 +357,18 @@ void BossAI::SetPhase2DazedResetTimer(float timer)
     NOTIFY_COMPONENT_CHANGED( "phase2DazedResetTimer", m_phase2DazedResetTimer );
 }
 
+const ResourceReference &BossAI::GetIntroScream(void) const
+{
+    return m_introScream;
+}
+
+void BossAI::SetIntroScream(const ResourceReference &audioEvent)
+{
+    m_introScream = audioEvent;
+
+    NOTIFY_COMPONENT_CHANGED( "introScream", m_introScream );
+}
+
 EntityHandle BossAI::GetSeedshotEntity(void)
 {
     return GetOwner( )->GetChildByName( m_seedshotEntity );
@@ -476,6 +489,7 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
+        auto playScream = sm->AddState<BossPlayAudioEventState>( m_introScream );
         auto spawnBoss = sm->AddState<BossSpawnState>( );
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
         auto spawnVines2 = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 0.5f );
@@ -486,6 +500,7 @@ void BossAI::OnInitialize(void)
         auto dazed = sm->AddState<BossDazedState>( );
         auto changePhaseState = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase2 );
 
+        playScream->AddTransition( spawnBoss, "Spawn Boss" );
         spawnBoss->AddTransition( spawnVines, "To Spawn Vines" );
         spawnVines->AddTransition( invulnerable, "To Invulnerable" );
         invulnerable->AddTransition( seedshot, "To Seedshot" )
@@ -515,7 +530,7 @@ void BossAI::OnInitialize(void)
              );
 
 
-        sm->SetInitialState( spawnBoss );
+        sm->SetInitialState( playScream );
 
         m_bossLogic[ 0 ].push_back( sm );
     }

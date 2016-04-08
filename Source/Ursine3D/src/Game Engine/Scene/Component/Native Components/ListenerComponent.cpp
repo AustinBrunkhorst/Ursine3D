@@ -26,35 +26,35 @@
 
 namespace ursine
 {
-    namespace ecs
-    {
-        NATIVE_COMPONENT_DEFINITION( AudioListener );
+	namespace ecs
+	{
+		NATIVE_COMPONENT_DEFINITION( AudioListener );
 
-        AudioListener::AudioListener(void)
-            : BaseComponent( )
+		AudioListener::AudioListener(void)
+			: BaseComponent( )
             , m_listenerIndex( ListenerIndex::NONE ) { }
 
-        AudioListener::~AudioListener(void)
-        {
+		AudioListener::~AudioListener(void)
+		{
+            AudioComponentBase::OnRemove( GetOwner( ) );
+		}
 
-        }
+		void AudioListener::OnInitialize(void)
+		{
+            AudioComponentBase::OnInitialize( GetOwner( ) );
+		}
 
-        void AudioListener::OnInitialize(void)
-        {
+		ListenerIndex AudioListener::GetListenerIndex(void) const
+		{
+			return m_listenerIndex;
+		}
 
-        }
+		void AudioListener::SetListenerIndex(ListenerIndex index)
+		{
+			m_listenerIndex = index;
 
-        ListenerIndex AudioListener::GetListenerIndex(void) const
-        {
-            return m_listenerIndex;
-        }
+			NOTIFY_COMPONENT_CHANGED( "listener", m_listenerIndex );
+		}
 
-        void AudioListener::SetListenerIndex(ListenerIndex index)
-        {
-            m_listenerIndex = index;
-
-            NOTIFY_COMPONENT_CHANGED( "listener", m_listenerIndex );
-        }
-
-    }
+	}
 }
