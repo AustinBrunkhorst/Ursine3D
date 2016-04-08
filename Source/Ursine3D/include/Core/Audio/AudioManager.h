@@ -24,50 +24,50 @@
 
 namespace ursine
 {
-	class AudioManager : public core::CoreSystem
-	{
-		CORE_SYSTEM;
+    class AudioManager : public core::CoreSystem
+    {
+        CORE_SYSTEM;
 
-	public:
-		Meta(Enable)
-		AudioManager(void) { }
+    public:
+        Meta(Enable)
+        AudioManager(void) { }
 
         ~AudioManager(void);
 
-		void OnInitialize(void) override;
-		void OnRemove(void) override;
+        void OnInitialize(void) override;
+        void OnRemove(void) override;
 
-		void PlayEvent(const std::string name, AkGameObjectID obj);
+        void PlayEvent(const std::string name, AkGameObjectID obj);
 
-		static void PlayGlobalEvent(const std::string &name);
-		static void StopGlobalEvent(const std::string &name);
+        static void PlayGlobalEvent(const std::string &name);
+        static void StopGlobalEvent(const std::string &name);
         static bool IsGlobalEventPlaying(const std::string &name);
 
-		static void PauseAudio(void);
+        static void PauseAudio(void);
 
-		static void StopSound(std::string name, AkGameObjectID id);
+        static void StopSound(std::string name, AkGameObjectID id);
 
-		static void ResumeAudio(void);
+        static void ResumeAudio(void);
 
-		void LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank);
+        void LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank);
 
-		void UnloadBank(const resources::AudioData &data);
+        void UnloadBank(const resources::AudioData &data);
 
-		void RegisterObject(AkGameObjectID obj, int listener);
+        void RegisterObject(AkGameObjectID obj, int listener);
 
-		void UnRegisterObject(AkGameObjectID obj);
+        void UnRegisterObject(AkGameObjectID obj);
 
-		void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, 
-			const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param);
-	private:
-		AkInitSettings m_initSettings;
-		AkPlatformInitSettings m_platSettings;
+        void RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, 
+            const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param);
+    private:
+        AkInitSettings m_initSettings;
+        AkPlatformInitSettings m_platSettings;
 
-		void onAppUpdate(EVENT_HANDLER(Application));
+        void onAppUpdate(EVENT_HANDLER(Application));
 
-		void init(AkInitSettings *in_pSettings, AkPlatformInitSettings *in_pPlatformSettings);
+        void init(AkInitSettings *in_pSettings, AkPlatformInitSettings *in_pPlatformSettings);
 
-	} Meta(Enable, WhiteListMethods);
+    } Meta(Enable, WhiteListMethods);
 }
 
 // Global JavaScript methods
