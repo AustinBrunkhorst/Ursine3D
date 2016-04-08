@@ -18,6 +18,8 @@
 #include "ListenerMasks.h"
 #include "AudioEventInfo.h"
 
+#include <AudioItemEventData.h>
+
 #include <queue>
 
 namespace ursine
@@ -40,11 +42,13 @@ namespace ursine
 
             Meta(Enable)
             AudioEmitter(void);
+            ~AudioEmitter(void);
 
-            EditorField(
-                std::string test,
-                GetText,
-                SetText
+            EditorResourceField(
+                ursine::resources::AudioItemEventData,
+                TestEvent,
+                GetTestEvent,
+                SetTestEvent
             );
 
             EditorButton(
@@ -52,11 +56,20 @@ namespace ursine
                 "Play Sound"
             );
 
+            EditorField(
+                float attenuationScalingFactor,
+                GetAttenuationScalingFactor,
+                SetAttenuationScalingFactor
+            );
+
             ListenerMask GetListenerMask(void) const;
             void SetListenerMask(ListenerMask mask);
 
-            const std::string &GetText(void) const;
-            void SetText(const std::string &text);
+            const ursine::resources::ResourceReference &GetTestEvent(void) const;
+            void SetTestEvent(const ursine::resources::ResourceReference &audioEvent);
+
+            float GetAttenuationScalingFactor(void) const;
+            void SetAttenuationScalingFactor(float scalar);
 
             void PushEvent(const AudioEvent::Handle event);
             void PushEvent(const resources::ResourceReference &eventResource);
@@ -71,8 +84,12 @@ namespace ursine
         private:
             ListenerMask m_listenerMask;
             std::queue<AudioEvent::Handle> m_events;
-            std::string m_testText;
+            ursine::resources::ResourceReference m_testEvent;
             bool m_maskChanged;
+
+            float m_attenuationScalar;
+
+            void OnInitialize(void) override;
             
         } Meta(Enable, WhiteListMethods, DisplayName( "AudioEmitter" ));
     }

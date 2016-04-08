@@ -20,5 +20,6 @@
 #include "EditorIconComponent.h"
 
 #include "ProjectBuildSettingsComponent.h"
+#include "ProjectInstallerSettingsComponent.h"
 
 #include <SharedComponents.h>

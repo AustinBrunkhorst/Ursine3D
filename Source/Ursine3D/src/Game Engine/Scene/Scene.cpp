@@ -88,6 +88,10 @@ namespace ursine
 
         Dispatch( SCENE_WORLD_CHANGED, &e );
 
+        // make sure it doesn't stay in the cache
+        if (ignoreCache)
+            m_resourceManager.UnloadReference( reference );
+
         return true;
     }
 

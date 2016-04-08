@@ -61,6 +61,10 @@ class EntityInspector extends WindowHandler {
         initializeInspection( );
     }
 
+    public function getComponentHandler(componentType : String) {
+        return m_componentHandlers[ componentType ];
+    }
+
     private function onInspectedEntityComponentAdded(e) {
         var inspection = {
             type: e.component,

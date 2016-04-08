@@ -67,6 +67,7 @@ void VineUprootState::Update(VineAIStateMachine *machine)
         case UprootState::Burrowing:
         {
             playAnimation( animator, "Spike_Down" );
+            aiOwner->GetComponent<AudioEmitter>( )->PushEvent( ai->GetBurrowSfx( ) );
             break;
         }
         case UprootState::Digging:
@@ -141,6 +142,7 @@ void VineUprootState::Update(VineAIStateMachine *machine)
 
             for (auto &emitter : emitters)
                 emitter->SetEmitting( false );
+            aiOwner->GetComponent<AudioEmitter>( )->PushEvent( ai->GetEmergeSfx( ) );
 
             break;
         }

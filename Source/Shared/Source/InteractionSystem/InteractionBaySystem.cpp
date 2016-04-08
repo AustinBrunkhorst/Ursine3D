@@ -62,76 +62,52 @@ void InteractionBaySystem::onUpdate(EVENT_HANDLER(World))
 
 void InteractionBaySystem::UpdateBay(InteractionBay* bay)
 {
-    PrevIter prevIt = bay->m_prevInteractables.begin( );
-    PrevIter prevEnd = bay->m_prevInteractables.end( );
-
     EntityHandle bayOwner = bay->GetOwner( );
 
     // loop through all interactables in bay
     while ( !bay->m_interactQueue.empty( ) )
     {
-        if ( InteractUpdate( bay, bay->m_interactQueue.top( ), prevIt, prevEnd ) )
+        if ( InteractUpdate( bay, bay->m_interactQueue.top( ).second ) )
             break;
 
         bay->m_interactQueue.pop( );
     }
 
+    PrevIter prevIt = bay->m_prevInteractables.begin( );
+    PrevIter prevEnd = bay->m_prevInteractables.end( );
+
     // left over prev interactables that a no longer being interacted with
     for ( ; prevIt != prevEnd; ++prevIt )
-        prevIt->second->StopInteraction( bayOwner );
+        ( *prevIt )->StopInteraction( bayOwner );
 
-    bay->Clear( );
+    bay->Update( );
 }
 
-bool InteractionBaySystem::InteractUpdate(InteractionBay* bay, const InteractInfo& currInteractInfo, PrevIter& prevIt, PrevIter& prevEnd)
+bool InteractionBaySystem::InteractUpdate(InteractionBay* bay, Interactable* currInteractable)
 {
-    PrevIter temp;
+    PrevIter prevInteractable = bay->m_prevInteractables.find( currInteractable );
 
     EntityHandle bayOwner = bay->GetOwner( );
 
-    // if prev and curr not == then an inconsistency was found
-    // loop until consistency restored or curr is new interaction
-    while ( *prevIt != currInteractInfo && prevIt != prevEnd )
-    {
-        // new interactable found
-        if ( currInteractInfo < *prevIt )
-        {
-            // start interction
-            currInteractInfo.second->StartInteraction( bayOwner );
-
-            // add to prev of bay
-            bay->m_prevInteractables.insert( prevIt, currInteractInfo );
-
-            // kick out of loop since new consistencey found
-            break;
-        }
-
-        // no longer interacting w/ prev obj
-        prevIt->second->StopInteraction( bayOwner );
-
-        // no longer should be in prev
-        bay->m_prevInteractables.erase( prevIt++ );
-    }
-
     // new interactable found
-    if ( prevIt == prevEnd )
+    if ( prevInteractable == bay->m_prevInteractables.end( ) )
     {
         // start interaction
-        currInteractInfo.second->StartInteraction(bayOwner);
+        currInteractable->StartInteraction( bayOwner );
 
         // add to prev of bay
-        bay->m_prevInteractables.push_back(currInteractInfo);
+        bay->m_currInteractables.insert( currInteractable );
     }
 
-    // curr is the prev so increment for next interaction in bay
-    else if ( *prevIt == currInteractInfo )
-        ++prevIt;
+    // remove from prev list so we do not stop interaction later
+    else
+        bay->m_prevInteractables.erase( prevInteractable );
 
     // perform interaction with interactable
-    currInteractInfo.second->Interact( bayOwner );
+    currInteractable->Interact( bayOwner );
 
     // will end if interact type is end
-    return currInteractInfo.second->GetInteractType( ) == Interactable::END;
+    return currInteractable->GetInteractType( ) == Interactable::END;
 }
 
 

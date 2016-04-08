@@ -175,9 +175,9 @@ namespace ursine
 
                         transFactor = 0.0f;
                     }
-
-                    // reset "sent" flag on the state's events
-                    resetSentFlagInEvents( (*currSt)->GetStateName( ) );
+                    else
+                        // reset "sent" flag on the state's events
+                        resetSentFlagInEvents( (*currSt)->GetStateName( ) );
                 }
 
                 return;

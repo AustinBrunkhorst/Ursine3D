@@ -75,7 +75,7 @@ void InputController::MapXboxContoller(void)
 
     m_pullTrigger = PlayerAction::RightTrigger;
     m_reload      = PlayerAction::Action3;
-    m_swap        = PlayerAction::Action4;
+    //m_swap        = PlayerAction::Action4;
     m_jump        = PlayerAction::Action1;
 }
 
@@ -97,7 +97,7 @@ void InputController::MapKeyboard(void)
 
     m_pullTrigger = PlayerAction::RightTrigger;
     m_reload      = PlayerAction::Action3;
-    m_swap        = PlayerAction::Action4;
+    //m_swap        = PlayerAction::Action4;
     m_jump        = PlayerAction::Action1;
 }
 
@@ -113,7 +113,7 @@ void InputController::MapCommandList(PlayerID* idComp)
         .AddActionCommand( Method( m_reload, HELD, gEvent::INTERACT_COMMAND ) )
         .AddActionCommand( Method( m_reload, RELEASED, gEvent::RELOAD_COMMAND ) )
         .AddActionCommand( Method( m_jump, TRIGGERED, gEvent::JUMP_COMMAND ) )
-        .AddActionCommand( Method( m_swap, TRIGGERED, gEvent::SWAP_COMMAND ) );
+        /*.AddActionCommand( Method( m_swap, TRIGGERED, gEvent::SWAP_COMMAND ) )*/;
 
     PlayerTwoAxisAction* axisActions = new PlayerTwoAxisAction( &m_action, GetOwner( ) );
     axisActions->AddAxisBinding( AxisBinding( m_moveLeft, m_moveRight, m_moveForward, m_moveBack, gEvent::MOVEMENT_COMMAND ) )

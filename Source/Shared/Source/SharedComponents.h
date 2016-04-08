@@ -35,9 +35,12 @@
 
 #include "PlayerLogic/PlayerIdComponent.h"
 #include "PlayerLogic/PlayerSpawnPointComponent.h"
+#include "PlayerLogic/PlayerDownedObjectComponent.h"
+#include "PlayerLogic/PlayerDeathCameraAnimatorComponent.h"
 #include "PlayerLogic/CharacterController/CharacterControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerGunAnimationControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerAnimationControllerComponent.h"
+#include "PlayerLogic/AnimationControllers/FacePlayerBoneTowardsMeComponent.h"
 
 /////////////////////////////////
 //        Damage System        //
@@ -64,6 +67,7 @@
 
 #include "InteractionSystem/RaidTriggers/EmpowerTriggerComponent.h"
 #include "InteractionSystem/RaidTriggers/DisempowerTriggerComponent.h"
+#include "InteractionSystem/Triggers/RevivePlayerComponent.h"
 
 /////////////////////////////////
 //        Weapon System        //
@@ -98,6 +102,7 @@
 #include "BossAIComponent.h"
 #include "Boss/Components/PollinateProjectileComponent.h"
 #include "Boss/Components/SludgeshotProjectileComponent.h"
+#include "Boss/Components/SeedshotProjectileComponent.h"
 #include "VineAIComponent.h"
 #include "VineSpawnerComponent.h"
 
@@ -158,6 +163,7 @@
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/ChangeSegmentOnAnimatorFinishComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/Phase3BossSpawnComponent.h"
+#include "LevelSegmentManager/SegmentLogic/Misc/BossBattleMusicManagerComponent.h"
 #include "Misc/DeathTriggerGroupComponent.h"
 #include "Misc/PingTestComponent.h"
 

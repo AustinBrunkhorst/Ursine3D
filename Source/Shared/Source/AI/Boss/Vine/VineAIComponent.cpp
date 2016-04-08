@@ -33,6 +33,7 @@ NATIVE_COMPONENT_DEFINITION( VineAI );
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 VineAI::VineAI(void)
     : BaseComponent( )
@@ -197,6 +198,42 @@ float VineAI::GetUprootCooldown(void) const
 void VineAI::SetUprootCooldown(float cooldown)
 {
     m_uprootCooldown = cooldown;
+}
+
+const ResourceReference &VineAI::GetSwipeSfx(void) const
+{
+    return m_swipeSfx;
+}
+
+void VineAI::SetSwipeSfx(const ResourceReference &swipeSfx)
+{
+    m_swipeSfx = swipeSfx;
+
+    NOTIFY_COMPONENT_CHANGED( "swipeSfx", m_swipeSfx );
+}
+
+const ResourceReference &VineAI::GetBurrowSfx(void) const
+{
+    return m_burrowSfx;
+}
+
+void VineAI::SetBurrowSfx(const ResourceReference &burrowSfx)
+{
+    m_burrowSfx = burrowSfx;
+
+    NOTIFY_COMPONENT_CHANGED( "burrowSfx", m_burrowSfx );
+}
+
+const ResourceReference &VineAI::GetEmergeSfx(void) const
+{
+    return m_emergeSfx;
+}
+
+void VineAI::SetEmergeSfx(const ResourceReference &emergeSfx)
+{
+    m_emergeSfx = emergeSfx;
+
+    NOTIFY_COMPONENT_CHANGED( "emergeSfx", m_emergeSfx );
 }
 
 Animator *VineAI::GetAnimator(void)

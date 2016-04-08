@@ -44,7 +44,7 @@ private:
 
     // update current bay
     void UpdateBay(InteractionBay* bay);
-    bool InteractUpdate(InteractionBay* bay, const InteractInfo& currInteractable, PrevIter& prevIt, PrevIter& prevEnd);
+    bool InteractUpdate(InteractionBay* bay, Interactable* currInteractable);
 
     std::unordered_map<ursine::ecs::EntityHandle, InteractionBay*> m_interactionBays;
 

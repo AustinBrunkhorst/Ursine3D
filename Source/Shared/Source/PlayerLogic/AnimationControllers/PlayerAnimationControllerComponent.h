@@ -134,6 +134,7 @@ private:
     void onJump(EVENT_HANDLER(ursine::ecs::Entity));
     void onMove(EVENT_HANDLER(ursine::ecs::Entity));
     void onDeath(EVENT_HANDLER(Health));
+    void onRevive(EVENT_HANDLER(ursine::ecs::Entity));
 
 } Meta(
     Enable,

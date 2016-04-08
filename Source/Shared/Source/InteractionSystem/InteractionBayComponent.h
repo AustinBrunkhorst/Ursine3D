@@ -43,7 +43,10 @@ private:
     NATIVE_COMPONENT;
 
     Meta(Disable)
-    typedef std::list< InteractionBayUtils::InteractInfo > PrevIteractables;
+    typedef std::set< Interactable* > PrevIteractables;
+
+    Meta(Disable)
+        typedef std::set< Interactable* > CurrInteractables;
 
 public:
     Meta(Disable)
@@ -67,6 +70,10 @@ public:
     Meta(Enable)
     void OnCollision(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PERSISTED));
 
+    void AddInteractable(float distSquared, Interactable* interactable);
+
+    void Update(void);
+
     void Clear(void);
 
     Meta(Disable)
@@ -74,5 +81,8 @@ public:
 
     Meta(Disable)
     PrevIteractables m_prevInteractables;
+
+    Meta(Disable)
+    CurrInteractables m_currInteractables;
 
 } Meta(Enable, WhiteListMethods, DisplayName("InteractionBay"));

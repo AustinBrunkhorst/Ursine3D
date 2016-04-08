@@ -14,6 +14,7 @@
 #pragma once
 
 #include "ProjectGameBuilder.h"
+#include "ProjectGameInstaller.h"
 
 #include <ResourcePipelineManager.h>
 
@@ -29,6 +30,7 @@ public:
 private:
     Editor *m_editor;
     ProjectGameBuilder &m_gameBuilder;
+    ProjectGameInstaller &m_gameInstaller;
     ursine::rp::ResourcePipelineManager &m_pipeline;
 
     ///////////////////////////////////////////////////////////////////////////
@@ -37,7 +39,14 @@ private:
 
     void onProjectBuildStart(EVENT_HANDLER(ProjectGameBuilder));
     void onProjectBuildProgress(EVENT_HANDLER(ProjectGameBuilder));
-    void onProjectBuildComplete(EVENT_HANDLER(ProjectGameBuilder));
+    void onProjectBuildComplete(EVENT_HANDLER(ProjectGameBuilder));   
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Installer Build Events
+    ///////////////////////////////////////////////////////////////////////////
+
+    void onInstallStart(EVENT_HANDLER(ProjectGameInstaller));
+    void onInstallComplete(EVENT_HANDLER(ProjectGameInstaller));
 
     ///////////////////////////////////////////////////////////////////////////
     // Resource Events

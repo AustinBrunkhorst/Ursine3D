@@ -19,9 +19,20 @@
 #include "HealthComponent.h"
 #include "VineAIComponent.h"
 
+#include <AudioItemEventData.h>
+#include <AudioEmitterComponent.h>
+
+enum class BossAIEvents
+{
+    ShieldUp,
+    ShieldDown
+};
+
 class Health;
 
-class BossAI : public ursine::ecs::Component
+class BossAI 
+    : public ursine::ecs::Component
+    , public ursine::EventDispatcher<BossAIEvents>
 {
     NATIVE_COMPONENT;
 
@@ -170,6 +181,20 @@ public:
         SetPhase2DazedResetTimer
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        introScream,
+        GetIntroScream,
+        SetIntroScream
+    );
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        hurtSfx,
+        GetHurtSfx,
+        SetHurtSfx
+    );
+
     Meta(Enable)
     BossAI(void);
 
@@ -239,6 +264,12 @@ public:
     float GetPhase2DazedResetTimer(void) const;
     void SetPhase2DazedResetTimer(float timer);
 
+    const ursine::resources::ResourceReference &GetIntroScream(void) const;
+    void SetIntroScream(const ursine::resources::ResourceReference &audioEvent);
+
+    const ursine::resources::ResourceReference &GetHurtSfx(void) const;
+    void SetHurtSfx(const ursine::resources::ResourceReference &hurtSfx);
+
     ursine::ecs::EntityHandle GetSeedshotEntity(void);
 
     ursine::ecs::EntityHandle GetSludgeshotEntity(void);
@@ -269,6 +300,8 @@ private:
     void onHierachyConstructed(EVENT_HANDLER(ursine::ecs::Entity));
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
+
+    void onDamageTaken(EVENT_HANDLER(Health));
 
     void onLevelSegmentChanged(EVENT_HANDLER(LevelSegmentManager));
 
@@ -355,9 +388,16 @@ private:
 
     bool m_underground;
 
+    // Sfxs
+    ursine::resources::ResourceReference m_introScream;
+    ursine::resources::ResourceReference m_hurtSfx;
+
 } Meta(
     Enable,
     WhiteListMethods
 ) EditorMeta(
-    RequiresComponents( typeof( Health ) )
+    RequiresComponents( 
+        typeof( Health ),
+        typeof( ursine::ecs::AudioEmitter )
+    )
 );

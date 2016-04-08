@@ -83,6 +83,8 @@
             },
             _onOpenedChanged: function() {
                 this.classList.toggle( 'opened', this.opened );
+
+                this.fire( 'open-changed', { } );
             },
             _onDraggingChanged: function() {
                 this.classList.toggle( 'dragging', this.dragging );

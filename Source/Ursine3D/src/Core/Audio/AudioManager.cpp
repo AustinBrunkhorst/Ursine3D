@@ -35,36 +35,36 @@
 
 namespace AK
 {
-	void *AllocHook(size_t size)
-	{
-		return malloc( size );
-	}
+    void *AllocHook(size_t size)
+    {
+        return malloc( size );
+    }
 
-	void FreeHook(void *input)
-	{
-		free( input );
-	}
+    void FreeHook(void *input)
+    {
+        free( input );
+    }
 
 #if defined(PLATFORM_WINDOWS)
 
-	inline void *VirtualAllocHook(
-		void *in_pMemAddress,
-		size_t in_size,
-		DWORD in_dwAllocationType,
-		DWORD in_dwProtect
-	)
-	{
-		return VirtualAlloc( in_pMemAddress, in_size, in_dwAllocationType, in_dwProtect );
-	}
+    inline void *VirtualAllocHook(
+        void *in_pMemAddress,
+        size_t in_size,
+        DWORD in_dwAllocationType,
+        DWORD in_dwProtect
+    )
+    {
+        return VirtualAlloc( in_pMemAddress, in_size, in_dwAllocationType, in_dwProtect );
+    }
 
-	inline void VirtualFreeHook(
-		void *in_pMemAddress,
-		size_t in_size,
-		DWORD in_dwFreeType
-	)
-	{
-		VirtualFree( in_pMemAddress, in_size, in_dwFreeType );
-	}
+    inline void VirtualFreeHook(
+        void *in_pMemAddress,
+        size_t in_size,
+        DWORD in_dwFreeType
+    )
+    {
+        VirtualFree( in_pMemAddress, in_size, in_dwFreeType );
+    }
 
 #endif
 }
@@ -72,372 +72,295 @@ namespace AK
 
 namespace
 {
-	const AkGameObjectID StartID = 100;
+    const AkGameObjectID StartID = 100;
 
-	const std::string kInitBank = "INIT";
-	const std::string kMainBank = "MAIN";
+    const std::string kInitBank = "INIT";
+    const std::string kMainBank = "MAIN";
 
-	const std::string kSecondaryBus = "MASTER_SECONDARY_BUS";
+    const std::string kSecondaryBus = "MASTER_SECONDARY_BUS";
 
-	AkBankID BankID = AK_INVALID_BANK_ID;
-	AkBankID MainID = AK_INVALID_BANK_ID;
+    AkBankID BankID = AK_INVALID_BANK_ID;
+    AkBankID MainID = AK_INVALID_BANK_ID;
 
-	std::unordered_map<std::string, AkPlayingID> &getCreatedGlobalEvents(void)
-	{
-		static std::unordered_map<std::string, AkPlayingID> globalEvents;
+    std::unordered_map<std::string, AkPlayingID> &getCreatedGlobalEvents(void)
+    {
+        static std::unordered_map<std::string, AkPlayingID> globalEvents;
 
-		return globalEvents;
-	}
+        return globalEvents;
+    }
 }
 
 namespace ursine
 {
-	CORE_SYSTEM_DEFINITION( AudioManager );
+    CORE_SYSTEM_DEFINITION( AudioManager );
 
-	AudioManager::~AudioManager(void)
-	{
-		AK::SoundEngine::UnregisterAllGameObj( );
+    AudioManager::~AudioManager(void)
+    {
+        AK::SoundEngine::UnregisterAllGameObj( );
 
-		AK::MusicEngine::Term( );
+        AK::MusicEngine::Term( );
 
-		AK::SoundEngine::Term( );
+        AK::SoundEngine::Term( );
 
-		if (AK::IAkStreamMgr::Get( ))
-			AK::IAkStreamMgr::Get( )->Destroy( );
+        if (AK::IAkStreamMgr::Get( ))
+            AK::IAkStreamMgr::Get( )->Destroy( );
 
-		AK::MemoryMgr::Term( );
-	}
+        AK::MemoryMgr::Term( );
+    }
 
-	void AudioManager::OnInitialize(void)
-	{
-		// Init all things from web page
-		AK::SoundEngine::GetDefaultInitSettings( m_initSettings );
-		AK::SoundEngine::GetDefaultPlatformInitSettings( m_platSettings );
+    void AudioManager::OnInitialize(void)
+    {
+        // Init all things from web page
+        AK::SoundEngine::GetDefaultInitSettings( m_initSettings );
+        AK::SoundEngine::GetDefaultPlatformInitSettings( m_platSettings );
 
-		init( &m_initSettings, &m_platSettings );
+        init( &m_initSettings, &m_platSettings );
 
-		// Init all Listeners
-		initAllListeners( );
+        // Subscribe to update
+        Application::Instance->Connect( APP_UPDATE, this, &AudioManager::onAppUpdate );
+    }
 
-		// Create the global listener
-		//setGlobalListeners( );
+    void AudioManager::PauseAudio(void)
+    {
+        AK::SoundEngine::Suspend( false );
+    }
 
-		// Subscribe to update
-		Application::Instance->Connect( APP_UPDATE, this, &AudioManager::onAppUpdate );
-	}
+    void AudioManager::StopSound(std::string name, AkGameObjectID id)
+    {
+        auto result = ExecuteActionOnEvent(
+            name.c_str( ),
+            AK::SoundEngine::AkActionOnEventType_Stop,
+            id
+        );
 
-	void AudioManager::PauseAudio(void)
-	{
-		AK::SoundEngine::Suspend( false );
-	}
+        UWarningIf( result != AK_Success,
+            "Wwise: Could Not Stop The Music!! Or this event."
+        );
+    }
 
-	void AudioManager::StopSound(std::string name, AkGameObjectID id)
-	{
-		auto result = ExecuteActionOnEvent(
-			name.c_str( ),
-			AK::SoundEngine::AkActionOnEventType_Stop,
-			id
-		);
+    void AudioManager::ResumeAudio(void)
+    {
+        AK::SoundEngine::WakeupFromSuspend( );
+    }
 
-		UWarningIf( result != AK_Success,
-			"Wwise: Could Not Stop The Music!! Or this event."
-		);
-	}
+    void AudioManager::PlayEvent(const std::string name, AkGameObjectID obj)
+    {
+        if (AK::SoundEngine::PostEvent( name.c_str( ), obj ) == AK_INVALID_PLAYING_ID)
+        {
+            UWarning( "Wwise: Cannot Post Event: %s", name.c_str( ) );
+        }
+    }
 
-	void AudioManager::ResumeAudio(void)
-	{
-		AK::SoundEngine::WakeupFromSuspend( );
-	}
+    void AudioManager::PlayGlobalEvent(const std::string &name)
+    {
+        auto result = AK::SoundEngine::PostEvent(
+            name.c_str( ),
+            AUDIO_GLOBAL_OBJECT_ID,
+            AK_EnableGetSourcePlayPosition
+        );
 
-	void AudioManager::PlayEvent(const std::string name, AkGameObjectID obj)
-	{
-		if (AK::SoundEngine::PostEvent( name.c_str( ), obj ) == AK_INVALID_PLAYING_ID)
-		{
-			UWarning( "Wwise: Cannot Post Event: %s", name.c_str( ) );
-		}
-	}
+        if (result == AK_INVALID_PLAYING_ID)
+        {
+            UWarning( "Wwise: Cannot Post Global Event: %s", name.c_str( ) );
+        }
+        else
+        {
+            auto &globalEvents = getCreatedGlobalEvents( );
 
-	void AudioManager::PlayGlobalEvent(const std::string &name)
-	{
-		auto result = AK::SoundEngine::PostEvent(
-			name.c_str( ),
-			AUDIO_GLOBAL_OBJECT_ID,
-			AK_EnableGetSourcePlayPosition
-		);
+            globalEvents[ name ] = result;
+        }
+    }
 
-		if (result == AK_INVALID_PLAYING_ID)
-		{
-			UWarning( "Wwise: Cannot Post Global Event: %s", name.c_str( ) );
-		}
-		else
-		{
-			auto &globalEvents = getCreatedGlobalEvents( );
+    void AudioManager::StopGlobalEvent(const std::string &name)
+    {
+        auto &globalEvents = getCreatedGlobalEvents( );
 
-			globalEvents[ name ] = result;
-		}
-	}
+        auto result = ExecuteActionOnEvent(
+            name.c_str( ),
+            AK::SoundEngine::AkActionOnEventType_Stop,
+            AUDIO_GLOBAL_OBJECT_ID
+        );
 
-	void AudioManager::StopGlobalEvent(const std::string &name)
-	{
-		auto &globalEvents = getCreatedGlobalEvents( );
+        if (result == AK_Success)
+        {
+            globalEvents.erase( name );
+        }
+        else
+        {
+            UWarning( "Wwise: Could Not Stop The Music!! Or this event." );
+        }
+    }
 
-		auto result = ExecuteActionOnEvent(
-			name.c_str( ),
-			AK::SoundEngine::AkActionOnEventType_Stop,
-			AUDIO_GLOBAL_OBJECT_ID
-		);
+    bool AudioManager::IsGlobalEventPlaying(const std::string &name)
+    {
+        auto &globalEvents = getCreatedGlobalEvents( );
 
-		if (result == AK_Success)
-		{
-			globalEvents.erase( name );
-		}
-		else
-		{
-			UWarning( "Wwise: Could Not Stop The Music!! Or this event." );
-		}
-	}
+        auto search = globalEvents.find( name );
 
-	bool AudioManager::IsGlobalEventPlaying(const std::string &name)
-	{
-		auto &globalEvents = getCreatedGlobalEvents( );
+        // doesn't exist, so it can't be playing
+        if (search == globalEvents.end( ))
+            return false;
 
-		auto search = globalEvents.find( name );
+        AkTimeMs position;
 
-		// doesn't exist, so it can't be playing
-		if (search == globalEvents.end( ))
-			return false;
+        auto result = AK::SoundEngine::GetSourcePlayPosition(
+            search->second,
+            &position
+        );
 
-		AkTimeMs position;
+        return result == AK_Success;
+    }
 
-		auto result = AK::SoundEngine::GetSourcePlayPosition(
-			search->second,
-			&position
-		);
+    void AudioManager::OnRemove(void)
+    {
+        Application::Instance->Disconnect( APP_UPDATE, this, &AudioManager::onAppUpdate );
+    }
 
-		return result == AK_Success;
-	}
+    void AudioManager::onAppUpdate(void *_sender, const ursine::EventArgs *_args)
+    {
+        // Process bank requests, events, positions, RTPC, etc.
+        UAssert( AK::SoundEngine::RenderAudio( ) == AK_Success, "Wwise: Cannot Render Audio" );
+    }
 
-	void AudioManager::OnRemove(void)
-	{
-		Application::Instance->Disconnect( APP_UPDATE, this, &AudioManager::onAppUpdate );
-	}
+    void AudioManager::LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank)
+    {
+        auto initResult = AK::SoundEngine::LoadBank(
+            data.GetInitData( ).GetData( ),
+            static_cast<AkUInt32>( data.GetInitData( ).GetSize( ) ),
+            outInit
+        );
 
-	void AudioManager::onAppUpdate(void *_sender, const ursine::EventArgs *_args)
-	{
-		// Process bank requests, events, positions, RTPC, etc.
-		UAssert( AK::SoundEngine::RenderAudio( ) == AK_Success, "Wwise: Cannot Render Audio" );
-	}
+        UAssertCatchable( initResult == AK_Success,
+            "Unable to load init bank."
+        );
 
-	void AudioManager::LoadBank(const resources::AudioData &data, AkBankID &outInit, AkBankID &outBank)
-	{
-		auto initResult = AK::SoundEngine::LoadBank(
-			data.GetInitData( ).GetData( ),
-			static_cast<AkUInt32>( data.GetInitData( ).GetSize( ) ),
-			outInit
-		);
+        auto bankResult = AK::SoundEngine::LoadBank(
+            data.GetBankData( ).GetData( ),
+            static_cast<AkUInt32>( data.GetBankData( ).GetSize( ) ),
+            outBank
+        );
 
-		UAssertCatchable( initResult == AK_Success,
-			"Unable to load init bank."
-		);
+        UAssertCatchable( bankResult == AK_Success,
+            "Unable to load bank."
+        );
+    }
 
-		auto bankResult = AK::SoundEngine::LoadBank(
-			data.GetBankData( ).GetData( ),
-			static_cast<AkUInt32>( data.GetBankData( ).GetSize( ) ),
-			outBank
-		);
+    void AudioManager::UnloadBank(const resources::AudioData &data)
+    {
+        auto initResult = AK::SoundEngine::UnloadBank(
+            data.GetInitID( ),
+            data.GetInitData( ).GetData( ),
+            nullptr
+        );
 
-		UAssertCatchable( bankResult == AK_Success,
-			"Unable to load bank."
-		);
-	}
+        UAssertCatchable( initResult == AK_Success,
+            "Unable to unload init bank."
+        );
 
-	void AudioManager::UnloadBank(const resources::AudioData &data)
-	{
-		auto initResult = AK::SoundEngine::UnloadBank(
-			data.GetInitID( ),
-			data.GetInitData( ).GetData( ),
-			nullptr
-		);
+        auto bankResult = AK::SoundEngine::UnloadBank(
+            data.GetBankID( ),
+            data.GetBankData( ).GetData( ),
+            nullptr
+        );
 
-		UAssertCatchable( initResult == AK_Success,
-			"Unable to unload init bank."
-		);
+        UAssertCatchable( bankResult == AK_Success,
+            "Unable to unload bank."
+        );
+    }
 
-		auto bankResult = AK::SoundEngine::UnloadBank(
-			data.GetBankID( ),
-			data.GetBankData( ).GetData( ),
-			nullptr
-		);
+    void AudioManager::RegisterObject(AkGameObjectID obj, int listener)
+    {
+        if (AK::SoundEngine::RegisterGameObj( obj, listener ) != AK_Success)
+        {
+            UWarning( "Wwise: Cannot Register Game Object" );
+        }
+    }
 
-		UAssertCatchable( bankResult == AK_Success,
-			"Unable to unload bank."
-		);
-	}
+    void AudioManager::UnRegisterObject(AkGameObjectID obj)
+    {
+        if (AK::SoundEngine::UnregisterGameObj( obj ) != AK_Success)
+        {
+            UWarning( "Wwise: Cannot Unregister Game Object" );
+        }
+    }
 
-	void AudioManager::RegisterObject(AkGameObjectID obj, int listener)
-	{
-		if (AK::SoundEngine::RegisterGameObj( obj, listener ) != AK_Success)
-		{
-			UWarning( "Wwise: Cannot Register Game Object" );
-		}
-	}
+    void AudioManager::RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param)
+    {
+        if (AK::SoundEngine::RegisterPlugin( type, company_id, plugin_id, create_func, create_param ))
+        {
+            UWarning( "Wwise: Cannot Register Plugin" );
+        }
+    }
 
-	bool AudioManager::GetListenerAvailablility(ListenerIndex index)
-	{
-		return m_listeners[ static_cast<unsigned>( index ) ];
-	}
+    void AudioManager::init(AkInitSettings *in_pSettings, AkPlatformInitSettings *in_pPlatformSettings)
+    {
+        AkMemSettings memSettings;
+        memSettings.uMaxNumPools = 20;
 
-	bool AudioManager::SetListener(ListenerIndex index)
-	{
-		auto& status = m_listeners[ static_cast<unsigned>( index ) ];
-		if (status)
-		{
-			return false;
-		}
-		else
-		{
-			status = true;
-			return true;
-		}
-	}
+        UAssert( AK::MemoryMgr::Init( &memSettings ) == AK_Success, 
+            "Wwise: Cannot Create The Memory Manager."
+        );
 
-	void AudioManager::FreeListener(ListenerIndex listener)
-	{
-		m_listeners[ static_cast<unsigned>( listener ) ] = false;
-	}
+        AK::StreamMgr::SetCurrentLanguage( AKTEXT( "English(US)" ) );
 
-	void AudioManager::UnRegisterObject(AkGameObjectID obj)
-	{
-		if (AK::SoundEngine::UnregisterGameObj( obj ) != AK_Success)
-		{
-			UWarning( "Wwise: Cannot Unregister Game Object" );
-		}
-	}
+        AkStreamMgrSettings stmSettings;
+        AK::StreamMgr::GetDefaultSettings( stmSettings );
 
-	void AudioManager::RegisterWwisePlugin(const AkPluginType type, const AkUInt32 company_id, const AkUInt32 plugin_id, AkCreatePluginCallback create_func, AkCreateParamCallback create_param)
-	{
-		if (AK::SoundEngine::RegisterPlugin( type, company_id, plugin_id, create_func, create_param ))
-		{
-			UWarning( "Wwise: Cannot Register Plugin" );
-		}
-	}
+        // Customize the Stream Manager settings here.
 
-	ListenerIndex AudioManager::NextAvailableListener()
-	{
-		int i = 0;
-		for (auto lis : m_listeners)
-		{
-			if (!lis)
-				return static_cast<ListenerIndex>( i );
-		}
-		return ListenerIndex::L1;
-	}
+        UAssert( AK::StreamMgr::Create( stmSettings ), 
+            "Wwise: Cannot Create The Streaming Manager"
+        );
 
-	void AudioManager::setGlobalListeners(void)
-	{
-		// create an object that emits to all listeners
-		RegisterObject( AUDIO_GLOBAL_OBJECT_ID, static_cast<AkUInt32>( ListenerMask::L8 ) );
+        AkDeviceSettings deviceSettings;
+        AK::StreamMgr::GetDefaultDeviceSettings( deviceSettings );
 
-		// set position of the listener and the emitter to (0,0,0)
-		AkSoundPosition pos;
-		AkListenerPosition lpos;
+        // Initialize sound engine.
+        UAssert( AK::SoundEngine::Init( in_pSettings, in_pPlatformSettings ) == AK_Success,
+            "Wwise: Cannot Initialize Sound Engine" 
+        );
 
-		pos.Position.X = pos.Position.Y = pos.Position.Z = 0.0f;
-		lpos.Position = pos.Position;
-		pos.Orientation.X = pos.Orientation.Y = 0.0f;
-		pos.Orientation.Z = -1.0f;
-		lpos.OrientationFront = pos.Orientation;
-		lpos.OrientationTop.X = lpos.OrientationTop.Z = 0.0f;
-		lpos.OrientationTop.Y = 1.0f;
+        AkMusicSettings musicInit;
+        AK::MusicEngine::GetDefaultInitSettings( musicInit );
 
-		if (AK::SoundEngine::SetPosition( AUDIO_GLOBAL_OBJECT_ID, pos ) != AK_Success)
-		{
-			UWarning( "Wwise: Cannot Set Object 3D Position" ) ;
-		}
-
-		if (AK::SoundEngine::SetListenerPosition( lpos, static_cast<AkUInt32>( ListenerMask::L8 ) ) != AK_Success)
-		{
-			UWarning( "Wwise: Cannot Set Listener Postion" ) ;
-		}
-
-		m_listeners[ static_cast<int>( ListenerIndex::LG ) ] = true;
-	}
-
-	void AudioManager::initAllListeners(void)
-	{
-		m_listeners.fill( false );
-		m_listeners[ 0 ] = true;
-	}
-
-	void AudioManager::init(AkInitSettings *in_pSettings, AkPlatformInitSettings *in_pPlatformSettings)
-	{
-		AkMemSettings memSettings;
-		memSettings.uMaxNumPools = 20;
-
-		UAssert( AK::MemoryMgr::Init( &memSettings ) == AK_Success, 
-			"Wwise: Cannot Create The Memory Manager."
-		);
-
-		AK::StreamMgr::SetCurrentLanguage( AKTEXT( "English(US)" ) );
-
-		AkStreamMgrSettings stmSettings;
-		AK::StreamMgr::GetDefaultSettings( stmSettings );
-
-		// Customize the Stream Manager settings here.
-
-		UAssert( AK::StreamMgr::Create( stmSettings ), 
-			"Wwise: Cannot Create The Streaming Manager"
-		);
-
-		AkDeviceSettings deviceSettings;
-		AK::StreamMgr::GetDefaultDeviceSettings( deviceSettings );
-
-		// Initialize sound engine.
-		UAssert( AK::SoundEngine::Init( in_pSettings, in_pPlatformSettings ) == AK_Success,
-			"Wwise: Cannot Initialize Sound Engine" 
-		);
-
-		AkMusicSettings musicInit;
-		AK::MusicEngine::GetDefaultInitSettings( musicInit );
-
-		UAssert( AK::MusicEngine::Init( &musicInit ) == AK_Success,
-			"Wwise: Cannot Initialize The Music Engine." 
-		);
-	}
+        UAssert( AK::MusicEngine::Init( &musicInit ) == AK_Success,
+            "Wwise: Cannot Initialize The Music Engine." 
+        );
+    }
 }
 
 JSFunction(AudioPlayGlobalEvent)
 {
-	if (arguments.size( ) != 1)
-		JSThrow( "Invalid arguments.", nullptr );
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
 
-	ursine::AudioManager::PlayGlobalEvent(
-		arguments[ 0 ]->GetStringValue( )
-	);
+    ursine::AudioManager::PlayGlobalEvent(
+        arguments[ 0 ]->GetStringValue( )
+    );
 
-	return CefV8Value::CreateBool( true );
+    return CefV8Value::CreateBool( true );
 }
 
 JSFunction(AudioStopGlobalEvent)
 {
-	if (arguments.size( ) != 1)
-		JSThrow(" Invalid arguments.", nullptr );
+    if (arguments.size( ) != 1)
+        JSThrow(" Invalid arguments.", nullptr );
 
-	ursine::AudioManager::StopGlobalEvent(
-		arguments[ 0 ]->GetStringValue( )
-	);
+    ursine::AudioManager::StopGlobalEvent(
+        arguments[ 0 ]->GetStringValue( )
+    );
 
-	return CefV8Value::CreateBool( true );
+    return CefV8Value::CreateBool( true );
 }
 
 JSFunction(AudioIsGlobalEventPlaying)
 {
-	if (arguments.size( ) != 1)
-		JSThrow(" Invalid arguments.", nullptr );
+    if (arguments.size( ) != 1)
+        JSThrow(" Invalid arguments.", nullptr );
 
-	auto result = ursine::AudioManager::IsGlobalEventPlaying(
-		arguments[ 0 ]->GetStringValue( )
-	);
+    auto result = ursine::AudioManager::IsGlobalEventPlaying(
+        arguments[ 0 ]->GetStringValue( )
+    );
 
-	return CefV8Value::CreateBool( result );
+    return CefV8Value::CreateBool( result );
 }

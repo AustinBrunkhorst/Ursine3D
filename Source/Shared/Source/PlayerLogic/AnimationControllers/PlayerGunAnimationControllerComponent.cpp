@@ -12,7 +12,9 @@
 #include "Precompiled.h"
 
 #include "PlayerGunAnimationControllerComponent.h"
+
 #include "GameEvents.h"
+#include "PlayEntityAnimationClipState.h"
 
 #include <TriggerCondition.h>
 #include <BoolCondition.h>
@@ -27,11 +29,13 @@ namespace
     const std::string kJump = "Jump";
     const std::string kMoving = "Moving";
     const std::string kShooting = "Shooting";
+    const std::string kReload = "Reload";
 }
 
 PlayerGunAnimationController::PlayerGunAnimationController(void)
     : BaseComponent( )
-    , m_connected( false ) { }
+    , m_connected( false )
+    , m_reloadTime( 1.0f ) { }
 
 PlayerGunAnimationController::~PlayerGunAnimationController(void)
 {
@@ -54,11 +58,13 @@ void PlayerGunAnimationController::OnSceneReady(Scene *scene)
     auto shootIn = m_controller->AddState<PlayAnimationState>( m_shootBeginState, true );
     auto shootOut = m_controller->AddState<PlayAnimationState>( m_shootEndState, false );
     auto shootLoop = m_controller->AddState<PlayAnimationState>( m_shootLoopState, false, 1.5f );
+    auto reload = m_controller->AddState<PlayEntityAnimationClipState>( "Reload", true );
 
     // Add the variables
     m_controller->AddTrigger( kJump );
     m_controller->AddBool( kMoving, false );
     m_controller->AddBool( kShooting, false );
+    m_controller->AddBool( kReload, false );
 
     // Add the transitions
     idle->AddTransition( jump, "Jumping" )
@@ -79,13 +85,32 @@ void PlayerGunAnimationController::OnSceneReady(Scene *scene)
     jump->AddTransition( shootIn, "To Shoot" )
         ->AddCondition<sm::BoolCondition>( kShooting, true );
 
-    shootIn->AddTransition( shootLoop, "To Shoot Loop" );
+    shootIn->AddTransition( shootLoop, "To Shoot Loop" )
+           ->AddCondition<sm::BoolCondition>( kReload, false );
     shootLoop->AddTransition( shootOut, "To Shoot Out" )
              ->AddCondition<sm::BoolCondition>( kShooting, false );
     shootOut->AddTransition( idle, "To Idle" )
             ->AddCondition<sm::BoolCondition>( kMoving, false );
     shootOut->AddTransition( run, "To Run" )
             ->AddCondition<sm::BoolCondition>( kMoving, true );
+
+    idle->AddTransition( reload, "reload" )->AddCondition<sm::BoolCondition>( kReload, true );
+    run->AddTransition( reload, "reload" )->AddCondition<sm::BoolCondition>( kReload, true );
+    jump->AddTransition( reload, "reload" )->AddCondition<sm::BoolCondition>( kReload, true );
+    shootLoop->AddTransition( shootOut, "reload" )->AddCondition<sm::BoolCondition>( kReload, true );
+    shootOut->AddTransition( reload, "reload" )->AddCondition<sm::BoolCondition>( kReload, true );
+
+    {
+        auto trans = reload->AddTransition( idle, "To Idle" );
+        trans->AddCondition<sm::BoolCondition>( kMoving, false );
+        trans->AddCondition<sm::BoolCondition>( kReload, false );
+    }
+
+    {
+        auto trans = reload->AddTransition( run, "To Idle" );
+        trans->AddCondition<sm::BoolCondition>( kMoving, true );
+        trans->AddCondition<sm::BoolCondition>( kReload, false );
+    }
 
     // Set the initial state
     m_controller->SetInitialState( idle );
@@ -167,6 +192,18 @@ void PlayerGunAnimationController::SetShootEndState(const std::string &state)
     NOTIFY_COMPONENT_CHANGED( "shootEndState", m_shootEndState );
 }
 
+const std::string &PlayerGunAnimationController::GetReloadClip(void) const
+{
+    return m_reloadClip;
+}
+
+void PlayerGunAnimationController::SetReloadClip(const std::string &clip)
+{
+    m_reloadClip = clip;
+
+    NOTIFY_COMPONENT_CHANGED( "reloadClip", m_reloadClip );
+}
+
 void PlayerGunAnimationController::onUpdate(EVENT_HANDLER(World))
 {
     if (!m_connected)
@@ -186,7 +223,9 @@ void PlayerGunAnimationController::connectToEvents(bool toggle)
             .On( game::JUMP_COMMAND, &PlayerGunAnimationController::onJump )
             .On( game::MOVEMENT_COMMAND, &PlayerGunAnimationController::onMove )
             .On( game::FIRE_START, &PlayerGunAnimationController::onStartShoot )
-            .On( game::FIRE_END, &PlayerGunAnimationController::onEndShoot );
+            .On( game::FIRE_END, &PlayerGunAnimationController::onEndShoot )
+            .On( game::RELOAD_START, &PlayerGunAnimationController::onStartReload )
+            .On( game::RELOAD_END, &PlayerGunAnimationController::onEndReload );
 
         m_connected = true;
     }
@@ -196,7 +235,9 @@ void PlayerGunAnimationController::connectToEvents(bool toggle)
             .Off( game::JUMP_COMMAND, &PlayerGunAnimationController::onJump )
             .Off( game::MOVEMENT_COMMAND, &PlayerGunAnimationController::onMove )
             .Off( game::FIRE_START, &PlayerGunAnimationController::onStartShoot )
-            .Off( game::FIRE_END, &PlayerGunAnimationController::onEndShoot );
+            .Off( game::FIRE_END, &PlayerGunAnimationController::onEndShoot )
+            .Off( game::RELOAD_START, &PlayerGunAnimationController::onStartReload )
+            .Off( game::RELOAD_END, &PlayerGunAnimationController::onEndReload );
 
         m_connected = false;
     }
@@ -214,10 +255,21 @@ void PlayerGunAnimationController::onMove(EVENT_HANDLER(Entity))
 
 void PlayerGunAnimationController::onStartShoot(EVENT_HANDLER(Entity))
 {
-    m_controller->SetBool( kShooting, true );
+    if (!m_controller->GetBool( kReload ))
+        m_controller->SetBool( kShooting, true );
 }
 
 void PlayerGunAnimationController::onEndShoot(EVENT_HANDLER(Entity))
 {
     m_controller->SetBool( kShooting, false );
+}
+
+void PlayerGunAnimationController::onStartReload(EVENT_HANDLER(Entity))
+{
+    m_controller->SetBool( kReload, true );
+}
+
+void PlayerGunAnimationController::onEndReload(EVENT_HANDLER(Entity))
+{
+    m_controller->SetBool( kReload, false );
 }
