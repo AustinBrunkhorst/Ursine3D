@@ -22,7 +22,7 @@ namespace ursine
 {
     class UIScreen;
 
-    class UIScreenManager
+    class UIScreenManager : public EventDispatcher<std::string>
     {
     public:
         UIScreenManager(void);
@@ -77,6 +77,12 @@ namespace ursine
             const std::string &message, 
             const Json &data
         ) const;
+
+        // Dispatches an event globally to this manager
+        void MessageGlobalNative(
+            const std::string &message,
+            const Json &data
+        );
 
         // Removes all screens
         void ClearScreens(void);

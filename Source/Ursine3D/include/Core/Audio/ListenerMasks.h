@@ -17,6 +17,7 @@ namespace ursine
 {
 	enum class ListenerIndex
 	{
+        NONE = -1,
 		L1,
 		L2,
 		L3,
@@ -24,12 +25,12 @@ namespace ursine
 		L5,
 		L6,
 		L7,
-		LG
+		L8
     } Meta(Enable);
 
 	enum class ListenerMask
     {
-        None = 0,
+        NONE = 0,
         L1 = 1 << 0u,
         L2 = 1 << 1u,
         L3 = 1 << 2u,

@@ -8,8 +8,8 @@ SamplerState SampleType     : register(s0);
 //inv projection 
 cbuffer InverseProjection   : register(b4)
 {
-    float       gNearPlane;
-    float       gFarPlane;
+    float       gAValue;
+    float       gBValue;
     float2      buffer;
 };
 
@@ -23,9 +23,9 @@ cbuffer ShadowFalloff               : register(b12)
 // convert given depth value from exponential to linear
 float LinearizeDepth(float depth)
 {
-    return (2.0f * gNearPlane) /
-        (gFarPlane + gNearPlane - depth * (gFarPlane - gNearPlane));
+    return gBValue / (depth - gAValue);
 }
+
 
 struct PS_INPUT
 {
@@ -45,7 +45,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 
     float4 texColor = gColorTexture.Sample(SampleType, input.uv);
 
-    float depthScalar = (sceneDepth - particleDepth) * 100.0f;
+    float depthScalar = (sceneDepth - particleDepth) * 150.0f;
 
     float Output = 0.5 *saturate(2 * ((depthScalar > 0.5) ? 1 - depthScalar : depthScalar));
     Output = (depthScalar > 0.5) ? 1 - Output : Output;

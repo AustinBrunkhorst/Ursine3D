@@ -39,8 +39,19 @@ class Extern {
         return untyped __js__( "ProjectSetFullScreen(fullscreen)" );
     }
 
-    public static inline function ProjectGetEditorPreferences() {
-        return untyped __js__( "ProjectGetEditorPreferences()" );
+    public static inline function ProjectGetGlobalPreferences() {
+        return untyped __js__( "ProjectGetGlobalPreferences()" );
+    }
+
+    public static function ProjectPreferenceStoreLoad(category : String, item : String, ?defaultValue : Dynamic) {
+        if (defaultValue == null)
+            return untyped __js__( "ProjectPreferenceStoreLoad(category, item)" );
+
+        return untyped __js__( "ProjectPreferenceStoreLoad(category, item, defaultValue)" );
+    }
+
+    public static function ProjectPreferenceStoreStore(category : String, item : String, value : Dynamic) {
+        return untyped __js__( "ProjectPreferenceStoreStore(category, item, value)" );
     }
 
     public static inline function ProjectGetResourceTree() {

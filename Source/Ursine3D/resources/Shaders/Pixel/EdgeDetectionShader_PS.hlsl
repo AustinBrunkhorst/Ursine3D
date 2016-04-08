@@ -9,8 +9,8 @@ SamplerState SampleType             : register(s0);
 cbuffer InverseProjection           : register(b4)
 {
     float4x4    gInvProj;
-    float       gNearPlane;
-    float       gFarPlane;
+    float       gAValue;
+    float       gBValue;
 };
 
 cbuffer ShadowFalloff               : register(b12)
@@ -23,8 +23,7 @@ cbuffer ShadowFalloff               : register(b12)
 // convert given depth value from exponential to linear
 float LinearizeDepth(float depth)
 {
-    return (2.0f * gNearPlane) /
-        (gFarPlane + gNearPlane - depth * (gFarPlane - gNearPlane));
+    return gBValue / (depth - gAValue);
 }
 
 int GetIDFromTex(float4 value)
@@ -88,11 +87,10 @@ float4 main(PS_INPUT In) : SV_TARGET
 
     float base = LinearizeDepth(gDepthTexture.Load(int3(In.Position.xy, 0)).x);
 
-
     // first, to save sampling we sample the 8 pixels surrounding base pixel
     for (int x = 0; x < 8; ++x)
     {
-        samples[x] = LinearizeDepth(gDepthTexture.Load(int3(In.Position.xy + offsets[ x ] * weights[x], 0)).x);
+        samples[x] = LinearizeDepth(gDepthTexture.Load(int3(In.Position.xy + offsets[ x ] * weights[x], 0)).x) ;
     }
 
     // Sobel operator is defined as the magnitude of the gradient sampled by the masks, 
@@ -111,10 +109,13 @@ float4 main(PS_INPUT In) : SV_TARGET
     // y mask is rotated 90 degrees
     float sY = samples[0] + 2 * samples[1] + samples[2] - (samples[5] + 2 * samples[6] + samples[7]);
 
-    float mag = sqrt(sX * sX + sY * sY);
+    float mag = (sqrt(sX * sX + sY * sY) - (base * base * base) / (gLightStep * 10000))/ 2500;
 
-    if (mag > 0.052)
-        return float4(0, 0, 0, 1);
+    //return float4(mag, mag, mag, 1);
+
+    //// must beat 14% of max distance
+    //if (mag > (2500 + base * base / gLightStep) * 0.01 * 14)
+    //    return float4(0, 0, 0, 1);
 
     /////////////////////////////////////////////////////////////////
     // LAPLACIAN GAUSSIAN
@@ -133,8 +134,10 @@ float4 main(PS_INPUT In) : SV_TARGET
         samples[0] * corners + samples[ 2 ] * corners + samples[ 5 ] * corners + samples[ 7 ] * corners +
         samples[ 1 ] * sides + samples[ 3 ] * sides + samples[ 4 ] * sides + samples[ 6 ] * sides;
 
-    //if (mag > 0.062 + base / 10.0f)
-    //    return float4(0, 0, 0, 1);
+    lapGauss /= 2500;
+
+    if (lapGauss > 0.07)
+        return float4(0, 0, 0, 1);
 
     return float4(0, 0, 0, 0);
 }

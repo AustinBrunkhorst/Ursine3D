@@ -18,7 +18,9 @@
 #include "HealthComponent.h"
 
 #include <AnimatorComponent.h>
+#include <AudioItemEventData.h>
 #include <EventDispatcher.h>
+#include <AudioEmitterComponent.h>
 
 enum VineAIEvents
 {
@@ -132,6 +134,27 @@ public:
         SetUprootCooldown
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        swipeSfx,
+        GetSwipeSfx,
+        SetSwipeSfx
+    );
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        burrowSfx,
+        GetBurrowSfx,
+        SetBurrowSfx
+    );
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        emergeSfx,
+        GetEmergeSfx,
+        SetEmergeSfx
+    );
+
     ursine::Array<HealthThreshold> healthThresholds;
 
     EditorMeta(Annotation("List of ROOT entities we're colliding with (used for uproot)."))
@@ -180,6 +203,15 @@ public:
 
     float GetUprootCooldown(void) const;
     void SetUprootCooldown(float cooldown);
+
+    const ursine::resources::ResourceReference &GetSwipeSfx(void) const;
+    void SetSwipeSfx(const ursine::resources::ResourceReference &swipeSfx);
+
+    const ursine::resources::ResourceReference &GetBurrowSfx(void) const;
+    void SetBurrowSfx(const ursine::resources::ResourceReference &burrowSfx);
+
+    const ursine::resources::ResourceReference &GetEmergeSfx(void) const;
+    void SetEmergeSfx(const ursine::resources::ResourceReference &emergeSfx);
 
     ursine::ecs::Animator *GetAnimator(void);
 
@@ -238,8 +270,16 @@ private:
     // This is our current index into the health threshold array
     int m_currentHealthThreshold;
 
+    // Sfxs
+    ursine::resources::ResourceReference m_swipeSfx;
+    ursine::resources::ResourceReference m_burrowSfx;
+    ursine::resources::ResourceReference m_emergeSfx;
+
 } Meta(
     Enable
 ) EditorMeta(
-    RequiresComponents( typeof( Health ) )
+    RequiresComponents( 
+        typeof( Health ),
+        typeof( ursine::ecs::AudioEmitter )
+    )
 );

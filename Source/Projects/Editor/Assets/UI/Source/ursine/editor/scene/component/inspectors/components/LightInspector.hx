@@ -109,7 +109,8 @@ class LightInspector extends ComponentInspectionHandler {
             "intensity",
             "spotlightAngles",
             "renderMask",
-            "shadowResolution"
+            "shadowResolution",
+            "castShadows"
         ];
     }
 }

@@ -17,6 +17,8 @@
 
 #include "AudioItemEventData.h"
 
+#include <AK/SoundEngine/Common/AkSoundEngine.h>
+
 namespace ursine
 {
     using namespace resources;
@@ -28,7 +30,20 @@ namespace ursine
         AudioEmitter::AudioEmitter(void)
             : BaseComponent( )
             , m_maskChanged( false )
-            , m_listenerMask( ListenerMask::None )  { }
+            , m_listenerMask( ListenerMask::NONE )
+            , m_attenuationScalar( 1.0f ) { }
+
+        AudioEmitter::~AudioEmitter(void)
+        {
+            AudioComponentBase::OnRemove( GetOwner( ) );
+        }
+
+        void AudioEmitter::OnInitialize(void)
+        {
+            AudioComponentBase::OnInitialize( GetOwner( ) );
+
+            AK::SoundEngine::SetAttenuationScalingFactor( m_handle, m_attenuationScalar );
+        }
 
         ListenerMask AudioEmitter::GetListenerMask(void) const
         {
@@ -39,24 +54,10 @@ namespace ursine
 
         void AudioEmitter::PushTestSound(void)
         {
-            auto event = std::make_shared<AudioGeneric>( );
-
-            event->name = m_testText;
-            
-            m_events.push( event );
+            PushEvent( m_testEvent );
         }
 
     #endif
-
-        const std::string& AudioEmitter::GetText(void) const
-        {
-            return m_testText;
-        }
-
-        void AudioEmitter::SetText(const std::string& text)
-        {
-            m_testText = text;
-        }
 
         void AudioEmitter::PushEvent(const AudioEvent::Handle event)
         {
@@ -119,6 +120,32 @@ namespace ursine
             m_maskChanged = true;
 
             NOTIFY_COMPONENT_CHANGED( "listenerMask", m_listenerMask );
+        }
+
+        const ResourceReference &AudioEmitter::GetTestEvent(void) const
+        {
+            return m_testEvent;
+        }
+
+        void AudioEmitter::SetTestEvent(const ResourceReference &audioEvent)
+        {
+            m_testEvent = audioEvent;
+
+            NOTIFY_COMPONENT_CHANGED( "TestEvent", m_testEvent );
+        }
+
+        float AudioEmitter::GetAttenuationScalingFactor(void) const
+        {
+            return m_attenuationScalar;
+        }
+
+        void AudioEmitter::SetAttenuationScalingFactor(float scalar)
+        {
+            m_attenuationScalar = scalar;
+
+            NOTIFY_COMPONENT_CHANGED( "attenuationScalingFactor", m_attenuationScalar );
+
+            AK::SoundEngine::SetAttenuationScalingFactor( m_handle, m_attenuationScalar );
         }
     }
 }

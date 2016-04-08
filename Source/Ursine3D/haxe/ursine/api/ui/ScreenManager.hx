@@ -12,6 +12,9 @@ extern class NativeScreenManager {
     function removeScreen(id : ScreenID) : Void;
 
     function screenHasFocus(id : ScreenID) : Bool;
+
+    function messageOwner(screen : ScreenID, message : String, data : Dynamic) : Void;
+    function messageGlobal(message : String, data : Dynamic) : Void;
 }
 
 @:keep
@@ -24,4 +27,7 @@ interface ScreenManager {
     function removeScreen(screen : Screen) : Void;
 
     function hasInputFocus(screen : Screen) : Bool;
+
+    function messageNativeOwner(screen : Screen, message : String, data : Dynamic) : Void;
+    function messageNativeGlobal(message : String, data : Dynamic) : Void;
 }

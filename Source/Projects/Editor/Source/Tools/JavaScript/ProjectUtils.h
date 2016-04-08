@@ -31,7 +31,13 @@ Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectSetFullScreen);
 
 Meta(Enable, ExposeJavaScript)
-JSFunction(ProjectGetEditorPreferences);
+JSFunction(ProjectGetGlobalPreferences);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(ProjectPreferenceStoreLoad);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(ProjectPreferenceStoreStore);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(ProjectGetName);

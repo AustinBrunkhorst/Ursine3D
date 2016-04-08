@@ -16,6 +16,8 @@
 #include "ProjectUtils.h"
 #include "Editor.h"
 
+#include <JSConfig.h>
+
 #include <ResourceItem.h>
 
 #include <FileDialog.h>
@@ -26,7 +28,7 @@ namespace
 {
     fs::path gLastSelectedLauncherBuildDir;
     fs::path gLastSelectedOutputDir;
-    fs::path gLastSelectedInstallOutputDir;
+    fs::path gLastSelectedInstallExecutable;
 
     void buildResourceDirectory(rp::ResourceDirectoryNode *node, Json::object &obj);
     Json serializeResource(rp::ResourceItem::Handle resource);
@@ -122,19 +124,24 @@ JSFunction(ProjectInstallStart)
 
     gLastSelectedOutputDir = buildDir;
 
-    folderDialog.config.initialPath = gLastSelectedInstallOutputDir;
-    folderDialog.config.windowTitle = "Select Output Directory";
+    fs::FileDialog fileDialog;
 
-    auto outputResult = folderDialog.Open( );
+    fileDialog.config.mode = fs::FDM_SAVE;
+    fileDialog.config.initialPath = gLastSelectedInstallExecutable;
+    fileDialog.config.windowTitle = "Select Installer Executable";
+    fileDialog.config.filters = { { "Executable Files", { "exe" } } };
+    fileDialog.config.parentWindow = editor->GetMainWindow( ).GetWindow( );
+
+    auto outputResult = fileDialog.Open( );
 
     if (!outputResult)
         return CefV8Value::CreateBool( false );
 
-    auto &outputDir = outputResult.selectedFiles[ 0 ];
+    auto &outputFile = outputResult.selectedFiles[ 0 ];
 
-    gLastSelectedInstallOutputDir = outputDir;
+    gLastSelectedInstallExecutable = outputFile;
 
-    installer.Build( buildDir, outputDir );
+    installer.Build( buildDir, outputFile );
 
 	return CefV8Value::CreateBool( true );
 }
@@ -156,7 +163,7 @@ JSFunction(ProjectSetFullScreen)
     return CefV8Value::CreateBool( true );
 }
 
-JSFunction(ProjectGetEditorPreferences)
+JSFunction(ProjectGetGlobalPreferences)
 {
     auto *editor = GetCoreSystem( Editor );
 
@@ -167,6 +174,49 @@ JSFunction(ProjectGetEditorPreferences)
     JsonSerializer::Deserialize( meta::Type::SerializeJson( prefs ), obj );
 
 	return obj;
+}
+
+JSFunction(ProjectPreferenceStoreLoad)
+{
+    if (arguments.size( ) < 2)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto category = arguments[ 0 ]->GetStringValue( );
+    auto item = arguments[ 1 ]->GetStringValue( );
+
+    Json defaultValue;
+
+    if (arguments.size( ) == 3)
+        defaultValue = JsonSerializer::Serialize( arguments[ 2 ] );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    auto value = editor->GetProject( )->GetPreferenceStore( )
+        .Load( category, item, defaultValue );
+
+    CefRefPtr<CefV8Value> obj;
+
+    JsonSerializer::Deserialize( value, obj );
+
+    return obj;
+}
+
+JSFunction(ProjectPreferenceStoreStore)
+{
+    if (arguments.size( ) != 3)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto category = arguments[ 0 ]->GetStringValue( );
+    auto item = arguments[ 1 ]->GetStringValue( );
+
+    auto storedValue = JsonSerializer::Serialize( arguments[ 2 ] );
+
+    auto *editor = GetCoreSystem( Editor );
+
+    editor->GetProject( )->GetPreferenceStore( )
+        .Store( category, item, storedValue );
+
+    return CefV8Value::CreateBool( true );
 }
 
 JSFunction(ProjectGetName)

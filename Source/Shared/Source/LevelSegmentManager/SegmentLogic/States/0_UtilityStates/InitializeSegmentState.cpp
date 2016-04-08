@@ -41,7 +41,7 @@ void InitializeSegmentState::Enter(SegmentLogicStateMachine *machine)
     world->Listener( this )
         .On( WORLD_ENTITY_ADDED, &InitializeSegmentState::onEntityAdded );
 
-    world->MergeWorld( world->GetOwner( )->GetResourceManager( ), m_loadInWorld );
+    world->ImportWorld( world->GetOwner( )->GetResourceManager( ), m_loadInWorld );
 
     world->Listener( this )
         .Off( WORLD_ENTITY_ADDED, &InitializeSegmentState::onEntityAdded );

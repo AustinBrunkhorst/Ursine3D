@@ -39,7 +39,8 @@ private:
     void onAnimationFinished(EVENT_HANDLER(EntityAnimator));
 
 } Meta(
-    Enable,
+    Enable
+) EditorMeta(
     RequiresComponents(
         typeof( EntityAnimator ),
         typeof( ursine::ecs::Camera )

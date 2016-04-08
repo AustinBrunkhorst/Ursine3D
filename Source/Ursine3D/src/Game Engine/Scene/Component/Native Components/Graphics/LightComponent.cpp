@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -164,6 +164,8 @@ namespace ursine
         void Light::SetRenderMask(RenderMask mask)
         {
             m_light->SetRenderMask( static_cast<unsigned long long>(mask) );
+
+            NOTIFY_COMPONENT_CHANGED("renderMask", mask);
         }
 
         unsigned Light::GetShadowmapSize(void) const
@@ -176,6 +178,8 @@ namespace ursine
             if(size > 4096)
                 size = 4096;
             m_light->SetShadowmapWidth( size );
+
+            NOTIFY_COMPONENT_CHANGED("rendeshadowResolutionrMask", size);
         }
 
         bool Light::GetIsActive() const
@@ -186,6 +190,21 @@ namespace ursine
         void Light::SetIsActive(bool isActive)
         {
             m_light->SetActive( isActive );
+
+            NOTIFY_COMPONENT_CHANGED("active", isActive);
+        }
+
+        bool Light::GetCastShadows(void) const
+        {
+            return m_light->GetRenderShadows( );
+        }
+
+        void Light::SetCastShadows(bool doesCastShadows)
+        {
+            m_light->SetRenderShadows( doesCastShadows );
+
+            NOTIFY_COMPONENT_CHANGED("castShadows", doesCastShadows);
+
         }
 
         void Light::updateRenderer(void)

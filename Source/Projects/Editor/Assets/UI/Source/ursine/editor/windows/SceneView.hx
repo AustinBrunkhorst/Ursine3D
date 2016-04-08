@@ -48,7 +48,7 @@ class SceneView extends NativeCanvasWindowHandler {
         window.addEventListener( 'resize', onWindowResize );
         window.addEventListener( 'keydown', onWindowKeyDown );
 
-        m_fullScreen = Extern.ProjectGetEditorPreferences( ).fullScreen;
+        m_fullScreen = Extern.ProjectGetGlobalPreferences( ).fullScreen;
 
         m_fullScreenItem = Editor.instance.mainMenu
             .findItem( 'View' ).menu

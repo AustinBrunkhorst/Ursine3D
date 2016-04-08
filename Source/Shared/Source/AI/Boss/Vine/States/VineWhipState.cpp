@@ -181,6 +181,12 @@ void VineWhipState::onAnimationFinished(EVENT_HANDLER(Entity))
             animator->SetTimeScalar( 1.0f );
             animator->SetCurrentState( "Whip_Idle" );
 
+            auto vine = sender->GetRoot( )->GetComponent<VineAI>( );
+
+            vine->GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent(
+                vine->GetSwipeSfx( )
+            );
+
             break;
         }
         case WhipState::Out:

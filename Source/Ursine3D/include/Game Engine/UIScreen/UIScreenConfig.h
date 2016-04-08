@@ -34,8 +34,8 @@ namespace ursine
 
     struct UIScreenMessageArgs : EventArgs
     {
-        const std::string &message;
-        const Json &data;
+        const std::string message;
+        const Json data;
 
         UIScreenMessageArgs(const std::string &message, const Json &data)
             : message( message )

@@ -26,4 +26,6 @@ private:
     void OnInitialize(void) override;
     void OnSceneReady(ursine::Scene *scene) override;
     void OnRemove(void) override;
+
+    void onGameplayStarted(EVENT_HANDLER(ursine::UIScreenManager));
 } Meta(Enable);

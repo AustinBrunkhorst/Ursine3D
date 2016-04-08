@@ -61,13 +61,13 @@ namespace ursine
             {
                 return SMat4( DirectX::XMMatrixPerspectiveFovLH( m_fov * 3.14f / 180.f,
                                                                  m_screenWidth / m_screenHeight,
-                                                                 m_nearPlane, m_farPlane ) );
+                                                                 m_farPlane, m_nearPlane) );
             }
             else
             {
                 return SMat4( DirectX::XMMatrixOrthographicLH( m_size *
                                                                (m_screenWidth / m_screenHeight),
-                                                               m_size, m_nearPlane, m_farPlane ) );
+                                                               m_size, m_farPlane, m_nearPlane) );
             }
         }
 
@@ -104,10 +104,6 @@ namespace ursine
 
         void Camera::SetPlanes(const float nearPlane, const float farPlane)
         {
-            UAssert( nearPlane < farPlane, 
-                "Near and far planes cannot be the same!"
-            );
-
             m_nearPlane = nearPlane;
             m_farPlane = farPlane;
         }

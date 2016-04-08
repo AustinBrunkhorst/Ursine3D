@@ -42,6 +42,7 @@
     </template>
     <script>
         const kDirectorySeparator = '\\';
+        const kProjectBrowserCategory = 'ProjectBrowser';
 
         var ProjectBrowserControl = Polymer({
             is: "x-project-browser",
@@ -63,10 +64,28 @@
                 this._resources = treeRoot;
                 this._pathToResourceEntry = { };
                 this._pathToDirectoryItem = { };
+                this._folderOpenState = ProjectPreferenceStoreLoad(
+                    kProjectBrowserCategory,
+                    'folderOpenState',
+                    { }
+                );
 
                 this._projectDirectory = this._getFileDirectory( this._resources.path );
 
                 this._buildTree( treeRoot );
+
+                this.browseDirectory(
+                    ProjectPreferenceStoreLoad(
+                        kProjectBrowserCategory,
+                        'browsedDirectory',
+                        ''
+                    )
+                );
+
+                setTimeout( function() {
+                    if (this._lastSelectedTreeItem)
+                        this._lastSelectedTreeItem.scrollIntoViewIfNeeded( );
+                }.bind( this ), 250 );
             },
             created: function() {
                 this._lastSelectedTreeItem = null;
@@ -189,6 +208,21 @@
                 showInExplorer.icon = 'folder-closed';
 
                 menu.open( e.clientX, e.clientY );
+            },
+            _onTreeItemOpenChanged: function(item, e) {
+                var normalized = this._normalizePath( item.directoryData.path );
+
+                var oldState = this._folderOpenState[ normalized ];
+
+                this._folderOpenState[ normalized ] = e.target.opened;
+
+                if (oldState !== e.target.opened) {
+                    ProjectPreferenceStoreStore(
+                        kProjectBrowserCategory,
+                        'folderOpenState',
+                        this._folderOpenState
+                    );
+                }
             },
             _onCrumbSelected: function(e) {
                 var index = this.get( 'crumbs' ).length - e.model.__data__.index - 1;
@@ -444,6 +478,12 @@
                 this.set( 'directoryFolders', entry.subDirectories.slice( 0 ) );
 
                 this.set( 'directoryResources', entry.resources.slice( 0 ) );
+
+                ProjectPreferenceStoreStore(
+                    kProjectBrowserCategory,
+                    'browsedDirectory',
+                    entry.path
+                );
             },
             _getDirectoryItem: function(path) {
                 return this._pathToDirectoryItem[ this._normalizePath( path ) ];
@@ -550,8 +590,12 @@
                 item.textElement.addEventListener( 'click', this._onTreeItemClick.bind( this, item ) );
                 item.textElement.addEventListener( 'dblclick', this._onTreeItemDblClick.bind( this, item ) );
                 item.textElement.addEventListener( 'contextmenu', this._onTreeItemContextMenu.bind( this, item ) );
+                item.addEventListener( 'open-changed', this._onTreeItemOpenChanged.bind( this, item ) );
 
                 var normalizedPath = this._normalizePath( directoryNode.path );
+
+                if (this._folderOpenState[ normalizedPath ] == true)
+                    item.opened = true;
 
                 this._pathToResourceEntry[ normalizedPath ] = directoryNode;
                 this._pathToDirectoryItem[ normalizedPath ] = item;

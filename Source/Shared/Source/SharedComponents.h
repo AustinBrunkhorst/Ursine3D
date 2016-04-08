@@ -102,6 +102,7 @@
 #include "BossAIComponent.h"
 #include "Boss/Components/PollinateProjectileComponent.h"
 #include "Boss/Components/SludgeshotProjectileComponent.h"
+#include "Boss/Components/SeedshotProjectileComponent.h"
 #include "VineAIComponent.h"
 #include "VineSpawnerComponent.h"
 
@@ -162,6 +163,7 @@
 #include "LevelSegmentManager/SegmentLogic/Misc/AnimateOnSegmentComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/ChangeSegmentOnAnimatorFinishComponent.h"
 #include "LevelSegmentManager/SegmentLogic/Misc/Phase3BossSpawnComponent.h"
+#include "LevelSegmentManager/SegmentLogic/Misc/BossBattleMusicManagerComponent.h"
 #include "Misc/DeathTriggerGroupComponent.h"
 #include "Misc/PingTestComponent.h"
 

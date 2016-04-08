@@ -3,6 +3,7 @@ package ursine.editor.scene.component.inspectors.fields;
 import ursine.native.Extern;
 import ursine.native.Property;
 
+import ursine.controls.ContextMenu;
 import ursine.controls.Notification;
 import ursine.controls.ResourceReferenceSelectionPopup;
 
@@ -49,6 +50,18 @@ class ResourceReferenceInspector extends FieldInspectionHandler {
             js.Browser.document.body.appendChild( selector );
 
             selector.show( e.clientX, e.clientY );
+        } );
+
+        m_displayText.addEventListener( 'contextmenu', function(e) {
+            var menu = new ContextMenu( );
+
+            menu.addItem( 'Make Invalid', function() {
+                notifyChanged( m_field, {
+                    guid: null
+                } );
+            } ).icon = 'invalid';
+
+            menu.open( e.clientX, e.clientY );
         } );
 
         m_displayText.addEventListener( 'resource-drag', onResourceDrag );

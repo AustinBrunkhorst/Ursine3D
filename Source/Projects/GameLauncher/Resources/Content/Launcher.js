@@ -429,6 +429,12 @@ ui_ScreenManager.prototype = {
 	,hasInputFocus: function(screen) {
 		return this.m_nativeManager.screenHasFocus(screen.getID());
 	}
+	,messageNativeOwner: function(screen,message,data) {
+		this.m_nativeManager.messageOwner(screen.getID(),message,data);
+	}
+	,messageNativeGlobal: function(message,data) {
+		this.m_nativeManager.messageGlobal(message,data);
+	}
 	,clearScreens: function() {
 		this.m_container.innerHTML = "";
 		this.m_screens = new haxe_ds_IntMap();

@@ -188,7 +188,7 @@ namespace ursine
                 swapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 
                 //Set the refresh rate of the back buffer.
-                if (true) //@Matt change this to properly do vsync
+                if (false) //@Matt change this to properly do vsync
                 {
                     swapChainDesc.BufferDesc.RefreshRate.Numerator = numerator;
                     swapChainDesc.BufferDesc.RefreshRate.Denominator = denominator;
@@ -213,7 +213,7 @@ namespace ursine
                 LogMessage("Sample Quality: %i", 2, swapChainDesc.SampleDesc.Quality);
 
                 //set swap chain flags
-                swapChainDesc.Windowed = true; // this is like this for a reason
+                swapChainDesc.Windowed = !fullscreen; // this is like this for a reason
                 swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
 
                 //Set the scan line ordering and scaling to unspecified.
@@ -231,6 +231,8 @@ namespace ursine
                 );
 
                 UAssert(result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage(result));
+
+                pIDXGIFactory->MakeWindowAssociation(hWindow, DXGI_MWA_NO_ALT_ENTER);
 
                 RELEASE_RESOURCE(pIDXGIFactory);
                 RELEASE_RESOURCE(pDXGIAdapter);
@@ -349,9 +351,9 @@ namespace ursine
 
             void DirectXCore::ClearDepthBuffers(void)
             {
-                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_OVERDRAW), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_MAIN), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
+                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_SHADOWMAP), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
+                m_deviceContext->ClearDepthStencilView(m_depthStencilManager->GetDepthStencilView(DEPTH_STENCIL_OVERDRAW), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 0.0f, 0);
             }
 
             void DirectXCore::ClearSwapchain(void)

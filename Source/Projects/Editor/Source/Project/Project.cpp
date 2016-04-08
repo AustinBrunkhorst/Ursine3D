@@ -33,12 +33,14 @@ namespace
 {
     const auto kBuiltInResourcesDirectory = "Resources/EditorTools";
 
+    const auto kPreferencesDirectory = "Preferences";
     const auto kResourcesTempDirectory = "Temp";
     const auto kResourcesBuildDirectory = "Resources";
 }
 
 Project::Project(void)
-    : m_gameBuilder( this )
+    : m_preferences( this )
+    , m_gameBuilder( this )
     , m_gameInstaller( this )
     , m_gameContext( nullptr )
     , m_sceneManager( nullptr )
@@ -84,6 +86,11 @@ void Project::WriteConfig(void)
         "Unable to write project configuration.\nfile: %s",
         m_config.projectFile.string( ).c_str( )
     );
+}
+
+ProjectPreferenceStore &Project::GetPreferenceStore(void)
+{
+    return m_preferences;
 }
 
 ProjectGameBuilder &Project::GetGameBuilder(void)
@@ -166,6 +173,11 @@ void Project::initialize(const ProjectConfig &config)
 
     auto rootDirectory = m_config.projectFile.parent_path( );
 
+    m_config.preferencesDirectory = rootDirectory / config.buildDirectory / kPreferencesDirectory;
+
+    if (!exists( m_config.preferencesDirectory ))
+        create_directories( m_config.preferencesDirectory );
+
     rp::ResourcePipelineConfig resourceConfig;
 
     resourceConfig.resourceDirectory = rootDirectory / config.resourceDirectory;
@@ -242,6 +254,7 @@ void Project::onScenePlayStateChanged(EVENT_HANDLER(Scene))
     auto oldState = args->oldState;
     auto newState = args->newState;
 
+    // going from editor to play mode
     if (oldState == PS_EDITOR && (newState == PS_PLAYING || newState == PS_PAUSED))
     {
         auto *oldWorld = m_scene.GetActiveWorld( );
@@ -256,6 +269,7 @@ void Project::onScenePlayStateChanged(EVENT_HANDLER(Scene))
 
         m_scene.LoadConfiguredSystems( );
     }
+    // play mode to editor
     else if ((oldState == PS_PLAYING || oldState == PS_PAUSED) && newState == PS_EDITOR)
     {
         m_scene.GetScreenManager( ).ClearScreens( );
@@ -265,7 +279,8 @@ void Project::onScenePlayStateChanged(EVENT_HANDLER(Scene))
         m_scene.SetActiveWorld( ecs::World::Handle( cachedWorld ) );
 
         cachedWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
-    } 
+    }
+    // switching between playing and paused
     else
     {
         m_scene.GetActiveWorld( )->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( 

@@ -21,23 +21,16 @@
 #include "CollisionEventArgs.h"
 #include "DamageOnCollideComponent.h"
 #include "AbstractHitscanWeapon.h"
-#include <Application.h>
+#include "UIEvents.h"
+#include "UIScreensConfigComponent.h"
 #include "GameEvents.h"
+
+#include <Application.h>
 
 NATIVE_COMPONENT_DEFINITION( Health );
 
 using namespace ursine;
 using namespace ecs;
-
-namespace gameUIEvents
-{
-    const auto UI_HealthComponentStats = "UI_HealthComponentStats";
-}
-
-namespace
-{
-    const std::string kTakeDamage = "PLAYER_TAKE_DAMAGE";
-}
 
 Health::Health(void)
     : BaseComponent( )
@@ -209,12 +202,13 @@ void Health::AddShieldHealth(float shieldToAdd)
 
 void Health::DealDamage(float damage)
 {
-    if ( m_health <= 0 || m_invulnerable )
+    if (m_health <= 0 || m_invulnerable)
         return;
 
     auto owner = GetOwner( );
+    auto *world = owner->GetWorld( );
 
-    owner->Dispatch(HEALTH_DAMAGED, ursine::ecs::EntityEventArgs::Empty);
+    owner->Dispatch( HEALTH_DAMAGED, ursine::ecs::EntityEventArgs::Empty );
 
     // Check to see if we have a shield
     if (m_hasShield && m_shield > 0.0f)
@@ -247,22 +241,26 @@ void Health::DealDamage(float damage)
 
         // dispatch damage taken event
         HealthEventArgs args( damage, m_health / m_maxHealth );
+
         Dispatch( HEALTH_DAMAGE_TAKEN, &args );
 
-        // dispacth to ui if player
-        if (owner->HasComponent<PlayerID>( ) )
-        {
-            URSINE_TODO( "Create health event" );
-            /*ursine::Json message = ursine::Json::object {
-                { "playerID", owner->GetComponent< PlayerID >( )->GetID( ) },
-                { "healthPercent", percentage }
-            };
+        auto *player = owner->GetComponent<PlayerID>( );
 
-            GetOwner( )->GetWorld( )->MessageUI( gameUIEvents::UI_HealthComponentStats, message );*/
+        // dispacth to ui if player
+        if (player)
+        {
+            ui_event::PlayerHealthUpdated healthEvent;
+
+            healthEvent.playerID = player->GetID( );
+            healthEvent.percent = percentage;
+
+            auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+
+            if (ui)
+                ui->TriggerPlayerHUDEvent( healthEvent );
         }
     }
 }
-
 
 void Health::DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit)
 {
@@ -291,7 +289,7 @@ void Health::OnInitialize(void)
 
     m_maxShield = m_shield;
 
-    GetOwner( )->Listener(this)
+    GetOwner( )->Listener( this )
         .On( game::REVIVE_PLAYER, &Health::onRevive )
         .On( ENTITY_REMOVED, &Health::onDeath );
 }

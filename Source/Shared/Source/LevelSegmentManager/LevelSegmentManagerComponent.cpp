@@ -35,9 +35,18 @@
 #include "CombatBowl1ResourcesComponent.h"
 #include "BossRoomResourcesComponent.h"
 
+#include "UIScreensConfigComponent.h"
+
+#include <Scene.h>
 #include <TimerCondition.h>
 
 #include <iostream>
+
+#if defined(URSINE_WITH_EDITOR)
+
+#include <Notification.h>
+
+#endif
 
 NATIVE_COMPONENT_DEFINITION( LevelSegmentManager );
 
@@ -98,8 +107,70 @@ const EntityHandle &LevelSegmentManager::GetPlayer2(void)
 
 void LevelSegmentManager::OnSceneReady(Scene *scene)
 {
+    auto *world = GetOwner( )->GetWorld( );
+
+    if (scene->GetPlayState( ) == PS_PLAYING)
+    {
+        auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        if (!ui)
+        {
+            NotificationConfig warning;
+
+            warning.type = NOTIFY_WARNING;
+            warning.header = "Warning";
+            warning.message = "World settings missing <strong class=\"highlight\">UIScreensConfig</strong> component.";
+            
+            EditorPostNotification( warning );
+
+            goto skipUI;
+        }
+
+    #else
+
+        UAssert( ui != nullptr,
+            "World settings missing UIScreensConfig component."    
+        );
+
+    #endif
+
+        auto *playerHUD = ui->GetPlayerHUD( );
+
+        if (!playerHUD)
+            playerHUD = ui->AddPlayerHUD( );
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        if (!playerHUD)
+        {
+            NotificationConfig warning;
+
+            warning.type = NOTIFY_WARNING;
+            warning.header = "Warning";
+            warning.message = "UI Screen <strong class=\"highlight\">PlayerHUD</strong> invalid or not configured.";
+            
+            EditorPostNotification( warning );
+        }
+
+    #else
+
+        UAssert( playerHUD != nullptr,
+            "UIScreen 'PlayerHUD' invalid or not configured."    
+        );
+
+    #endif
+    }
+
+#if defined(URSINE_WITH_EDITOR)
+
+skipUI:
+
+#endif
+
     // subscribe to update
-    GetOwner( )->GetWorld( )->Listener( this )
+    world->Listener( this )
         .On( WORLD_UPDATE, &LevelSegmentManager::onUpdate );
 
     // add and initialize all segment logic

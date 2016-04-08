@@ -17,6 +17,10 @@
 
 #include "SegmentLogicStateIncludes.h"
 
+#include "UIScreensConfigComponent.h"
+
+#include <Scene.h>
+
 ToggleHudState::ToggleHudState(bool toggle)
     : SegmentLogicState( toggle ? "Turn Hud On" : "Turn Hud Off" )
     , m_toggle( toggle ) { }
@@ -26,8 +30,21 @@ void ToggleHudState::Enter(SegmentLogicStateMachine *machine)
     auto segmentManager = machine->GetSegmentManager( );
     auto world = segmentManager->GetOwner( )->GetWorld( );
 
-    //if (m_toggle)
-        // send message here
-    // else
-        // send message here
+    auto *scene = world->GetOwner( );
+
+    UAssert( scene != nullptr,
+        "Scene was null."    
+    );
+
+    auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+
+    UAssert( ui != nullptr,
+        "UIConfig was null."    
+    );
+
+    ui_event::ToggleHUD e;
+
+    e.toggled = m_toggle;
+
+    ui->TriggerPlayerHUDEvent( e );
 }

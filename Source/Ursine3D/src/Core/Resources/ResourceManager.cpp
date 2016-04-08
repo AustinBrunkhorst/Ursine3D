@@ -37,6 +37,11 @@ namespace ursine
             return cache->second;
         }
 
+        void ResourceManager::UnloadReference(const ResourceReference &reference)
+        {
+            m_database.erase( reference.GetGUID( ) );
+        }
+
         bool ResourceManager::ResourceExists(const GUID &guid) const
         {
             return m_database.find( guid ) != m_database.end( ) || exists( getResourceFileName( guid ) );
