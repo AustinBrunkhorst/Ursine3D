@@ -85,7 +85,7 @@
 //       Damage System         //
 /////////////////////////////////
 
-#include "DamageSystem/DamageTextSystem.h"
+//#include "DamageSystem/DamageTextSystem.h"
 #include "DamageSystem/DamageOnCollideSystem.h"
 
 /////////////////////////////////
