@@ -142,6 +142,7 @@ void VineUprootState::Update(VineAIStateMachine *machine)
 
             for (auto &emitter : emitters)
                 emitter->SetEmitting( false );
+
             aiOwner->GetComponent<AudioEmitter>( )->PushEvent( ai->GetEmergeSfx( ) );
 
             break;

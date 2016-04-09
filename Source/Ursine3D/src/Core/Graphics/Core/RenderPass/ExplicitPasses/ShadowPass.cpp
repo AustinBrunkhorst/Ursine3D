@@ -79,6 +79,9 @@ namespace ursine
                 if(!light.GetRenderShadows( ))
                     continue;
 
+                if (!light.GetActive( ))
+                    continue;
+
                 m_manager->GetDXCore( )->StartDebugEvent( "Shadow Start" );
 
                 beginPass( currentCamera );
