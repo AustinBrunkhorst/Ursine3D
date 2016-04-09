@@ -51,7 +51,7 @@ void BossSeedshotState::Enter(BossAIStateMachine *machine)
     {
         animator->SetEnableBoneManipulation( true );
         animator->SetPlaying( true );
-        animator->SetCurrentState( "Idle" );
+        animator->SetCurrentState( "Seedshot" );
     }
 }
 
