@@ -80,10 +80,10 @@ void PlayerDownedObject::onZeroHealth(EVENT_HANDLER(Entity))
     auto cc = GetOwner( )->GetComponent<CharacterController>( );
 
     cc->SetLockLooking( true );
-    cc->SetLockLooking( true );
+    cc->SetLockMovement( true );
 
     // Tell the swept controller it isn't active
-    GetOwner( )->GetComponent<SweptController>( )->SetActive( false );
+    GetOwner( )->GetComponent<SweptController>( )->SetEnableImpulses( false );
 
     // animate the camera
     auto animator = GetOwner( )->GetComponentInChildren<PlayerDeathCameraAnimator>( );

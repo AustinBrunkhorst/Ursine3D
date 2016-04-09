@@ -532,7 +532,7 @@ bool HitscanWeaponSystem::RaycastClosestHitLogic(SVec3 &raycastVec, physics::Ray
         Health* rootHealth = objHit->GetRoot( )->GetComponent< Health >( );
 
         if ( rootHealth->CanDamage(&weapon) )
-            rootHealth->DealDamage(collisionPoint, damage, crit);
+            rootHealth->DealDamage(weapon.m_owner, collisionPoint, damage, crit);
 
         else
             return false;
@@ -542,7 +542,7 @@ bool HitscanWeaponSystem::RaycastClosestHitLogic(SVec3 &raycastVec, physics::Ray
         Health* objHealth = objHit->GetComponent< Health >( );
 
         if ( objHealth->CanDamage(&weapon) )
-            objHealth->DealDamage(collisionPoint, damage, crit);
+            objHealth->DealDamage(weapon.m_owner, collisionPoint, damage, crit);
 
         else
             return false;

@@ -131,7 +131,7 @@ void PlayerDeathCameraAnimator::onAnimationFinished(EVENT_HANDLER(EntityAnimator
     cc->SetLockMovement( false );
 
     // turn on swept cotnroller
-    root->GetComponent<SweptController>( )->SetActive( true );
+    root->GetComponent<SweptController>( )->SetEnableImpulses( true );
 
     // give back health
     auto health = root->GetComponent<Health>( );

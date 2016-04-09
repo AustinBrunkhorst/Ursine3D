@@ -1,5 +1,3 @@
-#pragma once
-
 /* ---------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -11,39 +9,45 @@
 **
 ** -------------------------------------------------------------------------*/
 
+#pragma once
 
 #include <Component.h>
+
 #include "HealthComponent.h"
 
 class HealthRegen : public ursine::ecs::Component
 {
     NATIVE_COMPONENT
-public:
 
-    HealthRegen(void);
-    ~HealthRegen(void);
+public:
 
     EditorField(
         float HealthRegenTime,
         GetHealthRegenTime,
         SetHealthRegenTime
-        );
-    float GetHealthRegenTime(void) const;
-    void SetHealthRegenTime(float time);
+    );
 
     EditorField(
         float ShieldRegenTime,
         GetShieldRegenTime,
         SetShieldRegenTime
-        );
-    float GetShieldRegenTime(void) const;
-    void SetShieldRegenTime(float time);
+    );
 
     EditorField(
         float WaitTime,
         GetWaitTime,
         SetWaitTime
-        );
+    );
+
+    HealthRegen(void);
+    ~HealthRegen(void);
+
+    float GetHealthRegenTime(void) const;
+    void SetHealthRegenTime(float time);
+
+    float GetShieldRegenTime(void) const;
+    void SetShieldRegenTime(float time);
+
     float GetWaitTime(void) const;
     void SetWaitTime(float time);
 
@@ -60,9 +64,9 @@ public:
     void SetHealthToAdd(float healthToAdd);
 
     Meta(Disable)
-        float GetShieldToAdd(void) const;
+    float GetShieldToAdd(void) const;
     Meta(Disable)
-        void SetShieldToAdd(float shieldToAdd);
+    void SetShieldToAdd(float shieldToAdd);
 
 protected:
 

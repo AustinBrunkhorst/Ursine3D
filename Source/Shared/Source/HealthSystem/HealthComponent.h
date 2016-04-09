@@ -39,10 +39,12 @@ struct HealthEventArgs : ursine::EventArgs
 {
     float health;
     float percentage;
+    ursine::ecs::EntityHandle damager;
 
-    HealthEventArgs(float health, float percentage)
+    HealthEventArgs(float health, float percentage, ursine::ecs::EntityHandle damager)
         : health( health )
-        , percentage( percentage ) { }
+        , percentage( percentage )
+        , damager( damager ) { }
 };
 
 enum HealthType
@@ -117,7 +119,7 @@ public:
         float MaxShieldHealth,
         GetMaxShieldHealth,
         SetMaxShieldHealth
-        );
+    );
 
     Meta(Enable)
     Health(void);
@@ -158,8 +160,9 @@ public:
     void AddHealth(float healthToAdd);
     void AddShieldHealth(float healthToAdd);
 
-    void DealDamage(float damage);
-    void DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit);
+    void DealDamage(const ursine::ecs::EntityHandle &damager, float damage);
+    void DealDamage(const ursine::ecs::EntityHandle &damager,
+                    const ursine::SVec3& contactPoint, float damage, bool crit);
 
     bool CanDamage(DamageOnCollide *damage) const;
     bool CanDamage(AbstractHitscanWeapon *weapon) const;

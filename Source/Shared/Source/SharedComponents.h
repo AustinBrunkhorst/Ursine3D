@@ -28,6 +28,8 @@
 #include "Misc/ForceComponent.h"
 #include "Misc/TimeDeathComponent.h"
 #include "Misc/BuffComponent.h"
+#include "Misc/SlimePitComponent.h"
+#include "Misc/SlimePitDeathSpawnComponent.h"
 
 /////////////////////////////////
 //        Player Logic         //

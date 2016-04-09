@@ -87,6 +87,32 @@ void Health::SetHealth(const float health)
     m_health = math::Max(health, 0.0f);
 
     NOTIFY_COMPONENT_CHANGED( "EntityHealth", m_health );
+
+    auto *player = GetOwner( )->GetComponent<PlayerID>( );
+
+    // dispacth to ui if player
+    if (player)
+    {
+        ui_event::PlayerHealthUpdated healthEvent;
+
+        healthEvent.playerID = player->GetID( );
+        healthEvent.percent = m_health / m_maxHealth;
+
+        auto world = GetOwner( )->GetWorld( );
+
+        if (!world)
+            return;
+
+        auto settings = world->GetSettings( );
+
+        if (!settings)
+            return;
+
+        auto *ui = settings->GetComponent<UIScreensConfig>( );
+
+        if (ui)
+            ui->TriggerPlayerHUDEvent( healthEvent );
+    }
 }
 
 float Health::GetMaxHealth(void) const
@@ -200,15 +226,16 @@ void Health::AddShieldHealth(float shieldToAdd)
     SetShieldHealth( math::Min( m_shield + shieldToAdd, m_maxShield ) );
 }
 
-void Health::DealDamage(float damage)
+void Health::DealDamage(const EntityHandle &damager, float damage)
 {
     if (m_health <= 0 || m_invulnerable)
         return;
 
     auto owner = GetOwner( );
     auto *world = owner->GetWorld( );
+    HealthEventArgs args( m_health, m_health / m_maxHealth, damager );
 
-    owner->Dispatch( HEALTH_DAMAGED, ursine::ecs::EntityEventArgs::Empty );
+    owner->Dispatch( HEALTH_DAMAGED, &args );
 
     // Check to see if we have a shield
     if (m_hasShield && m_shield > 0.0f)
@@ -228,43 +255,26 @@ void Health::DealDamage(float damage)
 
     SetHealth( GetHealth( ) - damage );
 
+    args.health = m_health;
+    args.percentage = m_health / m_maxHealth;
+
     if (m_health <= 0)
     {
-        Dispatch( HEALTH_ZERO, ursine::EventArgs::Empty );
+        Dispatch( HEALTH_ZERO, &args );
 
         if (m_deleteOnZero)
             GetOwner( )->Delete( );
     }
     else
     {
-        float percentage = m_health / m_maxHealth;
-
         // dispatch damage taken event
-        HealthEventArgs args( damage, m_health / m_maxHealth );
-
         Dispatch( HEALTH_DAMAGE_TAKEN, &args );
-
-        auto *player = owner->GetComponent<PlayerID>( );
-
-        // dispacth to ui if player
-        if (player)
-        {
-            ui_event::PlayerHealthUpdated healthEvent;
-
-            healthEvent.playerID = player->GetID( );
-            healthEvent.percent = percentage;
-
-            auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
-
-            if (ui)
-                ui->TriggerPlayerHUDEvent( healthEvent );
-        }
     }
 }
 
-void Health::DealDamage(const ursine::SVec3& contactPoint, float damage, bool crit)
+void Health::DealDamage(const EntityHandle &damager, const SVec3& contactPoint, float damage, bool crit)
 {
-    DealDamage(damage);
+    DealDamage(damager, damage);
 
     sendDamageTextEvent(contactPoint, damage, crit);
 }
@@ -272,7 +282,7 @@ void Health::DealDamage(const ursine::SVec3& contactPoint, float damage, bool cr
 bool Health::CanDamage(DamageOnCollide *damage) const
 {
     auto type = damage->GetDamageType( );
-	
+
     return type == DAMAGE_ALL || type == m_type;
 }
 

@@ -28,6 +28,7 @@ namespace ursine
             : BaseComponent( )
             , m_active( true )
             , m_forwardEvents( true )
+            , m_enableImpulses( true )
             , m_grounded( true )
             , m_jumping( false )
             , m_worldUp( SVec3::UnitY( ) )
@@ -242,6 +243,18 @@ namespace ursine
             m_groundSnapDistance = snapDist;
         }
 
+        bool SweptController::GetEnableImpulses(void) const
+        {
+            return m_enableImpulses;
+        }
+
+        void SweptController::SetEnableImpulses(bool flag)
+        {
+            m_enableImpulses = flag;
+
+            NOTIFY_COMPONENT_CHANGED( "enableImpulses", m_enableImpulses );
+        }
+
         bool SweptController::GetGrounded(void) const
         {
             return m_grounded;
@@ -333,6 +346,9 @@ namespace ursine
 
         void SweptController::AddImpulse(const SVec3 &impulse)
         {
+            if (!m_enableImpulses)
+                return;
+
             m_controllerVelocity += impulse;
 
             // check to see if we're shoving the controller up
