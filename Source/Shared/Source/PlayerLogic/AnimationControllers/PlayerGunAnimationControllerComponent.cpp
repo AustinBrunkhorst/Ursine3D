@@ -15,6 +15,10 @@
 
 #include "GameEvents.h"
 #include "PlayEntityAnimationClipState.h"
+#include "GunReloadFinishedState.h"
+#include "UIScreensConfigComponent.h"
+#include "PlayerIdComponent.h"
+#include "HitscanWeaponComponent.h"
 
 #include <TriggerCondition.h>
 #include <BoolCondition.h>
@@ -59,6 +63,7 @@ void PlayerGunAnimationController::OnSceneReady(Scene *scene)
     auto shootOut = m_controller->AddState<PlayAnimationState>( m_shootEndState, false );
     auto shootLoop = m_controller->AddState<PlayAnimationState>( m_shootLoopState, false, 1.5f );
     auto reload = m_controller->AddState<PlayEntityAnimationClipState>( "Reload", true );
+    auto messageUI = m_controller->AddState<GunReloadFinishedState>( );
 
     // Add the variables
     m_controller->AddTrigger( kJump );
@@ -94,6 +99,8 @@ void PlayerGunAnimationController::OnSceneReady(Scene *scene)
     shootOut->AddTransition( run, "To Run" )
             ->AddCondition<sm::BoolCondition>( kMoving, true );
 
+    reload->AddTransition( messageUI, "Message UI" );
+
     idle->AddTransition( reload, "reload" )->AddCondition<sm::BoolCondition>( kReload, true );
     run->AddTransition( reload, "reload" )->AddCondition<sm::BoolCondition>( kReload, true );
     jump->AddTransition( reload, "reload" )->AddCondition<sm::BoolCondition>( kReload, true );
@@ -101,13 +108,13 @@ void PlayerGunAnimationController::OnSceneReady(Scene *scene)
     shootOut->AddTransition( reload, "reload" )->AddCondition<sm::BoolCondition>( kReload, true );
 
     {
-        auto trans = reload->AddTransition( idle, "To Idle" );
+        auto trans = messageUI->AddTransition( idle, "To Idle" );
         trans->AddCondition<sm::BoolCondition>( kMoving, false );
         trans->AddCondition<sm::BoolCondition>( kReload, false );
     }
 
     {
-        auto trans = reload->AddTransition( run, "To Idle" );
+        auto trans = messageUI->AddTransition( run, "To Idle" );
         trans->AddCondition<sm::BoolCondition>( kMoving, true );
         trans->AddCondition<sm::BoolCondition>( kReload, false );
     }
@@ -225,7 +232,8 @@ void PlayerGunAnimationController::connectToEvents(bool toggle)
             .On( game::FIRE_START, &PlayerGunAnimationController::onStartShoot )
             .On( game::FIRE_END, &PlayerGunAnimationController::onEndShoot )
             .On( game::RELOAD_START, &PlayerGunAnimationController::onStartReload )
-            .On( game::RELOAD_END, &PlayerGunAnimationController::onEndReload );
+            .On( game::RELOAD_END, &PlayerGunAnimationController::onEndReload )
+            .On( game::GUN_SHOOT, &PlayerGunAnimationController::onShoot );
 
         m_connected = true;
     }
@@ -237,7 +245,8 @@ void PlayerGunAnimationController::connectToEvents(bool toggle)
             .Off( game::FIRE_START, &PlayerGunAnimationController::onStartShoot )
             .Off( game::FIRE_END, &PlayerGunAnimationController::onEndShoot )
             .Off( game::RELOAD_START, &PlayerGunAnimationController::onStartReload )
-            .Off( game::RELOAD_END, &PlayerGunAnimationController::onEndReload );
+            .Off( game::RELOAD_END, &PlayerGunAnimationController::onEndReload )
+            .Off( game::GUN_SHOOT, &PlayerGunAnimationController::onShoot );
 
         m_connected = false;
     }
@@ -272,4 +281,37 @@ void PlayerGunAnimationController::onStartReload(EVENT_HANDLER(Entity))
 void PlayerGunAnimationController::onEndReload(EVENT_HANDLER(Entity))
 {
     m_controller->SetBool( kReload, false );
+}
+
+void PlayerGunAnimationController::onShoot(EVENT_HANDLER(Entity))
+{
+    EVENT_SENDER(Entity, sender);
+
+    // message the UI that the gun is reloaded
+    auto world = sender->GetWorld( );
+    auto *scene = world->GetOwner( );
+
+    UAssert( scene != nullptr,
+        "Scene was null."    
+    );
+
+    auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+
+    UAssert( ui != nullptr,
+        "UIConfig was null."
+    );
+
+    auto root = sender->GetRoot( );
+    auto player = root->GetComponent<PlayerID>( );
+    auto gun = root->GetComponentInChildren<HitscanWeapon>( );
+
+    UAssert( gun, "Error: There should be a gun son" );
+
+    ui_event::PlayerAmmoUpdated e;
+
+    e.percent = static_cast<float>( gun->GetClipCount( ) ) / 
+                gun->GetClipSize( );
+    e.playerID = player->GetID( );
+
+    ui->TriggerPlayerHUDEvent( e );
 }
