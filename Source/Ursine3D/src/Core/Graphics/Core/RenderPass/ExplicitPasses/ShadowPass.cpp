@@ -159,7 +159,7 @@ namespace ursine
             m_manager->GetDXCore( )->GetDeviceContext( )->ClearDepthStencilView(
                 depthStencil.depthStencilView, 
                 D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 
-                1.0f, 
+                0.0f, 
                 0
             );
 

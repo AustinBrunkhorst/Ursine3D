@@ -410,7 +410,7 @@ namespace ursine
 
             m_shadowmap = 0;
             m_shadowmapWidth = 1024;
-            m_renderShadows = true;
+            m_renderShadows = false;
 
             Renderable::Initialize();
         }

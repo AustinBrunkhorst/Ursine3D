@@ -152,7 +152,7 @@ namespace ursine
             samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
             samplerDesc.MipLODBias = 0.0f;
             samplerDesc.MaxAnisotropy = 0;
-            samplerDesc.ComparisonFunc = D3D11_COMPARISON_LESS;
+            samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
             samplerDesc.BorderColor[ 0 ] = 1.0;
             samplerDesc.BorderColor[ 1 ] = 1.0;
             samplerDesc.BorderColor[ 2 ] = 1.0;

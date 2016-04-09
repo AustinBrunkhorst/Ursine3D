@@ -20,7 +20,8 @@ namespace ursine
 {
     namespace graphics
     {
-        SpotLightProcessor::SpotLightProcessor(void)
+        SpotLightProcessor::SpotLightProcessor(bool useShadows)
+            : m_useShadows( useShadows )
         {
             m_renderableType = RENDERABLE_LIGHT;
         }
@@ -41,6 +42,10 @@ namespace ursine
 
             // if culed by camera mask
             if ( currentCamera.CheckMask(light.GetRenderMask()) )
+                return true;
+
+            // skip shadows
+            if(light.GetRenderShadows( ) != m_useShadows)
                 return true;
 
             // return false as in DO NOT CULL ME
@@ -80,19 +85,22 @@ namespace ursine
             invCam.Inverse();
 
             // map shadow projection buffer
-            ShadowProjectionBuffer spb;
-            invCam.Transpose();
-            lightview.Transpose();
-            lightproj.Transpose();
-            spb.invCam = invCam.ToD3D();
-            spb.lightView = lightview.ToD3D();
-            spb.lightProj = lightproj.ToD3D();
+            if(m_useShadows)
+            {
+                ShadowProjectionBuffer spb;
+                invCam.Transpose();
+                lightview.Transpose();
+                lightproj.Transpose();
+                spb.invCam = invCam.ToD3D();
+                spb.lightView = lightview.ToD3D();
+                spb.lightProj = lightproj.ToD3D();
 
-            m_manager->bufferManager->MapBuffer<BUFFER_SHADOWMAP, ShadowProjectionBuffer>(
-                &spb,
-                SHADERTYPE_PIXEL,
-                13
-            );
+                m_manager->bufferManager->MapBuffer<BUFFER_SHADOWMAP, ShadowProjectionBuffer>(
+                    &spb,
+                    SHADERTYPE_PIXEL,
+                    13
+                );
+            }
 
             // MAP TRANSFORM DATA ///////////////////////////////////
             m_manager->bufferManager->MapTransformBuffer(
@@ -106,7 +114,9 @@ namespace ursine
             // MAP DEPTH DATA ///////////////////////////////////////
             // SHADER_SLOT_4
             auto shadowmap = m_manager->dxCore->GetDepthMgr( )->GetShadowmapDepthStencil( spotLight.GetShadowmapHandle( ) );
-            m_manager->dxCore->GetDeviceContext( )->PSSetShaderResources( 4, 1, &shadowmap.depthStencilSRV );
+
+            if(m_useShadows)
+                m_manager->dxCore->GetDeviceContext( )->PSSetShaderResources( 4, 1, &shadowmap.depthStencilSRV );
 
             // DETERMINE CULLING MODE ///////////////////////////////
             SVec3 light2Cam = currentCamera.GetPosition( ) - spotLight.GetPosition( );
