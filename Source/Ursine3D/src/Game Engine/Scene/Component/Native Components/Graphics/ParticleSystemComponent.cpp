@@ -206,6 +206,16 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "orientToVelocity", m_particleSystem->GetVelocityOrient( ) );
         }
 
+        float ParticleSystem::GetGeometryFade() const
+        {
+            return m_particleSystem->GetFadeScalar( );
+        }
+
+        void ParticleSystem::SetGeometryFade(float fade)
+        {
+            m_particleSystem->SetFadeScalar( fade );
+        }
+
     #if defined(URSINE_WITH_EDITOR)
 
         bool ParticleSystem::UpdatesInEditor(void) const

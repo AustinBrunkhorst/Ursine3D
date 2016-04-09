@@ -361,6 +361,9 @@ namespace ursine
 
             bool GetVelocityOrient(void) const;
             void SetVelocityOrient(bool velocityOrient);
+
+            float GetFadeScalar(void) const;
+            void SetFadeScalar(float scalar);
         private:
             // members
             unsigned m_backIndex;
@@ -375,6 +378,8 @@ namespace ursine
             bool m_useAdditive;
             bool m_worldSpace;
             bool m_velocityOrient;
+
+            float m_fadeScalar;
 
             SMat4 m_transform;
         };

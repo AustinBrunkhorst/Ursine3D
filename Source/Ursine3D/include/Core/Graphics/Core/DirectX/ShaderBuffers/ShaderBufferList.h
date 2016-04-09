@@ -208,7 +208,8 @@ namespace ursine
         {
             float lightSteps;
             float borderCutoff;
-            DirectX::XMFLOAT2 buffer;
+            float farDistance;
+            float buffer;
         };
 
         struct FragmentationVSBuffer

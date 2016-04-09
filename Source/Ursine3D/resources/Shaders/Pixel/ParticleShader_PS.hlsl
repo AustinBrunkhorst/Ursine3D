@@ -13,11 +13,18 @@ cbuffer InverseProjection   : register(b4)
     float2      buffer;
 };
 
+cbuffer ParticleFade : register(b9)
+{
+    float gScalar;
+    float3 buffer3;
+}
+
 cbuffer ShadowFalloff               : register(b12)
 {
     float gLightStep;
     float gBorderCutoff;
-    float2 buffert;
+    float gFarDistance;
+    float buffer2;
 }
 
 // convert given depth value from exponential to linear
@@ -45,7 +52,7 @@ float4 main(PS_INPUT input) : SV_TARGET
 
     float4 texColor = gColorTexture.Sample(SampleType, input.uv);
 
-    float depthScalar = (sceneDepth - particleDepth) * 150.0f;
+    float depthScalar = (sceneDepth - particleDepth) / (gFarDistance * gScalar);
 
     float Output = 0.5 *saturate(2 * ((depthScalar > 0.5) ? 1 - depthScalar : depthScalar));
     Output = (depthScalar > 0.5) ? 1 - Output : Output;

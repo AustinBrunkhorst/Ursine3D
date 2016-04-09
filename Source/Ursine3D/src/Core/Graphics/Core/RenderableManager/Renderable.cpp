@@ -611,6 +611,8 @@ namespace ursine
             m_useAdditive = true;
             m_worldSpace = true;
             m_velocityOrient = false;
+
+            m_fadeScalar = 0.5f;
         }
 
         std::vector<Particle_GPU>& ParticleSystem::GetGPUParticleData(void)
@@ -748,6 +750,15 @@ namespace ursine
         void ParticleSystem::SetVelocityOrient(bool velocityOrient)
         {
             m_velocityOrient = velocityOrient;
+        }
+
+        float ParticleSystem::GetFadeScalar(void) const
+        {
+            return m_fadeScalar;
+        }
+        void ParticleSystem::SetFadeScalar(float scalar)
+        {
+            m_fadeScalar = scalar;
         }
 
         /////////////////////////////////////////////////////////////

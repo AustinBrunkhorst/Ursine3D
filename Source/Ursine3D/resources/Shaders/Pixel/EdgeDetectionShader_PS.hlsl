@@ -17,7 +17,8 @@ cbuffer ShadowFalloff               : register(b12)
 {
     float gLightStep;
     float gBorderCutoff;
-    float2 buffer;
+    float gFarDistance;
+    float buffer;
 }
 
 // convert given depth value from exponential to linear
@@ -134,7 +135,7 @@ float4 main(PS_INPUT In) : SV_TARGET
         samples[0] * corners + samples[ 2 ] * corners + samples[ 5 ] * corners + samples[ 7 ] * corners +
         samples[ 1 ] * sides + samples[ 3 ] * sides + samples[ 4 ] * sides + samples[ 6 ] * sides;
 
-    lapGauss /= 2500;
+    lapGauss /= gFarDistance;
 
     if (lapGauss > 0.07)
         return float4(0, 0, 0, 1);
