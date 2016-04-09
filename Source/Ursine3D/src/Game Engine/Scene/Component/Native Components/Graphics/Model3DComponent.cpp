@@ -307,14 +307,14 @@ namespace ursine
             if (data == nullptr)
             {
                 // default
-                m_model->SetTextureHandle(1);
+                m_model->SetNormalTextureHandle(1);
             }
             else
             {
                 auto handle = data->GetTextureHandle();
 
                 if (unload)
-                    m_graphics->ResourceMgr.UnloadTexture(m_model->GetTextureHandle());
+                    m_graphics->ResourceMgr.UnloadTexture( m_model->GetNormalTextureHandle( ) );
 
                 m_graphics->ResourceMgr.LoadTexture(handle);
 
