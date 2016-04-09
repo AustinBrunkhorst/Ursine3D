@@ -909,7 +909,7 @@ namespace ursine
                             lUVIndex = lUVElement->GetIndexArray().GetAt(lVertexIndex);
 
                         FbxVector2 lUVValue = lUVElement->GetDirectArray().GetAt(lUVIndex);
-                        pData->uvs[ lVertexIndex ] = pseudodx::XMFLOAT2(static_cast<float>(lUVValue.mData[ 0 ]), static_cast<float>(lUVValue.mData[ 1 ]));
+                        pData->uvs[ lVertexIndex ] = pseudodx::XMFLOAT2(static_cast<float>(1.0f - lUVValue.mData[ 0 ]), static_cast<float>(1.0f - lUVValue.mData[ 1 ]));
 
                         if (2 == lVertexIndex % 3)
                         {
@@ -948,7 +948,7 @@ namespace ursine
                                 int lUVIndex = lUseIndex ? lUVElement->GetIndexArray().GetAt(lPolyIndexCounter) : lPolyIndexCounter;
 
                                 lUVValue = lUVElement->GetDirectArray().GetAt(lUVIndex);
-                                pData->uvs[ lPolyIndexCounter ] = pseudodx::XMFLOAT2(static_cast<float>(lUVValue.mData[ 0 ]), static_cast<float>(lUVValue.mData[ 1 ]));
+                                pData->uvs[ lPolyIndexCounter ] = pseudodx::XMFLOAT2(1.0f - static_cast<float>(lUVValue.mData[ 0 ]), static_cast<float>(1.0f - lUVValue.mData[ 1 ]));
 
                                 // for converting indicies for texture
                                 if (2 == lPolyIndexCounter % 3)
