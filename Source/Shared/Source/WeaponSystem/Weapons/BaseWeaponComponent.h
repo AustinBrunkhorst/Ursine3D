@@ -33,6 +33,4 @@ protected:
 } Meta(
     Enable, 
     DisplayName( "ProjectileWeapon" ), 
-) EditorMeta(
-    RequiresComponents( typeof( ursine::ecs::AudioEmitter ) )
 );

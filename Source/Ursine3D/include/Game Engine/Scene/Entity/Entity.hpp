@@ -67,31 +67,31 @@ namespace ursine
             return HasComponent( mask );
         }
 
-	    template <class ComponentType>
-	    ComponentType* Entity::GetComponentInChildren(void) const
-	    {
-			return m_world->m_entityManager->GetComponentInChildren<ComponentType>( this );
-	    }
+        template <class ComponentType>
+        ComponentType *Entity::GetComponentInChildren(void) const
+        {
+            return m_world->m_entityManager->GetComponentInChildren<ComponentType>( this );
+        }
 
-	    template <class ComponentType>
-	    ComponentType* Entity::GetComponentInParent(void) const
-	    {
-			return m_world->m_entityManager->GetComponentInParent<ComponentType>( this );
-	    }
+        template <class ComponentType>
+        ComponentType *Entity::GetComponentInParents(void) const
+        {
+            return m_world->m_entityManager->GetComponentInParents<ComponentType>( this );
+        }
 
-	    template <class ComponentType>
-	    std::vector<ComponentType*> Entity::GetComponentsInChildren(void) const
-	    {
-			return m_world->m_entityManager->GetComponentsInChildren<ComponentType>( this );
-	    }
+        template <class ComponentType>
+        std::vector<ComponentType*> Entity::GetComponentsInChildren(void) const
+        {
+            return m_world->m_entityManager->GetComponentsInChildren<ComponentType>( this );
+        }
 
-	    template <class ComponentType>
-	    std::vector<ComponentType*> Entity::GetComponentsInParents(void) const
-	    {
-			return m_world->m_entityManager->GetComponentsInParents<ComponentType>( this );
-	    }
+        template <class ComponentType>
+        std::vector<ComponentType*> Entity::GetComponentsInParents(void) const
+        {
+            return m_world->m_entityManager->GetComponentsInParents<ComponentType>( this );
+        }
 
-	    template<typename Args>
+        template<typename Args>
         void Entity::Connect(
             EventID event, 
             EventDispatcher::HandlerType::StaticDelegate<Args> delegate,
