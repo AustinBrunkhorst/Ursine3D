@@ -1,6 +1,7 @@
 #include "Precompiled.h"
 #include "WaypointSystem.h"
 #include "AIPriorityQueue.h"
+#include <Utilities/Application/Application.h>
 
 
 namespace ursine
@@ -144,15 +145,18 @@ namespace ursine
         void WaypointSystem::OnInitialize(void)
         {
             m_world->Listener(this)
-                .On(WORLD_ENTITY_COMPONENT_ADDED, &WaypointSystem::onComponentAdded)
-                .On(WORLD_ENTITY_COMPONENT_REMOVED, &WaypointSystem::onComponentRemoved);
+                .On( WORLD_ENTITY_COMPONENT_ADDED, &WaypointSystem::onComponentAdded )
+                .On( WORLD_ENTITY_COMPONENT_REMOVED, &WaypointSystem::onComponentRemoved )
+                .On( WORLD_UPDATE, &WaypointSystem::onUpdate );
         }
 
         void WaypointSystem::OnRemove(void)
         {
             m_world->Listener( this )
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &WaypointSystem::onComponentAdded )
-                .Off( WORLD_ENTITY_COMPONENT_REMOVED, &WaypointSystem::onComponentRemoved );
+                .Off( WORLD_ENTITY_COMPONENT_REMOVED, &WaypointSystem::onComponentRemoved )
+                .Off( WORLD_UPDATE, &WaypointSystem::onUpdate );
+
         }
 
         void WaypointSystem::onComponentAdded(EVENT_HANDLER(World))
@@ -170,6 +174,10 @@ namespace ursine
                 // if it is set to auto connect, find everything it can connect to
                 // ...
             }
+            else if (args->component->Is<WaypointAgent>())
+            {
+                m_agents.push_back(static_cast<WaypointAgent *>(args->component)); 
+            }
         }
 
         void WaypointSystem::onComponentRemoved(EVENT_HANDLER(World))
@@ -182,6 +190,32 @@ namespace ursine
 
                 if (search != m_waypoints.end())
                     m_waypoints.erase(search);
+            }
+            else if (args->component->Is<WaypointAgent>())
+            {
+                auto iter = std::find( m_agents.begin(), m_agents.end()
+                    , static_cast<WaypointAgent *>( args->component ) );
+                
+                m_agents.erase( iter );
+            }
+        }
+
+        void WaypointSystem::onUpdate(EVENT_HANDLER(World))
+        {
+            EVENT_ATTRS(World, WorldEventArgs);
+
+            // update all the ai agents
+            for (auto agent : m_agents)
+            {
+                // if the agent is ready to update, do so
+                if (agent->CanUpdate())
+                {
+                    agent->ResetTimer();
+
+                    CalculatePath( *agent, agent->GetTarget() );
+                }
+                // eitherway, update the timer on all the agents
+                agent->UpdateTimer(ursine::Application::Instance->GetDeltaTime());
             }
         }
 

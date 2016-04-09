@@ -45,6 +45,14 @@ namespace ursine
             m_audioMan->UnRegisterObject( id );
         }
 
+        void AudioSystem::DeleteAllAudioObjects(void)
+        {
+            if (AK::SoundEngine::UnregisterAllGameObj(  ) != AK_Success)
+            {
+                UWarning("Wwise: Cannot Unregister ALL game objects");
+            }
+        }
+
         void AudioSystem::OnInitialize(void)
         {
             m_world->Listener( this )
@@ -63,6 +71,9 @@ namespace ursine
 
         void AudioSystem::OnRemove(void)
         {
+            StopAllSounds();
+            DeleteAllAudioObjects( );
+
             m_world->Listener( this )
                 .Off( WORLD_UPDATE, &AudioSystem::onUpdate )
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &AudioSystem::onComponentAdded )
@@ -160,7 +171,7 @@ namespace ursine
                 auto &handle = emitter.second->m_handle;
                 auto entity = emitter.first;
                 auto eventQ = emitter.second;
-                //auto maskCheck = emitter.second->checkMask( );
+                auto &stopSoundFlag = emitter.second->checkStopFlag( );
                 auto mask = emitter.second->GetListenerMask( );
 
                 // I need to find out a way to access all of the events from the emitter's queues
@@ -181,6 +192,12 @@ namespace ursine
                     PostAudioEventInfo( postedEvent, handle );
                     eventQ->PopEvent( );
                 }
+
+                if (stopSoundFlag)
+                {
+                    StopAllSounds( handle );
+                    stopSoundFlag = false;
+                }
             }
         }
 
@@ -190,6 +207,16 @@ namespace ursine
             {
                 UWarning( "Wwise: Cannot Set RTPC value: %s", param.c_str( ) );
             }
+        }
+
+        void AudioSystem::StopAllSounds(void)
+        {
+            AK::SoundEngine::StopAll( );
+        }
+
+        void AudioSystem::StopAllSounds(AkGameObjectID id)
+        {
+            AK::SoundEngine::StopAll( id );
         }
 
         void AudioSystem::PostAudioEvent(const std::string param, AkGameObjectID id)

@@ -45,3 +45,4 @@
 #include "Tools/JavaScript/ComponentUtils.h"
 #include "Tools/JavaScript/NotificationUtils.h"
 #include "Tools/JavaScript/GameContextUtils.h"
+#include "Tools/JavaScript/WaypointUtils.h"

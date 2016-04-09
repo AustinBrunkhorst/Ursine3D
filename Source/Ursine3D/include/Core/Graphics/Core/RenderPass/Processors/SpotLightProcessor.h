@@ -24,11 +24,14 @@ namespace ursine
         class SpotLightProcessor : public GraphicsEntityProcessor
         {
         public:
-            SpotLightProcessor(void);
+            SpotLightProcessor(bool useShadows = true);
+
         private:
              bool cullOperation(_DRAWHND, Camera &currentCamera) override;
              void prepOperation(_DRAWHND, SMat4 &view, SMat4 &proj, Camera &currentCamera) override;
              void renderOperation(_DRAWHND handle, Camera &currentCamera) override;
+
+             bool m_useShadows;
         };
     }
 }

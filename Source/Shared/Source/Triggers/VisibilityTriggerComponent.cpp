@@ -14,6 +14,7 @@
 #include "VisibilityTriggerComponent.h"
 #include "LevelSegmentManagerComponent.h"
 #include "Model3DComponent.h"
+#include "RigidbodyComponent.h"
 #include <Core\CoreSystem.h>
 #include <Filter.h>
 #include <CollisionEventArgs.h>
@@ -28,6 +29,7 @@ VisibilityTrigger::VisibilityTrigger(void)
     : BaseComponent()
     , m_segment(LevelSegments::Empty)
     , m_unsubscribed( true )
+    , m_delay( 0.0f )
 {
 }
 
@@ -78,6 +80,16 @@ LevelSegments VisibilityTrigger::GetLevelSegment(void) const
     return m_segment;
 }
 
+float VisibilityTrigger::GetDelayInSec() const
+{
+    return m_delay;
+}
+
+void VisibilityTrigger::SetDelayInSec(float delay)
+{
+    m_delay = math::Clamp( delay, 0.0f, 1000.0f );
+}
+
 void VisibilityTrigger::SetLevelSegment(LevelSegments levelSegment)
 {
     m_segment = levelSegment;
@@ -92,28 +104,39 @@ void VisibilityTrigger::onSegmentChange(EVENT_HANDLER(LevelSegmentManager))
 
     if (args->segment == m_segment)
     {
-        if (GetOwner( )->HasComponent<Model3D>( ))
+        Timer::Create( TimeSpan::FromSeconds( m_delay ), kTimerGroupGameplay ).Completed( [=]
         {
-            auto model = GetOwner( )->GetComponent<Model3D>( );
-            auto flag = model->GetActive( );
-            model->SetActive( !flag );
+            if (GetOwner()->HasComponent<Model3D>())
+            {
+                auto model = GetOwner()->GetComponent<Model3D>();
+                auto flag = model->GetActive();
+                model->SetActive(!flag);
 
-            auto world = GetOwner( )->GetWorld( );
 
-            if (!world)
-                return;
+                if (GetOwner()->HasComponent<Rigidbody>())
+                {
+                    auto rigid = GetOwner()->GetComponent<Rigidbody>();
+                    auto rflag = rigid->GetDisableContactResponse();
+                    rigid->SetDisableContactResponse(!rflag);
+                }
 
-            auto segmentManagers = world->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
+                auto world = GetOwner()->GetWorld();
 
-            if (segmentManagers.size( ) == 0)
-                return;
+                if (!world)
+                    return;
 
-            auto segmentManager = segmentManagers[ 0 ];
+                auto segmentManagers = world->GetEntitiesFromFilter(Filter().All<LevelSegmentManager>());
 
-            segmentManager->GetComponent<LevelSegmentManager>( )->Listener( this )
-                .Off( LevelSegmentManagerEvents::SegmentChanged, &VisibilityTrigger::onSegmentChange );
+                if (segmentManagers.size() == 0)
+                    return;
 
-            m_unsubscribed = true;
-        }
+                auto segmentManager = segmentManagers[0];
+
+                segmentManager->GetComponent<LevelSegmentManager>()->Listener(this)
+                    .Off(LevelSegmentManagerEvents::SegmentChanged, &VisibilityTrigger::onSegmentChange);
+
+                m_unsubscribed = true;
+            }
+        } );
     }
 }
