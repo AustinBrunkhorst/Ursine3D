@@ -344,17 +344,17 @@ namespace ursine
             }
         }
 
-        void Model3D::onTextureReload()
+        void Model3D::onTextureReload(void)
         {
             invalidateModel( false );
         }
 
-        void Model3D::onNormalTextureReload()
+        void Model3D::onNormalTextureReload(void)
         {
-            invalidateTexture( false );
+            invalidateNormalTexture( false );
         }
 
-        void Model3D::OnModelReload()
+        void Model3D::OnModelReload(void)
         {
             invalidateModel( false );
         }

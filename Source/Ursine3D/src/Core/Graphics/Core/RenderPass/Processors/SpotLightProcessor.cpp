@@ -113,10 +113,13 @@ namespace ursine
 
             // MAP DEPTH DATA ///////////////////////////////////////
             // SHADER_SLOT_4
-            auto shadowmap = m_manager->dxCore->GetDepthMgr( )->GetShadowmapDepthStencil( spotLight.GetShadowmapHandle( ) );
+            
 
             if(m_useShadows)
+            {
+                auto shadowmap = m_manager->dxCore->GetDepthMgr()->GetShadowmapDepthStencil(spotLight.GetShadowmapHandle());
                 m_manager->dxCore->GetDeviceContext( )->PSSetShaderResources( 4, 1, &shadowmap.depthStencilSRV );
+            }
 
             // DETERMINE CULLING MODE ///////////////////////////////
             SVec3 light2Cam = currentCamera.GetPosition( ) - spotLight.GetPosition( );

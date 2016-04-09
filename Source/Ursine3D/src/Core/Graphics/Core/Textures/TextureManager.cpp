@@ -328,6 +328,8 @@ namespace ursine
                 return;
             }
 
+            UAssert( m_textureCache[ ID ].m_shaderResource != nullptr, "tried to bind without creating texture on GPU!" );
+
             m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureCache[ ID ].m_shaderResource);
         }
 
