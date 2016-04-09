@@ -29,8 +29,8 @@ namespace ursine
 
         AudioEmitter::AudioEmitter(void)
             : BaseComponent( )
-            , m_maskChanged( false )
             , m_listenerMask( ListenerMask::NONE )
+            , m_stopSounds( false )
             , m_attenuationScalar( 1.0f ) { }
 
         AudioEmitter::~AudioEmitter(void)
@@ -98,26 +98,24 @@ namespace ursine
             m_events.pop( );
         }
 
-        bool AudioEmitter::EmptyEvent()
+        bool AudioEmitter::EmptyEvent(void)
         {
             return m_events.empty( );
         }
 
-        bool AudioEmitter::checkMask()
+        bool& AudioEmitter::checkStopFlag(void)
         {
-            return m_maskChanged;
+            return m_stopSounds;
         }
 
-        void AudioEmitter::ResetMaskFlag()
+        void AudioEmitter::StopAllCurrentSounds(void)
         {
-            m_maskChanged = false;
+            m_stopSounds = true;
         }
 
         void AudioEmitter::SetListenerMask(ListenerMask mask)
         {
             m_listenerMask = mask;
-
-            m_maskChanged = true;
 
             NOTIFY_COMPONENT_CHANGED( "listenerMask", m_listenerMask );
         }

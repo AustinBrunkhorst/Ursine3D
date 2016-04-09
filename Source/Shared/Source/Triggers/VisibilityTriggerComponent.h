@@ -33,15 +33,25 @@ public:
         SetLevelSegment
     );
 
+    EditorField(
+        float delayInSeconds,
+        GetDelayInSec,
+        SetDelayInSec
+        );
+
     void OnInitialize(void) override;
 
     LevelSegments GetLevelSegment(void) const;
     void SetLevelSegment(LevelSegments levelSegment);
 
+    float GetDelayInSec(void) const;
+    void SetDelayInSec(float delay);
+
 private:
     LevelSegments m_segment;
 
     bool m_unsubscribed;
+    float m_delay;
 
     void onSegmentChange(EVENT_HANDLER(LevelSegmentManager));
 

@@ -78,14 +78,15 @@ namespace ursine
             void PopEvent(void);
             bool EmptyEvent(void);
 
-            bool checkMask(void);
-            void ResetMaskFlag(void);
+            bool& checkStopFlag(void);
+
+            void StopAllCurrentSounds(void);
 
         private:
             ListenerMask m_listenerMask;
             std::queue<AudioEvent::Handle> m_events;
             ursine::resources::ResourceReference m_testEvent;
-            bool m_maskChanged;
+            bool m_stopSounds;
 
             float m_attenuationScalar;
 
