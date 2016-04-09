@@ -129,7 +129,7 @@ JSFunction(ProjectInstallStart)
     fileDialog.config.mode = fs::FDM_SAVE;
     fileDialog.config.initialPath = gLastSelectedInstallExecutable;
     fileDialog.config.windowTitle = "Select Installer Executable";
-    fileDialog.config.filters = { { "Executable Files", { "exe" } } };
+    fileDialog.config.filters = { { "Executable Files", { "*.exe" } } };
     fileDialog.config.parentWindow = editor->GetMainWindow( ).GetWindow( );
 
     auto outputResult = fileDialog.Open( );

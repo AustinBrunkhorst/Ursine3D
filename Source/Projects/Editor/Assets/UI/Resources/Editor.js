@@ -3465,13 +3465,12 @@ ursine_utils_Utils.formatDuration = function(milliseconds) {
 	var hours = Math.floor(milliseconds / 3600000);
 	var minutes = Math.floor(milliseconds / 60000);
 	var seconds = Math.floor(milliseconds / 1000);
-	var output = "";
-	if(hours > 0) output += "" + hours + "hrs";
-	if(minutes > 0) output += " " + minutes + "mins";
-	if(seconds > 0) output += " " + seconds + "s";
-	if(output.length > 0) output += " ";
-	output += "" + milliseconds + "ms";
-	return output;
+	var chunks = [];
+	if(hours > 0) chunks.push("" + hours + "hrs");
+	if(minutes > 0) chunks.push("" + minutes + "mins");
+	if(seconds > 0) chunks.push("" + seconds + "s");
+	chunks.push("" + milliseconds % 1000 + "ms");
+	return chunks.join(" ");
 };
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;

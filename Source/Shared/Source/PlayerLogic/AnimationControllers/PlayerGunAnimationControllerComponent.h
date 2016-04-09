@@ -122,6 +122,8 @@ private:
     void onStartReload(EVENT_HANDLER(ursine::ecs::Entity));
     void onEndReload(EVENT_HANDLER(ursine::ecs::Entity));
 
+    void onShoot(EVENT_HANDLER(ursine::ecs::Entity));
+
 } Meta(
     Enable,
 ) EditorMeta(

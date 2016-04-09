@@ -88,7 +88,7 @@ namespace ursine
             );
 
              EditorField(
-                unsigned castShadows,
+                bool castShadows,
                 GetCastShadows,
                 SetCastShadows
             );

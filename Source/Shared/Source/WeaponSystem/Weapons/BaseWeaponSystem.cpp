@@ -312,12 +312,13 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
         if (e)
         weapon.m_firePosHandle->AddChildAlreadyInLocal(e->GetTransform( ));
 
-
         // number of rounds that were fired
         CreateProjectiles(
             weapon, *m_transforms[ entity ], 
             WeaponSystemUtils::RemoveRoundsFromClip( weapon ) 
         );
+
+        entity->GetRoot( )->Dispatch( game::GUN_SHOOT, EventArgs::Empty );
     }
 }
 
@@ -455,6 +456,8 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
             weapon, *m_transforms[ entity ], 
             WeaponSystemUtils::RemoveRoundsFromClip( weapon ) 
         );
+
+        entity->GetRoot( )->Dispatch( game::GUN_SHOOT, EventArgs::Empty );
     }
 }
 

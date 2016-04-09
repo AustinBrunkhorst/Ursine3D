@@ -21,4 +21,9 @@ namespace ui_event
         int playerID;
         float percent;
     );
+
+    UI_EVENT( PlayerAmmoUpdated,
+        int playerID;
+        float percent;
+    );
 }
