@@ -36,7 +36,7 @@ namespace ursine
         public:
             Renderable(void);
 
-            void Initialize(void);
+            virtual void Initialize(void);
 
             void SetEntityID(ecs::EntityID id);
             ecs::EntityID GetEntityID(void) const;
@@ -107,6 +107,8 @@ namespace ursine
                 float normalOffset;
                 float spinScalar;
 
+                SVec4 color;
+
                 float seed;
 
                 float xUV, yUV;
@@ -114,7 +116,9 @@ namespace ursine
 
         public:
             Model3D(void);
-            void Initialize(void);
+            void Initialize(void) override;
+
+            void InitializeFragment(void);
 
             const char *GetModelName(void);
             void SetModelName(std::string modelName);

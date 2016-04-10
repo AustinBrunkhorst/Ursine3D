@@ -257,7 +257,11 @@ namespace ursine
             // normal transparency
             float transparencyThreshold;
 
-            DirectX::XMFLOAT2 buffer;
+            float globalTime;
+
+            float buffer;
+
+            DirectX::XMFLOAT4 color;
         };
     }
 }

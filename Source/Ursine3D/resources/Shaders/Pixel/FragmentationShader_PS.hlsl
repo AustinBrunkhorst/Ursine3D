@@ -30,6 +30,10 @@ cbuffer FragData : register(b11)
     float transparencyThreshold;
 
     float globalTime;
+
+    float buffer11;
+
+    float4 color;
 }
 
 struct PS_INPUT
@@ -54,5 +58,5 @@ float4 main( PS_INPUT input ) : SV_TARGET
 
     dotp = saturate(1.0f - (abs(dot(normal, float3(0, 0, 1))) * fadeAmount + offset) + transparencyThreshold) * ((endTime - time) / endTime);
 
-    return float4(baseColor.xyz * dotp, 1.0f);
+    return float4(baseColor.xyz * dotp * color.xyz * color.w, 1.0f);
 }

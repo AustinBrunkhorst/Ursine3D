@@ -63,6 +63,12 @@ namespace ursine
                 SetTexture
             );
 
+            EditorField(
+                Color colorTint,
+                GetColor,
+                SetColor
+            );
+
             EditorMeta(InputRange(0.0f, 1.0f, 0.1f, "{{value.toPrecision( 3 )}}"))
             EditorField(
                 float timeSlider,
@@ -212,6 +218,9 @@ namespace ursine
 
             bool GetPlayInReverse(void) const;
             void SetPlayInReverse(bool playReverse);
+
+            Color GetColor(void) const;
+            void SetColor(const Color &color);
 
         private:
 

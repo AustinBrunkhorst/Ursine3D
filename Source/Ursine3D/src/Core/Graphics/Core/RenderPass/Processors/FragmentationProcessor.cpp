@@ -81,7 +81,8 @@ namespace ursine
             fpb.time                    = fragData.time;
             fpb.endTime                 = fragData.maxTime;
             fpb.transparencyThreshold   = fragData.transparencyThreshold;
-            fpb.buffer.x                = fragData.globalTime;
+            fpb.globalTime              = fragData.globalTime;
+            fpb.color                   = fragData.color.ToD3D( );
 
             m_manager->bufferManager->MapBuffer<BUFFER_FRAG_VS>(
                 &fvb,

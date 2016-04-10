@@ -291,7 +291,7 @@ namespace ursine
             model->GetFragmentData( ).time = m_playReverse ? model->GetFragmentData( ).maxTime : 0.0f;
         }
 
-        float ModelFragmenter::GetTimeSliderValue() const
+        float ModelFragmenter::GetTimeSliderValue(void) const
         {
             auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
 
@@ -316,7 +316,7 @@ namespace ursine
             m_isPlaying = false;
         }
 
-        bool ModelFragmenter::GetPlayInReverse() const
+        bool ModelFragmenter::GetPlayInReverse(void) const
         {
             return m_playReverse;
         }
@@ -325,6 +325,17 @@ namespace ursine
         {
             m_playReverse = playReverse;
             NOTIFY_COMPONENT_CHANGED( "playingBackwards", playReverse );
+        }
+
+        Color ModelFragmenter::GetColor(void) const
+        {
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).color;
+        }
+
+        void ModelFragmenter::SetColor(const Color &color)
+        {
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).color = color.ToVector4( );
+            NOTIFY_COMPONENT_CHANGED( "colorTint", color);
         }
 
         void ModelFragmenter::invalidateTexture(bool unload)
