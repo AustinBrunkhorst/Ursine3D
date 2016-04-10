@@ -155,6 +155,7 @@
 #include "FX/PlayClipOnAnimationFinishComponent.h"
 #include "FX/FaceBoneTowardsTargetComponent.h"
 #include "FX/LightingGroupComponent.h"
+#include "FX/ShieldFXComponent.h"
 
 /////////////////////////////////
 //             Misc            //

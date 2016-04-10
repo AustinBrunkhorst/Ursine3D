@@ -29,6 +29,7 @@ namespace ursine
         ModelFragmenter::ModelFragmenter(void)
             : BaseComponent( )
             , m_isPlaying( false )
+            , m_playReverse( false )
         {
         }
 
@@ -240,7 +241,15 @@ namespace ursine
         void ModelFragmenter::Update(float dt)
         {
             if(m_isPlaying)
-                m_model->GetFragmentData( ).time += dt;
+            {
+                m_model->GetFragmentData( ).time += dt * (m_playReverse ? -1.0f : 1.0f);
+
+                if(m_model->GetFragmentData( ).time < 0)
+                    SetTime( 0 );
+
+                if(m_model->GetFragmentData( ).time > m_model->GetFragmentData( ).maxTime)
+                    SetTime( m_model->GetFragmentData( ).maxTime );
+            }
         }
 
         void ModelFragmenter::ResetFragmentation(void)
@@ -258,6 +267,27 @@ namespace ursine
         {
             m_model->GetFragmentData().time = value * m_model->GetFragmentData( ).maxTime;
             NOTIFY_COMPONENT_CHANGED("time", m_model->GetFragmentData().time);
+        }
+
+        void ModelFragmenter::StartFragmentation(void)
+        {
+            m_isPlaying = true;
+        }
+
+        void ModelFragmenter::PauseFragmentation(void)
+        {
+            m_isPlaying = false;
+        }
+
+        bool ModelFragmenter::GetPlayInReverse() const
+        {
+            return m_playReverse;
+        }
+
+        void ModelFragmenter::SetPlayInReverse(bool playReverse)
+        {
+            m_playReverse = playReverse;
+            NOTIFY_COMPONENT_CHANGED("playingBackwards", playReverse);
         }
 
         void ModelFragmenter::invalidateTexture(bool unload)
@@ -286,5 +316,7 @@ namespace ursine
         {
             invalidateTexture( false );
         }
+
+        
     }
 }

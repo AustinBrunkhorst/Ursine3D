@@ -50,6 +50,12 @@ namespace ursine
                 SetIsActive
             );
 
+            EditorField(
+                bool playingBackwards,
+                GetPlayInReverse,
+                SetPlayInReverse
+            );
+
             EditorResourceField(
                 ursine::resources::TextureData,
                 texture,
@@ -201,6 +207,12 @@ namespace ursine
             float GetTimeSliderValue(void) const;
             void SetTimeSliderValue(float value);
 
+            void StartFragmentation(void);
+            void PauseFragmentation(void);
+
+            bool GetPlayInReverse(void) const;
+            void SetPlayInReverse(bool playReverse);
+
         private:
 
             graphics::GfxAPI *m_graphics;
@@ -215,6 +227,8 @@ namespace ursine
             void onTextureReload(void);
 
             bool m_isPlaying;
+
+            bool m_playReverse;
 
         } Meta(Enable, WhiteListMethods, DisplayName("ModelFragmenter"))
         EditorMeta(

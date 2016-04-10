@@ -93,5 +93,5 @@
 /////////////////////////////////
 
 #include "HealthSystem/HealthRegenSystem.h"
-
+#include "FX/ShieldFXSystem.h"
 
