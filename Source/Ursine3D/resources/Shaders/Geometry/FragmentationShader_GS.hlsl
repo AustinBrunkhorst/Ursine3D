@@ -137,9 +137,9 @@ void main(
       input[ y ].position.yz = mul( input[ y ].position.yz, rotation3 );
       input[ y ].position += averageTruePos;
 
-      input[ y ].normal.xy = normalize(mul(input[ y ].normal.xy, rotation));
-      input[ y ].normal.xz = normalize(mul(input[ y ].normal.xz, rotation2));
-      input[ y ].normal.yz = normalize(mul(input[ y ].normal.yz, rotation3));
+      input[ y ].normal.xy = (mul(input[ y ].normal.xy, rotation));
+      input[ y ].normal.xz = (mul(input[ y ].normal.xz, rotation2));
+      input[ y ].normal.yz = (mul(input[ y ].normal.yz, rotation3));
     }
 
     /////////////////////////////////////////////////////////////////////////////////////
@@ -168,7 +168,7 @@ void main(
         float4 worldPos = input[ x ].position;
         float4 viewPos = mul(worldPos, viewMatrix);             //position wr2 the center of the world
         outputV.position = mul(viewPos, projectionMatrix);      //get the screen pos
-        outputV.normal = mul(input[ x ].normal, transform);
+        outputV.normal = mul(normalize(input[ x ].normal), transform);
         outputV.normal = mul(outputV.normal, viewMatrix);
         outputV.color = averagePos;
         outputV.uv = input[ x ].uv;

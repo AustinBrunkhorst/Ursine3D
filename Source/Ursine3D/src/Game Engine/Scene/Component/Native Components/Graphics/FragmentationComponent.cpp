@@ -31,11 +31,12 @@ namespace ursine
             , m_isPlaying( false )
             , m_playReverse( false )
         {
+            m_graphics = GetCoreSystem(graphics::GfxAPI);
         }
 
         ModelFragmenter::~ModelFragmenter(void)
         {
-            m_model->SetDoesFragment( false );
+            GetOwner( )->GetComponent<Model3D>( )->m_model->SetDoesFragment( false );
         }
 
 #ifdef URSINE_WITH_EDITOR
@@ -54,20 +55,20 @@ namespace ursine
             m_isPlaying = true;
             ResetFragmentation( );
 
-            NOTIFY_COMPONENT_CHANGED("time", m_model->GetFragmentData( ).time);
-            NOTIFY_COMPONENT_CHANGED("timeSlider", m_model->GetFragmentData( ).time / m_model->GetFragmentData( ).maxTime);
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
+
+            NOTIFY_COMPONENT_CHANGED( "time", model->GetFragmentData( ).time );
+            NOTIFY_COMPONENT_CHANGED( "timeSlider", model->GetFragmentData( ).time / model->GetFragmentData( ).maxTime );
         }
 #endif
 
         void ModelFragmenter::OnInitialize(void)
         {
-            m_model = GetOwner( )->GetComponent<Model3D>( )->m_model;
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
 
-            m_graphics = GetCoreSystem( graphics::GfxAPI );
+            model->SetDoesFragment( true );
 
-            m_model->SetDoesFragment( true );
-
-            m_model->GetFragmentData( ).seed = randomizer.GetValue( );
+            model->GetFragmentData( ).seed = randomizer.GetValue( );
         }
 
         void ModelFragmenter::OnSceneReady(Scene *scene)
@@ -77,12 +78,12 @@ namespace ursine
 
         bool ModelFragmenter::GetIsActive(void) const
         {
-            return m_model->GetDoesFragment( );
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetDoesFragment( );
         }
 
         void ModelFragmenter::SetIsActive(bool isActive)
         {
-            m_model->SetDoesFragment( isActive );
+            GetOwner( )->GetComponent<Model3D>( )->m_model->SetDoesFragment( isActive );
         }
 
         const resources::ResourceReference &ModelFragmenter::GetTexture( ) const
@@ -99,174 +100,210 @@ namespace ursine
 
             invalidateTexture( );
 
-            NOTIFY_COMPONENT_CHANGED("texture", m_textureResource);
+            NOTIFY_COMPONENT_CHANGED( "texture", m_textureResource );
         }
 
         float ModelFragmenter::GetTime(void) const
         {
-            return m_model->GetFragmentData( ).time;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).time;
         }
 
         void ModelFragmenter::SetTime(float value)
         {
-            m_model->GetFragmentData( ).time = value;
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
+            model->GetFragmentData( ).time = value;
 
-            NOTIFY_COMPONENT_CHANGED("time", m_model->GetFragmentData( ).time);
-            NOTIFY_COMPONENT_CHANGED("timeSlider", m_model->GetFragmentData( ).time / m_model->GetFragmentData( ).maxTime);
+            NOTIFY_COMPONENT_CHANGED( "time", model->GetFragmentData( ).time );
+            NOTIFY_COMPONENT_CHANGED( "timeSlider", model->GetFragmentData( ).time / model->GetFragmentData( ).maxTime );
         }
 
         float ModelFragmenter::GetMaxTime(void) const
         {
-            return m_model->GetFragmentData( ).maxTime;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).maxTime;
         }
 
         void ModelFragmenter::SetMaxTime(float value)
         {
-            m_model->GetFragmentData( ).maxTime = value;
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
 
-            NOTIFY_COMPONENT_CHANGED("timeSlider", m_model->GetFragmentData( ).time / m_model->GetFragmentData( ).maxTime);
+            model->GetFragmentData( ).maxTime = value;
+
+            NOTIFY_COMPONENT_CHANGED( "timeSlider", model->GetFragmentData( ).time / model->GetFragmentData( ).maxTime );
         }
 
         float ModelFragmenter::GetVerticalForce(void) const
         {
-            return m_model->GetFragmentData( ).verticalForce;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).verticalForce;
         }
 
         void ModelFragmenter::SetVerticalForce(float value)
         {
-            m_model->GetFragmentData( ).verticalForce = value;
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).verticalForce = value;
+
+            NOTIFY_COMPONENT_CHANGED( "verticalForce", value );
         }
 
         float ModelFragmenter::GetHorizontalForce(void) const
         {
-            return m_model->GetFragmentData( ).horizontalForce;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).horizontalForce;
         }
 
         void ModelFragmenter::SetHorizontalForce(float value)
         {
-            m_model->GetFragmentData( ).horizontalForce = value;
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).horizontalForce = value;
+            NOTIFY_COMPONENT_CHANGED( "horizontalForce", value );
         }
 
         float ModelFragmenter::GetOutwardForce(void) const
         {
-            return m_model->GetFragmentData( ).outwardForce;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).outwardForce;
         }
 
         void ModelFragmenter::SetOutwardForce(float value)
         {
-            m_model->GetFragmentData( ).outwardForce = value;
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).outwardForce = value;
+
+            NOTIFY_COMPONENT_CHANGED( "outwardForce", value );
         }
 
         float ModelFragmenter::GetGravityForce(void) const
         {
-            return m_model->GetFragmentData( ).gravityForce;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).gravityForce;
         }
 
         void ModelFragmenter::SetGravityForce(float value)
         {
-            m_model->GetFragmentData( ).gravityForce = value;
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).gravityForce = value;
+
+            NOTIFY_COMPONENT_CHANGED( "gravityForce", value );
         }
 
         float ModelFragmenter::GetRandomForce(void) const
         {
-            return m_model->GetFragmentData( ).randomForce;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).randomForce;
         }
 
         void ModelFragmenter::SetRandomForce(float value)
         {
-            m_model->GetFragmentData( ).randomForce = value;
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).randomForce = value;
+            NOTIFY_COMPONENT_CHANGED( "randomForce", value );
         }
 
         float ModelFragmenter::GetPulseSpeed(void) const
         {
-            return m_model->GetFragmentData( ).pulseSpeed;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).pulseSpeed;
         }
 
         void ModelFragmenter::SetPulseSpeed(float value)
         {
-            m_model->GetFragmentData( ).pulseSpeed = value;
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).pulseSpeed = value;
+            
+            NOTIFY_COMPONENT_CHANGED( "pulseSpeed", value );
         }
 
         float ModelFragmenter::GetFadeAmount(void) const
         {
-            return m_model->GetFragmentData( ).fadeAmount;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).fadeAmount;
         }
 
         void ModelFragmenter::SetFadeAmount(float value)
         {
-            m_model->GetFragmentData( ).fadeAmount = value;
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).fadeAmount = value;
+            
+            NOTIFY_COMPONENT_CHANGED( "fadeAmount", value );
         }
 
         float ModelFragmenter::GetTransparencyThreshold(void) const
         {
-            return m_model->GetFragmentData( ).transparencyThreshold;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).transparencyThreshold;
         }
 
         void ModelFragmenter::SetTransparencyThreshold(float value)
         {
-            m_model->GetFragmentData( ).transparencyThreshold = value;
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).transparencyThreshold = value;
+            
+            NOTIFY_COMPONENT_CHANGED( "transparencyThreshold", value );
         }
 
         float ModelFragmenter::GetNormalOffset(void) const
         {
-            return m_model->GetFragmentData( ).normalOffset;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).normalOffset;
         }
 
         void ModelFragmenter::SetNormalOffset(float value)
         {
-            m_model->GetFragmentData( ).normalOffset = value;
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).normalOffset = value;
+            
+            NOTIFY_COMPONENT_CHANGED( "normalOffset", value );
         }
 
         float ModelFragmenter::GetSpinScalar(void) const
         {
-            return m_model->GetFragmentData( ).spinScalar;
+            return GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).spinScalar;
         }
 
         void ModelFragmenter::SetSpinScalar(float value)
         {
-            m_model->GetFragmentData( ).spinScalar = value;
+            GetOwner( )->GetComponent<Model3D>( )->m_model->GetFragmentData( ).spinScalar = value;
+
+            NOTIFY_COMPONENT_CHANGED( "spinScalar", value );
         }
 
         Vec2 ModelFragmenter::GetTextureUV(void) const
         {
-            return Vec2( m_model->GetFragmentData( ).xUV, m_model->GetFragmentData( ).yUV );
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
+
+            return Vec2( model->GetFragmentData( ).xUV, model->GetFragmentData( ).yUV );
         }
 
         void ModelFragmenter::SetTextureUV(Vec2 value)
         {
-            m_model->GetFragmentData().xUV = value.X( );
-            m_model->GetFragmentData().yUV = value.Y( );
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
+
+            model->GetFragmentData().xUV = value.X( );
+            model->GetFragmentData().yUV = value.Y( );
+
+            NOTIFY_COMPONENT_CHANGED( "textureOffset", value );
         }
 
         void ModelFragmenter::Update(float dt)
         {
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
             if(m_isPlaying)
             {
-                m_model->GetFragmentData( ).time += dt * (m_playReverse ? -1.0f : 1.0f);
+                SetTime( model->GetFragmentData( ).time + dt * (m_playReverse ? -1.0f : 1.0f) );
 
-                if(m_model->GetFragmentData( ).time < 0)
+                if(model->GetFragmentData( ).time < 0)
                     SetTime( 0 );
 
-                if(m_model->GetFragmentData( ).time > m_model->GetFragmentData( ).maxTime)
-                    SetTime( m_model->GetFragmentData( ).maxTime );
+                if(model->GetFragmentData( ).time > model->GetFragmentData( ).maxTime)
+                    SetTime( model->GetFragmentData( ).maxTime );
             }
+
+            model->GetFragmentData( ).globalTime += dt;
         }
 
         void ModelFragmenter::ResetFragmentation(void)
         {
-            m_model->GetFragmentData( ).seed = randomizer.GetValue( );
-            m_model->GetFragmentData( ).time = 0;
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
+
+            model->GetFragmentData( ).seed = randomizer.GetValue( );
+            model->GetFragmentData( ).time = m_playReverse ? model->GetFragmentData( ).maxTime : 0.0f;
         }
 
         float ModelFragmenter::GetTimeSliderValue() const
         {
-            return m_model->GetFragmentData( ).time / m_model->GetFragmentData( ).maxTime;
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
+
+            return model->GetFragmentData( ).time / model->GetFragmentData( ).maxTime;
         }
 
         void ModelFragmenter::SetTimeSliderValue(float value)
         {
-            m_model->GetFragmentData().time = value * m_model->GetFragmentData( ).maxTime;
-            NOTIFY_COMPONENT_CHANGED("time", m_model->GetFragmentData().time);
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
+
+            model->GetFragmentData().time = value * model->GetFragmentData( ).maxTime;
+            NOTIFY_COMPONENT_CHANGED( "time", model->GetFragmentData().time );
         }
 
         void ModelFragmenter::StartFragmentation(void)
@@ -287,28 +324,30 @@ namespace ursine
         void ModelFragmenter::SetPlayInReverse(bool playReverse)
         {
             m_playReverse = playReverse;
-            NOTIFY_COMPONENT_CHANGED("playingBackwards", playReverse);
+            NOTIFY_COMPONENT_CHANGED( "playingBackwards", playReverse );
         }
 
         void ModelFragmenter::invalidateTexture(bool unload)
         {
             auto data = loadResource<resources::TextureData>( m_textureResource );
 
+            auto *model = GetOwner( )->GetComponent<Model3D>( )->m_model;
+
             if (data == nullptr)
             {
                 // default
-                m_model->SetFragmentTextureHandle( 1 );
+                model->SetFragmentTextureHandle( 1 );
             }
             else
             {
                 auto handle = data->GetTextureHandle( );
 
                 if (unload)
-                    m_graphics->ResourceMgr.UnloadTexture( m_model->GetFragmentTextureHandle( ) );
+                    m_graphics->ResourceMgr.UnloadTexture( model->GetFragmentTextureHandle( ) );
 
                 m_graphics->ResourceMgr.LoadTexture( handle );
 
-                m_model->SetFragmentTextureHandle( handle );
+                model->SetFragmentTextureHandle( handle );
             }
         }
 
@@ -316,7 +355,5 @@ namespace ursine
         {
             invalidateTexture( false );
         }
-
-        
     }
 }

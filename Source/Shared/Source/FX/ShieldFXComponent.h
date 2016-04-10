@@ -45,6 +45,12 @@ public:
         "Rebuild Shield"
     );
 
+    EditorField(
+        ursine::Vec2 textureVelocity,
+        GetTextureVelocity,
+        SetTextureVelocity
+    );
+
     Meta(Enable)
     ShieldFX(void);
 
@@ -54,12 +60,17 @@ public:
     ShieldState GetShieldState(void) const;
     void SetShieldState(ShieldState state);
 
+    ursine::Vec2 GetTextureVelocity(void) const;
+    void SetTextureVelocity(const ursine::Vec2 &textureVel);
+
     void StabilizeShield(void);
     void DestroyShield(void);
     void RebuildShield(void);
 
 private:
     ShieldState m_shieldState;
+
+    ursine::Vec2 m_textureVelocity;
 
 } 
 Meta(Enable, WhiteListMethods, DisplayName("ShieldFX"))

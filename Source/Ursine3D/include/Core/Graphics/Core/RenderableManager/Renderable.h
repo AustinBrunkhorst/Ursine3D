@@ -90,6 +90,8 @@ namespace ursine
                 float time;
                 float maxTime;
 
+                float globalTime;
+
                 // forces
                 float verticalForce;
                 float horizontalForce;

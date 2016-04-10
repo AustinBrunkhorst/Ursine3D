@@ -217,9 +217,6 @@ namespace ursine
 
             graphics::GfxAPI *m_graphics;
 
-            // This model component's model in the renderer
-            graphics::Model3D *m_model;
-
             resources::ResourceReference m_textureResource;
 
             void invalidateTexture(bool unload = true);

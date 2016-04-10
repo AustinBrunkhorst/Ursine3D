@@ -59,7 +59,19 @@ void ShieldFX::SetShieldState(ShieldState state)
     m_shieldState = state;
 }
 
-void ShieldFX::StabilizeShield()
+ursine::Vec2 ShieldFX::GetTextureVelocity( ) const
+{
+    return m_textureVelocity;
+}
+
+void ShieldFX::SetTextureVelocity(const ursine::Vec2& textureVel)
+{
+    m_textureVelocity = textureVel;
+
+    NOTIFY_COMPONENT_CHANGED( "textureVelocity", textureVel );
+}
+
+void ShieldFX::StabilizeShield(void)
 {
     auto fragment = GetOwner( )->GetComponent<ModelFragmenter>( );
 
@@ -73,6 +85,7 @@ void ShieldFX::DestroyShield(void)
 {
     auto fragment = GetOwner( )->GetComponent<ModelFragmenter>( );
 
+    fragment->ResetFragmentation( );
     fragment->SetTime( 0.0f );
     fragment->SetPlayInReverse( false );
     fragment->StartFragmentation( );
@@ -84,6 +97,7 @@ void ShieldFX::RebuildShield()
 {
     auto fragment = GetOwner()->GetComponent<ModelFragmenter>();
 
+    fragment->ResetFragmentation( );
     fragment->SetTime( fragment->GetMaxTime( ) );
     fragment->SetPlayInReverse( true );
     fragment->StartFragmentation();
