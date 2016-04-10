@@ -485,7 +485,7 @@ void BossAI::OnInitialize(void)
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
         auto playScream = sm->AddState<BossPlayAudioEventState>( m_introScream );
-        auto spawnBoss = sm->AddState<BossSpawnState>( );
+        auto spawnBoss = sm->AddState<BossSpawnState>( 1.0f, true );
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
         auto spawnVines2 = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 0.5f );
         auto seedshot = sm->AddState<BossSeedshotState>( );
