@@ -59,7 +59,7 @@ void ShieldFX::SetShieldState(ShieldState state)
     m_shieldState = state;
 }
 
-ursine::Vec2 ShieldFX::GetTextureVelocity( ) const
+Vec2 ShieldFX::GetTextureVelocity(void) const
 {
     return m_textureVelocity;
 }
@@ -93,7 +93,7 @@ void ShieldFX::DestroyShield(void)
     m_shieldState = SHIELD_STATE_DESTROYING;
 }
 
-void ShieldFX::RebuildShield()
+void ShieldFX::RebuildShield(void)
 {
     auto fragment = GetOwner()->GetComponent<ModelFragmenter>();
 
