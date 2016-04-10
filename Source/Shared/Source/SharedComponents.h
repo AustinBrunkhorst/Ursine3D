@@ -156,6 +156,7 @@
 #include "FX/FaceBoneTowardsTargetComponent.h"
 #include "FX/LightingGroupComponent.h"
 #include "FX/ShieldFXComponent.h"
+#include "FX/PlayerShieldFXComponent.h"
 
 /////////////////////////////////
 //             Misc            //
