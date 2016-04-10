@@ -21,7 +21,7 @@ namespace LevelSegments_enum
     {
         // Tutorial
         Tut_OpeningCinematic, // Introduce players?  What about dome
-        Tut_GateOpens,
+        Tut_GateOpensTutorial,
         Tut_MovementTutorial, // Tell the player to move to a position
         Tut_JumpTutorial, // Tell the player to jump
         Meta(Disable)
@@ -33,9 +33,13 @@ namespace LevelSegments_enum
         Tut_ShootMovingTargetsTutorial, // Shooting moving targets
         Meta(Disable)
         Tut_SoloTriggerTutorial, // Accumulate trigger pad (particle effects)
+        Tut_HallwayInterumTutorial, // The player walks to the last zone
+        Tut_KillPlayerTutorial, // Kill one player
         Tut_ReviveTutorial, // Revive mechanic (kill one player, have other revive the other)
         Meta(Disable)
         Tut_SimultaneousTriggerTutorial, // SoloTrigger X 2
+        Tut_SpawnVinesTutorial, // Must Defeat Vines to exit
+        Tut_DoorOpenTutorial, // Vines defeated
         Tut_SimulationCreationCinematic, // Cinematic for simulation begin
 
         // Combat Bowl 1

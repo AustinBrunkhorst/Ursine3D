@@ -206,7 +206,7 @@ void LevelSegmentManager::initTutorialLogic(void)
     auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
     auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
     auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
-    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpens );
+    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpensTutorial );
 
     // Next state for spawning the players
     initState->AddTransition( playerCreateState, "Go To Init Players" );
@@ -232,17 +232,19 @@ void LevelSegmentManager::initTutorialLogic(void)
     stateM->SetInitialState( initState );
 
     addSegmentLogic( stateM, {
-        LevelSegments::Tut_OpeningCinematic,
-        LevelSegments::Tut_GateOpens,
-        LevelSegments::Tut_MovementTutorial,
-        LevelSegments::Tut_JumpTutorial,
-        LevelSegments::Tut_WeaponPickupTutorial,
-        LevelSegments::Tut_HipFireTutorial,
-        LevelSegments::Tut_AimFireTutorial,
-        LevelSegments::Tut_AmmoPickupTutorial,
-        LevelSegments::Tut_ShootMovingTargetsTutorial,
-        LevelSegments::Tut_SoloTriggerTutorial,
-        LevelSegments::Tut_ReviveTutorial,
+        LevelSegments::Tut_OpeningCinematic, // Introduce players?  What about dome
+        LevelSegments::Tut_GateOpensTutorial,
+        LevelSegments::Tut_MovementTutorial, // Tell the player to move to a position
+        LevelSegments::Tut_JumpTutorial, // Tell the player to jump
+        LevelSegments::Tut_HipFireTutorial, // Shooting targets
+        LevelSegments::Tut_AimFireTutorial, // Shooting targets
+        LevelSegments::Tut_ShootMovingTargetsTutorial, // Shooting moving targets
+        LevelSegments::Tut_HallwayInterumTutorial, // The player walks to the last zone
+        LevelSegments::Tut_KillPlayerTutorial, // Kill one player
+        LevelSegments::Tut_ReviveTutorial, // Revive mechanic (kill one player, have other revive the other)
+        LevelSegments::Tut_SpawnVinesTutorial, // Must Defeat Vines to exit
+        LevelSegments::Tut_DoorOpenTutorial, // Vines defeated
+        LevelSegments::Tut_SimulationCreationCinematic, // Cinematic for simulation begin
     } );
 
     auto endingState = std::make_shared<SegmentLogicStateMachine>( "To Combat Bowl", this );
