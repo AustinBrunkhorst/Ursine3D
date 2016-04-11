@@ -174,6 +174,9 @@ namespace ursine
             float GetFragTime(void) const;
             void SetFragTime(float time);
 
+            bool GetIsVisible(void) const;
+            void SetIsVisible(bool isVisible);
+
             FragmentData &GetFragmentData(void);
 
         private:
@@ -201,6 +204,8 @@ namespace ursine
             bool m_shadowCaster;
 
             bool m_doesFragment;
+
+            bool m_isVisible;
 
             FragmentData m_fragData;
         };

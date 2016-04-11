@@ -71,7 +71,7 @@ PixelInputType main(uint id : SV_VERTEXID)
     float3 position;
 
     // scale
-    float3 rightVec = mul(g_bufPosColor[ particleIndex ].rotation, (float3x3)view);
+    float3 rightVec = float3(0, 0, 1);
     float3 upVec = cross(rightVec, float3(0, 0, -1));
 
     upVec.z = 0;

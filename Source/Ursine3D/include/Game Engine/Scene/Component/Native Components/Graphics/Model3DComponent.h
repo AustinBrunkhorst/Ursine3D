@@ -61,6 +61,18 @@ namespace ursine
             );
 
             EditorField(
+                bool overdraw,
+                GetDoesOverdraw,
+                SetDoesOverdraw
+            );
+
+            EditorField(
+                bool visible,
+                GetIsVisible,
+                SetIsVisible
+            );
+
+            EditorField(
                 Color color,
                 GetColor,
                 SetColor
@@ -186,6 +198,12 @@ namespace ursine
 
             const Vec2 &GetTextureUVScalar(void) const;
             void SetTextureUVScalar(const Vec2 &scalar);
+
+            bool GetIsVisible(void) const;
+            void SetIsVisible(bool isVisible);
+
+            bool GetDoesOverdraw(void);
+            void SetDoesOverdraw(bool doesOverdraw);
 
             void OnSerialize(Json::object &output) const override;
             void OnDeserialize(const Json &input) override;

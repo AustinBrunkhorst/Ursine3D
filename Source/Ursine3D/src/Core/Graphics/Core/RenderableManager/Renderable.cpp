@@ -135,6 +135,8 @@ namespace ursine
 
             m_doesFragment = false;
 
+            m_isVisible = true;
+
             InitializeFragment( );
         }
 
@@ -310,6 +312,16 @@ namespace ursine
         void Model3D::SetFragTime(float time)
         {
             m_fragData.time = time;
+        }
+
+        bool Model3D::GetIsVisible(void) const
+        {
+            return m_isVisible;
+        }
+
+        void Model3D::SetIsVisible(bool isVisible)
+        {
+            m_isVisible = isVisible;
         }
 
         Model3D::FragmentData &Model3D::GetFragmentData(void)

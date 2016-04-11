@@ -32,6 +32,7 @@ namespace ursine
 
                 ID3D11DepthStencilState *GetStencilState(const DEPTH_STATES state);
                 void SetDepthState(const DEPTH_STATES state);
+                DEPTH_STATES GetCurrentDepthState(void) const;
 
                 void Invalidate(void);
             private:

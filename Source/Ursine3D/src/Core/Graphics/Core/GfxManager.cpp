@@ -276,8 +276,8 @@ namespace ursine
 
                 drawCall.Model_ = current->GetModelHandle() & 0xFFFF;
                 drawCall.Overdraw_ = current->GetOverdraw();
-                drawCall.Shader_ = drawCall.Overdraw_ ? SHADER_OVERDRAW_MODEL : SHADER_DEFERRED_DEPTH;
-                drawCall.Type_ = drawCall.Overdraw_ ? RENDERABLE_OVERDRAW : render->Type_;
+                drawCall.Shader_ = SHADER_DEFERRED_DEPTH;
+                drawCall.Type_ = render->Type_;
             }
             break;
             case RENDERABLE_BILLBOARD2D:
@@ -558,7 +558,7 @@ namespace ursine
             RenderPass          emissivePass( "EmissivePass" );
             LineRendererPass    lineRenderPass( false );
             PointRendererPass   pointRenderPass( false );
-            RenderPass          overdrawPass( "OverdrawPass" );
+            RenderPass          invisiblePass( "InvisibleGeometryPass" );
             LineRendererPass    overdrawLinePass( true, "OverdrawLine" );
             PointRendererPass   overdrawPointPass( true, "OverdrawPoint" );
             RenderPass          particlePass( "ParticlePass" );
@@ -572,7 +572,8 @@ namespace ursine
 
             // create processors
             auto modelProcessor         = Model3DProcessor( );
-            auto shadowProcessor        = Model3DProcessor( false );
+            auto invisProcessor         = Model3DProcessor( false, true );
+            auto shadowProcessor        = Model3DProcessor( true );
             auto slProcessor            = SpotLightProcessor( );
             auto slProcessorNoShadow    = SpotLightProcessor( false );
             auto plProcessor            = PointLightProcessor( );
@@ -876,9 +877,9 @@ namespace ursine
                 }
 
                 /////////////////////////////////////////////////////////
-                // OVERDRAW PASS
+                // INSIVIBLE PASS
                 {
-                    overdrawPass.
+                    invisiblePass.
                         Set( 
                             {
                                 RENDER_TARGET_DEFERRED_COLOR,
@@ -886,7 +887,7 @@ namespace ursine
                                 RENDER_TARGET_DEFERRED_SPECPOW
                             }
                         ).
-                        Set( SHADER_OVERDRAW_MODEL ).
+                        Set( SHADER_DEFERRED_DEPTH ).
                         Set( DEPTH_STENCIL_OVERDRAW ).
                         Set( DEPTH_STATE_DEPTH_NOSTENCIL ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
@@ -896,8 +897,8 @@ namespace ursine
 
                         AddResource( &viewBuffer ).
 
-                        Accepts( RENDERABLE_OVERDRAW ).
-                        Processes( &modelProcessor ).
+                        Accepts( RENDERABLE_MODEL3D ).
+                        Processes( &invisProcessor ).
                     InitializePass( );
                 }
 
@@ -974,8 +975,8 @@ namespace ursine
                     velocityParticlePass.
                         Set( { RENDER_TARGET_SWAPCHAIN } ).
                         Set( SHADER_VELOCITY_PARTICLE ).
-                        Set( DEPTH_STENCIL_MAIN ).
-                        Set( DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL ).
+                        Set( DEPTH_STENCIL_COUNT ).
+                        Set( DEPTH_STATE_COUNT ).
                         Set( SAMPLER_STATE_WRAP_TEX ).
                         Set( RASTER_STATE_SOLID_NOCULL ).
                         Set( BLEND_STATE_ADDITIVE ).
@@ -984,6 +985,9 @@ namespace ursine
                         AddResource( &viewBuffer ).
                         AddResource( &particleModel ).
                         AddResource( &invView ).
+                        AddResource( &particleFadeBuffer ).
+
+                        AddResource( &depthInput ).
 
                         Accepts( RENDERABLE_PS ).
                         Processes( &velParticleProcessor ).
@@ -1135,7 +1139,7 @@ namespace ursine
                 AddPrePass( &outlinePass ).
                 AddPrePass( &lineRenderPass ).
                 AddPrePass( &pointRenderPass ).
-                AddPrePass( &overdrawPass ).
+                AddPrePass( &invisiblePass ).
                 AddPrePass( &overdrawLinePass ).
                 AddPrePass( &overdrawPointPass ).
                 AddPrePass( &particlePass ).
@@ -1468,7 +1472,7 @@ namespace ursine
 
                     AddResource(&viewBuffer).
 
-                    Accepts(RENDERABLE_OVERDRAW).
+                    Accepts(RENDERABLE_MODEL3D).
                     Processes(&modelProcessor).
                     InitializePass();
 
@@ -1690,7 +1694,6 @@ namespace ursine
                 switch (type)
                 {
                 case RENDERABLE_MODEL3D:
-                case 3: // work around for overdraw, since bitfield only holds 4 values
                     m_currentID = renderableManager->m_renderableModel3D[index].GetEntityID();
                     break;
                 case RENDERABLE_BILLBOARD2D:
