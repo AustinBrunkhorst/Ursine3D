@@ -193,6 +193,8 @@ void SludgeshotProjectile::onAnimationCompleted(EVENT_HANDLER(EntityAnimator))
 
     owner->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &SludgeshotProjectile::onUpdate );
+
+    owner->GetComponent<Health>( )->SetSpawnOnDeath( false );
 }
 
 void SludgeshotProjectile::onUpdate(EVENT_HANDLER(World))

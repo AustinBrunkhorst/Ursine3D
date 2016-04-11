@@ -104,7 +104,6 @@
 #include "EnemyDeathComponent.h"
 
 #include "BossAIComponent.h"
-#include "Boss/Components/PollinateProjectileComponent.h"
 #include "Boss/Components/SludgeshotProjectileComponent.h"
 #include "Boss/Components/SeedshotProjectileComponent.h"
 #include "VineAIComponent.h"
