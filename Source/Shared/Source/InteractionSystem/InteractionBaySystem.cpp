@@ -87,7 +87,7 @@ void InteractionBaySystem::UpdateBay(InteractionBay* bay)
     // left over prev interactables that a no longer being interacted with
     for ( ; prevIt != prevEnd; ++prevIt )
     {
-        if ( prevIt->Get( ) != nullptr )
+        if ( *prevIt != nullptr )
         {
             Interactable* interact = prevIt->Get( ); 
             interact->StopInteraction(bayOwner);
