@@ -23,9 +23,10 @@
 using namespace ursine;
 using namespace ecs;
 
-BossPhase3RepositionBoss::BossPhase3RepositionBoss(bool onlyBossSpawn)
+BossPhase3RepositionBoss::BossPhase3RepositionBoss(bool onlyBossSpawn, bool goToCenterPlanter)
     : BossAIState( "Reposition Boss" )
-    , m_onlyBossSpawn( onlyBossSpawn ) { }
+    , m_onlyBossSpawn( onlyBossSpawn )
+    , m_goToCenterPlanter( goToCenterPlanter ) { }
 
 void BossPhase3RepositionBoss::Enter(BossAIStateMachine *machine)
 {
@@ -33,7 +34,12 @@ void BossPhase3RepositionBoss::Enter(BossAIStateMachine *machine)
     auto boss = ai->GetOwner( )->GetTransform( );
     auto world = boss->GetOwner( )->GetWorld( );
 
-    if (m_onlyBossSpawn)
+    if (m_goToCenterPlanter)
+    {
+        boss->SetWorldPosition( SVec3( 0.0f, 8.9f, 0.0f ) );
+        boss->SetWorldRotation( SQuat::Identity( ) );
+    }
+    else if (m_onlyBossSpawn)
     {
         auto spawnPoints = world->GetEntitiesFromFilter( Filter( ).All<Phase3BossSpawn>( ) );
 

@@ -15,12 +15,14 @@
 
 #include "BossAIState.h"
 
+#include <EntityHandle.h>
+
 class BossAI;
 
 class BossSludgeshotState : public BossAIState
 {
 public:
-    BossSludgeshotState(float playback = 1.0f);
+    BossSludgeshotState(int numShots = 1, float playback = 1.0f, bool toIdle = false);
 
     bool CanExit(void) override { return m_finished; }
 
@@ -31,7 +33,6 @@ public:
 private:
 
     void onAnimationEvent(EVENT_HANDLER(ursine::ecs::Entity));
-    void onAnimationFinish(EVENT_HANDLER(ursine::ecs::Entity));
 
     void shootSludge(void);
     void findTarget(void);
@@ -41,7 +42,12 @@ private:
 
     ursine::ecs::EntityHandle m_target;
 
+    int m_numShots;
+    int m_numShotsCounter;
+
     bool m_finished;
+
+    bool m_toIdle;
 
     float m_playback;
 };

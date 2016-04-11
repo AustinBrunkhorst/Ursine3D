@@ -26,10 +26,12 @@
 using namespace ursine;
 using namespace ecs;
 
-BossSludgeshotState::BossSludgeshotState(float playback)
+BossSludgeshotState::BossSludgeshotState(int numShots, float playback, bool toIdle)
     : BossAIState( "Boss Sludgeshot" )
     , m_boss( nullptr )
     , m_finished( false )
+    , m_toIdle( toIdle )
+    , m_numShots( numShots )
     , m_playback( playback ) { }
 
 void BossSludgeshotState::Enter(BossAIStateMachine *machine)
@@ -45,11 +47,12 @@ void BossSludgeshotState::Enter(BossAIStateMachine *machine)
 
     // subscribe to the OnAnimationFinish and OnAnimationEvent
     animator->GetOwner( )->Listener( this )
-        .On( ENTITY_ANIMATION_STATE_EVENT, &BossSludgeshotState::onAnimationEvent )
-        .On( ENTITY_ANIMATION_FINISH, &BossSludgeshotState::onAnimationFinish );
+        .On( ENTITY_ANIMATION_STATE_EVENT, &BossSludgeshotState::onAnimationEvent );
 
     // Set Finish to false
     m_finished = false;
+
+    m_numShotsCounter = 0;
 }
 
 void BossSludgeshotState::Update(BossAIStateMachine *machine)
@@ -67,10 +70,12 @@ void BossSludgeshotState::Exit(BossAIStateMachine *machine)
 
     // unsubscribe from everything
     animator->GetOwner( )->Listener( this )
-        .Off( ENTITY_ANIMATION_STATE_EVENT, &BossSludgeshotState::onAnimationEvent )
-        .Off( ENTITY_ANIMATION_FINISH, &BossSludgeshotState::onAnimationFinish );
+        .Off( ENTITY_ANIMATION_STATE_EVENT, &BossSludgeshotState::onAnimationEvent );
 
     animator->SetTimeScalar( 1.0f );
+
+    if (m_toIdle)
+        animator->SetCurrentState( "Idle" );
 }
 
 void BossSludgeshotState::onAnimationEvent(EVENT_HANDLER(Entity))
@@ -79,11 +84,11 @@ void BossSludgeshotState::onAnimationEvent(EVENT_HANDLER(Entity))
 
     if (args->state == "Sludgeshot" && args->message == "Shoot")
         shootSludge( );
-}
 
-void BossSludgeshotState::onAnimationFinish(EVENT_HANDLER(Entity))
-{
-    m_finished = true;
+    ++m_numShotsCounter;
+
+    if (m_numShotsCounter >= m_numShots)
+        m_finished = true;
 }
 
 void BossSludgeshotState::shootSludge(void)
