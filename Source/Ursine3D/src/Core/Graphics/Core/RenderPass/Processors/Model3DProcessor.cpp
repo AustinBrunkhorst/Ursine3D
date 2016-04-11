@@ -117,6 +117,7 @@ namespace ursine
             // map texture offset
             TextureUVOffset offset;
             offset.uv = DirectX::XMFLOAT2(model.GetTextureUVOffset( ).X( ), model.GetTextureUVOffset( ).Y( ));
+            offset.buffer = DirectX::XMFLOAT2(model.GetTextureUVScalar( ).X( ), model.GetTextureUVScalar( ).Y( ));
 
             m_manager->bufferManager->MapBuffer<BUFFER_TEX_OFFSET>(
                 &offset,

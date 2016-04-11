@@ -158,6 +158,7 @@
 #include "FX/LightingGroupComponent.h"
 #include "FX/ShieldFXComponent.h"
 #include "FX/PlayerShieldFXComponent.h"
+#include "FX/TextureAnimatorComponent.h"
 
 /////////////////////////////////
 //             Misc            //

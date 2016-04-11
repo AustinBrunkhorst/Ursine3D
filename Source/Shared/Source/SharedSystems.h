@@ -99,4 +99,5 @@
 /////////////////////////////////
 
 #include "FX/ShieldFXSystem.h"
+#include "FX/TextureAnimatorSystem.h"
 

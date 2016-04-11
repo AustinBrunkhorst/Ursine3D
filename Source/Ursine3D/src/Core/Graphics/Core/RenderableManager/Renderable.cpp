@@ -131,6 +131,7 @@ namespace ursine
             m_meshIndex = -1;
             m_shadowCaster = true;
             m_textureUVOffset = Vec2(0, 0);
+            m_textureUVScalar = Vec2(1, 1);
 
             m_doesFragment = false;
 
@@ -279,6 +280,16 @@ namespace ursine
         void Model3D::SetTextureUVOffset(const Vec2 &offset)
         {
             m_textureUVOffset = offset;
+        }
+
+        const Vec2 &Model3D::GetTextureUVScalar() const
+        {
+            return m_textureUVScalar;
+        }
+
+        void Model3D::SetTextureUVScalar(const Vec2 &scalar)
+        {
+            m_textureUVScalar = scalar;
         }
 
         bool Model3D::GetDoesFragment(void) const

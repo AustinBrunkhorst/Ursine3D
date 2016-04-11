@@ -165,6 +165,9 @@ namespace ursine
             const Vec2 &GetTextureUVOffset(void) const;
             void SetTextureUVOffset(const Vec2 &offset);
 
+            const Vec2 &GetTextureUVScalar(void) const;
+            void SetTextureUVScalar(const Vec2 &scalar);
+
             bool GetDoesFragment(void) const;
             void SetDoesFragment(bool doesFragment);
 
@@ -190,6 +193,7 @@ namespace ursine
             std::vector<SMat4> m_matrixPaletteIT;
 
             Vec2 m_textureUVOffset;
+            Vec2 m_textureUVScalar;
 
             // for multimaps
             int m_meshIndex;
