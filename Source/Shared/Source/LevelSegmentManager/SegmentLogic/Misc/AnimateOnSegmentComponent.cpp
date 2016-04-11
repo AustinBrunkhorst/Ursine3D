@@ -16,6 +16,7 @@
 
 #include "LevelSegmentManagerComponent.h"
 #include "EntityAnimatorGroupComponent.h"
+#include "ShieldFXComponent.h"
 
 #include <EntityEvent.h>
 
@@ -132,6 +133,11 @@ void AnimateOnSegment::playAnimation(void)
 
     if (group)
         group->PlayGroupAnimators( );
+
+    auto shieldFX = GetOwner( )->GetComponent<ShieldFX>( );
+
+    if (shieldFX)
+        shieldFX->DestroyShield( );
 
     m_finished = true;
 }
