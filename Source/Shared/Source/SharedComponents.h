@@ -94,6 +94,7 @@
 
 #include "AI/WaypointComponent.h"
 #include "AI/WaypointAgentComponent.h"
+#include "AI/WaypointManagerComponent.h"
 #include "AI/AIMovementControllerComponent.h"
 #include "AI/AIHordeReasoner.h"
 

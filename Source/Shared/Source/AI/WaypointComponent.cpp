@@ -10,7 +10,7 @@ namespace ursine
         NATIVE_COMPONENT_DEFINITION( Waypoint );
 
 
-        bool Waypoint::waypointPair::operator==(Component::Handle<Waypoint> wp) const
+        bool waypointPair::operator==(Component::Handle<Waypoint> wp) const
         {
             return waypoint == wp;
         }
@@ -23,7 +23,7 @@ namespace ursine
             , m_jumpPoint( false )
             , m_autoWPConnect( false )
         {
-
+            m_guid = to_string(GUIDGenerator()());
         }
 
         void Waypoint::OnInitialize(void)
@@ -87,7 +87,7 @@ namespace ursine
                             );
             
             // add waypoint to our map of waypoints
-            m_connectedWaypoints.push_back(waypointPair(distance, wp));
+            m_connectedWaypoints.Push(waypointPair(distance, wp));
         }
 
         void Waypoint::RemoveWaypointConnection(ursine::ecs::Component::Handle<Waypoint> wp)
@@ -97,7 +97,7 @@ namespace ursine
                 auto search = find_waypoint_pair( wp );
 
                 if ( search != m_connectedWaypoints.end() )
-                    m_connectedWaypoints.erase( search );
+                    m_connectedWaypoints.Remove( search );
             }
         }
 
@@ -113,7 +113,7 @@ namespace ursine
             return true;
         }
 
-        const Waypoint::waypointConList &Waypoint::GetConnectedWaypoints() const
+        const waypointConList &Waypoint::GetConnectedWaypoints() const
         {
             return m_connectedWaypoints;
         }
@@ -123,7 +123,17 @@ namespace ursine
             return m_index;
         }
 
-        Waypoint::waypointConList::iterator Waypoint::find_waypoint_pair(ursine::ecs::Component::Handle<Waypoint> wp)
+        const std::string& Waypoint::GetGUID() const
+        {
+            return m_guid;
+        }
+
+        void Waypoint::SetGUID(const std::string &newGuid)
+        {
+            m_guid = newGuid;
+        }
+
+        waypointConList::Iterator Waypoint::find_waypoint_pair(ursine::ecs::Component::Handle<Waypoint> wp)
         {
             return std::find(
                 m_connectedWaypoints.begin(),
