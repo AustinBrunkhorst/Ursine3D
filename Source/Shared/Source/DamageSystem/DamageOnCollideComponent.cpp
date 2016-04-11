@@ -238,7 +238,7 @@ void DamageOnCollide::applyDamage(const EntityHandle &obj, const SVec3& contact,
 {
     Health* healthComp = obj->GetComponent< Health >( );
 
-    healthComp->DealDamage(contact, damage, crit );
+    healthComp->DealDamage( GetOwner( ), contact, damage, crit );
 
     // add other object to damage interval map 
     //   if not deleting due to collision

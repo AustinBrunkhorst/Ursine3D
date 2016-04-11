@@ -13,8 +13,14 @@
 
 #include "SludgeshotProjectileComponent.h"
 
+#include "PlayerIDComponent.h"
+
 #include <LocalTimerManager.h>
-#include <GhostComponent.h>
+#include <SystemManager.h>
+#include <DebugSystem.h>
+#include <SweptControllerComponent.h>
+#include <HealthComponent.h>
+#include <World.h>
 
 NATIVE_COMPONENT_DEFINITION(SludgeshotProjectile);
 
@@ -24,7 +30,11 @@ using namespace ecs;
 SludgeshotProjectile::SludgeshotProjectile(void)
     : BaseComponent( )
     , m_time( 0.0f )
-    , m_emitionRate( 0.0f ) { }
+    , m_emitionRate( 0.0f )
+    , m_range( 10.0f )
+    , m_damage( 50.0f )
+    , m_interval( 1.0f )
+    , m_impulse( 100.0f ) { }
 
 SludgeshotProjectile::~SludgeshotProjectile(void)
 {
@@ -33,6 +43,60 @@ SludgeshotProjectile::~SludgeshotProjectile(void)
     if (animator)
         animator->Listener( this )
             .Off( EntityAnimatorEvent::FinishedAnimating, &SludgeshotProjectile::onAnimationCompleted );
+
+    auto world = GetOwner( )->GetWorld( );
+    
+    if (world)
+        world->Listener( this )
+            .Off( WORLD_UPDATE, &SludgeshotProjectile::onUpdate );
+}
+
+float SludgeshotProjectile::GetRange(void) const
+{
+    return m_range;
+}
+
+void SludgeshotProjectile::SetRange(float range)
+{
+    m_range = range;
+
+    NOTIFY_COMPONENT_CHANGED( "range", m_range );
+}
+
+float SludgeshotProjectile::GetDamage(void) const
+{
+    return m_damage;
+}
+
+void SludgeshotProjectile::SetDamage(float damage)
+{
+    m_damage = damage;
+
+    NOTIFY_COMPONENT_CHANGED( "damage", m_damage );
+}
+
+float SludgeshotProjectile::GetDamageInterval(void) const
+{
+    return m_interval;
+}
+
+void SludgeshotProjectile::SetDamageInterval(float interval)
+{
+    m_interval = interval;
+
+    NOTIFY_COMPONENT_CHANGED( "damageInterval", m_interval );
+}
+
+float SludgeshotProjectile::GetImpulse(void) const
+{
+    return m_impulse;
+}
+
+void SludgeshotProjectile::SetImpulse(float impulse)
+{
+    m_impulse = impulse;
+
+    NOTIFY_COMPONENT_CHANGED( "impulse", m_impulse );
 }
 
 void SludgeshotProjectile::SetTargetPosition(const ursine::SVec3& target)
@@ -48,11 +112,6 @@ void SludgeshotProjectile::SetTotalTimeOfAnimation(float time)
 void SludgeshotProjectile::InitializeComponents(void)
 {
     auto owner = GetOwner( );
-
-    // Make sure the child has a collider
-    /*auto ghost = owner->GetComponentInChildren<Ghost>( );
-
-    UAssert( ghost, "Error: A child entity must have a ghost component." );*/
 
     // Make sure the child has an emitter
     auto emitter = owner->GetComponentInChildren<ParticleEmitter>( );
@@ -101,11 +160,6 @@ void SludgeshotProjectile::InitializeComponents(void)
 
     animator->Listener( this )
         .On( EntityAnimatorEvent::FinishedAnimating, &SludgeshotProjectile::onAnimationCompleted );
-
-    // Make sure "Listen to children" is unchecked
-    auto damage = owner->GetComponent<DamageOnCollide>( );
-
-    damage->SetListenToChildren( false );
 }
 
 void SludgeshotProjectile::onAnimationCompleted(EVENT_HANDLER(EntityAnimator))
@@ -125,10 +179,6 @@ void SludgeshotProjectile::onAnimationCompleted(EVENT_HANDLER(EntityAnimator))
     childEmitter->SetEmitRate( m_emitionRate );
     childEmitter->ResetSpawnCount( );
 
-    auto damageDealer = owner->GetComponent<DamageOnCollide>( );
-
-    damageDealer->SetListenToChildren( true );
-
     // Also remove the health component
     // TODO:
 
@@ -140,4 +190,65 @@ void SludgeshotProjectile::onAnimationCompleted(EVENT_HANDLER(EntityAnimator))
 
     sender->Listener( this )
         .Off( EntityAnimatorEvent::FinishedAnimating, &SludgeshotProjectile::onAnimationCompleted );
+
+    owner->GetWorld( )->Listener( this )
+        .On( WORLD_UPDATE, &SludgeshotProjectile::onUpdate );
 }
+
+void SludgeshotProjectile::onUpdate(EVENT_HANDLER(World))
+{
+    // get all players
+    auto  world = GetOwner( )->GetWorld( );
+    auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+    auto ourPosition = GetOwner( )->GetTransform( )->GetWorldPosition( );
+
+    // iterate through them
+    for (auto &player : players)
+    {
+        auto playerPos = player->GetTransform( )->GetWorldPosition( );
+
+        // if in range
+        if (SVec3::DistanceSquared( playerPos, ourPosition ) <= m_range * m_range)
+        {
+            // if damage map value is less than zero, damage dat bitch
+            auto itr = m_damageMap.find( player );
+
+            if (itr == m_damageMap.end( ) || m_damageMap[ player ] <= 0.0f)
+            {
+                player->GetComponent<Health>( )->DealDamage( GetOwner( ), m_damage );
+
+                m_damageMap[ player ] = m_interval;
+
+                // apply an impulse away from ourselves
+                player->GetComponent<SweptController>( )->AddImpulse(
+                    SVec3::Normalize( playerPos - ourPosition ) * m_impulse
+                );
+            }
+        }
+    }
+
+    auto dt = Application::Instance->GetDeltaTime( );
+
+    for (auto &pair : m_damageMap)
+    {
+        pair.second -= dt;
+    }
+}
+
+#if defined(URSINE_WITH_EDITOR)
+
+void SludgeshotProjectile::drawRange(void)
+{
+    auto world = GetOwner( )->GetWorld( );
+
+    if (!world)
+        return;
+
+    auto debug = world->GetEntitySystem<DebugSystem>( );
+
+    auto pos = GetOwner( )->GetTransform( )->GetWorldPosition( );
+
+    debug->DrawSphere( pos, m_range, Color::Gold, 3.0f, true );
+}
+
+#endif

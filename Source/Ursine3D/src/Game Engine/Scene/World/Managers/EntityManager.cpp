@@ -354,7 +354,7 @@ namespace ursine
             return nullptr;
         }
 
-        Component *EntityManager::GetComponentInParent(const Entity *entity, ComponentTypeID id) const
+        Component *EntityManager::GetComponentInParents(const Entity *entity, ComponentTypeID id) const
         {
             const auto *parent = entity;
             Component *component = nullptr;

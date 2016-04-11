@@ -53,15 +53,21 @@ public:
     );
 
     EditorField(
-        std::string jumpState,
-        GetJumpState,
-        SetJumpState
+        std::string jumpInState,
+        GetJumpInState,
+        SetJumpInState
     );
 
     EditorField(
-        std::string jumpCycleState,
-        GetJumpCycleState,
-        SetJumpCycleState
+        std::string jumpLoopState,
+        GetJumpLoopState,
+        SetJumpLoopState
+    );
+
+    EditorField(
+        std::string jumpOutState,
+        GetJumpOutState,
+        SetJumpOutState
     );
 
     EditorField(
@@ -93,11 +99,14 @@ public:
     const std::string &GetRunRightState(void) const;
     void SetRunRightState(const std::string &state);
 
-    const std::string &GetJumpState(void) const;
-    void SetJumpState(const std::string &state);
+    const std::string &GetJumpInState(void) const;
+    void SetJumpInState(const std::string &state);
 
-    const std::string &GetJumpCycleState(void) const;
-    void SetJumpCycleState(const std::string &state);
+    const std::string &GetJumpLoopState(void) const;
+    void SetJumpLoopState(const std::string &state);
+
+    const std::string &GetJumpOutState(void) const;
+    void SetJumpOutState(const std::string &state);
 
     const std::string &GetDieState(void) const;
     void SetDieState(const std::string &state);
@@ -114,8 +123,9 @@ private:
     std::string m_runLeftState;
     std::string m_runRightState;
 
-    std::string m_jumpState;
-    std::string m_jumpCycleState;
+    std::string m_jumpInState;
+    std::string m_jumpLoopState;
+    std::string m_jumpOutState;
 
     std::string m_dieState;
 

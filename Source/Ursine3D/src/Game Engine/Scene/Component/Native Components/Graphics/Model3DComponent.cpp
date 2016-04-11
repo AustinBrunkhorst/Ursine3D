@@ -270,6 +270,16 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED("textureOffset", m_model->GetTextureUVOffset());
         }
 
+        const Vec2 & Model3D::GetTextureUVScalar() const
+        {
+            return m_model->GetTextureUVScalar( );
+        }
+
+        void Model3D::SetTextureUVScalar(const Vec2 &scalar)
+        {
+            m_model->SetTextureUVScalar( scalar );
+        }
+
         void Model3D::updateRenderer(void)
         {
             auto trans = GetOwner( )->GetTransform( );

@@ -15,6 +15,8 @@
 #include "EntityAnimatorComponent.h"
 
 #include <Application.h>
+#include <Scene.h>
+#include <SelectedComponent.h>
 
 ENTITY_SYSTEM_DEFINITION( EntityAnimatorSystem );
 
@@ -39,6 +41,20 @@ void EntityAnimatorSystem::Initialize(void)
 
 void EntityAnimatorSystem::Process(const EntityHandle &entity)
 {
+    auto playstate = entity->GetWorld( )->GetOwner( )->GetPlayState( );
+
+#if defined(URSINE_WITH_EDITOR)
+
+    if (playstate != PS_PLAYING && !entity->HasComponent<Selected>())
+        return;
+
+#else
+
+    if (playstate != PS_PLAYING)
+        return;
+
+#endif
+
     auto animator = entity->GetComponent<EntityAnimator>( );
 
     if (!animator->m_playing)

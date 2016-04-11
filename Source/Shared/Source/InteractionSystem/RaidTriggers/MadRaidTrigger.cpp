@@ -229,7 +229,7 @@ void MadRaidTrigger::DealDamage(const ursine::ecs::EntityHandle &player)
     if ( player->HasComponent< Health >( ) )
     {
         // deals le damaushe
-        player->GetComponent< Health >( )->DealDamage(m_damage);
+        player->GetComponent< Health >( )->DealDamage(nullptr, m_damage);
     }
 
 }

@@ -101,4 +101,10 @@
 
 #include "HealthSystem/HealthRegenSystem.h"
 
+/////////////////////////////////
+//       Shield System         //
+/////////////////////////////////
+
+#include "FX/ShieldFXSystem.h"
+#include "FX/TextureAnimatorSystem.h"
 

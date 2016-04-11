@@ -16,6 +16,7 @@
 #include "BossAIStateMachine.h"
 #include "BossAIComponent.h"
 #include "HealthComponent.h"
+#include "ShieldFxComponent.h"
 
 #include <ParticleEmitterComponent.h>
 
@@ -35,10 +36,15 @@ void BossInvulnerableToggleState::Enter(BossAIStateMachine *machine)
     if (health)
         health->SetInvulnerable( m_toggle );
 
-    auto emitter = boss->GetInvulnerableEmitterEntity( );
+    auto fx = boss->GetOwner( )->GetComponentInChildren<ShieldFX>( );
 
-    if (emitter)
-        emitter->GetComponent<ParticleEmitter>( )->SetEmitting( m_toggle );
+    if (fx)
+    {
+        if (m_toggle)
+            fx->RebuildShield( );
+        else
+            fx->DestroyShield( );
+    }
 
     if (m_toggle)
         boss->Dispatch( BossAIEvents::ShieldUp, EventArgs::Empty );

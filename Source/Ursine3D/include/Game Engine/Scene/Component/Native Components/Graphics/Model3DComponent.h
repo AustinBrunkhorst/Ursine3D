@@ -184,6 +184,9 @@ namespace ursine
             const Vec2 &GetTextureUVOffset(void) const;
             void SetTextureUVOffset(const Vec2 &offset);
 
+            const Vec2 &GetTextureUVScalar(void) const;
+            void SetTextureUVScalar(const Vec2 &scalar);
+
             void OnSerialize(Json::object &output) const override;
             void OnDeserialize(const Json &input) override;
 

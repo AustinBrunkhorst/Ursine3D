@@ -17,7 +17,7 @@ cbuffer MatrixStack : register(b12)
 cbuffer TextureOffset : register(b13)
 {
     float2 textureOffset;
-    float2 buffer;
+    float2 textureScale;
 }
 
 struct VS_INPUT
@@ -68,7 +68,7 @@ VS_OUTPUT main(VS_INPUT input)
     output.Pos = mul(float4(pos.xyz, 1.f), World);
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
-    output.Tex = input.Tex + textureOffset;
+    output.Tex = (input.Tex + textureOffset) * textureScale;
 
     output.normal = mul(float4(input.Nor.xyz, 0), World);
     output.normal = normalize(mul(output.normal, View));

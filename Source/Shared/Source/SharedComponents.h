@@ -28,6 +28,9 @@
 #include "Misc/ForceComponent.h"
 #include "Misc/TimeDeathComponent.h"
 #include "Misc/BuffComponent.h"
+#include "Misc/SlimePitComponent.h"
+#include "Misc/SlimePitDeathSpawnComponent.h"
+#include "Misc/TeleportPlayerToSpawnOnHitComponent.h"
 
 /////////////////////////////////
 //        Player Logic         //
@@ -96,6 +99,7 @@
 
 #include "AI/WaypointComponent.h"
 #include "AI/WaypointAgentComponent.h"
+#include "AI/WaypointManagerComponent.h"
 #include "AI/AIMovementControllerComponent.h"
 #include "AI/AIHordeReasoner.h"
 
@@ -155,6 +159,9 @@
 #include "FX/PlayClipOnAnimationFinishComponent.h"
 #include "FX/FaceBoneTowardsTargetComponent.h"
 #include "FX/LightingGroupComponent.h"
+#include "FX/ShieldFXComponent.h"
+#include "FX/PlayerShieldFXComponent.h"
+#include "FX/TextureAnimatorComponent.h"
 
 /////////////////////////////////
 //             Misc            //

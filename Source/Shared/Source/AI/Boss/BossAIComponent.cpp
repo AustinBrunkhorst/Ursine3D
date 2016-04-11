@@ -49,7 +49,7 @@ using namespace resources;
 
 namespace
 {
-    const int kPhaseNumber = 5;
+    static const int kPhaseNumber = 5;
 
     int GetSegmentIndex(LevelSegments segment)
     {
@@ -285,18 +285,6 @@ void BossAI::SetPollinateArchetype(const ResourceReference &pollinateArchetype)
     NOTIFY_COMPONENT_CHANGED( "pollinateArchetype", m_pollinateArchetype );
 }
 
-const std::string &BossAI::GetInvulnerableEmitterEntityName(void) const
-{
-    return m_invulnerableEmitterEntity;
-}
-
-void BossAI::SetInvulnerableEmitterEntityName(const std::string &entityName)
-{
-    m_invulnerableEmitterEntity = entityName;
-
-    NOTIFY_COMPONENT_CHANGED( "invulnerableEmitterEntity", m_invulnerableEmitterEntity );
-}
-
 const ResourceReference &BossAI::GetVineArchetype(void) const
 {
     return m_vineArchetype;
@@ -394,11 +382,6 @@ EntityHandle BossAI::GetSludgeshotEntity(void)
 EntityHandle BossAI::GetPollinateEntity(void)
 {
     return GetOwner( )->GetChildByName( m_pollinateEntity );
-}
-
-EntityHandle BossAI::GetInvulnerableEmitterEntity(void)
-{
-    return GetOwner( )->GetChildByName( m_invulnerableEmitterEntity );
 }
 
 void BossAI::AddSpawnedVine(EntityHandle vine)
@@ -502,7 +485,7 @@ void BossAI::OnInitialize(void)
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
         auto playScream = sm->AddState<BossPlayAudioEventState>( m_introScream );
-        auto spawnBoss = sm->AddState<BossSpawnState>( );
+        auto spawnBoss = sm->AddState<BossSpawnState>( 1.0f, true );
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
         auto spawnVines2 = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 0.5f );
         auto seedshot = sm->AddState<BossSeedshotState>( );

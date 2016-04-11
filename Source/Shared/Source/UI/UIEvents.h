@@ -37,4 +37,9 @@ namespace ui_event
         int playerID;
         bool enemyKilled;
     );
+
+    UI_EVENT( PlayerAmmoUpdated,
+        int playerID;
+        float percent;
+    );
 }

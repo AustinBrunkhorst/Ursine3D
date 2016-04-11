@@ -215,11 +215,11 @@ namespace ursine
             // Gets a component of the specified type in this entity's parent (type safe)
             // nullptr if it doesn't exist
             template<class ComponentType>
-            inline ComponentType *GetComponentInParent(void) const;
+            inline ComponentType *GetComponentInParents(void) const;
 
             // Gets a component of the specified type id in this entity's parent
             // nullptr if it doesn't exist. Use the type safe version when possible
-            Component *GetComponentInParent(ComponentTypeID id) const;
+            Component *GetComponentInParents(ComponentTypeID id) const;
 
             // Gets the components of the specified type in this entity's children (type safe)
             // nullptr if it doesn't exist

@@ -145,7 +145,7 @@ void SpawnerGroupSystem::addSpawnerGroup(SpawnerGroup *group)
 
 bool SpawnerGroupSystem::addSpawner(Spawner *spawner)
 {
-    auto group = spawner->GetOwner( )->GetComponentInParent<SpawnerGroup>( );
+    auto group = spawner->GetOwner( )->GetComponentInParents<SpawnerGroup>( );
 
     if (group)
     {
@@ -160,7 +160,7 @@ void SpawnerGroupSystem::onSpawnerParentChange(EVENT_HANDLER(Entity))
     EVENT_ATTRS(Entity, TransformChangedArgs);
 
     auto spawner = sender->GetComponent<Spawner>( );
-    auto group = spawner->GetOwner( )->GetComponentInParent<SpawnerGroup>( );
+    auto group = spawner->GetOwner( )->GetComponentInParents<SpawnerGroup>( );
 
     if (group)
     {

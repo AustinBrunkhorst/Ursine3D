@@ -17,17 +17,17 @@
 
 #include "VineAIStateMachine.h"
 #include "VineAIComponent.h"
-#include "AnimatorComponent.h"
-#include "EntityEvent.h"
+
+#include <AnimatorComponent.h>
+#include <EntityEvent.h>
+#include <ParticleEmitterComponent.h>
 
 using namespace ursine;
 using namespace ecs;
 
 VineSpawnState::VineSpawnState(void)
     : VineAIState( "Spawn" )
-    , m_finished( false )
-{
-}
+    , m_finished( false ) { }
 
 void VineSpawnState::Enter(VineAIStateMachine *machine)
 {
@@ -45,6 +45,14 @@ void VineSpawnState::Enter(VineAIStateMachine *machine)
     vineAI->SetHomeLocation( 
         vineAI->GetOwner( )->GetTransform( )->GetWorldPosition( )
     );
+
+    // reset the spawn particles
+    auto entity = vineAI->GetOwner( )->GetChildByName( vineAI->GetSpawnParticleEmitterName( ) );
+
+    auto emitters = entity->GetComponentsInChildren<ParticleEmitter>( );
+
+    for (auto &emitter : emitters)
+        emitter->ResetSpawnCount(  );
 }
 
 void VineSpawnState::onAnimationFinished(EVENT_HANDLER(Entity))

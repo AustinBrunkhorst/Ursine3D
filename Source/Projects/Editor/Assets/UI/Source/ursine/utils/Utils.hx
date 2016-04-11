@@ -17,22 +17,19 @@ class Utils {
         var minutes = Math.floor( milliseconds / (1000 * 60) );
         var seconds = Math.floor( milliseconds / 1000 );
 
-        var output = '';
+        var chunks : Array<String> = [ ];
 
         if (hours > 0)
-            output += '${hours}hrs';
+            chunks.push( '${hours}hrs' );
 
         if (minutes > 0)
-            output += ' ${minutes}mins';
+            chunks.push( '${minutes}mins' );
 
         if (seconds > 0)
-            output += ' ${seconds}s';
+            chunks.push( '${seconds}s' );
 
-        if (output.length > 0)
-            output += ' ';
+        chunks.push( '${milliseconds % 1000}ms' );
 
-        output += '${milliseconds}ms';
-
-        return output;
+        return chunks.join( ' ' );
     }
 }

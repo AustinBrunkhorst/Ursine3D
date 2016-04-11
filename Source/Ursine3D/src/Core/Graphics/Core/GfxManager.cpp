@@ -1156,6 +1156,9 @@ namespace ursine
             invViewBuffer ivb;
             FalloffBuffer fb;
             BillboardSpriteBuffer bsb;
+            float nearP, farP;
+
+            currentCamera.GetPlanes(nearP, farP);
 
             // viewBuffer(SHADERTYPE_VERTEX);
             // viewBufferGeom(SHADERTYPE_GEOMETRY);
@@ -1205,6 +1208,8 @@ namespace ursine
             // lightFalloff( SHADERTYPE_PIXEL );
             fb.lightSteps = m_lightSteps;
             fb.borderCutoff = m_borderValue;
+            
+            fb.farDistance = farP - nearP;
             lightFalloff.Update(fb, SHADER_SLOT_12);
 
             fb.lightSteps = m_globalEmissive;

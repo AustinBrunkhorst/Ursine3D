@@ -22,9 +22,9 @@ namespace ursine
         }
 
         template <class ComponentType>
-        ComponentType* Transform::GetComponentInParent(void) const
+        ComponentType* Transform::GetComponentInParents(void) const
         {
-            return GetOwner( )->GetComponentInParent<ComponentType>( );
+            return GetOwner( )->GetComponentInParents<ComponentType>( );
         }
 
         template <class ComponentType>

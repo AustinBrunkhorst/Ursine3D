@@ -21,25 +21,30 @@ namespace ursine
 {
     namespace ecs
     {
+        class Waypoint;
+
+        struct waypointPair
+        {
+            waypointPair(float wpCost, ursine::ecs::Component::Handle<ursine::ecs::Waypoint> wp) : cost(wpCost), waypoint(wp) { }
+
+            bool operator==(const ursine::ecs::Component::Handle<ursine::ecs::Waypoint> wp) const;
+
+            float cost;
+
+            ursine::ecs::Component::Handle<ursine::ecs::Waypoint> waypoint;
+        };
+
+        typedef ursine::Array<waypointPair> waypointConList;
+
         class Waypoint : public Component
         {
             NATIVE_COMPONENT;
 
             friend class WaypointSystem;
 
-            struct waypointPair
-            {
-                waypointPair(float wpCost, ursine::ecs::Component::Handle<ursine::ecs::Waypoint> wp) : cost(wpCost), waypoint(wp) { }
-
-                bool operator==(const ursine::ecs::Component::Handle<ursine::ecs::Waypoint> wp) const;
-
-                float cost;
-
-                ursine::ecs::Component::Handle<ursine::ecs::Waypoint> waypoint;
-            };
-
         public:
-            typedef std::vector<waypointPair> waypointConList;
+
+            //void OnSerialize(Json &output) override;
 
             EditorField(
                 float Radius,
@@ -124,11 +129,25 @@ namespace ursine
             Meta(Disable)
             unsigned GetIndex(void) const;
 
+            Meta(Enable)
+            const std::string &GetGUID(void) const;
+
+            Meta(Enable)
+            void SetGUID(const std::string &newGuid);
+
+            Meta(Disable)
+            waypointConList m_connectedWaypoints;
+
+            // this is used to identify for serialization
+            Meta(Enable)
+            std::string m_guid;
         private:
 
-            waypointConList::iterator Waypoint::find_waypoint_pair(ursine::ecs::Component::Handle<Waypoint> wp);
+            waypointConList::Iterator Waypoint::find_waypoint_pair(ursine::ecs::Component::Handle<Waypoint> wp);
 
-            waypointConList m_connectedWaypoints;
+            ursine::Array<boost::uuids::uuid> m_connectedGuids;
+
+
 
             float m_cost;
 
