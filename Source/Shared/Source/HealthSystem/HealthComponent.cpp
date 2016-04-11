@@ -276,7 +276,7 @@ void Health::DealDamage(const EntityHandle &damager, const SVec3& contactPoint, 
 {
     DealDamage(damager, damage);
 
-    sendDamageTextEvent(contactPoint, damage, crit);
+    sendDamageTextEvent(contactPoint, damager, damage, crit);
 }
 
 bool Health::CanDamage(DamageOnCollide *damage) const
@@ -304,11 +304,11 @@ void Health::OnInitialize(void)
         .On( ENTITY_REMOVED, &Health::onDeath );
 }
 
-void Health::sendDamageTextEvent(const SVec3& contact, float damage, bool crit)
+void Health::sendDamageTextEvent(const SVec3& contact, const EntityHandle &damager, float damage, bool crit)
 {
     EntityHandle owner = GetOwner( );
 
-    game::DamageEventArgs dEvent( contact, owner, damage, crit, m_invulnerable );
+    game::DamageEventArgs dEvent( contact, owner, damager, damage, crit, m_invulnerable );
 
     owner->GetWorld( )->Dispatch( game::DAMAGE_TEXT_EVENT, &dEvent );
 }

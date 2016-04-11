@@ -14,6 +14,7 @@
 #include "DamageTextManagerComponent.h"
 
 #include "DamageEvent.h"
+#include "PlayerIDComponent.h"
 
 #include <SpriteTextComponent.h>
 #include <Model3DComponent.h>
@@ -91,11 +92,14 @@ void DamageTextManager::onDamageText(EVENT_HANDLER(World))
 {
     EVENT_ATTRS(World, game::DamageEventArgs);
 
+    if (args->entityHit->GetRoot( )->HasComponent<PlayerID>( ))
+        return;
+
     EntityHandle damageText;
 
     // load valid damage text archetype
     if ( args->invulnerable )
-        damageText = sender->CreateEntityFromArchetype(m_invulnerableText);
+        damageText = sender->CreateEntityFromArchetype( m_invulnerableText );
     else if (args->crit)
         damageText = sender->CreateEntityFromArchetype( m_critText ); 
     else
@@ -124,10 +128,10 @@ void DamageTextManager::onDamageText(EVENT_HANDLER(World))
     textComp->SetOverdraw( true );
 
     // set text comp render mask
-    Model3D* model = args->entityHit->GetComponent<Model3D>( );
+    Model3D* model = args->damageDealer->GetComponent<Model3D>( );
 
     if (!model)
-        model = args->entityHit->GetComponentInChildren<Model3D>( );
+        model = args->damageDealer->GetComponentInChildren<Model3D>( );
 
     if (model)
         textComp->SetRenderMask( model->GetRenderMask( ) );

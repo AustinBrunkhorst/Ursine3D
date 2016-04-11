@@ -169,7 +169,7 @@ public:
 
 private:
     void OnInitialize(void) override;
-    void sendDamageTextEvent(const ursine::SVec3& contact, float damage, bool crit);
+    void sendDamageTextEvent(const ursine::SVec3& contact, const ursine::ecs::EntityHandle &damager, float damage, bool crit);
 
     void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
 

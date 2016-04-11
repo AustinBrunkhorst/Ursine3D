@@ -29,10 +29,12 @@ namespace game
     {
     public:
         DamageEventArgs(const ursine::SVec3 &hitPosition,
-                        ursine::ecs::EntityHandle &entityHit,
+                        const ursine::ecs::EntityHandle &entityHit,
+                        const ursine::ecs::EntityHandle &damageDealer,
                         float damage, bool crit, bool invulnerable)
             : hitPosition( hitPosition )
             , entityHit( entityHit )
+            , damageDealer( damageDealer )
             , damage( damage )
             , crit( crit )
             , invulnerable( invulnerable ) { }
@@ -40,6 +42,7 @@ namespace game
         ursine::SVec3 hitPosition;
 
         ursine::ecs::EntityHandle entityHit;
+        ursine::ecs::EntityHandle damageDealer;
 
         float damage;
 
