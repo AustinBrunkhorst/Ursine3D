@@ -142,12 +142,6 @@ public:
         SetPollinateArchetype
     );
 
-    EditorField(
-        std::string invulnerableEmitterEntity,
-        GetInvulnerableEmitterEntityName,
-        SetInvulnerableEmitterEntityName
-    );
-
     EditorResourceField(
         ursine::resources::ArchetypeData,
         vineArchetype,
@@ -246,9 +240,6 @@ public:
     const ursine::resources::ResourceReference &GetPollinateArchetype(void) const;
     void SetPollinateArchetype(const ursine::resources::ResourceReference &pollinateArchetype);
 
-    const std::string &GetInvulnerableEmitterEntityName(void) const;
-    void SetInvulnerableEmitterEntityName(const std::string &entityName);
-
     const ursine::resources::ResourceReference &GetVineArchetype(void) const;
     void SetVineArchetype(const ursine::resources::ResourceReference &vineArchetype);
 
@@ -275,8 +266,6 @@ public:
     ursine::ecs::EntityHandle GetSludgeshotEntity(void);
 
     ursine::ecs::EntityHandle GetPollinateEntity(void);
-
-    ursine::ecs::EntityHandle GetInvulnerableEmitterEntity(void);
 
     void AddSpawnedVine(ursine::ecs::EntityHandle vine);
     const std::vector<ursine::ecs::EntityHandle> &GetVines(void) const;

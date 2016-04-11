@@ -18,6 +18,12 @@
 
 class LevelSegmentManager;
 
+enum class VisibilityTriggerType
+{
+    VIS_MODEL,
+    VIS_EMITTER
+} Meta(Enable);
+
 class VisibilityTrigger : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
@@ -33,15 +39,35 @@ public:
         SetLevelSegment
     );
 
+    EditorField(
+        float delayInSeconds,
+        GetDelayInSec,
+        SetDelayInSec
+        );
+
+    EditorField(
+        VisibilityTriggerType triggerType,
+        GetTriggerType,
+        SetTriggerType
+        );
+
     void OnInitialize(void) override;
 
     LevelSegments GetLevelSegment(void) const;
     void SetLevelSegment(LevelSegments levelSegment);
 
+    float GetDelayInSec(void) const;
+    void SetDelayInSec(float delay);
+
+    VisibilityTriggerType GetTriggerType(void) const;
+    void SetTriggerType(VisibilityTriggerType type);
+
 private:
     LevelSegments m_segment;
 
     bool m_unsubscribed;
+    float m_delay;
+    VisibilityTriggerType m_type;
 
     void onSegmentChange(EVENT_HANDLER(LevelSegmentManager));
 

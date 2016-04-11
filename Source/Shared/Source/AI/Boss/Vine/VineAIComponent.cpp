@@ -80,6 +80,18 @@ void VineAI::OnSceneReady(ursine::Scene *scene)
     }
 }
 
+const std::string &VineAI::GetSpawnParticleEmitterName(void) const
+{
+    return m_spawnParticleEmitterName;
+}
+
+void VineAI::SetSpawnParticleEmitterName(const std::string &name)
+{
+    m_spawnParticleEmitterName = name;
+
+    NOTIFY_COMPONENT_CHANGED( "spawnParticleEmitterName", m_spawnParticleEmitterName );
+}
+
 bool VineAI::GetFaceClosestPlayer(void) const
 {
     return m_faceClosestPlayer;

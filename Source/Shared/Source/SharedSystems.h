@@ -94,4 +94,9 @@
 
 #include "HealthSystem/HealthRegenSystem.h"
 
+/////////////////////////////////
+//       Shield System         //
+/////////////////////////////////
+
+#include "FX/ShieldFXSystem.h"
 

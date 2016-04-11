@@ -60,6 +60,12 @@ public:
     );
 
     EditorField(
+        std::string spawnParticleEmitterName,
+        GetSpawnParticleEmitterName,
+        SetSpawnParticleEmitterName
+    );
+
+    EditorField(
         bool faceClosestPlayer,
         GetFaceClosestPlayer,
         SetFaceClosestPlayer
@@ -168,6 +174,9 @@ public:
 
     void OnSceneReady(ursine::Scene *scene) override;
 
+    const std::string &GetSpawnParticleEmitterName(void) const;
+    void SetSpawnParticleEmitterName(const std::string &name);
+
     bool GetFaceClosestPlayer(void) const;
     void SetFaceClosestPlayer(bool flag);
 
@@ -258,6 +267,7 @@ private:
     ursine::SVec3 m_homeLocation;
 
     std::string m_digParticleEmitterName;
+    std::string m_spawnParticleEmitterName;
 
     VineAIStateMachine m_stateMachine;
 

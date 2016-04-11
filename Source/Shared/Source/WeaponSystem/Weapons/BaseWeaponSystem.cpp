@@ -226,7 +226,7 @@ void WeaponSystemUtils::ResetIdleSequence(AbstractWeapon* weapon)
 //////////////////////////////
 
 BaseWeaponSystem::BaseWeaponSystem(World *world) 
-    : FilterSystem( world, Filter( ).One< BaseWeapon >( ).All< AudioEmitter >( ) )
+    : FilterSystem( world, Filter( ).One< BaseWeapon >( ) )
 {
 }
 
@@ -237,16 +237,12 @@ void BaseWeaponSystem::Enable(const EntityHandle &entity)
         m_weapons[ entity ] = entity->GetComponent< BaseWeapon >( );
 
     m_transforms[ entity ] = entity->GetTransform( );
-
-    // grab audio emitter from root
-    m_emitters[ entity ] = entity->GetComponent< AudioEmitter >( );
 }
 
 void BaseWeaponSystem::Disable(const EntityHandle &entity)
 {
     m_weapons.erase( entity );
     m_transforms.erase( entity );
-    m_emitters.erase( entity );
 }
 
 void BaseWeaponSystem::onUpdate(EVENT_HANDLER(World))
@@ -273,7 +269,7 @@ void BaseWeaponSystem::EvaluateProjectileWeapons(float dt)
             WeaponSystemUtils::DecrementReloadTimer( dt, *weapon );
             break;
         case MUST_RELOAD:
-            WeaponSystemUtils::ReloadWeapon( *weapon, m_emitters[ it.first ] );
+            WeaponSystemUtils::ReloadWeapon( *weapon, weapon->GetAudioEmitter( ) );
             break;
         case FIRE_TIMER_SET:
             WeaponSystemUtils::DecrementFireTimer( dt, *weapon );
@@ -298,7 +294,7 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        m_emitters[ entity ]->PushEvent( weapon.GetShootSFX( ) );
+        weapon.GetAudioEmitter( )->PushEvent( weapon.GetShootSFX( ) );
 
         // reset firing sequence
         /*weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
@@ -312,12 +308,13 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
         if (e)
         weapon.m_firePosHandle->AddChildAlreadyInLocal(e->GetTransform( ));
 
-
         // number of rounds that were fired
         CreateProjectiles(
             weapon, *m_transforms[ entity ], 
             WeaponSystemUtils::RemoveRoundsFromClip( weapon ) 
         );
+
+        entity->GetRoot( )->Dispatch( game::GUN_SHOOT, EventArgs::Empty );
     }
 }
 
@@ -356,7 +353,7 @@ void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, Transform& 
 /////////////////////////////////
 
 HitscanWeaponSystem::HitscanWeaponSystem(World *world)
-    : FilterSystem( world, Filter( ).One<HitscanWeapon>( ).All<AudioEmitter>( ) ) { }
+    : FilterSystem( world, Filter( ).One<HitscanWeapon>( ) ) { }
 
 void HitscanWeaponSystem::Initialize(void)
 {
@@ -370,16 +367,12 @@ void HitscanWeaponSystem::Enable(const EntityHandle &entity)
         m_weapons[ entity ] = entity->GetComponent<HitscanWeapon>( );
 
     m_transforms[ entity ] = entity->GetTransform( );
-
-    // grab audio emitter from root
-    m_emitters[ entity ] = entity->GetComponent<AudioEmitter>( );
 }
 
 void HitscanWeaponSystem::Disable(const EntityHandle &entity)
 {
     m_weapons.erase( entity );
     m_transforms.erase( entity );
-    m_emitters.erase( entity );
 }
 
 void HitscanWeaponSystem::onUpdate(EVENT_HANDLER(World))
@@ -407,7 +400,7 @@ void HitscanWeaponSystem::EvaluateHitscanWeapons(const float dt)
             WeaponSystemUtils::DecrementReloadTimer( dt, *weapon );
             break;
         case MUST_RELOAD:
-            WeaponSystemUtils::ReloadWeapon( *weapon, m_emitters[ it.first ] );
+            WeaponSystemUtils::ReloadWeapon( *weapon, weapon->GetAudioEmitter( ) );
             break;
         case FIRE_TIMER_SET:
             WeaponSystemUtils::DecrementFireTimer( dt, *weapon );
@@ -432,7 +425,7 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        m_emitters[ entity ]->PushEvent( weapon.GetShootSFX( ) );
+        weapon.GetAudioEmitter( )->PushEvent( weapon.GetShootSFX( ) );
 
         //// reset firing sequence
         //weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
@@ -455,6 +448,8 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
             weapon, *m_transforms[ entity ], 
             WeaponSystemUtils::RemoveRoundsFromClip( weapon ) 
         );
+
+        entity->GetRoot( )->Dispatch( game::GUN_SHOOT, EventArgs::Empty );
     }
 }
 
@@ -529,7 +524,7 @@ bool HitscanWeaponSystem::RaycastClosestHitLogic(SVec3 &raycastVec, physics::Ray
         Health* rootHealth = objHit->GetRoot( )->GetComponent< Health >( );
 
         if ( rootHealth->CanDamage(&weapon) )
-            rootHealth->DealDamage(collisionPoint, damage, crit);
+            rootHealth->DealDamage(weapon.m_owner, collisionPoint, damage, crit);
 
         else
             return false;
@@ -539,7 +534,7 @@ bool HitscanWeaponSystem::RaycastClosestHitLogic(SVec3 &raycastVec, physics::Ray
         Health* objHealth = objHit->GetComponent< Health >( );
 
         if ( objHealth->CanDamage(&weapon) )
-            objHealth->DealDamage(collisionPoint, damage, crit);
+            objHealth->DealDamage(weapon.m_owner, collisionPoint, damage, crit);
 
         else
             return false;

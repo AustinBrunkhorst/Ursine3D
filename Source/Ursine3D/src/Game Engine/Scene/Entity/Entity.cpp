@@ -271,9 +271,9 @@ namespace ursine
             return EntityHandle::Invalid( );
         }
 
-        Component* Entity::GetComponentInParent(ComponentTypeID id) const
+        Component *Entity::GetComponentInParents(ComponentTypeID id) const
         {
-            return m_world->m_entityManager->GetComponentInParent( this, id );
+            return m_world->m_entityManager->GetComponentInParents( this, id );
         }
 
         ComponentVector Entity::GetComponentsInChildren(ComponentTypeID id) const

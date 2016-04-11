@@ -54,7 +54,7 @@ namespace ursine
         }
 
         template <class ComponentType>
-        ComponentType* EntityManager::GetComponentInChildren(const Entity* entity) const
+        ComponentType *EntityManager::GetComponentInChildren(const Entity* entity) const
         {
             return static_cast<ComponentType*>(
                 GetComponentInChildren( entity, GetComponentID( ComponentType ) )
@@ -62,10 +62,10 @@ namespace ursine
         }
 
         template <class ComponentType>
-        ComponentType* EntityManager::GetComponentInParent(const Entity* entity) const
+        ComponentType *EntityManager::GetComponentInParents(const Entity* entity) const
         {
             return static_cast<ComponentType*>(
-                GetComponentInParent( entity, GetComponentID( ComponentType ) )
+                GetComponentInParents( entity, GetComponentID( ComponentType ) )
             );
         }
 

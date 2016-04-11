@@ -77,6 +77,12 @@ namespace ursine
                 SetRenderMask
             );
 
+            EditorField(
+                float geometryFade,
+                GetGeometryFade,
+                SetGeometryFade
+            );
+
             EditorOnlyField(
                 bool orientToVelocity,
                 GetVelocityOrient,
@@ -133,6 +139,9 @@ namespace ursine
 
             bool GetVelocityOrient(void) const;
             void SetVelocityOrient(bool velocityOrient);
+
+            float GetGeometryFade(void) const;
+            void SetGeometryFade(float fade);
 
         #if defined(URSINE_WITH_EDITOR)
 

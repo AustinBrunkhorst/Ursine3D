@@ -134,20 +134,26 @@ namespace ursine
 
             m_doesFragment = false;
 
+            InitializeFragment( );
+        }
+
+        void Model3D::InitializeFragment(void)
+        {
             m_fragData.normalOffset = 1.0f;
-            
+
             m_fragData.verticalForce = 250.0f;
             m_fragData.horizontalForce = 200;
             m_fragData.outwardForce = 100;
             m_fragData.gravityForce = 1.0f;
             m_fragData.randomForce = 150.0f;
             m_fragData.time = 0;
-            
+
             m_fragData.pulseSpeed = 1.0f;
             m_fragData.fadeAmount = 0.5f;
             m_fragData.maxTime = 5;
             m_fragData.transparencyThreshold = 0.0f;
             m_fragData.spinScalar = 4.0f;
+            m_fragData.color = Vec4(1.0f);
         }
 
         const char *Model3D::GetModelName(void)
@@ -410,7 +416,7 @@ namespace ursine
 
             m_shadowmap = 0;
             m_shadowmapWidth = 1024;
-            m_renderShadows = true;
+            m_renderShadows = false;
 
             Renderable::Initialize();
         }
@@ -611,6 +617,8 @@ namespace ursine
             m_useAdditive = true;
             m_worldSpace = true;
             m_velocityOrient = false;
+
+            m_fadeScalar = 0.5f;
         }
 
         std::vector<Particle_GPU>& ParticleSystem::GetGPUParticleData(void)
@@ -748,6 +756,15 @@ namespace ursine
         void ParticleSystem::SetVelocityOrient(bool velocityOrient)
         {
             m_velocityOrient = velocityOrient;
+        }
+
+        float ParticleSystem::GetFadeScalar(void) const
+        {
+            return m_fadeScalar;
+        }
+        void ParticleSystem::SetFadeScalar(float scalar)
+        {
+            m_fadeScalar = scalar;
         }
 
         /////////////////////////////////////////////////////////////

@@ -154,6 +154,12 @@ namespace ursine
                 SetGroundSnapDistance
             );
 
+            EditorField(
+                bool enableImpulses,
+                GetEnableImpulses,
+                SetEnableImpulses
+            );
+
             SweptController(void);
             ~SweptController(void);
 
@@ -208,6 +214,9 @@ namespace ursine
 
             float GetGroundSnapDistance(void) const;
             void SetGroundSnapDistance(float snapDist);
+
+            bool GetEnableImpulses(void) const;
+            void SetEnableImpulses(bool flag);
 
             bool GetGrounded(void) const;
 
@@ -265,6 +274,8 @@ namespace ursine
             bool m_active;
             
             bool m_forwardEvents;
+
+            bool m_enableImpulses;
 
             // Controller state for being on a ground surface.
             // Determines movement acceleration types.

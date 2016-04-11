@@ -58,7 +58,7 @@ namespace ursine
                         auto health = dmgEntity->GetComponent<Health>( );
 
                         if (health)
-                            health->DealDamage( scaledDmg );
+                            health->DealDamage( GetOwner( ), scaledDmg );
                     }
                 }
             }

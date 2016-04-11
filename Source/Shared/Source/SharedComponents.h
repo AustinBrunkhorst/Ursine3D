@@ -28,6 +28,8 @@
 #include "Misc/ForceComponent.h"
 #include "Misc/TimeDeathComponent.h"
 #include "Misc/BuffComponent.h"
+#include "Misc/SlimePitComponent.h"
+#include "Misc/SlimePitDeathSpawnComponent.h"
 
 /////////////////////////////////
 //        Player Logic         //
@@ -154,6 +156,8 @@
 #include "FX/PlayClipOnAnimationFinishComponent.h"
 #include "FX/FaceBoneTowardsTargetComponent.h"
 #include "FX/LightingGroupComponent.h"
+#include "FX/ShieldFXComponent.h"
+#include "FX/PlayerShieldFXComponent.h"
 
 /////////////////////////////////
 //             Misc            //

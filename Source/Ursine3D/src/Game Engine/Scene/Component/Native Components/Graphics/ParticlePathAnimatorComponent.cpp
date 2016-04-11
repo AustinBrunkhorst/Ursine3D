@@ -50,7 +50,8 @@ namespace ursine
 
             GetOwner()->Listener(this).On(
                 ENTITY_PARTICLE_UPDATE, 
-                &ParticlePathAnimator::onParticleUpdate
+                &ParticlePathAnimator::onParticleUpdate,
+                1
             );
         }
 

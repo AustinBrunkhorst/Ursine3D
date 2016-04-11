@@ -208,7 +208,8 @@ namespace ursine
         {
             float lightSteps;
             float borderCutoff;
-            DirectX::XMFLOAT2 buffer;
+            float farDistance;
+            float buffer;
         };
 
         struct FragmentationVSBuffer
@@ -235,6 +236,14 @@ namespace ursine
             // time
             float time;
 
+            float randomForce;
+
+            float spinScalar;
+
+            float seed;
+
+            float globalTime;
+
             DirectX::XMFLOAT3 buffer;
         };
 
@@ -256,7 +265,11 @@ namespace ursine
             // normal transparency
             float transparencyThreshold;
 
-            DirectX::XMFLOAT2 buffer;
+            float globalTime;
+
+            float buffer;
+
+            DirectX::XMFLOAT4 color;
         };
     }
 }

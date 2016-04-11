@@ -28,6 +28,12 @@ cbuffer FragData : register(b11)
 
     // normal transparency
     float transparencyThreshold;
+
+    float globalTime;
+
+    float buffer11;
+
+    float4 color;
 }
 
 struct PS_INPUT
@@ -44,12 +50,13 @@ float4 main( PS_INPUT input ) : SV_TARGET
     float3 normal = input.normal.xyz;
 
     float texLength = length(textureOffset);
-    float offset = cos((time) * pulseSpeed) * fadeAmount;
+    float offset = (cos((globalTime) * pulseSpeed) + 1) / 2.0f;
 
-    // at time = 50, we need to be 0
-    // (50 - time) / 50;
 
-    float dotp = saturate( (1 - abs(dot(normal, float3(0, 0, 1))) / (8.0f)) + transparencyThreshold + offset) * ((endTime - time) / endTime);
+    // old, don't remove
+    float dotp;// = saturate((1 - abs(1 - dot(normal, float3(0, 0, -1))) / (8.0f)) + transparencyThreshold + offset) * ((endTime - time) / endTime);
 
-    return float4(baseColor.xyz * dotp, 1.0f);
+    dotp = saturate(1.0f - (abs(dot(normal, float3(0, 0, 1))) * fadeAmount + offset) + transparencyThreshold) * ((endTime - time) / endTime);
+
+    return float4(baseColor.xyz * dotp * color.xyz * color.w, 1.0f);
 }

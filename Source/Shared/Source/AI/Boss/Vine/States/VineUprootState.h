@@ -35,6 +35,7 @@ private:
     {
         Burrowing,
         Digging,
+        GoingHome,
         UprootDelay,
         Uprooting
     };
@@ -44,6 +45,9 @@ private:
     float m_delayTimer;
 
     ursine::SVec3 m_originalDimensions;
+
+    float m_goHomeTime;
+    float m_goHomeTimer;
 
     void playAnimation(ursine::ecs::Animator *animator, const std::string &clip);
 

@@ -112,5 +112,3 @@ void HealthRegen::OnDamaged(EVENT_HANDLER(ursine::ecs::Entity))
 {
     m_timer = 0.0f;
 }
-
-

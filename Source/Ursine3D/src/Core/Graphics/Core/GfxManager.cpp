@@ -123,6 +123,8 @@ namespace ursine
                 shaderManager->LoadShader(SHADER_DEFERRED_DEPTH_NORM, "DeferredDepthNormalMap");
                 shaderManager->LoadShader(SHADER_DIRECTIONAL_LIGHT, "DirectionalLightSource");
                 shaderManager->LoadShader(SHADER_SPOT_LIGHT, "SpotlightSource");
+                shaderManager->LoadShader(SHADER_SPOT_LIGHT_NO_SHADOW, "SpotlightSourceNoShadow");
+                
                 shaderManager->LoadShader(SHADER_POINT_LIGHT, "PointLightSource");
                 shaderManager->LoadShader(SHADER_QUAD, "QuadShader");
                 shaderManager->LoadShader(SHADER_UI, "UIShader");
@@ -550,6 +552,7 @@ namespace ursine
             RenderPass          outlinePass( "OutlinePass" );
             ShadowPass          shadowPass;
             RenderPass          spotlightPass( "SpotlightPass" );
+            RenderPass          spotlightPassNoShadow("SpotlightPassNoShadow");
             RenderPass          pointlightPass( "PointLightPass" );
             RenderPass          directionalLightPass( "DirectionalLightPass" );
             RenderPass          emissivePass( "EmissivePass" );
@@ -571,6 +574,7 @@ namespace ursine
             auto modelProcessor         = Model3DProcessor( );
             auto shadowProcessor        = Model3DProcessor( false );
             auto slProcessor            = SpotLightProcessor( );
+            auto slProcessorNoShadow    = SpotLightProcessor( false );
             auto plProcessor            = PointLightProcessor( );
             auto dlProcessor            = DirectionalLightProcessor( );
             auto particleProcessor      = ParticleSystemProcessor( );
@@ -688,6 +692,35 @@ namespace ursine
 
                         Accepts( RENDERABLE_LIGHT ).
                         Processes( &slProcessor ).
+                    InitializePass();
+                }
+
+                /////////////////////////////////////////////////////////
+                // SPOTLIGHT PASS NO SHADOW
+                {
+                    spotlightPassNoShadow.
+                        Set( { RENDER_TARGET_SWAPCHAIN } ).
+                        Set( SHADER_SPOT_LIGHT_NO_SHADOW ).
+                        Set( DEPTH_STENCIL_COUNT ).
+                        Set( DEPTH_STATE_NODEPTH_NOSTENCIL ).
+                        Set( SAMPLER_STATE_NO_WRAP_TEX, 0).
+                        Set( RASTER_STATE_SOLID_BACKCULL ).
+                        Set( BLEND_STATE_ADDITIVE ).
+                        Set( DXCore::TOPOLOGY_TRIANGLE_LIST ).
+
+                        AddResource( &viewBuffer ).
+                        AddResource( &invProjection ).
+                        AddResource( &lightConeModel ).
+                        AddResource( &lightFalloff ).
+                        AddResource( &lightMap ).
+
+                        AddResource( &depthInput ).
+                        AddResource( &diffuseRT ).
+                        AddResource( &normalRT ).
+                        AddResource( &specPowRT ).
+
+                        Accepts( RENDERABLE_LIGHT ).
+                        Processes( &slProcessorNoShadow ).
                     InitializePass();
                 }
 
@@ -1095,6 +1128,7 @@ namespace ursine
                 AddPrePass( &deferredPass ).
                 AddPrePass( &shadowPass ).
                 AddPrePass( &spotlightPass ).
+                AddPrePass( &spotlightPassNoShadow ).
                 AddPrePass( &pointlightPass ).
                 AddPrePass( &directionalLightPass ).
                 AddPrePass( &emissivePass ).
@@ -1122,6 +1156,9 @@ namespace ursine
             invViewBuffer ivb;
             FalloffBuffer fb;
             BillboardSpriteBuffer bsb;
+            float nearP, farP;
+
+            currentCamera.GetPlanes(nearP, farP);
 
             // viewBuffer(SHADERTYPE_VERTEX);
             // viewBufferGeom(SHADERTYPE_GEOMETRY);
@@ -1171,6 +1208,8 @@ namespace ursine
             // lightFalloff( SHADERTYPE_PIXEL );
             fb.lightSteps = m_lightSteps;
             fb.borderCutoff = m_borderValue;
+            
+            fb.farDistance = farP - nearP;
             lightFalloff.Update(fb, SHADER_SLOT_12);
 
             fb.lightSteps = m_globalEmissive;

@@ -39,6 +39,8 @@ namespace ursine
 
             void DeleteAudioObject(AkGameObjectID& id);
 
+            void DeleteAllAudioObjects(void);
+
             void AssignListener(AkGameObjectID obj, ListenerMask listeners);
 
             void SetListener3DPosition(const AkVector orientation_forward,
@@ -66,6 +68,10 @@ namespace ursine
             static void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id);
 
             static void PostAudioEvent(const std::string param, AkGameObjectID id = AUDIO_GLOBAL_OBJECT_ID);
+
+            static void StopAllSounds(void);
+
+            static void StopAllSounds(AkGameObjectID id);
 
             void PostAudioEventInfo(AudioEvent::Handle e, AkGameObjectID id);
 

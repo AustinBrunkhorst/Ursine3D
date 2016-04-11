@@ -56,7 +56,7 @@ void BossPhase2VineHandlerState::Update(BossAIStateMachine *machine)
     }
 
     // if there are less than two away from home, send one out
-    if (numAwayFromHome < 2 && homeVines.size( ) > 0)
+    if (numAwayFromHome < 2 && homeVines.size( ) > 1)
     {
         // Find the vine that has been sitting at home the longest
         TimeSpan latestTime = homeVines[ 0 ]->GetTimeOfLastPursue( );

@@ -68,7 +68,7 @@ namespace ursine
         {
             Health* healthComp = obj->GetComponent< Health >();
 
-            healthComp->DealDamage(contact, damage, false);
+            healthComp->DealDamage(m_animator->GetOwner( ), contact, damage, false);
 
             // NOTE: we need to change a variable here to change from this state to the delay state
         }
