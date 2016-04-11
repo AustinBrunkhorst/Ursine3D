@@ -226,9 +226,8 @@ void WeaponSystemUtils::ResetIdleSequence(AbstractWeapon* weapon)
 //////////////////////////////
 
 BaseWeaponSystem::BaseWeaponSystem(World *world) 
-    : FilterSystem( world, Filter( ).One< BaseWeapon >( ).All< AudioEmitter >( ) )
-{
-}
+    : FilterSystem( world, Filter( ).One< BaseWeapon >( ) )
+{ }
 
 void BaseWeaponSystem::Enable(const EntityHandle &entity)
 {
@@ -237,9 +236,9 @@ void BaseWeaponSystem::Enable(const EntityHandle &entity)
         m_weapons[ entity ] = entity->GetComponent< BaseWeapon >( );
 
     m_transforms[ entity ] = entity->GetTransform( );
-
+ 
     // grab audio emitter from root
-    m_emitters[ entity ] = entity->GetComponent< AudioEmitter >( );
+    m_emitters[ entity ] = entity->GetComponentInParent< AudioEmitter >( );
 }
 
 void BaseWeaponSystem::Disable(const EntityHandle &entity)
@@ -298,7 +297,10 @@ void BaseWeaponSystem::FireProjectileWeapon(AbstractProjWeapon& weapon, const En
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        m_emitters[ entity ]->PushEvent( weapon.GetShootSFX( ) );
+        AudioEmitter* emitter = m_emitters[ entity ];
+
+        if ( emitter )
+            emitter->PushEvent( weapon.GetShootSFX( ) );
 
         // reset firing sequence
         /*weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);
@@ -356,7 +358,8 @@ void BaseWeaponSystem::CreateProjectiles(AbstractProjWeapon& weapon, Transform& 
 /////////////////////////////////
 
 HitscanWeaponSystem::HitscanWeaponSystem(World *world)
-    : FilterSystem( world, Filter( ).One<HitscanWeapon>( ).All<AudioEmitter>( ) ) { }
+    : FilterSystem( world, Filter( ).One<HitscanWeapon>( ) ) 
+{ }
 
 void HitscanWeaponSystem::Initialize(void)
 {
@@ -372,7 +375,7 @@ void HitscanWeaponSystem::Enable(const EntityHandle &entity)
     m_transforms[ entity ] = entity->GetTransform( );
 
     // grab audio emitter from root
-    m_emitters[ entity ] = entity->GetComponent<AudioEmitter>( );
+    m_emitters[ entity ] = entity->GetComponentInParent<AudioEmitter>( );
 }
 
 void HitscanWeaponSystem::Disable(const EntityHandle &entity)
@@ -432,7 +435,10 @@ void HitscanWeaponSystem::FireHitscanWeapon(AbstractHitscanWeapon &weapon, const
         weapon.m_fireTimer = weapon.m_fireRate;
 
         // play sound
-        m_emitters[ entity ]->PushEvent( weapon.GetShootSFX( ) );
+        AudioEmitter* emitter = m_emitters[ entity ];
+
+        if ( emitter )
+            emitter->PushEvent( weapon.GetShootSFX( ) );
 
         //// reset firing sequence
         //weapon.m_animatorHandle->SetAnimationTimePosition(0.1f);

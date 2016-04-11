@@ -108,13 +108,7 @@ namespace ursine
         }
 
         template<class ComponentType>
-        ComponentType *Component::Handle<ComponentType>::Get(void)
-        {
-            return operator->( );
-        }
-
-        template<class ComponentType>
-        const ComponentType *Component::Handle<ComponentType>::Get(void) const
+        ComponentType *Component::Handle<ComponentType>::Get(void) const
         {
             return operator->( );
         }
@@ -173,31 +167,34 @@ namespace ursine
         }
 
         template<class ComponentType>
+        bool Component::Handle<ComponentType>::operator<(const ComponentType *rhs) const
+        {
+            if ( m_entity )
+                return operator->( ) < rhs;
+
+            return true;
+        }
+
+        template<class ComponentType>
+        bool Component::Handle<ComponentType>::operator< (const Handle<ComponentType> &rhs) const
+        {
+            return m_entity.Get( ) < rhs.m_entity.Get( );
+        }
+
+        template<class ComponentType>
         Component::Handle<ComponentType>::operator bool(void) const
         {
             return m_entity && m_entity->HasComponent<ComponentType>( );
         }
 
         template<class ComponentType>
-        ComponentType &Component::Handle<ComponentType>::operator*(void)
+        ComponentType &Component::Handle<ComponentType>::operator*(void) const
         {
             return *operator->( );
         }
 
         template<class ComponentType>
-        const ComponentType &Component::Handle<ComponentType>::operator*(void) const
-        {
-            return *operator->( );
-        }
-
-        template<class ComponentType>
-        ComponentType *Component::Handle<ComponentType>::operator->(void)
-        {
-            return m_entity->GetComponent<ComponentType>( );
-        }
-
-        template<class ComponentType>
-        const ComponentType *Component::Handle<ComponentType>::operator->(void) const
+        ComponentType *Component::Handle<ComponentType>::operator->(void) const
         {
             return m_entity->GetComponent<ComponentType>( );
         }
@@ -208,7 +205,6 @@ namespace ursine
             return m_entity;
         }
 
-        extern template Transform *Component::Handle<Transform>::operator->(void);
-        extern template const Transform *Component::Handle<Transform>::operator->(void) const;
+        extern template Transform *Component::Handle<Transform>::operator->(void) const;
     }
 }

@@ -21,4 +21,20 @@ namespace ui_event
         int playerID;
         float percent;
     );
+
+    UI_EVENT( HealthTrackStart,
+        int playerID;
+        std::string NameOfEnemy;
+        float healthPercent;
+    );
+
+    UI_EVENT(HealthTrackUpdate,
+        int playerID;
+        float healthPercent;
+    );
+
+    UI_EVENT( HealthTrackEnd,
+        int playerID;
+        bool enemyKilled;
+    );
 }

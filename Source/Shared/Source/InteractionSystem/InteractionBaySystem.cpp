@@ -16,6 +16,7 @@
 #include "InteractionBayComponent.h"
 #include "InteractableComponent.h"
 #include "CommandQueueComponent.h"
+#include "Component.h"
 
 
 ENTITY_SYSTEM_DEFINITION( InteractionBaySystem ) ;
@@ -67,7 +68,14 @@ void InteractionBaySystem::UpdateBay(InteractionBay* bay)
     // loop through all interactables in bay
     while ( !bay->m_interactQueue.empty( ) )
     {
-        if ( InteractUpdate( bay, bay->m_interactQueue.top( ).second ) )
+        auto interact = bay->m_interactQueue.top( ).second.Get( );
+
+        // check if handle is still valid
+        if ( interact == nullptr )
+            continue;
+
+        // update interaction
+        if ( InteractUpdate( bay, interact ) )
             break;
 
         bay->m_interactQueue.pop( );
@@ -78,7 +86,13 @@ void InteractionBaySystem::UpdateBay(InteractionBay* bay)
 
     // left over prev interactables that a no longer being interacted with
     for ( ; prevIt != prevEnd; ++prevIt )
-        ( *prevIt )->StopInteraction( bayOwner );
+    {
+        if ( prevIt->Get( ) != nullptr )
+        {
+            Interactable* interact = prevIt->Get( ); 
+            interact->StopInteraction(bayOwner);
+        }
+    }
 
     bay->Update( );
 }

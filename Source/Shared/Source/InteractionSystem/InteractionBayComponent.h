@@ -30,7 +30,7 @@ struct Interactable;
 namespace InteractionBayUtils
 {
     Meta(Disable)
-    typedef std::pair<float, Interactable*> InteractInfo;
+    typedef std::pair< float, ursine::ecs::Component::Handle< Interactable > > InteractInfo;
 
 
     Meta(Disable)
@@ -43,10 +43,10 @@ private:
     NATIVE_COMPONENT;
 
     Meta(Disable)
-    typedef std::set< Interactable* > PrevIteractables;
+    typedef std::set< Handle< Interactable > > PrevIteractables;
 
     Meta(Disable)
-        typedef std::set< Interactable* > CurrInteractables;
+        typedef std::set< Handle< Interactable > > CurrInteractables;
 
 public:
     Meta(Disable)
@@ -57,7 +57,7 @@ public:
 
     Meta(Disable)
     typedef std::priority_queue<InteractInfo,
-                                std::vector<std::pair<float, Interactable*>>,
+                                std::vector< std::pair< float, Handle< Interactable > > >,
                                 std::function<bool(InteractInfo&, InteractInfo&)>
                                > InteractQueue;
 
