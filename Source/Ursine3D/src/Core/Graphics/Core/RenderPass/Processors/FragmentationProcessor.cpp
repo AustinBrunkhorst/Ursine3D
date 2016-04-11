@@ -72,9 +72,10 @@ namespace ursine
             fgb.outwardForce            = fragData.outwardForce;
             fgb.gravityForce            = fragData.gravityForce;
             fgb.time                    = fragData.time;
-            fgb.buffer.x                = fragData.randomForce;
-            fgb.buffer.y                = fragData.spinScalar;
-            fgb.buffer.z                = fragData.seed;
+            fgb.randomForce             = fragData.randomForce;
+            fgb.spinScalar              = fragData.spinScalar;
+            fgb.seed                    = fragData.seed;
+            fgb.globalTime              = fragData.globalTime;
 
             fpb.pulseSpeed              = fragData.pulseSpeed;
             fpb.fadeAmount              = fragData.fadeAmount;

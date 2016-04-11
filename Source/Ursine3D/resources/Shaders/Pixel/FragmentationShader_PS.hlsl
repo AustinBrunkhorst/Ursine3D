@@ -50,7 +50,7 @@ float4 main( PS_INPUT input ) : SV_TARGET
     float3 normal = input.normal.xyz;
 
     float texLength = length(textureOffset);
-    float offset = cos((globalTime) * pulseSpeed);
+    float offset = (cos((globalTime) * pulseSpeed) + 1) / 2.0f;
 
 
     // old, don't remove

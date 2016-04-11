@@ -69,7 +69,7 @@ namespace ursine
                 SetColor
             );
 
-            EditorMeta(InputRange(0.0f, 1.0f, 0.1f, "{{value.toPrecision( 3 )}}"))
+            EditorMeta(InputRange(0.0f, 1.0f, 0.001f, "{{value.toPrecision( 3 )}}"))
             EditorField(
                 float timeSlider,
                 GetTimeSliderValue,

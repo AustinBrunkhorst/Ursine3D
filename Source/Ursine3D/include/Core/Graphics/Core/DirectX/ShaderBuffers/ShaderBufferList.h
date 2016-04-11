@@ -236,6 +236,14 @@ namespace ursine
             // time
             float time;
 
+            float randomForce;
+
+            float spinScalar;
+
+            float seed;
+
+            float globalTime;
+
             DirectX::XMFLOAT3 buffer;
         };
 

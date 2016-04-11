@@ -33,6 +33,8 @@ cbuffer FragData : register(b11)
     float spinSpeed;
 
     float seed;
+
+    float globalTime;
 }
 
 struct GS_INPUT
@@ -106,7 +108,7 @@ void main(
 
     /////////////////////////////////////////////////////////////////////////////////////
     // generate rotations
-    float angleScalar = time * 0.5f * spinSpeed;
+    float angleScalar = (time > 0) * 0.5f * spinSpeed * globalTime;
     float angle = (averagePos.x * randXY) * angleScalar;
     float2x2 rotation =
     { 
