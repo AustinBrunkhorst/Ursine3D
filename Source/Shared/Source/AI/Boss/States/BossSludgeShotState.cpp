@@ -139,19 +139,9 @@ void BossSludgeshotState::findTarget(void)
 {
     auto world = m_boss->GetOwner( )->GetWorld( );
     auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
-    float minHealth = std::numeric_limits<float>( ).max( );
+    auto size = players.size( );
 
-    // find the player with the lowest health
-    for (auto &player : players)
-    {
-        auto health = player->GetComponent<Health>( )->GetHealth( );
-
-        if (health < minHealth)
-        {
-            minHealth = health;
-            m_target = player;
-        }
-    }
+    m_target = players[ rand( ) % size ];
 }
 
 void BossSludgeshotState::rotateTowardsTarget(void)

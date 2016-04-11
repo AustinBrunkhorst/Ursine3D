@@ -11,7 +11,6 @@
 
 #include <Component.h>
 
-#include "DamageOnCollideComponent.h"
 #include "EntityAnimatorComponent.h"
 #include "HealthComponent.h"
 
@@ -22,8 +21,49 @@ class SludgeshotProjectile : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
+    EditorButton(
+        drawRange,
+        "Draw Range"
+    );
+
+    EditorField(
+        float range,
+        GetRange,
+        SetRange
+    );
+
+    EditorField(
+        float damage,
+        GetDamage,
+        SetDamage
+    );
+
+    EditorField(
+        float damageInterval,
+        GetDamageInterval,
+        SetDamageInterval
+    );
+
+    EditorField(
+        float impulse,
+        GetImpulse,
+        SetImpulse
+    );
+
     SludgeshotProjectile(void);
     ~SludgeshotProjectile(void);
+
+    float GetRange(void) const;
+    void SetRange(float range);
+
+    float GetDamage(void) const;
+    void SetDamage(float damage);
+
+    float GetDamageInterval(void) const;
+    void SetDamageInterval(float interval);
+
+    float GetImpulse(void) const;
+    void SetImpulse(float impulse);
 
     void SetTargetPosition(const ursine::SVec3 &target);
 
@@ -39,12 +79,26 @@ private:
 
     float m_emitionRate;
 
+    float m_range;
+
+    float m_damage;
+
+    float m_interval;
+
+    float m_impulse;
+
+    // This map keeps track of timers related to the last time we've damaged
+    // the player that corresponds to the key
+    std::unordered_map<ursine::ecs::EntityHandle, float> m_damageMap;
+
     void onAnimationCompleted(EVENT_HANDLER(EntityAnimator));
+
+    void onUpdate(EVENT_HANDLER(ursine::ecs::World));
+
 } Meta(
     Enable,
 ) EditorMeta(
     RequiresComponents(
-        typeof( DamageOnCollide ),
         typeof( EntityAnimator ),
         typeof( Health ),
         typeof( ursine::ecs::ParticleEmitter )

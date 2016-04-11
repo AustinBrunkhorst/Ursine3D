@@ -30,6 +30,7 @@
 #include "Misc/BuffComponent.h"
 #include "Misc/SlimePitComponent.h"
 #include "Misc/SlimePitDeathSpawnComponent.h"
+#include "Misc/TeleportPlayerToSpawnOnHitComponent.h"
 
 /////////////////////////////////
 //        Player Logic         //
