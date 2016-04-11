@@ -16,6 +16,7 @@
 #include <Component.h>
 #include <Array.h>
 #include <WorldData.h>
+#include <ArchetypeData.h>
 
 class TutorialResources : public ursine::ecs::Component
 {
@@ -32,10 +33,21 @@ public:
         SetWorldData
     );
 
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        vineArchetype,
+        GetVineArchetype,
+        SetVineArchetype
+    );
+
     const ursine::resources::ResourceReference &GetWorldData(void) const;
     void SetWorldData(const ursine::resources::ResourceReference &world);
 
+    const ursine::resources::ResourceReference &GetVineArchetype(void) const;
+    void SetVineArchetype(const ursine::resources::ResourceReference &vine);
+
 private:
     ursine::resources::ResourceReference m_worldToMerge;
+    ursine::resources::ResourceReference m_vine;
 
 } Meta(Enable);

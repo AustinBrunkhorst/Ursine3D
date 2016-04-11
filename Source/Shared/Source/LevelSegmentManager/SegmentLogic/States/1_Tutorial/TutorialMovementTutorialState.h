@@ -19,16 +19,16 @@ class  TutorialMovementTutorialState : public SegmentLogicState
 {
 public:
 
-	TutorialMovementTutorialState(void);
+   TutorialMovementTutorialState(void);
 
-	void Enter(SegmentLogicStateMachine *machine) override;
+   void Enter(SegmentLogicStateMachine *machine) override;
 
-	bool CanExit(void) override { return m_complete; }
+   bool CanExit(void) override { return m_complete; }
 
 private:
 
-	bool m_complete;
+   bool m_complete;
 
-	void onCameraAnimFinish(EVENT_HANDLER(EntityAnimator));
+   void onCameraAnimFinish(EVENT_HANDLER(EntityAnimator));
 
 };

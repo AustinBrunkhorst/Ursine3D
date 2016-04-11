@@ -28,6 +28,8 @@
 #include "Phase3WaitForTriggerState.h"
 #include "ToggleCameraActiveState.h"
 #include "PlayEntityAnimatorState.h"
+#include "TutorialWaitForPlayerReviveState.h"
+#include "TutorialVineHandlerState.h"
 
 #include "CurrentSegmentCondition.h"
 
@@ -199,7 +201,7 @@ void LevelSegmentManager::initTutorialLogic(void)
     // Initial state for spawning the level
     auto initState = stateM->AddState<InitializeSegmentState>(
         resources->GetWorldData( ),
-        LevelSegments::CB1_SimulationStartCinematic
+        LevelSegments::BossRoom_Platforming
     );
 
     auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
@@ -207,6 +209,8 @@ void LevelSegmentManager::initTutorialLogic(void)
     auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
     auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
     auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpensTutorial );
+    auto waitForRevive = stateM->AddState<TutorialWaitForPlayerReviveState>( );
+    auto vineHandler = stateM->AddState<TutorialVineHandlerState>( resources->GetVineArchetype( ) );
 
     // Next state for spawning the players
     initState->AddTransition( playerCreateState, "Go To Init Players" );
@@ -228,6 +232,11 @@ void LevelSegmentManager::initTutorialLogic(void)
 
     // After the viewports tween out change the level segment
     unlockCCState->AddTransition( changeSegState, "To Gate Opens" );
+
+    changeSegState->AddTransition( waitForRevive, "Revive Dat Ass" );
+
+    waitForRevive->AddTransition( vineHandler, "To Vine Handler" )
+                 ->AddCondition<sm::CurrentSegmentCondition>( this, LevelSegments::Tut_SpawnVinesTutorial );
     
     stateM->SetInitialState( initState );
 
@@ -245,23 +254,6 @@ void LevelSegmentManager::initTutorialLogic(void)
         LevelSegments::Tut_SpawnVinesTutorial, // Must Defeat Vines to exit
         LevelSegments::Tut_DoorOpenTutorial, // Vines defeated
         LevelSegments::Tut_SimulationCreationCinematic, // Cinematic for simulation begin
-    } );
-
-    auto endingState = std::make_shared<SegmentLogicStateMachine>( "To Combat Bowl", this );
-
-    auto lock = endingState->AddState<LockPlayerCharacterControllerState>( true, false, true, false );
-    auto changeSeg = endingState->AddState<ChangeSegmentState>( LevelSegments::CB1_SimulationStartCinematic );
-    
-    auto trans = lock->AddTransition(
-        changeSeg, "Change To Change"
-    );
-
-    trans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 6.0f ) );
-
-    endingState->SetInitialState( lock );
-
-    addSegmentLogic( endingState, {
-        LevelSegments::Tut_SimultaneousTriggerTutorial
     } );
 }
 

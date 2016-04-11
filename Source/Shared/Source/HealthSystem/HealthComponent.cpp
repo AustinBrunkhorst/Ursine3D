@@ -240,17 +240,17 @@ void Health::DealDamage(const EntityHandle &damager, float damage)
     // Check to see if we have a shield
     if (m_hasShield && m_shield > 0.0f)
     {
+        auto newShieldHealth = m_shield - damage;
+
         // deal the damage to the shield
-        SetShieldHealth( m_shield - damage );
+        SetShieldHealth( newShieldHealth );
 
         // early out while shield is still up
-        if ( m_shield > 0.0f )
+        if ( newShieldHealth > 0.0f )
             return;
 
         // carry over the damage to the health
-        damage = -m_shield;
-
-        SetShieldHealth( 0.0f );
+        damage = -newShieldHealth;
     }
 
     SetHealth( GetHealth( ) - damage );
