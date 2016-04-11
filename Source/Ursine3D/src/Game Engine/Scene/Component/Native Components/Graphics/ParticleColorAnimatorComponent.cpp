@@ -47,7 +47,7 @@ namespace ursine
             m_particleComponent = GetOwner()->GetComponent<ParticleSystem>();
 
             GetOwner()->Listener(this)
-                .On(ENTITY_PARTICLE_UPDATE, &ParticleColorAnimator::onParticleUpdate);
+                .On(ENTITY_PARTICLE_UPDATE, &ParticleColorAnimator::onParticleUpdate, 1);
         }
 
         const Color &ParticleColorAnimator::GetColor0(void) const

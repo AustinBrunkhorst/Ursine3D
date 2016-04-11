@@ -44,7 +44,7 @@ namespace ursine
             m_particleComponent = GetOwner()->GetComponent<ParticleSystem>();
 
             GetOwner()->Listener(this)
-                .On(ENTITY_PARTICLE_UPDATE, &ParticleAnimator::onParticleUpdate);
+                .On(ENTITY_PARTICLE_UPDATE, &ParticleAnimator::onParticleUpdate, 1);
         }
 
         float ParticleAnimator::GetDampening(void) const

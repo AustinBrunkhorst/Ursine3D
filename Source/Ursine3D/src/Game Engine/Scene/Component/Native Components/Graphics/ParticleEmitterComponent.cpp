@@ -71,7 +71,7 @@ namespace ursine
             m_particleComponent = GetOwner( )->GetComponent<ParticleSystem>( );
 
             GetOwner( )->Listener(this)
-                .On(ENTITY_PARTICLE_UPDATE, &ParticleEmitter::onParticleUpdate);
+                .On(ENTITY_PARTICLE_UPDATE, &ParticleEmitter::onParticleUpdate, 10);
 
             m_lastPosition = GetOwner( )->GetTransform( )->GetWorldPosition( );
         }
