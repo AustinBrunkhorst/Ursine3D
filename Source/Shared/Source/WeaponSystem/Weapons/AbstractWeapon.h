@@ -141,6 +141,7 @@ namespace ursine
     {
         class Transform;
         class Animator;
+        class AudioEmitter;
     }
 }
 
@@ -237,6 +238,8 @@ public:
 
     bool GetTriggerPulled(void) const;
 
+    ursine::ecs::AudioEmitter *GetAudioEmitter(void);
+
     void ConnectTrigger(const ursine::ecs::EntityHandle &obj);
 
 protected:
@@ -318,6 +321,8 @@ protected:
 
     // can i shoot?
     bool m_active;
+
+    ursine::ecs::AudioEmitter *m_emitter;
 
     // Weapons trigger is being pulled
     void TriggerPulled(EVENT_HANDLER(game::FIRE_START));

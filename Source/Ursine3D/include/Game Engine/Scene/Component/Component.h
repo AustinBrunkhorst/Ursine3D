@@ -76,8 +76,7 @@ namespace ursine
                 Handle(const ComponentType *);
                 ~Handle(void);
 
-                ComponentType *Get(void);
-                const ComponentType *Get(void) const;
+                ComponentType *Get(void) const;
 
                 // Assignment and Equivalency
                 const ComponentType *operator=(const ComponentType *rhs);
@@ -86,15 +85,16 @@ namespace ursine
                 bool operator==(const Handle<ComponentType> &rhs) const;
                 bool operator!=(const ComponentType *rhs) const;
                 bool operator!=(const Handle<ComponentType> &rhs) const;
+                bool operator<(const ComponentType *rhs) const;
+                bool operator<(const Handle<ComponentType> &rhs) const;
+
 
                 // Checking for null
                 explicit operator bool(void) const;
 
                 // Dereference Operators
-                ComponentType &operator*(void);
-                const ComponentType &operator*(void) const;
-                ComponentType *operator->(void);
-                const ComponentType *operator->(void) const;
+                ComponentType &operator*(void) const;
+                ComponentType *operator->(void) const;
 
                 const EntityHandle &GetEntity(void) const;
 

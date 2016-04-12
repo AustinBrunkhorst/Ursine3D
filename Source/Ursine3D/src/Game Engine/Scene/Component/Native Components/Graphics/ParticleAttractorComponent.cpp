@@ -44,7 +44,7 @@ namespace ursine
             m_particleComponent = GetOwner()->GetComponent<ParticleSystem>();
 
             GetOwner()->Listener(this)
-                .On(ENTITY_PARTICLE_UPDATE, &ParticleAttractor::onParticleUpdate);
+                .On(ENTITY_PARTICLE_UPDATE, &ParticleAttractor::onParticleUpdate, 1);
         }
 
         float ParticleAttractor::GetMinDistance(void) const

@@ -99,7 +99,6 @@ private:
     
     std::unordered_map<ursine::ecs::EntityHandle, AbstractProjWeapon*> m_weapons;
     std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::Transform*> m_transforms;
-    std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::AudioEmitter*> m_emitters;
 
 } Meta(Enable, AutoAddEntitySystem);
 
@@ -134,5 +133,4 @@ private:
 
     std::unordered_map<ursine::ecs::EntityHandle, HitscanWeapon*> m_weapons;
     std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::Transform*> m_transforms;
-    std::unordered_map<ursine::ecs::EntityHandle, ursine::ecs::AudioEmitter*> m_emitters;
 } Meta(Enable, AutoAddEntitySystem);

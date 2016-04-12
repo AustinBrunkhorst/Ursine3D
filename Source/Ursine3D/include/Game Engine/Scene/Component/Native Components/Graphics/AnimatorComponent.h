@@ -149,10 +149,7 @@ namespace ursine
                             float dt, float &transFactor,
                             StateBlender *stateBlender);
 
-            void changeState(AnimationState **currSt, AnimationState **futSt,
-                             float currloopTimePos, float futloopTimePos, 
-                             float currNoloopTimePos, float futNoloopTimePos,
-                             float &transFactor);
+            void changeState(AnimationState **currSt, AnimationState **futSt, float &transFactor);
 
             AnimationState *getAnimationState(const std::string &stateName);
 

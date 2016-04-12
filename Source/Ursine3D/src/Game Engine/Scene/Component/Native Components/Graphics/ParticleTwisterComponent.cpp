@@ -45,7 +45,7 @@ namespace ursine
             Component::OnInitialize();
 
             GetOwner()->Listener(this)
-                .On(ENTITY_PARTICLE_UPDATE, &ParticleTwister::onParticleUpdate);
+                .On(ENTITY_PARTICLE_UPDATE, &ParticleTwister::onParticleUpdate, 1);
         }
 
         const SVec3 & ParticleTwister::GetAxis(void) const

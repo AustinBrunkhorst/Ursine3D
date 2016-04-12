@@ -21,10 +21,12 @@ namespace ursine
 
     namespace graphics
     {
+        enum DEPTH_STATES : unsigned;
+
         class Model3DProcessor : public GraphicsEntityProcessor
         {
         public:
-            Model3DProcessor(bool debugRender = true);
+            Model3DProcessor(bool shadowPass = false, bool notVisiblePass = false);
 
         private:
              bool cullOperation(_DRAWHND, Camera &currentCamera) override;
@@ -35,6 +37,9 @@ namespace ursine
              void renderSection(_DRAWHND handle, bool renderDebug = false);
 
              bool m_shadowPass;
+             bool m_notVisiblePass;
+
+             DEPTH_STATES m_defaultState;
         };
     }
 }

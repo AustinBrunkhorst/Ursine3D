@@ -63,7 +63,6 @@ void InteractionBay::OnCollision(EVENT_HANDLER(ursine::ecs::ENTITY_COLLISION_PER
 
         m_interactQueue.push( std::make_pair( distSqu, args->otherEntity->GetComponent< Interactable >( ) ) );
     }
-
 }
 
 void InteractionBay::AddInteractable(float distSquared, Interactable* interactable)

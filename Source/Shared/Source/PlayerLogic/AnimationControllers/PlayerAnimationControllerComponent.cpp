@@ -59,8 +59,9 @@ void PlayerAnimationController::OnSceneReady(Scene *scene)
     auto run = m_controller->AddState<PlayAnimationState>( m_runState );
     auto runR = m_controller->AddState<PlayAnimationState>( m_runRightState );
     auto runL = m_controller->AddState<PlayAnimationState>( m_runLeftState );
-    auto jump = m_controller->AddState<PlayAnimationState>( m_jumpState );
-    auto jumpC = m_controller->AddState<PlayAnimationState>( m_jumpCycleState );
+    auto jumpIn = m_controller->AddState<PlayAnimationState>( m_jumpInState );
+    auto jumpLoop = m_controller->AddState<PlayAnimationState>( m_jumpLoopState );
+    auto jumpOut = m_controller->AddState<PlayAnimationState>( m_jumpOutState );
     auto die = m_controller->AddState<PlayAnimationState>( m_dieState, false, 1.0f, true );
     auto win = m_controller->AddState<PlayAnimationState>( m_winState, false, 1.0f, true );
 
@@ -74,11 +75,12 @@ void PlayerAnimationController::OnSceneReady(Scene *scene)
     m_controller->AddBool( kDead, false );
 
     // Setup transitions
-    idle->AddTransition( jump, "Jump" )->AddCondition<sm::BoolCondition>( kJump, true );
-    idle->AddTransition( jumpC, "Jump Cycle" )->AddCondition<sm::BoolCondition>( kAirborn, true );
-    jump->AddTransition( jumpC, "Jump Cycle" )->AddCondition<sm::BoolCondition>( kAirborn, true );
-    jumpC->AddTransition( idle, "Idle" )->AddCondition<sm::BoolCondition>( kAirborn, false );
-    jump->AddTransition( idle, "Idle" )->AddCondition<sm::BoolCondition>( kAirborn, false );
+    idle->AddTransition( jumpIn, "Jump" )->AddCondition<sm::BoolCondition>( kJump, true );
+    idle->AddTransition( jumpLoop, "Jump Cycle" )->AddCondition<sm::BoolCondition>( kAirborn, true );
+    jumpIn->AddTransition( jumpLoop, "Jump Cycle" )->AddCondition<sm::BoolCondition>( kAirborn, true );
+    jumpLoop->AddTransition( jumpOut, "Jump Out" )->AddCondition<sm::BoolCondition>( kAirborn, false );
+    jumpOut->AddTransition( idle, "Idle" )->AddCondition<sm::BoolCondition>( kAirborn, false );
+    jumpIn->AddTransition( jumpOut, "Jump Out" )->AddCondition<sm::BoolCondition>( kAirborn, false );
 
     idle->AddTransition( die, "Die" )->AddCondition<sm::BoolCondition>( kDead, true );
     die->AddTransition( idle, "Idle" )->AddCondition<sm::BoolCondition>( kDead, false );
@@ -98,13 +100,13 @@ void PlayerAnimationController::OnSceneReady(Scene *scene)
     runR->AddTransition( win, "Win" )->AddCondition<sm::BoolCondition>( kWon, true );
     runL->AddTransition( win, "Win" )->AddCondition<sm::BoolCondition>( kWon, true );
 
-    run->AddTransition( jump, "Jump" )->AddCondition<sm::BoolCondition>( kJump, true );
-    runR->AddTransition( jump, "Jump" )->AddCondition<sm::BoolCondition>( kJump, true );
-    runL->AddTransition( jump, "Jump" )->AddCondition<sm::BoolCondition>( kJump, true );
+    run->AddTransition( jumpIn, "Jump" )->AddCondition<sm::BoolCondition>( kJump, true );
+    runR->AddTransition( jumpIn, "Jump" )->AddCondition<sm::BoolCondition>( kJump, true );
+    runL->AddTransition( jumpIn, "Jump" )->AddCondition<sm::BoolCondition>( kJump, true );
 
-    run->AddTransition( jumpC, "Airborn" )->AddCondition<sm::BoolCondition>( kAirborn, true );
-    runR->AddTransition( jumpC, "Airborn" )->AddCondition<sm::BoolCondition>( kAirborn, true );
-    runL->AddTransition( jumpC, "Airborn" )->AddCondition<sm::BoolCondition>( kAirborn, true );
+    run->AddTransition( jumpLoop, "Airborn" )->AddCondition<sm::BoolCondition>( kAirborn, true );
+    runR->AddTransition( jumpLoop, "Airborn" )->AddCondition<sm::BoolCondition>( kAirborn, true );
+    runL->AddTransition( jumpLoop, "Airborn" )->AddCondition<sm::BoolCondition>( kAirborn, true );
 
     // Run to idle
     {
@@ -276,28 +278,40 @@ void PlayerAnimationController::SetRunRightState(const std::string &state)
     NOTIFY_COMPONENT_CHANGED( "runRightState", m_runRightState );
 }
 
-const std::string &PlayerAnimationController::GetJumpState(void) const
+const std::string &PlayerAnimationController::GetJumpInState(void) const
 {
-    return m_jumpState;
+    return m_jumpInState;
 }
 
-void PlayerAnimationController::SetJumpState(const std::string &state)
+void PlayerAnimationController::SetJumpInState(const std::string &state)
 {
-    m_jumpState = state;
+    m_jumpInState = state;
 
-    NOTIFY_COMPONENT_CHANGED( "jumpState", m_jumpState );
+    NOTIFY_COMPONENT_CHANGED( "jumpInState", m_jumpInState );
 }
 
-const std::string &PlayerAnimationController::GetJumpCycleState(void) const
+const std::string &PlayerAnimationController::GetJumpLoopState(void) const
 {
-    return m_jumpCycleState;
+    return m_jumpLoopState;
 }
 
-void PlayerAnimationController::SetJumpCycleState(const std::string &state)
+void PlayerAnimationController::SetJumpLoopState(const std::string &state)
 {
-    m_jumpCycleState = state;
+    m_jumpLoopState = state;
 
-    NOTIFY_COMPONENT_CHANGED( "jumpCycleState", m_jumpCycleState );
+    NOTIFY_COMPONENT_CHANGED( "jumpLoopState", m_jumpLoopState );
+}
+
+const std::string &PlayerAnimationController::GetJumpOutState(void) const
+{
+    return m_jumpOutState;
+}
+
+void PlayerAnimationController::SetJumpOutState(const std::string &state)
+{
+    m_jumpOutState = state;
+
+    NOTIFY_COMPONENT_CHANGED( "jumpOutState", m_jumpOutState );
 }
 
 const std::string &PlayerAnimationController::GetDieState(void) const

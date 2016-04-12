@@ -82,10 +82,10 @@ namespace ursine
 
         // Maximum number of components able to be stored (number of bits able
         // to be stored in ComponentTypeMask).
-        const uint8 kMaxComponentCount = 128;
+        const uint32 kMaxComponentCount = 256;
 
         // Type for unique ids mapped to component types
-        typedef uint8 ComponentTypeID;
+        typedef uint32 ComponentTypeID;
 
         // Type for IDs representing unique instances of components
         typedef uint32 ComponentUniqueID;

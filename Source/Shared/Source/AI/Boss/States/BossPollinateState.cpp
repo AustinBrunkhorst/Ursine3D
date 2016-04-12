@@ -15,7 +15,6 @@
 
 #include "BossPollinateState.h"
 #include "BossAIComponent.h"
-#include "PollinateProjectileComponent.h"
 
 #include <AnimatorComponent.h>
 #include <EntityEvent.h>
@@ -25,8 +24,7 @@ using namespace ecs;
 
 BossPollinateState::BossPollinateState(void)
     : BossAIState( "Boss Pollinate" )
-    , m_boss( nullptr )
-    , m_finished( false ) { }
+    , m_boss( nullptr ) { }
 
 void BossPollinateState::Enter(BossAIStateMachine *machine)
 {
@@ -40,11 +38,7 @@ void BossPollinateState::Enter(BossAIStateMachine *machine)
 
     // subscribe to the OnAnimationFinish and OnAnimationEvent
     animator->GetOwner( )->Listener( this )
-        .On( ENTITY_ANIMATION_STATE_EVENT, &BossPollinateState::onAnimationEvent )
-        .On( ENTITY_ANIMATION_FINISH, &BossPollinateState::onAnimationFinish );
-
-    // Set Finish to false
-    m_finished = false;
+        .On( ENTITY_ANIMATION_STATE_EVENT, &BossPollinateState::onAnimationEvent );
 }
 
 void BossPollinateState::Exit(BossAIStateMachine *machine)
@@ -52,12 +46,9 @@ void BossPollinateState::Exit(BossAIStateMachine *machine)
     // play idle
     auto animator = m_boss->GetOwner( )->GetComponentInChildren<Animator>( );
 
-    animator->SetCurrentState( "Idle" );
-
     // unsubscribe from everything
     animator->GetOwner( )->Listener( this )
-        .Off( ENTITY_ANIMATION_STATE_EVENT, &BossPollinateState::onAnimationEvent )
-        .Off( ENTITY_ANIMATION_FINISH, &BossPollinateState::onAnimationFinish );
+        .Off( ENTITY_ANIMATION_STATE_EVENT, &BossPollinateState::onAnimationEvent );
 }
 
 void BossPollinateState::onAnimationEvent(EVENT_HANDLER(Entity))
@@ -66,11 +57,6 @@ void BossPollinateState::onAnimationEvent(EVENT_HANDLER(Entity))
 
     if (args->state == "Pollinate" && args->message == "Spew")
         spewPollin( );
-}
-
-void BossPollinateState::onAnimationFinish(EVENT_HANDLER(Entity))
-{
-    m_finished = true;
 }
 
 void BossPollinateState::spewPollin(void)
@@ -83,9 +69,6 @@ void BossPollinateState::spewPollin(void)
 
     auto pollinateTrans = pollinateEntity->GetTransform( );
     auto pollinatePosition = pollinateTrans->GetWorldPosition( );
-
-    // get the angle
-    auto angle = m_boss->GetMaxPollinateSpreadAngle( );
 
     // get the world forward vector
     auto focus = pollinateTrans->ToWorld(
@@ -124,32 +107,12 @@ void BossPollinateState::spewPollin(void)
             pollinatePosition
         );
 
-        // The projectile must have this component
-        UAssert(
-            projectile->HasComponent<PollinateProjectile>( ),
-            "Error: The pollinate projectile must of have the \"PollinateProjectile\" component."
-        );
-
-        auto pollinate = projectile->GetComponent<PollinateProjectile>( );
-
         // Set it's direction of influence (u rotated by Q(worldNormal, theta))
         auto dir = SQuat( theta, worldForward ).Rotate( u );
 
-        pollinate->SetDirection( dir );
-
-        // Set the gravity
-        pollinate->SetGravity( m_boss->GetPollinateGravity( ) );
-
-        // Set the distance
-        pollinate->SetSpreadDistance( m_boss->GetPollinateSpreadDistance( ) );
-
-        // Set the time it takes to get there
-        pollinate->SetSpreadTime( m_boss->GetPollinateSpreadTime( ) );
-
-        // Set the lifetime
-        pollinate->SetLifeTime( m_boss->GetPollinateProjectileLifeTime( ) );
-
-        pollinate->InitializeComponents( );
+        projectile->GetTransform( )->SetWorldRotation( 
+            SQuat::LookAt( dir, worldForward )
+        );
 
         theta += step;
     }

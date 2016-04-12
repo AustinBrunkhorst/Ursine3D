@@ -11,8 +11,10 @@
 #include "WeaponPickup.h"
 #include <AnimatorComponent.h>
 #include <FirePosComponent.h>
+#include <AudioEmitterComponent.h>
 
 using namespace ursine;
+using namespace ecs;
 
 #define ARBITRARY_NUM 100.0f
 
@@ -36,6 +38,7 @@ AbstractWeapon::AbstractWeapon(void)
     , m_triggerPulled( false )
     , m_reload( false )
     , m_active( false )
+    , m_emitter( nullptr )
 {   
     m_ammoCount = m_maxAmmoCount;
     m_clipCount = m_clipSize;
@@ -485,4 +488,24 @@ void AbstractWeapon::CeaseFire(EVENT_HANDLER(game::CEASE_FIRE))
 void AbstractWeapon::FireAtWill(EVENT_HANDLER(game::FIRE_AT_WILL))
 {
     m_active = true;
+}
+
+AudioEmitter *AbstractWeapon::GetAudioEmitter(void)
+{
+    if (!m_emitter)
+    {
+        // get the emitter from the owner or from the owner's parents
+        if (m_owner->HasComponent<AudioEmitter>( ))
+        {
+            m_emitter = m_owner->GetComponent<AudioEmitter>( );
+        }
+        else
+        {
+            m_emitter = m_owner->GetComponentInParents<AudioEmitter>( );
+
+            UAssert( m_emitter, "Error: There must be an audio emitter somwhere." );
+        }
+    }
+
+    return m_emitter;
 }

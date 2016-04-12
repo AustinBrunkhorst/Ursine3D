@@ -50,6 +50,12 @@ namespace ursine
                 SetIsActive
             );
 
+            EditorField(
+                bool playingBackwards,
+                GetPlayInReverse,
+                SetPlayInReverse
+            );
+
             EditorResourceField(
                 ursine::resources::TextureData,
                 texture,
@@ -57,7 +63,13 @@ namespace ursine
                 SetTexture
             );
 
-            EditorMeta(InputRange(0.0f, 1.0f, 0.1f, "{{value.toPrecision( 3 )}}"))
+            EditorField(
+                Color colorTint,
+                GetColor,
+                SetColor
+            );
+
+            EditorMeta(InputRange(0.0f, 1.0f, 0.001f, "{{value.toPrecision( 3 )}}"))
             EditorField(
                 float timeSlider,
                 GetTimeSliderValue,
@@ -201,12 +213,18 @@ namespace ursine
             float GetTimeSliderValue(void) const;
             void SetTimeSliderValue(float value);
 
+            void StartFragmentation(void);
+            void PauseFragmentation(void);
+
+            bool GetPlayInReverse(void) const;
+            void SetPlayInReverse(bool playReverse);
+
+            Color GetColor(void) const;
+            void SetColor(const Color &color);
+
         private:
 
             graphics::GfxAPI *m_graphics;
-
-            // This model component's model in the renderer
-            graphics::Model3D *m_model;
 
             resources::ResourceReference m_textureResource;
 
@@ -215,6 +233,8 @@ namespace ursine
             void onTextureReload(void);
 
             bool m_isPlaying;
+
+            bool m_playReverse;
 
         } Meta(Enable, WhiteListMethods, DisplayName("ModelFragmenter"))
         EditorMeta(

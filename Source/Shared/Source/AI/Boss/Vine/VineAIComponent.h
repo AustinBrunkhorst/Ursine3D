@@ -60,6 +60,12 @@ public:
     );
 
     EditorField(
+        std::string spawnParticleEmitterName,
+        GetSpawnParticleEmitterName,
+        SetSpawnParticleEmitterName
+    );
+
+    EditorField(
         bool faceClosestPlayer,
         GetFaceClosestPlayer,
         SetFaceClosestPlayer
@@ -117,6 +123,12 @@ public:
     );
 
     EditorField(
+        float digRayStartY,
+        GetDigRayStartY,
+        SetDigRayStartY
+    );
+
+    EditorField(
         float uprootDistance,
         GetUprootDistance,
         SetUprootDistance
@@ -168,6 +180,9 @@ public:
 
     void OnSceneReady(ursine::Scene *scene) override;
 
+    const std::string &GetSpawnParticleEmitterName(void) const;
+    void SetSpawnParticleEmitterName(const std::string &name);
+
     bool GetFaceClosestPlayer(void) const;
     void SetFaceClosestPlayer(bool flag);
 
@@ -194,6 +209,9 @@ public:
 
     const std::string &GetDigParticleEmitterName(void) const;
     void SetDigParticleEmitterName(const std::string &name);
+
+    float GetDigRayStartY(void) const;
+    void SetDigRayStartY(float y);
 
     float GetUprootDistance(void) const;
     void SetUprootDistance(float distance);
@@ -251,6 +269,7 @@ private:
 
     float m_digSpeed;
     float m_digTurnSpeed;
+    float m_digRayStartY;
     float m_uprootDistance;
     float m_uprootDelay;
     float m_uprootCooldown;
@@ -258,6 +277,7 @@ private:
     ursine::SVec3 m_homeLocation;
 
     std::string m_digParticleEmitterName;
+    std::string m_spawnParticleEmitterName;
 
     VineAIStateMachine m_stateMachine;
 

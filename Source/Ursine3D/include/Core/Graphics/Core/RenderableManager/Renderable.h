@@ -36,7 +36,7 @@ namespace ursine
         public:
             Renderable(void);
 
-            void Initialize(void);
+            virtual void Initialize(void);
 
             void SetEntityID(ecs::EntityID id);
             ecs::EntityID GetEntityID(void) const;
@@ -90,6 +90,8 @@ namespace ursine
                 float time;
                 float maxTime;
 
+                float globalTime;
+
                 // forces
                 float verticalForce;
                 float horizontalForce;
@@ -105,6 +107,8 @@ namespace ursine
                 float normalOffset;
                 float spinScalar;
 
+                SVec4 color;
+
                 float seed;
 
                 float xUV, yUV;
@@ -112,7 +116,9 @@ namespace ursine
 
         public:
             Model3D(void);
-            void Initialize(void);
+            void Initialize(void) override;
+
+            void InitializeFragment(void);
 
             const char *GetModelName(void);
             void SetModelName(std::string modelName);
@@ -159,11 +165,17 @@ namespace ursine
             const Vec2 &GetTextureUVOffset(void) const;
             void SetTextureUVOffset(const Vec2 &offset);
 
+            const Vec2 &GetTextureUVScalar(void) const;
+            void SetTextureUVScalar(const Vec2 &scalar);
+
             bool GetDoesFragment(void) const;
             void SetDoesFragment(bool doesFragment);
 
             float GetFragTime(void) const;
             void SetFragTime(float time);
+
+            bool GetIsVisible(void) const;
+            void SetIsVisible(bool isVisible);
 
             FragmentData &GetFragmentData(void);
 
@@ -184,6 +196,7 @@ namespace ursine
             std::vector<SMat4> m_matrixPaletteIT;
 
             Vec2 m_textureUVOffset;
+            Vec2 m_textureUVScalar;
 
             // for multimaps
             int m_meshIndex;
@@ -191,6 +204,8 @@ namespace ursine
             bool m_shadowCaster;
 
             bool m_doesFragment;
+
+            bool m_isVisible;
 
             FragmentData m_fragData;
         };
@@ -361,6 +376,9 @@ namespace ursine
 
             bool GetVelocityOrient(void) const;
             void SetVelocityOrient(bool velocityOrient);
+
+            float GetFadeScalar(void) const;
+            void SetFadeScalar(float scalar);
         private:
             // members
             unsigned m_backIndex;
@@ -375,6 +393,8 @@ namespace ursine
             bool m_useAdditive;
             bool m_worldSpace;
             bool m_velocityOrient;
+
+            float m_fadeScalar;
 
             SMat4 m_transform;
         };

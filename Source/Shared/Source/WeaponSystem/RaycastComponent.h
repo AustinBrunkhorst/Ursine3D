@@ -42,7 +42,8 @@ public:
     float GetRotationModifier(void) const;
     void SetRotationModifier(float range);
 
-    const ursine::ecs::EntityHandle &GetEntityHit(void) const;
+    const ursine::ecs::EntityHandle& GetEntityHit(void) const;
+    void SetEntityHit(ursine::ecs::EntityHandle& entity);
 
     ursine::ecs::Transform *GetCameraTransform(void) const;
 

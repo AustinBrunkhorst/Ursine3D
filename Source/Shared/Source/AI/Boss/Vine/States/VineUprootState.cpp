@@ -27,6 +27,7 @@
 #include <BoxColliderComponent.h>
 #include <GhostComponent.h>
 #include <EntityEvent.h>
+#include <UrsineMath.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -36,6 +37,8 @@ VineUprootState::VineUprootState(void)
     , m_finished( false )
     , m_animating( false )
     , m_delayTimer( 0.0f )
+    , m_goHomeTime( 10.0f )
+    , m_goHomeTimer( 0.0f )
     , m_state( UprootState::Burrowing )
 {
 }
@@ -82,13 +85,17 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             auto targetTrans = ai->GetTarget( )->GetTransform( );
             auto lookAtPosition = targetTrans->GetWorldPosition( );
 
+            // add some randomness to it
+            lookAtPosition.X( ) += math::Rand( -10.0f, 10.0f );
+            lookAtPosition.Z( ) += math::Rand( -10.0f, 10.0f );
+
+            // raycast to find what the Y position should be
+            aiPos.Y( ) = VineStateUtils::FindYPosition( ai, aiPos );
+
             lookAtPosition.Y( ) = aiPos.Y( );
 
             // Turn towards the target
             aiTrans->LookAt( lookAtPosition, ai->GetDigTurnSpeed( ) );
-
-            // raycast to find what the Y position should be
-            aiPos.Y( ) = VineStateUtils::FindYPosition( ai, aiPos );
 
             // Move forward based on the dig speed
             aiTrans->SetWorldPosition( aiPos + aiTrans->GetForward( ) * ai->GetDigSpeed( ) * dt );
@@ -106,9 +113,62 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             {
                 m_state = UprootState::UprootDelay;
                 m_delayTimer = ai->GetUprootDelay( );
+
+                aiTrans->SetWorldPosition( lookAtPosition );
+
+                return;
+            }
+
+            // incrmenet the timer
+            m_goHomeTimer += dt;
+
+            // Tell it to go home if it's taking too long
+            if (m_goHomeTimer >= m_goHomeTime)
+            {
+                m_state = UprootState::GoingHome;
             }
 
             break;
+        }
+        case UprootState::GoingHome:
+        {
+            auto aiTrans = aiOwner->GetTransform( );
+            auto aiPos = aiTrans->GetWorldPosition( );
+            auto dt = Application::Instance->GetDeltaTime( );
+
+            // move towards the target in the x-z plane.
+            auto lookAtPosition = ai->GetHomeLocation( );
+
+            // raycast to find what the Y position should be
+            aiPos.Y( ) = VineStateUtils::FindYPosition( ai, aiPos );
+
+            lookAtPosition.Y( ) = aiPos.Y( );
+
+            // Turn towards the target
+            aiTrans->LookAt( lookAtPosition );
+
+            // Move forward based on the dig speed
+            aiTrans->SetWorldPosition( aiPos + aiTrans->GetForward( ) * ai->GetDigSpeed( ) * dt );
+
+            // Tell the particle emitter to play
+            auto entity = aiOwner->GetChildByName( ai->GetDigParticleEmitterName( ) );
+
+            auto emitters = entity->GetComponentsInChildren<ParticleEmitter>( );
+
+            for (auto &emitter : emitters)
+                emitter->SetEmitting( true );
+
+            // Check to see if we've reached a valid distance
+            if (VineStateUtils::AtHome( ai, 5.0f ))
+            {
+                m_state = UprootState::UprootDelay;
+
+                machine->SetBool( VineAIStateMachine::GoHome, false );
+                machine->SetBool( VineAIStateMachine::IsHome, true );
+                machine->SetBool( VineAIStateMachine::PursueTarget, false );
+
+                aiTrans->SetWorldPosition( ai->GetHomeLocation( ) );
+            }
         }
         case UprootState::UprootDelay:
         {
@@ -194,6 +254,9 @@ void VineUprootState::onAnimationFinished(EVENT_HANDLER(Entity))
                 model->SetActive( false );
 
             m_state = UprootState::Digging;
+
+            m_goHomeTimer = 0.0f;
+
             break;
         }
         case UprootState::Uprooting:

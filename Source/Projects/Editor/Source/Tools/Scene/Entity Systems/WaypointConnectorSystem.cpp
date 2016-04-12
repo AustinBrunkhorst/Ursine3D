@@ -53,6 +53,11 @@ namespace ursine
             //grabExistingConnections();
         }
 
+        void WaypointConnectorSystem::OnSceneReady(Scene *scene)
+        {
+            grabExistingConnections();
+        }
+
         void WaypointConnectorSystem::OnRemove()
         {
             m_world->Listener(this)
@@ -222,11 +227,23 @@ namespace ursine
             {
                 auto wp = waypointEntity->GetComponent<Waypoint>();
 
-                if (!wp->GetConnectedWaypoints().empty())
+                // creating one
+                auto guid = GUIDGenerator( )( );
+
+                // string representation
+                auto guidString = to_string( guid );
+
+                auto fromString = GUIDStringGenerator( )( guidString );
+                
+
+                auto connections = wp->GetConnectedWaypoints();
+
+                for (auto connection : connections)
                 {
                     m_connectedWaypoints.push_back(wp);
                 }
             }
         }
+
     }
 }

@@ -20,31 +20,37 @@ namespace ursine
 {
     namespace graphics
     {
-        Model3DProcessor::Model3DProcessor(bool shadowPass)
-            : m_shadowPass(shadowPass)
+        Model3DProcessor::Model3DProcessor(bool shadowPass, bool notVisiblePass)
+            : m_shadowPass( shadowPass )
+            , m_notVisiblePass( notVisiblePass )
         {
             m_renderableType = RENDERABLE_MODEL3D;
         }
 
         bool Model3DProcessor::cullOperation(_DRAWHND handle, Camera &currentCamera)
         {
-            UAssert(handle.Type_ == m_renderableType || handle.Type_ == RENDERABLE_OVERDRAW, "GfxEntityProcessor attempted to proces invalid type!");
+            UAssert(handle.Type_ == m_renderableType, "GfxEntityProcessor attempted to proces invalid type!");
 
             Model3D &model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
 
             // if inactive
-            if ( !model.GetActive() )
+            if (!model.GetActive( ))
+                return true;
+
+            // check if this is a invisibility pass
+
+            if(model.GetIsVisible( ) == m_notVisiblePass)
                 return true;
 
             // skip non shadow casters, if a shadow pass
-            if( !m_shadowPass )
+            if(m_shadowPass)
             {
                 if(!model.GetShadowCaster( ))
                     return true;
             }
 
             // if culed by camera mask
-            if (currentCamera.CheckMask(model.GetRenderMask()))
+            if (currentCamera.CheckMask( model.GetRenderMask( ) ))
                 return true;
 
             // return false as in DO NOT CULL ME
@@ -82,8 +88,6 @@ namespace ursine
             // set unique ID for this model
             int overdrw = model.GetOverdraw( ) == true ? 1 : 0;
             unsigned type = handle.Type_;
-            if (type == RENDERABLE_OVERDRAW)
-                type = 3;
             type = type & 0x3;
             mdb.id = (handle.Index_) | (type << 12) | (overdrw << 15) | (1 << 11);
 
@@ -117,6 +121,7 @@ namespace ursine
             // map texture offset
             TextureUVOffset offset;
             offset.uv = DirectX::XMFLOAT2(model.GetTextureUVOffset( ).X( ), model.GetTextureUVOffset( ).Y( ));
+            offset.buffer = DirectX::XMFLOAT2(model.GetTextureUVScalar( ).X( ), model.GetTextureUVScalar( ).Y( ));
 
             m_manager->bufferManager->MapBuffer<BUFFER_TEX_OFFSET>(
                 &offset,
@@ -128,6 +133,13 @@ namespace ursine
             // map texture
             m_manager->textureManager->MapTextureByID( handle.Material_ );
             m_manager->textureManager->MapTextureByID( static_cast<unsigned>(model.GetNormalTextureHandle( ) & 0xFFFF), 1 );
+
+            /////////////////////////////////////////////////////////
+            // change overdraw
+            m_defaultState = m_manager->GetDXCore()->GetDepthStencilMgr()->GetCurrentDepthState( );
+
+            if( model.GetOverdraw( ) )
+                m_manager->GetDXCore( )->GetDepthStencilMgr( )->SetDepthState( DEPTH_STATE_PASSDEPTH_NOSTENCIL );
         }
 
         void Model3DProcessor::renderOperation(_DRAWHND handle, Camera &currentCamera)
@@ -144,6 +156,9 @@ namespace ursine
                     handle, 
                     model.GetDebug( ) 
                 );
+
+            // set back to default
+            m_manager->GetDXCore()->GetDepthStencilMgr()->SetDepthState( m_defaultState );
         }
 
         void Model3DProcessor::renderFullModel(_DRAWHND handle, bool renderDebug)
@@ -176,7 +191,7 @@ namespace ursine
             }
 
             // rendering debug lines
-            if(renderDebug && m_shadowPass)
+            if(renderDebug && !m_shadowPass)
             {
                 m_manager->dxCore->SetRasterState( RASTER_STATE_LINE_RENDERING );
 
@@ -240,7 +255,7 @@ namespace ursine
             m_manager->shaderManager->Render( m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex ));
 
             // debug rendering
-            if(renderDebug && m_shadowPass)
+            if(renderDebug && !m_shadowPass)
             {
                 m_manager->dxCore->SetRasterState(RASTER_STATE_LINE_RENDERING);
 

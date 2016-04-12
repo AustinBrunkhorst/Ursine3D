@@ -29,6 +29,8 @@
 #include "BossJumpToHomeLocationState.h"
 #include "BossPhase3VineLoopState.h"
 #include "BossPlayAudioEventState.h"
+#include "BossEmptyState.h"
+#include "BossDeathState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -49,7 +51,7 @@ using namespace resources;
 
 namespace
 {
-    const int kPhaseNumber = 5;
+    static const int kPhaseNumber = 5;
 
     int GetSegmentIndex(LevelSegments segment)
     {
@@ -81,13 +83,17 @@ BossAI::BossAI(void)
     , m_maxPollinateSpreadAngle( 30.0f )
     , m_pollinateLocalForward( 0.0f, 0.0f, 1.0f )
     , m_pollinateProjectileCount( 0 )
-    , m_pollinateGravity( 10.0f )
-    , m_pollinateSpreadDistance( 30.0f )
-    , m_pollinateSpreadTime( 2.0f )
-    , m_pollinateProjectileLifeTime( 15.0f )
     , m_vineCount( 0 ) 
     , m_phase1HealthThreshold( 75.0f )
     , m_phase1DazedResetTimer( 5.0f )
+    , m_phase2HealthThreshold( 50.0f )
+    , m_phase2DazedResetTimer( 5.0f )
+    , m_phase3HealthThreshold( 25.0f )
+    , m_phase3DazedResetTimer( 5.0f )
+    , m_phase3NumSludgeshots( 2 )
+    , m_phase3SludgeshotAnimScalar( 1.0f )
+    , m_phase4NumSludgeshots( 2 )
+    , m_phase4SeedshotDuration( 15.0f )
     , m_segment( LevelSegments::Empty )
     , m_underground( false ) { }
 
@@ -225,54 +231,6 @@ void BossAI::SetPollinateprojectileCount(int count)
     NOTIFY_COMPONENT_CHANGED( "pollinateProjectileCount", m_pollinateProjectileCount );
 }
 
-float BossAI::GetPollinateGravity(void) const
-{
-    return m_pollinateGravity;
-}
-
-void BossAI::SetPollinateGravity(float gravity)
-{
-    m_pollinateGravity = gravity;
-
-    NOTIFY_COMPONENT_CHANGED( "pollinateGravity", m_pollinateGravity );
-}
-
-float BossAI::GetPollinateSpreadDistance(void) const
-{
-    return m_pollinateSpreadDistance;
-}
-
-void BossAI::SetPollinateSpreadDistance(float distance)
-{
-    m_pollinateSpreadDistance = distance;
-
-    NOTIFY_COMPONENT_CHANGED( "pollinateSpreadDistance", m_pollinateSpreadDistance );
-}
-
-float BossAI::GetPollinateSpreadTime(void) const
-{
-    return m_pollinateSpreadTime;
-}
-
-void BossAI::SetPollinateSpreadTime(float time)
-{
-    m_pollinateSpreadTime = time;
-
-    NOTIFY_COMPONENT_CHANGED( "pollinateSpreadTime", m_pollinateSpreadTime );
-}
-
-float BossAI::GetPollinateProjectileLifeTime(void) const
-{
-    return m_pollinateProjectileLifeTime;
-}
-
-void BossAI::SetPollinateProjectileLifeTime(float lifeTime)
-{
-    m_pollinateProjectileLifeTime = lifeTime;
-
-    NOTIFY_COMPONENT_CHANGED( "pollinateProjectileLifeTime", m_pollinateProjectileLifeTime );
-}
-
 const ResourceReference &BossAI::GetPollinateArchetype(void) const
 {
     return m_pollinateArchetype;
@@ -283,18 +241,6 @@ void BossAI::SetPollinateArchetype(const ResourceReference &pollinateArchetype)
     m_pollinateArchetype = pollinateArchetype;
 
     NOTIFY_COMPONENT_CHANGED( "pollinateArchetype", m_pollinateArchetype );
-}
-
-const std::string &BossAI::GetInvulnerableEmitterEntityName(void) const
-{
-    return m_invulnerableEmitterEntity;
-}
-
-void BossAI::SetInvulnerableEmitterEntityName(const std::string &entityName)
-{
-    m_invulnerableEmitterEntity = entityName;
-
-    NOTIFY_COMPONENT_CHANGED( "invulnerableEmitterEntity", m_invulnerableEmitterEntity );
 }
 
 const ResourceReference &BossAI::GetVineArchetype(void) const
@@ -357,6 +303,78 @@ void BossAI::SetPhase2DazedResetTimer(float timer)
     NOTIFY_COMPONENT_CHANGED( "phase2DazedResetTimer", m_phase2DazedResetTimer );
 }
 
+float BossAI::GetPhase3DazedResetTimer(void) const
+{
+    return m_phase3DazedResetTimer;
+}
+
+float BossAI::GetPhase3HealthTransitionThreshold(void) const
+{
+    return m_phase3HealthThreshold;
+}
+
+void BossAI::SetPhase3HealthTransitionThreshold(float threshold)
+{
+    m_phase3HealthThreshold = threshold;
+
+    NOTIFY_COMPONENT_CHANGED( "phase3HealthTransitionThreshold", m_phase3HealthThreshold );
+}
+
+void BossAI::SetPhase3DazedResetTimer(float timer)
+{
+    m_phase3DazedResetTimer = timer;
+
+    NOTIFY_COMPONENT_CHANGED("phase3DazedResetTimer", m_phase3DazedResetTimer);
+}
+
+int BossAI::GetPhase3NumSludgeshots(void) const
+{
+    return m_phase3NumSludgeshots;
+}
+
+void BossAI::SetPhase3NumSludgeshots(int num)
+{
+    m_phase3NumSludgeshots = num;
+
+    NOTIFY_COMPONENT_CHANGED( "phase3NumSludgeshots", m_phase3NumSludgeshots );
+}
+
+float BossAI::GetPhase3SludgeshotAnimScalar(void) const
+{
+    return m_phase3SludgeshotAnimScalar;
+}
+
+void BossAI::SetPhase3SludgeshotAnimScalar(float scalar)
+{
+    m_phase3SludgeshotAnimScalar = scalar;
+
+    NOTIFY_COMPONENT_CHANGED( "phase3SludgeshotAnimScalar", m_phase3SludgeshotAnimScalar);
+}
+
+int BossAI::GetPhase4NumSludgeshots(void) const
+{
+    return m_phase4NumSludgeshots;
+}
+
+void BossAI::SetPhase4NumSludgeshots(int num)
+{
+    m_phase4NumSludgeshots = num;
+
+    NOTIFY_COMPONENT_CHANGED( "phase4NumSludgeshots", m_phase4NumSludgeshots );
+}
+
+float BossAI::GetPhase4SeedshotDuration(void) const
+{
+    return m_phase4SeedshotDuration;
+}
+
+void BossAI::SetPhase4SeedshotDuration(float duration)
+{
+    m_phase4SeedshotDuration = duration;
+
+    NOTIFY_COMPONENT_CHANGED( "phase4SeedshotDuration", m_phase4SeedshotDuration );
+}
+
 const ResourceReference &BossAI::GetIntroScream(void) const
 {
     return m_introScream;
@@ -394,11 +412,6 @@ EntityHandle BossAI::GetSludgeshotEntity(void)
 EntityHandle BossAI::GetPollinateEntity(void)
 {
     return GetOwner( )->GetChildByName( m_pollinateEntity );
-}
-
-EntityHandle BossAI::GetInvulnerableEmitterEntity(void)
-{
-    return GetOwner( )->GetChildByName( m_invulnerableEmitterEntity );
 }
 
 void BossAI::AddSpawnedVine(EntityHandle vine)
@@ -502,7 +515,7 @@ void BossAI::OnInitialize(void)
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
         auto playScream = sm->AddState<BossPlayAudioEventState>( m_introScream );
-        auto spawnBoss = sm->AddState<BossSpawnState>( );
+        auto spawnBoss = sm->AddState<BossSpawnState>( 1.0f, true );
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
         auto spawnVines2 = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 0.5f );
         auto seedshot = sm->AddState<BossSeedshotState>( );
@@ -630,17 +643,20 @@ void BossAI::OnInitialize(void)
         auto spawn2 = sm->AddState<BossSpawnState>( 0.5f );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
         auto enraged = sm->AddState<BossEnrageState>( );
-        auto sludgeshot = sm->AddState<BossSludgeshotState>( 0.5f );
+        auto sludgeshot = sm->AddState<BossSludgeshotState>( m_phase3NumSludgeshots, m_phase3SludgeshotAnimScalar );
         auto goUnderground4 = sm->AddState<BossUndergroundState>( );
         auto reposition3 = sm->AddState<BossPhase3RepositionBoss>( false );
         auto spawn3 = sm->AddState<BossSpawnState>( 1.0f, false );
+        auto repositionCenter = sm->AddState<BossPhase3RepositionBoss>( false, true );
+        auto spawnCenter = sm->AddState<BossSpawnState>( );
+        auto changePhaseState = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase4 );
 
         goUnderground->AddTransition( waitTillTrigger, "To Waiting For Trigger" );
         waitTillTrigger->AddTransition( repositionBoss, "To Reposition Boss" );
         repositionBoss->AddTransition( spawnVines, "Spawn Vines" )
                       ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
         spawnVines->AddTransition( blankState, "Pause" )
-                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 13.0f ) );
+                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 11.0f ) );
         blankState->AddTransition( spawnBoss, "Spawn Boss" );
         spawnBoss->AddTransition( invulnerable, "Invulneralbe" )
                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 2.0f ) );
@@ -662,6 +678,21 @@ void BossAI::OnInitialize(void)
         goUnderground4->AddTransition( reposition3, "Reposition" );
         reposition3->AddTransition( spawn3, "Spawn again" );
         spawn3->AddTransition( sludgeshot, "Sludgeshot" );
+        
+
+        // Go to the center position and become dazed once the bosses health has droped below the threshold
+        auto health = GetOwner( )->GetComponent<Health>( );
+        auto max = health->GetMaxHealth( );
+        auto fraction = m_phase3HealthThreshold * 0.01f;
+        auto threshold = max * fraction;
+
+        goUnderground4->AddTransition( repositionCenter, "Back To Center" )
+                      ->AddCondition<sm::FloatCondition>(
+                            BossAIStateMachine::Health, sm::Comparison::LessThan, threshold 
+                        );
+
+        repositionCenter->AddTransition( spawnCenter, "SpawnCenter" );
+        spawnCenter->AddTransition( changePhaseState, "Dazed Phase 3" );
 
         sm->SetInitialState( goUnderground );
 
@@ -676,26 +707,74 @@ void BossAI::OnInitialize(void)
         m_bossLogic[ 2 ].push_back( loop );
     }
 
-    // TESTING: Pollinate
-    /*{
-        auto sm = std::make_shared<BossAIStateMachine>( this );
-
-        auto pollinate = sm->AddState<BossPollinateState>( );
-
-        sm->SetInitialState( pollinate );
-
-        m_bossLogic[ 2 ].push_back( sm );
-    }*/
-
-    // TESTING: Sludgeshot
+    // Phase 4
+    // - Spawn all vines after dazed
+    // - Have the boss start sludgeshotting
+    // - Then he'll go to seedshot then back again
+    // - This continues until all vines are down
+    // - Then his shield breaks, and he goes into pollinate
+    // - The players must go to the safe zone and burn down the boss
+    // - Then once the bosses health is below zero, he goes to phase 5 which is the death state
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
-        auto sludgeshot = sm->AddState<BossSludgeshotState>( );
+        auto dazed = sm->AddState<BossDazedState>( );
+        auto enrage = sm->AddState<BossEnrageState>( );
+        auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
+        auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
+        auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase4, 1.0f );
+        auto sludgeshot = sm->AddState<BossSludgeshotState>( m_phase4NumSludgeshots, 1.0f, false );
+        auto seedshot = sm->AddState<BossSeedshotState>( );
+        auto pollinate = sm->AddState<BossPollinateState>( );
+        auto changeTo5 = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase5 );
 
-        sm->SetInitialState( sludgeshot );
+        dazed->AddTransition( enrage, "To Sludgeshot" )
+             ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( m_phase3DazedResetTimer ) );
+
+        enrage->AddTransition( invulnerable, "To Invulneralbe" );
+        invulnerable->AddTransition( spawnVines, "To Spawn Vines" );
+        spawnVines->AddTransition( sludgeshot, "To Seedshot" );
+        sludgeshot->AddTransition( seedshot, "To Seedshot" );
+        seedshot->AddTransition( sludgeshot, "To Sludgeshot" )
+                ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( m_phase4SeedshotDuration ) );
+
+        // When all our vines are down, break our shield and start to pollinate
+        seedshot->AddTransition( vulnerable, "Vulnerable" )
+                ->AddCondition<sm::IntCondition>( BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 );
+        sludgeshot->AddTransition( vulnerable, "Vulnerable" )
+                  ->AddCondition<sm::IntCondition>( BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 );
+
+        vulnerable->AddTransition( pollinate, "To Pollinate" );
+
+        pollinate->AddTransition( changeTo5, "Change to 5" )
+                 ->AddCondition<sm::FloatCondition>( 
+                        BossAIStateMachine::Health, sm::Comparison::Equal, 0.0f
+                    );
+
+        sm->SetInitialState( dazed );
 
         m_bossLogic[ 3 ].push_back( sm );
+
+        // Add the vine handler (the one from phase 2)
+        auto vineHandler = std::make_shared<BossAIStateMachine>( this );
+
+        auto loop = vineHandler->AddState<BossPhase2VineHandlerState>( );
+
+        vineHandler->SetInitialState( loop );
+
+        m_bossLogic[ 3 ].push_back( vineHandler );
+    }
+
+    // Phase 5
+    // - Death state
+    {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        auto death = sm->AddState<BossDeathState>( );
+
+        sm->SetInitialState( death );
+
+        m_bossLogic[ 4 ].push_back( sm );
     }
 }
 

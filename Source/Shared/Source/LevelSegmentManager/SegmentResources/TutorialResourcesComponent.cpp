@@ -18,9 +18,7 @@
 NATIVE_COMPONENT_DEFINITION( TutorialResources );
 
 TutorialResources::TutorialResources(void)
-    : BaseComponent( )
-{
-}
+    : BaseComponent( ) { }
 
 const ursine::resources::ResourceReference &TutorialResources::GetWorldData(void) const
 {
@@ -35,4 +33,19 @@ void TutorialResources::SetWorldData(const ursine::resources::ResourceReference 
         return;
 
     NOTIFY_COMPONENT_CHANGED( "world", m_worldToMerge );
+}
+
+const ursine::resources::ResourceReference &TutorialResources::GetVineArchetype(void) const
+{
+    return m_vine;
+}
+
+void TutorialResources::SetVineArchetype(const ursine::resources::ResourceReference &vine)
+{
+    m_vine = vine;
+
+    if (!resourcesAreAvailable( ))
+        return;
+
+    NOTIFY_COMPONENT_CHANGED( "vineArchetype", m_vine );
 }

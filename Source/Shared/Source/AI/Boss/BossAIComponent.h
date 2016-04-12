@@ -111,41 +111,11 @@ public:
         SetPollinateprojectileCount
     );
 
-    EditorField(
-        float pollinateGravity,
-        GetPollinateGravity,
-        SetPollinateGravity
-    );
-
-    EditorField(
-        float pollinateSpreadDistance,
-        GetPollinateSpreadDistance,
-        SetPollinateSpreadDistance
-    );
-
-    EditorField(
-        float pollinateSpreadTime,
-        GetPollinateSpreadTime,
-        SetPollinateSpreadTime
-    );
-
-    EditorField(
-        float pollinateProjectileLifeTime,
-        GetPollinateProjectileLifeTime,
-        SetPollinateProjectileLifeTime
-    );
-
     EditorResourceField(
         ursine::resources::ArchetypeData,
         pollinateArchetype,
         GetPollinateArchetype,
         SetPollinateArchetype
-    );
-
-    EditorField(
-        std::string invulnerableEmitterEntity,
-        GetInvulnerableEmitterEntityName,
-        SetInvulnerableEmitterEntityName
     );
 
     EditorResourceField(
@@ -179,6 +149,43 @@ public:
         float phase2DazedResetTimer,
         GetPhase2DazedResetTimer,
         SetPhase2DazedResetTimer
+    );
+
+    EditorMeta(InputRange(0.0f, 100.0f, 0.1f, "{{value.toFixed( 2 )}} %"))
+    EditorField(
+        float phase3HealthTransitionThreshold,
+        GetPhase3HealthTransitionThreshold,
+        SetPhase3HealthTransitionThreshold
+    );
+
+    EditorField(
+        float phase3DazedResetTimer,
+        GetPhase3DazedResetTimer,
+        SetPhase3DazedResetTimer
+    );
+
+    EditorField(
+        int phase3NumSludgeshots,
+        GetPhase3NumSludgeshots,
+        SetPhase3NumSludgeshots
+    );
+
+    EditorField(
+        float phase3SludgeshotAnimScalar,
+        GetPhase3SludgeshotAnimScalar,
+        SetPhase3SludgeshotAnimScalar
+    );
+
+    EditorField(
+        int phase4NumSludgeshots,
+        GetPhase4NumSludgeshots,
+        SetPhase4NumSludgeshots
+    );
+
+    EditorField(
+        float phase4SeedshotDuration,
+        GetPhase4SeedshotDuration,
+        SetPhase4SeedshotDuration
     );
 
     EditorResourceField(
@@ -231,23 +238,8 @@ public:
     int GetPollinateProjectileCount(void) const;
     void SetPollinateprojectileCount(int count);
 
-    float GetPollinateGravity(void) const;
-    void SetPollinateGravity(float gravity);
-
-    float GetPollinateSpreadDistance(void) const;
-    void SetPollinateSpreadDistance(float distance);
-
-    float GetPollinateSpreadTime(void) const;
-    void SetPollinateSpreadTime(float time);
-
-    float GetPollinateProjectileLifeTime(void) const;
-    void SetPollinateProjectileLifeTime(float lifetime);
-
     const ursine::resources::ResourceReference &GetPollinateArchetype(void) const;
     void SetPollinateArchetype(const ursine::resources::ResourceReference &pollinateArchetype);
-
-    const std::string &GetInvulnerableEmitterEntityName(void) const;
-    void SetInvulnerableEmitterEntityName(const std::string &entityName);
 
     const ursine::resources::ResourceReference &GetVineArchetype(void) const;
     void SetVineArchetype(const ursine::resources::ResourceReference &vineArchetype);
@@ -264,6 +256,24 @@ public:
     float GetPhase2DazedResetTimer(void) const;
     void SetPhase2DazedResetTimer(float timer);
 
+    float GetPhase3HealthTransitionThreshold(void) const;
+    void SetPhase3HealthTransitionThreshold(float threshold);
+
+    float GetPhase3DazedResetTimer(void) const;
+    void SetPhase3DazedResetTimer(float timer);
+
+    int GetPhase3NumSludgeshots(void) const;
+    void SetPhase3NumSludgeshots(int num);
+
+    float GetPhase3SludgeshotAnimScalar(void) const;
+    void SetPhase3SludgeshotAnimScalar(float scalar);
+
+    int GetPhase4NumSludgeshots(void) const;
+    void SetPhase4NumSludgeshots(int num);
+
+    float GetPhase4SeedshotDuration(void) const;
+    void SetPhase4SeedshotDuration(float duration);
+
     const ursine::resources::ResourceReference &GetIntroScream(void) const;
     void SetIntroScream(const ursine::resources::ResourceReference &audioEvent);
 
@@ -275,8 +285,6 @@ public:
     ursine::ecs::EntityHandle GetSludgeshotEntity(void);
 
     ursine::ecs::EntityHandle GetPollinateEntity(void);
-
-    ursine::ecs::EntityHandle GetInvulnerableEmitterEntity(void);
 
     void AddSpawnedVine(ursine::ecs::EntityHandle vine);
     const std::vector<ursine::ecs::EntityHandle> &GetVines(void) const;
@@ -340,14 +348,6 @@ private:
 
     int m_pollinateProjectileCount;
 
-    float m_pollinateGravity;
-
-    float m_pollinateSpreadDistance;
-
-    float m_pollinateSpreadTime;
-
-    float m_pollinateProjectileLifeTime;
-
     ursine::resources::ResourceReference m_pollinateArchetype;
 
     // Invulnerable emitter
@@ -376,6 +376,20 @@ private:
 
     // The timer we use for resetting the boss for phase 2
     float m_phase2DazedResetTimer;
+
+    // The threshold we're using for the phase 3 transition (1-100%)
+    float m_phase3HealthThreshold;
+
+    // The timer we use for resetting the boss for phase 3
+    float m_phase3DazedResetTimer;
+
+    int m_phase3NumSludgeshots;
+
+    float m_phase3SludgeshotAnimScalar;
+
+    int m_phase4NumSludgeshots;
+
+    float m_phase4SeedshotDuration;
 
     // Logic variables
     LevelSegments m_segment;

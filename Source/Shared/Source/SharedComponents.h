@@ -28,6 +28,9 @@
 #include "Misc/ForceComponent.h"
 #include "Misc/TimeDeathComponent.h"
 #include "Misc/BuffComponent.h"
+#include "Misc/SlimePitComponent.h"
+#include "Misc/SlimePitDeathSpawnComponent.h"
+#include "Misc/TeleportPlayerToSpawnOnHitComponent.h"
 
 /////////////////////////////////
 //        Player Logic         //
@@ -41,6 +44,8 @@
 #include "PlayerLogic/AnimationControllers/PlayerGunAnimationControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/PlayerAnimationControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/FacePlayerBoneTowardsMeComponent.h"
+
+#include "PlayerLogic/LookAtSystem/PlayerLookAtComponent.h"
 
 /////////////////////////////////
 //        Damage System        //
@@ -94,13 +99,13 @@
 
 #include "AI/WaypointComponent.h"
 #include "AI/WaypointAgentComponent.h"
+#include "AI/WaypointManagerComponent.h"
 #include "AI/AIMovementControllerComponent.h"
 #include "AI/AIHordeReasoner.h"
 
 #include "EnemyDeathComponent.h"
 
 #include "BossAIComponent.h"
-#include "Boss/Components/PollinateProjectileComponent.h"
 #include "Boss/Components/SludgeshotProjectileComponent.h"
 #include "Boss/Components/SeedshotProjectileComponent.h"
 #include "VineAIComponent.h"
@@ -153,6 +158,9 @@
 #include "FX/PlayClipOnAnimationFinishComponent.h"
 #include "FX/FaceBoneTowardsTargetComponent.h"
 #include "FX/LightingGroupComponent.h"
+#include "FX/ShieldFXComponent.h"
+#include "FX/PlayerShieldFXComponent.h"
+#include "FX/TextureAnimatorComponent.h"
 
 /////////////////////////////////
 //             Misc            //

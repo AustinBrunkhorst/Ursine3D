@@ -52,8 +52,9 @@ struct VertexInputType
 struct PixelInputType
 {
     float4 position : SV_POSITION;
-    float4 color : COLOR;
-    float2 uv : UV;
+    float4 color    : COLOR;
+    float2 uv       : UV;
+    float zDepth : DEPTH;
 };
 
 float2x2 GenerateRotation(float radianAngle)
@@ -71,8 +72,11 @@ PixelInputType main(uint id : SV_VERTEXID)
     float3 position;
 
     // scale
-    float3 rightVec = mul(g_bufPosColor[ particleIndex ].rotation, (float3x3)view);
+    float3 rightVec = mul(mul(normalize(g_bufPosColor[ particleIndex ].rotation.xyz), (float3x3)World).xyz, (float3x3)view).xyz;
     float3 upVec = cross(rightVec, float3(0, 0, -1));
+
+    if(abs(dot(rightVec, float3(0, 0, -1)) > 0.99))
+        upVec = float3(0, 1, 0);
 
     upVec.z = 0;
     rightVec.z = 0;
@@ -127,5 +131,7 @@ PixelInputType main(uint id : SV_VERTEXID)
     output.position = mul(output.position, projection);
     output.color = (g_bufPosColor[ particleIndex ].color * g_bufPosColor[ particleIndex ].color.w) * color;
      
+    output.zDepth = output.position.z;
+
     return output;
 }

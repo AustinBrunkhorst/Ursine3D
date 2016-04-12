@@ -75,7 +75,7 @@ void BossSpawnState::onAnimationFinished(EVENT_HANDLER(Entity))
         animator->SetTimeScalar( 1.0f );
     }
 
-    sender->GetComponentInParent<BossAI>( )->SetUnderground( false );
+    sender->GetComponentInParents<BossAI>( )->SetUnderground( false );
 
     m_finished = true;
 }

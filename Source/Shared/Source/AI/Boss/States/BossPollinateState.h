@@ -22,20 +22,15 @@ class BossPollinateState : public BossAIState
 public:
     BossPollinateState(void);
 
-    bool CanExit(void) override { return m_finished; }
-
     void Enter(BossAIStateMachine *machine) override;
     void Exit(BossAIStateMachine *machine) override;
 
 private:
 
     void onAnimationEvent(EVENT_HANDLER(ursine::ecs::Entity));
-    void onAnimationFinish(EVENT_HANDLER(ursine::ecs::Entity));
 
     void spewPollin(void);
 
     BossAI *m_boss;
-
-    bool m_finished;
 
 };

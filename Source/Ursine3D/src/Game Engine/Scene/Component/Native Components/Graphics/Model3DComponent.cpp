@@ -270,6 +270,36 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED("textureOffset", m_model->GetTextureUVOffset());
         }
 
+        const Vec2 & Model3D::GetTextureUVScalar(void) const
+        {
+            return m_model->GetTextureUVScalar( );
+        }
+
+        void Model3D::SetTextureUVScalar(const Vec2 &scalar)
+        {
+            m_model->SetTextureUVScalar( scalar );
+        }
+
+        bool Model3D::GetIsVisible(void) const
+        {
+            return m_model->GetIsVisible( );
+        }
+
+        void Model3D::SetIsVisible(bool isVisible)
+        {
+            m_model->SetIsVisible( isVisible );
+        }
+
+        bool Model3D::GetDoesOverdraw(void)
+        {
+            return m_model->GetOverdraw( );
+        }
+
+        void Model3D::SetDoesOverdraw(bool doesOverdraw)
+        {
+            m_model->SetOverdraw( doesOverdraw );
+        }
+
         void Model3D::updateRenderer(void)
         {
             auto trans = GetOwner( )->GetTransform( );

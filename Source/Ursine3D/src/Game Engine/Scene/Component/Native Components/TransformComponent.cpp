@@ -544,9 +544,9 @@ namespace ursine
             return GetOwner( )->GetComponentInChildren( id );
         }
 
-        Component *Transform::GetComponentInParent(ComponentTypeID id) const
+        Component *Transform::GetComponentInParents(ComponentTypeID id) const
         {
-            return GetOwner( )->GetComponentInParent( id );
+            return GetOwner( )->GetComponentInParents( id );
         }
 
         ComponentVector Transform::GetComponentsInChildren(ComponentTypeID id) const

@@ -233,6 +233,7 @@ namespace ursine
                 // Check the frame to approve start blending
                 if (!m_blending)
                 {
+                    // get current animation's frame index
                     for (unsigned x = 0; x < keyframeCount1 - 1; ++x)
                     {
                         // get the two current keyframes
@@ -246,7 +247,11 @@ namespace ursine
                         ++index1;
                     }
                 
+                    // get state blender's current trans frame index;
                     index2 = stateBlender->GetcurrTransFrm( );
+
+                    // if current animation's frame index is after han state blender's current trans frame index,
+                    // then start blending.
                     if (index1 >= index2)
                     {
                         // Set Trans Frame by Transition Position - fut
@@ -295,18 +300,12 @@ namespace ursine
                         transFactor = 1.0f;
                     }
 
+                    // if the time position reached at the future animation's last frame,
+                    // change the whole state and reset the transFactor as 0.0f
                     if ((*futSt)->GetTimePosition( ) > fut_lastFrame.length)
                     {
                         if (bTransEnd)
-                        {
-                            changeState(currSt, futSt,
-                                curr_firstFrame.length,
-                                (*futAni)->GetKeyframe(stateBlender->GetfutTransFrm(), 0).length,
-                                curr_lastFrame.length,
-                                fut_lastFrame.length,
-                                transFactor
-                                );
-                        }
+                            changeState(currSt, futSt, transFactor);
                         else
                             (*futSt)->SetTimePosition(fut_firstFrame.length);
                     }
@@ -318,24 +317,15 @@ namespace ursine
                     if (transFactor > 1.0f)
                         transFactor = 1.0f;
 
+                    // if the time position reached at the future animation's last frame,
+                    // change the whole state and reset the transFactor as 0.0f
                     if ((*futSt)->GetTimePosition() > fut_lastFrame.length)
-                    {
-                        changeState(currSt, futSt,
-                            curr_firstFrame.length, 
-                            fut_firstFrame.length,
-                            curr_lastFrame.length, 
-                            fut_lastFrame.length,
-                            transFactor
-                            );
-                    }
+                        changeState(currSt, futSt, transFactor);
                 }
             }
         }
 
-        void Animator::changeState(AnimationState **currSt, AnimationState **futSt,
-                                   float currloopTimePos, float futloopTimePos,
-                                   float currNoloopTimePos, float futNoloopTimePos,
-                                   float &transFactor)
+        void Animator::changeState(AnimationState **currSt, AnimationState **futSt, float &transFactor)
         {
             if (!currSt || !(*(currSt)) || !futSt || !(*(futSt)))
                 return;
@@ -344,10 +334,8 @@ namespace ursine
             m_futStName = "";
 
             // change current state as future state
-            // reset current state's time position as the last frame of future state to prevent repeating twice
             // then change future state as null
             (*currSt) = (*futSt);
-            (*currSt)->SetTimePosition(futNoloopTimePos);
             (*futSt) = nullptr;
 
             transFactor = 0.0f;

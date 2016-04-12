@@ -16,10 +16,11 @@
 class BossPhase3RepositionBoss : public BossAIState
 {
 public:
-    BossPhase3RepositionBoss(bool onlyBossSpawn = true);
+    BossPhase3RepositionBoss(bool onlyBossSpawn = true, bool goToCenterPlanter = false);
 
     void Enter(BossAIStateMachine *machine) override;
 
 private:
     bool m_onlyBossSpawn;
+    bool m_goToCenterPlanter;
 };

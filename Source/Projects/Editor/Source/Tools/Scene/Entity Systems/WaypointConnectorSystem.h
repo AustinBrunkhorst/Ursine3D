@@ -30,6 +30,8 @@ namespace ursine
 
             void SetShowLines(bool draw);
 
+            void OnSceneReady(Scene *scene) override;
+
         private:
 
             void OnInitialize(void) override;

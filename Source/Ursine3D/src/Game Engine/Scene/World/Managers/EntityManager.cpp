@@ -354,7 +354,7 @@ namespace ursine
             return nullptr;
         }
 
-        Component *EntityManager::GetComponentInParent(const Entity *entity, ComponentTypeID id) const
+        Component *EntityManager::GetComponentInParents(const Entity *entity, ComponentTypeID id) const
         {
             const auto *parent = entity;
             Component *component = nullptr;
@@ -480,7 +480,7 @@ namespace ursine
             );
 
             // we're removing man
-            entity->Dispatch( ENTITY_REMOVED, EventArgs::Empty );
+            entity->Dispatch( ENTITY_REMOVED, &e );
             m_world->Dispatch( WORLD_ENTITY_REMOVED, &e );
         }
 

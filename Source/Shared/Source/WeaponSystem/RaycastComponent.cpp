@@ -59,6 +59,11 @@ const ursine::ecs::EntityHandle& RaycastComponent::GetEntityHit(void) const
     return m_entityHit;
 }
 
+void RaycastComponent::SetEntityHit(ursine::ecs::EntityHandle& entity)
+{
+    m_entityHit = entity;
+}
+
 ursine::ecs::Transform* RaycastComponent::GetCameraTransform(void) const
 {
     return m_camTransform;

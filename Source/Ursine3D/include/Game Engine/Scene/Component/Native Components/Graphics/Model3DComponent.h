@@ -61,6 +61,18 @@ namespace ursine
             );
 
             EditorField(
+                bool overdraw,
+                GetDoesOverdraw,
+                SetDoesOverdraw
+            );
+
+            EditorField(
+                bool visible,
+                GetIsVisible,
+                SetIsVisible
+            );
+
+            EditorField(
                 Color color,
                 GetColor,
                 SetColor
@@ -94,6 +106,7 @@ namespace ursine
                 SetRenderMask
             );
 
+            EditorMeta(InputRange(0.0f, 2.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
             EditorField(
                 float emissive,
                 GetEmissive,
@@ -183,6 +196,15 @@ namespace ursine
 
             const Vec2 &GetTextureUVOffset(void) const;
             void SetTextureUVOffset(const Vec2 &offset);
+
+            const Vec2 &GetTextureUVScalar(void) const;
+            void SetTextureUVScalar(const Vec2 &scalar);
+
+            bool GetIsVisible(void) const;
+            void SetIsVisible(bool isVisible);
+
+            bool GetDoesOverdraw(void);
+            void SetDoesOverdraw(bool doesOverdraw);
 
             void OnSerialize(Json::object &output) const override;
             void OnDeserialize(const Json &input) override;

@@ -28,6 +28,8 @@
 #include "Phase3WaitForTriggerState.h"
 #include "ToggleCameraActiveState.h"
 #include "PlayEntityAnimatorState.h"
+#include "TutorialWaitForPlayerReviveState.h"
+#include "TutorialVineHandlerState.h"
 
 #include "CurrentSegmentCondition.h"
 
@@ -199,14 +201,16 @@ void LevelSegmentManager::initTutorialLogic(void)
     // Initial state for spawning the level
     auto initState = stateM->AddState<InitializeSegmentState>(
         resources->GetWorldData( ),
-        LevelSegments::CB1_SimulationStartCinematic
+        LevelSegments::BossRoom_Platforming
     );
 
     auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
     auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
     auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
     auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
-    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpens );
+    auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpensTutorial );
+    auto waitForRevive = stateM->AddState<TutorialWaitForPlayerReviveState>( );
+    auto vineHandler = stateM->AddState<TutorialVineHandlerState>( resources->GetVineArchetype( ) );
 
     // Next state for spawning the players
     initState->AddTransition( playerCreateState, "Go To Init Players" );
@@ -228,38 +232,28 @@ void LevelSegmentManager::initTutorialLogic(void)
 
     // After the viewports tween out change the level segment
     unlockCCState->AddTransition( changeSegState, "To Gate Opens" );
+
+    changeSegState->AddTransition( waitForRevive, "Revive Dat Ass" );
+
+    waitForRevive->AddTransition( vineHandler, "To Vine Handler" )
+                 ->AddCondition<sm::CurrentSegmentCondition>( this, LevelSegments::Tut_SpawnVinesTutorial );
     
     stateM->SetInitialState( initState );
 
     addSegmentLogic( stateM, {
-        LevelSegments::Tut_OpeningCinematic,
-        LevelSegments::Tut_GateOpens,
-        LevelSegments::Tut_MovementTutorial,
-        LevelSegments::Tut_JumpTutorial,
-        LevelSegments::Tut_WeaponPickupTutorial,
-        LevelSegments::Tut_HipFireTutorial,
-        LevelSegments::Tut_AimFireTutorial,
-        LevelSegments::Tut_AmmoPickupTutorial,
-        LevelSegments::Tut_ShootMovingTargetsTutorial,
-        LevelSegments::Tut_SoloTriggerTutorial,
-        LevelSegments::Tut_ReviveTutorial,
-    } );
-
-    auto endingState = std::make_shared<SegmentLogicStateMachine>( "To Combat Bowl", this );
-
-    auto lock = endingState->AddState<LockPlayerCharacterControllerState>( true, false, true, false );
-    auto changeSeg = endingState->AddState<ChangeSegmentState>( LevelSegments::CB1_SimulationStartCinematic );
-    
-    auto trans = lock->AddTransition(
-        changeSeg, "Change To Change"
-    );
-
-    trans->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 6.0f ) );
-
-    endingState->SetInitialState( lock );
-
-    addSegmentLogic( endingState, {
-        LevelSegments::Tut_SimultaneousTriggerTutorial
+        LevelSegments::Tut_OpeningCinematic, // Introduce players?  What about dome
+        LevelSegments::Tut_GateOpensTutorial,
+        LevelSegments::Tut_MovementTutorial, // Tell the player to move to a position
+        LevelSegments::Tut_JumpTutorial, // Tell the player to jump
+        LevelSegments::Tut_HipFireTutorial, // Shooting targets
+        LevelSegments::Tut_AimFireTutorial, // Shooting targets
+        LevelSegments::Tut_ShootMovingTargetsTutorial, // Shooting moving targets
+        LevelSegments::Tut_HallwayInterumTutorial, // The player walks to the last zone
+        LevelSegments::Tut_KillPlayerTutorial, // Kill one player
+        LevelSegments::Tut_ReviveTutorial, // Revive mechanic (kill one player, have other revive the other)
+        LevelSegments::Tut_SpawnVinesTutorial, // Must Defeat Vines to exit
+        LevelSegments::Tut_DoorOpenTutorial, // Vines defeated
+        LevelSegments::Tut_SimulationCreationCinematic, // Cinematic for simulation begin
     } );
 }
 

@@ -85,6 +85,16 @@ namespace ursine
                 SHADERTYPE_VERTEX
             );
 
+            // FADE SCALAR //////////////////////////////////////////
+            FragmentationVSBuffer fvb;
+            fvb.normalOffset = particleSystem.GetFadeScalar( );
+
+            m_manager->bufferManager->MapBuffer<BUFFER_FRAG_VS>(
+                &fvb,
+                SHADERTYPE_PIXEL,
+                9
+            );
+
             // SET TEXTURE //////////////////////////////////////////
             m_manager->textureManager->MapTextureByID( handle.Material_, 1 );
         }
