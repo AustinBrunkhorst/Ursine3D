@@ -16,8 +16,10 @@ cbuffer MatrixStack : register(b12)
 
 cbuffer TextureOffset : register(b13)
 {
-    float2 textureOffset;
-    float2 textureScalar;
+    float2 diffuseTextureOffset;
+    float2 diffuseTextureScalar;
+    float2 emissiveTextureOffset;
+    float2 emissiveTextureScalar;
 }
 
 struct VS_INPUT
@@ -67,8 +69,8 @@ VS_OUTPUT main(VS_INPUT input)
     output.Pos = mul(float4(pos.xyz, 1.f), World);
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
-    output.Tex = (input.Tex);
-    output.emisiveTex = (input.Tex + textureOffset) * textureScalar;
+    output.Tex = (input.Tex + diffuseTextureOffset) * diffuseTextureScalar;
+    output.emisiveTex = (input.Tex + emissiveTextureOffset) * emissiveTextureScalar;
 
     // move all vectors into world
     output.normal       = mul(float4(input.Nor.xyz, 0), World);

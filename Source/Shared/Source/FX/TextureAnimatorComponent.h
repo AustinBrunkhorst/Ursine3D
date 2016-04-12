@@ -24,41 +24,74 @@ class TextureAnimator : public ursine::ecs::Component
 
 public:
     EditorField(
-        bool isPlaying,
-        GetIsPlaying,
-        SetIsPlaying
+        bool playDiffuse,
+        GetIsDiffusePlaying,
+        SetIsDiffusePlaying
     );
 
     EditorField(
-        ursine::Vec2 textureVelocity,
-        GetTextureVelocity,
-        SetTextureVelocity
+        ursine::Vec2 diffuseTextureVelocity,
+        GetDiffuseTextureVelocity,
+        SetDiffuseTextureVelocity
     );
 
     EditorField(
-        ursine::Vec2 textureScalar,
-        GetTextureScalar,
-        SetTextureScalar
+        ursine::Vec2 diffuseTextureScalar,
+        GetDiffuseTextureScalar,
+        SetDiffuseTextureScalar
     );
+
+    EditorField(
+        bool playEmissive,
+        GetIsEmissivePlaying,
+        SetIsEmissivePlaying
+    );
+
+    EditorField(
+        ursine::Vec2 emissiveTextureVelocity,
+        GetEmissiveTextureVelocity,
+        SetEmissiveTextureVelocity
+    );
+
+    EditorField(
+        ursine::Vec2 emissiveTextureScalar,
+        GetEmissiveTextureScalar,
+        SetEmissiveTextureScalar
+    );
+
 
     Meta(Enable)
     TextureAnimator(void);
 
+    ~TextureAnimator(void);
+
     Meta(Enable)
     void OnInitialize(void) override;
 
-    bool GetIsPlaying(void) const;
-    void SetIsPlaying(bool isPlaying);
+    bool GetIsDiffusePlaying(void) const;
+    void SetIsDiffusePlaying(bool isPlaying);
 
-    ursine::Vec2 GetTextureVelocity(void) const;
-    void SetTextureVelocity(const ursine::Vec2 &textureVel);
+    bool GetIsEmissivePlaying(void) const;
+    void SetIsEmissivePlaying(bool isPlaying);
 
-    ursine::Vec2 GetTextureScalar(void) const;
-    void SetTextureScalar(const ursine::Vec2 &textureScalar);
+    ursine::Vec2 GetDiffuseTextureVelocity(void) const;
+    void SetDiffuseTextureVelocity(const ursine::Vec2 &textureVel);
+
+    ursine::Vec2 GetDiffuseTextureScalar(void) const;
+    void SetDiffuseTextureScalar(const ursine::Vec2 &textureScalar);
+
+    ursine::Vec2 GetEmissiveTextureVelocity(void) const;
+    void SetEmissiveTextureVelocity(const ursine::Vec2 &textureVel);
+
+    ursine::Vec2 GetEmissiveTextureScalar(void) const;
+    void SetEmissiveTextureScalar(const ursine::Vec2 &textureScalar);
+
 private:
     ursine::Vec2 m_textureVelocity;
+    ursine::Vec2 m_emissiveTextureVelocity;
 
-    bool m_isPlaying;
+    bool m_isDiffusePlaying;
+    bool m_isEmissivePlaying;
 } 
 Meta(Enable, WhiteListMethods, DisplayName("TextureAnimator"))
 EditorMeta(

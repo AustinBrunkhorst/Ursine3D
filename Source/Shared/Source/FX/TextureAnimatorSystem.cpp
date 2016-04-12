@@ -51,6 +51,9 @@ void TextureAnimatorSystem::Process(const ursine::ecs::EntityHandle & entity)
 
     float dt = Application::Instance->GetDeltaTime( );
 
-    if(textureAnimator->GetIsPlaying( ))
-        model->SetTextureUVOffset( model->GetTextureUVOffset( ) + textureAnimator->GetTextureVelocity( ) * dt );
+    if(textureAnimator->GetIsDiffusePlaying( ))
+        model->SetTextureUVOffset( model->GetTextureUVOffset( ) + textureAnimator->GetDiffuseTextureVelocity( ) * dt );
+
+    if (textureAnimator->GetIsEmissivePlaying( ))
+        model->SetEmissiveTextureUVOffset(model->GetEmissiveTextureUVOffset( ) + textureAnimator->GetEmissiveTextureVelocity( ) * dt);
 }

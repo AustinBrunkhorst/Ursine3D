@@ -200,8 +200,11 @@ namespace ursine
 
         struct TextureUVOffset
         {
-            DirectX::XMFLOAT2 uv;
-            DirectX::XMFLOAT2 buffer;
+            DirectX::XMFLOAT2 diffuseUV;
+            DirectX::XMFLOAT2 diffuseScalar;
+
+            DirectX::XMFLOAT2 emissiveUV;
+            DirectX::XMFLOAT2 emissiveScalar;
         };
 
         struct FalloffBuffer

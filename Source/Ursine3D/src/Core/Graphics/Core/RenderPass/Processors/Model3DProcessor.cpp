@@ -120,8 +120,11 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // map texture offset
             TextureUVOffset offset;
-            offset.uv = DirectX::XMFLOAT2(model.GetTextureUVOffset( ).X( ), model.GetTextureUVOffset( ).Y( ));
-            offset.buffer = DirectX::XMFLOAT2(model.GetTextureUVScalar( ).X( ), model.GetTextureUVScalar( ).Y( ));
+            offset.diffuseUV = DirectX::XMFLOAT2(model.GetTextureUVOffset( ).X( ), model.GetTextureUVOffset( ).Y( ));
+            offset.diffuseScalar = DirectX::XMFLOAT2(model.GetTextureUVScalar( ).X( ), model.GetTextureUVScalar( ).Y( ));
+
+            offset.emissiveUV = DirectX::XMFLOAT2(model.GetEmissiveTextureUVOffset( ).X( ), model.GetEmissiveTextureUVOffset( ).Y( ));
+            offset.emissiveScalar = DirectX::XMFLOAT2(model.GetEmissiveTextureUVScalar( ).X( ), model.GetEmissiveTextureUVScalar( ).Y( ));
 
             m_manager->bufferManager->MapBuffer<BUFFER_TEX_OFFSET>(
                 &offset,
