@@ -30,12 +30,16 @@ namespace ursine
         public:
             WaypointAgent(void);
 
+            virtual void OnInitialize(void) override;
+
             Meta(Disable)
             Node *GetClosestNode(const Vec3 &pos);
 
             void SetTarget(const SVec3 &pos);
 
             const SVec3 &GetTarget(void) const;
+
+            SVec3 GetTargetPathPosition(void) const;
 
 
             EditorField(
@@ -67,6 +71,8 @@ namespace ursine
             void UpdateTimer(float dt);
 
             bool CanUpdate(void) const;
+
+            void UpdateClosed(void);
 
         private:
             std::vector<Node> m_nodes;
