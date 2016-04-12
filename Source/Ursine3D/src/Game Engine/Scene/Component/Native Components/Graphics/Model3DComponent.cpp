@@ -267,10 +267,10 @@ namespace ursine
         void Model3D::SetTextureUVOffset(const Vec2 &offset)
         {
             m_model->SetTextureUVOffset( offset );
-            NOTIFY_COMPONENT_CHANGED("textureOffset", m_model->GetTextureUVOffset());
+            NOTIFY_COMPONENT_CHANGED("diffuseTextureOffset", m_model->GetTextureUVOffset());
         }
 
-        const Vec2 & Model3D::GetTextureUVScalar() const
+        const Vec2 & Model3D::GetTextureUVScalar(void) const
         {
             return m_model->GetTextureUVScalar( );
         }
@@ -278,6 +278,47 @@ namespace ursine
         void Model3D::SetTextureUVScalar(const Vec2 &scalar)
         {
             m_model->SetTextureUVScalar( scalar );
+        }
+
+        const Vec2 &Model3D::GetEmissiveTextureUVOffset(void) const
+        {
+            return m_model->GetEmissiveTextureUVOffset( );
+        }
+
+        void Model3D::SetEmissiveTextureUVOffset(const Vec2 &offset)
+        {
+            m_model->SetEmissiveTextureUVOffset( offset );
+            NOTIFY_COMPONENT_CHANGED("emissiveTextureOffset", m_model->GetEmissiveTextureUVOffset( ));
+        }
+
+        const Vec2 & Model3D::GetEmissiveTextureUVScalar(void) const
+        {
+            return m_model->GetEmissiveTextureUVScalar( );
+        }
+
+        void Model3D::SetEmissiveTextureUVScalar(const Vec2 &scalar)
+        {
+            m_model->SetEmissiveTextureUVScalar( scalar );
+        }
+
+        bool Model3D::GetIsVisible(void) const
+        {
+            return m_model->GetIsVisible( );
+        }
+
+        void Model3D::SetIsVisible(bool isVisible)
+        {
+            m_model->SetIsVisible( isVisible );
+        }
+
+        bool Model3D::GetDoesOverdraw(void)
+        {
+            return m_model->GetOverdraw( );
+        }
+
+        void Model3D::SetDoesOverdraw(bool doesOverdraw)
+        {
+            m_model->SetOverdraw( doesOverdraw );
         }
 
         void Model3D::updateRenderer(void)

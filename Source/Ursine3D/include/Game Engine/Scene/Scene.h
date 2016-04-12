@@ -22,18 +22,17 @@
 
 #include "GFXAPIDefines.h"
 
-#include "ScenePlayState.h"
 #include "SceneEvent.h"
 
 #include "DeltaTime.h"
 
 namespace ursine
 {
-    class Scene : public EventDispatcher<SceneEventType>
+    class Scene : public EventDispatcher<uint32>
     {
     public:
         Scene(void);
-        ~Scene(void);
+        virtual ~Scene(void);
 
         GameContext *GetGameContext(void);
         void SetGameContext(GameContext *context);
@@ -46,25 +45,24 @@ namespace ursine
         graphics::GfxHND GetViewport(void) const;
         void SetViewport(graphics::GfxHND viewport);
 
-        ScenePlayState GetPlayState(void) const;
-        void SetPlayState(ScenePlayState state);
+        virtual void SetPaused(bool paused);
+        virtual bool IsPaused(void) const;
 
         UIScreenManager &GetScreenManager(void);
         resources::ResourceManager &GetResourceManager(void);
 
-        void Step(void) const;
-
-        void Update(DeltaTime dt) const;
-        void Render(void) const;
+        virtual void Update(DeltaTime dt) const;
+        virtual void Render(void) const;
 
         void LoadConfiguredSystems(void);
-    private:
+
+    protected:
         Scene(const Scene &rhs) = delete;
         Scene &operator=(const Scene &rhs) = delete;
 
-        GameContext *m_gameContext;
+        bool m_paused;
 
-        ScenePlayState m_playState;
+        GameContext *m_gameContext;
 
         graphics::GfxHND m_viewport;
 

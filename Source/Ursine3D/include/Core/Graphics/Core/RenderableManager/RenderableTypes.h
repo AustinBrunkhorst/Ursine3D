@@ -25,7 +25,6 @@ namespace ursine
             RENDERABLE_LIGHT,           // light
             RENDERABLE_PS,              // particle system
             RENDERABLE_TYPE_COUNT,
-            RENDERABLE_OVERDRAW         // not standard, don't use
         };
     }
 }

@@ -175,7 +175,10 @@ void WeaponSystemUtils::DecrementReloadTimer(float dt, AbstractWeapon &weapon)
     weapon.m_reloadTimer -= dt;
 
     if (weapon.m_reloadTimer <= 0.0f)
+    {
         weapon.m_owner->GetRoot( )->Dispatch( game::RELOAD_END, EventArgs::Empty );
+        weapon.m_fireTimer = 0.0f;
+    }
 }
 
 // Tries to remove the number of rounds specified from the clip

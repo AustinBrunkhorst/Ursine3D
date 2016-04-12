@@ -15,6 +15,8 @@
 
 #include <CoreSystem.h>
 
+#include "GameLauncherGameContext.h"
+
 #include <UIView.h>
 #include <Scene.h>
 #include <GameSettings.h>
@@ -30,6 +32,7 @@ public:
     ~GameLauncher(void);
 
     ursine::Scene *GetScene(void);
+    ursine::Window::Handle GetWindow(void);
     ursine::UIView::Handle GetUI(void);
 
 private:
@@ -37,6 +40,8 @@ private:
 
     ursine::Scene *m_scene;
     ursine::GameSettings m_settings;
+
+    GameLauncherGameContext *m_gameContext;
 
     struct
     {

@@ -133,7 +133,12 @@ namespace ursine
             m_textureUVOffset = Vec2(0, 0);
             m_textureUVScalar = Vec2(1, 1);
 
+            m_emissiveTextureUVOffset = Vec2(0, 0);
+            m_emissiveTextureUVScalar = Vec2(1, 1);
+
             m_doesFragment = false;
+
+            m_isVisible = true;
 
             InitializeFragment( );
         }
@@ -292,6 +297,26 @@ namespace ursine
             m_textureUVScalar = scalar;
         }
 
+        const Vec2 &Model3D::GetEmissiveTextureUVOffset(void) const
+        {
+            return m_emissiveTextureUVOffset;
+        }
+
+        void Model3D::SetEmissiveTextureUVOffset(const Vec2 &offset)
+        {
+            m_emissiveTextureUVOffset = offset;
+        }
+
+        const Vec2 &Model3D::GetEmissiveTextureUVScalar( ) const
+        {
+            return m_emissiveTextureUVScalar;
+        }
+
+        void Model3D::SetEmissiveTextureUVScalar(const Vec2 &scalar)
+        {
+            m_emissiveTextureUVScalar = scalar;
+        }
+
         bool Model3D::GetDoesFragment(void) const
         {
             return m_doesFragment;
@@ -310,6 +335,16 @@ namespace ursine
         void Model3D::SetFragTime(float time)
         {
             m_fragData.time = time;
+        }
+
+        bool Model3D::GetIsVisible(void) const
+        {
+            return m_isVisible;
+        }
+
+        void Model3D::SetIsVisible(bool isVisible)
+        {
+            m_isVisible = isVisible;
         }
 
         Model3D::FragmentData &Model3D::GetFragmentData(void)

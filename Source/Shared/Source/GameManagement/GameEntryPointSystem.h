@@ -28,4 +28,8 @@ private:
     void OnRemove(void) override;
 
     void onGameplayStarted(EVENT_HANDLER(ursine::UIScreenManager));
+    void onGameplayPaused(EVENT_HANDLER(ursine::UIScreenManager));
+    void onGameplayResumed(EVENT_HANDLER(ursine::UIScreenManager));
+    void onGameplayExited(EVENT_HANDLER(ursine::UIScreenManager));
+    void onGameplayRestarted(EVENT_HANDLER(ursine::UIScreenManager));
 } Meta(Enable);

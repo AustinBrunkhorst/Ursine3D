@@ -92,13 +92,7 @@ namespace ursine
         #endif
 
         template<>
-        Transform *Component::Handle<Transform>::operator->(void)
-        {
-            return m_entity->GetTransform( );
-        }
-
-        template<>
-        const Transform *Component::Handle<Transform>::operator->(void) const
+        Transform *Component::Handle<Transform>::operator->(void) const
         {
             return m_entity->GetTransform( );
         }

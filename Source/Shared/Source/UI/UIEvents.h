@@ -10,7 +10,11 @@ namespace ui_event
 {
     namespace global
     {
-        const auto GameplayStarted = "GameplayStarted";
+        const auto GameStart = "GameplayStart";
+        const auto GamePause = "GameplayPause";
+        const auto GameResume = "GameplayResume";
+        const auto GameExit = "GameplayExit";
+        const auto GameRestart = "GameRestart";
     }
 
     UI_EVENT( ToggleHUD,
@@ -20,6 +24,22 @@ namespace ui_event
     UI_EVENT( PlayerHealthUpdated,
         int playerID;
         float percent;
+    );
+
+    UI_EVENT( HealthTrackStart,
+        int playerID;
+        std::string NameOfEnemy;
+        float healthPercent;
+    );
+
+    UI_EVENT(HealthTrackUpdate,
+        int playerID;
+        float healthPercent;
+    );
+
+    UI_EVENT( HealthTrackEnd,
+        int playerID;
+        bool enemyKilled;
     );
 
     UI_EVENT( PlayerAmmoUpdated,

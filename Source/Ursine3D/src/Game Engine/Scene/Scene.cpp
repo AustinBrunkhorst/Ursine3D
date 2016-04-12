@@ -22,26 +22,19 @@
 
 #include "WorldData.h"
 
-#if defined(URSINE_WITH_EDITOR)
-
-#define SCENE_STARTING_STATE PS_EDITOR
-
-#else
-
-#define SCENE_STARTING_STATE PS_PLAYING
-
-#endif
-
 namespace ursine
 {
     Scene::Scene(void)
         : EventDispatcher( this )
+        , m_paused( false )
         , m_gameContext( nullptr )
-        , m_playState( SCENE_STARTING_STATE )
         , m_viewport( 0 )
         , m_activeWorld( nullptr ) { }
 
-    Scene::~Scene(void) { }
+    Scene::~Scene(void)
+    {
+        m_activeWorld = nullptr;
+    }
 
     GameContext *Scene::GetGameContext(void)
     {
@@ -105,21 +98,14 @@ namespace ursine
         m_viewport = viewport;
     }
 
-    ScenePlayState Scene::GetPlayState(void) const
+    void Scene::SetPaused(bool paused)
     {
-        return m_playState;
+        m_paused = paused;
     }
 
-    void Scene::SetPlayState(ScenePlayState state)
+    bool Scene::IsPaused(void) const
     {
-        if (state == m_playState)
-            return;
-
-        ScenePlayStateChangedArgs e( m_playState, state );
-
-        m_playState = state;
-
-        Dispatch( SCENE_PLAYSTATE_CHANGED, &e );
+        return m_paused;
     }
 
     UIScreenManager &Scene::GetScreenManager(void)
@@ -132,56 +118,16 @@ namespace ursine
         return m_resourceManager;
     }
 
-    void Scene::Step(void) const
-    {
-        if (m_activeWorld)
-            m_activeWorld->Update( );
-
-        SceneFrameSteppedArgs e( Application::Instance->GetDeltaTime( ) );
-
-        Dispatch( SCENE_FRAME_STEPPED, &e );
-    }
-
     void Scene::Update(DeltaTime dt) const
     {
-        if (!m_activeWorld)
-            return;
-
-        switch (m_playState)
-        {
-    #if defined(URSINE_WITH_EDITOR)
-
-        case PS_PAUSED:
-        case PS_EDITOR:
-            m_activeWorld->EditorUpdate( );
-            break;
-
-    #endif
-        case PS_PLAYING:
+        if (m_activeWorld && !m_paused)
             m_activeWorld->Update( );
-            break;
-        }
     }
 
     void Scene::Render(void) const
     {
-        if (!m_activeWorld)
-            return;
-
-        switch (m_playState)
-        {
-    #if defined(URSINE_WITH_EDITOR)
-
-        case PS_PAUSED:
-        case PS_EDITOR:
-            m_activeWorld->EditorRender( );
-            break;
-
-    #endif
-        case PS_PLAYING:
+        if (m_activeWorld)
             m_activeWorld->Render( );
-            break;
-        }
     }
 
     void Scene::LoadConfiguredSystems(void)

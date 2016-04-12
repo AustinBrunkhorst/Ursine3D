@@ -908,30 +908,30 @@ ursine_editor_Editor.prototype = {
 		this.m_btnStep = window.document.querySelector("#simulation-step");
 		this.m_btnStop = window.document.querySelector("#simulation-stop");
 		this.m_btnPlay.addEventListener("click",function() {
-			ursine_native_Extern.SceneSetPlayState(0);
+			ursine_native_Extern.SceneSetPlayState(1);
 		});
 		this.m_btnToggle.addEventListener("click",function() {
 			var currentState = SceneGetPlayState();
-			ursine_native_Extern.SceneSetPlayState(currentState == 0?1:0);
+			ursine_native_Extern.SceneSetPlayState(currentState == 1?2:1);
 		});
 		this.m_btnStep.addEventListener("click",function() {
 			SceneStep();
 		});
 		this.m_btnStop.addEventListener("click",function() {
-			ursine_native_Extern.SceneSetPlayState(2);
+			ursine_native_Extern.SceneSetPlayState(0);
 		});
 	}
 	,onScenePlayStateChanged: function() {
 		var state = SceneGetPlayState();
 		switch(state) {
-		case 0:
+		case 1:
 			this.m_toolsContainer.classList.add("running");
 			this.m_toolsContainer.classList.remove("paused");
 			break;
-		case 1:
+		case 2:
 			this.m_toolsContainer.classList.add("running","paused");
 			break;
-		case 2:
+		case 0:
 			this.m_toolsContainer.classList.remove("running","paused");
 			break;
 		}
@@ -2386,7 +2386,7 @@ var ursine_editor_scene_ui_EditorScreenManager = function(container) {
 	this.m_screenLoadQueue = new haxe_ds_StringMap();
 	this.m_screenLayoutCache = new haxe_ds_StringMap();
 	this.m_screenTypeCache = new haxe_ds_StringMap();
-	this.m_lastPlayState = 2;
+	this.m_lastPlayState = 0;
 	this.m_stepTimer = null;
 	var kbManager = new NativeKeyboardManager();
 	var gpManager = new NativeGamepadManager();
@@ -2415,7 +2415,7 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 		if(priority == null) priority = 0;
 		if(inputBlocking == null) inputBlocking = true;
 		var id = this.m_nativeManager.createScreen(path,inputBlocking,priority);
-		this.createScreen(path,id,priority,inputBlocking);
+		this.createScreen(path,id,priority,initData);
 		return id;
 	}
 	,hasInputFocus: function(screen) {
@@ -2530,6 +2530,7 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 				++_g;
 				var sheet = node;
 				styleContainer.innerHTML += "@import url(" + sheet.href + ");";
+				node.parentNode.removeChild(node);
 			}
 			layout.template.content.appendChild(styleContainer);
 		}
@@ -2588,7 +2589,7 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 		this.m_container.appendChild(container);
 		var config = { project : project, owner : this, id : id, container : element, data : data};
 		var screen = Type.createInstance(layout.logicHandlerType,[config]);
-		if(SceneGetPlayState() == 1) screen.pause();
+		if(SceneGetPlayState() == 2) screen.pause();
 		this.m_screens.h[id] = screen;
 	}
 	,getProjectGUID: function(path) {
@@ -2626,7 +2627,7 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 	}
 	,hasFocus: function() {
 		var playState = SceneGetPlayState();
-		if(playState != 0) return false;
+		if(playState != 1) return false;
 		var focused = window.document.activeElement;
 		return focused != null && (this.m_container == focused || focused.contains(this.m_container));
 	}
@@ -2660,22 +2661,22 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 		if(state == this.m_lastPlayState) return;
 		if(this.m_stepTimer != null) this.m_stepTimer.stop();
 		switch(state) {
-		case 0:
-			this.m_container.classList.add("running");
-			if(this.m_lastPlayState != 2) this.resumeScreens();
-			break;
 		case 1:
+			this.m_container.classList.add("running");
+			if(this.m_lastPlayState != 0) this.resumeScreens();
+			break;
+		case 2:
 			this.m_container.classList.remove("running");
 			this.pauseScreens();
 			break;
-		case 2:
+		case 0:
 			this.m_container.classList.remove("running");
 			break;
 		}
 		this.m_lastPlayState = state;
 	}
 	,onSceneFrameStepped: function(e) {
-		if(SceneGetPlayState() != 1) return;
+		if(SceneGetPlayState() != 2) return;
 		this.resumeScreens();
 		this.m_stepTimer = haxe_Timer.delay($bind(this,this.pauseScreens),Math.max(e.dt,30));
 	}
@@ -3115,8 +3116,8 @@ ursine_editor_windows_SceneOutline.prototype = $extend(ursine_editor_WindowHandl
 	}
 	,onPlaystateChanged: function(e) {
 		var state = SceneGetPlayState();
-		this.m_rootView.classList.toggle("inactive",state == 0);
-		if(state == 1) this.refresh();
+		this.m_rootView.classList.toggle("inactive",state == 1);
+		if(state == 2) this.refresh();
 	}
 	,onEntityAdded: function(e) {
 		var _g = this;
@@ -3349,7 +3350,7 @@ ursine_editor_windows_SceneView.prototype = $extend(ursine_editor_NativeCanvasWi
 	}
 	,onWindowKeyDown: function(e) {
 		var state = SceneGetPlayState();
-		if(state == 0) return true;
+		if(state == 1) return true;
 		var _g = e.keyCode;
 		switch(_g) {
 		case 122:
@@ -3467,8 +3468,8 @@ ursine_utils_Utils.formatDuration = function(milliseconds) {
 	var seconds = Math.floor(milliseconds / 1000);
 	var chunks = [];
 	if(hours > 0) chunks.push("" + hours + "hrs");
-	if(minutes > 0) chunks.push("" + minutes + "mins");
-	if(seconds > 0) chunks.push("" + seconds + "s");
+	if(minutes > 0) chunks.push("" + minutes % 60 + "mins");
+	if(seconds > 0) chunks.push("" + seconds % 60 + "s");
 	chunks.push("" + milliseconds % 1000 + "ms");
 	return chunks.join(" ");
 };

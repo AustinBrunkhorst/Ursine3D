@@ -41,8 +41,6 @@ namespace ursine
 
         fs::path resourcePath = url.substr( m_requestPrefix.size( ) );
 
-        std::cout << "LOAD: " << resourcePath << std::endl;
-
         auto extension = resourcePath.extension( ).string( );
 
         // remove the dot if it exists

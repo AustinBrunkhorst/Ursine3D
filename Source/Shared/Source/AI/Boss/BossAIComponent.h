@@ -165,6 +165,18 @@ public:
     );
 
     EditorField(
+        int phase3NumSludgeshots,
+        GetPhase3NumSludgeshots,
+        SetPhase3NumSludgeshots
+    );
+
+    EditorField(
+        float phase3SludgeshotAnimScalar,
+        GetPhase3SludgeshotAnimScalar,
+        SetPhase3SludgeshotAnimScalar
+    );
+
+    EditorField(
         int phase4NumSludgeshots,
         GetPhase4NumSludgeshots,
         SetPhase4NumSludgeshots
@@ -249,6 +261,12 @@ public:
 
     float GetPhase3DazedResetTimer(void) const;
     void SetPhase3DazedResetTimer(float timer);
+
+    int GetPhase3NumSludgeshots(void) const;
+    void SetPhase3NumSludgeshots(int num);
+
+    float GetPhase3SludgeshotAnimScalar(void) const;
+    void SetPhase3SludgeshotAnimScalar(float scalar);
 
     int GetPhase4NumSludgeshots(void) const;
     void SetPhase4NumSludgeshots(int num);
@@ -364,6 +382,10 @@ private:
 
     // The timer we use for resetting the boss for phase 3
     float m_phase3DazedResetTimer;
+
+    int m_phase3NumSludgeshots;
+
+    float m_phase3SludgeshotAnimScalar;
 
     int m_phase4NumSludgeshots;
 

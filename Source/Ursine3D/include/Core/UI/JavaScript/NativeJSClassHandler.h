@@ -24,6 +24,23 @@ namespace ursine
     private:
         friend class RenderProcessHandler;
 
+        struct InstanceWrapper : CefBase
+        {
+            meta::Variant instance;
+
+            InstanceWrapper(
+                const meta::Constructor &constructor,
+                CefRefPtr<CefV8Value> context,
+                const CefV8ValueList &arguments,
+                CefString &exception,
+                CefRefPtr<CefV8Value> thisContext
+            );
+
+            ~InstanceWrapper(void);
+
+            IMPLEMENT_REFCOUNTING( InstanceWrapper );
+        };
+
         struct PrototypeHandler : CefV8Handler
         {
             std::unordered_map<
@@ -42,26 +59,13 @@ namespace ursine
             IMPLEMENT_REFCOUNTING( PrototypeHandler );
         };
 
-        struct InstanceWrapper : CefBase
-        {
-            meta::Variant instance;
-
-            InstanceWrapper(
-                const meta::Constructor &constructor,
-                CefRefPtr<CefV8Value> context,
-                const CefV8ValueList &arguments,
-                CefString &exception,
-                CefRefPtr<CefV8Value> thisContext
-            );
-
-            IMPLEMENT_REFCOUNTING( InstanceWrapper );
-        };
-
         meta::Type m_classType;
 
         const meta::Constructor &m_constructor;
 
         CefRefPtr<PrototypeHandler> m_prototypeHandler;
+
+        std::vector<CefRefPtr<InstanceWrapper>> m_instances;
 
         NativeJSClassHandler(meta::Type classType);
 

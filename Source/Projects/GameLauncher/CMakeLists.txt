@@ -19,6 +19,7 @@ ursine_project(GameLauncher
     SYM_LINKS "Resources"
     PARSE_SOURCE_GROUPS
     RECURSIVE_INCLUDES
+    WINDOWS_RESOURCE_FILE "BuildResources/Resources.rc"
     BUILD_META
     META_HEADER "Reflection.h"
     META_MODULE_HEADER "GameLauncherReflectionModule.h"

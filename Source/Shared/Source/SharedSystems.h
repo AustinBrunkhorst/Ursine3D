@@ -43,6 +43,13 @@
 //        Weapon System        //
 /////////////////////////////////
 
+#include "PlayerLogic/LookAtSystem/PlayerLookAtSystem.h"
+
+
+/////////////////////////////////
+//        Weapon System        //
+/////////////////////////////////
+
 #include "WeaponSystem/Weapons/BaseWeaponSystem.h"
 #include "WeaponSystem/Projectiles/ProjectileSystem.h"
 #include "WeaponSystem/Inventory/InventorySystem.h"

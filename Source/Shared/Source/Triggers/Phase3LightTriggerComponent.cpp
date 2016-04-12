@@ -63,7 +63,7 @@ void Phase3LightTrigger::OnSceneReady(Scene *scene)
 {
 #if defined(URSINE_WITH_EDITOR)
 
-    if (scene->GetPlayState( ) == PS_EDITOR)
+    if (scene->IsPaused( ))
         return;
 
 #endif

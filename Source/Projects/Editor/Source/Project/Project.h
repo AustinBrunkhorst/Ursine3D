@@ -21,13 +21,14 @@
 
 #include "EditorGameContext.h"
 
+#include "EditorScene.h"
+
 #include "EditorSceneManager.h"
 #include "EditorEntityManager.h"
 
 #include "EditorResourcePipelineManager.h"
 
 #include <ResourcePipelineManager.h>
-#include <Scene.h>
 
 class Project
 {
@@ -46,7 +47,7 @@ public:
     ursine::rp::ResourcePipelineManager &GetResourcePipeline(void);
     ursine::resources::ResourceManager &GetBuiltInResourceManager(void);
 
-    ursine::Scene &GetScene(void);
+    EditorScene &GetScene(void);
 
     void SetEmptyScene(void);
 
@@ -79,7 +80,7 @@ private:
     ProjectGameBuilder m_gameBuilder;
     ProjectGameInstaller m_gameInstaller;
 
-    ursine::Scene m_scene;
+    EditorScene m_scene;
     ursine::Json m_worldCache;
     ursine::resources::ResourceReference m_playedWorld;
 

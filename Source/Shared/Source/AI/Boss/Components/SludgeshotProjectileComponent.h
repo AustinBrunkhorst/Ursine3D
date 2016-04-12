@@ -100,7 +100,6 @@ private:
 ) EditorMeta(
     RequiresComponents(
         typeof( EntityAnimator ),
-        typeof( Health ),
         typeof( ursine::ecs::ParticleEmitter )
     )
 );

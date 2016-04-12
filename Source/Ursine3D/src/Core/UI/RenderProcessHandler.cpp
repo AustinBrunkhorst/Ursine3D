@@ -35,7 +35,8 @@ namespace ursine
     RenderProcessHandler::~RenderProcessHandler(void) { }
 
     void RenderProcessHandler::OnRenderThreadCreated(
-        CefRefPtr<CefListValue> extraInfo) { }
+        CefRefPtr<CefListValue> extraInfo
+    ) { }
 
     void RenderProcessHandler::OnWebKitInitialized(void)
     {
@@ -49,10 +50,12 @@ namespace ursine
     }
 
     void RenderProcessHandler::OnBrowserCreated(
-        CefRefPtr<CefBrowser> browser) { }
+        CefRefPtr<CefBrowser> browser
+    ) { }
 
     void RenderProcessHandler::OnBrowserDestroyed(
-        CefRefPtr<CefBrowser> browser) { }
+        CefRefPtr<CefBrowser> browser
+    ) { }
 
     bool RenderProcessHandler::OnBeforeNavigation(
         CefRefPtr<CefBrowser> browser,
@@ -72,7 +75,8 @@ namespace ursine
     void RenderProcessHandler::OnContextCreated(
         CefRefPtr<CefBrowser> browser,
         CefRefPtr<CefFrame> frame,
-        CefRefPtr<CefV8Context> context)
+        CefRefPtr<CefV8Context> context
+    )
     {
         auto global = context->GetGlobal( );
 
@@ -87,7 +91,8 @@ namespace ursine
     void RenderProcessHandler::OnContextReleased(
         CefRefPtr<CefBrowser> browser,
         CefRefPtr<CefFrame> frame,
-        CefRefPtr<CefV8Context> context)
+        CefRefPtr<CefV8Context> context
+    )
     {
         auto global = context->GetGlobal( );
 

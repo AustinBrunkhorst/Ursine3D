@@ -41,16 +41,9 @@ void EntityAnimatorSystem::Initialize(void)
 
 void EntityAnimatorSystem::Process(const EntityHandle &entity)
 {
-    auto playstate = entity->GetWorld( )->GetOwner( )->GetPlayState( );
-
 #if defined(URSINE_WITH_EDITOR)
 
-    if (playstate != PS_PLAYING && !entity->HasComponent<Selected>())
-        return;
-
-#else
-
-    if (playstate != PS_PLAYING)
+    if (entity->GetWorld( )->GetOwner( )->IsPaused( ) && !entity->HasComponent<Selected>( ))
         return;
 
 #endif

@@ -13,15 +13,9 @@
 
 #pragma once
 
-namespace ursine
+enum ScenePlayState
 {
-    enum ScenePlayState
-    {
-        PS_PLAYING,
-        PS_PAUSED,
-
-    #if defined(URSINE_WITH_EDITOR)
-        PS_EDITOR
-    #endif
-    };
-}
+    PS_EDITOR,
+    PS_PLAYING,
+    PS_PAUSED
+};

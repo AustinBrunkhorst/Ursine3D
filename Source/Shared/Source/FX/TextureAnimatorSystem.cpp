@@ -39,23 +39,21 @@ TextureAnimatorSystem::TextureAnimatorSystem(World *world)
 
 void TextureAnimatorSystem::Process(const ursine::ecs::EntityHandle & entity)
 {
-    auto playstate = entity->GetWorld( )->GetOwner( )->GetPlayState( );
-
 #if defined(URSINE_WITH_EDITOR)
 
-    if (playstate != PS_PLAYING && !entity->HasComponent<Selected>( ))
-        return;
-
-#else
-
-    if (playstate != PS_PLAYING)
+    if (entity->GetWorld( )->GetOwner( )->IsPaused( ) && !entity->HasComponent<Selected>( ))
         return;
 
 #endif
 
     auto *model = entity->GetComponent<Model3D>( );
+    auto *textureAnimator = entity->GetComponent<TextureAnimator>( );
 
     float dt = Application::Instance->GetDeltaTime( );
 
-    model->SetTextureUVOffset( model->GetTextureUVOffset( ) * dt );
+    if(textureAnimator->GetIsDiffusePlaying( ))
+        model->SetTextureUVOffset( model->GetTextureUVOffset( ) + textureAnimator->GetDiffuseTextureVelocity( ) * dt );
+
+    if (textureAnimator->GetIsEmissivePlaying( ))
+        model->SetEmissiveTextureUVOffset(model->GetEmissiveTextureUVOffset( ) + textureAnimator->GetEmissiveTextureVelocity( ) * dt);
 }

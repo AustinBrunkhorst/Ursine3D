@@ -20,6 +20,8 @@
 #include <DebugSystem.h>
 #include <SweptControllerComponent.h>
 #include <HealthComponent.h>
+#include <GhostComponent.h>
+#include <SphereColliderComponent.h>
 #include <World.h>
 
 NATIVE_COMPONENT_DEFINITION(SludgeshotProjectile);
@@ -131,8 +133,6 @@ void SludgeshotProjectile::InitializeComponents(void)
     // Calculate the start, middle, and end positions
     auto start = owner->GetTransform( )->GetWorldPosition( );
     auto end = m_target;
-    auto dir = end - start;
-    auto middle = start + SVec3( dir.X( ) * 0.8f, -dir.Y( ) * 0.2f, dir.X( ) * 0.8f );
 
     auto &keyFrames = animator->keyFrames;
 
@@ -144,10 +144,6 @@ void SludgeshotProjectile::InitializeComponents(void)
     frame.scaleKey = false;
 
     frame.position = start;
-
-    keyFrames.Push( frame );
-
-    frame.position = middle;
 
     keyFrames.Push( frame );
 
@@ -180,7 +176,10 @@ void SludgeshotProjectile::onAnimationCompleted(EVENT_HANDLER(EntityAnimator))
     childEmitter->ResetSpawnCount( );
 
     // Also remove the health component
-    // TODO:
+    owner->GetComponent<Health>( )->SetSpawnOnDeath( false );
+    owner->RemoveComponent<Health>( );
+    owner->RemoveComponent<Ghost>( );
+    owner->RemoveComponent<SphereCollider>( );
 
     // After one second, delete the entity
     owner->GetTimers( ).Create( TimeSpan::FromSeconds( 1.0f ) )
@@ -193,8 +192,6 @@ void SludgeshotProjectile::onAnimationCompleted(EVENT_HANDLER(EntityAnimator))
 
     owner->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &SludgeshotProjectile::onUpdate );
-
-    owner->GetComponent<Health>( )->SetSpawnOnDeath( false );
 }
 
 void SludgeshotProjectile::onUpdate(EVENT_HANDLER(World))

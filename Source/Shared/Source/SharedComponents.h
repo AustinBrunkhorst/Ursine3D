@@ -45,6 +45,8 @@
 #include "PlayerLogic/AnimationControllers/PlayerAnimationControllerComponent.h"
 #include "PlayerLogic/AnimationControllers/FacePlayerBoneTowardsMeComponent.h"
 
+#include "PlayerLogic/LookAtSystem/PlayerLookAtComponent.h"
+
 /////////////////////////////////
 //        Damage System        //
 /////////////////////////////////

@@ -123,6 +123,12 @@ public:
     );
 
     EditorField(
+        float digRayStartY,
+        GetDigRayStartY,
+        SetDigRayStartY
+    );
+
+    EditorField(
         float uprootDistance,
         GetUprootDistance,
         SetUprootDistance
@@ -204,6 +210,9 @@ public:
     const std::string &GetDigParticleEmitterName(void) const;
     void SetDigParticleEmitterName(const std::string &name);
 
+    float GetDigRayStartY(void) const;
+    void SetDigRayStartY(float y);
+
     float GetUprootDistance(void) const;
     void SetUprootDistance(float distance);
 
@@ -260,6 +269,7 @@ private:
 
     float m_digSpeed;
     float m_digTurnSpeed;
+    float m_digRayStartY;
     float m_uprootDistance;
     float m_uprootDelay;
     float m_uprootCooldown;

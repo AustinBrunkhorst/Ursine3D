@@ -200,6 +200,8 @@ void ProjectGameInstaller::doBuild(void)
             "Failed to run '%s'. Make sure NSIS is installed and added to your path.",
             kNSISExecutable
         );
+
+        completionEvent.successful = true;
     }
     catch (const AssertionException &e)
     {

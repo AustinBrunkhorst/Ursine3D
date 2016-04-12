@@ -105,7 +105,7 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // map texture offset
             TextureUVOffset offset;
-            offset.uv = DirectX::XMFLOAT2(fragData.xUV, fragData.yUV);
+            offset.diffuseUV = DirectX::XMFLOAT2( fragData.xUV, fragData.yUV );
 
             m_manager->bufferManager->MapBuffer<BUFFER_TEX_OFFSET>(
                 &offset,

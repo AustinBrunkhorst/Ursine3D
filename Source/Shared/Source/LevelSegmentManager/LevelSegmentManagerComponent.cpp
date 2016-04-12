@@ -111,7 +111,7 @@ void LevelSegmentManager::OnSceneReady(Scene *scene)
 {
     auto *world = GetOwner( )->GetWorld( );
 
-    if (scene->GetPlayState( ) == PS_PLAYING)
+    if (!scene->IsPaused( ))
     {
         auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
 
@@ -133,7 +133,7 @@ void LevelSegmentManager::OnSceneReady(Scene *scene)
     #else
 
         UAssert( ui != nullptr,
-            "World settings missing UIScreensConfig component."    
+            "World settings missing UIScreensConfig component."
         );
 
     #endif

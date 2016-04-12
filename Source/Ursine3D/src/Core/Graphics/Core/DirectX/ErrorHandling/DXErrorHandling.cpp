@@ -65,6 +65,7 @@ const char* ursine::graphics::DXCore::GetDXErrorMessage(int code)
         hde(DXGI_ERROR_ACCESS_DENIED);
         hde(DXGI_ERROR_NAME_ALREADY_EXISTS);
         hde(DXGI_ERROR_SDK_COMPONENT_MISSING);
+        hde(DXGI_STATUS_OCCLUDED);
 
         //other error codes
         hde(E_ABORT);
