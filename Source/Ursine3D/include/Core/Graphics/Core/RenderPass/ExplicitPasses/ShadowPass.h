@@ -28,7 +28,7 @@ namespace ursine
             virtual ~ShadowPass(void);
 
         protected:
-            void executePass(Camera &currentCamera) override;
+            void executePass(Camera &currentCamera, int index) override;
 
             void setDepthTarget(Light *light);
         };

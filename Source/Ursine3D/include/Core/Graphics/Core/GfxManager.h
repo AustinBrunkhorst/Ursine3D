@@ -46,6 +46,7 @@ namespace ursine
             void Initialize(GfxConfig &config);
             void Uninitialize();
 
+            // methods for rendering
             void Render(GfxHND handle);
 
             void StartFrame();
@@ -58,6 +59,7 @@ namespace ursine
 
             void EndFrame();
 
+            // utility methods
             DXCore::DirectXCore *GetDXCore();
 
             void Resize(int width, int height);
@@ -65,10 +67,6 @@ namespace ursine
             void SetFullscreenState(const bool state);
 
             void Invalidate();
-
-            void RenderUI(GfxHND camera, RENDER_TARGETS input);
-
-            void RenderUI_Main(RENDER_TARGETS input);
 
             //set the viewport for the current game
             void SetGameViewport(GfxHND vp);
@@ -83,7 +81,7 @@ namespace ursine
             void RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void *input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY);
 
             // get the currently selected object
-            int GetCurrentUniqueID();
+            int GetCurrentUniqueID(void);
 
             SVec3 GetCurrentWorldPosition(const GfxHND &cameraHandle);
 
@@ -93,52 +91,54 @@ namespace ursine
             DXCore::ShaderManager       *shaderManager;
             DXCore::ShaderBufferManager *bufferManager;
 
-            DXCore::InputLayoutManager *layoutManager;
-            ModelManager *modelManager;
-            RenderableManager *renderableManager;
-            CameraManager *cameraManager;
-            TextureManager *textureManager;
-            ViewportManager *viewportManager;
-            GfxUIManager *uiManager;
-            DrawingManager *drawingManager;
-            FontManager *fontManager;
-            GfxProfiler *gfxProfiler;
+            DXCore::InputLayoutManager  *layoutManager;
+            ModelManager                *modelManager;
+            RenderableManager           *renderableManager;
+            CameraManager               *cameraManager;
+            TextureManager              *textureManager;
+            ViewportManager             *viewportManager;
+            GfxUIManager                *uiManager;
+            DrawingManager              *drawingManager;
+            FontManager                 *fontManager;
+            GfxProfiler                 *gfxProfiler;
 
-            GfxInfo *gfxInfo;
+            GfxInfo                     *gfxInfo;
 
             float m_lightSteps;
             float m_borderValue;
             float m_globalEmissive;
             GfxHND m_lightMapTexture;
 
-            //thred stuff
         private:
-            struct threadData
+            struct UIRenderData
             {
-                GfxManager *gfx;
-                float dt;
-                bool forward;
-                GfxHND viewport;
+                GfxHND texHandle;
+                float posX;
+                float posY;
+                GfxHND cameraHandle;
             };
 
-            HANDLE m_threadHandle;
-            DWORD m_threadID;
-
-            //private methods
         private:
-            static DWORD WINAPI renderBootstrap(LPVOID lpParam);
-            void RenderScene_Forward(float dt, GfxHND viewport = -1);
-            void RenderScene_Deferred(float dt, GfxHND viewport = -1);
+            // multithread rendering methods
+            static void internalGfxEntry(GfxManager *manager);
 
-            //preparing for rendering
-            void PrepForCompute(void);
-            void PrepForUI(void);
+            void internalStartFrame(void);
+            void internalRenderScene(Camera &camera, int index);
+            void internalEndFrame(void);
 
-            //rendering funcs
-            void RenderComputeMousePos(void);
+            void RenderScene_Deferred(Camera &camera, int index);
+            void RenderScene_Forward(Camera &camera, int index);
+            
+            // misc methods
+            void internalRenderDynamicTexture(GfxHND &texHandle, const float posX, const float posY);
+            void internalRenderDynamicTextureInViewport(GfxHND &texHandle, const float posX, const float posY, GfxHND &camera);
+            void prepForCompute(void);
+            void prepForUI(void);
+            void renderComputeMousePos(void);
 
             //privates members
         private:
+            // keeping track of a bunch of states
             std::atomic<bool> m_rendering;
 
             bool m_sceneActive; //was beginscene called
@@ -151,13 +151,23 @@ namespace ursine
             int m_currentID;            // current object we are moused over
             SVec3 m_currentPosition;    // view position of current object, stored in x pos, y pos, depth
 
+            // main game viewport
             GfxHND m_GameViewport;
 
-            std::vector<_DRAWHND> m_drawList;
-            unsigned m_drawCount;
+            // ui render calls
+            std::vector<UIRenderData>                   m_uiRenderCalls;
+            std::vector<UIRenderData>                   m_uiViewportRenderCalls;
 
-            //temp
-            std::list<GfxHND> m_viewportList;
+            // list of cameras for this frame
+            std::vector<std::pair<Camera, unsigned>>    m_cameraList;
+
+            // list of render calls for each from
+            std::vector<std::vector<_DRAWHND>>          m_drawLists;
+            std::vector<unsigned>                       m_drawCounts;
+            int                                         m_currentList;
+
+            // thread object
+            std::thread m_gfxThread;
         };
     }
 }

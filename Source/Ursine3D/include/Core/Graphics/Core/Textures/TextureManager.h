@@ -16,6 +16,8 @@
 #include <vector>
 #include <map>
 #include <string>
+#include <atomic>
+
 #include "D3D11Forward.h"
 #include "Texture.h"
 #include "SamplerList.h"
@@ -59,6 +61,8 @@ namespace ursine
 
             void GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize);
 
+            bool IsLoading(void) const;
+
         private:
             void LoadTextureToGPU(Texture &texture) const;
 
@@ -68,6 +72,8 @@ namespace ursine
             ID3D11DeviceContext *m_deviceContext;
 
             unsigned m_textureCount;
+
+            std::atomic<bool> m_loadingTexture;
 
             std::vector<ID3D11SamplerState*> m_samplerStateList_;
 

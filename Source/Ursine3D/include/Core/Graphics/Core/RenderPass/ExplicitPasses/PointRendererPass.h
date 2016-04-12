@@ -26,7 +26,7 @@ namespace ursine
             virtual ~PointRendererPass(void);
 
         protected:
-            void executePass(Camera &currentCamera) override;
+            void executePass(Camera &currentCamera, int index) override;
 
             bool m_debugRender;
         };

@@ -254,7 +254,11 @@ namespace ursine
             m_manager->bufferManager->MapTransformBuffer( model.GetWorldMatrix() );
 
             // set model
+
+            std::cout << "PRIOR: " << model.GetModelHandle() << std::endl;
+
             m_manager->modelManager->BindModel( handle.Model_, meshIndex );
+            std::cout << "after: " << std::endl;
             m_manager->shaderManager->Render( m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex ));
 
             // debug rendering
@@ -275,15 +279,9 @@ namespace ursine
                 m_manager->bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
                 m_manager->textureManager->MapTextureByID( INTERNAL_BLANK_TEX );
 
-                // set model
-                 m_manager->modelManager->BindModel(
-                     handle.Model_, 
-                     meshIndex
-                );
+                m_manager->shaderManager->Render(m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex));
 
-                 m_manager->shaderManager->Render(m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex));
-
-                 m_manager->dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
+                m_manager->dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
             }
         }
     }
