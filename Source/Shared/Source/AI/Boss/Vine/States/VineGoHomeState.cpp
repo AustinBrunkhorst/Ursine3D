@@ -75,13 +75,13 @@ void VineGoHomeState::Update(VineAIStateMachine *machine)
                 return;
             }
 
+            // raycast to find what the Y position should be
+            aiPos.Y( ) = VineStateUtils::FindYPosition( ai, aiPos );
+
             lookAtPosition.Y( ) = aiPos.Y( );
 
             // Turn towards the target
             aiTrans->LookAt( lookAtPosition );
-
-            // raycast to find what the Y position should be
-            aiPos.Y( ) = VineStateUtils::FindYPosition( ai, aiPos );
 
             // Move forward based on the dig speed
             aiTrans->SetWorldPosition( aiPos + aiTrans->GetForward( ) * ai->GetDigSpeed( ) * dt );
@@ -95,9 +95,11 @@ void VineGoHomeState::Update(VineAIStateMachine *machine)
                 emitter->SetEmitting( true );
 
             // Check to see if we've reached a valid distance
-            if (VineStateUtils::AtHome( ai, 1.0f ))
+            if (VineStateUtils::AtHome( ai, 5.0f ))
             {
                 m_state = GoHomeState::Uprooting;
+
+                aiTrans->SetWorldPosition( ai->GetHomeLocation( ) );
             }
 
             break;

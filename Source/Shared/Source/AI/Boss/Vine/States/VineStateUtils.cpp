@@ -26,8 +26,11 @@ float VineStateUtils::FindYPosition(VineAI *ai, const SVec3 &aiPosition)
     auto world = aiOwner->GetWorld( );
     auto physics = world->GetEntitySystem<PhysicsSystem>( );
 
-    auto startPos = aiPosition - SVec3::UnitY( ) * 200.0f;
-    auto dir = SVec3::UnitY( ) * 1000.0f;
+    auto startPos = aiPosition;
+
+    startPos.Y( ) = ai->GetDigRayStartY( );
+
+    auto dir = SVec3::UnitY( ) * abs( ai->GetDigRayStartY( ) * 2.0f );
 
     physics::RaycastInput input( startPos, dir );
     physics::RaycastOutput output;
@@ -94,6 +97,9 @@ bool VineStateUtils::AtHome(VineAI *ai, float distance)
 {
     auto homePos = ai->GetHomeLocation( );
     auto aiPos = ai->GetOwner( )->GetTransform( )->GetWorldPosition( );
+
+    aiPos.Y( ) = 0.0f;
+    homePos.Y( ) = 0.0f;
 
     float dist = SVec3::Distance( homePos, aiPos );
 

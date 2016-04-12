@@ -20,12 +20,12 @@
 #include <SelectedComponent.h>
 #include <CameraComponent.h>
 #include <LightComponent.h>
-
-ENTITY_SYSTEM_DEFINITION( LightDebugDrawSystem );
-ENTITY_SYSTEM_DEFINITION( CameraDebugDrawSystem );
+#include <AudioEmitterComponent.h>
 
 using namespace ursine;
 using namespace ecs;
+
+ENTITY_SYSTEM_DEFINITION( LightDebugDrawSystem );
 
 LightDebugDrawSystem::LightDebugDrawSystem(World* world)
     : FilterSystem( world, Filter( ).All<Selected, Light>( ) )
@@ -59,7 +59,7 @@ void LightDebugDrawSystem::Process(const EntityHandle &entity)
             auto lightUp = lightTrans->GetUp( );
             auto lightForward = lightTrans->GetForward( );
 
-            drawer->DrawCircle( light->GetPosition( ), lightForward, circleRadius, Color::Yellow, 0.0f );
+            drawer->DrawCircle( light->GetPosition( ), lightForward, circleRadius, Color::Gold, 0.0f );
 
             float theta = 0.0f;
             float step = 360.0f / resolution;
@@ -119,7 +119,7 @@ void LightDebugDrawSystem::Process(const EntityHandle &entity)
         {
             drawer->DrawSphere( 
                 light->GetPosition( ), light->GetRadius( ), 
-                Color::Yellow, 0.0f 
+                Color::Gold, 0.0f
             );
 
             break;
@@ -127,6 +127,8 @@ void LightDebugDrawSystem::Process(const EntityHandle &entity)
     }
 
 }
+
+ENTITY_SYSTEM_DEFINITION( CameraDebugDrawSystem );
 
 CameraDebugDrawSystem::CameraDebugDrawSystem(World* world)
     : FilterSystem( world, Filter( ).All<Selected, Camera>( ) )
@@ -173,18 +175,41 @@ void CameraDebugDrawSystem::Process(const EntityHandle &entity)
     auto p6 = p5 + up * farH;
     auto p7 = p6 - right * farW;
 
-    drawer->DrawLine( p0, p1, Color::Yellow, 0.0f );
-    drawer->DrawLine( p1, p2, Color::Yellow, 0.0f );
-    drawer->DrawLine( p2, p3, Color::Yellow, 0.0f );
-    drawer->DrawLine( p3, p0, Color::Yellow, 0.0f );
+    drawer->DrawLine( p0, p1, Color::Gold, 0.0f );
+    drawer->DrawLine( p1, p2, Color::Gold, 0.0f );
+    drawer->DrawLine( p2, p3, Color::Gold, 0.0f );
+    drawer->DrawLine( p3, p0, Color::Gold, 0.0f );
 
-    drawer->DrawLine( p4, p5, Color::Yellow, 0.0f );
-    drawer->DrawLine( p5, p6, Color::Yellow, 0.0f );
-    drawer->DrawLine( p6, p7, Color::Yellow, 0.0f );
-    drawer->DrawLine( p7, p4, Color::Yellow, 0.0f );
+    drawer->DrawLine( p4, p5, Color::Gold, 0.0f );
+    drawer->DrawLine( p5, p6, Color::Gold, 0.0f );
+    drawer->DrawLine( p6, p7, Color::Gold, 0.0f );
+    drawer->DrawLine( p7, p4, Color::Gold, 0.0f );
 
-    drawer->DrawLine( p0, p4, Color::Yellow, 0.0f );
-    drawer->DrawLine( p1, p5, Color::Yellow, 0.0f );
-    drawer->DrawLine( p2, p6, Color::Yellow, 0.0f );
-    drawer->DrawLine( p3, p7, Color::Yellow, 0.0f );
+    drawer->DrawLine( p0, p4, Color::Gold, 0.0f );
+    drawer->DrawLine( p1, p5, Color::Gold, 0.0f );
+    drawer->DrawLine( p2, p6, Color::Gold, 0.0f );
+    drawer->DrawLine( p3, p7, Color::Gold, 0.0f );
+}
+
+ENTITY_SYSTEM_DEFINITION( AudioEmitterDebugDrawSystem );
+
+AudioEmitterDebugDrawSystem::AudioEmitterDebugDrawSystem(World *world)
+    : FilterSystem( world, Filter( ).All<Selected, AudioEmitter>( ) )
+{
+    SetUpdateType( WORLD_EDITOR_UPDATE );
+}
+
+void AudioEmitterDebugDrawSystem::Process(const EntityHandle &entity)
+{
+    auto emitter = entity->GetComponent<AudioEmitter>( );
+
+    auto drawer = m_world->GetEntitySystem<DebugSystem>( );
+
+    if (!drawer)
+        return;
+
+    drawer->DrawSphere(
+        emitter->GetOwner( )->GetTransform( )->GetWorldPosition( ), emitter->GetAttenuationScalingFactor( ), 
+        Color::Gold, 0.0f
+    );
 }

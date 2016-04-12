@@ -28,13 +28,26 @@ private:
 
 } Meta(Enable, AutoAddEntitySystem);
 
-// Draw the camer's frustum
+// Draw the camera's frustum
 class CameraDebugDrawSystem : public ursine::ecs::FilterSystem
 {
     ENTITY_SYSTEM;
 
 public:
     CameraDebugDrawSystem(ursine::ecs::World *world);
+
+private:
+    void Process(const ursine::ecs::EntityHandle &entity) override;
+
+} Meta(Enable, AutoAddEntitySystem);
+
+// Draw the audio emitter's range
+class AudioEmitterDebugDrawSystem : public ursine::ecs::FilterSystem
+{
+    ENTITY_SYSTEM;
+
+public:
+    AudioEmitterDebugDrawSystem(ursine::ecs::World *world);
 
 private:
     void Process(const ursine::ecs::EntityHandle &entity) override;

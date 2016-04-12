@@ -89,13 +89,13 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             lookAtPosition.X( ) += math::Rand( -10.0f, 10.0f );
             lookAtPosition.Z( ) += math::Rand( -10.0f, 10.0f );
 
+            // raycast to find what the Y position should be
+            aiPos.Y( ) = VineStateUtils::FindYPosition( ai, aiPos );
+
             lookAtPosition.Y( ) = aiPos.Y( );
 
             // Turn towards the target
             aiTrans->LookAt( lookAtPosition, ai->GetDigTurnSpeed( ) );
-
-            // raycast to find what the Y position should be
-            aiPos.Y( ) = VineStateUtils::FindYPosition( ai, aiPos );
 
             // Move forward based on the dig speed
             aiTrans->SetWorldPosition( aiPos + aiTrans->GetForward( ) * ai->GetDigSpeed( ) * dt );
@@ -135,13 +135,13 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             // move towards the target in the x-z plane.
             auto lookAtPosition = ai->GetHomeLocation( );
 
+            // raycast to find what the Y position should be
+            aiPos.Y( ) = VineStateUtils::FindYPosition( ai, aiPos );
+
             lookAtPosition.Y( ) = aiPos.Y( );
 
             // Turn towards the target
             aiTrans->LookAt( lookAtPosition );
-
-            // raycast to find what the Y position should be
-            aiPos.Y( ) = VineStateUtils::FindYPosition( ai, aiPos );
 
             // Move forward based on the dig speed
             aiTrans->SetWorldPosition( aiPos + aiTrans->GetForward( ) * ai->GetDigSpeed( ) * dt );
@@ -155,13 +155,15 @@ void VineUprootState::Update(VineAIStateMachine *machine)
                 emitter->SetEmitting( true );
 
             // Check to see if we've reached a valid distance
-            if (VineStateUtils::AtHome( ai, 1.0f ))
+            if (VineStateUtils::AtHome( ai, 5.0f ))
             {
                 m_state = UprootState::UprootDelay;
 
                 machine->SetBool( VineAIStateMachine::GoHome, false );
                 machine->SetBool( VineAIStateMachine::IsHome, true );
                 machine->SetBool( VineAIStateMachine::PursueTarget, false );
+
+                aiTrans->SetWorldPosition( ai->GetHomeLocation( ) );
             }
         }
         case UprootState::UprootDelay:

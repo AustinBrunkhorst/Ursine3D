@@ -45,6 +45,7 @@ VineAI::VineAI(void)
     , m_whipDuration( 0.5f )
     , m_whipCooldown( 2.0f )
     , m_digSpeed( 2.0f )
+    , m_digRayStartY( -20.0f )
     , m_digTurnSpeed( 2.0f )
     , m_uprootDistance( 2.0f )
     , m_uprootDelay( 2.0f )
@@ -180,6 +181,18 @@ const std::string &VineAI::GetDigParticleEmitterName(void) const
 void VineAI::SetDigParticleEmitterName(const std::string &name)
 {
     m_digParticleEmitterName = name;
+}
+
+float VineAI::GetDigRayStartY(void) const
+{
+    return m_digRayStartY;
+}
+
+void VineAI::SetDigRayStartY(float y)
+{
+    m_digRayStartY = y;
+
+    NOTIFY_COMPONENT_CHANGED( "digRayStartY", m_digRayStartY );
 }
 
 float VineAI::GetUprootDistance(void) const
