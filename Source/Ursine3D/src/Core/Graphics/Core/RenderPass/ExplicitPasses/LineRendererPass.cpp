@@ -34,7 +34,7 @@ namespace ursine
         {
         }
 
-        void LineRendererPass::executePass(Camera &currentCamera)
+        void LineRendererPass::executePass(Camera &currentCamera, int index)
         {
             ID3D11Buffer *mesh, *indices;
             unsigned vertCount, indexCount;

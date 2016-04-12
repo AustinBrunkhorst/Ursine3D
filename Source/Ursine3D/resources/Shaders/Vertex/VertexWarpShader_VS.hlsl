@@ -1,7 +1,9 @@
+#include "../Headers/Randomness_H.hlsl"
+
 cbuffer CameraBuffer : register(b0)
 {
-    matrix view;
-    matrix projection;
+    matrix View;
+    matrix Projection;
 };
 
 cbuffer TransformBuffer : register(b1)
@@ -9,123 +11,92 @@ cbuffer TransformBuffer : register(b1)
     matrix World;
 }
 
-
-cbuffer invView : register(b4)
+cbuffer MatrixStack : register(b12)
 {
-    matrix invView;
-    float nearPlane;
-    float farPlane;
-};
-
-cbuffer posAndColor : register(b6)
-{
-    float4 cameraPosition;
-    float4 color;
+    matrix matPal[ 96 ];
 }
 
-struct Particle_GPU
+cbuffer TextureOffset : register(b13)
 {
-    // alignment is really, really important
-    // boundry ////////////
-    float3 position;
-    float scaleX;
+    float2 diffuseTextureOffset;
+    float2 diffuseTextureScalar;
 
-    // boundry ////////////
-    float3 rotation;
-    float scaleY;
-
-    // boundry ////////////
-    float4 color;
-};
-
-cbuffer ParticleData : register(b13)
-{
-    Particle_GPU g_bufPosColor[ 1024 ];
+    float2 emissiveTextureOffset;
+    float2 emissiveTextureScalar;
 }
 
-// dummy for reflection data
-struct VertexInputType
+struct VS_INPUT
 {
-    float4 position : POSITION;
+    float3  Pos         : POSITION;
+    float3  Nor         : NORMAL;
+    float3  Tan         : TANGENT;
+    float2  Tex         : TEXCOORD;
+    float4  BWeight     : BLENDWEIGHT;
+    uint4   BIdx        : BLENDINDICES;
 };
 
-struct PixelInputType
+
+struct VS_OUTPUT
 {
-    float4 position : SV_POSITION;
-    float4 color : COLOR;
-    float2 uv : UV;
+    float4 Pos          : SV_POSITION;
+    float4 normal       : NORMAL;
+    float4 tangent      : TANGENT;
+    float4 bitangent    : BITANGENT;
+    float2 Tex          : UV;
+    float2 emisiveTex          : EM_UV;
 };
 
-float2x2 GenerateRotation(float radianAngle)
+VS_OUTPUT main(VS_INPUT input)
 {
-    return float2x2(float2(cos(radianAngle), -sin(radianAngle)), (float2(sin(radianAngle), cos(radianAngle))));
-}
+    VS_OUTPUT output;
 
-PixelInputType main(uint id : SV_VERTEXID)
-{
-    PixelInputType output;
+    float weights[ 4 ] = { 0.0f, 0.0f, 0.0f, 0.0f };
+    weights[ 0 ] = input.BWeight.x;
+    weights[ 1 ] = input.BWeight.y;
+    weights[ 2 ] = input.BWeight.z;
+    weights[ 3 ] = 1.0f - weights[ 0 ] - weights[ 1 ] - weights[ 2 ];
 
-    uint particleIndex = id / 6;
-    uint vertexInQuad = id % 6;
+    int indices[ 4 ] = { 0, 0, 0, 0 };
+    indices[ 0 ] = input.BIdx.x;
+    indices[ 1 ] = input.BIdx.y;
+    indices[ 2 ] = input.BIdx.z;
+    indices[ 3 ] = input.BIdx.w;
 
-    float3 position;
+    float3 pos = float3(0.f, 0.f, 0.f);
 
-    // scale
-    float3 rightVec = float3(0, 0, 1);
-    float3 upVec = cross(rightVec, float3(0, 0, -1));
-
-    upVec.z = 0;
-    rightVec.z = 0;
-
-    switch (vertexInQuad)
+    for (int i = 0; i < 4; ++i)
     {
-    case 0:
-        position = -rightVec + upVec;
-
-        output.uv.x = 0;
-        output.uv.y = 0;
-        break;
-    case 1:
-        position = rightVec + upVec;
-
-        output.uv.x = 1;
-        output.uv.y = 0;
-        break;
-    case 2:
-        position = -rightVec - upVec;
-
-        output.uv.x = 0;
-        output.uv.y = 1;
-        break;
-    case 3:
-        position = rightVec + upVec;
-
-        output.uv.x = 1;
-        output.uv.y = 0;
-        break;
-    case 4:
-        position = rightVec - upVec;
-
-        output.uv.x = 1;
-        output.uv.y = 1;
-        break;
-    default:
-        position = -rightVec - upVec;
-
-        output.uv.x = 0;
-        output.uv.y = 1;
-        break;
+        pos += weights[ i ] * mul(float4(input.Pos.xyz, 1.0f), matPal[ indices[ i ] ]).xyz;
     }
 
-    position.xy *= (g_bufPosColor[ particleIndex ].scaleX) * 0.5f;
+    // play with it...
+    float x = sin((pos.x + diffuseTextureOffset.x / emissiveTextureScalar.y) * emissiveTextureOffset.x);
+    float y = cos((pos.z + diffuseTextureOffset.x / emissiveTextureScalar.y) * emissiveTextureOffset.y) / emissiveTextureOffset.y;
 
-    // into world -> translate
 
-    position = mul(position, (float3x3)invView) + mul(float4(g_bufPosColor[ particleIndex ].position, 1.0f), World).xyz;
 
-    output.position = mul(float4(position, 1.0f), view);
-    output.position = mul(output.position, projection);
-    output.color = (g_bufPosColor[ particleIndex ].color * g_bufPosColor[ particleIndex ].color.w) * color;
+    pos.y = x * y * emissiveTextureScalar.x;
+
+    //sin(5x)*cos(5y) / 5
+
+    // end of warping
+
+    output.Pos = mul(float4(pos.xyz, 1.f), World);
+    output.Pos = mul(output.Pos, View);
+    output.Pos = mul(output.Pos, Projection);
+    output.Tex = (input.Tex + diffuseTextureOffset) * diffuseTextureScalar;
+    output.emisiveTex = (input.Tex + emissiveTextureOffset) * emissiveTextureScalar;
+
+    // move all vectors into world
+    output.normal = mul(float4(input.Nor.xyz, 0), World);
+    output.tangent = mul(float4(input.Tan.xyz, 0), World);
+
+    // move all vectors into view
+    output.normal = normalize(mul(output.normal, View));
+    output.tangent = normalize(mul(output.tangent, View));
+
+    // calculate bitangent
+    output.bitangent = normalize(float4(cross(output.normal.xyz, output.tangent.xyz), 0));
 
     return output;
 }

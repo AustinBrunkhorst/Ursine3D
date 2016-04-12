@@ -20,9 +20,11 @@ namespace ursine
     {
         void RenderableManager::Initialize(GfxManager *manager)
         {
-            //m_currentRenderableModel3D.resize(MAX_RENDERABLES);
-            //m_currentRenderableBillboards.resize(MAX_RENDERABLES);
-            //m_currentRenderableLights.resize(MAX_RENDERABLES);
+            m_currentRenderableModel3D.resize(MAX_RENDERABLES);
+            m_currentRenderableBillboards.resize(MAX_RENDERABLES);
+            m_currentRenderableLights.resize(MAX_RENDERABLES);
+            m_currentRenderableParticleSystems.resize(MAX_RENDERABLES);
+            m_currentRenderableSpriteText.resize(MAX_RENDERABLES);
 
             m_renderableModel3D.resize(MAX_RENDERABLES);
             m_renderableBillboards.resize(MAX_RENDERABLES);
@@ -56,24 +58,24 @@ namespace ursine
             switch (type)
             {
             case RENDERABLE_MODEL3D:
-                m_renderableModel3D[ newRender->Index_ ].m_active = true;
-                m_renderableModel3D[ newRender->Index_ ].Initialize( );
+                m_currentRenderableModel3D[ newRender->Index_ ].m_active = true;
+                m_currentRenderableModel3D[ newRender->Index_ ].Initialize( );
                 break;
             case RENDERABLE_LIGHT:
-                m_renderableLights[ newRender->Index_ ].m_active = true;
-                m_renderableLights[ newRender->Index_ ].Initialize( );
+                m_currentRenderableLights[ newRender->Index_ ].m_active = true;
+                m_currentRenderableLights[ newRender->Index_ ].Initialize( );
                 break;
             case RENDERABLE_BILLBOARD2D:
-                m_renderableBillboards[ newRender->Index_ ].m_active = true;
-                m_renderableBillboards[ newRender->Index_ ].Initialize();
+                m_currentRenderableBillboards[ newRender->Index_ ].m_active = true;
+                m_currentRenderableBillboards[ newRender->Index_ ].Initialize();
                 break;
             case RENDERABLE_PS:
-                m_renderableParticleSystems[ newRender->Index_ ].m_active = true;
-                m_renderableParticleSystems[ newRender->Index_ ].Initialize();
+                m_currentRenderableParticleSystems[ newRender->Index_ ].m_active = true;
+                m_currentRenderableParticleSystems[ newRender->Index_ ].Initialize();
                 break;
             case RENDERABLE_SPRITE_TEXT:
-                m_renderableSpriteText[ newRender->Index_ ].m_active = true;
-                m_renderableSpriteText[ newRender->Index_ ].Initialize();
+                m_currentRenderableSpriteText[ newRender->Index_ ].m_active = true;
+                m_currentRenderableSpriteText[ newRender->Index_ ].Initialize();
                 break;
             default:
                 UAssert(false, "Tried to add an invalid renderable!");
@@ -94,19 +96,19 @@ namespace ursine
             switch (rend->Type_)
             {
             case RENDERABLE_MODEL3D:
-                m_renderableModel3D[ rend->Index_ ].Uninitialize( m_manager );
+                m_currentRenderableModel3D[ rend->Index_ ].Uninitialize( m_manager );
                 break;
             case RENDERABLE_LIGHT:
-                m_renderableLights[ rend->Index_ ].Uninitialize( m_manager );
+                m_currentRenderableLights[ rend->Index_ ].Uninitialize( m_manager );
                 break;
             case RENDERABLE_BILLBOARD2D:
-                m_renderableBillboards[ rend->Index_ ].Uninitialize( m_manager );
+                m_currentRenderableBillboards[ rend->Index_ ].Uninitialize( m_manager );
                 break;
             case RENDERABLE_PS:
-                m_renderableParticleSystems[ rend->Index_ ].Uninitialize( m_manager );
+                m_currentRenderableParticleSystems[ rend->Index_ ].Uninitialize( m_manager );
                 break;
             case RENDERABLE_SPRITE_TEXT:
-                m_renderableSpriteText[ rend->Index_ ].Uninitialize( m_manager );
+                m_currentRenderableSpriteText[ rend->Index_ ].Uninitialize( m_manager );
                 break;
             default:
                 UAssert(false, "Tried to destroy an invalid renderable!");
@@ -119,10 +121,11 @@ namespace ursine
 
         void RenderableManager::CacheFrame(void)
         {
-            //m_renderableModel3D = m_currentRenderableModel3D;
-            //m_renderablePrimitives = m_currentRenderablePrimitives;
-            //m_renderableBillboards = m_currentRenderableBillboards;
-            //m_renderableLights = m_currentRenderableLights;
-        }
+            m_renderableModel3D             = m_currentRenderableModel3D;
+            m_renderableBillboards          = m_currentRenderableBillboards;
+            m_renderableLights              = m_currentRenderableLights;
+            m_renderableParticleSystems     = m_currentRenderableParticleSystems;
+            m_renderableSpriteText          = m_currentRenderableSpriteText;
+        }   
     }
 }

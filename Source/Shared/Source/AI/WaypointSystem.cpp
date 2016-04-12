@@ -142,6 +142,11 @@ namespace ursine
             //Debug.LogError(debugMessage);
         }
 
+        const WaypointMap& WaypointSystem::GetWaypointMap() const
+        {
+            return m_waypoints;
+        }
+
         void WaypointSystem::OnInitialize(void)
         {
             m_world->Listener(this)
@@ -207,6 +212,7 @@ namespace ursine
             // update all the ai agents
             for (auto agent : m_agents)
             {
+                agent->UpdateClosed();
                 // if the agent is ready to update, do so
                 if (agent->CanUpdate())
                 {

@@ -26,7 +26,7 @@ namespace ursine
 
         ShadowPass::~ShadowPass() { }
 
-        void ShadowPass::executePass(Camera &currentCamera)
+        void ShadowPass::executePass(Camera &currentCamera, int index)
         {
             D3D11_VIEWPORT vpData;
             vpData.TopLeftX = 0;
@@ -37,15 +37,15 @@ namespace ursine
             /////////////////////////////////////////////////////////////////////////////
             // GET OBJECT RANGE
             unsigned objStart = 0, objEnd = 0;
-            auto &drawList = m_manager->m_drawList;
+            auto &drawList = m_manager->m_drawLists[ index ];
 
             // get the start of objects
-            while (drawList[ objStart ].Type_ != RENDERABLE_MODEL3D && objStart < m_manager->m_drawCount)
+            while (drawList[ objStart ].Type_ != RENDERABLE_MODEL3D && objStart < m_manager->m_drawCounts[ index ])
                 ++objStart;
             objEnd = objStart;
 
             // get the end of objects
-            while (drawList[ objEnd ].Type_ == RENDERABLE_MODEL3D && objEnd < m_manager->m_drawCount)
+            while (drawList[ objEnd ].Type_ == RENDERABLE_MODEL3D && objEnd < m_manager->m_drawCounts[ index ])
                 ++objEnd;
 
             /////////////////////////////////////////////////////////////////////////////
@@ -53,12 +53,12 @@ namespace ursine
             unsigned lightStart = 0, lightEnd = 0;
 
             // get the start of objects
-            while (drawList[ lightStart ].Type_ != m_renderableMode && lightStart < m_manager->m_drawCount)
+            while (drawList[ lightStart ].Type_ != m_renderableMode && lightStart < m_manager->m_drawCounts[ index ])
                 ++lightStart;
             lightEnd = lightStart;
 
             // get the end of objects
-            while (drawList[ lightEnd ].Type_ == m_renderableMode && lightEnd < m_manager->m_drawCount)
+            while (drawList[ lightEnd ].Type_ == m_renderableMode && lightEnd < m_manager->m_drawCounts[ index ])
                 ++lightEnd;
 
             // start debug event
@@ -108,7 +108,7 @@ namespace ursine
 
                 // render this set of objects
                 m_processor->Process(
-                    m_manager->m_drawList,
+                    m_manager->m_drawLists[ index ],
                     currentCamera,
                     objStart,
                     objEnd

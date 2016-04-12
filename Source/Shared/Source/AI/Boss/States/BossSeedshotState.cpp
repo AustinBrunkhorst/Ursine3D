@@ -110,6 +110,8 @@ void BossSeedshotState::Exit(BossAIStateMachine *machine)
 
 void BossSeedshotState::findTarget(BossAI *boss)
 {
+    m_target = nullptr;
+
     auto world = boss->GetOwner( )->GetWorld( );
     auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
     float minHealth = std::numeric_limits<float>( ).max( );
@@ -119,12 +121,18 @@ void BossSeedshotState::findTarget(BossAI *boss)
     {
         auto health = player->GetComponent<Health>( )->GetHealth( );
 
+        if (health <= 0.0f)
+            continue;
+
         if (health < minHealth)
         {
             minHealth = health;
             m_target = player;
         }
     }
+
+    if (!m_target)
+        m_target = players[ rand( ) % players.size( ) ];
 }
 
 void BossSeedshotState::rotateTowardsTarget(BossAI *boss)

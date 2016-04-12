@@ -17,6 +17,7 @@
 
 #include <function.h>
 #include <Game Engine/Scene/Component/Native Components/Physics/GhostComponent.h>
+#include "WaypointAgentComponent.h"
 
 // here is a fancy macro for quickly passing component members to this state
 #define INIT_WALKSTATE(name)                                              \
@@ -69,6 +70,8 @@ namespace ursine
             std::vector<ecs::EntityHandle> m_surrounding;
 
             ecs::AIMovementController *m_move;
+
+            ecs::WaypointAgent *m_wayAgent;
 
             ecs::Ghost *m_ghostCollider;
 

@@ -1,6 +1,8 @@
 #include "Precompiled.h"
 
 #include "WaypointAgentComponent.h"
+#include "WaypointSystem.h"
+#include<SystemManager.h>
 
 #include <limits>
 #include <list>
@@ -15,6 +17,25 @@ namespace ursine
             , m_timerLength(0.5f)
             , m_timer(0.0f)
         {
+        }
+
+        void WaypointAgent::OnInitialize()
+        {
+            auto entitySystem = GetOwner()->GetWorld()->GetEntitySystem<WaypointSystem>();
+
+            if (!entitySystem)
+                return;
+
+
+            auto map = entitySystem->GetWaypointMap();
+
+            if (map.empty())
+                return;
+
+            for (auto wpPair : map)
+            {
+                m_nodes.push_back(Node(wpPair.second, 0,0));
+            }
         }
 
         Node* WaypointAgent::GetClosestNode(const Vec3& pos)
@@ -54,6 +75,17 @@ namespace ursine
             return m_target;
         }
 
+        SVec3 WaypointAgent::GetTargetPathPosition() const
+        {
+            // if there are no waypoints on the list, just return target's position
+            if (m_closed.empty() == true)
+            {
+                return m_target;
+            }
+
+            return m_closed.begin()._Ptr->_Myval->waypoint.Get()->GetOwner()->GetTransform()->GetWorldPosition();
+        }
+
         float WaypointAgent::GetUpdateTimer() const
         {
             return m_timerLength;
@@ -88,6 +120,21 @@ namespace ursine
         bool WaypointAgent::CanUpdate(void) const
         {
             return m_timer <= 0.0f;
+        }
+
+        void WaypointAgent::UpdateClosed()
+        {
+            if (m_closed.empty() == true)
+                return;
+
+            Waypoint *topWp = m_closed.begin()._Ptr->_Myval->waypoint.Get();
+
+            float arrivedDist = topWp->GetRadius();
+
+            if (GetOwner()->GetTransform()->GetWorldPosition().Distance(topWp->GetPosition()) <= arrivedDist)
+            {
+                m_closed.pop_front();
+            }
         }
     }
 }

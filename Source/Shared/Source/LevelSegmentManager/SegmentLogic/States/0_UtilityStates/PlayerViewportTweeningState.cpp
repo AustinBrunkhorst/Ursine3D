@@ -21,9 +21,10 @@
 using namespace ursine;
 using namespace ecs;
 
-PlayerViewportTweeningState::PlayerViewportTweeningState(ViewportTweenType type, bool blocking)
+PlayerViewportTweeningState::PlayerViewportTweeningState(ViewportTweenType type, bool blocking, bool camerasActive)
     : SegmentLogicState( "Player Viewport Tween" )
     , m_blocking( blocking )
+    , m_camerasActive( camerasActive )
 {
     m_type = type;
 }
@@ -46,8 +47,11 @@ void PlayerViewportTweeningState::Enter(SegmentLogicStateMachine *machine)
     auto c1 = p1->GetComponentInChildren<Camera>( );
     auto c2 = p2->GetComponentInChildren<Camera>( );
 
-    c1->SetActive( true );
-    c2->SetActive( true );
+    if (m_camerasActive)
+    {
+        c1->SetActive( true );
+        c2->SetActive( true );
+    }
 
     switch (m_type)
     {
@@ -340,4 +344,20 @@ void PlayerViewportTweeningState::Enter(SegmentLogicStateMachine *machine)
             break;
         }
     };
+}
+
+void PlayerViewportTweeningState::Exit(SegmentLogicStateMachine *machine)
+{
+    auto segmentManager = machine->GetSegmentManager( );
+    auto p1 = segmentManager->GetPlayer1( );
+    auto p2 = segmentManager->GetPlayer2( );
+
+    auto c1 = p1->GetComponentInChildren<Camera>( );
+    auto c2 = p2->GetComponentInChildren<Camera>( );
+
+    if (!m_camerasActive)
+    {
+        c1->SetActive( false );
+        c2->SetActive( false );
+    }
 }

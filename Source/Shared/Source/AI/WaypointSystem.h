@@ -21,6 +21,8 @@ namespace ursine
 {
     namespace ecs
     {
+        typedef std::unordered_map<EntityHandle, Component::Handle<Waypoint>> WaypointMap;
+
         class WaypointSystem 
             : public EntitySystem
         {
@@ -35,8 +37,11 @@ namespace ursine
             Meta(Disable)
             void CalculatePath(WaypointAgent &agent, const Vec3 &goal);
 
+            Meta(Disable)
+                const WaypointMap &GetWaypointMap(void) const;
+
         private:
-            std::unordered_map<EntityHandle, Component::Handle<Waypoint>> m_waypoints;
+            WaypointMap m_waypoints;
 
             std::vector<WaypointAgent *> m_agents;
 

@@ -104,7 +104,7 @@ namespace ursine
             m_targetArray.resize( m_outputTargets.size( ) );
         }
 
-        void RenderPass::Execute(Camera &currentCamera)
+        void RenderPass::Execute(Camera &currentCamera, int index)
         {
             /////////////////////////////////////////////////////////
             // trigger pre-passes
@@ -119,7 +119,7 @@ namespace ursine
             beginPass( currentCamera );
 
             // execute our own pass
-            executePass( currentCamera );
+            executePass( currentCamera, index );
 
             // end debug event
             m_manager->dxCore->EndDebugEvent( );
@@ -275,27 +275,30 @@ namespace ursine
                 pass->Execute( currentCamera );
         }
 
-        void RenderPass::executePass(Camera &currentCamera)
+        void RenderPass::executePass(Camera &currentCamera, int index)
         {
+            while (m_manager->modelManager->IsLoading()) { }
+            while (m_manager->textureManager->IsLoading()) { }
+
             // check to see if this pass has stuff to do
             if (m_processor != nullptr && m_fullscreenPass == false)
             {
                 // calculate our range
                 unsigned start = 0, end = 0;
-                auto &drawList = m_manager->m_drawList;
+                auto &drawList = m_manager->m_drawLists[ index ];
 
                 // get the start
-                while((drawList[start].Type_ != m_renderableMode) && start < m_manager->m_drawCount)
+                while((drawList[start].Type_ != m_renderableMode) && start < m_manager->m_drawCounts[ index ])
                     ++start;
                 end = start;
 
                 // get the end
-                while(drawList[end].Type_ == m_renderableMode && end < m_manager->m_drawCount )
+                while(drawList[end].Type_ == m_renderableMode && end < m_manager->m_drawCounts[ index ])
                     ++end;
 
                 // process
                 m_processor->Process( 
-                    m_manager->m_drawList, 
+                    m_manager->m_drawLists[ index ],
                     currentCamera, 
                     start, 
                     end 

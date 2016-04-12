@@ -90,10 +90,10 @@ namespace ursine
                         makeConnection(newWP);
                     }
                 }
-                else
-                {
-                    m_mode = MODE_INACTIVE;
-                }
+                //else
+                //{
+                //    m_mode = MODE_INACTIVE;
+                //}
             }
             else if(args->component->Is<Selected>())
             {

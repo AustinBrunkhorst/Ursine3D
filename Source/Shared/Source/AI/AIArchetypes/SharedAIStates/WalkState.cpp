@@ -21,6 +21,7 @@ namespace ursine
         WalkState::WalkState(std::string name)
             : AIState(name)
             , m_move(nullptr)
+            , m_wayAgent(nullptr)
             , m_ghostCollider(nullptr)
             , m_nearRadius(1.0f)
             , m_attackRange(3.0f)
@@ -44,6 +45,7 @@ namespace ursine
             {
                 setTargetDirection = std::bind(&WalkState::setTargetDirectionWaypoints, this, _1);
 
+                m_wayAgent = aiActor->GetComponent<WaypointAgent>();
             }
             else
             {
@@ -220,7 +222,12 @@ namespace ursine
 
         void WalkState::setTargetDirectionWaypoints(const SVec3& target)
         {
-            
+            m_wayAgent->SetTarget(target);
+            // get the direction we are going from the waypoint controller
+            SVec3 dir = m_wayAgent->GetTargetPathPosition();
+
+            // now we apply it just like normal to the direction
+            m_move->SetTargetDirection(dir);
         }
 
         void WalkState::setTargetDirectionMovement(const SVec3& target)
