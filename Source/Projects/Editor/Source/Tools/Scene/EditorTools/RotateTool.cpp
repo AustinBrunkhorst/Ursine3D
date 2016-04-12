@@ -206,6 +206,7 @@ void RotateTool::enableAxis(void)
         model->SetOverdraw( true );
         model->SetMaterialData( 4, 0, 0 );
         model->SetModel( m_torus );
+        model->SetIsVisible( false );
     }
 }
 

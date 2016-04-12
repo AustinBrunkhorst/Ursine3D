@@ -38,6 +38,7 @@ struct VS_OUTPUT
     float4 tangent      : TANGENT;
     float4 bitangent    : BITANGENT;
     float2 Tex          : UV;
+    float2 emisiveTex          : EM_UV;
 };
 
 VS_OUTPUT main(VS_INPUT input)
@@ -66,7 +67,8 @@ VS_OUTPUT main(VS_INPUT input)
     output.Pos = mul(float4(pos.xyz, 1.f), World);
     output.Pos = mul(output.Pos, View);
     output.Pos = mul(output.Pos, Projection);
-    output.Tex = (input.Tex + textureOffset) * textureScalar;
+    output.Tex = (input.Tex);
+    output.emisiveTex = (input.Tex + textureOffset) * textureScalar;
 
     // move all vectors into world
     output.normal       = mul(float4(input.Nor.xyz, 0), World);

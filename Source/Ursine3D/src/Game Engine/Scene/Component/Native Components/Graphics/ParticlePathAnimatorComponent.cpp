@@ -232,10 +232,17 @@ namespace ursine
            if(particleSystem->GetSystemSpace( ) == SystemSpace::WorldSpace)
             {
                 m_pointArray[0] = GetOwner( )->GetTransform( )->GetWorldPosition( );
-
+                
                 for(unsigned x = 0; x < size; ++x)
                 {
                     auto childEntity = GetOwner( )->GetWorld( )->GetEntity( (*children)[ x ] );
+                    if(childEntity->GetName( ) == "__bb")
+                    {
+                        m_pointArray.pop_back( );
+                        --size;
+                        continue;
+                    }
+
                     m_pointArray[ x + 1] = childEntity->GetTransform( )->GetWorldPosition( );
                 }
             }
@@ -246,6 +253,15 @@ namespace ursine
                for (unsigned x = 0; x < size; ++x)
                {
                    auto childEntity = GetOwner()->GetWorld()->GetEntity((*children)[ x ]);
+
+                   if (childEntity->GetName() == "__bb")
+                   {
+                       m_pointArray.pop_back();
+                       --size;
+                       continue;
+                   }
+
+
                    m_pointArray[ x + 1 ] = childEntity->GetTransform()->GetLocalPosition();
 
                    //m_pointArray[ x + 1 ] = GetOwner( )->GetTransform( )->GetWorldRotation( ).Rotate(m_pointArray[ x + 1 ]);
