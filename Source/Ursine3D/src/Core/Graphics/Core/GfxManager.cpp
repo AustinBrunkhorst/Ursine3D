@@ -410,7 +410,7 @@ namespace ursine
             m_currentlyRendering = false;
 
             // if we are multithreading
-            if(false)
+            if(true)
             {
                 m_gfxThread = std::thread(internalGfxEntry, this);
 
@@ -457,6 +457,12 @@ namespace ursine
         {
             manager->internalStartFrame();
 
+            // render ui
+            for (auto &uiCall : manager->m_uiRenderCalls)
+                manager->internalRenderDynamicTexture(uiCall.texHandle, uiCall.posX, uiCall.posY);
+            for (auto &uiCall : manager->m_uiViewportRenderCalls)
+                manager->internalRenderDynamicTextureInViewport(uiCall.texHandle, uiCall.posX, uiCall.posY, uiCall.cameraHandle);
+
             // sort calls
             int index = 0;
             for (auto &list : manager->m_drawLists)
@@ -473,12 +479,6 @@ namespace ursine
             {
                 manager->internalRenderScene(camPair.first, camPair.second);
             }
-
-            // render ui
-            for (auto &uiCall : manager->m_uiRenderCalls)
-                manager->internalRenderDynamicTexture(uiCall.texHandle, uiCall.posX, uiCall.posY);
-            for (auto &uiCall : manager->m_uiViewportRenderCalls)
-                manager->internalRenderDynamicTextureInViewport(uiCall.texHandle, uiCall.posX, uiCall.posY, uiCall.cameraHandle);
 
             // end frame
             manager->internalEndFrame();
