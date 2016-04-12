@@ -43,3 +43,19 @@ ursine_project(Editor
 )
 
 target_link_libraries(Editor Shared)
+
+add_custom_target(SyncAddedFiles
+    COMMAND ${CMAKE_COMMAND} -E touch \"${Editor_LIST_FILE}\"
+    COMMAND ${CMAKE_COMMAND} -E touch \"${Shared_LIST_FILE}\"
+    COMMAND ${CMAKE_COMMAND} -E touch \"${URSINE_LIST_FILE}\"
+)
+
+add_custom_target(MagicRebuild
+    DEPENDS SyncAddedFiles
+    DEPENDS Editor-RebuildMeta
+    DEPENDS Shared-RebuildMeta
+    DEPENDS Ursine3D-RebuildMeta
+)
+
+ursine_set_folder(SyncAddedFiles ".Utility")
+ursine_set_folder(MagicRebuild ".Utility")
