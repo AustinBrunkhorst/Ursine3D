@@ -168,6 +168,12 @@ namespace ursine
             const Vec2 &GetTextureUVScalar(void) const;
             void SetTextureUVScalar(const Vec2 &scalar);
 
+            const Vec2 &GetEmissiveTextureUVOffset(void) const;
+            void SetEmissiveTextureUVOffset(const Vec2 &offset);
+
+            const Vec2 &GetEmissiveTextureUVScalar(void) const;
+            void SetEmissiveTextureUVScalar(const Vec2 &scalar);
+
             bool GetDoesFragment(void) const;
             void SetDoesFragment(bool doesFragment);
 
@@ -197,6 +203,9 @@ namespace ursine
 
             Vec2 m_textureUVOffset;
             Vec2 m_textureUVScalar;
+
+            Vec2 m_emissiveTextureUVOffset;
+            Vec2 m_emissiveTextureUVScalar;
 
             // for multimaps
             int m_meshIndex;

@@ -24,42 +24,88 @@ NATIVE_COMPONENT_DEFINITION(TextureAnimator);
 
 TextureAnimator::TextureAnimator(void)
     : BaseComponent( )
+    , m_isDiffusePlaying( false )
+    , m_isEmissivePlaying( false )
 {
+}
+
+TextureAnimator::~TextureAnimator(void)
+{
+    auto *model = GetOwner( )->GetComponent<Model3D>( );
+
+    model->SetTextureUVScalar( Vec2(1.0f, 1.0f) );
+    model->SetTextureUVOffset( Vec2(0, 0) );
+
+    model->SetEmissiveTextureUVScalar( Vec2(1.0f, 1.0f) );
+    model->SetEmissiveTextureUVOffset( Vec2(0, 0) );
 }
 
 void TextureAnimator::OnInitialize(void)
 {
 }
 
-bool TextureAnimator::GetIsPlaying(void) const
+bool TextureAnimator::GetIsDiffusePlaying(void) const
 {
-    return m_isPlaying;
+    return m_isDiffusePlaying;
 }
 
-void TextureAnimator::SetIsPlaying(bool isPlaying)
+void TextureAnimator::SetIsDiffusePlaying(bool isPlaying)
 {
-    m_isPlaying = isPlaying;
+    m_isDiffusePlaying = isPlaying;
 }
 
-Vec2 TextureAnimator::GetTextureVelocity(void) const
+bool TextureAnimator::GetIsEmissivePlaying(void) const
+{
+    return m_isEmissivePlaying;
+}
+
+void TextureAnimator::SetIsEmissivePlaying(bool isPlaying)
+{
+    m_isEmissivePlaying = isPlaying;
+}
+
+Vec2 TextureAnimator::GetDiffuseTextureVelocity(void) const
 {
     return m_textureVelocity;
 }
 
-void TextureAnimator::SetTextureVelocity(const ursine::Vec2& textureVel)
+void TextureAnimator::SetDiffuseTextureVelocity(const ursine::Vec2& textureVel)
 {
     m_textureVelocity = textureVel;
 
-    NOTIFY_COMPONENT_CHANGED( "textureVelocity", textureVel );
+    NOTIFY_COMPONENT_CHANGED( "diffuseTextureVelocity", textureVel );
 }
 
-Vec2 TextureAnimator::GetTextureScalar(void) const
+Vec2 TextureAnimator::GetDiffuseTextureScalar(void) const
 {
     return GetOwner( )->GetComponent<Model3D>( )->GetTextureUVScalar( );
 }
 
-void TextureAnimator::SetTextureScalar(const ursine::Vec2& textureScalar)
+void TextureAnimator::SetDiffuseTextureScalar(const ursine::Vec2& textureScalar)
 {
     GetOwner( )->GetComponent<Model3D>( )->SetTextureUVScalar( textureScalar );
-    NOTIFY_COMPONENT_CHANGED( "textureScalar", textureScalar );
+    NOTIFY_COMPONENT_CHANGED( "diffuseTextureScalar", textureScalar );
+}
+
+Vec2 TextureAnimator::GetEmissiveTextureVelocity(void) const
+{
+    return m_emissiveTextureVelocity;
+}
+
+void TextureAnimator::SetEmissiveTextureVelocity(const ursine::Vec2& textureVel)
+{
+    m_emissiveTextureVelocity = textureVel;
+
+    NOTIFY_COMPONENT_CHANGED( "emissiveTextureVelocity", textureVel );
+}
+
+Vec2 TextureAnimator::GetEmissiveTextureScalar(void) const
+{
+    return GetOwner( )->GetComponent<Model3D>( )->GetEmissiveTextureUVScalar( );
+}
+
+void TextureAnimator::SetEmissiveTextureScalar(const ursine::Vec2& textureScalar)
+{
+    GetOwner( )->GetComponent<Model3D>( )->SetTextureUVScalar( textureScalar );
+    NOTIFY_COMPONENT_CHANGED( "emissiveTextureScalar", textureScalar );
 }
