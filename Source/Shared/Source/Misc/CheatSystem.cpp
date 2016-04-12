@@ -14,13 +14,18 @@
 #include "Precompiled.h"
 
 #include "CheatSystem.h"
+
+#include "PlayerIdComponent.h"
+#include "HealthComponent.h"
+#include "GameEvents.h"
+
 #include <WorldEvent.h>
-#include <Core/CoreSystem.h>
-#include <Core/Input/Keyboard/KeyboardManager.h>
-#include <Game Engine/Scene/World/Managers/SystemManager.h>
+#include <CoreSystem.h>
+#include <KeyboardManager.h>
+#include <SystemManager.h>
 
 using namespace ursine;
-
+using namespace ecs;
 
 ENTITY_SYSTEM_DEFINITION( CheatSystem );
 
@@ -43,7 +48,87 @@ void CheatSystem::OnRemove()
 
 void CheatSystem::onUpdate(EVENT_HANDLER(ursine::ecs:::World))
 {
-    int killCheck = killTeamCheat();
+    auto *kbManager = GetCoreSystem(KeyboardManager);
+
+    if (kbManager->IsTriggeredDown(KEY_O))
+    {
+        // teleport player 2 to player 1
+        auto players = m_world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+
+        if (players.size( ) >= 2)
+        {
+            EntityHandle p1, p2;
+
+            for (auto &player : players)
+            {
+                auto id = player->GetComponent<PlayerID>( )->GetID( );
+
+                if (id == 0)
+                    p1 = player;
+                else if (id == 1)
+                    p2 = player;
+            }
+
+            if (p1 && p2)
+            {
+                auto p2trans = p2->GetTransform( );
+                auto p1trans = p1->GetTransform( );
+
+                p2trans->SetWorldPosition(
+                    p1trans->GetWorldPosition( ) + p1trans->GetRight( ) * 10.0f
+                );
+
+                p2trans->SetWorldRotation(
+                    p1trans->GetWorldRotation( )
+                );
+            }
+        }
+    }
+    if (kbManager->IsTriggeredDown(KEY_P))
+    {
+        // teleport player 1 to player 2
+        auto players = m_world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+
+        if (players.size( ) >= 2)
+        {
+            EntityHandle p1, p2;
+
+            for (auto &player : players)
+            {
+                auto id = player->GetComponent<PlayerID>( )->GetID( );
+
+                if (id == 0)
+                    p1 = player;
+                else if (id == 1)
+                    p2 = player;
+            }
+
+            if (p1 && p2)
+            {
+                auto p2trans = p2->GetTransform( );
+                auto p1trans = p1->GetTransform( );
+
+                p1trans->SetWorldPosition( 
+                    p2trans->GetWorldPosition( ) + p2trans->GetRight( ) * 10.0f
+                );
+
+                p1trans->SetWorldRotation(
+                    p2trans->GetWorldRotation( )
+                );
+            }
+        }
+    }
+    if (kbManager->IsTriggeredDown(KEY_I))
+    {
+        // revive players
+        auto players = m_world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+
+        for (auto &player : players)
+        {
+            if (player->GetComponent<Health>( )->GetHealth( ) <= 0.0f)
+                player->Dispatch( game::REVIVE_PLAYER, EventArgs::Empty );
+        }
+    }
 }
 
 int CheatSystem::killTeamCheat(void)

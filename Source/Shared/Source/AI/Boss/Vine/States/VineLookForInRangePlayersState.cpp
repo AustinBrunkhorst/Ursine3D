@@ -58,6 +58,9 @@ void VineLookForInRangePlayersState::Update(VineAIStateMachine *machine)
 
     for (auto &playerID : players)
     {
+        if (playerID->GetComponent<Health>( )->GetHealth( ) <= 0.0f)
+            continue;
+
         auto playerTrans = playerID->GetTransform( );
         auto dir = playerTrans->GetWorldPosition( ) - 
                    aiTrans->GetWorldPosition( );
@@ -87,6 +90,9 @@ void VineLookForInRangePlayersState::Update(VineAIStateMachine *machine)
             }
         }
     }
+
+    if (!closestTrans)
+        closestTrans = players[ rand( ) % players.size( ) ]->GetTransform( );
 
     ai->SetTarget( closestTrans->GetOwner( ) );
 
