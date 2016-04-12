@@ -45,6 +45,8 @@ namespace ursine
 
             m_currentState = -1;
 
+            m_loadingModel = false;
+
             AnimationBuilder::InitializeStaticData( );
 
             /////////////////////////////////////////////////////////////////////////////
@@ -256,6 +258,7 @@ namespace ursine
 
         GfxHND ModelManager::CreateModel(const ufmt_loader::ModelInfo &modelInfo)
         {
+            m_loadingModel = true;
             GfxHND handle;
 
             auto *hnd = HND_RSRCE( handle );
@@ -286,6 +289,8 @@ namespace ursine
             hnd->ID_ = SANITY_RESOURCE;
             hnd->Type_ = ID_MODEL;
             hnd->Index_ = internalID;
+
+            m_loadingModel = false;
 
             return handle;
         }
@@ -341,7 +346,11 @@ namespace ursine
             auto &model = search->second;
 
             if (model.HasNoReferences( ))
+            {
+                m_loadingModel = true;
                 loadModelToGPU( model );
+                m_loadingModel = false;
+            }
 
             model.IncrementReference( );
         }
@@ -513,6 +522,7 @@ namespace ursine
 
         ModelResource *ModelManager::GetModel(const unsigned ID)
         {
+            waitForLoading( );
             return &m_modelCache[ ID ];
         }
 
@@ -523,6 +533,16 @@ namespace ursine
             UAssert( modelInfo != m_modelInfoTable.end( ), "Failed to find model info with name '%s'!", name.c_str( ) );
 
             return modelInfo->second;
+        }
+
+        bool ModelManager::IsLoading() const
+        {
+            return m_loadingModel;
+        }
+
+        void ModelManager::waitForLoading(void) const
+        {
+            while(m_loadingModel) { }
         }
 
         // private methods

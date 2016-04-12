@@ -53,7 +53,7 @@ namespace ursine
             void InitializePass(void);
 
             // execute this pass
-            void Execute(Camera &currentCamera);
+            void Execute(Camera &currentCamera, int index = 0);
 
             // all the sets
             RenderPass &Set(std::initializer_list<RENDER_TARGETS> targets);     // where do we write to
@@ -85,7 +85,7 @@ namespace ursine
             void executePrePasses(Camera &currentCamera);
 
             // process self, can be overridden for extremely specific purposes
-            virtual void executePass(Camera &currentCamera);
+            virtual void executePass(Camera &currentCamera, int index);
 
             // process post-passes
             void executePostPasses(Camera &currentCamera);

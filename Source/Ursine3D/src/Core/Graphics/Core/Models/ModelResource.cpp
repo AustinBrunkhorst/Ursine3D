@@ -45,7 +45,11 @@ namespace ursine
 
         Mesh *ModelResource::GetMesh(const unsigned index) const
         {
-            UAssert(index < m_meshArray.size(), "Tried to get mesh that does not exist!");
+            if(!(index < m_meshArray.size()))
+            {
+                return m_meshArray[ 0 ];
+            }
+            
             return m_meshArray[index];
         }
 

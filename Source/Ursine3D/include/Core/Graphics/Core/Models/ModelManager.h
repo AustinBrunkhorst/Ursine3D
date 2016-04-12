@@ -15,6 +15,7 @@
 
 #include <map>
 #include <string>
+#include <atomic>
 
 #include "ModelResource.h"
 #include "ModelInfo.h"
@@ -78,7 +79,10 @@ namespace ursine
             // getting model info by name
             ufmt_loader::ModelInfo *GetModelInfoByName(const std::string &name);
 
+            bool IsLoading(void) const;
+
         private:
+            void waitForLoading(void) const;
             void InitializeModel(const ufmt_loader::ModelInfo &modelInfo, ModelResource &modelresource);
             void loadModelToGPU(ModelResource &model);
             void unloadModelFromGPU(ModelResource &model);
@@ -89,6 +93,8 @@ namespace ursine
             // model
             unsigned m_nextModelID;
             unsigned m_currentState;
+
+            std::atomic<bool> m_loadingModel;
 
             std::unordered_map<unsigned, ModelResource> m_modelCache;
             std::unordered_map<unsigned, ufmt_loader::ModelInfo> m_modelInfoCache;

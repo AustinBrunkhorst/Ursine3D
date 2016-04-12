@@ -249,7 +249,9 @@ namespace ursine
             // if it doesn't exist on the GPU, load it up
             if (m_textureCache[ id ].m_referenceCount == 0)
             {
+                m_loadingTexture = true;
                 LoadTextureToGPU(m_textureCache[ id ]);
+                m_loadingTexture = false;
             }
 
             ++(m_textureCache[ id ].m_referenceCount);
@@ -501,6 +503,11 @@ namespace ursine
 
             *dataPtr = texture.m_binaryData;
             binarySize = texture.m_binarySize;
+        }
+
+        bool TextureManager::IsLoading() const
+        {
+            return m_loadingTexture;
         }
 
         // private methods

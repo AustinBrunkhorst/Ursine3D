@@ -35,7 +35,7 @@ namespace ursine
 
         }
 
-        void PointRendererPass::executePass(Camera &currentCamera)
+        void PointRendererPass::executePass(Camera &currentCamera, int index)
         {
             ID3D11Buffer *mesh, *indices;
             unsigned vertCount, indexCount;
