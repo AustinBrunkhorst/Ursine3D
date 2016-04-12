@@ -21,7 +21,16 @@ namespace ursine
 
         void WaypointAgent::OnInitialize()
         {
-            auto map = GetOwner()->GetWorld()->GetEntitySystem<WaypointSystem>()->GetWaypointMap();
+            auto entitySystem = GetOwner()->GetWorld()->GetEntitySystem<WaypointSystem>();
+
+            if (!entitySystem)
+                return;
+
+
+            auto map = entitySystem->GetWaypointMap();
+
+            if (map.empty())
+                return;
 
             for (auto wpPair : map)
             {
