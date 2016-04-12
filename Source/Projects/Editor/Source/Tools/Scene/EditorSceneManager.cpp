@@ -31,16 +31,16 @@ EditorSceneManager::EditorSceneManager(Project *project)
 {
      m_project->GetScene( ).Listener( this )
         .On( SCENE_WORLD_CHANGED, &EditorSceneManager::onSceneActiveWorldChanged )
-        .On( SCENE_PLAYSTATE_CHANGED, &EditorSceneManager::onScenePlayStateChanged )
-        .On( SCENE_FRAME_STEPPED, &EditorSceneManager::onSceneFrameStepped );
+        .On( EDITOR_SCENE_PLAYSTATE_CHANGED, &EditorSceneManager::onScenePlayStateChanged )
+        .On( EDITOR_SCENE_FRAME_STEPPED, &EditorSceneManager::onSceneFrameStepped );
 }
 
 EditorSceneManager::~EditorSceneManager(void)
 {
     m_project->GetScene( ).Listener( this )
         .Off( SCENE_WORLD_CHANGED, &EditorSceneManager::onSceneActiveWorldChanged )
-        .Off( SCENE_PLAYSTATE_CHANGED, &EditorSceneManager::onScenePlayStateChanged )
-        .Off( SCENE_FRAME_STEPPED, &EditorSceneManager::onSceneFrameStepped );
+        .Off( EDITOR_SCENE_PLAYSTATE_CHANGED, &EditorSceneManager::onScenePlayStateChanged )
+        .Off( EDITOR_SCENE_FRAME_STEPPED, &EditorSceneManager::onSceneFrameStepped );
 }
 
 void EditorSceneManager::onSceneActiveWorldChanged(EVENT_HANDLER(Scene))

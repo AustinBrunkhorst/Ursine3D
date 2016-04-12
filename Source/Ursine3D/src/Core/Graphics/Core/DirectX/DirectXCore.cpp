@@ -230,7 +230,14 @@ namespace ursine
                     &m_swapChain
                 );
 
-                UAssert(result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage(result));
+                if(result == DXGI_STATUS_OCCLUDED)
+                {
+                    UWarning( "Device was occluded!" );
+                }
+                else
+                {
+                    UAssert( result == S_OK, "Failed to create swapchain! (Error '%s')", GetDXErrorMessage( result ) );
+                }
 
                 pIDXGIFactory->MakeWindowAssociation(hWindow, DXGI_MWA_NO_ALT_ENTER);
 
@@ -238,8 +245,22 @@ namespace ursine
                 RELEASE_RESOURCE(pDXGIAdapter);
                 RELEASE_RESOURCE(pDXGIDevice);
 
+                // this is fucking awful
                 //set to not fullscreen
-                m_swapChain->SetFullscreenState(fullscreen, nullptr);
+                for (int x = 0; x < 10; ++x)
+                {
+                    // attempt to set to fullscreen
+                    HRESULT result = m_swapChain->SetFullscreenState( fullscreen, nullptr );
+
+                    // if it works, dandy
+                    if (result == S_OK)
+                    {
+                        break;
+                    }
+
+                    // just sleep for a frame and try again later
+                    std::this_thread::sleep_for( std::chrono::milliseconds( 16 ) );
+                }
 
                 ///////////////////////////////////////////////////////////////
                 // INIT RENDER TARGETS ////////////////////////////////////////

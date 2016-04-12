@@ -50,7 +50,7 @@ Project::Project(void)
 {
     m_scene.Listener( this )
         .On( SCENE_WORLD_CHANGED, &Project::onSceneWorldChanged )
-        .On( SCENE_PLAYSTATE_CHANGED, &Project::onScenePlayStateChanged );
+        .On( EDITOR_SCENE_PLAYSTATE_CHANGED, &Project::onScenePlayStateChanged );
 
     m_resourcePipeline.Listener( this )
         .On( rp::RP_RESOURCE_MODIFIED, &Project::onResourceModified );
@@ -62,7 +62,7 @@ Project::~Project(void)
 {
     m_scene.Listener( this )
         .Off( SCENE_WORLD_CHANGED, &Project::onSceneWorldChanged )
-        .Off( SCENE_PLAYSTATE_CHANGED, &Project::onScenePlayStateChanged );
+        .Off( EDITOR_SCENE_PLAYSTATE_CHANGED, &Project::onScenePlayStateChanged );
 
     m_resourcePipeline.Listener( this )
         .Off( rp::RP_RESOURCE_MODIFIED, &Project::onResourceModified );
@@ -113,7 +113,7 @@ resources::ResourceManager &Project::GetBuiltInResourceManager(void)
     return m_builtInResourceManager;
 }
 
-Scene &Project::GetScene(void)
+EditorScene &Project::GetScene(void)
 {
     return m_scene;
 }

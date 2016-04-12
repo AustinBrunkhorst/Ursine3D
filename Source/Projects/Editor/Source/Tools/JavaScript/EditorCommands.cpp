@@ -26,7 +26,7 @@ namespace editor_commands
 {
     namespace
     {
-        Scene &getScene(void);
+        EditorScene &getScene(void);
         ecs::World *getActiveWorld(void);
         ecs::EntityHandle createEntity(const std::string &name = "Empty Entity");
     }
@@ -219,7 +219,7 @@ namespace editor_commands
 
     namespace
     {
-        Scene &getScene(void)
+        EditorScene &getScene(void)
         {
             return GetCoreSystem( Editor )->GetProject( )->GetScene( );
         }

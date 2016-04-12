@@ -2,12 +2,12 @@
 
 #include <GameContext.h>
 
-class Project;
+class GameLauncher;
 
-class EditorGameContext : public ursine::GameContext
+class GameLauncherGameContext : public ursine::GameContext
 {
 public:
-    EditorGameContext(Project *project);
+    GameLauncherGameContext(void);
 
     bool GetWindowFullScreen(void) const override;
     void SetWindowFullScreen(bool fullScreen) override;
@@ -21,5 +21,5 @@ public:
     void ExitGame(void) override;
 
 private:
-    Project *m_project;
+    GameLauncher *m_launcher;
 };

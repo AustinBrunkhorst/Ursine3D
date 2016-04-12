@@ -35,7 +35,7 @@ using namespace ursine;
 namespace
 {
     Project *getProject(void);
-    Scene &getScene(void);
+    EditorScene &getScene(void);
     ecs::World *getActiveWorld(void);
 
     fs::path selectSavePath(const fs::path &defaultPath);
@@ -304,7 +304,7 @@ namespace
         return editor->GetProject( );
     }
 
-    Scene &getScene(void)
+    EditorScene &getScene(void)
     {
         return getProject( )->GetScene( );
     }

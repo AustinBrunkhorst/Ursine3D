@@ -36,11 +36,23 @@
 //max cameras
 #define MAX_CAMERAS             32
 
+#if defined(URSINE_WITH_EDITOR)
+
 //max points/lines
 #define MAX_DRAW_OBJ            800019
 
 //max renderables of each type
 #define MAX_RENDERABLES         2000
+
+#else
+
+//max points/lines
+#define MAX_DRAW_OBJ            64
+
+//max renderables of each type
+#define MAX_RENDERABLES         1024
+
+#endif
 
 //max draw calls for a single scene
 #define MAX_DRAW_CALLS          2048

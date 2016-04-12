@@ -46,7 +46,11 @@ void GameEntryPointSystem::OnInitialize(void)
 void GameEntryPointSystem::OnSceneReady(Scene *scene)
 {
     scene->GetScreenManager( ).Listener( this )
-        .On( ui_event::global::GameplayStarted, &GameEntryPointSystem::onGameplayStarted );
+        .On( ui_event::global::GameStart, &GameEntryPointSystem::onGameplayStarted )
+        .On( ui_event::global::GamePause, &GameEntryPointSystem::onGameplayPaused )
+        .On( ui_event::global::GameResume, &GameEntryPointSystem::onGameplayResumed )
+        .On( ui_event::global::GameExit, &GameEntryPointSystem::onGameplayExited )
+        .On( ui_event::global::GameRestart, &GameEntryPointSystem::onGameplayRestarted );
 
     auto *ui = m_world->GetSettings( )->GetComponent<UIScreensConfig>( );
 
@@ -100,7 +104,11 @@ void GameEntryPointSystem::OnSceneReady(Scene *scene)
 void GameEntryPointSystem::OnRemove(void)
 {
     m_world->GetOwner( )->GetScreenManager( ).Listener( this )
-        .Off( ui_event::global::GameplayStarted, &GameEntryPointSystem::onGameplayStarted );
+        .Off( ui_event::global::GameStart, &GameEntryPointSystem::onGameplayStarted )
+        .Off( ui_event::global::GamePause, &GameEntryPointSystem::onGameplayPaused )
+        .Off( ui_event::global::GameResume, &GameEntryPointSystem::onGameplayResumed )
+        .Off( ui_event::global::GameExit, &GameEntryPointSystem::onGameplayExited )
+        .Off( ui_event::global::GameRestart, &GameEntryPointSystem::onGameplayRestarted );
 }
 
 void GameEntryPointSystem::onGameplayStarted(EVENT_HANDLER(UIScreenManager))
@@ -127,13 +135,39 @@ void GameEntryPointSystem::onGameplayStarted(EVENT_HANDLER(UIScreenManager))
 #else
 
     UAssert( ui != nullptr,
-        "World settings missing UIScreensConfig component."    
+        "World settings missing UIScreensConfig component." 
     );
 
 #endif
+
+    m_world->GetOwner( )->SetPaused( false );
 
     m_world->ImportWorld( 
         m_world->GetOwner( )->GetResourceManager( ), 
         ui->GetStartingGameplayWorld( ) 
     );
+}
+
+void GameEntryPointSystem::onGameplayPaused(EVENT_HANDLER(UIScreenManager))
+{
+    EVENT_ATTRS(UIScreenManager, UIScreenMessageArgs);
+
+    m_world->GetOwner( )->SetPaused( true );
+}
+
+void GameEntryPointSystem::onGameplayResumed(EVENT_HANDLER(UIScreenManager))
+{
+    EVENT_ATTRS(UIScreenManager, UIScreenMessageArgs);
+
+    m_world->GetOwner( )->SetPaused( false );
+}
+
+void GameEntryPointSystem::onGameplayExited(EVENT_HANDLER(UIScreenManager))
+{
+    EVENT_ATTRS(UIScreenManager, UIScreenMessageArgs);
+}
+
+void GameEntryPointSystem::onGameplayRestarted(EVENT_HANDLER(UIScreenManager))
+{
+    EVENT_ATTRS(UIScreenManager, UIScreenMessageArgs);
 }

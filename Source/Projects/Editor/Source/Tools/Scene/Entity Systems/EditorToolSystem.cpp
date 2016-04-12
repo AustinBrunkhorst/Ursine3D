@@ -33,10 +33,7 @@ EditorToolSystem::EditorToolSystem(ecs::World *world)
     , m_currentSelected( )
     , m_currentTool( nullptr )
     , m_selectTool( nullptr )
-    , m_dupTool( nullptr )
-{
-
-}
+    , m_dupTool( nullptr ) { }
 
 EditorToolSystem::~EditorToolSystem(void)
 {
@@ -123,7 +120,7 @@ void EditorToolSystem::OnRemove(void)
 
 bool EditorToolSystem::isEditing(void) const
 {
-    auto *scene = m_world->GetOwner( );
+    auto *scene = static_cast<EditorScene*>( m_world->GetOwner( ) );
 
     return scene && scene->GetPlayState( ) != PS_PLAYING;
 }

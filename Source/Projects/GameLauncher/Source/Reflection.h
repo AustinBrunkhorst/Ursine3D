@@ -14,3 +14,4 @@
 #pragma once
 
 #include "GameLauncher.h"
+#include "JSGameContext.h"

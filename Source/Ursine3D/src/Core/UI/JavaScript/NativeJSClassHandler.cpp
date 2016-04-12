@@ -15,6 +15,8 @@
 
 #include "NativeJSClassHandler.h"
 
+#include "NativeJSClass.h"
+
 namespace ursine
 {
     NativeJSClassHandler::NativeJSClassHandler(meta::Type classType)
@@ -63,11 +65,13 @@ namespace ursine
 
     void NativeJSClassHandler::UnBind(CefRefPtr<CefV8Value> object)
     {
-        object->DeleteValue( m_classType.GetName( ) );
+        m_instances.clear( );
 
         // release function handler instances
         for (auto &method : m_prototypeHandler->methods)
             method.second.first = nullptr;
+
+        object->DeleteValue( m_classType.GetName( ) );
     }
 
     bool NativeJSClassHandler::Execute(
@@ -80,9 +84,17 @@ namespace ursine
     {
         auto object = context->CreateObject( nullptr );
 
-        object->SetUserData( 
-            new InstanceWrapper( m_constructor, context, arguments, exception, object )
+        auto wrapper = new InstanceWrapper( 
+            m_constructor, 
+            context, 
+            arguments, 
+            exception, 
+            object 
         );
+
+        m_instances.push_back( wrapper );
+
+        object->SetUserData( wrapper );
 
         for (auto &method : m_prototypeHandler->methods)
         {
@@ -102,16 +114,18 @@ namespace ursine
         const CefString &name, 
         CefRefPtr<CefV8Value> context, 
         const CefV8ValueList &arguments, 
-        CefRefPtr<CefV8Value> &retval, CefString &exception)
+        CefRefPtr<CefV8Value> &retval, 
+        CefString &exception
+    )
     {
-        auto data = context->GetUserData( );
-
-        auto *wrapper = static_cast<InstanceWrapper *>( data.get( ) );
-
         auto search = methods.find( name );
 
         if (search == methods.end( ))
             return false;
+
+        auto data = context->GetUserData( );
+
+        auto *wrapper = static_cast<InstanceWrapper*>( data.get( ) );
 
         auto result = search->second.second.Invoke(
             wrapper->instance,
@@ -139,5 +153,10 @@ namespace ursine
         )
     {
         
+    }
+
+    NativeJSClassHandler::InstanceWrapper::~InstanceWrapper(void)
+    {
+        delete &instance.GetValue<NativeJSClass>( );
     }
 }

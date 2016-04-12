@@ -71,13 +71,15 @@ CORE_SYSTEM_DEFINITION( GameLauncher );
 GameLauncher::GameLauncher(void)
     : m_graphics( nullptr )
     , m_scene( nullptr )
-    , m_window( { nullptr } ) { }
+    , m_window( { nullptr } )
+    , m_gameContext( nullptr ) { }
 
 
 GameLauncher::GameLauncher(const GameLauncher &rhs)
     : m_graphics( nullptr )
     , m_scene( nullptr )
-    , m_window( { nullptr } ) { }
+    , m_window( { nullptr } )
+    , m_gameContext( nullptr ) { }
 
 GameLauncher::~GameLauncher(void)
 {
@@ -89,6 +91,11 @@ Scene *GameLauncher::GetScene(void)
     return m_scene;
 }
 
+Window::Handle GameLauncher::GetWindow(void)
+{
+    return m_window.window;
+}
+
 UIView::Handle GameLauncher::GetUI(void)
 {
     return m_window.ui;
@@ -98,6 +105,10 @@ void GameLauncher::OnInitialize(void)
 {
     m_scene = new Scene( );
     m_scene->GetResourceManager( ).SetResourceDirectory( kGameResourcesPath );
+
+    m_gameContext = new GameLauncherGameContext( );
+
+    m_scene->SetGameContext( m_gameContext );
 
     initSettings( );
     initWindow( );
@@ -114,6 +125,12 @@ void GameLauncher::OnInitialize(void)
 
 void GameLauncher::OnRemove(void)
 {
+    m_scene->SetGameContext( nullptr );
+
+    delete m_gameContext;
+
+    delete m_scene;
+
     Application::Instance->Disconnect(
         APP_UPDATE,
         this,
@@ -128,8 +145,6 @@ void GameLauncher::OnRemove(void)
     m_window.ui = nullptr;
     
     m_window.window = nullptr;
-
-    delete m_scene;
 }
 
 void GameLauncher::initSettings(void)
@@ -307,6 +322,10 @@ void GameLauncher::onWindowFocusChanged(EVENT_HANDLER(ursine::Window))
     }
 
     Application::Instance->SetActive( args->focused );
+
+    GameContextWindowFocusArgs e( args->focused );
+
+    m_gameContext->Dispatch( GC_WINDOW_FOCUS_CHANGED, &e );
 }
 
 void GameLauncher::onWindowResize(EVENT_HANDLER(ursine::Window))

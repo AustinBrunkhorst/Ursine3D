@@ -135,7 +135,7 @@ void EditorEntityManager::onEntityAdded(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
 
-    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING && 
+    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING &&
         !args->entity->HasComponent<ecs::Selected>( ))
         return;
 
@@ -157,7 +157,7 @@ void EditorEntityManager::onEntityRemoved(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EntityEventArgs);
 
-    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING && 
+    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING &&
         !args->entity->HasComponent<ecs::Selected>( ))
         return;
 
@@ -179,7 +179,7 @@ void EditorEntityManager::onEntityNameChanged(EVENT_HANDLER(ursine::ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorEntityNameChangedArgs);
 
-    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING && 
+    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING &&
         !args->entity->HasComponent<ecs::Selected>( ))
         return;
 
@@ -202,7 +202,7 @@ void EditorEntityManager::onEntityParentChanged(EVENT_HANDLER(ecs::Entity))
 {
     EVENT_ATTRS(ecs::Entity, ecs::ParentChangedArgs);
 
-    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING && 
+    if (m_project->GetScene( ).GetPlayState( ) == PS_PLAYING &&
         !sender->HasComponent<ecs::Selected>( ))
         return;
 

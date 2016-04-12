@@ -127,7 +127,7 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
     public function addScreen(path : String, initData : Dynamic, inputBlocking : Bool = true, priority : Int = 0) : ScreenID {
         var id = m_nativeManager.createScreen( path, inputBlocking, priority );
 
-        createScreen( path, id, priority, inputBlocking );
+        createScreen( path, id, priority, initData );
 
         return id;
     }
@@ -263,6 +263,8 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
                 var sheet : LinkElement = cast node;
 
                 styleContainer.innerHTML += '@import url(${sheet.href});';
+
+                node.parentNode.removeChild( node );
             }
 
             layout.template.content.appendChild( styleContainer );

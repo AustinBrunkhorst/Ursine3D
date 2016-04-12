@@ -10,7 +10,11 @@ namespace ui_event
 {
     namespace global
     {
-        const auto GameplayStarted = "GameplayStarted";
+        const auto GameStart = "GameplayStart";
+        const auto GamePause = "GameplayPause";
+        const auto GameResume = "GameplayResume";
+        const auto GameExit = "GameplayExit";
+        const auto GameRestart = "GameRestart";
     }
 
     UI_EVENT( ToggleHUD,

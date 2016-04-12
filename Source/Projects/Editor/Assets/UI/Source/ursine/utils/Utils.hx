@@ -23,10 +23,10 @@ class Utils {
             chunks.push( '${hours}hrs' );
 
         if (minutes > 0)
-            chunks.push( '${minutes}mins' );
+            chunks.push( '${minutes % 60}mins' );
 
         if (seconds > 0)
-            chunks.push( '${seconds}s' );
+            chunks.push( '${seconds % 60}s' );
 
         chunks.push( '${milliseconds % 1000}ms' );
 

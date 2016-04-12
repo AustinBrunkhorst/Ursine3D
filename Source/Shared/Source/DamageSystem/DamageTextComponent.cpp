@@ -15,7 +15,7 @@
 
 #include <Scene.h>
 
-NATIVE_COMPONENT_DEFINITION( DamageText ) ;
+NATIVE_COMPONENT_DEFINITION( DamageText );
 
 using namespace ursine;
 
@@ -36,7 +36,7 @@ void DamageText::OnInitialize(void)
     if (!scene)
         return;
 
-    if (scene->GetPlayState( ) == PS_EDITOR)
+    if (scene->IsPaused( ))
         return;
 
 #endif
