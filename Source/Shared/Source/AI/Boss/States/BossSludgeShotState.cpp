@@ -146,7 +146,15 @@ void BossSludgeshotState::findTarget(void)
     auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
     auto size = players.size( );
 
-    m_target = players[ rand( ) % size ];
+    bool p1Dead = players[ 0 ]->GetComponent<Health>( )->GetHealth( ) <= 0.0f,
+         p2Dead = players[ 1 ]->GetComponent<Health>( )->GetHealth( ) <= 0.0f;
+
+    if (p1Dead == p2Dead)
+        m_target = players[ rand( ) % size ];
+    else if (p1Dead)
+        m_target = players[ 1 ];
+    else
+        m_target = players[ 0 ];
 }
 
 void BossSludgeshotState::rotateTowardsTarget(void)
