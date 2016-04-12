@@ -106,6 +106,6 @@ Vec2 TextureAnimator::GetEmissiveTextureScalar(void) const
 
 void TextureAnimator::SetEmissiveTextureScalar(const ursine::Vec2& textureScalar)
 {
-    GetOwner( )->GetComponent<Model3D>( )->SetTextureUVScalar( textureScalar );
+    GetOwner( )->GetComponent<Model3D>( )->SetEmissiveTextureUVScalar( textureScalar );
     NOTIFY_COMPONENT_CHANGED( "emissiveTextureScalar", textureScalar );
 }
