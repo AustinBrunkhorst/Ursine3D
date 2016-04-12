@@ -31,6 +31,16 @@ void TextureAnimator::OnInitialize(void)
 {
 }
 
+bool TextureAnimator::GetIsPlaying(void) const
+{
+    return m_isPlaying;
+}
+
+void TextureAnimator::SetIsPlaying(bool isPlaying)
+{
+    m_isPlaying = isPlaying;
+}
+
 Vec2 TextureAnimator::GetTextureVelocity(void) const
 {
     return m_textureVelocity;
@@ -45,7 +55,7 @@ void TextureAnimator::SetTextureVelocity(const ursine::Vec2& textureVel)
 
 Vec2 TextureAnimator::GetTextureScalar(void) const
 {
-    return m_textureVelocity;
+    return GetOwner( )->GetComponent<Model3D>( )->GetTextureUVScalar( );
 }
 
 void TextureAnimator::SetTextureScalar(const ursine::Vec2& textureScalar)

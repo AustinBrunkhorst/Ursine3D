@@ -106,6 +106,7 @@ namespace ursine
                 SetRenderMask
             );
 
+            EditorMeta(InputRange(0.0f, 2.0f, 0.01f, "{{value.toPrecision( 2 )}}"))
             EditorField(
                 float emissive,
                 GetEmissive,

@@ -54,8 +54,10 @@ void TextureAnimatorSystem::Process(const ursine::ecs::EntityHandle & entity)
 #endif
 
     auto *model = entity->GetComponent<Model3D>( );
+    auto *textureAnimator = entity->GetComponent<TextureAnimator>( );
 
     float dt = Application::Instance->GetDeltaTime( );
 
-    model->SetTextureUVOffset( model->GetTextureUVOffset( ) * dt );
+    if(textureAnimator->GetIsPlaying( ))
+        model->SetTextureUVOffset( model->GetTextureUVOffset( ) + textureAnimator->GetTextureVelocity( ) * dt );
 }

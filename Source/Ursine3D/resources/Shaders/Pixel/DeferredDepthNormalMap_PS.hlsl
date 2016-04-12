@@ -27,6 +27,7 @@ struct PS_INPUT
     float4 tangent      : TANGENT;
     float4 bitangent    : BITANGENT;
     float2 uv           : UV;
+    float2 emisiveTex          : EM_UV;
 };
 
 PS_GBUFFER_OUT main(PS_INPUT input)
@@ -35,14 +36,14 @@ PS_GBUFFER_OUT main(PS_INPUT input)
     float3 normal = input.normal.xyz;
 
     // sample
-    float3 normalValue = (gNormalMap.Sample(SampleType, input.uv).xyz);
+    float3 normalValue = (gNormalMap.Sample(SampleType, input.emisiveTex).xyz);
 
     float3x3 texSpace = float3x3(input.tangent.xyz, input.bitangent.xyz, input.normal.xyz);
 
     // calculate final normal based upon bitan tan and normal
     float3 finalNormal = normalize( mul(normalValue, texSpace) );
 
-    PS_GBUFFER_OUT buff = PackGBuffer(baseColor, normal, specularIntensity, specularPower, emissive, objID);
+    PS_GBUFFER_OUT buff = PackGBuffer(baseColor, normal, specularIntensity, specularPower, emissive * normalValue.x, objID);
 
 
     return buff;

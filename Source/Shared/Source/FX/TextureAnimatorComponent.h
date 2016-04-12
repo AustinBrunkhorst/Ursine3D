@@ -24,6 +24,12 @@ class TextureAnimator : public ursine::ecs::Component
 
 public:
     EditorField(
+        bool isPlaying,
+        GetIsPlaying,
+        SetIsPlaying
+    );
+
+    EditorField(
         ursine::Vec2 textureVelocity,
         GetTextureVelocity,
         SetTextureVelocity
@@ -41,6 +47,9 @@ public:
     Meta(Enable)
     void OnInitialize(void) override;
 
+    bool GetIsPlaying(void) const;
+    void SetIsPlaying(bool isPlaying);
+
     ursine::Vec2 GetTextureVelocity(void) const;
     void SetTextureVelocity(const ursine::Vec2 &textureVel);
 
@@ -49,6 +58,7 @@ public:
 private:
     ursine::Vec2 m_textureVelocity;
 
+    bool m_isPlaying;
 } 
 Meta(Enable, WhiteListMethods, DisplayName("TextureAnimator"))
 EditorMeta(
