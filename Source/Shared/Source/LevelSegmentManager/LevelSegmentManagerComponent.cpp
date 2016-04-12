@@ -206,7 +206,7 @@ void LevelSegmentManager::initTutorialLogic(void)
 
     auto playerCreateState = stateM->AddState<SpawnPlayersState>( true, true );
     auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
-    auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
+    auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true, true );
     auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
     auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpensTutorial );
     auto waitForRevive = stateM->AddState<TutorialWaitForPlayerReviveState>( );
@@ -293,7 +293,7 @@ void LevelSegmentManager::initCombatBowl1Logic(void)
     lockPlayers->AddTransition( cinematicState, "Go To Start Cinematic" );
 
     // After the cinematic is finshed (it's a blocking state), tween the viewports and unlock the players
-    auto viewportTween = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true );
+    auto viewportTween = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true, true );
 
     cinematicState->AddTransition( viewportTween, "Go To Tween Viewports" );
 
@@ -464,8 +464,8 @@ void LevelSegmentManager::initBossRoomLogic(void)
         auto changeSegment = cinematicStateM->AddState<ChangeSegmentState>( LevelSegments::BossRoom_Phase1 );
         auto turnCinCamOn = cinematicStateM->AddState<ToggleCameraActiveState>( resources->bossIntroCinCameraName, true );
         auto turnCinCamOff = cinematicStateM->AddState<ToggleCameraActiveState>( resources->bossIntroCinCameraName, false );
-        auto tweenOut = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
-        auto tweenIn = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
+        auto tweenOut = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true, false );
+        auto tweenIn = cinematicStateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true, true );
         auto toggleHudOn = cinematicStateM->AddState<ToggleHudState>( true );
         auto toggleHudOn2 = cinematicStateM->AddState<ToggleHudState>( true );
         auto toggleHudOff = cinematicStateM->AddState<ToggleHudState>( false );
@@ -513,8 +513,8 @@ void LevelSegmentManager::initBossRoomLogic(void)
         auto toggleHudOff = p1to2StateM->AddState<ToggleHudState>( false );
         auto turnCamOn = p1to2StateM->AddState<ToggleCameraActiveState>( resources->bossTransitionCameraName, true );
         auto turnCamOff = p1to2StateM->AddState<ToggleCameraActiveState>( resources->bossTransitionCameraName, false );
-        auto tweenOut = p1to2StateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
-        auto tweenIn = p1to2StateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
+        auto tweenOut = p1to2StateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true, false );
+        auto tweenIn = p1to2StateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true, true );
 
         createPlayers->AddTransition( lockPlayers, "Lock Players" );
         lockPlayers->AddTransition( toggleHudOff, "Toggle Hud Off" ); 
@@ -546,8 +546,8 @@ void LevelSegmentManager::initBossRoomLogic(void)
         auto turnOffCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase3CinematicCamera, false );
         auto playCinematicFocalP = sm->AddState<PlayEntityAnimatorState>( resources->phase3CinematicFocalPoint, false );
         auto playCinematicCam = sm->AddState<PlayEntityAnimatorState>( resources->phase3CinematicCamera, true );
-        auto tweenOut = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true );
-        auto tweenIn = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true );
+        auto tweenOut = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true, false );
+        auto tweenIn = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true, true );
         auto toggleHudOn = sm->AddState<ToggleHudState>( true );
         auto toggleHudOff = sm->AddState<ToggleHudState>( false );
         auto lockPlayers = sm->AddState<LockPlayerCharacterControllerState>( true, true, true, true );

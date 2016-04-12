@@ -56,15 +56,18 @@ typedef ViewportTweenType_enum::ViewportTweenType ViewportTweenType;
 class PlayerViewportTweeningState : public SegmentLogicState
 {
 public:
-    PlayerViewportTweeningState(ViewportTweenType type, bool blocking = false);
+    PlayerViewportTweeningState(ViewportTweenType type, bool blocking, bool camerasActive);
 
     bool CanExit(void) override { return !m_blocking; }
 
     void Enter(SegmentLogicStateMachine *machine) override;
 
+    void Exit(SegmentLogicStateMachine *machine) override;
+
 private:
     ViewportTweenType m_type;
 
     bool m_blocking;
+    bool m_camerasActive;
 
 };
