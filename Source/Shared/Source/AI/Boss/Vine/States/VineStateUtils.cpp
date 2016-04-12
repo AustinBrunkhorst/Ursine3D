@@ -61,8 +61,8 @@ float VineStateUtils::FindYPosition(VineAI *ai, const SVec3 &aiPosition)
         );
 
         if (hitEntity == aiOwner->GetRoot( ) ||
-            collisionItr == ai->collisionList.end( ) ||
-            ignoreItr != ai->ignoreList.end( ))
+            (ai->collisionList.Size( ) && collisionItr == ai->collisionList.end( )) ||
+            (ai->ignoreList.Size( ) && ignoreItr != ai->ignoreList.end( )))
             continue;
 
         auto hit = output.hit[ i ];

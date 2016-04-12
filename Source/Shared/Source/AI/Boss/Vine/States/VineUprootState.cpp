@@ -113,6 +113,10 @@ void VineUprootState::Update(VineAIStateMachine *machine)
             {
                 m_state = UprootState::UprootDelay;
                 m_delayTimer = ai->GetUprootDelay( );
+
+                aiTrans->SetWorldPosition( lookAtPosition );
+
+                return;
             }
 
             // incrmenet the timer

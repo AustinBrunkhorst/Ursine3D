@@ -90,6 +90,8 @@ BossAI::BossAI(void)
     , m_phase2DazedResetTimer( 5.0f )
     , m_phase3HealthThreshold( 25.0f )
     , m_phase3DazedResetTimer( 5.0f )
+    , m_phase3NumSludgeshots( 2 )
+    , m_phase3SludgeshotAnimScalar( 1.0f )
     , m_phase4NumSludgeshots( 2 )
     , m_phase4SeedshotDuration( 15.0f )
     , m_segment( LevelSegments::Empty )
@@ -323,6 +325,30 @@ void BossAI::SetPhase3DazedResetTimer(float timer)
     m_phase3DazedResetTimer = timer;
 
     NOTIFY_COMPONENT_CHANGED("phase3DazedResetTimer", m_phase3DazedResetTimer);
+}
+
+int BossAI::GetPhase3NumSludgeshots(void) const
+{
+    return m_phase3NumSludgeshots;
+}
+
+void BossAI::SetPhase3NumSludgeshots(int num)
+{
+    m_phase3NumSludgeshots = num;
+
+    NOTIFY_COMPONENT_CHANGED( "phase3NumSludgeshots", m_phase3NumSludgeshots );
+}
+
+float BossAI::GetPhase3SludgeshotAnimScalar(void) const
+{
+    return m_phase3SludgeshotAnimScalar;
+}
+
+void BossAI::SetPhase3SludgeshotAnimScalar(float scalar)
+{
+    m_phase3SludgeshotAnimScalar = scalar;
+
+    NOTIFY_COMPONENT_CHANGED( "phase3SludgeshotAnimScalar", m_phase3SludgeshotAnimScalar);
 }
 
 int BossAI::GetPhase4NumSludgeshots(void) const
@@ -617,7 +643,7 @@ void BossAI::OnInitialize(void)
         auto spawn2 = sm->AddState<BossSpawnState>( 0.5f );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
         auto enraged = sm->AddState<BossEnrageState>( );
-        auto sludgeshot = sm->AddState<BossSludgeshotState>( 1, 0.5f );
+        auto sludgeshot = sm->AddState<BossSludgeshotState>( m_phase3NumSludgeshots, m_phase3SludgeshotAnimScalar );
         auto goUnderground4 = sm->AddState<BossUndergroundState>( );
         auto reposition3 = sm->AddState<BossPhase3RepositionBoss>( false );
         auto spawn3 = sm->AddState<BossSpawnState>( 1.0f, false );
@@ -630,7 +656,7 @@ void BossAI::OnInitialize(void)
         repositionBoss->AddTransition( spawnVines, "Spawn Vines" )
                       ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
         spawnVines->AddTransition( blankState, "Pause" )
-                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 13.0f ) );
+                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 11.0f ) );
         blankState->AddTransition( spawnBoss, "Spawn Boss" );
         spawnBoss->AddTransition( invulnerable, "Invulneralbe" )
                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 2.0f ) );
