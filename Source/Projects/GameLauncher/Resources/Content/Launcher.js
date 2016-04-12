@@ -406,6 +406,7 @@ var ui_ScreenManager = function(container) {
 	bm.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited)).on("ScreensCleared",$bind(this,this.onScreensCleared));
 	bm.getChannel("GamepadManager").on("GamepadButtonDown",$bind(this,this.onGamepadBtnDown)).on("GamepadButtonUp",$bind(this,this.onGamepadBtnUp)).on("GamepadConnected",$bind(this,this.onGamepadConnected)).on("GamepadDisconnected",$bind(this,this.onGamepadDisconnected));
 	bm.getChannel("KeyboardManager").on("KeyboardKeyDown",$bind(this,this.onKeyDown)).on("KeyboardKeyUp",$bind(this,this.onKeyUp));
+	window.addEventListener("resize",$bind(this,this.invalidateScreenViewport));
 };
 ui_ScreenManager.__name__ = true;
 ui_ScreenManager.__interfaces__ = [ursine_api_ui_ScreenManager];
@@ -423,7 +424,7 @@ ui_ScreenManager.prototype = {
 		if(priority == null) priority = 0;
 		if(inputBlocking == null) inputBlocking = true;
 		var id = this.m_nativeManager.createScreen(path,inputBlocking,priority);
-		this.createScreen(path,id,priority,inputBlocking);
+		this.createScreen(path,id,priority,initData);
 		return id;
 	}
 	,hasInputFocus: function(screen) {
@@ -438,6 +439,13 @@ ui_ScreenManager.prototype = {
 	,clearScreens: function() {
 		this.m_container.innerHTML = "";
 		this.m_screens = new haxe_ds_IntMap();
+	}
+	,invalidateScreenViewport: function() {
+		var $it0 = this.m_screens.iterator();
+		while( $it0.hasNext() ) {
+			var screen = $it0.next();
+			screen.invalidateViewport();
+		}
 	}
 	,invalidateScreenTypeCache: function() {
 		var screens = window.screens;
@@ -716,6 +724,12 @@ ursine_api_ui_Screen.prototype = {
 	}
 	,exit: function() {
 		this.m_owner.removeScreen(this);
+	}
+	,invalidateViewport: function() {
+		var aspectContainer = this.m_container.querySelector(".aspect-ratio-container");
+		if(aspectContainer == null) return;
+		var host = this.getHost();
+		aspectContainer.style.zoom = Math.min(host.clientWidth / 1280,host.clientHeight / 720);
 	}
 	,__class__: ursine_api_ui_Screen
 };

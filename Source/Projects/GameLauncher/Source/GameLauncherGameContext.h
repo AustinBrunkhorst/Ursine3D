@@ -2,6 +2,8 @@
 
 #include <GameContext.h>
 
+const ursine::Vec2 kDefaultWindowDimensions { 1280, 720 };
+
 class GameLauncher;
 
 class GameLauncherGameContext : public ursine::GameContext

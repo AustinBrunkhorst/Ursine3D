@@ -82,6 +82,8 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
         bm.getChannel( 'KeyboardManager' )
             .on( KeyboardEventType.KeyDown, onKeyDown )
             .on( KeyboardEventType.KeyUp, onKeyUp );
+
+        js.Browser.window.addEventListener( 'resize', invalidateScreenViewport );
     }
 
     public function getScreen(id : ScreenID) : Screen {
@@ -101,7 +103,7 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
     public function addScreen(path : String, initData : Dynamic, inputBlocking : Bool = true, priority : Int = 0) : ScreenID {
         var id = m_nativeManager.createScreen( path, inputBlocking, priority );
 
-        createScreen( path, id, priority, inputBlocking );
+        createScreen( path, id, priority, initData );
 
         return id;
     }

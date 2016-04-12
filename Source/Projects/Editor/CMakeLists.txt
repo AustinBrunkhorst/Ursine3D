@@ -59,3 +59,6 @@ add_custom_target(MagicRebuild
 
 ursine_set_folder(SyncAddedFiles ".Utility")
 ursine_set_folder(MagicRebuild ".Utility")
+
+set_target_properties(SyncAddedFiles PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+set_target_properties(MagicRebuild PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)

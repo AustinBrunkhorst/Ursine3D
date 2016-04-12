@@ -19,6 +19,7 @@
 #include <WindowManager.h>
 #include <UIManager.h>
 #include <UIResourceHandler.h>
+#include <Timer.h>
 
 using namespace ursine;
 
@@ -29,8 +30,6 @@ namespace
     const auto kGameSettingsFile = "Resources/Launcher.config";
     const auto kGameIconFile = "Resources/Icon.png";
     const auto kGameResourcesPath = "Resources/Content";
-
-    const Vec2 kDefaultWindowDimensions { 1280, 720 };
 
     class UIResourceHandlerFactory : public CefSchemeHandlerFactory
     {
@@ -71,15 +70,15 @@ CORE_SYSTEM_DEFINITION( GameLauncher );
 GameLauncher::GameLauncher(void)
     : m_graphics( nullptr )
     , m_scene( nullptr )
-    , m_window( { nullptr } )
-    , m_gameContext( nullptr ) { }
+    , m_gameContext( nullptr )
+    , m_window( { nullptr } ) { }
 
 
 GameLauncher::GameLauncher(const GameLauncher &rhs)
     : m_graphics( nullptr )
     , m_scene( nullptr )
-    , m_window( { nullptr } )
-    , m_gameContext( nullptr ) { }
+    , m_gameContext( nullptr )
+    , m_window( { nullptr } ) { }
 
 GameLauncher::~GameLauncher(void)
 {
@@ -114,7 +113,16 @@ void GameLauncher::OnInitialize(void)
     initWindow( );
     initGraphics( );
     initUI( );
-    initStartingWorld( );
+
+    if (m_settings.windowFullScreen)
+    {
+        // make sure we have time to switch into fullscreen
+        Application::PostMainThread( std::bind( &GameLauncher::initStartingWorld, this ) );
+    }
+    else
+    {
+        initStartingWorld( );
+    }
 
     Application::Instance->Connect(
         APP_UPDATE,
