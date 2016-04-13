@@ -575,6 +575,42 @@ void LevelSegmentManager::initBossRoomLogic(void)
             LevelSegments::BossRoom_Phase3
         } );
     }
+
+    // Setup logic for phase5 cinematic logic
+    {
+        // tween out viewports
+        // start animating the camera and focal point
+        // tell players to enter the win aniamtion state
+        // when camera finishes, tween viewports back in and tell players they aren't winning
+
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase5 Cinematic", this );
+
+        auto turnOnCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase5CinematicCamera, true );
+        auto turnOffCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase5CinematicCamera, false );
+        auto playCinematicFocalP = sm->AddState<PlayEntityAnimatorState>( resources->phase5CinematicFocalPoint, false );
+        auto playCinematicCam = sm->AddState<PlayEntityAnimatorState>( resources->phase5CinematicCamera, false );
+        auto tweenOut = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true, false );
+        auto tweenIn = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true, true );
+        auto toggleHudOff = sm->AddState<ToggleHudState>( false );
+        auto lockPlayers = sm->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
+        auto unlockPlayers = sm->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+
+        toggleHudOff->AddTransition( lockPlayers, "Lock Players" );
+        lockPlayers->AddTransition( turnOnCinematicCam, "Turn On Camera" );
+        turnOnCinematicCam->AddTransition( tweenOut, "Tween viewports out" );
+        tweenOut->AddTransition( playCinematicCam, "Play Cinematic" );
+        playCinematicCam->AddTransition( playCinematicFocalP, "Play Focal Point" );
+        playCinematicFocalP->AddTransition( tweenIn, "Tween back in" )
+                           ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 13.0f ) );
+        tweenIn->AddTransition( turnOffCinematicCam, "Turn cam off" );
+        turnOffCinematicCam->AddTransition( unlockPlayers, "Unlock players" );
+
+        sm->SetInitialState( toggleHudOff );
+
+        addSegmentLogic( sm, {
+            LevelSegments::BossRoom_Phase5
+        } );
+    }
 }
 
 SegmentLogicStateMachine::Handle LevelSegmentManager::createSegmentLogic(const std::string &name, LevelSegments segment)

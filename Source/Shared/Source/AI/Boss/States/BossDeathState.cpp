@@ -26,6 +26,7 @@ BossDeathState::BossDeathState(void)
 
 void BossDeathState::Enter(BossAIStateMachine *machine)
 {
-    machine->GetBoss( )->GetOwner( )->GetComponentInChildren<Animator>( )
-        ->SetCurrentState( "Death" );
+    auto animator = machine->GetBoss( )->GetOwner( )->GetComponentInChildren<Animator>( );
+    animator->SetCurrentState( "Death" );
+    animator->SetPlaying( true );
 }
