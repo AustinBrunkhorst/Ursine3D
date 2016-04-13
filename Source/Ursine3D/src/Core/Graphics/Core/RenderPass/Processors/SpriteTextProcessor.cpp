@@ -32,8 +32,6 @@ namespace ursine
 
             SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
-            return true;
-
             // if inactive
             if (!spriteText.GetActive())
                 return true;

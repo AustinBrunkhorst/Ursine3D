@@ -90,9 +90,13 @@ namespace ursine
             /////////////////////////////////////////////////////////
             // FONT
             /////////////////////////////////////////////////////////
+            void PrepForFont(void);
+
             GfxHND CreateBitmapFont(const uint8_t *binaryData, size_t binarySize);
             void DestroyBitmapFont(GfxHND &fontHandle);
             void RegisterTexture(GfxHND fontHandle, const std::string &fontName, GfxHND textureHandle);
+
+            void FinishFont(void);
 
         private:
             privData *m_privates;

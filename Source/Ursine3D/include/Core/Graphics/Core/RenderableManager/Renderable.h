@@ -183,6 +183,9 @@ namespace ursine
             bool GetIsVisible(void) const;
             void SetIsVisible(bool isVisible);
 
+            bool GetIsWarping(void) const;
+            void SetIsWarping(bool isWarping);
+
             FragmentData &GetFragmentData(void);
 
         private:
@@ -215,6 +218,8 @@ namespace ursine
             bool                m_doesFragment;
 
             bool                m_isVisible;
+
+            bool                m_doesWarp;
 
             FragmentData        m_fragData;
         };

@@ -23,6 +23,7 @@ namespace ursine
             SHADER_QUAD,
 
             SHADER_FRAGMENTATION,
+            SHADER_WARPING,
             
             SHADER_DEFERRED_DEPTH,
             SHADER_DEFERRED_DEPTH_STATIC,

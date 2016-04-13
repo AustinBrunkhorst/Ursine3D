@@ -20,9 +20,10 @@ namespace ursine
 {
     namespace graphics
     {
-        Model3DProcessor::Model3DProcessor(bool shadowPass, bool notVisiblePass)
+        Model3DProcessor::Model3DProcessor(bool shadowPass, bool notVisiblePass, bool warpPass)
             : m_shadowPass( shadowPass )
             , m_notVisiblePass( notVisiblePass )
+            , m_warpPass( warpPass )
         {
             m_renderableType = RENDERABLE_MODEL3D;
         }
@@ -49,6 +50,10 @@ namespace ursine
                     return true;
             }
 
+            // check for warp pass
+            if(m_warpPass != model.GetIsWarping( ))
+                return true;
+
             // if culed by camera mask
             if (currentCamera.CheckMask( model.GetRenderMask( ) ))
                 return true;
@@ -61,6 +66,13 @@ namespace ursine
         {
             Model3D &model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
 
+
+            if(m_warpPass)
+            {
+                auto x = handle;
+
+                std::cout << x.Index_ << std::endl;
+            }
             /////////////////////////////////////////////////////////
             // map color
             Color c = model.GetColor( );

@@ -53,6 +53,8 @@ namespace ursine
             return false;
         }
 
+        /////////////////////////////////////////////////////////////////////////////////
+        // PUBLIC METHODS
         void GfxManager::Initialize(GfxConfig &config)
         {
             /////////////////////////////////////////////////////////////////
@@ -146,6 +148,7 @@ namespace ursine
 
                 shaderManager->LoadShader(SHADER_OUTLINE, "EdgeDetectionShader");
                 shaderManager->LoadShader(SHADER_FRAGMENTATION, "FragmentationShader");
+                shaderManager->LoadShader(SHADER_WARPING, "VertexWarpShader");
                 
 
                 //load compute
@@ -213,7 +216,7 @@ namespace ursine
 
         }
 
-        void GfxManager::Uninitialize()
+        void GfxManager::Uninitialize(void)
         {
             m_shouldQuit = true;
             while(m_rendering) { }
@@ -360,7 +363,10 @@ namespace ursine
             m_currentlyRendering = true;
 
             // stalls until gfx is done rendering
-            while (m_threadRender);
+            while (m_threadRender)
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(1));
+            }
 
             m_rendering = true;
 
@@ -393,14 +399,14 @@ namespace ursine
             m_cameraList.push_back( std::pair<GfxHND, unsigned>(camera, static_cast<unsigned>(m_drawLists.size( ) - 1)) );
         }
 
-        void GfxManager::EndScene()
+        void GfxManager::EndScene(void)
         {
             UAssert(m_currentlyRendering == true, "Attemped to end a scene without starting the frame!");
             UAssert(m_sceneActive == true, "Attempted to end a scene before beginning one!");
             m_sceneActive = false;
         }
 
-        void GfxManager::EndFrame()
+        void GfxManager::EndFrame(void)
         {
             UAssert(m_sceneActive == false, "Attempted to end the frame without ending the scene!");
             UAssert(m_currentlyRendering == true, "Attemped to end the frame when it was never started!");
@@ -421,7 +427,9 @@ namespace ursine
             }
         }
 
-        DXCore::DirectXCore *GfxManager::GetDXCore()
+        /////////////////////////////////////////////////////////////////////////////////
+        // PUBLIC UTILITY METHODS
+        DXCore::DirectXCore *GfxManager::GetDXCore(void)
         {
             return dxCore;
         }
@@ -453,6 +461,108 @@ namespace ursine
             layoutManager->Invalidate( );
         }
 
+        void GfxManager::SetGameViewport(GfxHND vp)
+        {
+            _VIEWPORTHND *viewPort = reinterpret_cast<_VIEWPORTHND*>(&vp);
+
+            UAssert(viewPort->ID_ == ID_VIEWPORT, "Attempted to set game viewport with invalid handle!");
+
+            m_GameViewport = vp;
+        }
+
+        void GfxManager::RenderDynamicTexture(GfxHND& texHandle, const float posX, const float posY)
+        {
+            UIRenderData data;
+            data.texHandle = texHandle;
+            data.posX = posX;
+            data.posY = posY;
+
+            m_uiRenderCalls.push_back(data);
+        }
+
+        void GfxManager::RenderDynamicTextureInViewport(GfxHND& texHandle, const float posX, const float posY, GfxHND& camera)
+        {
+            UIRenderData data;
+            data.texHandle = texHandle;
+            data.posX = posX;
+            data.posY = posY;
+            data.cameraHandle = camera;
+
+            m_uiViewportRenderCalls.push_back(data);
+        }
+
+        void GfxManager::RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void* input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY)
+        {
+            //set up description
+            D3D11_TEXTURE2D_DESC desc;
+            desc.Width = srcWidth;
+            desc.Height = srcHeight;
+            desc.MipLevels = desc.ArraySize = 1;
+            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // dammmnnnn
+            desc.SampleDesc.Count = 1;
+            desc.SampleDesc.Quality = 0;
+            desc.Usage = D3D11_USAGE_DEFAULT;
+            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+            desc.CPUAccessFlags = 0;
+            desc.MiscFlags = 0;
+
+            //set up resource
+            D3D11_SUBRESOURCE_DATA subrsc;
+            subrsc.pSysMem = input;
+            subrsc.SysMemPitch = srcWidth * 4; //length of one line in bytes, 32 bit color
+            subrsc.SysMemSlicePitch = 0;
+
+            //create the texture
+            ID3D11Texture2D *tex;
+            HRESULT hr = dxCore->GetDevice()->CreateTexture2D(&desc, &subrsc, &tex);
+
+            UAssert(hr == S_OK, "Failed to create UI texture!");
+
+            //this doesn't work for now
+            //define the box of the texture
+            D3D11_BOX box; //this box is the taken from the SOURCE texture
+            box.back = 1; //this might need SERIOUS changes
+            box.front = 0;
+
+            box.left = 0;
+            box.top = 0;
+
+            box.right = inputWidth;
+            box.bottom = inputHeight;
+
+            //now that we have the texture, we need to write it to the render target
+            Texture *target = textureManager->GetDynamicTexture(destTexture);
+            dxCore->GetDeviceContext()->CopySubresourceRegion(target->m_texture2d, 0, destinationX, destinationY, 0, tex, 0, &box);
+
+
+            RELEASE_RESOURCE(tex);
+        }
+
+        int GfxManager::GetCurrentUniqueID(void)
+        {
+            return m_currentID;
+        }
+
+        SVec3 GfxManager::GetCurrentWorldPosition(const GfxHND& cameraHandle)
+        {
+            auto &camera = cameraManager->GetCamera(cameraHandle);
+
+            // get the saved depth
+            float depth = m_currentPosition.Z();
+
+            POINT point;
+            GetCursorPos(&point);
+
+            ScreenToClient(wHND, &point);
+
+            // transform from screen to world, given a specific camera
+            auto worldPosition = camera.ScreenToWorld(Vec2(static_cast<float>(point.x), static_cast<float>(point.y)), depth);
+
+            return worldPosition;
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////
+        // PRIVATE METHODS
         void GfxManager::internalGfxEntry(GfxManager *manager)
         {
             do
@@ -585,9 +695,9 @@ namespace ursine
 
             /////////////////////////////////////////////////////////////////
             if (cam.GetRenderMode() == VIEWPORT_RENDER_DEFERRED)
-                RenderScene_Deferred(cam, index);
+                renderScene_Deferred(cam, index);
             else
-                RenderScene_Forward(cam, index);
+                rendeScene_forward(cam, index);
 
             dxCore->EndDebugEvent();
             return;
@@ -624,7 +734,7 @@ namespace ursine
             m_threadRender = false;
         }
 
-        void GfxManager::RenderScene_Deferred(Camera &camera, int index)
+        void GfxManager::renderScene_Deferred(Camera &camera, int index)
         {
             /////////////////////////////////////////////////////////////////
             // PRE FRAME STUFF 
@@ -670,6 +780,7 @@ namespace ursine
 
             // define the passes
             RenderPass          deferredPass("DeferredPass");
+            RenderPass          warpingPass("WarpPass");
             RenderPass          outlinePass("OutlinePass");
             ShadowPass          shadowPass;
             RenderPass          spotlightPass("SpotlightPass");
@@ -692,19 +803,20 @@ namespace ursine
             RenderPass          debugPass("debugPass");
 
             // create processors
-            auto modelProcessor = Model3DProcessor();
+            auto modelProcessor = Model3DProcessor( );
             auto invisProcessor = Model3DProcessor(false, true);
             auto shadowProcessor = Model3DProcessor(true);
-            auto slProcessor = SpotLightProcessor();
+            auto slProcessor = SpotLightProcessor( );
             auto slProcessorNoShadow = SpotLightProcessor(false);
-            auto plProcessor = PointLightProcessor();
-            auto dlProcessor = DirectionalLightProcessor();
-            auto particleProcessor = ParticleSystemProcessor();
+            auto plProcessor = PointLightProcessor( );
+            auto dlProcessor = DirectionalLightProcessor( );
+            auto particleProcessor = ParticleSystemProcessor( );
             auto velParticleProcessor = ParticleSystemProcessor(true);
-            auto billboardPorcessor = Billboard2DProcessor();
-            auto textProcessor = SpriteTextProcessor();
+            auto billboardPorcessor = Billboard2DProcessor( );
+            auto textProcessor = SpriteTextProcessor( );
             auto overdrawProcessor = SpriteTextProcessor(true);
-            auto fragProcessor = FragmentationProcessor();
+            auto fragProcessor = FragmentationProcessor( );
+            auto warpProcessor = Model3DProcessor(false, false, true);
 
             // CREATE GLOBALS
             GlobalCBuffer<CameraBuffer, BUFFER_CAMERA>              viewBuffer(SHADERTYPE_VERTEX);
@@ -769,6 +881,32 @@ namespace ursine
                 }
 
                 /////////////////////////////////////////////////////////
+                // WARPING PASS
+                {
+                    warpingPass.
+                        Set(
+                            {
+                                RENDER_TARGET_DEFERRED_COLOR,
+                                RENDER_TARGET_DEFERRED_NORMAL,
+                                RENDER_TARGET_DEFERRED_SPECPOW
+                            }
+                        ).
+                        Set(SHADER_WARPING).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_DEPTH_NOSTENCIL).
+                        Set(SAMPLER_STATE_WRAP_TEX).
+                        Set(RASTER_STATE_SOLID_BACKCULL).
+                        Set(BLEND_STATE_COUNT).
+                        Set(DXCore::TOPOLOGY_TRIANGLE_LIST).
+
+                        AddResource(&viewBuffer).
+
+                        Accepts(RENDERABLE_MODEL3D).
+                        Processes(&warpProcessor).
+                    InitializePass();
+                }
+
+                /////////////////////////////////////////////////////////
                 // SHADOW PASS
                 {
                     shadowPass.
@@ -784,7 +922,7 @@ namespace ursine
 
                         Accepts(RENDERABLE_LIGHT).
                         Processes(&shadowProcessor).
-                        InitializePass();
+                    InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
@@ -1220,7 +1358,7 @@ namespace ursine
 
                         Accepts(RENDERABLE_MODEL3D).
                         Processes(&fragProcessor).
-                        InitializePass();
+                    InitializePass();
                 }
 
                 /////////////////////////////////////////////////////////
@@ -1243,7 +1381,7 @@ namespace ursine
 
                         IsFullscreenPass(true).
 
-                        InitializePass();
+                    InitializePass();
                 }
             }
 
@@ -1251,6 +1389,7 @@ namespace ursine
             // CREATE PIPELINE
             DeferredPipeline.
                 AddPrePass(&deferredPass).
+                AddPrePass(&warpingPass).
                 AddPrePass(&shadowPass).
                 AddPrePass(&spotlightPass).
                 AddPrePass(&spotlightPassNoShadow).
@@ -1270,7 +1409,7 @@ namespace ursine
                 AddPrePass(&textPass).
                 AddPrePass(&overdrawTextPass).
                 // AddPrePass(&debugPass).
-                InitializePass();
+             InitializePass();
 
             /////////////////////////////////////////////////////////
             // UPDATE RESOURCES
@@ -1486,7 +1625,7 @@ namespace ursine
             shaderManager->Render(modelManager->GetModelIndexcountByID(INTERNAL_QUAD));
         }
 
-        void GfxManager::RenderScene_Forward(Camera &camera, int index)
+        void GfxManager::rendeScene_forward(Camera &camera, int index)
         {
             ///////////////////////////////////////////////////////////////////
             //// PRE FRAME STUFF 
@@ -1789,7 +1928,7 @@ namespace ursine
 #endif
         }
 
-        void GfxManager::prepForUI()
+        void GfxManager::prepForUI(void)
         {
             SMat4 trans;
             trans.Translate(SVec3(0, 0, 0.1f));
@@ -1808,7 +1947,7 @@ namespace ursine
             modelManager->BindModel(INTERNAL_QUAD);
         }
 
-        void GfxManager::renderComputeMousePos()
+        void GfxManager::renderComputeMousePos(void)
         {
             MouseBuffer dataToCS;
 
@@ -1885,104 +2024,6 @@ namespace ursine
                 m_currentID = -1;
         }
 
-        void GfxManager::SetGameViewport(GfxHND vp)
-        {
-            _VIEWPORTHND *viewPort = reinterpret_cast<_VIEWPORTHND*>(&vp);
-
-            UAssert(viewPort->ID_ == ID_VIEWPORT, "Attempted to set game viewport with invalid handle!");
-
-            m_GameViewport = vp;
-        }
-
-        void GfxManager::RenderDynamicTexture(GfxHND& texHandle, const float posX, const float posY)
-        {
-            UIRenderData data;
-            data.texHandle = texHandle;
-            data.posX = posX;
-            data.posY = posY;
-
-            m_uiRenderCalls.push_back( data );
-        }
-
-        void GfxManager::RenderDynamicTextureInViewport(GfxHND& texHandle, const float posX, const float posY, GfxHND& camera)
-        {
-            UIRenderData data;
-            data.texHandle = texHandle;
-            data.posX = posX;
-            data.posY = posY;
-            data.cameraHandle = camera;
-
-            m_uiViewportRenderCalls.push_back(data);
-        }
-
-        void GfxManager::RenderToDynamicTexture(const int srcWidth, const int srcHeight, const void* input, const int inputWidth, const int inputHeight, GfxHND destTexture, const int destinationX, const int destinationY)
-        {
-            //set up description
-            D3D11_TEXTURE2D_DESC desc;
-            desc.Width = srcWidth;
-            desc.Height = srcHeight;
-            desc.MipLevels = desc.ArraySize = 1;
-            desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // dammmnnnn
-            desc.SampleDesc.Count = 1;
-            desc.SampleDesc.Quality = 0;
-            desc.Usage = D3D11_USAGE_DEFAULT;
-            desc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-            desc.CPUAccessFlags = 0;
-            desc.MiscFlags = 0;
-
-            //set up resource
-            D3D11_SUBRESOURCE_DATA subrsc;
-            subrsc.pSysMem = input;
-            subrsc.SysMemPitch = srcWidth * 4; //length of one line in bytes, 32 bit color
-            subrsc.SysMemSlicePitch = 0;
-
-            //create the texture
-            ID3D11Texture2D *tex;
-            HRESULT hr = dxCore->GetDevice()->CreateTexture2D(&desc, &subrsc, &tex);
-
-            UAssert(hr == S_OK, "Failed to create UI texture!");
-
-            //this doesn't work for now
-            //define the box of the texture
-            D3D11_BOX box; //this box is the taken from the SOURCE texture
-            box.back = 1; //this might need SERIOUS changes
-            box.front = 0;
-
-            box.left = 0;
-            box.top = 0;
-
-            box.right = inputWidth;
-            box.bottom = inputHeight;
-
-            //now that we have the texture, we need to write it to the render target
-            Texture *target = textureManager->GetDynamicTexture(destTexture);
-            dxCore->GetDeviceContext()->CopySubresourceRegion(target->m_texture2d, 0, destinationX, destinationY, 0, tex, 0, &box);
-
-
-            RELEASE_RESOURCE(tex);
-        }
-
-        int GfxManager::GetCurrentUniqueID()
-        {
-            return m_currentID;
-        }
-
-        SVec3 GfxManager::GetCurrentWorldPosition(const GfxHND& cameraHandle)
-        {
-            auto &camera = cameraManager->GetCamera(cameraHandle);
-
-            // get the saved depth
-            float depth = m_currentPosition.Z();
-
-            POINT point;
-            GetCursorPos(&point);
-
-            ScreenToClient(wHND, &point);
-
-            // transform from screen to world, given a specific camera
-            auto worldPosition = camera.ScreenToWorld(Vec2(static_cast<float>(point.x), static_cast<float>(point.y)), depth);
-
-            return worldPosition;
-        }
+     
     }
 }

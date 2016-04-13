@@ -41,32 +41,34 @@ namespace ursine
             friend class ShadowPass;
             friend class GlobalShaderResource;
 
-            //public methods
         public:
+            /////////////////////////////////////////////////////////////////////////////////
+            // PUBLIC METHODS
             void Initialize(GfxConfig &config);
-            void Uninitialize();
 
-            // methods for rendering
+            void Uninitialize(void);
+
             void Render(GfxHND handle);
 
-            void StartFrame();
+            void StartFrame(void);
 
-            void BeginScene();
+            void BeginScene(void);
 
             void RenderScene(float dt, GfxHND viewport = -1);
 
-            void EndScene();
+            void EndScene(void);
 
-            void EndFrame();
+            void EndFrame(void);
 
-            // utility methods
-            DXCore::DirectXCore *GetDXCore();
+            /////////////////////////////////////////////////////////////////////////////////
+            // PUBLIC UTILITY METHODS
+            DXCore::DirectXCore *GetDXCore(void);
 
             void Resize(int width, int height);
 
             void SetFullscreenState(const bool state);
 
-            void Invalidate();
+            void Invalidate(void);
 
             //set the viewport for the current game
             void SetGameViewport(GfxHND vp);
@@ -85,8 +87,8 @@ namespace ursine
 
             SVec3 GetCurrentWorldPosition(const GfxHND &cameraHandle);
 
-            //public members
-        public:
+            /////////////////////////////////////////////////////////////////////////////////
+            // PUBLIC MEMBERS
             DXCore::DirectXCore         *dxCore;
             DXCore::ShaderManager       *shaderManager;
             DXCore::ShaderBufferManager *bufferManager;
@@ -104,30 +106,22 @@ namespace ursine
 
             GfxInfo                     *gfxInfo;
 
-            float m_lightSteps;
-            float m_borderValue;
-            float m_globalEmissive;
-            GfxHND m_lightMapTexture;
+            float                       m_lightSteps;
+            float                       m_borderValue;
+            float                       m_globalEmissive;
+            GfxHND                      m_lightMapTexture;
 
         private:
-            struct UIRenderData
-            {
-                GfxHND texHandle;
-                float posX;
-                float posY;
-                GfxHND cameraHandle;
-            };
-
-        private:
-            // multithread rendering methods
+            /////////////////////////////////////////////////////////////////////////////////
+            // PRIVATE METHODS
             static void internalGfxEntry(GfxManager *manager);
 
             void internalStartFrame(void);
             void internalRenderScene(Camera &camera, int index);
             void internalEndFrame(void);
 
-            void RenderScene_Deferred(Camera &camera, int index);
-            void RenderScene_Forward(Camera &camera, int index);
+            void renderScene_Deferred(Camera &camera, int index);
+            void rendeScene_forward(Camera &camera, int index);
             
             // misc methods
             void internalRenderDynamicTexture(GfxHND &texHandle, const float posX, const float posY);
@@ -136,8 +130,19 @@ namespace ursine
             void prepForUI(void);
             void renderComputeMousePos(void);
 
-            //privates members
-        private:
+            /////////////////////////////////////////////////////////////////////////////////
+            // PRIVATE STRUCTURES
+            struct UIRenderData
+            {
+                GfxHND texHandle;
+                float posX;
+                float posY;
+                GfxHND cameraHandle;
+            };
+
+            /////////////////////////////////////////////////////////////////////////////////
+            // PRIVATE MEMBERS
+
             // keeping track of a bunch of states
             std::atomic<bool> m_rendering;
             std::atomic<bool> m_threadRender;

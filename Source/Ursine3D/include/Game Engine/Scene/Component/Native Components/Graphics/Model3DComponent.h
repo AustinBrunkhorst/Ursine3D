@@ -73,6 +73,12 @@ namespace ursine
             );
 
             EditorField(
+                bool warping,
+                GetDoesWarp,
+                SetDoesWarp
+            );
+
+            EditorField(
                 Color color,
                 GetColor,
                 SetColor
@@ -217,6 +223,9 @@ namespace ursine
 
             bool GetDoesOverdraw(void);
             void SetDoesOverdraw(bool doesOverdraw);
+
+            bool GetDoesWarp(void) const;
+            void SetDoesWarp(bool doesWarp);
 
             void OnSerialize(Json::object &output) const override;
             void OnDeserialize(const Json &input) override;

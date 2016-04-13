@@ -141,5 +141,20 @@ namespace ursine
 
             return handle->second;
         }
+
+        void FontManager::LockFontManager(void)
+        {
+            m_loadingFont = true;
+        }
+
+        void FontManager::UnlockFontManager(void)
+        {
+            m_loadingFont = false;
+        }
+
+        bool FontManager::IsLoading(void) const
+        {
+            return m_loadingFont;
+        }
     }
 }

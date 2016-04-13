@@ -147,6 +147,11 @@ namespace ursine
             return m_privates->modelMgr->GeAnimeInfo( handle );
         }
 
+        void ResourceAPI::PrepForFont(void)
+        {
+            m_privates->fontMgr->LockFontManager();
+        }
+
         GfxHND ResourceAPI::CreateBitmapFont(const uint8_t *binaryData, size_t binarySize)
         {
             return m_privates->fontMgr->CreateBitmapFont( binaryData, binarySize );
@@ -160,6 +165,11 @@ namespace ursine
         void ResourceAPI::RegisterTexture(GfxHND fontHandle, const std::string &fontName, GfxHND textureHandle)
         {
             m_privates->fontMgr->RegisterTexture( fontHandle, fontName, textureHandle );
+        }
+
+        void ResourceAPI::FinishFont(void)
+        {
+            m_privates->fontMgr->UnlockFontManager( );
         }
 
         void ResourceAPI::SetPrivates(void *priv, void *priv2, void *priv3)

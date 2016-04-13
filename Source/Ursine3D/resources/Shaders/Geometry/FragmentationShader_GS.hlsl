@@ -87,19 +87,19 @@ void main(
 
     // calculate the required vectors for up and side trajectories
     float4 upVec        = normalize( mul(
-                                    float4(0, averagePos.y, 0, 0), 
+                                    float4(0, averageTruePos.y, 0, 0),
                                     transform
                                 ) 
                             );
 
     float4 sideVec      = normalize( mul(
-                                    float4(averagePos.x, 0, averagePos.z, 0), 
+                                    float4(averageTruePos.x, 0, averageTruePos.z, 0),
                                     transform
                                 ) 
                             );
 
     float4 outVec       = normalize( mul(
-                                    float4(averagePos.xyz, 0), 
+                                    float4(averageTruePos.xyz, 0),
                                     transform
                                 ) 
                             );

@@ -26,7 +26,7 @@ namespace ursine
         class Model3DProcessor : public GraphicsEntityProcessor
         {
         public:
-            Model3DProcessor(bool shadowPass = false, bool notVisiblePass = false);
+            Model3DProcessor(bool shadowPass = false, bool notVisiblePass = false, bool warpPass = false);
 
         private:
              bool cullOperation(_DRAWHND, Camera &currentCamera) override;
@@ -38,6 +38,7 @@ namespace ursine
 
              bool m_shadowPass;
              bool m_notVisiblePass;
+             bool m_warpPass;
 
              DEPTH_STATES m_defaultState;
         };

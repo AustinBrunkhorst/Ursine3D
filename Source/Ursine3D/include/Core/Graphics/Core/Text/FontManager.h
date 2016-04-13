@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <atomic>
+
 #include "GfxDefines.h"
 #include "BitmapFont.h"
 
@@ -41,12 +43,20 @@ namespace ursine
             // gets a texture handle for a font
             GfxHND GetTextureHandle(GfxHND fontHandle, const std::string &textureName);
 
+            // locking/unlocking for loading
+            void LockFontManager(void);
+            void UnlockFontManager(void);
+
+            bool IsLoading(void) const;
+
         private:
             // actual font data
             std::unordered_map<unsigned, BitmapFont> m_fontCache;
 
             // lookup for the texture handles for specific fonts
             std::unordered_map<unsigned, std::unordered_map<std::string, GfxHND>> m_textureCache;
+
+            std::atomic<bool> m_loadingFont;
         };
     }
 }

@@ -32,6 +32,8 @@ namespace ursine
         {
             auto *graphics = GetCoreSystem( graphics::GfxAPI );
 
+            graphics->ResourceMgr.PrepForFont( );
+
             m_fontHandle = graphics->ResourceMgr.CreateBitmapFont( 
                 reinterpret_cast<const uint8_t*>( m_fntData.GetData( ) ), 
                 m_fntData.GetSize( )
@@ -71,6 +73,8 @@ namespace ursine
                     texture
                 );
             }
+
+            graphics->ResourceMgr.FinishFont( );
         }
 
         FontData::FontData(const FontData &rhs)

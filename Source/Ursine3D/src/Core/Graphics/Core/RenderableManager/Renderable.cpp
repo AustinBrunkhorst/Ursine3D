@@ -138,6 +138,7 @@ namespace ursine
             m_emissiveTextureUVScalar = Vec2(1, 1);
 
             m_doesFragment = false;
+            m_doesWarp = false;
 
             m_isVisible = true;
 
@@ -346,6 +347,16 @@ namespace ursine
         void Model3D::SetIsVisible(bool isVisible)
         {
             m_isVisible = isVisible;
+        }
+
+        bool Model3D::GetIsWarping(void) const
+        {
+            return m_doesWarp;
+        }
+
+        void Model3D::SetIsWarping(bool isWarping)
+        {
+            m_doesWarp = isWarping;
         }
 
         Model3D::FragmentData &Model3D::GetFragmentData(void)

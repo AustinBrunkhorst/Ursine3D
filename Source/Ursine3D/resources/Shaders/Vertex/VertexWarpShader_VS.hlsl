@@ -70,12 +70,12 @@ VS_OUTPUT main(VS_INPUT input)
     }
 
     // play with it...
-    float x = sin((pos.x + diffuseTextureOffset.x / emissiveTextureScalar.y) * emissiveTextureOffset.x);
-    float y = cos((pos.z + diffuseTextureOffset.x / emissiveTextureScalar.y) * emissiveTextureOffset.y) / emissiveTextureOffset.y;
+    float x = sin((pos.x + diffuseTextureOffset.y / 1) * 50);
+    float y = cos((pos.z + diffuseTextureOffset.y / 1) * 50) / 50;
 
 
 
-    pos.y = x * y * emissiveTextureScalar.x;
+    pos.y = x * y * 200;
 
     //sin(5x)*cos(5y) / 5
 

@@ -321,6 +321,16 @@ namespace ursine
             m_model->SetOverdraw( doesOverdraw );
         }
 
+        bool Model3D::GetDoesWarp(void) const
+        {
+            return m_model->GetIsWarping( );
+        }
+
+        void Model3D::SetDoesWarp(bool doesWarp)
+        {
+            m_model->SetIsWarping( doesWarp );
+        }
+
         void Model3D::updateRenderer(void)
         {
             auto trans = GetOwner( )->GetTransform( );

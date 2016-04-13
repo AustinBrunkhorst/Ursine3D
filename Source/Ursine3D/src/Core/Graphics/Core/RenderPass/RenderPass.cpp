@@ -277,8 +277,9 @@ namespace ursine
 
         void RenderPass::executePass(Camera &currentCamera, int index)
         {
-            while (m_manager->modelManager->IsLoading()) { }
-            while (m_manager->textureManager->IsLoading()) { }
+            while (m_manager->modelManager->IsLoading( ))   { /*std::cout << "STALL ON: " << "models" << std::endl;*/ }
+            while (m_manager->textureManager->IsLoading( )) { /*std::cout << "STALL ON: " << "text" << std::endl;*/ }
+            //while (m_manager->fontManager->IsLoading( ))    { std::cout << "STALL ON: " << "fonts" << std::endl; }
 
             // check to see if this pass has stuff to do
             if (m_processor != nullptr && m_fullscreenPass == false)
@@ -306,6 +307,7 @@ namespace ursine
             }
             else if(m_fullscreenPass)
             {
+                m_manager->modelManager->BindModel( INTERNAL_QUAD );
                 m_manager->shaderManager->Render( 6 );
             }
         }
