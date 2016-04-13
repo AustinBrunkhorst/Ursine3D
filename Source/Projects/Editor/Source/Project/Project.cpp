@@ -295,12 +295,7 @@ void Project::onResourceModified(EVENT_HANDLER(rp::ResourcePipelineManager))
 
     m_scene.GetResourceManager( ).ReloadIfCached( args->resource->GetGUID( ) );
 
-    auto *world = m_scene.GetActiveWorld( );
+    SceneResourceModifiedArgs e( args->resource->GetGUID( ) );
 
-    if (world)
-    {
-        ecs::EditorWorldResourceModifiedArgs e( args->resource->GetGUID( ) );
-
-        world->Dispatch( ecs::WORLD_EDITOR_RESOURCE_MODIFIED, &e );
-    }
+    m_scene.Dispatch( SCENE_RESOURCE_MODIFIED, &e );
 }

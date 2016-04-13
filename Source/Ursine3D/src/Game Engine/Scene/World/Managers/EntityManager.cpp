@@ -632,6 +632,12 @@ namespace ursine
 
             auto *&component = m_componentTypes[ id ][ entity->m_id ];
 
+            #if defined(URSINE_WITH_EDITOR)
+
+                component->onBeforeRemove( );
+
+            #endif
+
             if (dispatch)
             {
                 ComponentRemovedEventArgs e( 
@@ -725,7 +731,17 @@ namespace ursine
                 // the queue to remove (based on instance id)
                 // this is so components with dependencies are deleted in the correct order
                 if (entity->HasComponent( mask ))
-                    utils::InsertionSort( toRemove, m_componentTypes[ i ][ entityID ], CompareComponentsDescending );
+                {
+                    auto *component = m_componentTypes[ i ][ entityID ];
+
+                #if defined(URSINE_WITH_EDITOR)
+
+                    component->onBeforeRemove( );
+
+                #endif
+
+                    utils::InsertionSort( toRemove, component, CompareComponentsDescending );
+                }
             }
 
             auto const removeCount = toRemove.size( );

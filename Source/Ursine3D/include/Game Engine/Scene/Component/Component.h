@@ -40,7 +40,6 @@ namespace ursine
 
             inline explicit Component(ComponentTypeID typeID);
             Component(const Component &rhs) = default;
-            ~Component(void);
 
             Component &operator=(const Component &rhs) = default;
 
@@ -141,7 +140,11 @@ namespace ursine
 
         #if defined(URSINE_WITH_EDITOR)
 
-            void onResourceModifed(EVENT_HANDLER(World));
+            bool m_hasResources;
+            std::vector<std::function<void(void)>> m_resourceEventDestructors;
+
+            void onBeforeRemove(void);
+            void onResourceModifed(EVENT_HANDLER(Scene));
 
         #endif
         } Meta(WhiteListMethods);

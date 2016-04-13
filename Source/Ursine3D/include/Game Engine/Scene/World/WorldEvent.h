@@ -55,11 +55,6 @@ namespace ursine
             // A component's array field has been modified
             WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED,
 
-            /// Resources
-
-            // A resource has been rebuilt
-            WORLD_EDITOR_RESOURCE_MODIFIED,
-
         #endif
 
             // Starting index for events defined out of engine
@@ -151,14 +146,6 @@ namespace ursine
                 : ComponentEventArgs( WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, entity, component )
                 , modification( args )
                 , field( field ) { }
-        };
-
-        struct EditorWorldResourceModifiedArgs : EventArgs
-        {
-            GUID resourceGUID;
-
-            EditorWorldResourceModifiedArgs(const GUID &resourceGUID)
-                : resourceGUID( resourceGUID ) { }
         };
 
     #endif

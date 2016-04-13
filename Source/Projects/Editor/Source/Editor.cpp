@@ -563,7 +563,7 @@ void Editor::onEditorUpdate(EVENT_HANDLER(Application))
     auto dt = sender->GetDeltaTime( );
 
     auto &scene = m_project->GetScene( );
-
+    
     scene.Update( dt );
     scene.Render( );
 

@@ -46,6 +46,9 @@ namespace ursine
 
             Entity *Get(void) const;
 
+            // Skips the IsActive check
+            Entity *GetUnchecked(void) const;
+
         private:
             friend class Entity;
             friend class World;

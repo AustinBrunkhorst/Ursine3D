@@ -109,5 +109,13 @@ namespace ursine
 
             return nullptr;
         }
+
+        Entity *EntityHandle::GetUnchecked(void) const
+        {
+            if (!m_manager)
+                return nullptr;
+
+            return m_manager->GetEntity( *this );
+        }
     }
 }

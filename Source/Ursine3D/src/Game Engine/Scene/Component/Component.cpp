@@ -8,15 +8,6 @@ namespace ursine
 {
     namespace ecs
     {
-        Component::~Component(void)
-        {
-        #if defined(URSINE_WITH_EDITOR)
-
-            m_owner->GetWorld( )->Disconnect( WORLD_EDITOR_RESOURCE_MODIFIED, this, &Component::onResourceModifed );
-
-        #endif
-        }
-
         bool Component::resourcesAreAvailable(void) const
         {
             return m_owner->GetWorld( )->GetOwner( ) != nullptr;
@@ -29,6 +20,8 @@ namespace ursine
             auto fields = type.GetFields( );
 
             auto instance = ObjectVariant( this );
+
+            m_hasResources = false;
 
             for (auto &field : fields)
             {
@@ -61,9 +54,12 @@ namespace ursine
                     events.Connect<EventArgs>( AMODIFY_SET, onModification );
                     events.Connect<EventArgs>( AMODIFY_REMOVE, onModification );
                 }
+                else if (!m_hasResources && fieldType == typeof( ursine::resources::ResourceReference ))
+                {
+                    m_hasResources = true;
+                }
             }
 
-            m_owner->GetWorld( )->Connect( WORLD_EDITOR_RESOURCE_MODIFIED, this, &Component::onResourceModifed );
         #endif
 
             OnInitialize( );
@@ -71,14 +67,39 @@ namespace ursine
 
         void Component::onSceneReady(Scene *scene)
         {
+        #if defined(URSINE_WITH_EDITOR)
+
+            if (m_hasResources)
+            {
+                scene->Connect( 
+                    SCENE_RESOURCE_MODIFIED,
+                    this, 
+                    &Component::onResourceModifed 
+                );
+
+                m_resourceEventDestructors.emplace_back( [=] {
+                    scene->Disconnect( SCENE_RESOURCE_MODIFIED, this, &Component::onResourceModifed );
+                } );
+            }
+
+        #endif
+
             OnSceneReady( scene );
         }
 
         #if defined(URSINE_WITH_EDITOR)
 
-        void Component::onResourceModifed(EVENT_HANDLER(World))
+        void Component::onBeforeRemove(void)
         {
-            EVENT_ATTRS(World, EditorWorldResourceModifiedArgs);
+            for (auto &dtor : m_resourceEventDestructors)
+                dtor( );
+
+            m_resourceEventDestructors.clear( );
+        }
+
+        void Component::onResourceModifed(EVENT_HANDLER(Scene))
+        {
+            EVENT_ATTRS(Scene, SceneResourceModifiedArgs);
 
             if (!m_owner)
                 return;

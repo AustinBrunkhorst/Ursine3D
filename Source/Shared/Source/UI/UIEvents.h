@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LevelSegments.h"
+
 #include <Color.h>
 
 #define UI_EVENT(name, definition)                 \
@@ -41,7 +42,7 @@ namespace ui_event
 
     UI_EVENT( HealthTrackStart,
         int playerID;
-        std::string NameOfEnemy;
+        std::string enemyName;
         float healthPercent;
     );
 

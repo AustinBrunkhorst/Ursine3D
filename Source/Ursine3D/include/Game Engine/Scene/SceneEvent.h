@@ -9,7 +9,14 @@ namespace ursine
         // The active world changed
         SCENE_WORLD_CHANGED,
 
-        SCENE_EVENT_COUNT
+        SCENE_EVENT_CUSTOM,
+
+    #if defined(URSINE_WITH_EDITOR)
+
+        // A resource has been rebuilt
+        SCENE_RESOURCE_MODIFIED = 0x800
+
+    #endif
     };
 
     struct SceneWorldChangedArgs : EventArgs
@@ -24,4 +31,16 @@ namespace ursine
             : oldWorld( oldWorld )
             , reference( reference ) { }
     };
+
+#if defined(URSINE_WITH_EDITOR)
+
+    struct SceneResourceModifiedArgs : EventArgs
+    {
+        GUID resourceGUID;
+
+        SceneResourceModifiedArgs(const GUID &resourceGUID)
+            : resourceGUID( resourceGUID ) { }
+    };
+
+#endif
 }
