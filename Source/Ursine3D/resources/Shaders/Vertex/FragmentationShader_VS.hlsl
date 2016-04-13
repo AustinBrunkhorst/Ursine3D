@@ -60,9 +60,9 @@ PixelInputType main( VertexInputType input )
 
   normal = normalize(normal);
 
-  output.position = float4(pos + input.Nor * normalOffset, 1.0f);
-  output.basePos = float4(input.Pos + input.Nor * normalOffset, 1.0f);
-  output.normal = float4(input.Nor, 0.0f);
+  output.position = float4(pos + normal * normalOffset, 1.0f);
+  output.basePos = float4(input.Pos + normal * normalOffset, 1.0f);
+  output.normal = float4(normal, 0.0f);
   output.uv = input.Tex + textureOffset;
 
   return output;
