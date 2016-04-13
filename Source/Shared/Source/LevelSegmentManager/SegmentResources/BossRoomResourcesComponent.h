@@ -55,6 +55,10 @@ public:
     std::string phase3CinematicCamera;
     std::string phase3CinematicFocalPoint;
 
+    std::string phase4Lights;
+
+    std::string phase5Lights;
+
     std::string phase5CinematicCamera;
     std::string phase5CinematicFocalPoint;
 

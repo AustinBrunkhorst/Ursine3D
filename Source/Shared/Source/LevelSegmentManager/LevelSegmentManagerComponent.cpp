@@ -209,6 +209,7 @@ void LevelSegmentManager::initTutorialLogic(void)
     auto lockCCState = stateM->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
     auto tweenState = stateM->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInUpDown, true, true );
     auto unlockCCState = stateM->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
+    auto hudOn = stateM->AddState<ToggleHudState>( true );
     auto changeSegState = stateM->AddState<ChangeSegmentState>( LevelSegments::Tut_GateOpensTutorial );
     auto waitForRevive = stateM->AddState<TutorialWaitForPlayerReviveState>( );
     auto vineHandler = stateM->AddState<TutorialVineHandlerState>( resources->GetVineArchetype( ) );
@@ -227,12 +228,14 @@ void LevelSegmentManager::initTutorialLogic(void)
     // Unlock players
     tweenState->AddTransition( unlockCCState, "Go To Unlocking Player Controller" );
 
+    unlockCCState->AddTransition( hudOn, "Turn Hud On" );
+
     // Halt the state machine until the players hit the first trigger, so that we can then
     // Spawn the movmement tutorial prompts
     //auto waitForTrigger = stateM->AddState<TriggerWaitState>( resources->GetGateTriggerName( ) );
 
     // After the viewports tween out change the level segment
-    unlockCCState->AddTransition( changeSegState, "To Gate Opens" );
+    hudOn->AddTransition( changeSegState, "To Gate Opens" );
 
     changeSegState->AddTransition( waitForRevive, "Revive Dat Ass" );
 
@@ -449,6 +452,72 @@ void LevelSegmentManager::initBossRoomLogic(void)
         } );
     }
 
+    // Turn phase 4 lights on
+    {
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase 4 Lights On", this );
+        sm->SetInitialState(
+            sm->AddState<ToggleLightGroupState>(
+                true, std::vector<std::string>{ resources->phase4Lights }
+            )
+        );
+        addSegmentLogic( sm, {
+            LevelSegments::BossRoom_Phase4
+        } );
+    }
+
+    // Turn phase 4 lights off
+    {
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase 4 Lights Off", this );
+        sm->SetInitialState(
+            sm->AddState<ToggleLightGroupState>(
+                false, std::vector<std::string>{ 
+                    resources->phase4Lights
+                }
+            )
+        );
+        addSegmentLogic( sm, {
+            LevelSegments::BossRoom_Platforming,
+            LevelSegments::BossRoom_Introduction,
+            LevelSegments::BossRoom_Phase1,
+            LevelSegments::BossRoom_Phase2,
+            LevelSegments::BossRoom_Phase3,
+            LevelSegments::BossRoom_Phase5
+        } );
+    }
+
+    // Turn phase 5 lights on
+    {
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase 5 Lights On", this );
+        sm->SetInitialState(
+            sm->AddState<ToggleLightGroupState>(
+                true, std::vector<std::string>{ resources->phase5Lights }
+            )
+        );
+        addSegmentLogic( sm, {
+            LevelSegments::BossRoom_Phase5
+        } );
+    }
+
+    // Turn phase 5 lights off
+    {
+        auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase 5 Lights Off", this );
+        sm->SetInitialState(
+            sm->AddState<ToggleLightGroupState>(
+                false, std::vector<std::string>{ 
+                    resources->phase5Lights
+                }
+            )
+        );
+        addSegmentLogic( sm, {
+            LevelSegments::BossRoom_Platforming,
+            LevelSegments::BossRoom_Introduction,
+            LevelSegments::BossRoom_Phase1,
+            LevelSegments::BossRoom_Phase2,
+            LevelSegments::BossRoom_Phase3,
+            LevelSegments::BossRoom_Phase4
+        } );
+    }
+
     // Setup logic for the introduction cinematic
     {
         auto cinematicStateM = std::make_shared<SegmentLogicStateMachine>( "Boss Cinematic", this );
@@ -546,6 +615,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
         auto lockPlayers = sm->AddState<LockPlayerCharacterControllerState>( true, true, true, true );
         auto unlockPlayers = sm->AddState<LockPlayerCharacterControllerState>( false, false, false, false );
         auto turnBossLightOn = sm->AddState<ToggleLightGroupState>( true, std::vector<std::string>{ resources->phase3BossLights } );
+        auto turnCenterLightsOff = sm->AddState<ToggleLightGroupState>( false, std::vector<std::string>{ resources->phase3CenterLights } );
 
         waitForTrig->AddTransition( turnOnCinematicCam, "Turn On Cam" );
         turnOnCinematicCam->AddTransition( lockPlayers, "Lock Players" );
@@ -556,8 +626,9 @@ void LevelSegmentManager::initBossRoomLogic(void)
                            ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 7.0f ) );
         playCinematicCam->AddTransition( turnBossLightOn, "Turn On Lights" )
                         ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 5.0f ) );
-        turnBossLightOn->AddTransition( tweenIn, "Tween Back In" )
-                       ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 4.0f ) );
+        turnBossLightOn->AddTransition( turnCenterLightsOff, "Turn center lights off" );
+        turnCenterLightsOff->AddTransition( tweenIn, "Tween Back In" )
+                           ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 4.0f ) );
         tweenIn->AddTransition( toggleHudOn, "Hud On" );
         toggleHudOn->AddTransition( turnOffCinematicCam, "Turn Cam Off" );
         turnOffCinematicCam->AddTransition( unlockPlayers, "Unlock Players" );
