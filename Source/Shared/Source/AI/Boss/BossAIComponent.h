@@ -159,12 +159,6 @@ public:
     );
 
     EditorField(
-        float phase3DazedResetTimer,
-        GetPhase3DazedResetTimer,
-        SetPhase3DazedResetTimer
-    );
-
-    EditorField(
         int phase3NumSludgeshots,
         GetPhase3NumSludgeshots,
         SetPhase3NumSludgeshots
@@ -272,9 +266,6 @@ public:
 
     float GetPhase3HealthTransitionThreshold(void) const;
     void SetPhase3HealthTransitionThreshold(float threshold);
-
-    float GetPhase3DazedResetTimer(void) const;
-    void SetPhase3DazedResetTimer(float timer);
 
     int GetPhase3NumSludgeshots(void) const;
     void SetPhase3NumSludgeshots(int num);
@@ -399,9 +390,6 @@ private:
 
     // The threshold we're using for the phase 3 transition (1-100%)
     float m_phase3HealthThreshold;
-
-    // The timer we use for resetting the boss for phase 3
-    float m_phase3DazedResetTimer;
 
     int m_phase3NumSludgeshots;
 

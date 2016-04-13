@@ -90,7 +90,6 @@ BossAI::BossAI(void)
     , m_phase2HealthThreshold( 50.0f )
     , m_phase2DazedResetTimer( 5.0f )
     , m_phase3HealthThreshold( 25.0f )
-    , m_phase3DazedResetTimer( 5.0f )
     , m_phase3NumSludgeshots( 2 )
     , m_phase3SludgeshotAnimScalar( 1.0f )
     , m_phase4NumSludgeshots( 2 )
@@ -304,11 +303,6 @@ void BossAI::SetPhase2DazedResetTimer(float timer)
     NOTIFY_COMPONENT_CHANGED( "phase2DazedResetTimer", m_phase2DazedResetTimer );
 }
 
-float BossAI::GetPhase3DazedResetTimer(void) const
-{
-    return m_phase3DazedResetTimer;
-}
-
 float BossAI::GetPhase3HealthTransitionThreshold(void) const
 {
     return m_phase3HealthThreshold;
@@ -319,13 +313,6 @@ void BossAI::SetPhase3HealthTransitionThreshold(float threshold)
     m_phase3HealthThreshold = threshold;
 
     NOTIFY_COMPONENT_CHANGED( "phase3HealthTransitionThreshold", m_phase3HealthThreshold );
-}
-
-void BossAI::SetPhase3DazedResetTimer(float timer)
-{
-    m_phase3DazedResetTimer = timer;
-
-    NOTIFY_COMPONENT_CHANGED("phase3DazedResetTimer", m_phase3DazedResetTimer);
 }
 
 int BossAI::GetPhase3NumSludgeshots(void) const
@@ -743,7 +730,6 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
-        auto dazed = sm->AddState<BossDazedState>( );
         auto enrage = sm->AddState<BossEnrageState>( );
         auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
@@ -752,9 +738,6 @@ void BossAI::OnInitialize(void)
         auto seedshot = sm->AddState<BossSeedshotState>( );
         auto pollinate = sm->AddState<BossPollinateState>( );
         auto changeTo5 = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase5 );
-
-        dazed->AddTransition( enrage, "To Sludgeshot" )
-             ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( m_phase3DazedResetTimer ) );
 
         enrage->AddTransition( invulnerable, "To Invulneralbe" );
         invulnerable->AddTransition( spawnVines, "To Spawn Vines" );
@@ -776,7 +759,7 @@ void BossAI::OnInitialize(void)
                         BossAIStateMachine::Health, sm::Comparison::Equal, 0.0f
                     );
 
-        sm->SetInitialState( dazed );
+        sm->SetInitialState( enrage );
 
         m_bossLogic[ 3 ].push_back( sm );
 

@@ -58,6 +58,9 @@ public:
     std::string phase5CinematicCamera;
     std::string phase5CinematicFocalPoint;
 
+    std::string bossAliveParticleGroup;
+    std::string bossDeadParticleGroup;
+
 private:
     ursine::resources::ResourceReference m_worldToMerge;
 
