@@ -37,6 +37,9 @@ private:
     BossAI *m_boss;
 
     ursine::ecs::EntityHandle m_safetyShield;
+    ursine::ecs::EntityHandle m_pollinateSmogEntity;
+
+    float m_counter;
 
     std::unordered_map<ursine::ecs::EntityHandle, float> m_damageMap;
 };

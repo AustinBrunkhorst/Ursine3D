@@ -410,6 +410,18 @@ void BossAI::SetPollinateTickAmount(float damage)
     NOTIFY_COMPONENT_CHANGED( "pollinateTickAmount", m_pollinateTickAmount );
 }
 
+const std::string &BossAI::GetPollinateSmogEntityName(void) const
+{
+    return m_pollinateSmogEntity;
+}
+
+void BossAI::SetPollinateSmogEntityName(const std::string &name)
+{
+    m_pollinateSmogEntity = name;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateSmogEntityName", m_pollinateSmogEntity );
+}
+
 const ResourceReference &BossAI::GetIntroScream(void) const
 {
     return m_introScream;
@@ -471,6 +483,11 @@ EntityHandle BossAI::GetSludgeshotEntity(void)
 EntityHandle BossAI::GetPollinateEntity(void)
 {
     return GetOwner( )->GetChildByName( m_pollinateEntity );
+}
+
+EntityHandle BossAI::GetPollinateSmogEntity(void)
+{
+    return GetOwner( )->GetWorld( )->GetEntityFromName( m_pollinateSmogEntity );
 }
 
 EntityHandle BossAI::GetPollinateSafetyShield(void)

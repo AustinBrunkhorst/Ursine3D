@@ -130,6 +130,12 @@ public:
         SetPollinateTickAmount
     );
 
+    EditorField(
+        std::string pollinateSmogEntityName,
+        GetPollinateSmogEntityName,
+        SetPollinateSmogEntityName
+    );
+
     EditorResourceField(
         ursine::resources::ArchetypeData,
         vineArchetype,
@@ -271,6 +277,9 @@ public:
     float GetPollinateTickAmount(void) const;
     void SetPollinateTickAmount(float damage);
 
+    const std::string &GetPollinateSmogEntityName(void) const;
+    void SetPollinateSmogEntityName(const std::string &name);
+
     const ursine::resources::ResourceReference &GetPollinateArchetype(void) const;
     void SetPollinateArchetype(const ursine::resources::ResourceReference &pollinateArchetype);
 
@@ -324,6 +333,8 @@ public:
     ursine::ecs::EntityHandle GetSludgeshotEntity(void);
 
     ursine::ecs::EntityHandle GetPollinateEntity(void);
+
+    ursine::ecs::EntityHandle GetPollinateSmogEntity(void);
 
     ursine::ecs::EntityHandle GetPollinateSafetyShield(void);
 
@@ -394,6 +405,8 @@ private:
     float m_pollinateTickRate;
 
     float m_pollinateTickAmount;
+
+    std::string m_pollinateSmogEntity;
 
     // Invulnerable emitter
     std::string m_invulnerableEmitterEntity;

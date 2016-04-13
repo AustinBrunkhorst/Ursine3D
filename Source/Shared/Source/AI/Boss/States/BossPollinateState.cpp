@@ -20,6 +20,7 @@
 #include "HealthComponent.h"
 #include "EntityAnimatorComponent.h"
 
+#include <ParticleEmitterComponent.h>
 #include <GhostComponent.h>
 #include <AnimatorComponent.h>
 #include <EntityEvent.h>
@@ -51,6 +52,10 @@ void BossPollinateState::Enter(BossAIStateMachine *machine)
 
     for (auto &pair : m_damageMap)
         pair.second = 0.0f;
+
+    m_pollinateSmogEntity = m_boss->GetPollinateSmogEntity( );
+
+    m_counter = 0.0f;
 }
 
 void BossPollinateState::Update(BossAIStateMachine *machine)
@@ -98,6 +103,20 @@ void BossPollinateState::Update(BossAIStateMachine *machine)
     for (auto &pair : m_damageMap)
         if (pair.second > 0.0f)
             pair.second -= dt;
+
+    auto emitter = m_pollinateSmogEntity->GetComponent<ParticleEmitter>( );
+
+    if (emitter && m_counter < 10.0f)
+    {
+        m_counter += dt;
+
+        if (m_counter > 10.0f)
+            m_counter = 10.0f;
+
+        emitter->SetEmitRate(
+            (m_counter / 10.0f) * 50
+        );
+    }
 }
 
 void BossPollinateState::Exit(BossAIStateMachine *machine)

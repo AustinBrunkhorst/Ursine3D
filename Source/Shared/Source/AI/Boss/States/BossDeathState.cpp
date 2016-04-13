@@ -17,6 +17,7 @@
 #include "BossAIComponent.h"
 #include "ShieldFXComponent.h"
 
+#include <ParticleEmitterComponent.h>
 #include <AnimatorComponent.h>
 
 using namespace ursine;
@@ -38,4 +39,6 @@ void BossDeathState::Enter(BossAIStateMachine *machine)
     boss->GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent(
         boss->GetShieldBreakSfx( )
     );
+
+    boss->GetPollinateSmogEntity( )->GetComponent<ParticleEmitter>( )->SetEmitRate( 0.0f );
 }
