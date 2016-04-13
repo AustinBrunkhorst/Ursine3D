@@ -360,7 +360,7 @@ namespace ursine
             m_currentlyRendering = true;
 
             // stalls until gfx is done rendering
-            while (m_rendering);
+            while (m_threadRender);
 
             m_rendering = true;
 
@@ -390,14 +390,7 @@ namespace ursine
             UAssert(m_currentlyRendering == true, "Attempted to render a scene without starting the frame!");
             UAssert(m_sceneActive == true, "Attempted to render a scene without beginning one!");
 
-            // get viewport
-            _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>( &camera );
-            UAssert(camHND->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
-
-            Camera &cam = cameraManager->GetCamera(camera);
-
-            m_cameraList.push_back( std::pair<Camera, unsigned>(cam, static_cast<unsigned>(m_drawLists.size( ) - 1)) );
-
+            m_cameraList.push_back( std::pair<GfxHND, unsigned>(camera, static_cast<unsigned>(m_drawLists.size( ) - 1)) );
         }
 
         void GfxManager::EndScene()
@@ -438,6 +431,8 @@ namespace ursine
             if (!m_ready)
                 return;
 
+            while(m_threadRender) { }
+
             gfxInfo->SetDimensions( width, height );
 
             //MAIN render targets, not viewports
@@ -460,39 +455,48 @@ namespace ursine
 
         void GfxManager::internalGfxEntry(GfxManager *manager)
         {
-            while(!manager->m_threadRender)
+            do
             {
-                if(manager->m_shouldQuit == true)
-                    return;
-            }
-
-            manager->internalStartFrame();
+                while(!manager->m_threadRender)
+                {
+                    if (manager->m_shouldQuit == true)
+                        return;
+                }
             
-            // sort calls
-            int index = 0;
-            for (auto &list : manager->m_drawLists)
-            {
-                std::sort(
-                    list.begin(),
-                    list.begin() + manager->m_drawCounts[ index++ ],
-                    sort
-                );
-            }
+                manager->internalStartFrame();
+            
+                // sort calls
+                int index = 0;
+                for (auto &list : manager->m_drawLists)
+                {
+                    std::sort(
+                        list.begin(),
+                        list.begin() + manager->m_drawCounts[ index++ ],
+                        sort
+                    );
+                }
 
-            // render all cameras
-            for (auto &camPair : manager->m_cameraList)
-            {
-                manager->internalRenderScene(camPair.first, camPair.second);
-            }
+                // render all cameras
+                for (auto &camPair : manager->m_cameraList)
+                {
+                    // get viewport
+                    _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>(&camPair.first);
+                    UAssert(camHND->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
 
-            //for (auto &uiCall : manager->m_uiViewportRenderCalls)
-            //    manager->internalRenderDynamicTextureInViewport(uiCall.texHandle, uiCall.posX, uiCall.posY, uiCall.cameraHandle);
-            // render ui
-            for (auto &uiCall : manager->m_uiRenderCalls)
-                manager->internalRenderDynamicTexture(uiCall.texHandle, uiCall.posX, uiCall.posY);
+                    Camera &cam = manager->cameraManager->GetCamera(camPair.first);
 
-            // end frame
-            manager->internalEndFrame();
+                    manager->internalRenderScene(cam, camPair.second);
+                }
+
+                for (auto &uiCall : manager->m_uiViewportRenderCalls)
+                    manager->internalRenderDynamicTextureInViewport(uiCall.texHandle, uiCall.posX, uiCall.posY, uiCall.cameraHandle);
+                // render ui
+                for (auto &uiCall : manager->m_uiRenderCalls)
+                    manager->internalRenderDynamicTexture(uiCall.texHandle, uiCall.posX, uiCall.posY);
+
+                // end frame
+                manager->internalEndFrame();
+            }while(true);
         }
 
         void GfxManager::internalStartFrame(void)
@@ -610,8 +614,7 @@ namespace ursine
             dxCore->CheckSize();
 
             //invalidate CPU-side gfx engine for next frame
-            dxCore->Invalidate();
-            Invalidate();
+            Invalidate( );
 
             // reset drawing for next scene
             drawingManager->EndScene();
@@ -619,8 +622,6 @@ namespace ursine
             //end rendering
             m_rendering = false;
             m_threadRender = false;
-
-            internalGfxEntry( this );
         }
 
         void GfxManager::RenderScene_Deferred(Camera &camera, int index)
@@ -650,11 +651,12 @@ namespace ursine
             currentCamera.SetScreenDimensions(
                 w,
                 h
-                );
+            );
+
             currentCamera.SetScreenPosition(
                 gvp.TopLeftX,
                 gvp.TopLeftY
-                );
+            );
 
             // sort the handles
             std::sort(
@@ -1972,14 +1974,15 @@ namespace ursine
             // get the saved depth
             float depth = m_currentPosition.Z();
 
+            POINT point;
+            GetCursorPos(&point);
+
+            ScreenToClient(wHND, &point);
+
             // transform from screen to world, given a specific camera
-            auto worldPosition = camera.ScreenToWorld(Vec2(m_currentPosition.X(), m_currentPosition.Y()), depth);
+            auto worldPosition = camera.ScreenToWorld(Vec2(static_cast<float>(point.x), static_cast<float>(point.y)), depth);
 
             return worldPosition;
         }
-
-
-
-        
     }
 }
