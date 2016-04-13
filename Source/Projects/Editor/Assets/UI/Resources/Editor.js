@@ -2529,6 +2529,7 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 				var node = styleSheets[_g];
 				++_g;
 				var sheet = node;
+				if(sheet.hasAttribute("data-global")) continue;
 				styleContainer.innerHTML += "@import url(" + sheet.href + ");";
 				node.parentNode.removeChild(node);
 			}

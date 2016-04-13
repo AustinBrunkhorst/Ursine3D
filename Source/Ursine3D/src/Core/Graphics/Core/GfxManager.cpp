@@ -410,7 +410,7 @@ namespace ursine
             m_currentlyRendering = false;
 
             // if we are multithreading
-            if(true)
+            if(false)
             {
                 m_gfxThread = std::thread(internalGfxEntry, this);
 

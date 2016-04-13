@@ -262,6 +262,10 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
             for (node in styleSheets) {
                 var sheet : LinkElement = cast node;
 
+                // skip stylesheets marked global
+                if (sheet.hasAttribute( 'data-global' ))
+                    continue;
+
                 styleContainer.innerHTML += '@import url(${sheet.href});';
 
                 node.parentNode.removeChild( node );
