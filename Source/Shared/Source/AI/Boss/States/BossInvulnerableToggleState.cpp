@@ -50,4 +50,14 @@ void BossInvulnerableToggleState::Enter(BossAIStateMachine *machine)
         boss->Dispatch( BossAIEvents::ShieldUp, EventArgs::Empty );
     else
         boss->Dispatch( BossAIEvents::ShieldDown, EventArgs::Empty );
+
+    auto emitter = boss->GetOwner( )->GetComponent<AudioEmitter>( );
+
+    if (emitter)
+    {
+        if (m_toggle)
+            emitter->PushEvent( boss->GetShieldRebuildSfx( ) );
+        else
+            emitter->PushEvent( boss->GetShieldBreakSfx( ) );
+    }
 }

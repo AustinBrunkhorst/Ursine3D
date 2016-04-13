@@ -400,6 +400,30 @@ void BossAI::SetHurtSfx(const ResourceReference &hurtSfx)
     NOTIFY_COMPONENT_CHANGED( "hurtSfx", m_hurtSfx );
 }
 
+const ResourceReference &BossAI::GetShieldBreakSfx(void) const
+{
+    return m_shieldBreakSfx;
+}
+
+void BossAI::SetShieldBreakSfx(const ResourceReference &shieldBreakSfx)
+{
+    m_shieldBreakSfx = shieldBreakSfx;
+
+    NOTIFY_COMPONENT_CHANGED( "shieldBreakSfx", m_shieldBreakSfx );
+}
+
+const ResourceReference &BossAI::GetShieldRebuildSfx(void) const
+{
+    return m_shieldRebuildSfx;
+}
+
+void BossAI::SetShieldRebuildSfx(const ResourceReference &shieldRebuildSfx)
+{
+    m_shieldRebuildSfx = shieldRebuildSfx;
+
+    NOTIFY_COMPONENT_CHANGED( "shieldRebuildSfx", m_shieldRebuildSfx );
+}
+
 EntityHandle BossAI::GetSeedshotEntity(void)
 {
     return GetOwner( )->GetChildByName( m_seedshotEntity );

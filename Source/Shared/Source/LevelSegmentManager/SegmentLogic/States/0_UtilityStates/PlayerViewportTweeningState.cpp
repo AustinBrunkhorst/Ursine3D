@@ -16,6 +16,9 @@
 #include "PlayerViewportTweeningState.h"
 
 #include "SegmentLogicStateIncludes.h"
+#include "HealthComponent.h"
+#include "GameEvents.h"
+
 #include <CameraComponent.h>
 
 using namespace ursine;
@@ -46,6 +49,13 @@ void PlayerViewportTweeningState::Enter(SegmentLogicStateMachine *machine)
 
     auto c1 = p1->GetComponentInChildren<Camera>( );
     auto c2 = p2->GetComponentInChildren<Camera>( );
+
+    // If a player is dead, revive them
+    if (p1->GetComponent<Health>( )->GetHealth( ) <= 0.0f)
+        p1->Dispatch( game::REVIVE_PLAYER, EventArgs::Empty );
+
+    if (p2->GetComponent<Health>( )->GetHealth( ) <= 0.0f)
+        p2->Dispatch( game::REVIVE_PLAYER, EventArgs::Empty );
 
     if (m_camerasActive)
     {

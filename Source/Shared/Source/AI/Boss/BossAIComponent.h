@@ -202,6 +202,20 @@ public:
         SetHurtSfx
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        shieldBreakSfx,
+        GetShieldBreakSfx,
+        SetShieldBreakSfx
+    );
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        shieldRebuildSfx,
+        GetShieldRebuildSfx,
+        SetShieldRebuildSfx
+    );
+
     Meta(Enable)
     BossAI(void);
 
@@ -279,6 +293,12 @@ public:
 
     const ursine::resources::ResourceReference &GetHurtSfx(void) const;
     void SetHurtSfx(const ursine::resources::ResourceReference &hurtSfx);
+
+    const ursine::resources::ResourceReference &GetShieldBreakSfx(void) const;
+    void SetShieldBreakSfx(const ursine::resources::ResourceReference &shieldBreakSfx);
+
+    const ursine::resources::ResourceReference &GetShieldRebuildSfx(void) const;
+    void SetShieldRebuildSfx(const ursine::resources::ResourceReference &shieldRebuildSfx);
 
     ursine::ecs::EntityHandle GetSeedshotEntity(void);
 
@@ -405,6 +425,8 @@ private:
     // Sfxs
     ursine::resources::ResourceReference m_introScream;
     ursine::resources::ResourceReference m_hurtSfx;
+    ursine::resources::ResourceReference m_shieldBreakSfx;
+    ursine::resources::ResourceReference m_shieldRebuildSfx;
 
 } Meta(
     Enable,
