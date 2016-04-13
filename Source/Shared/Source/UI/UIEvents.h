@@ -1,6 +1,7 @@
 #pragma once
 
 #include "LevelSegments.h"
+#include <Color.h>
 
 #define UI_EVENT(name, definition)                 \
     struct name {                                  \
@@ -77,5 +78,13 @@ namespace ui_event
     UI_EVENT( TutorialDialogue,
         ursine::Array<std::string> dialogueLines;
         float totalTimeForDialogue;
+    );
+
+    UI_EVENT( ScreenFadeEffect,
+        float fadeOutTime;
+        float pauseTime;
+        float fadeInTime;
+
+        ursine::Color screenColor;
     );
 }

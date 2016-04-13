@@ -226,7 +226,8 @@ void Health::DealDamage(const EntityHandle &damager, float damage)
     Dispatch( HEALTH_DAMAGED, &args );
 
     // Message the UI
-    sendDamageUIEvent( damager, damage );
+    if (GetOwner( )->HasComponent<PlayerID>( ))
+        sendDamageUIEvent( damager, damage );
 
     // Check to see if we have a shield
     if (m_hasShield && m_shield > 0.0f)
