@@ -100,7 +100,7 @@ namespace ursine
 
             EditorResourceField(
                 ursine::resources::TextureData,
-                normalMap,
+                emissiveMap,
                 GetNormalTexture,
                 SetNormalTexture
             );
