@@ -118,6 +118,18 @@ public:
         SetPollinateArchetype
     );
 
+    EditorField(
+        float pollinateTickRate,
+        GetPollinateTickRate,
+        SetPollinateTickRate
+    );
+
+    EditorField(
+        float pollinateTickAmount,
+        GetPollinateTickAmount,
+        SetPollinateTickAmount
+    );
+
     EditorResourceField(
         ursine::resources::ArchetypeData,
         vineArchetype,
@@ -180,6 +192,12 @@ public:
         float phase4SeedshotDuration,
         GetPhase4SeedshotDuration,
         SetPhase4SeedshotDuration
+    );
+
+    EditorField(
+        std::string pollinateSafetyShieldEntityName,
+        GetPollinateSafetyShieldEntityName,
+        SetPollinateSafetyShieldEntityName
     );
 
     EditorResourceField(
@@ -247,6 +265,12 @@ public:
     int GetPollinateProjectileCount(void) const;
     void SetPollinateprojectileCount(int count);
 
+    float GetPollinateTickRate(void) const;
+    void SetPollinateTickRate(float rate);
+
+    float GetPollinateTickAmount(void) const;
+    void SetPollinateTickAmount(float damage);
+
     const ursine::resources::ResourceReference &GetPollinateArchetype(void) const;
     void SetPollinateArchetype(const ursine::resources::ResourceReference &pollinateArchetype);
 
@@ -280,6 +304,9 @@ public:
     float GetPhase4SeedshotDuration(void) const;
     void SetPhase4SeedshotDuration(float duration);
 
+    const std::string &GetPollinateSafetyShieldEntityName(void) const;
+    void SetPollinateSafetyShieldEntityName(const std::string &name);
+
     const ursine::resources::ResourceReference &GetIntroScream(void) const;
     void SetIntroScream(const ursine::resources::ResourceReference &audioEvent);
 
@@ -297,6 +324,8 @@ public:
     ursine::ecs::EntityHandle GetSludgeshotEntity(void);
 
     ursine::ecs::EntityHandle GetPollinateEntity(void);
+
+    ursine::ecs::EntityHandle GetPollinateSafetyShield(void);
 
     void AddSpawnedVine(ursine::ecs::EntityHandle vine);
     const std::vector<ursine::ecs::EntityHandle> &GetVines(void) const;
@@ -362,6 +391,10 @@ private:
 
     ursine::resources::ResourceReference m_pollinateArchetype;
 
+    float m_pollinateTickRate;
+
+    float m_pollinateTickAmount;
+
     // Invulnerable emitter
     std::string m_invulnerableEmitterEntity;
 
@@ -399,6 +432,8 @@ private:
     int m_phase4NumSludgeshots;
 
     float m_phase4SeedshotDuration;
+
+    std::string m_pollinateSafetyShield;
 
     // Logic variables
     LevelSegments m_segment;

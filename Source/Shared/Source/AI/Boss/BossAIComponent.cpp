@@ -374,6 +374,42 @@ void BossAI::SetPhase4SeedshotDuration(float duration)
     NOTIFY_COMPONENT_CHANGED( "phase4SeedshotDuration", m_phase4SeedshotDuration );
 }
 
+const std::string &BossAI::GetPollinateSafetyShieldEntityName(void) const
+{
+    return m_pollinateSafetyShield;
+}
+
+void BossAI::SetPollinateSafetyShieldEntityName(const std::string &name)
+{
+    m_pollinateSafetyShield = name;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateSafetyShieldEntityName", m_pollinateSafetyShield );
+}
+
+float BossAI::GetPollinateTickRate(void) const
+{
+    return m_pollinateTickRate;
+}
+
+void BossAI::SetPollinateTickRate(float rate)
+{
+    m_pollinateTickRate = rate;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateTickRate", m_pollinateTickRate );
+}
+
+float BossAI::GetPollinateTickAmount(void) const
+{
+    return m_pollinateTickAmount;
+}
+
+void BossAI::SetPollinateTickAmount(float damage)
+{
+    m_pollinateTickAmount = damage;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateTickAmount", m_pollinateTickAmount );
+}
+
 const ResourceReference &BossAI::GetIntroScream(void) const
 {
     return m_introScream;
@@ -435,6 +471,11 @@ EntityHandle BossAI::GetSludgeshotEntity(void)
 EntityHandle BossAI::GetPollinateEntity(void)
 {
     return GetOwner( )->GetChildByName( m_pollinateEntity );
+}
+
+EntityHandle BossAI::GetPollinateSafetyShield(void)
+{
+    return GetOwner( )->GetWorld( )->GetEntityFromName( m_pollinateSafetyShield );
 }
 
 void BossAI::AddSpawnedVine(EntityHandle vine)

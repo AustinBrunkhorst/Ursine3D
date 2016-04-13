@@ -83,7 +83,7 @@ namespace ursine
 
             void onTransformChange(EVENT_HANDLER(Entity));
 
-			void onCollision(EVENT_HANDLER(Entity));
+            void onCollision(EVENT_HANDLER(Entity));
 
         } Meta( Enable, DisplayName( "Ghost" ) );
     }

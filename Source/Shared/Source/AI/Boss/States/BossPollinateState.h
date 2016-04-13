@@ -23,6 +23,7 @@ public:
     BossPollinateState(void);
 
     void Enter(BossAIStateMachine *machine) override;
+    void Update(BossAIStateMachine *machine) override;
     void Exit(BossAIStateMachine *machine) override;
 
 private:
@@ -31,6 +32,11 @@ private:
 
     void spewPollin(void);
 
+    void tryDealDamage(ursine::ecs::EntityHandle entity);
+
     BossAI *m_boss;
 
+    ursine::ecs::EntityHandle m_safetyShield;
+
+    std::unordered_map<ursine::ecs::EntityHandle, float> m_damageMap;
 };

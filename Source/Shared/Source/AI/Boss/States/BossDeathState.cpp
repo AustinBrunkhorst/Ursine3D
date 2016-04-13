@@ -15,6 +15,7 @@
 
 #include "BossAIStateMachine.h"
 #include "BossAIComponent.h"
+#include "ShieldFXComponent.h"
 
 #include <AnimatorComponent.h>
 
@@ -26,7 +27,11 @@ BossDeathState::BossDeathState(void)
 
 void BossDeathState::Enter(BossAIStateMachine *machine)
 {
-    auto animator = machine->GetBoss( )->GetOwner( )->GetComponentInChildren<Animator>( );
+    auto boss = machine->GetBoss( );
+
+    auto animator = boss->GetOwner( )->GetComponentInChildren<Animator>( );
     animator->SetCurrentState( "Death" );
     animator->SetPlaying( true );
+
+    boss->GetPollinateSafetyShield( )->GetComponentInChildren<ShieldFX>( )->DestroyShield( );
 }
