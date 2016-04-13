@@ -18,6 +18,8 @@
 #include "PlayerDeathCameraAnimatorComponent.h"
 #include "SlimePitComponent.h"
 #include "SlimePitDeathSpawnComponent.h"
+#include "UIScreensConfigComponent.h"
+#include "PlayerIDComponent.h"
 
 #include <SweptControllerComponent.h>
 
@@ -128,16 +130,46 @@ void PlayerDownedObject::onZeroHealth(EVENT_HANDLER(Health))
             );
         }
     }
+
+    // turn off the hud for this player
+    auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+
+    UAssert( ui != nullptr,
+        "UIConfig was null."    
+    );
+
+    ui_event::ToggleHUD e;
+
+    e.toggled = false;
+    e.playerID = owner->GetComponent<PlayerID>( )->GetID( );
+
+    ui->TriggerPlayerHUDEvent( e );
 }
 
 void PlayerDownedObject::onRevive(EVENT_HANDLER(Entity))
 {
+    auto owner = GetOwner( );
+
     // animate the camera
-    auto animator = GetOwner( )->GetComponentInChildren<PlayerDeathCameraAnimator>( );
+    auto animator = owner->GetComponentInChildren<PlayerDeathCameraAnimator>( );
 
     UAssert( animator, "Error: Need a death camera animator" );
 
     animator->AnimateRevival( );
+
+    // turn on the hud for this player
+    auto *ui = owner->GetWorld( )->GetSettings( )->GetComponent<UIScreensConfig>( );
+
+    UAssert( ui != nullptr,
+        "UIConfig was null."    
+    );
+
+    ui_event::ToggleHUD e;
+
+    e.toggled = true;
+    e.playerID = owner->GetComponent<PlayerID>( )->GetID( );
+
+    ui->TriggerPlayerHUDEvent( e );
 }
 
 #if defined(URSINE_WITH_EDITOR)

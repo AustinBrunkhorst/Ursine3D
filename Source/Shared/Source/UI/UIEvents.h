@@ -19,6 +19,7 @@ namespace ui_event
 
     UI_EVENT( ToggleHUD,
         bool toggled;
+        int playerID;
     );
 
     UI_EVENT( PlayerHealthUpdated,

@@ -45,6 +45,7 @@ void ToggleHudState::Enter(SegmentLogicStateMachine *machine)
     ui_event::ToggleHUD e;
 
     e.toggled = m_toggle;
+    e.playerID = -1;
 
     ui->TriggerPlayerHUDEvent( e );
 }
