@@ -618,6 +618,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
         auto playCinematicFocalP = sm->AddState<PlayEntityAnimatorState>( resources->phase5CinematicFocalPoint, false );
         auto playCinematicCam = sm->AddState<PlayEntityAnimatorState>( resources->phase5CinematicCamera, false );
         auto turnOffAliveParticles = sm->AddState<ToggleLightGroupState>( false, std::vector<std::string>{ resources->bossAliveParticleGroup } );
+        auto turnOnDeadParticles = sm->AddState<ToggleLightGroupState>( true, std::vector<std::string>{ resources->bossDeadParticleGroup } );
         auto tweenOut = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitOutRightLeft, true, false );
         auto tweenIn = sm->AddState<PlayerViewportTweeningState>( ViewportTweenType::SplitInLeftRight, true, true );
         auto toggleHudOff = sm->AddState<ToggleHudState>( false );
@@ -633,8 +634,10 @@ void LevelSegmentManager::initBossRoomLogic(void)
         turnOffAliveParticles->AddTransition( playCinematicFocalP, "Play Focal Point" );
         playCinematicFocalP->AddTransition( repositionPlayers, "Tween back in" )
                            ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
-        repositionPlayers->AddTransition( tweenIn, "Tween back in" )
-                         ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 10.0f ) );
+        repositionPlayers->AddTransition( turnOnDeadParticles, "Tween back in" )
+                         ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 7.0f ) );
+        turnOnDeadParticles->AddTransition( tweenIn, "Tween back in" )
+                           ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
         tweenIn->AddTransition( turnOffCinematicCam, "Turn cam off" );
         turnOffCinematicCam->AddTransition( playerWinOff, "Turn Off Win" );
         playerWinOff->AddTransition( unlockPlayers, "Unlock players" );
