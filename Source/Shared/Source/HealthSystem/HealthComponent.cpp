@@ -324,6 +324,7 @@ void Health::sendDamageUIEvent(const EntityHandle &damager, float damage)
 {
     ui_event::PlayerDamaged damageEvent;
 
+    damageEvent.playerID = GetOwner( )->GetComponent<PlayerID>( )->GetID( );
     damageEvent.damage = damage;
     damageEvent.back = damageEvent.front = 
     damageEvent.left = damageEvent.right = false;

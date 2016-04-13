@@ -20,6 +20,7 @@
 #include "SlimePitDeathSpawnComponent.h"
 #include "UIScreensConfigComponent.h"
 #include "PlayerIDComponent.h"
+#include "LevelSegmentManagerComponent.h"
 
 #include <SweptControllerComponent.h>
 
@@ -119,6 +120,26 @@ void PlayerDownedObject::onZeroHealth(EVENT_HANDLER(Health))
     e.playerID = owner->GetComponent<PlayerID>( )->GetID( );
 
     ui->TriggerPlayerHUDEvent( e );
+
+    // If both players are dead, send event that both players are dead... lol
+    auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+    bool allDead = true;
+
+    for (auto &player : players)
+        if (player->GetComponent<Health>( )->GetHealth( ) > 0.0f)
+            allDead = false;
+
+    if (allDead)
+    {
+        ui_event::BothPlayersDied bothDeadEvent;
+
+        // get the current segment
+        auto sm = world->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
+
+        bothDeadEvent.currentSegment = sm[ 0 ]->GetComponent<LevelSegmentManager>( )->GetCurrentSegment( );
+
+        ui->TriggerPlayerHUDEvent( bothDeadEvent );
+    }
 }
 
 void PlayerDownedObject::onRevive(EVENT_HANDLER(Entity))

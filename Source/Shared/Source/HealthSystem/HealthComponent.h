@@ -123,6 +123,7 @@ public:
 
     Meta(Enable)
     Health(void);
+    ~Health(void);
 
     HealthType GetHealthType(void) const;
     void SetHealthType(HealthType type);

@@ -16,11 +16,12 @@
 #include "CommandQueueComponent.h"
 #include "HealthComponent.h"
 #include "GameEvents.h"
+#include "UIScreensConfigComponent.h"
 
 NATIVE_COMPONENT_DEFINITION( RevivePlayer ) ;
 
 using namespace ursine;
-
+using namespace ecs;
 
 RevivePlayer::RevivePlayer(void) :
     BaseComponent( )
@@ -89,11 +90,15 @@ void RevivePlayer::Interact(const ursine::ecs::EntityHandle& entity)
         float* time = &m_times[ entity ];
 
         // update
-        *time += ursine::Application::Instance->GetDeltaTime( );
+        *time += Application::Instance->GetDeltaTime( );
+
+        messageUIProgress( queue->GetOwner( ), *time );
 
         // revive player if time has been met
         if ( *time > m_reviveTime )
         {
+            messageUISuccess( queue->GetOwner( ) );
+
             InteractionComplete( );
         }
     }
@@ -110,4 +115,55 @@ void RevivePlayer::InteractionComplete(void)
 {
     GetOwner( )->GetRoot( )->Dispatch( game::REVIVE_PLAYER, ursine::ecs::EntityEventArgs::Empty );
     GetOwner( )->Delete( );
+}
+
+void RevivePlayer::messageUIProgress(const EntityHandle &reviver, float time)
+{
+    auto world = GetOwner( )->GetWorld( );
+
+    if (!world)
+        return;
+
+    auto settings = world->GetSettings( );
+
+    if (!settings)
+        return;
+
+    auto ui = settings->GetComponent<UIScreensConfig>( );
+
+    if (!ui)
+        return;
+
+    ui_event::PlayerReviveUpdate event;
+
+    event.percent = math::Min( time / m_reviveTime, 1.0f );
+    event.playerReviving = reviver->GetComponent<PlayerID>( )->GetID( );
+    event.playerDowned = GetOwner( )->GetRoot( )->GetComponent<PlayerID>( )->GetID( );
+
+    ui->TriggerPlayerHUDEvent( event );
+}
+
+void RevivePlayer::messageUISuccess(const EntityHandle &reviver)
+{
+    auto world = GetOwner( )->GetWorld( );
+
+    if (!world)
+        return;
+
+    auto settings = world->GetSettings( );
+
+    if (!settings)
+        return;
+
+    auto ui = settings->GetComponent<UIScreensConfig>( );
+
+    if (!ui)
+        return;
+
+    ui_event::PlayerReviveSuccess event;
+
+    event.playerReviving = reviver->GetComponent<PlayerID>( )->GetID( );
+    event.playerRevived = GetOwner( )->GetRoot( )->GetComponent<PlayerID>( )->GetID( );
+
+    ui->TriggerPlayerHUDEvent( event );
 }

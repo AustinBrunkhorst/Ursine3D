@@ -60,6 +60,9 @@ private:
     void StopInteraction(const ursine::ecs::EntityHandle& entity) override;
     void InteractionComplete(void);
 
+    void messageUIProgress(const ursine::ecs::EntityHandle &reviver, float time);
+    void messageUISuccess(const ursine::ecs::EntityHandle &reviver);
+
     // command queues
     std::unordered_map<ursine::ecs::EntityHandle, CommandQueue*> m_queues;
 

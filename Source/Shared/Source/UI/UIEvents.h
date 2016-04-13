@@ -1,5 +1,7 @@
 #pragma once
 
+#include "LevelSegments.h"
+
 #define UI_EVENT(name, definition)                 \
     struct name {                                  \
         static constexpr auto DefaultName = #name; \
@@ -28,6 +30,7 @@ namespace ui_event
     );
 
     UI_EVENT( PlayerDamaged,
+        int playerID;
         float damage;
         bool front;
         bool back;
@@ -54,5 +57,20 @@ namespace ui_event
     UI_EVENT( PlayerAmmoUpdated,
         int playerID;
         float percent;
+    );
+
+    UI_EVENT( BothPlayersDied,
+        LevelSegments currentSegment;
+    );
+
+    UI_EVENT( PlayerReviveUpdate,
+        int playerReviving;
+        int playerDowned;
+        float percent;
+    );
+
+    UI_EVENT( PlayerReviveSuccess,
+        int playerReviving;
+        int playerRevived;
     );
 }
