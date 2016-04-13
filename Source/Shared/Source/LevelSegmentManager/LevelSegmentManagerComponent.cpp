@@ -30,6 +30,7 @@
 #include "PlayEntityAnimatorState.h"
 #include "TutorialWaitForPlayerReviveState.h"
 #include "TutorialVineHandlerState.h"
+#include "PlayerWinState.h"
 
 #include "CurrentSegmentCondition.h"
 
@@ -576,6 +577,8 @@ void LevelSegmentManager::initBossRoomLogic(void)
         } );
     }
 
+    // TODO: Teleport players to their spots
+    //       If they aren't there, also fix the HUD problem
     // Setup logic for phase5 cinematic logic
     {
         // tween out viewports
@@ -585,6 +588,8 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
         auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase5 Cinematic", this );
 
+        auto playerWinOn = sm->AddState<PlayerWinState>( true );
+        auto playerWinOff = sm->AddState<PlayerWinState>( false );
         auto turnOnCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase5CinematicCamera, true );
         auto turnOffCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase5CinematicCamera, false );
         auto playCinematicFocalP = sm->AddState<PlayEntityAnimatorState>( resources->phase5CinematicFocalPoint, false );
@@ -597,13 +602,15 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
         toggleHudOff->AddTransition( lockPlayers, "Lock Players" );
         lockPlayers->AddTransition( turnOnCinematicCam, "Turn On Camera" );
-        turnOnCinematicCam->AddTransition( tweenOut, "Tween viewports out" );
+        turnOnCinematicCam->AddTransition( playerWinOn, "Player Won" );
+        playerWinOn->AddTransition( tweenOut, "Tween viewports out" );
         tweenOut->AddTransition( playCinematicCam, "Play Cinematic" );
         playCinematicCam->AddTransition( playCinematicFocalP, "Play Focal Point" );
         playCinematicFocalP->AddTransition( tweenIn, "Tween back in" )
                            ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 13.0f ) );
         tweenIn->AddTransition( turnOffCinematicCam, "Turn cam off" );
-        turnOffCinematicCam->AddTransition( unlockPlayers, "Unlock players" );
+        turnOffCinematicCam->AddTransition( playerWinOff, "Turn Off Win" );
+        playerWinOff->AddTransition( unlockPlayers, "Unlock players" );
 
         sm->SetInitialState( toggleHudOff );
 
