@@ -123,9 +123,6 @@ public:
 
     Meta(Enable)
     Health(void);
-    ~Health(void);
-
-    void OnSceneReady(ursine::Scene *scene) override;
 
     HealthType GetHealthType(void) const;
     void SetHealthType(HealthType type);
@@ -173,9 +170,9 @@ private:
 
     void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
 
-    void onUpdate(EVENT_HANDLER(ursine::ecs::World));
-
     void onRevive(EVENT_HANDLER(ursine::ecs::Entity));
+
+    void sendDamageUIEvent(const ursine::ecs::EntityHandle &damager, float damage);
 
     HealthType m_type;
 

@@ -51,18 +51,6 @@ Health::~Health(void)
     GetOwner( )->Listener(this)
         .Off( game::REVIVE_PLAYER, &Health::onRevive )
         .Off( ursine::ecs::ENTITY_REMOVED, &Health::onDeath );
-
-    auto world = GetOwner( )->GetWorld( );
-
-    if (world)
-        world->Listener( this )
-            .Off( WORLD_UPDATE, &Health::onUpdate );
-}
-
-void Health::OnSceneReady(Scene *scene)
-{
-    GetOwner( )->GetWorld( )->Listener( this )
-        .On( WORLD_UPDATE, &Health::onUpdate );
 }
 
 HealthType Health::GetHealthType(void) const
@@ -237,6 +225,9 @@ void Health::DealDamage(const EntityHandle &damager, float damage)
 
     Dispatch( HEALTH_DAMAGED, &args );
 
+    // Message the UI
+    sendDamageUIEvent( damager, damage );
+
     // Check to see if we have a shield
     if (m_hasShield && m_shield > 0.0f)
     {
@@ -324,12 +315,60 @@ void Health::onDeath(EVENT_HANDLER(ursine::ecs::ENTITY_REMOVED))
     }
 }
 
-void Health::onUpdate(EVENT_HANDLER(World))
-{
-
-}
-
 void Health::onRevive(EVENT_HANDLER(ursine::ecs::Entity))
 {
     AddHealth( m_maxHealth );
+}
+
+void Health::sendDamageUIEvent(const EntityHandle &damager, float damage)
+{
+    ui_event::PlayerDamaged damageEvent;
+
+    damageEvent.damage = damage;
+    damageEvent.back = damageEvent.front = 
+    damageEvent.left = damageEvent.right = false;
+
+    auto trans = GetOwner( )->GetTransform( );
+    auto damagerPos = damager->GetTransform( )->GetWorldPosition( );
+    auto ourPos = trans->GetWorldPosition( );
+    auto dir = damagerPos - ourPos;
+
+    dir.Y( ) = 0.0f;
+
+    dir.Normalize( );
+
+    float xCos = trans->GetRight( ).Dot( dir );
+    float yCos = trans->GetForward( ).Dot( dir );
+
+    if (abs(xCos) < 0.5f)
+    {
+        // Dealing with front back case
+        if (yCos > 0.0f)
+            damageEvent.front = true;
+        else
+            damageEvent.back = true;
+    }
+    else
+    {
+        // Dealing with right left case
+        if (xCos < 0.0f)
+            damageEvent.left = true;
+        else
+            damageEvent.right = true;
+    }
+
+    auto world = GetOwner( )->GetWorld( );
+
+    if (!world)
+        return;
+
+    auto settings = world->GetSettings( );
+
+    if (!settings)
+        return;
+
+    auto *ui = settings->GetComponent<UIScreensConfig>( );
+
+    if (ui)
+        ui->TriggerPlayerHUDEvent( damageEvent );
 }

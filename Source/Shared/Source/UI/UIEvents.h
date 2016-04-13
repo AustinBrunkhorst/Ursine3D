@@ -27,13 +27,21 @@ namespace ui_event
         float percent;
     );
 
+    UI_EVENT( PlayerDamaged,
+        float damage;
+        bool front;
+        bool back;
+        bool right;
+        bool left;
+    );
+
     UI_EVENT( HealthTrackStart,
         int playerID;
         std::string NameOfEnemy;
         float healthPercent;
     );
 
-    UI_EVENT(HealthTrackUpdate,
+    UI_EVENT( HealthTrackUpdate,
         int playerID;
         float healthPercent;
     );
