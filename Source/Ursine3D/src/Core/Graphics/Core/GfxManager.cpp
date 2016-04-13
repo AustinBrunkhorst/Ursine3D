@@ -455,45 +455,48 @@ namespace ursine
 
         void GfxManager::internalGfxEntry(GfxManager *manager)
         {
-            while(!manager->m_threadRender)
+            do
             {
-                if(manager->m_shouldQuit == true)
-                    return;
-            }
-
-            manager->internalStartFrame();
+                while(!manager->m_threadRender)
+                {
+                    if (manager->m_shouldQuit == true)
+                        return;
+                }
             
-            // sort calls
-            int index = 0;
-            for (auto &list : manager->m_drawLists)
-            {
-                std::sort(
-                    list.begin(),
-                    list.begin() + manager->m_drawCounts[ index++ ],
-                    sort
-                );
-            }
+                manager->internalStartFrame();
+            
+                // sort calls
+                int index = 0;
+                for (auto &list : manager->m_drawLists)
+                {
+                    std::sort(
+                        list.begin(),
+                        list.begin() + manager->m_drawCounts[ index++ ],
+                        sort
+                    );
+                }
 
-            // render all cameras
-            for (auto &camPair : manager->m_cameraList)
-            {
-                // get viewport
-                _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>(&camPair.first);
-                UAssert(camHND->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
+                // render all cameras
+                for (auto &camPair : manager->m_cameraList)
+                {
+                    // get viewport
+                    _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>(&camPair.first);
+                    UAssert(camHND->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
 
-                Camera &cam = manager->cameraManager->GetCamera(camPair.first);
+                    Camera &cam = manager->cameraManager->GetCamera(camPair.first);
 
-                manager->internalRenderScene(cam, camPair.second);
-            }
+                    manager->internalRenderScene(cam, camPair.second);
+                }
 
-            for (auto &uiCall : manager->m_uiViewportRenderCalls)
-                manager->internalRenderDynamicTextureInViewport(uiCall.texHandle, uiCall.posX, uiCall.posY, uiCall.cameraHandle);
-            // render ui
-            for (auto &uiCall : manager->m_uiRenderCalls)
-                manager->internalRenderDynamicTexture(uiCall.texHandle, uiCall.posX, uiCall.posY);
+                for (auto &uiCall : manager->m_uiViewportRenderCalls)
+                    manager->internalRenderDynamicTextureInViewport(uiCall.texHandle, uiCall.posX, uiCall.posY, uiCall.cameraHandle);
+                // render ui
+                for (auto &uiCall : manager->m_uiRenderCalls)
+                    manager->internalRenderDynamicTexture(uiCall.texHandle, uiCall.posX, uiCall.posY);
 
-            // end frame
-            manager->internalEndFrame();
+                // end frame
+                manager->internalEndFrame();
+            }while(true);
         }
 
         void GfxManager::internalStartFrame(void)
@@ -619,8 +622,6 @@ namespace ursine
             //end rendering
             m_rendering = false;
             m_threadRender = false;
-
-            internalGfxEntry( this );
         }
 
         void GfxManager::RenderScene_Deferred(Camera &camera, int index)
