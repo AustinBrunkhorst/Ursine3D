@@ -215,6 +215,13 @@ public:
 
     EditorResourceField(
         ursine::resources::AudioItemEventData,
+        deathScream,
+        GetDeathScream,
+        SetDeathScream
+    );
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
         hurtSfx,
         GetHurtSfx,
         SetHurtSfx
@@ -318,6 +325,9 @@ public:
 
     const ursine::resources::ResourceReference &GetIntroScream(void) const;
     void SetIntroScream(const ursine::resources::ResourceReference &audioEvent);
+
+    const ursine::resources::ResourceReference &GetDeathScream(void) const;
+    void SetDeathScream(const ursine::resources::ResourceReference &audioEvent);
 
     const ursine::resources::ResourceReference &GetHurtSfx(void) const;
     void SetHurtSfx(const ursine::resources::ResourceReference &hurtSfx);
@@ -461,6 +471,7 @@ private:
 
     // Sfxs
     ursine::resources::ResourceReference m_introScream;
+    ursine::resources::ResourceReference m_deathScream;
     ursine::resources::ResourceReference m_hurtSfx;
     ursine::resources::ResourceReference m_shieldBreakSfx;
     ursine::resources::ResourceReference m_shieldRebuildSfx;

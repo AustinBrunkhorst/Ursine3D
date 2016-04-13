@@ -15,6 +15,8 @@
 
 #include <Component.h>
 
+#include <AudioItemEventData.h>
+
 namespace ursine
 {
     namespace ecs
@@ -99,6 +101,19 @@ public:
         SetJumpDirectionScalar
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        footSfx,
+        GetFootSfx,
+        SetFootSfx
+    );
+
+    EditorField(
+        float stepSfxInterval,
+        GetStepSfxInterval,
+        SetStepSfxInterval
+    );
+
     float GetRotateSpeed(void) const;
     void SetRotateSpeed(float rotateSpeed);
 
@@ -138,6 +153,12 @@ public:
     float GetJumpDirectionScalar(void) const;
     void SetJumpDirectionScalar(float scalar);
 
+    const ursine::resources::ResourceReference &GetFootSfx(void) const;
+    void SetFootSfx(const ursine::resources::ResourceReference &audioEvent);
+
+    float GetStepSfxInterval(void) const;
+    void SetStepSfxInterval(float interval);
+
     void OnInitialize(void) override;
 
 private:
@@ -169,6 +190,11 @@ private:
 
     ursine::Vec2 m_moveDir;
     ursine::Vec2 m_lookDir;
+
+    ursine::resources::ResourceReference m_footSfx;
+
+    float m_stepInterval;
+    float m_stepTimer;
 
 } Meta(
     Enable, 

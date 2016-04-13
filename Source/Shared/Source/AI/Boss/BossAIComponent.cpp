@@ -434,6 +434,18 @@ void BossAI::SetIntroScream(const ResourceReference &audioEvent)
     NOTIFY_COMPONENT_CHANGED( "introScream", m_introScream );
 }
 
+const ResourceReference &BossAI::GetDeathScream(void) const
+{
+    return m_deathScream;
+}
+
+void BossAI::SetDeathScream(const ResourceReference &audioEvent)
+{
+    m_deathScream = audioEvent;
+
+    NOTIFY_COMPONENT_CHANGED( "deathScream", m_deathScream );
+}
+
 const ResourceReference &BossAI::GetHurtSfx(void) const
 {
     return m_hurtSfx;

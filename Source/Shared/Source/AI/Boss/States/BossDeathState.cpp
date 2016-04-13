@@ -36,9 +36,9 @@ void BossDeathState::Enter(BossAIStateMachine *machine)
 
     boss->GetPollinateSafetyShield( )->GetComponentInChildren<ShieldFX>( )->DestroyShield( );
 
-    boss->GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent(
-        boss->GetShieldBreakSfx( )
-    );
+    auto emitter = boss->GetOwner( )->GetComponent<AudioEmitter>( );
+    emitter->PushEvent( boss->GetShieldBreakSfx( ) );
+    emitter->PushEvent( boss->GetDeathScream( ) );
 
     boss->GetPollinateSmogEntity( )->GetComponent<ParticleEmitter>( )->SetEmitRate( 0.0f );
 }

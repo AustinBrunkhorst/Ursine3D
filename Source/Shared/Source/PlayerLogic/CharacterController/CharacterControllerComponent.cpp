@@ -15,9 +15,14 @@
 
 #include "CharacterControllerComponent.h"
 #include "GameEvents.h"
+
 #include <Application.h>
 
 NATIVE_COMPONENT_DEFINITION( CharacterController );
+
+using namespace ursine;
+using namespace ecs;
+using namespace resources;
 
 CharacterController::CharacterController(void)
     : BaseComponent( )
@@ -32,7 +37,9 @@ CharacterController::CharacterController(void)
     , m_mediumRotationFactor( 1.0f )
     , m_jumpDirectionScalar( 0.2f )
     , m_lockMovement( false )
-    , m_lockLooking( false ) { }
+    , m_lockLooking( false )
+    , m_stepInterval( 1.0f )
+    , m_stepTimer( 0.1f ) { }
 
 CharacterController::~CharacterController(void)
 {
@@ -180,6 +187,30 @@ void CharacterController::SetJumpDirectionScalar(float scalar)
     m_jumpDirectionScalar = scalar;
 
     NOTIFY_COMPONENT_CHANGED( "jumpDirectionScalar", m_jumpDirectionScalar );
+}
+
+const ResourceReference &CharacterController::GetFootSfx(void) const
+{
+    return m_footSfx;
+}
+
+void CharacterController::SetFootSfx(const ResourceReference &audioEvent)
+{
+    m_footSfx = audioEvent;
+
+    NOTIFY_COMPONENT_CHANGED( "footSfx", m_footSfx );
+}
+
+float CharacterController::GetStepSfxInterval(void) const
+{
+    return m_stepInterval;
+}
+
+void CharacterController::SetStepSfxInterval(float interval)
+{
+    m_stepInterval = interval;
+
+    NOTIFY_COMPONENT_CHANGED( "stepSfxInterval", m_stepInterval );
 }
 
 void CharacterController::OnInitialize(void)

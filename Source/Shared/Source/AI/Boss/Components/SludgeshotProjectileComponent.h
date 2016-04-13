@@ -15,6 +15,7 @@
 #include "HealthComponent.h"
 
 #include <ParticleEmitterComponent.h>
+#include <AudioItemEventData.h>
 
 class SludgeshotProjectile : public ursine::ecs::Component
 {
@@ -63,6 +64,13 @@ public:
         SetMapRaycastEntity
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        shootSfx,
+        GetShootSfx,
+        SetShootSfx
+    );
+
     SludgeshotProjectile(void);
     ~SludgeshotProjectile(void);
 
@@ -80,6 +88,9 @@ public:
 
     const ursine::resources::ResourceReference &GetAoeArchetype(void) const;
     void SetAoeArchetype(const ursine::resources::ResourceReference &archetype);
+
+    const ursine::resources::ResourceReference &GetShootSfx(void) const;
+    void SetShootSfx(const ursine::resources::ResourceReference &soundEvent);
 
     const std::string &GetMapRaycastEntity(void) const;
     void SetMapRaycastEntity(const std::string &name);
@@ -107,6 +118,7 @@ private:
     float m_impulse;
 
     ursine::resources::ResourceReference m_aoeArchetype;
+    ursine::resources::ResourceReference m_shootSfx;
 
     std::string m_mapName;
 

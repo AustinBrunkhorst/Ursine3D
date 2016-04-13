@@ -19,6 +19,7 @@
 #include "RigidbodyComponent.h"
 
 #include <CameraComponent.h>
+#include <AudioEmitterComponent.h>
 #include <SweptControllerComponent.h>
 
 #include "AudioManager.h"
@@ -139,7 +140,25 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
         }
 
         swept->SetMovementDirection( accum );
+
+        if (accum.Length( ) > math::Epsilon && swept->GetGrounded( ))
+        {
+            if (controller->m_stepTimer <= 0.0f)
+            {
+                // play audio event
+                entity->GetComponent<AudioEmitter>( )->PushEvent(
+                    controller->m_footSfx
+                );
+
+                controller->m_stepTimer = controller->m_stepInterval;
+            }
+            else
+            {
+                controller->m_stepTimer -= Application::Instance->GetDeltaTime( );
+            }
+        }
     }
+
     // Reset the look direction
     controller->SetLookDirection( Vec2::Zero( ) );
     controller->SetMoveDirection( Vec2::Zero( ) );

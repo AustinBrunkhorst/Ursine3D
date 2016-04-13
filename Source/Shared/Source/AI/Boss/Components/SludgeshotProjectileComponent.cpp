@@ -25,6 +25,7 @@
 #include <SphereColliderComponent.h>
 #include <World.h>
 #include <SystemManager.h>
+#include <AudioEmitterComponent.h>
 
 NATIVE_COMPONENT_DEFINITION(SludgeshotProjectile);
 
@@ -116,6 +117,18 @@ void SludgeshotProjectile::SetAoeArchetype(const ResourceReference &archetype)
     NOTIFY_COMPONENT_CHANGED( "aoeArchetype", m_aoeArchetype );
 }
 
+const ResourceReference &SludgeshotProjectile::GetShootSfx(void) const
+{
+    return m_shootSfx;
+}
+
+void SludgeshotProjectile::SetShootSfx(const ResourceReference &soundEvent)
+{
+    m_shootSfx = soundEvent;
+
+    NOTIFY_COMPONENT_CHANGED( "shootSfx", m_shootSfx );
+}
+
 const std::string &SludgeshotProjectile::GetMapRaycastEntity(void) const
 {
     return m_mapName;
@@ -183,6 +196,13 @@ void SludgeshotProjectile::InitializeComponents(void)
 
     animator->Listener( this )
         .On( EntityAnimatorEvent::FinishedAnimating, &SludgeshotProjectile::onAnimationCompleted );
+
+    auto audioEmitter = owner->GetComponent<AudioEmitter>( );
+
+    if (audioEmitter)
+    {
+        audioEmitter->PushEvent( m_shootSfx );
+    }
 }
 
 void SludgeshotProjectile::onAnimationCompleted(EVENT_HANDLER(EntityAnimator))

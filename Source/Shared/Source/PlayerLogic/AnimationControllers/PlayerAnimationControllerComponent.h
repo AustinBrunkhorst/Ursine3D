@@ -19,6 +19,7 @@
 #include "AnimatorControllerState.h"
 #include "PlayAnimationState.h"
 #include "HealthComponent.h"
+#include "CharacterControllerComponent.h"
 
 #include <SweptControllerComponent.h>
 
@@ -136,6 +137,7 @@ private:
     bool m_connected;
 
     ursine::ecs::SweptController *m_sweptController;
+    CharacterController *m_characterController;
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 

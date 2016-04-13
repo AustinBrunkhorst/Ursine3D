@@ -38,7 +38,9 @@ namespace
 
 PlayerAnimationController::PlayerAnimationController(void)
     : BaseComponent( )
-    , m_connected( false ) { }
+    , m_connected( false )
+    , m_sweptController( nullptr )
+    , m_characterController( nullptr ) { }
 
 PlayerAnimationController::~PlayerAnimationController(void)
 {
@@ -56,9 +58,9 @@ void PlayerAnimationController::OnSceneReady(Scene *scene)
 
     // create the states
     auto idle = m_controller->AddState<PlayAnimationState>( m_idleState );
-    auto run = m_controller->AddState<PlayAnimationState>( m_runState );
-    auto runR = m_controller->AddState<PlayAnimationState>( m_runRightState );
-    auto runL = m_controller->AddState<PlayAnimationState>( m_runLeftState );
+    auto run = m_controller->AddState<PlayAnimationState>( m_runState, false, 2.0f );
+    auto runR = m_controller->AddState<PlayAnimationState>( m_runRightState, false, 2.0f );
+    auto runL = m_controller->AddState<PlayAnimationState>( m_runLeftState, false, 2.0f );
     auto jumpIn = m_controller->AddState<PlayAnimationState>( m_jumpInState );
     auto jumpLoop = m_controller->AddState<PlayAnimationState>( m_jumpLoopState );
     auto jumpOut = m_controller->AddState<PlayAnimationState>( m_jumpOutState );
@@ -374,6 +376,7 @@ void PlayerAnimationController::connectToEvents(bool toggle)
             .On( HEALTH_ZERO, &PlayerAnimationController::onDeath );
 
         m_sweptController = root->GetComponent<SweptController>( );
+        m_characterController = root->GetComponent<CharacterController>( );
     }
     else
     {
@@ -389,13 +392,13 @@ void PlayerAnimationController::connectToEvents(bool toggle)
 
 void PlayerAnimationController::onJump(EVENT_HANDLER(ursine::ecs::Entity))
 {
-    if (m_sweptController->GetGrounded( ))
+    if (m_sweptController->GetGrounded( ) && !m_characterController->GetLockMovement( ))
         m_controller->SetBool( kJump, true );
 }
 
 void PlayerAnimationController::onMove(EVENT_HANDLER(ursine::ecs::Entity))
 {
-    if (!m_sweptController->GetGrounded( ))
+    if (!m_sweptController->GetGrounded( ) || m_characterController->GetLockMovement( ))
         return;
 
     EVENT_ATTRS(Entity, game::MovementEventArgs);
