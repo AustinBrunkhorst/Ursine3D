@@ -235,7 +235,7 @@ void Health::DealDamage(const EntityHandle &damager, float damage)
     auto *world = owner->GetWorld( );
     HealthEventArgs args( m_health, m_health / m_maxHealth, damager );
 
-    owner->Dispatch( HEALTH_DAMAGED, &args );
+    Dispatch( HEALTH_DAMAGED, &args );
 
     // Check to see if we have a shield
     if (m_hasShield && m_shield > 0.0f)

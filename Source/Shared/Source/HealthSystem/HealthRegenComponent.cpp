@@ -31,8 +31,11 @@ HealthRegen::HealthRegen(void) :
 
 HealthRegen::~HealthRegen(void)
 {
-    GetOwner( )->Listener(this)
-        .Off( HealthEvents::HEALTH_DAMAGED, &HealthRegen::OnDamaged );
+    auto health = GetOwner( )->GetComponent<Health>( );
+    
+    if (health)
+        health->Listener(this)
+            .Off( HealthEvents::HEALTH_DAMAGED, &HealthRegen::OnDamaged );
 }
 
 float HealthRegen::GetHealthRegenTime(void) const
@@ -104,7 +107,7 @@ void HealthRegen::SetShieldToAdd(float shieldToAdd)
 
 void HealthRegen::OnInitialize(void)
 {
-    GetOwner( )->Listener( this )
+    GetOwner( )->GetComponent<Health>( )->Listener( this )
         .On( HealthEvents::HEALTH_DAMAGED, &HealthRegen::OnDamaged );
 }
 
