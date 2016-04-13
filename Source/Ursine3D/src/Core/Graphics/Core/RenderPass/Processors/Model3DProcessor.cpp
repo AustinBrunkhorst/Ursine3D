@@ -254,11 +254,7 @@ namespace ursine
             m_manager->bufferManager->MapTransformBuffer( model.GetWorldMatrix() );
 
             // set model
-
-            std::cout << "PRIOR: " << model.GetModelHandle() << std::endl;
-
             m_manager->modelManager->BindModel( handle.Model_, meshIndex );
-            std::cout << "after: " << std::endl;
             m_manager->shaderManager->Render( m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex ));
 
             // debug rendering

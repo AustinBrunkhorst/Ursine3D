@@ -84,6 +84,13 @@ namespace ursine
             m_lightMapTexture = 1;
 
             m_rendering         = false;
+            m_threadRender      = false;
+            m_shouldQuit        = false;
+
+            // create thread
+            m_gfxThread = std::thread(internalGfxEntry, this);
+            if (m_gfxThread.joinable())
+                m_gfxThread.detach();
 
             RenderPass::SetGfxMgr(this);
             GraphicsEntityProcessor::SetGfxMgr(this);
@@ -208,7 +215,8 @@ namespace ursine
 
         void GfxManager::Uninitialize()
         {
-            //WaitForSingleObject( m_threadHandle, INFINITE );
+            m_shouldQuit = true;
+            while(m_rendering) { }
 
             gfxInfo->Uninitialize();
             shaderManager->Uninitialize();
@@ -356,9 +364,6 @@ namespace ursine
 
             m_rendering = true;
 
-            //cache state of all graphics objects
-            renderableManager->CacheFrame( );
-
             m_cameraList.clear( );
             m_drawCounts.clear( );
             m_drawLists.clear( );
@@ -409,13 +414,13 @@ namespace ursine
 
             m_currentlyRendering = false;
 
+            //cache state of all graphics objects
+            renderableManager->CacheFrame();
+
             // if we are multithreading
             if(false)
             {
-                m_gfxThread = std::thread(internalGfxEntry, this);
-
-                if(m_gfxThread.joinable( ))
-                    m_gfxThread.detach( );
+                m_threadRender = true;
             }
             else
             {
@@ -455,14 +460,14 @@ namespace ursine
 
         void GfxManager::internalGfxEntry(GfxManager *manager)
         {
+            while(!manager->m_threadRender)
+            {
+                if(manager->m_shouldQuit == true)
+                    return;
+            }
+
             manager->internalStartFrame();
-
-            // render ui
-            for (auto &uiCall : manager->m_uiRenderCalls)
-                manager->internalRenderDynamicTexture(uiCall.texHandle, uiCall.posX, uiCall.posY);
-            for (auto &uiCall : manager->m_uiViewportRenderCalls)
-                manager->internalRenderDynamicTextureInViewport(uiCall.texHandle, uiCall.posX, uiCall.posY, uiCall.cameraHandle);
-
+            
             // sort calls
             int index = 0;
             for (auto &list : manager->m_drawLists)
@@ -471,7 +476,7 @@ namespace ursine
                     list.begin(),
                     list.begin() + manager->m_drawCounts[ index++ ],
                     sort
-                    );
+                );
             }
 
             // render all cameras
@@ -479,6 +484,12 @@ namespace ursine
             {
                 manager->internalRenderScene(camPair.first, camPair.second);
             }
+
+            //for (auto &uiCall : manager->m_uiViewportRenderCalls)
+            //    manager->internalRenderDynamicTextureInViewport(uiCall.texHandle, uiCall.posX, uiCall.posY, uiCall.cameraHandle);
+            // render ui
+            for (auto &uiCall : manager->m_uiRenderCalls)
+                manager->internalRenderDynamicTexture(uiCall.texHandle, uiCall.posX, uiCall.posY);
 
             // end frame
             manager->internalEndFrame();
@@ -595,9 +606,6 @@ namespace ursine
             // end profiler
             gfxProfiler->WaitForCalls(m_profile);
 
-            //end rendering
-            m_rendering = false;
-
             //check to resize
             dxCore->CheckSize();
 
@@ -607,6 +615,12 @@ namespace ursine
 
             // reset drawing for next scene
             drawingManager->EndScene();
+
+            //end rendering
+            m_rendering = false;
+            m_threadRender = false;
+
+            internalGfxEntry( this );
         }
 
         void GfxManager::RenderScene_Deferred(Camera &camera, int index)

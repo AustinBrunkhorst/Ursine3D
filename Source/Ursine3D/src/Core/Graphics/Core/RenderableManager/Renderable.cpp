@@ -16,6 +16,7 @@
 #include <Core/Graphics/Core/GfxDefines.h>
 #include <DirectXMath.h>
 #include "GfxManager.h"
+#include "..\..\..\..\..\include\Core\Graphics\Core\RenderableManager\Renderable.h"
 
 namespace ursine
 {
@@ -96,7 +97,7 @@ namespace ursine
             m_transform = SMat4::Identity( );
         }
 
-        const SMat4 &Model::GetWorldMatrix(void)
+        const SMat4 &Model::GetWorldMatrix(void) const
         {
             return m_transform;
         }

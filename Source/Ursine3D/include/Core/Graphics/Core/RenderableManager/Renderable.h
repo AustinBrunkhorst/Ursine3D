@@ -69,12 +69,12 @@ namespace ursine
         {
             friend class RenderableManager;
         public:
-            const SMat4 &GetWorldMatrix(void);
+            const SMat4 &GetWorldMatrix(void) const;
             void SetWorldMatrix(const SMat4 &matrix);
 
             Model(void);
 
-        private:
+        protected:
             SMat4 m_transform;
         };
 
@@ -186,37 +186,37 @@ namespace ursine
             FragmentData &GetFragmentData(void);
 
         private:
-            float m_emissive;
-            float m_specPow;
-            float m_specIntensity;
-            Color m_color;
-            std::string m_modelResourceName;
+            float               m_emissive;
+            float               m_specPow;
+            float               m_specIntensity;
+            Color               m_color;
+            std::string         m_modelResourceName;
 
-            GfxHND m_modelHandle;
-            GfxHND m_textureHandle;
-            GfxHND m_fragmentTextureHandle;
-            GfxHND m_normalHandle;
+            GfxHND              m_modelHandle;
+            GfxHND              m_textureHandle;
+            GfxHND              m_fragmentTextureHandle;
+            GfxHND              m_normalHandle;
 
-            float m_animationTime;
-            std::vector<SMat4> m_matrixPalette;
-            std::vector<SMat4> m_matrixPaletteIT;
+            float               m_animationTime;
+            std::vector<SMat4>  m_matrixPalette;
+            std::vector<SMat4>  m_matrixPaletteIT;
 
-            Vec2 m_textureUVOffset;
-            Vec2 m_textureUVScalar;
+            Vec2                m_textureUVOffset;
+            Vec2                m_textureUVScalar;
 
-            Vec2 m_emissiveTextureUVOffset;
-            Vec2 m_emissiveTextureUVScalar;
+            Vec2                m_emissiveTextureUVOffset;
+            Vec2                m_emissiveTextureUVScalar;
 
             // for multimaps
-            int m_meshIndex;
+            int                 m_meshIndex;
 
-            bool m_shadowCaster;
+            bool                m_shadowCaster;
 
-            bool m_doesFragment;
+            bool                m_doesFragment;
 
-            bool m_isVisible;
+            bool                m_isVisible;
 
-            FragmentData m_fragData;
+            FragmentData        m_fragData;
         };
 
         /////////////////////////////////////////////////////////////////

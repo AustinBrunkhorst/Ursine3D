@@ -140,6 +140,8 @@ namespace ursine
         private:
             // keeping track of a bunch of states
             std::atomic<bool> m_rendering;
+            std::atomic<bool> m_threadRender;
+            std::atomic<bool> m_shouldQuit;
 
             bool m_sceneActive; //was beginscene called
             bool m_currentlyRendering;//was start frame called
