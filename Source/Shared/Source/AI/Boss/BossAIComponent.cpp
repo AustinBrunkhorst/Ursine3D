@@ -31,6 +31,7 @@
 #include "BossPlayAudioEventState.h"
 #include "BossEmptyState.h"
 #include "BossDeathState.h"
+#include "BossHealthCorrectionState.h"
 
 #include "HealthComponent.h"
 #include "GameEvents.h"
@@ -773,6 +774,47 @@ void BossAI::OnInitialize(void)
         auto death = sm->AddState<BossDeathState>( );
 
         sm->SetInitialState( death );
+
+        m_bossLogic[ 4 ].push_back( sm );
+    }
+
+    // Health correction
+    {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        sm->SetInitialState(
+            sm->AddState<BossHealthCorrectionState>( m_phase1HealthThreshold * 0.01f )
+        );
+
+        m_bossLogic[ 1 ].push_back( sm );
+    }
+
+    {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        sm->SetInitialState(
+            sm->AddState<BossHealthCorrectionState>( m_phase2HealthThreshold * 0.01f )
+        );
+
+        m_bossLogic[ 2 ].push_back( sm );
+    }
+
+    {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        sm->SetInitialState(
+            sm->AddState<BossHealthCorrectionState>( m_phase3HealthThreshold * 0.01f )
+        );
+
+        m_bossLogic[ 3 ].push_back( sm );
+    }
+
+    {
+        auto sm = std::make_shared<BossAIStateMachine>( this );
+
+        sm->SetInitialState(
+            sm->AddState<BossHealthCorrectionState>( 0.0f )
+        );
 
         m_bossLogic[ 4 ].push_back( sm );
     }

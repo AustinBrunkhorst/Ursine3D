@@ -55,6 +55,9 @@ public:
     std::string phase3CinematicCamera;
     std::string phase3CinematicFocalPoint;
 
+    std::string phase5CinematicCamera;
+    std::string phase5CinematicFocalPoint;
+
 private:
     ursine::resources::ResourceReference m_worldToMerge;
 
