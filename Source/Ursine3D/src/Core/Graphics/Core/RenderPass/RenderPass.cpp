@@ -279,7 +279,7 @@ namespace ursine
         {
             while (m_manager->modelManager->IsLoading( ))   { /*std::cout << "STALL ON: " << "models" << std::endl;*/ }
             while (m_manager->textureManager->IsLoading( )) { /*std::cout << "STALL ON: " << "text" << std::endl;*/ }
-            //while (m_manager->fontManager->IsLoading( ))    { std::cout << "STALL ON: " << "fonts" << std::endl; }
+            while (m_manager->fontManager->IsLoading( ))    { /*std::cout << "STALL ON: " << "fonts" << std::endl;*/ }
 
             // check to see if this pass has stuff to do
             if (m_processor != nullptr && m_fullscreenPass == false)

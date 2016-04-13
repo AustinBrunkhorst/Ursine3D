@@ -137,7 +137,7 @@ namespace ursine
 
             invalidateNormalTexture();
 
-            NOTIFY_COMPONENT_CHANGED("normalMap", m_normalTextureResource);
+            NOTIFY_COMPONENT_CHANGED("emissiveMap", m_normalTextureResource);
         }
 
         const graphics::ModelResource *Model3D::GetModelResource(void) const

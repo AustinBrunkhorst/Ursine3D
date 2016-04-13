@@ -32,7 +32,6 @@ namespace ursine
 
             SpriteText &spriteText = m_manager->renderableManager->GetRenderableByID<SpriteText>( handle.Index_ );
 
-            return true;
             // if inactive
             if (!spriteText.GetActive())
                 return true;
@@ -103,7 +102,8 @@ namespace ursine
 
             // map text data ////////////////////////////////////////
             SpriteTextBuffer stb;
-            auto &font = m_manager->fontManager->GetBitmapFont(handle.Material_);
+            auto &font = m_manager->fontManager->GetBitmapFont( spriteText.GetFontHandle( ) );
+
             stb.worldPosition = spriteText.GetPosition( ).ToD3D( );
             stb.offset = spriteText.GetSize( );
             stb.sizeScalar = DirectX::XMFLOAT2(
