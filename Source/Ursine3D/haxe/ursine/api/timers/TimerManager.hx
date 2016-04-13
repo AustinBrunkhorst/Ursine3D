@@ -7,6 +7,7 @@ typedef TimerGroupContainer = {
     var paused : Bool;
 }
 
+@:keep
 class TimerManager {
     private var m_groups : Map<TimerGroup, TimerGroupContainer>;
     private var m_created : Array<Timer>;

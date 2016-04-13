@@ -653,7 +653,19 @@ ursine_api_native_NativeBroadcastManager.prototype = {
 	}
 	,__class__: ursine_api_native_NativeBroadcastManager
 };
-var ursine_api_timers_Timer = function() { };
+var ursine_api_timers_Timer = function(duration) {
+	this.m_duration = duration;
+	this.m_remainingDuration = duration;
+	this.m_paused = false;
+	this.m_cancelled = false;
+	this.m_pausedFromGroup = false;
+	this.m_lastResumed = this.m_lastPaused = new Date().getTime();
+	this.m_repeat = 0;
+	this.m_repeatCallback = null;
+	this.m_completeCallback = null;
+	this.m_handle = new haxe_Timer(duration);
+	this.m_handle.run = $bind(this,this.tickFromRepeat);
+};
 $hxClasses["ursine.api.timers.Timer"] = ursine_api_timers_Timer;
 ursine_api_timers_Timer.__name__ = ["ursine","api","timers","Timer"];
 ursine_api_timers_Timer.prototype = {
@@ -696,11 +708,36 @@ ursine_api_timers_Timer.prototype = {
 	}
 	,__class__: ursine_api_timers_Timer
 };
-var ursine_api_timers_TimerManager = function() { };
+var ursine_api_timers_TimerManager = function() {
+	this.m_groups = new haxe_ds_IntMap();
+	this.m_created = [];
+};
 $hxClasses["ursine.api.timers.TimerManager"] = ursine_api_timers_TimerManager;
 ursine_api_timers_TimerManager.__name__ = ["ursine","api","timers","TimerManager"];
 ursine_api_timers_TimerManager.prototype = {
-	pause: function(group,force) {
+	create: function(duration,group) {
+		if(group == null) group = 0;
+		var timer = new ursine_api_timers_Timer(duration);
+		timer.m_group = group;
+		var container = this.m_groups.h[group];
+		if(container == null) {
+			container = { timers : [timer], paused : false};
+			{
+				this.m_groups.h[group] = container;
+				container;
+			}
+		} else {
+			if(container.paused) timer.pause();
+			container.timers.push(timer);
+		}
+		this.m_created.push(timer);
+		return timer;
+	}
+	,isPaused: function(group) {
+		var container = this.m_groups.h[group];
+		if(container == null) return true; else return container.paused;
+	}
+	,pause: function(group,force) {
 		if(force == null) force = false;
 		var container = this.m_groups.h[group];
 		if(container == null) return;
@@ -752,6 +789,12 @@ ursine_api_timers_TimerManager.prototype = {
 		}
 		this.m_groups = new haxe_ds_IntMap();
 		this.m_created = [];
+	}
+	,cancel: function(timer) {
+		var container = this.m_groups.h[timer.m_group];
+		if(container == null) return;
+		HxOverrides.remove(container.timers,timer);
+		timer.cancel();
 	}
 	,__class__: ursine_api_timers_TimerManager
 };
