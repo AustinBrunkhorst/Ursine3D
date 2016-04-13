@@ -212,6 +212,7 @@ public:
 
     Meta(Enable)
     BossAI(void);
+    ~BossAI(void);
 
     const std::string &GetSeedshotEntityName(void) const;
     void SetSeedshotEntityName(const std::string &entityName);

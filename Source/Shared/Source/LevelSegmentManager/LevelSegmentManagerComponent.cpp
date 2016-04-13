@@ -37,6 +37,7 @@
 #include "TutorialResourcesComponent.h"
 #include "CombatBowl1ResourcesComponent.h"
 #include "BossRoomResourcesComponent.h"
+#include "EndingCreditsResourcesComponent.h"
 
 #include "UIScreensConfigComponent.h"
 
@@ -363,7 +364,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
         // initial state for spawning the level
         auto initState = initStateM->AddState<InitializeSegmentState>(
             resources->GetWorldData( ),
-            LevelSegments::Empty
+            LevelSegments::EndingCredits
         );
 
         // Next state for spawning the players (reposition them if they are present)
@@ -716,6 +717,25 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
         addSegmentLogic( sm, {
             LevelSegments::BossRoom_Phase5
+        } );
+    }
+
+    // Setup logic for ending credits
+    {
+        auto endingCreditsResources = GetOwner( )->GetComponent<EndingCreditsResources>( );
+
+        auto initStateM = std::make_shared<SegmentLogicStateMachine>( "Init Ending Creidts", this );
+
+        // initial state for spawning the level
+        auto initState = initStateM->AddState<InitializeSegmentState>(
+            endingCreditsResources->GetWorldData( ),
+            LevelSegments::Empty
+        );
+
+        initStateM->SetInitialState( initState );
+
+        addSegmentLogic( initStateM, {
+            LevelSegments::EndingCredits
         } );
     }
 }

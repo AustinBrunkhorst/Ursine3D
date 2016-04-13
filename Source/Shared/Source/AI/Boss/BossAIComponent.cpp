@@ -97,6 +97,17 @@ BossAI::BossAI(void)
     , m_segment( LevelSegments::Empty )
     , m_underground( false ) { }
 
+BossAI::~BossAI(void)
+{
+    auto world = GetOwner( )->GetWorld( );
+
+    if (world)
+    {
+        world->Listener( this )
+            .Off( WORLD_UPDATE, &BossAI::onUpdate );
+    }
+}
+
 const std::string &BossAI::GetSeedshotEntityName(void) const
 {
     return m_seedshotEntity;

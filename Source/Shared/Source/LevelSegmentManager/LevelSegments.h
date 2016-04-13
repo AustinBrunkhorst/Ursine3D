@@ -181,6 +181,9 @@ namespace LevelSegments_enum
         BossRoom_Phase4, // Climax, accumulate
         BossRoom_Phase5, // Kill sequence
 
+        // Ending Credits
+        EndingCredits,
+
         Empty
     } Meta(Enable, DisplayName("LevelSegments"));
 }

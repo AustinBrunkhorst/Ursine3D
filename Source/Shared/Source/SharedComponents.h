@@ -127,6 +127,7 @@
 #include "LevelSegmentManager/SegmentResources/TutorialResourcesComponent.h"
 #include "LevelSegmentManager/SegmentResources/CombatBowl1ResourcesComponent.h"
 #include "LevelSegmentManager/SegmentResources/BossRoomResourcesComponent.h"
+#include "LevelSegmentmanager/SegmentResources/EndingCreditsResourcesComponent.h"
 
 /////////////////////////////////
 //       Entity Animation      //
