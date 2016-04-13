@@ -9,9 +9,11 @@ typedef TimerGroupContainer = {
 
 class TimerManager {
     private var m_groups : Map<TimerGroup, TimerGroupContainer>;
+    private var m_created : Array<Timer>;
 
     public function new() {
         m_groups = new Map<TimerGroup, TimerGroupContainer>( );
+        m_created = new Array<Timer>( );
     }
 
     public function create(duration : Int, group : TimerGroup = Timer.DefaultGroup) : Timer {
@@ -34,6 +36,8 @@ class TimerManager {
 
             container.timers.push( timer );
         }
+
+        m_created.push( timer );
 
         return timer;
     }
@@ -81,6 +85,14 @@ class TimerManager {
             resume( group, force );
     }
 
+    public function cancelAll() {
+        for (timer in m_created)
+            timer.cancel( );
+
+        m_groups = new Map<TimerGroup, TimerGroupContainer>( );
+        m_created = new Array<Timer>( );
+    }
+
     public function cancel(timer : Timer) {
         var container = m_groups[ timer.m_group ];
 
@@ -88,5 +100,7 @@ class TimerManager {
             return;
 
         container.timers.remove( timer );
+
+        timer.cancel( );
     }
 }

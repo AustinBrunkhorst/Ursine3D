@@ -29,6 +29,12 @@ HxOverrides.cca = function(s,index) {
 	if(x != x) return undefined;
 	return x;
 };
+HxOverrides.remove = function(a,obj) {
+	var i = a.indexOf(obj);
+	if(i == -1) return false;
+	a.splice(i,1);
+	return true;
+};
 HxOverrides.iter = function(a) {
 	return { cur : 0, arr : a, hasNext : function() {
 		return this.cur < this.arr.length;
@@ -102,6 +108,16 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
+var haxe_Timer = function() { };
+haxe_Timer.__name__ = true;
+haxe_Timer.prototype = {
+	stop: function() {
+		if(this.id == null) return;
+		clearInterval(this.id);
+		this.id = null;
+	}
+	,__class__: haxe_Timer
+};
 var haxe_ds_IntMap = function() {
 	this.h = { };
 };
@@ -417,6 +433,7 @@ ui_ScreenManager.prototype = {
 	,removeScreen: function(screen) {
 		var id = screen.getID();
 		this.m_nativeManager.removeScreen(id);
+		screen.timers.cancelAll();
 		this.m_container.removeChild(screen.getHost());
 		this.m_screens.remove(id);
 	}
@@ -711,6 +728,39 @@ ursine_api_native_NativeBroadcastManager.prototype = {
 		return channel;
 	}
 	,__class__: ursine_api_native_NativeBroadcastManager
+};
+var ursine_api_timers_Timer = function() { };
+ursine_api_timers_Timer.__name__ = true;
+ursine_api_timers_Timer.prototype = {
+	cancel: function() {
+		this.m_handle.stop();
+		this.m_cancelled = true;
+	}
+	,__class__: ursine_api_timers_Timer
+};
+var ursine_api_timers_TimerManager = function() { };
+ursine_api_timers_TimerManager.__name__ = true;
+ursine_api_timers_TimerManager.prototype = {
+	cancelAll: function() {
+		var $it0 = this.m_groups.iterator();
+		while( $it0.hasNext() ) {
+			var group = $it0.next();
+			var _g = 0;
+			var _g1 = group.timers;
+			while(_g < _g1.length) {
+				var timer = _g1[_g];
+				++_g;
+				this.cancel(timer);
+			}
+		}
+	}
+	,cancel: function(timer) {
+		var container = this.m_groups.h[timer.m_group];
+		if(container == null) return;
+		HxOverrides.remove(container.timers,timer);
+		timer.cancel();
+	}
+	,__class__: ursine_api_timers_TimerManager
 };
 var ursine_api_ui_Screen = function() { };
 ursine_api_ui_Screen.__name__ = true;

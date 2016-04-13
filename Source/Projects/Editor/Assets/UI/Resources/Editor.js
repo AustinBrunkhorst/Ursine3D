@@ -742,6 +742,17 @@ ursine_api_timers_TimerManager.prototype = {
 			this.resume(group,force);
 		}
 	}
+	,cancelAll: function() {
+		var _g = 0;
+		var _g1 = this.m_created;
+		while(_g < _g1.length) {
+			var timer = _g1[_g];
+			++_g;
+			timer.cancel();
+		}
+		this.m_groups = new haxe_ds_IntMap();
+		this.m_created = [];
+	}
 	,__class__: ursine_api_timers_TimerManager
 };
 var ursine_api_ui_Screen = function() { };
@@ -2408,6 +2419,7 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 	,removeScreen: function(screen) {
 		var id = screen.getID();
 		this.m_nativeManager.removeScreen(id);
+		screen.timers.cancelAll();
 		this.m_container.removeChild(screen.getHost());
 		this.m_screens.remove(id);
 	}

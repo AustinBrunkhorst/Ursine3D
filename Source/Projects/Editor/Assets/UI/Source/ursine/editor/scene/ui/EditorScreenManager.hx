@@ -119,6 +119,8 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
 
         m_nativeManager.removeScreen( id );
 
+        screen.timers.cancelAll( );
+
         m_container.removeChild( screen.getHost( ) );
 
         m_screens.remove( id );

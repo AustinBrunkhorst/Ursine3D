@@ -18,7 +18,9 @@ JSFunction(GameContextSetWindowFullScreen)
 
     auto state = arguments[ 0 ]->GetBoolValue( );
 
-    GetCoreSystem( GameLauncher )->GetScene( )->GetGameContext( )->SetWindowFullScreen( state );
+    ursine::Application::PostMainThread( [=] {
+         GetCoreSystem( GameLauncher )->GetScene( )->GetGameContext( )->SetWindowFullScreen( state );
+    } );
 
     return CefV8Value::CreateBool( true );
 }
