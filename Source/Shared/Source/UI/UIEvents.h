@@ -73,4 +73,9 @@ namespace ui_event
         int playerReviving;
         int playerRevived;
     );
+
+    UI_EVENT( TutorialDialogue,
+        ursine::Array<std::string> dialogueLines;
+        float totalTimeForDialogue;
+    );
 }
