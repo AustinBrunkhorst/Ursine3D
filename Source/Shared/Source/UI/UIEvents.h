@@ -81,9 +81,12 @@ namespace ui_event
     );
 
     UI_EVENT( ScreenFadeEffect,
-        float fadeOutTime;
-        float pauseTime;
+        // Time it takes to fade into the color
         float fadeInTime;
+        // Time we're paused at the color
+        float pauseTime;
+        // Time it takes to fade from the color to gameplay
+        float fadeOutTime;
 
         ursine::Color screenColor;
     );

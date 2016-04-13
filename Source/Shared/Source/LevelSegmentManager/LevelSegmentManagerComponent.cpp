@@ -31,6 +31,7 @@
 #include "TutorialWaitForPlayerReviveState.h"
 #include "TutorialVineHandlerState.h"
 #include "PlayerWinState.h"
+#include "ScreenFadeState.h"
 
 #include "CurrentSegmentCondition.h"
 
@@ -257,9 +258,21 @@ void LevelSegmentManager::initTutorialLogic(void)
         LevelSegments::Tut_KillPlayerTutorial, // Kill one player
         LevelSegments::Tut_ReviveTutorial, // Revive mechanic (kill one player, have other revive the other)
         LevelSegments::Tut_SpawnVinesTutorial, // Must Defeat Vines to exit
-        LevelSegments::Tut_DoorOpenTutorial, // Vines defeated
-        LevelSegments::Tut_SimulationCreationCinematic, // Cinematic for simulation begin
+        LevelSegments::Tut_DoorOpenTutorial // Vines defeated
     } );
+
+    // This state machine is used for fading to white, then chaing segments to the first boss segment
+    auto sm = std::make_shared<SegmentLogicStateMachine>( "Fade to white, then to boss", this );
+
+    auto fade = sm->AddState<ScreenFadeState>( 2.0f, 3.0f, 2.0f, Color::White );
+    auto changeSeg = sm->AddState<ChangeSegmentState>( LevelSegments::BossRoom_Platforming );
+
+    fade->AddTransition( changeSeg, "Change segment when fading is done" )
+        ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 2.1f ) );
+
+    sm->SetInitialState( fade );
+
+    addSegmentLogic( sm, { LevelSegments::Tut_SimulationCreationCinematic } );
 }
 
 void LevelSegmentManager::initCombatBowl1Logic(void)
