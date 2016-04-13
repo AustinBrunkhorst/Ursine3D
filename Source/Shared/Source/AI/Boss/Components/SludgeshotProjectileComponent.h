@@ -50,6 +50,19 @@ public:
         SetImpulse
     );
 
+    EditorResourceField(
+        ursine::resources::ArchetypeData,
+        aoeArchetype,
+        GetAoeArchetype,
+        SetAoeArchetype
+    );
+
+    EditorField(
+        std::string mapRaycastEntity,
+        GetMapRaycastEntity,
+        SetMapRaycastEntity
+    );
+
     SludgeshotProjectile(void);
     ~SludgeshotProjectile(void);
 
@@ -64,6 +77,12 @@ public:
 
     float GetImpulse(void) const;
     void SetImpulse(float impulse);
+
+    const ursine::resources::ResourceReference &GetAoeArchetype(void) const;
+    void SetAoeArchetype(const ursine::resources::ResourceReference &archetype);
+
+    const std::string &GetMapRaycastEntity(void) const;
+    void SetMapRaycastEntity(const std::string &name);
 
     void SetTargetPosition(const ursine::SVec3 &target);
 
@@ -86,6 +105,10 @@ private:
     float m_interval;
 
     float m_impulse;
+
+    ursine::resources::ResourceReference m_aoeArchetype;
+
+    std::string m_mapName;
 
     // This map keeps track of timers related to the last time we've damaged
     // the player that corresponds to the key

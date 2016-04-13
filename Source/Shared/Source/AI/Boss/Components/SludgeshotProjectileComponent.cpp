@@ -21,13 +21,16 @@
 #include <SweptControllerComponent.h>
 #include <HealthComponent.h>
 #include <GhostComponent.h>
+#include <PhysicsSystem.h>
 #include <SphereColliderComponent.h>
 #include <World.h>
+#include <SystemManager.h>
 
 NATIVE_COMPONENT_DEFINITION(SludgeshotProjectile);
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 SludgeshotProjectile::SludgeshotProjectile(void)
     : BaseComponent( )
@@ -99,6 +102,30 @@ void SludgeshotProjectile::SetImpulse(float impulse)
     m_impulse = impulse;
 
     NOTIFY_COMPONENT_CHANGED( "impulse", m_impulse );
+}
+
+const ResourceReference &SludgeshotProjectile::GetAoeArchetype(void) const
+{
+    return m_aoeArchetype;
+}
+
+void SludgeshotProjectile::SetAoeArchetype(const ResourceReference &archetype)
+{
+    m_aoeArchetype = archetype;
+
+    NOTIFY_COMPONENT_CHANGED( "aoeArchetype", m_aoeArchetype );
+}
+
+const std::string &SludgeshotProjectile::GetMapRaycastEntity(void) const
+{
+    return m_mapName;
+}
+
+void SludgeshotProjectile::SetMapRaycastEntity(const std::string &name)
+{
+    m_mapName = name;
+
+    NOTIFY_COMPONENT_CHANGED( "mapRaycastEntity", m_mapName );
 }
 
 void SludgeshotProjectile::SetTargetPosition(const ursine::SVec3& target)
@@ -192,6 +219,60 @@ void SludgeshotProjectile::onAnimationCompleted(EVENT_HANDLER(EntityAnimator))
 
     owner->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &SludgeshotProjectile::onUpdate );
+
+    auto world = owner->GetWorld( );
+
+    // raycast downwards and try to find the ground
+    if (!m_mapName.size( ))
+        return;
+
+    auto physics = world->GetEntitySystem<PhysicsSystem>( );
+
+    physics::RaycastInput input;
+    physics::RaycastOutput output;
+
+    input.start = owner->GetTransform( )->GetWorldPosition( ) + SVec3::UnitY( ) * 5.0f;
+    input.end = input.start - SVec3::UnitY( ) * 200.0f;
+
+    if (!physics->Raycast( input, output, physics::RAYCAST_ALL_HITS, true ))
+        return;
+
+    bool found = false;
+    SVec3 position;
+    int i = 0;
+
+    for (auto &entityID : output.entity)
+    {
+        auto entity = world->GetEntity( entityID );
+
+        if (!entity)
+            continue;
+
+        if (entity->GetName( ) == m_mapName || 
+            entity->GetRoot( )->GetName( ) == m_mapName)
+        {
+            found = true;
+            position = output.hit[ i ];
+
+            break;
+        }
+
+        ++i;
+    }
+
+    if (!found)
+        return;
+
+    // Create the aoe emitter
+    auto aoe = world->CreateEntityFromArchetype( m_aoeArchetype );
+
+    if (!aoe)
+        return;
+
+    auto aoeTrans = aoe->GetTransform( );
+
+    aoeTrans->SetWorldScale( SVec3( m_range, 0.0f, m_range ) );
+    aoeTrans->SetWorldPosition( position );
 }
 
 void SludgeshotProjectile::onUpdate(EVENT_HANDLER(World))
