@@ -37,7 +37,7 @@ void VineDeathState::Enter(VineAIStateMachine *machine)
     m_animator = ai->GetAnimator( );
     m_owner = ai->GetOwner( );
 
-    m_animator->SetTimeScalar( 0.5f );
+    m_animator->SetTimeScalar( 1.0f );
 
     // Flop over
     m_animator->SetCurrentState( "Swipe_In" );
