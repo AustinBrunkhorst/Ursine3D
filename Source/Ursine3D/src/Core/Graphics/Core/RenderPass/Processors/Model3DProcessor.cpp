@@ -66,13 +66,6 @@ namespace ursine
         {
             Model3D &model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
 
-
-            if(m_warpPass)
-            {
-                auto x = handle;
-
-                std::cout << x.Index_ << std::endl;
-            }
             /////////////////////////////////////////////////////////
             // map color
             Color c = model.GetColor( );
