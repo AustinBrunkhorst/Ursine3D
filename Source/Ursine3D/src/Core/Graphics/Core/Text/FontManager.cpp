@@ -18,11 +18,12 @@ namespace ursine
 {
     namespace graphics
     {
-        void FontManager::Initialize()
+        void FontManager::Initialize(void)
         {
+            m_loadingFont = false;
         }
 
-        void FontManager::Uninitialize()
+        void FontManager::Uninitialize(void)
         {
         }
 
@@ -132,6 +133,11 @@ namespace ursine
             );
 
             auto handle = m_textureCache[ hnd->Index_ ].find( textureName );
+
+            if(!(handle != m_textureCache[ hnd->Index_ ].end()))
+            {
+                std::cout << m_textureCache.size( ) << std::endl;
+            }
 
             UAssert( handle != m_textureCache[ hnd->Index_ ].end( ),
                 "Failed to find font texture.\nID: %i\nFont: %s",
