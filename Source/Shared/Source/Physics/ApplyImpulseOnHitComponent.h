@@ -25,8 +25,6 @@ class ApplyImpulseOnHit : public ursine::ecs::Component
 
 public:
 
-    
-
     EditorField(
         bool effectSweptController,
         GetEffectSweptController,
@@ -37,6 +35,12 @@ public:
         float impulse,
         GetImpulse,
         SetImpulse
+    );
+
+    EditorField(
+        float interval,
+        GetInterval,
+        SetInterval
     );
 
     EditorField(
@@ -61,7 +65,7 @@ public:
         ursine::IgnoredEntityArray ignoredEntities,
         GetIgnoredEntities,
         SetIgnoredEntities
-        );
+    );
 
     ApplyImpulseOnHit(void);
     ~ApplyImpulseOnHit(void);
@@ -71,6 +75,9 @@ public:
 
     float GetImpulse(void) const;
     void SetImpulse(float impulse);
+
+    float GetInterval(void) const;
+    void SetInterval(float interval);
 
     const ursine::SVec3 &GetLocalDirectionInfluence(void) const;
     void SetLocalDirectionInfluence(const ursine::SVec3 &direction);
@@ -90,6 +97,9 @@ private:
 
     void onHierarchySerialized(EVENT_HANDLER(ursine::ecs::Entity));
     void onCollision(EVENT_HANDLER(ursine::ecs::Entity));
+    bool canAffect(const ursine::ecs::EntityHandle &entity);
+
+    void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 
     void connectToChildrenCollisionEvents(
         bool connect, 
@@ -102,10 +112,13 @@ private:
     bool m_serialized;
 
     float m_impulse;
+    float m_interval;
 
     ursine::SVec3 m_localDirection;
     ursine::SVec3 m_worldDirection;
 
     ursine::IgnoredEntityArray m_ignored;
+
+    std::unordered_map<ursine::ecs::EntityHandle, float> m_impulseMap;
 
 } Meta(Enable);

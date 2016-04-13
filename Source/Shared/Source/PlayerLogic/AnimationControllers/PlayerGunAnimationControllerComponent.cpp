@@ -61,7 +61,7 @@ void PlayerGunAnimationController::OnSceneReady(Scene *scene)
     auto jump = m_controller->AddState<PlayAnimationState>( m_jumpState );
     auto shootIn = m_controller->AddState<PlayAnimationState>( m_shootBeginState, true );
     auto shootOut = m_controller->AddState<PlayAnimationState>( m_shootEndState, false );
-    auto shootLoop = m_controller->AddState<PlayAnimationState>( m_shootLoopState, false, 1.5f );
+    auto shootLoop = m_controller->AddState<PlayAnimationState>( m_shootLoopState, false, 3.96f );
     auto reload = m_controller->AddState<PlayEntityAnimationClipState>( "Reload", true );
     auto messageUI = m_controller->AddState<GunReloadFinishedState>( );
 

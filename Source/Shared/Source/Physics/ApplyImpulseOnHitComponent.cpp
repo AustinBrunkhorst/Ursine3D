@@ -17,6 +17,7 @@
 #include <CollisionEventArgs.h>
 #include <RigidbodyComponent.h>
 #include <SweptControllerComponent.h>
+#include <Application.h>
 
 NATIVE_COMPONENT_DEFINITION( ApplyImpulseOnHit );
 
@@ -26,6 +27,7 @@ using namespace ecs;
 ApplyImpulseOnHit::ApplyImpulseOnHit(void)
     : BaseComponent( )
     , m_impulse( 0.0f )
+    , m_interval( 0.1f )
     , m_effectSweptController( true )
     , m_listenToChildren( false )
     , m_serialized( false )
@@ -39,6 +41,12 @@ ApplyImpulseOnHit::~ApplyImpulseOnHit(void)
 
     if (m_listenToChildren)
         connectToChildrenCollisionEvents( false, GetOwner( )->GetChildren( ) );
+
+    auto world = GetOwner( )->GetWorld( );
+
+    if (world)
+        world->Listener( this )
+            .Off( WORLD_UPDATE, &ApplyImpulseOnHit::onUpdate );
 }
 
 bool ApplyImpulseOnHit::GetEffectSweptController(void) const
@@ -61,6 +69,18 @@ void ApplyImpulseOnHit::SetImpulse(float impulse)
     m_impulse = impulse;
 
     NOTIFY_COMPONENT_CHANGED( "impulse", m_impulse );
+}
+
+float ApplyImpulseOnHit::GetInterval(void) const
+{
+    return m_interval;
+}
+
+void ApplyImpulseOnHit::SetInterval(float interval)
+{
+    m_interval = interval;
+
+    NOTIFY_COMPONENT_CHANGED( "interval", m_interval );
 }
 
 const SVec3& ApplyImpulseOnHit::GetLocalDirectionInfluence(void) const
@@ -120,6 +140,12 @@ void ApplyImpulseOnHit::OnInitialize(void)
     GetOwner( )->Listener( this )
         .On( ENTITY_COLLISION_PERSISTED, &ApplyImpulseOnHit::onCollision )
         .On( ENTITY_HIERARCHY_SERIALIZED, &ApplyImpulseOnHit::onHierarchySerialized );
+
+    auto world = GetOwner( )->GetWorld( );
+
+    if (world)
+        world->Listener( this )
+            .On( WORLD_UPDATE, &ApplyImpulseOnHit::onUpdate );
 }
 
 void ApplyImpulseOnHit::onHierarchySerialized(EVENT_HANDLER(Entity))
@@ -146,7 +172,9 @@ void ApplyImpulseOnHit::onCollision(EVENT_HANDLER(Entity))
             return;
     }
 
-    if (m_effectSweptController && args->otherEntity->HasComponent<SweptController>( ))
+    if (m_effectSweptController && 
+        args->otherEntity->HasComponent<SweptController>( ) &&
+        canAffect( args->otherEntity ))
     {
         auto controller = args->otherEntity->GetComponent<SweptController>( );
 
@@ -155,7 +183,8 @@ void ApplyImpulseOnHit::onCollision(EVENT_HANDLER(Entity))
 
         controller->AddImpulse( dir * m_impulse );
     }
-    else if (args->otherEntity->HasComponent<Rigidbody>( ))
+    else if (args->otherEntity->HasComponent<Rigidbody>( ) &&
+             canAffect( args->otherEntity ))
     {
         auto body = args->otherEntity->GetComponent<Rigidbody>( );
 
@@ -163,6 +192,39 @@ void ApplyImpulseOnHit::onCollision(EVENT_HANDLER(Entity))
         auto dir = m_worldDirection + localToWorld.TransformVector( m_localDirection );
 
         body->AddImpulse( dir * m_impulse );
+    }
+}
+
+bool ApplyImpulseOnHit::canAffect(const EntityHandle &entity)
+{
+    auto itr = m_impulseMap.find( entity );
+
+    if (m_impulseMap.end( ) == itr)
+    {
+        m_impulseMap[ entity ] = m_interval;
+        return true;
+    }
+    else
+        return false;
+}
+
+void ApplyImpulseOnHit::onUpdate(EVENT_HANDLER(World))
+{
+    auto dt = Application::Instance->GetDeltaTime( );
+
+    std::vector<EntityHandle> toRemove;
+
+    for (auto &pair : m_impulseMap)
+    {
+        pair.second -= dt;
+
+        if (pair.second <= 0.0f)
+            toRemove.push_back( pair.first );
+    }
+
+    for (auto &remove : toRemove)
+    {
+        m_impulseMap.erase( remove );
     }
 }
 
