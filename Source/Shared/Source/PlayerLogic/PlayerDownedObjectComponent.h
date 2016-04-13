@@ -46,6 +46,7 @@ private:
     void onHeirarchy(EVENT_HANDLER(ursine::ecs::Entity));
     void onZeroHealth(EVENT_HANDLER(ursine::ecs::Entity));
     void onRevive(EVENT_HANDLER(ursine::ecs::Entity));
+    void onCollision(EVENT_HANDLER(ursine::ecs::Entity));
 
     ursine::resources::ResourceReference m_reviveObject;
 

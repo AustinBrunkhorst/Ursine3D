@@ -34,7 +34,8 @@ PlayerDownedObject::PlayerDownedObject(void)
 PlayerDownedObject::~PlayerDownedObject(void)
 {
     GetOwner( )->Listener(this)
-        .Off( ENTITY_HIERARCHY_SERIALIZED, &PlayerDownedObject::onHeirarchy );
+        .Off( ENTITY_HIERARCHY_SERIALIZED, &PlayerDownedObject::onHeirarchy )
+        .Off( ENTITY_COLLISION_PERSISTED, &PlayerDownedObject::onCollision );
 }
 
 const resources::ResourceReference& PlayerDownedObject::GetReviveObject(void) const
@@ -52,7 +53,8 @@ void PlayerDownedObject::SetReviveObject(const resources::ResourceReference& arc
 void PlayerDownedObject::OnInitialize(void)
 {
     GetOwner( )->Listener( this )
-        .On( ENTITY_HIERARCHY_SERIALIZED, &PlayerDownedObject::onHeirarchy );
+        .On( ENTITY_HIERARCHY_SERIALIZED, &PlayerDownedObject::onHeirarchy )
+        .On( ENTITY_COLLISION_PERSISTED, &PlayerDownedObject::onCollision );
 }
 
 void PlayerDownedObject::onHeirarchy(EVENT_HANDLER(ursine::ecs::Entity))
@@ -104,33 +106,6 @@ void PlayerDownedObject::onZeroHealth(EVENT_HANDLER(Health))
 
     animator->AnimateDeath( );
 
-    // Check to see if the damager that killed the player is a slime pit
-    if (args->damager && args->damager->GetRoot( )->HasComponent<SlimePit>( ))
-    {
-        // move the player to the closest slime pit spawn position
-        auto spawners = world->GetEntitiesFromFilter( Filter( ).All<SlimePitDeathSpawn>( ) );
-        float minDist = std::numeric_limits<float>( ).max( );
-        EntityHandle spawn = nullptr;
-
-        for (auto &spawner : spawners)
-        {
-            auto dist = SVec3::DistanceSquared( spawner->GetTransform( )->GetWorldPosition( ), position );
-
-            if (dist < minDist)
-            {
-                minDist = dist;
-                spawn = spawner;
-            }
-        }
-
-        if (spawn)
-        {
-            trans->SetWorldPosition(
-                spawn->GetTransform( )->GetWorldPosition( )
-            );
-        }
-    }
-
     // turn off the hud for this player
     auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
 
@@ -170,6 +145,47 @@ void PlayerDownedObject::onRevive(EVENT_HANDLER(Entity))
     e.playerID = owner->GetComponent<PlayerID>( )->GetID( );
 
     ui->TriggerPlayerHUDEvent( e );
+}
+
+void PlayerDownedObject::onCollision(EVENT_HANDLER(Entity))
+{
+    auto health = GetOwner( )->GetComponent<Health>( );
+
+    if (health->GetHealth( ) > 0.0f)
+        return;
+
+    EVENT_ATTRS(Entity, physics::CollisionEventArgs);
+
+    // Check to see if the damager that killed the player is a slime pit
+    if (args->otherEntity->GetRoot( )->HasComponent<SlimePit>( ))
+    {
+        auto world = GetOwner( )->GetWorld( );
+        auto trans = GetOwner( )->GetTransform( );
+        auto position = trans->GetWorldPosition( );
+
+        // move the player to the closest slime pit spawn position
+        auto spawners = world->GetEntitiesFromFilter( Filter( ).All<SlimePitDeathSpawn>( ) );
+        float minDist = std::numeric_limits<float>( ).max( );
+        EntityHandle spawn = nullptr;
+
+        for (auto &spawner : spawners)
+        {
+            auto dist = SVec3::DistanceSquared( spawner->GetTransform( )->GetWorldPosition( ), position );
+
+            if (dist < minDist)
+            {
+                minDist = dist;
+                spawn = spawner;
+            }
+        }
+
+        if (spawn)
+        {
+            trans->SetWorldPosition(
+                spawn->GetTransform( )->GetWorldPosition( )
+            );
+        }
+    }
 }
 
 #if defined(URSINE_WITH_EDITOR)
