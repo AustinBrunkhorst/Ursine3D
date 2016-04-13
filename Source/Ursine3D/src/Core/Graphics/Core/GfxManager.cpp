@@ -360,7 +360,7 @@ namespace ursine
             m_currentlyRendering = true;
 
             // stalls until gfx is done rendering
-            while (m_rendering);
+            while (m_threadRender);
 
             m_rendering = true;
 
@@ -430,6 +430,8 @@ namespace ursine
         {
             if (!m_ready)
                 return;
+
+            while(m_threadRender) { }
 
             gfxInfo->SetDimensions( width, height );
 
@@ -609,8 +611,7 @@ namespace ursine
             dxCore->CheckSize();
 
             //invalidate CPU-side gfx engine for next frame
-            dxCore->Invalidate();
-            Invalidate();
+            Invalidate( );
 
             // reset drawing for next scene
             drawingManager->EndScene();
