@@ -42,3 +42,14 @@ void BossDeathState::Enter(BossAIStateMachine *machine)
 
     boss->GetPollinateSmogEntity( )->GetComponent<ParticleEmitter>( )->SetEmitRate( 0.0f );
 }
+
+void BossDeathState::Update(BossAIStateMachine *machine)
+{
+    auto boss = machine->GetBoss( );
+    auto trans = boss->GetOwner( )->GetTransform( );
+
+    if (trans->GetWorldRotation( ) != SQuat::Identity( ))
+    {
+        trans->LookAt( SVec3( 0.0f, 0.0f, 20.0f ), 45.0f );
+    }
+}

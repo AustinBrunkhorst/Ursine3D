@@ -43,18 +43,18 @@ struct PS_INPUT
 
 float4 main(PS_INPUT input) : SV_TARGET
 {
-    float sceneDepth = LinearizeDepth(gDepthTexture.Load(int3(input.position.xy, 0)).x);
-float particleDepth = LinearizeDepth(input.position.z);
+    //float sceneDepth = LinearizeDepth(gDepthTexture.Load(int3(input.position.xy, 0)).x);
+//float particleDepth = LinearizeDepth(input.position.z);
 
 // discard particle if occluded
-if (sceneDepth < particleDepth) discard;
+//if (sceneDepth < particleDepth) discard;
 
 float4 texColor = gColorTexture.Sample(SampleType, input.uv);
 
-float depthScalar = (sceneDepth - particleDepth) / (gFarDistance * gScalar);
+//float depthScalar = (sceneDepth - particleDepth) / (gFarDistance * gScalar);
 
-float Output = 0.5 *saturate(2 * ((depthScalar > 0.5) ? 1 - depthScalar : depthScalar));
-Output = (depthScalar > 0.5) ? 1 - Output : Output;
+//float Output = 0.5 *saturate(2 * ((depthScalar > 0.5) ? 1 - depthScalar : depthScalar));
+//Output = (depthScalar > 0.5) ? 1 - Output : Output;
 
-return (input.color * texColor) * (Output);
+return (input.color * texColor);// *(Output);
 }

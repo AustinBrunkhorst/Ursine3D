@@ -113,6 +113,9 @@ void DamageTextManager::onDamageText(EVENT_HANDLER(World))
 
     transform->SetWorldPosition( args->hitPosition );
 
+    // face the damage text towards the damage dealer
+    transform->LookAt( args->damageDealer->GetTransform( )->GetWorldPosition( ) );
+
     // generate the damage text velocity and start alpha
     DamageText *damageTextComp = damageText->GetComponentInChildren<DamageText>( );
     SpriteText *textComp = damageText->GetComponentInChildren<SpriteText>( );

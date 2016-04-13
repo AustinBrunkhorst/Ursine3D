@@ -54,19 +54,19 @@ void SpawnPlayersState::Enter(SegmentLogicStateMachine *machine)
     {
         auto cur = segmentManager->GetCurrentSegment( );
 
-        auto spawnPoint1 = spawnPoints[ 0 ]->GetComponent<PlayerSpawnPoint>( );
-        auto spawnPoint2 = spawnPoints[ 1 ]->GetComponent<PlayerSpawnPoint>( );
+        PlayerSpawnPoint *spawnPoint1 = nullptr;
+        PlayerSpawnPoint *spawnPoint2 = nullptr;
 
-        for (size_t i = 2; i < spawnPoints.size( ); ++i)
+        for (size_t i = 0; i < spawnPoints.size( ); ++i)
         {
             auto newSpawn = spawnPoints[ i ]->GetComponent<PlayerSpawnPoint>( );
 
             if (newSpawn->GetSpawnSegment( ) > cur)
                 continue;
 
-            if (newSpawn->GetSpawnSegment( ) > spawnPoint1->GetSpawnSegment( ))
+            if (!spawnPoint1 || newSpawn->GetSpawnSegment( ) > spawnPoint1->GetSpawnSegment( ))
                 spawnPoint1 = newSpawn;
-            else if (newSpawn->GetSpawnSegment( ) > spawnPoint2->GetSpawnSegment( ))
+            else if (!spawnPoint2 || newSpawn->GetSpawnSegment( ) > spawnPoint2->GetSpawnSegment( ))
                 spawnPoint2 = newSpawn;
         }
 

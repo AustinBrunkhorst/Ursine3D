@@ -1070,8 +1070,8 @@ namespace ursine
                     particlePass.
                         Set({ RENDER_TARGET_SWAPCHAIN }).
                         Set(SHADER_PARTICLE).
-                        Set(DEPTH_STENCIL_COUNT).
-                        Set(DEPTH_STATE_COUNT).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL).
                         Set(SAMPLER_STATE_WRAP_TEX).
                         Set(RASTER_STATE_SOLID_NOCULL).
                         Set(BLEND_STATE_ADDITIVE).
@@ -1096,8 +1096,8 @@ namespace ursine
                     velocityParticlePass.
                         Set({ RENDER_TARGET_SWAPCHAIN }).
                         Set(SHADER_VELOCITY_PARTICLE).
-                        Set(DEPTH_STENCIL_COUNT).
-                        Set(DEPTH_STATE_COUNT).
+                        Set(DEPTH_STENCIL_MAIN).
+                        Set(DEPTH_STATE_CHECKDEPTH_NOWRITE_NOSTENCIL).
                         Set(SAMPLER_STATE_WRAP_TEX).
                         Set(RASTER_STATE_SOLID_NOCULL).
                         Set(BLEND_STATE_ADDITIVE).

@@ -19,5 +19,6 @@ public:
     BossDeathState(void);
 
     void Enter(BossAIStateMachine *machine) override;
+    void Update(BossAIStateMachine *machine) override;
 
 };
