@@ -34,4 +34,8 @@ void BossDeathState::Enter(BossAIStateMachine *machine)
     animator->SetPlaying( true );
 
     boss->GetPollinateSafetyShield( )->GetComponentInChildren<ShieldFX>( )->DestroyShield( );
+
+    boss->GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent(
+        boss->GetShieldBreakSfx( )
+    );
 }
