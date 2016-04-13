@@ -390,14 +390,7 @@ namespace ursine
             UAssert(m_currentlyRendering == true, "Attempted to render a scene without starting the frame!");
             UAssert(m_sceneActive == true, "Attempted to render a scene without beginning one!");
 
-            // get viewport
-            _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>( &camera );
-            UAssert(camHND->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
-
-            Camera &cam = cameraManager->GetCamera(camera);
-
-            m_cameraList.push_back( std::pair<Camera, unsigned>(cam, static_cast<unsigned>(m_drawLists.size( ) - 1)) );
-
+            m_cameraList.push_back( std::pair<GfxHND, unsigned>(camera, static_cast<unsigned>(m_drawLists.size( ) - 1)) );
         }
 
         void GfxManager::EndScene()
@@ -482,11 +475,17 @@ namespace ursine
             // render all cameras
             for (auto &camPair : manager->m_cameraList)
             {
-                manager->internalRenderScene(camPair.first, camPair.second);
+                // get viewport
+                _RESOURCEHND *camHND = reinterpret_cast<_RESOURCEHND*>(&camPair.first);
+                UAssert(camHND->ID_ == ID_CAMERA, "Attempted to render UI with invalid camera!");
+
+                Camera &cam = manager->cameraManager->GetCamera(camPair.first);
+
+                manager->internalRenderScene(cam, camPair.second);
             }
 
-            //for (auto &uiCall : manager->m_uiViewportRenderCalls)
-            //    manager->internalRenderDynamicTextureInViewport(uiCall.texHandle, uiCall.posX, uiCall.posY, uiCall.cameraHandle);
+            for (auto &uiCall : manager->m_uiViewportRenderCalls)
+                manager->internalRenderDynamicTextureInViewport(uiCall.texHandle, uiCall.posX, uiCall.posY, uiCall.cameraHandle);
             // render ui
             for (auto &uiCall : manager->m_uiRenderCalls)
                 manager->internalRenderDynamicTexture(uiCall.texHandle, uiCall.posX, uiCall.posY);
@@ -650,11 +649,12 @@ namespace ursine
             currentCamera.SetScreenDimensions(
                 w,
                 h
-                );
+            );
+
             currentCamera.SetScreenPosition(
                 gvp.TopLeftX,
                 gvp.TopLeftY
-                );
+            );
 
             // sort the handles
             std::sort(
@@ -1972,14 +1972,15 @@ namespace ursine
             // get the saved depth
             float depth = m_currentPosition.Z();
 
+            POINT point;
+            GetCursorPos(&point);
+
+            ScreenToClient(wHND, &point);
+
             // transform from screen to world, given a specific camera
-            auto worldPosition = camera.ScreenToWorld(Vec2(m_currentPosition.X(), m_currentPosition.Y()), depth);
+            auto worldPosition = camera.ScreenToWorld(Vec2(static_cast<float>(point.x), static_cast<float>(point.y)), depth);
 
             return worldPosition;
         }
-
-
-
-        
     }
 }

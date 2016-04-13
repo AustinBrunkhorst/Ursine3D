@@ -161,7 +161,7 @@ namespace ursine
             std::vector<UIRenderData>                   m_uiViewportRenderCalls;
 
             // list of cameras for this frame
-            std::vector<std::pair<Camera, unsigned>>    m_cameraList;
+            std::vector<std::pair<GfxHND, unsigned>>    m_cameraList;
 
             // list of render calls for each from
             std::vector<std::vector<_DRAWHND>>          m_drawLists;
