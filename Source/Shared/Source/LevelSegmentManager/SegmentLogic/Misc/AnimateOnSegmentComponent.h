@@ -37,6 +37,12 @@ public:
         SetWhenGreaterThan
     );
 
+    EditorField(
+        bool toggleParticleEmitters,
+        GetToggleParticleEmitters,
+        SetToggleParticleEmitters
+    );
+
     AnimateOnSegment(void);
     ~AnimateOnSegment(void);
 
@@ -48,6 +54,9 @@ public:
     bool GetWhenGreaterThan(void) const;
     void SetWhenGreaterThan(bool flag);
 
+    bool GetToggleParticleEmitters(void) const;
+    void SetToggleParticleEmitters(bool flag);
+
 private:
 
     LevelSegments m_segment;
@@ -55,6 +64,8 @@ private:
 
     // Whether we've played already
     bool m_finished;
+
+    bool m_toggleParticleEmitters;
 
     void onHierarchySerialize(EVENT_HANDLER(ursine::ecs::Entity));
 

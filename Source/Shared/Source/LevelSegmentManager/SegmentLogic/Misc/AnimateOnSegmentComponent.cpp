@@ -18,6 +18,7 @@
 #include "EntityAnimatorGroupComponent.h"
 #include "ShieldFXComponent.h"
 
+#include <ParticleEmitterComponent.h>
 #include <EntityEvent.h>
 
 NATIVE_COMPONENT_DEFINITION( AnimateOnSegment );
@@ -30,6 +31,7 @@ AnimateOnSegment::AnimateOnSegment(void)
     , m_segment( LevelSegments::Empty )
     , m_greaterThan( false )
     , m_finished( false )
+    , m_toggleParticleEmitters( false )
 {
 }
 
@@ -64,6 +66,18 @@ bool AnimateOnSegment::GetWhenGreaterThan(void) const
 void AnimateOnSegment::SetWhenGreaterThan(bool flag)
 {
     m_greaterThan = flag;
+}
+
+bool AnimateOnSegment::GetToggleParticleEmitters(void) const
+{
+    return m_toggleParticleEmitters;
+}
+
+void AnimateOnSegment::SetToggleParticleEmitters(bool flag)
+{
+    m_toggleParticleEmitters = flag;
+
+    NOTIFY_COMPONENT_CHANGED( "toggleParticleEmitters", m_toggleParticleEmitters );
 }
 
 void AnimateOnSegment::onHierarchySerialize(EVENT_HANDLER(ursine::ecs::Entity))
@@ -138,6 +152,16 @@ void AnimateOnSegment::playAnimation(void)
 
     if (shieldFX)
         shieldFX->DestroyShield( );
+
+    if (m_toggleParticleEmitters)
+    {
+        auto particleEmitter = GetOwner( )->GetComponentsInChildren<ParticleEmitter>( );
+
+        for (auto &emitter : particleEmitter)
+        {
+            emitter->SetEmitting( true );
+        }
+    }
 
     m_finished = true;
 }
