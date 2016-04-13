@@ -31,6 +31,7 @@
 #include "Misc/SlimePitComponent.h"
 #include "Misc/SlimePitDeathSpawnComponent.h"
 #include "Misc/TeleportPlayerToSpawnOnHitComponent.h"
+#include "Misc/SetToStartOnAwakeFixComponent.h"
 
 /////////////////////////////////
 //        Player Logic         //

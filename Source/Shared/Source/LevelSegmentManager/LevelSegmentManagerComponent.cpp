@@ -600,7 +600,6 @@ void LevelSegmentManager::initBossRoomLogic(void)
         } );
     }
 
-    // TODO: fix the HUD problem
     // Setup logic for phase5 cinematic logic
     {
         // tween out viewports
