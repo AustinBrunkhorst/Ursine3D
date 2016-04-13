@@ -142,7 +142,7 @@ function(ursine_build_meta)
         ${DEFINES_SWITCH}
     )
 
-    set_target_properties(${REBUILD_TARGET} PROPERTIES EXCLUDE_FROM_ALL 1 EXCLUDE_FROM_DEFAULT_BUILD 1)
+    set_target_properties(${REBUILD_TARGET} PROPERTIES EXCLUDE_FROM_DEFAULT_BUILD 1)
 
     ursine_set_folder(${REBUILD_TARGET} ".Utility/Meta")
 endfunction ()

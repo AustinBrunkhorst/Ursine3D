@@ -418,7 +418,7 @@ namespace ursine
             renderableManager->CacheFrame();
 
             // if we are multithreading
-            if(false)
+            if(true)
             {
                 m_threadRender = true;
             }
