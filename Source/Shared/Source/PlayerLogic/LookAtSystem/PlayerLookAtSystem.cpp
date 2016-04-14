@@ -82,8 +82,10 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
         enemyHandle = rayComp->GetEntityHit( );
 
+        // are we lookin at enemy
         if (enemyHandle != nullptr)
         {
+            // is health comp on entity
             enemyHealthComp = enemyHandle->GetComponent<Health>( );
 
             // if not on entity then on root
@@ -170,7 +172,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         }
 
         // increment timer
-        if (playerLookComp->GetCurrentEnemy( ))
+        if (!playerLookComp->ReticleActive( ))
             playerLookComp->IncrementTimer( dt );
 
         // check if greater than delay
