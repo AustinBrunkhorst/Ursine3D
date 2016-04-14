@@ -76,10 +76,10 @@ private:
 
     void OnDamaged(EVENT_HANDLER(ursine::ecs::Entity));
 
-    // time it takes to regen from no health to full
+    // amount to regen per fram
     float m_healthRegenTime;
 
-    // time it takes to regen from no shield to full
+    // amount to regen per frame
     float m_shieldRegenTime;
 
     // time to wait when taken damage to start regen

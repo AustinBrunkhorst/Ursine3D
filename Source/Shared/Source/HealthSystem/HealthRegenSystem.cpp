@@ -70,12 +70,6 @@ void HealthRegenSystem::onUpdate(EVENT_HANDLER(World))
         // should be looking to regen shield
         if ( regenComp->GetTimer( ) < regenComp->GetWaitTime( ) )
         {
-            // will wait timer finish this frame?
-            if ( regenComp->GetTimer( ) + dt >= regenComp->GetWaitTime( ) )
-            {
-                CalculateHealthToAdd( healthComp, regenComp );
-            }
-
             regenComp->IncrementTimer( dt );
         }
 
