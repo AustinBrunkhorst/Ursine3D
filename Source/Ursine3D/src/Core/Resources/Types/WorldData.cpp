@@ -17,7 +17,8 @@ namespace ursine
             }
             catch (ecs::SerializationException &e)
             {
-                UAssertCatchable( "Unable to deserialize world.\nerror: %s",
+                UAssertCatchable( false, 
+                    "Unable to deserialize world.\nerror: %s",
                     e.GetError( ).c_str( ) 
                 );
             }
