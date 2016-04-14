@@ -72,7 +72,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
     
     int id;
 
-    for ( auto playerLookIt : m_playerLookAtComps )
+    for (auto playerLookIt : m_playerLookAtComps)
     {
         rayComp = m_raycastComps[ playerLookIt.first ];
 
@@ -82,38 +82,42 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
         enemyHandle = rayComp->GetEntityHit( );
 
-        if ( enemyHandle != nullptr )
+        if (enemyHandle != nullptr)
         {
             enemyHealthComp = enemyHandle->GetComponent< Health >( );
+
+            // calculate enemy health percentage
+            float enemyHealthPercentage = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
 
             // if not on entity then on root
             if ( enemyHealthComp == nullptr )
                 enemyHealthComp = enemyHandle->GetRoot( )->GetComponent< Health >( );
 
             // new obj
-            if ( enemyHandle != playerLookComp->GetCurrentEnemy( ) )
+            if (enemyHandle != playerLookComp->GetCurrentEnemy( ))
             {
-                auto &currentEnemy = playerLookComp->GetCurrentEnemy( );
+                auto currEnemy = playerLookComp->GetCurrentEnemy( );
 
                 // unsubsribe to old enemies death
-                if (currentEnemy)
+                if (currEnemy)
                 {
-                    currentEnemy->Listener( playerLookComp )
+                    playerLookComp->GetCurrentEnemy( )->Listener(playerLookComp)
                         .Off( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
                 }
 
                 // change curr enemy
                 playerLookComp->SetCurrentEnemy( enemyHandle );
-                playerLookComp->SetReticleActive( false );
+                playerLookComp->SetReticleActive( true );
+                playerLookComp->SetHealthPercent( enemyHealthPercentage );
 
-                if ( ui )
+                if (ui)
                 {
                     // create track event for ui
                     ui_event::HealthTrackStart trackEvent;
 
                     trackEvent.playerID = id;
                     trackEvent.enemyName = "Enemy";
-                    trackEvent.healthPercent = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
+                    trackEvent.healthPercent = enemyHealthPercentage;
 
                     ui->TriggerPlayerHUDEvent( trackEvent );
 
@@ -131,13 +135,13 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             }
 
             // not new
-            else if ( ui )
+            else if (ui && enemyHealthPercentage != playerLookComp->GetHealthPercent( ))
             {
                 // create track update event
                 ui_event::HealthTrackUpdate trackEvent;
 
                 trackEvent.playerID = id;
-                trackEvent.healthPercent = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
+                trackEvent.healthPercent = enemyHealthPercentage;
 
                 ui->TriggerPlayerHUDEvent( trackEvent );
             }
@@ -147,11 +151,11 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         }
         
         // not looking at enemy
-        else if ( playerLookComp->ReticleActive( ) )
+        else if (playerLookComp->ReticleActive( ))
         {
             playerLookComp->SetReticleActive( false );
 
-            if ( ui )
+            if (ui)
             {
                 // crete reticle event
                 ui_event::ReticleActive reticleEvent;
@@ -160,7 +164,6 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
                 ui->TriggerPlayerHUDEvent( reticleEvent );
             }
-
         }
 
         // increment timer
@@ -168,14 +171,14 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             playerLookComp->IncrementTimer( dt );
 
         // check if greater than delay
-        if ( playerLookComp->GetTimer( ) >= playerLookComp->GetDelayTime( ) )
+        if (playerLookComp->GetTimer( ) >= playerLookComp->GetDelayTime( ))
         {
             playerLookComp->SetTimer( 0.0f );
 
-            if ( playerLookComp->GetCurrentEnemy( ) == nullptr )
+            if (playerLookComp->GetCurrentEnemy( ) == nullptr)
                 continue;
 
-            if ( ui )
+            if (ui)
             {
                 // create track end event
                 ui_event::HealthTrackEnd trackEvent;
@@ -190,6 +193,8 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             // connect to enemyhit death event
             playerLookComp->GetCurrentEnemy( )->Listener( playerLookComp )
                 .Off( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+
+            playerLookComp->SetCurrentEnemy( ursine::ecs::EntityHandle( nullptr ) );
         }
     }
 }

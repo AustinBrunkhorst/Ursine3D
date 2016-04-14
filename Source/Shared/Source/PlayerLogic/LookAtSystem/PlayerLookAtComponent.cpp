@@ -25,9 +25,11 @@ using namespace ursine;
 
 PlayerLookAt::PlayerLookAt(void) :
     BaseComponent( ),
-    m_timer(0.0f),
-    m_delay(2.0f),
-    m_currEnemy(nullptr)
+    m_delay( 2.0f ),
+    m_timer( 0.0f ),
+    m_healthPercent( 0.0f ),
+    m_currEnemy( nullptr ),
+    m_reticleActive( false )
 {
 }
 
@@ -65,6 +67,16 @@ void PlayerLookAt::IncrementTimer(float dt)
     m_timer += dt;
 }
 
+float PlayerLookAt::GetHealthPercent(void) const
+{
+    return m_healthPercent;
+}
+
+void PlayerLookAt::SetHealthPercent(float percent)
+{
+    m_healthPercent = percent;
+}
+
 bool PlayerLookAt::ReticleActive(void) const
 {
     return m_reticleActive;
@@ -90,21 +102,34 @@ void PlayerLookAt::onEnemyDeath(EVENT_HANDLER(ursine::ecs::Entity))
     // dont have to check if entity has player id because
     // this would not be called if it did not have it
 
-    ui_event::HealthTrackEnd trackEvent;
-    trackEvent.enemyKilled = true;
-    trackEvent.playerID = GetOwner( )->GetComponent< PlayerID >( )->GetID( );
+    auto *ui = GetOwner()->GetWorld()->GetSettings()->GetComponent<UIScreensConfig>();
 
-    auto *ui = GetOwner( )->GetWorld( )->GetSettings( )->GetComponent<UIScreensConfig>( );
+    if (ui)
+    {
+        int id = GetOwner()->GetComponent< PlayerID >()->GetID();
 
-    if ( ui )
+        ui_event::HealthTrackEnd trackEvent;
+        trackEvent.enemyKilled = true;
+        trackEvent.playerID = id;
+
         ui->TriggerPlayerHUDEvent(trackEvent);
 
-    SetTimer( 0.0f );
+        // crete reticle event
+        ui_event::ReticleActive reticleEvent;
+        reticleEvent.playerID = id;
+        reticleEvent.active = false;
 
-    m_currEnemy->Listener( this )
-        .Off( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+        ui->TriggerPlayerHUDEvent(reticleEvent);
+    }
+
+    SetTimer(0.0f);
+
+    m_currEnemy->Listener(this)
+        .Off(ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath);
 
     m_currEnemy = nullptr;
+
+    m_reticleActive = false;
 }
 
 void PlayerLookAt::OnInitialize(void)
