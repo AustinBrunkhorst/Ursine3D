@@ -21,6 +21,7 @@
 #include "HealthComponent.h"
 #include "CharacterControllerComponent.h"
 
+#include <AudioItemEventData.h>
 #include <SweptControllerComponent.h>
 
 class PlayerAnimationController : public ursine::ecs::Component

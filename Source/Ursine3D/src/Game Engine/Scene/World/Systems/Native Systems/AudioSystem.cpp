@@ -322,7 +322,9 @@ namespace ursine
             // global state change
             if (AK::SoundEngine::SetState( group.c_str( ), state.c_str( ) ))
             {
-                UWarning( "Wwise: Cannot Set State" );
+                // Commenting this out so that we don't get frame hitches
+                // - Jordan
+                // UWarning( "Wwise: Cannot Set State" );
             }
         }
 

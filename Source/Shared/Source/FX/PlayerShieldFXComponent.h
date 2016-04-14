@@ -40,6 +40,13 @@ public:
         SetShieldRebuildSfx
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        hurtSfx,
+        GetHurtSfx,
+        SetHurtSfx
+    );
+
     EditorField(
         ursine::Color flashColor,
         GetFlashColor,
@@ -69,6 +76,9 @@ public:
     const ursine::resources::ResourceReference &GetShieldRebuildSfx(void) const;
     void SetShieldRebuildSfx(const ursine::resources::ResourceReference &shieldRebuildSfx);
 
+    const ursine::resources::ResourceReference &GetHurtSfx(void) const;
+    void SetHurtSfx(const ursine::resources::ResourceReference &sfx);
+
     const ursine::Color &GetFlashColor(void) const;
     void SetFlashColor(const ursine::Color &color);
 
@@ -80,6 +90,7 @@ private:
 
     ursine::resources::ResourceReference m_shieldBreakSfx;
     ursine::resources::ResourceReference m_shieldRebuildSfx;
+    ursine::resources::ResourceReference m_hurtSfx;
 
     ursine::Color m_flashColor;
 

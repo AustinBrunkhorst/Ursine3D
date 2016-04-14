@@ -16,11 +16,13 @@
 #include "GameEvents.h"
 
 #include <BoolCondition.h>
+#include <AudioEmitterComponent.h>
 
 NATIVE_COMPONENT_DEFINITION(PlayerAnimationController);
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 namespace
 {
@@ -428,5 +430,5 @@ void PlayerAnimationController::onDeath(EVENT_HANDLER(Health))
 
 void PlayerAnimationController::onRevive(EVENT_HANDLER(Entity))
 {
-    m_controller->SetBool( kDead, false );
+    m_controller->SetBool( kDead, false );\
 }

@@ -29,6 +29,7 @@ CharacterController::CharacterController(void)
     , m_rotateSpeed( 4.0f )
     , m_rotationModifier( 1.0f )
     , m_jump( false )
+    , m_jumping( false )
     , m_deadZone( 0.0f )
     , m_deadZoneSnap( 0.0f )
     , m_mediumRotationFloor( 0.0f )
@@ -211,6 +212,30 @@ void CharacterController::SetStepSfxInterval(float interval)
     m_stepInterval = interval;
 
     NOTIFY_COMPONENT_CHANGED( "stepSfxInterval", m_stepInterval );
+}
+
+const ResourceReference &CharacterController::GetJumpSfx(void) const
+{
+    return m_jumpSfx;
+}
+
+void CharacterController::SetJumpSfx(const ResourceReference &sfx)
+{
+    m_jumpSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "jumpSfx", m_jumpSfx );
+}
+
+const ResourceReference &CharacterController::GetLandSfx(void) const
+{
+    return m_landSfx;
+}
+
+void CharacterController::SetLandSfx(const ResourceReference &sfx)
+{
+    m_landSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "landSfx", m_landSfx );
 }
 
 void CharacterController::OnInitialize(void)

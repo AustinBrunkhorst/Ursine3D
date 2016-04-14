@@ -81,6 +81,18 @@ void PlayerShieldFX::SetShieldRebuildSfx(const ResourceReference &shieldRebuildS
     NOTIFY_COMPONENT_CHANGED( "shieldRebuildSfx", m_shieldRebuildSfx );
 }
 
+const ResourceReference &PlayerShieldFX::GetHurtSfx(void) const
+{
+    return m_hurtSfx;
+}
+
+void PlayerShieldFX::SetHurtSfx(const ResourceReference &sfx)
+{
+    m_hurtSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "hurtSfx", m_hurtSfx );
+}
+
 const Color &PlayerShieldFX::GetFlashColor(void) const
 {
     return m_flashColor;
@@ -219,4 +231,7 @@ void PlayerShieldFX::onHealthDamaged(EVENT_HANDLER(Health))
     {
         m_timer = m_duration;
     }
+    else
+        // play hurt sound effect
+        GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent( m_hurtSfx );
 }

@@ -70,4 +70,6 @@ private:
     bool m_blocking;
     bool m_camerasActive;
 
+    void turnOffPlayerHUD(const ursine::ecs::EntityHandle &player);
+
 };

@@ -124,6 +124,15 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
 
         accum.Y( ) = 0.0f;
 
+        if (controller->m_jumping && swept->GetGrounded( ))
+        {
+            // play the sound effect
+            controller->GetOwner( )->GetComponent<AudioEmitter>( )
+                ->PushEvent( controller->GetLandSfx( ) );
+
+            controller->m_jumping = false;
+        }
+
         if (controller->m_jump)
         {
             if (swept->GetGrounded( ))
@@ -132,8 +141,11 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
 
                 swept->JumpDirectionally( currVel * ( 1.0f + controller->GetJumpDirectionScalar( ) ) );
 
-                URSINE_TODO("Fix sound hack for weapons");
-                GetCoreSystem(AudioManager)->PlayGlobalEvent("Player_Jump");
+                // play the sound effect
+                controller->GetOwner( )->GetComponent<AudioEmitter>( )
+                    ->PushEvent( controller->GetJumpSfx( ) );
+
+                controller->m_jumping = true;
             }
 
             controller->m_jump = false;

@@ -23,11 +23,13 @@
 #include "LevelSegmentManagerComponent.h"
 
 #include <SweptControllerComponent.h>
+#include <AudioEmitterComponent.h>
 
 NATIVE_COMPONENT_DEFINITION( PlayerDownedObject );
 
 using namespace ursine;
 using namespace ecs;
+using namespace resources;
 
 PlayerDownedObject::PlayerDownedObject(void) 
     : BaseComponent( ) { }
@@ -39,17 +41,54 @@ PlayerDownedObject::~PlayerDownedObject(void)
         .Off( ENTITY_COLLISION_PERSISTED, &PlayerDownedObject::onCollision );
 }
 
-const resources::ResourceReference& PlayerDownedObject::GetReviveObject(void) const
+const ResourceReference& PlayerDownedObject::GetReviveObject(void) const
 {
     return m_reviveObject;
 }
 
-void PlayerDownedObject::SetReviveObject(const resources::ResourceReference& archetype)
+void PlayerDownedObject::SetReviveObject(const ResourceReference& archetype)
 {
     m_reviveObject = archetype;
 
     NOTIFY_COMPONENT_CHANGED( "ReviveObject", m_reviveObject );
 }
+
+const ResourceReference &PlayerDownedObject::GetDeathSfx(void) const
+{
+    return m_deathSfx;
+}
+
+void PlayerDownedObject::SetDeathSfx(const ResourceReference &sfx)
+{
+    m_deathSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "deathSfx", m_deathSfx );
+}
+
+const ResourceReference &PlayerDownedObject::GetWhileDeadSfx(void) const
+{
+    return m_whileDeadSfx;
+}
+
+void PlayerDownedObject::SetWhileDeadSfx(const ResourceReference &sfx)
+{
+    m_whileDeadSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "whileDeadSfx", m_whileDeadSfx );
+}
+
+const ResourceReference &PlayerDownedObject::GetNotDeadSfx(void) const
+{
+    return m_notDeadSfx;
+}
+
+void PlayerDownedObject::SetNotDeadSfx(const ResourceReference &sfx)
+{
+    m_notDeadSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "notDeadSfx", m_notDeadSfx );
+}
+
 
 void PlayerDownedObject::OnInitialize(void)
 {
@@ -140,6 +179,11 @@ void PlayerDownedObject::onZeroHealth(EVENT_HANDLER(Health))
 
         ui->TriggerPlayerHUDEvent( bothDeadEvent );
     }
+
+    auto audioEmitter = owner->GetComponent<AudioEmitter>( );
+
+    audioEmitter->PushEvent( m_deathSfx );
+    audioEmitter->PushEvent( m_whileDeadSfx );
 }
 
 void PlayerDownedObject::onRevive(EVENT_HANDLER(Entity))
@@ -166,6 +210,10 @@ void PlayerDownedObject::onRevive(EVENT_HANDLER(Entity))
     e.playerID = owner->GetComponent<PlayerID>( )->GetID( );
 
     ui->TriggerPlayerHUDEvent( e );
+
+    auto audioEmitter = owner->GetComponent<AudioEmitter>( );
+
+    audioEmitter->PushEvent( m_notDeadSfx );
 }
 
 void PlayerDownedObject::onCollision(EVENT_HANDLER(Entity))

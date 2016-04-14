@@ -151,8 +151,9 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
             // disconnect from death event
             // connect to enemyhit death event
-            enemyHandle->Listener( playerLookComp )
-                .Off( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+            if (enemyHandle)
+                enemyHandle->Listener( playerLookComp )
+                    .Off( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
 
         }
     }

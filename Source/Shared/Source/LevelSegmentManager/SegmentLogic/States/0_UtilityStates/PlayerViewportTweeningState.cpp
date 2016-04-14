@@ -18,6 +18,8 @@
 #include "SegmentLogicStateIncludes.h"
 #include "HealthComponent.h"
 #include "GameEvents.h"
+#include "PlayerIDComponent.h"
+#include "UIScreensConfigComponent.h"
 
 #include <CameraComponent.h>
 
@@ -51,11 +53,21 @@ void PlayerViewportTweeningState::Enter(SegmentLogicStateMachine *machine)
     auto c2 = p2->GetComponentInChildren<Camera>( );
 
     // If a player is dead, revive them
-    if (p1->GetComponent<Health>( )->GetHealth( ) <= 0.0f)
-        p1->Dispatch( game::REVIVE_PLAYER, EventArgs::Empty );
+    if (p1->GetComponent<Health>()->GetHealth() <= 0.0f)
+    {
+        p1->Dispatch(game::REVIVE_PLAYER, EventArgs::Empty);
+
+        // Make sure that hud is off
+        turnOffPlayerHUD( p1 );
+    }
 
     if (p2->GetComponent<Health>( )->GetHealth( ) <= 0.0f)
+    {
         p2->Dispatch( game::REVIVE_PLAYER, EventArgs::Empty );
+
+        // make sure that hud is off
+        turnOffPlayerHUD( p2 );
+    }
 
     if (m_camerasActive)
     {
@@ -370,4 +382,28 @@ void PlayerViewportTweeningState::Exit(SegmentLogicStateMachine *machine)
         c1->SetActive( false );
         c2->SetActive( false );
     }
+}
+
+void PlayerViewportTweeningState::turnOffPlayerHUD(const EntityHandle &entity)
+{
+    auto world = entity->GetWorld( );
+
+    auto *scene = world->GetOwner( );
+
+    UAssert( scene != nullptr,
+        "Scene was null."    
+    );
+
+    auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+
+    UAssert( ui != nullptr,
+        "UIConfig was null."    
+    );
+
+    ui_event::ToggleHUD e;
+
+    e.toggled = false;
+    e.playerID = entity->GetComponent<PlayerID>( )->GetID( );
+
+    ui->TriggerPlayerHUDEvent( e );
 }

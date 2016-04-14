@@ -114,6 +114,20 @@ public:
         SetStepSfxInterval
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        jumpSfx,
+        GetJumpSfx,
+        SetJumpSfx
+    );
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        landSfx,
+        GetLandSfx,
+        SetLandSfx
+    );
+
     float GetRotateSpeed(void) const;
     void SetRotateSpeed(float rotateSpeed);
 
@@ -159,6 +173,12 @@ public:
     float GetStepSfxInterval(void) const;
     void SetStepSfxInterval(float interval);
 
+    const ursine::resources::ResourceReference &GetJumpSfx(void) const;
+    void SetJumpSfx(const ursine::resources::ResourceReference &sfx);
+
+    const ursine::resources::ResourceReference &GetLandSfx(void) const;
+    void SetLandSfx(const ursine::resources::ResourceReference &sfx);
+
     void OnInitialize(void) override;
 
 private:
@@ -184,6 +204,7 @@ private:
     float m_jumpDirectionScalar;
 
     bool m_jump;
+    bool m_jumping;
 
     bool m_lockMovement;
     bool m_lockLooking;
@@ -192,6 +213,8 @@ private:
     ursine::Vec2 m_lookDir;
 
     ursine::resources::ResourceReference m_footSfx;
+    ursine::resources::ResourceReference m_jumpSfx;
+    ursine::resources::ResourceReference m_landSfx;
 
     float m_stepInterval;
     float m_stepTimer;
