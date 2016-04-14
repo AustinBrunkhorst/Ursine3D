@@ -116,7 +116,7 @@ void VisibilityTrigger::onSegmentChange(EVENT_HANDLER(LevelSegmentManager))
 
     if (args->segment == m_segment)
     {
-        Timer::Create( TimeSpan::FromSeconds( m_delay ), kTimerGroupGameplay ).Completed( [=]
+        GetOwner( )->GetTimers( ).Create( TimeSpan::FromSeconds( m_delay ), kTimerGroupGameplay ).Completed( [=]
         {
             if (m_type == VisibilityTriggerType::VIS_MODEL)
             {
