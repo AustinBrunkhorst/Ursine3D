@@ -64,7 +64,7 @@ void TutorialDialogueManager::OnSceneReady(Scene *scene)
 
 void TutorialDialogueManager::onSegmentChange(EVENT_HANDLER(LevelSegmentManager))
 {
-    EVENT_SENDER(LevelSegmentManager, sender);
+    EVENT_ATTRS(LevelSegmentManager, LevelSegmentChangeArgs);
 
     dispatchUIEventForSegment( sender->GetCurrentSegment( ) );
 }

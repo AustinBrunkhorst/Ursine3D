@@ -79,6 +79,9 @@ LevelSegments LevelSegmentManager::GetCurrentSegment(void) const
 
 void LevelSegmentManager::SetCurrentSegment(LevelSegments segment)
 {
+    if (segment == m_segment)
+        return;
+
     m_segment = segment;
 
     LevelSegmentChangeArgs args;
