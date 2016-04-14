@@ -75,7 +75,7 @@ VS_OUTPUT main(VS_INPUT input)
 
 
 
-    pos.y = x * y * 200;
+    pos += (x * y * 200) * input.Nor.xyz;
 
     //sin(5x)*cos(5y) / 5
 

@@ -660,6 +660,37 @@ namespace ursine
             m_renderShadows = renderShadows;
         }
 
+#define COPY(name) name = rhs.name;
+
+        Light &Light::operator=(Light &rhs)
+        {
+            COPY(m_entityID);
+            COPY(m_active);
+            COPY(m_useOverdraw);
+            COPY(m_useDebugRendering);
+            COPY(m_mask);
+
+            COPY(m_type);
+            COPY(m_position);
+            COPY(m_color);
+            COPY(m_radius);
+            COPY(m_direction);
+            COPY(m_intensity);
+            COPY(m_spotlightAngles);
+            COPY(m_spotlightTransform);
+
+            
+
+            COPY(m_renderShadows);
+
+            // old one will have old handle
+            COPY(m_shadowmapWidth);
+
+            rhs.m_shadowmap = m_shadowmap;
+
+            return *this;
+        }
+
         /////////////////////////////////////////////////////////////
         // PARTICLE SYSTEM //////////////////////////////////////////
         ParticleSystem::ParticleSystem(void)

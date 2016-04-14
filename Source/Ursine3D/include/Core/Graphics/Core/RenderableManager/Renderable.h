@@ -53,7 +53,7 @@ namespace ursine
             bool GetActive(void) const;
             void SetActive(const bool isActive);
 
-        private:
+        protected:
             virtual void Uninitialize(GfxManager *mgr);
 
             ecs::EntityID m_entityID;
@@ -319,6 +319,8 @@ namespace ursine
 
             bool GetRenderShadows(void) const;
             void SetRenderShadows(bool renderShadows);
+
+            Light &operator=(Light &rhs);
 
         private:
             void Uninitialize(GfxManager *mgr) override;

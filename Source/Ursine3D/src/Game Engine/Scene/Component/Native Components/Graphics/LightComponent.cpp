@@ -179,7 +179,7 @@ namespace ursine
                 size = 4096;
             m_light->SetShadowmapWidth( size );
 
-            NOTIFY_COMPONENT_CHANGED("rendeshadowResolutionrMask", size);
+            NOTIFY_COMPONENT_CHANGED("shadowResolution", size);
         }
 
         bool Light::GetIsActive() const

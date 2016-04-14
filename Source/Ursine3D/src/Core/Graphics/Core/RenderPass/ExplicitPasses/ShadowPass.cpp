@@ -137,14 +137,17 @@ namespace ursine
             // if it exists, check for resize
             if(handle != 0)
             {
+                
                 auto depthStencil = depthMgr->GetShadowmapDepthStencil( light->GetShadowmapHandle( ) );
 
                 if(width != depthStencil.width)
+                {
                     depthMgr->ResizeShadowmapDepthTarget( 
                         handle, 
                         width, 
                         width 
                     );
+                }
             }
             else // create a new one
             {
