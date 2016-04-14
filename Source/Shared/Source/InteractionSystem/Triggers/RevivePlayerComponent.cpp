@@ -34,7 +34,7 @@ RevivePlayer::RevivePlayer(void) :
 
 RevivePlayer::~RevivePlayer(void)
 {
-    GetOwner( )->GetRoot( )->Listener(this)
+    GetOwner( )->Listener(this)
         .On( game::REVIVE_PLAYER, &RevivePlayer::OnReviveCheat );
 }
 
@@ -63,7 +63,7 @@ void RevivePlayer::OnInitialize(void)
 {
     GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this, Interactable::END);
 
-    GetOwner( )->GetRoot( )->Listener( this )
+    GetOwner( )->Listener( this )
         .On( game::REVIVE_PLAYER_CHEAT, &RevivePlayer::OnReviveCheat);
 }
 
