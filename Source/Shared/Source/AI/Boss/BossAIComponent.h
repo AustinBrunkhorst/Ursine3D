@@ -136,6 +136,18 @@ public:
         SetPollinateSmogEntityName
     );
 
+    EditorField(
+        std::string pollinateGooFloorEntityName,
+        GetPollinateGooFloorEntityName,
+        SetPollinateGooFloorEntityName
+    );
+
+    EditorField(
+        std::string pollinateSafetyShieldEntityName,
+        GetPollinateSafetyShieldEntityName,
+        SetPollinateSafetyShieldEntityName
+    );
+
     EditorResourceField(
         ursine::resources::ArchetypeData,
         vineArchetype,
@@ -198,12 +210,6 @@ public:
         float phase4SeedshotDuration,
         GetPhase4SeedshotDuration,
         SetPhase4SeedshotDuration
-    );
-
-    EditorField(
-        std::string pollinateSafetyShieldEntityName,
-        GetPollinateSafetyShieldEntityName,
-        SetPollinateSafetyShieldEntityName
     );
 
     EditorResourceField(
@@ -287,6 +293,9 @@ public:
     const std::string &GetPollinateSmogEntityName(void) const;
     void SetPollinateSmogEntityName(const std::string &name);
 
+    const std::string &GetPollinateGooFloorEntityName(void) const;
+    void SetPollinateGooFloorEntityName(const std::string &name);
+
     const ursine::resources::ResourceReference &GetPollinateArchetype(void) const;
     void SetPollinateArchetype(const ursine::resources::ResourceReference &pollinateArchetype);
 
@@ -348,6 +357,8 @@ public:
 
     ursine::ecs::EntityHandle GetPollinateSafetyShield(void);
 
+    ursine::ecs::EntityHandle GetPollinateGooFloor(void);
+
     void AddSpawnedVine(ursine::ecs::EntityHandle vine);
     const std::vector<ursine::ecs::EntityHandle> &GetVines(void) const;
 
@@ -403,6 +414,8 @@ private:
 
     // Pollinate variables
     std::string m_pollinateEntity;
+
+    std::string m_pollinateGooFloor;
 
     ursine::SVec3 m_pollinateLocalForward;
 
