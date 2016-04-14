@@ -167,6 +167,13 @@ public:
         SetEmergeSfx
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        deathSfx,
+        GetDeathSfx,
+        SetDeathSfx
+    );
+
     ursine::Array<HealthThreshold> healthThresholds;
 
     EditorMeta(Annotation("List of ROOT entities we're colliding with (used for uproot)."))
@@ -231,6 +238,9 @@ public:
     const ursine::resources::ResourceReference &GetEmergeSfx(void) const;
     void SetEmergeSfx(const ursine::resources::ResourceReference &emergeSfx);
 
+    const ursine::resources::ResourceReference &GetDeathSfx(void) const;
+    void SetDeathSfx(const ursine::resources::ResourceReference &deathSfx);
+
     ursine::ecs::Animator *GetAnimator(void);
 
     ursine::ecs::EntityHandle GetTarget(void);
@@ -294,6 +304,7 @@ private:
     ursine::resources::ResourceReference m_swipeSfx;
     ursine::resources::ResourceReference m_burrowSfx;
     ursine::resources::ResourceReference m_emergeSfx;
+    ursine::resources::ResourceReference m_deathSfx;
 
 } Meta(
     Enable

@@ -56,6 +56,8 @@ void VineDeathState::Enter(VineAIStateMachine *machine)
 
     for (auto &ghost : ghosts)
         ghost->GetOwner( )->RemoveComponent<Ghost>( );
+
+    m_owner->GetComponent<AudioEmitter>( )->PushEvent( ai->GetDeathSfx( ) );
 }
 
 void VineDeathState::onFlopFinish(EVENT_HANDLER(Entity))

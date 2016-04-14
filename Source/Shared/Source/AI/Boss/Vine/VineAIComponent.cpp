@@ -254,6 +254,18 @@ const ResourceReference &VineAI::GetEmergeSfx(void) const
     return m_emergeSfx;
 }
 
+const ResourceReference &VineAI::GetDeathSfx(void) const
+{
+    return m_deathSfx;
+}
+
+void VineAI::SetDeathSfx(const ResourceReference &deathSfx)
+{
+    m_deathSfx = deathSfx;
+
+    NOTIFY_COMPONENT_CHANGED( "deathSfx", m_deathSfx );
+}
+
 void VineAI::SetEmergeSfx(const ResourceReference &emergeSfx)
 {
     m_emergeSfx = emergeSfx;
