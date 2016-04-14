@@ -118,7 +118,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
                     ui_event::HealthTrackStart trackEvent;
 
                     trackEvent.playerID = id;
-                    trackEvent.enemyName = "Enemy";
+                    trackEvent.enemyName = enemyHealthComp->GetDisplayName( );
                     trackEvent.healthPercent = enemyHealthPercentage;
 
                     ui->TriggerPlayerHUDEvent( trackEvent );
