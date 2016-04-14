@@ -34,8 +34,8 @@ RevivePlayer::RevivePlayer(void) :
 
 RevivePlayer::~RevivePlayer(void)
 {
-    //GetOwner( )->Listener( this )
-    //     .Off( game::FIRE_END, &BaseWeapon::TriggerReleased ); 
+    GetOwner( )->GetRoot( )->Listener(this)
+        .On( game::REVIVE_PLAYER, &RevivePlayer::OnRevive );
 }
 
 float RevivePlayer::GetReviveTime(void) const
@@ -62,6 +62,9 @@ void RevivePlayer::SetTexture(const ursine::resources::ResourceReference& textur
 void RevivePlayer::OnInitialize(void)
 {
     GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this, Interactable::END);
+
+    GetOwner( )->GetRoot( )->Listener( this )
+        .On( game::REVIVE_PLAYER, &RevivePlayer::OnRevive );
 }
 
 void RevivePlayer::StartInteraction(const ursine::ecs::EntityHandle& entity)
@@ -126,7 +129,16 @@ void RevivePlayer::StopInteraction(const ursine::ecs::EntityHandle& entity)
 
 void RevivePlayer::InteractionComplete(void)
 {
+    GetOwner( )->Delete( );
     GetOwner( )->GetRoot( )->Dispatch( game::REVIVE_PLAYER, ursine::ecs::EntityEventArgs::Empty );
+    revivedSfx( );
+}
+
+void RevivePlayer::OnRevive(EVENT_HANDLER(ursine::ecs::Entity))
+{
+    if (GetOwner( )->IsDeleting( ))
+        return;
+
     GetOwner( )->Delete( );
     revivedSfx( );
 }
