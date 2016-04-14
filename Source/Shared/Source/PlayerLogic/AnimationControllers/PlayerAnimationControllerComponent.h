@@ -84,6 +84,13 @@ public:
         SetWinState
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        laughSfx,
+        GetLaughSfx,
+        SetLaughSfx
+    );
+
     PlayerAnimationController(void);
     ~PlayerAnimationController(void);
 
@@ -116,6 +123,9 @@ public:
     const std::string &GetWinState(void) const;
     void SetWinState(const std::string &state);
 
+    const ursine::resources::ResourceReference &GetLaughSfx(void);
+    void SetLaughSfx(const ursine::resources::ResourceReference &sfx);
+
     void SetWonFlag(bool flag);
 
 private:
@@ -132,6 +142,8 @@ private:
     std::string m_dieState;
 
     std::string m_winState;
+
+    ursine::resources::ResourceReference m_laughSfx;
 
     AnimatorControllerStateMachine::Handle m_controller;
 

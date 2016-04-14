@@ -10,13 +10,17 @@
 ** -------------------------------------------------------------------------*/
 
 #include <Precompiled.h>
+
 #include "RevivePlayerComponent.h"
 #include "ComponentIncludes.h"
 #include "PlayerIdCOmponent.h"
 #include "CommandQueueComponent.h"
 #include "HealthComponent.h"
+#include "PlayerDownedObjectComponent.h"
 #include "GameEvents.h"
 #include "UIScreensConfigComponent.h"
+
+#include <AudioEmitterComponent.h>
 
 NATIVE_COMPONENT_DEFINITION( RevivePlayer ) ;
 
@@ -91,6 +95,11 @@ void RevivePlayer::Interact(const ursine::ecs::EntityHandle& entity)
         // grab time
         float* time = &m_times[ entity ];
 
+        if (math::IsZero( fmod( *time, 1.5f ) ))
+        {
+            revivingSfx( entity );
+        }
+
         // update
         *time += Application::Instance->GetDeltaTime( );
 
@@ -119,6 +128,7 @@ void RevivePlayer::InteractionComplete(void)
 {
     GetOwner( )->GetRoot( )->Dispatch( game::REVIVE_PLAYER, ursine::ecs::EntityEventArgs::Empty );
     GetOwner( )->Delete( );
+    revivedSfx( );
 }
 
 void RevivePlayer::messageUIToggle(const ursine::ecs::EntityHandle &reviver, bool toggle)
@@ -196,4 +206,22 @@ void RevivePlayer::messageUISuccess(const EntityHandle &reviver)
     event.playerRevived = GetOwner( )->GetRoot( )->GetComponent<PlayerID>( )->GetID( );
 
     ui->TriggerPlayerHUDEvent( event );
+}
+
+void RevivePlayer::revivingSfx(const EntityHandle &reviver)
+{
+    auto root = reviver->GetRoot( );
+
+    root->GetComponent<AudioEmitter>( )->PushEvent(
+        root->GetComponent<PlayerDownedObject>( )->GetRevivingSfx( )
+    );
+}
+
+void RevivePlayer::revivedSfx(void)
+{
+    auto root = GetOwner( )->GetRoot( );
+
+    root->GetComponent<AudioEmitter>( )->PushEvent(
+        root->GetComponent<PlayerDownedObject>( )->GetBeingRevivedSfx( )
+    );
 }

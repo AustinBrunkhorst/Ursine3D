@@ -164,6 +164,7 @@
 #include "FX/ShieldFXComponent.h"
 #include "FX/PlayerShieldFXComponent.h"
 #include "FX/TextureAnimatorComponent.h"
+#include "FX/PlayAudioEventComponent.h"
 
 /////////////////////////////////
 //             Misc            //

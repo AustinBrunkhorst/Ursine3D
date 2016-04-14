@@ -335,6 +335,18 @@ const std::string &PlayerAnimationController::GetWinState(void) const
     return m_winState;
 }
 
+const ResourceReference &PlayerAnimationController::GetLaughSfx(void)
+{
+    return m_laughSfx;
+}
+
+void PlayerAnimationController::SetLaughSfx(const ResourceReference &sfx)
+{
+    m_laughSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "laughSfx", m_laughSfx );
+}
+
 void PlayerAnimationController::SetWinState(const std::string &state)
 {
     m_winState = state;
@@ -345,6 +357,17 @@ void PlayerAnimationController::SetWinState(const std::string &state)
 void PlayerAnimationController::SetWonFlag(bool flag)
 {
     m_controller->SetBool( kWon, flag );
+
+    auto emitter = GetOwner( )->GetRoot( )->GetComponent<AudioEmitter>( );
+
+    if (flag)
+    {
+        GetOwner( )->GetTimers( ).Create( TimeSpan::FromSeconds( math::Rand( 0.5f, 2.0f ) ) )
+            .Repeat( math::Rand( 1, 4 ) )
+            .Repeated( [=] {
+                emitter->PushEvent( m_laughSfx );
+            } );
+    }
 }
 
 void PlayerAnimationController::onUpdate(EVENT_HANDLER(World))

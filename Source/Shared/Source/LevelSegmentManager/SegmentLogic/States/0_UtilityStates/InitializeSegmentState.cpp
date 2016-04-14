@@ -20,15 +20,21 @@
 
 #include <World.h>
 #include <Scene.h>
+#include <AudioSystem.h>
+#include <SystemManager.h>
 
 using namespace ursine;
 using namespace ecs;
 
-InitializeSegmentState::InitializeSegmentState(const resources::ResourceReference &loadInWorld, LevelSegments unloadSegment)
+InitializeSegmentState::InitializeSegmentState(
+    const resources::ResourceReference &loadInWorld,
+    LevelSegments unloadSegment, bool stopAllSounds
+)
     : SegmentLogicState( "Initialize Segment State" )
     , m_loadInWorld( loadInWorld )
     , m_unloadSegment( unloadSegment )
     , m_segmentManager( nullptr )
+    , m_stopAllSounds( stopAllSounds )
 {
 }
 
@@ -45,6 +51,16 @@ void InitializeSegmentState::Enter(SegmentLogicStateMachine *machine)
 
     world->Listener( this )
         .Off( WORLD_ENTITY_ADDED, &InitializeSegmentState::onEntityAdded );
+
+    if (m_stopAllSounds)
+    {
+        auto audio = world->GetEntitySystem<AudioSystem>( );
+
+        if (audio)
+        {
+            audio->StopAllSounds( );
+        }
+    }
 }
 
 void InitializeSegmentState::onEntityAdded(EVENT_HANDLER(World))

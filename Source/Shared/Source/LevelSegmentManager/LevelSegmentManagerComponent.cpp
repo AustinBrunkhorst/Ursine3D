@@ -644,6 +644,8 @@ void LevelSegmentManager::initBossRoomLogic(void)
 
         auto sm = std::make_shared<SegmentLogicStateMachine>( "Phase3 Cinematic", this );
 
+        auto playerWinOn = sm->AddState<PlayerWinState>( true );
+        auto playerWinOff = sm->AddState<PlayerWinState>( false );
         auto waitForTrig = sm->AddState<Phase3WaitForTriggerState>( );
         auto turnOnCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase3CinematicCamera, true );
         auto turnOffCinematicCam = sm->AddState<ToggleCameraActiveState>( resources->phase3CinematicCamera, false );
@@ -662,7 +664,8 @@ void LevelSegmentManager::initBossRoomLogic(void)
         turnOnCinematicCam->AddTransition( lockPlayers, "Lock Players" );
         lockPlayers->AddTransition( toggleHudOff, "Turn Off Hud" );
         toggleHudOff->AddTransition( tweenOut, "Tween Out" );
-        tweenOut->AddTransition( playCinematicFocalP, "Play Cinematic" );
+        tweenOut->AddTransition( playerWinOn, "Win" );
+        playerWinOn->AddTransition( playCinematicFocalP, "Play Cinematic" );
         playCinematicFocalP->AddTransition( playCinematicCam, "Play Cinematic Cam" )
                            ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 7.0f ) );
         playCinematicCam->AddTransition( turnBossLightOn, "Turn On Lights" )
@@ -670,7 +673,8 @@ void LevelSegmentManager::initBossRoomLogic(void)
         turnBossLightOn->AddTransition( turnCenterLightsOff, "Turn center lights off" );
         turnCenterLightsOff->AddTransition( tweenIn, "Tween Back In" )
                            ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 4.0f ) );
-        tweenIn->AddTransition( toggleHudOn, "Hud On" );
+        tweenIn->AddTransition( playerWinOff, "Win Off" );
+        playerWinOff->AddTransition( toggleHudOn, "Hud On" );
         toggleHudOn->AddTransition( turnOffCinematicCam, "Turn Cam Off" );
         turnOffCinematicCam->AddTransition( unlockPlayers, "Unlock Players" );
 

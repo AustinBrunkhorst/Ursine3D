@@ -127,7 +127,7 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
         if (controller->m_jumping && swept->GetGrounded( ))
         {
             // play the sound effect
-            controller->GetOwner( )->GetComponent<AudioEmitter>( )
+            controller->GetFootStepEntity( )->GetComponent<AudioEmitter>( )
                 ->PushEvent( controller->GetLandSfx( ) );
 
             controller->m_jumping = false;
@@ -142,7 +142,7 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
                 swept->JumpDirectionally( currVel * ( 1.0f + controller->GetJumpDirectionScalar( ) ) );
 
                 // play the sound effect
-                controller->GetOwner( )->GetComponent<AudioEmitter>( )
+                controller->GetFootStepEntity( )->GetComponent<AudioEmitter>( )
                     ->PushEvent( controller->GetJumpSfx( ) );
 
                 controller->m_jumping = true;
@@ -158,7 +158,7 @@ void CharacterControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
             if (controller->m_stepTimer <= 0.0f)
             {
                 // play audio event
-                entity->GetComponent<AudioEmitter>( )->PushEvent(
+                controller->GetFootStepEntity( )->GetComponent<AudioEmitter>( )->PushEvent(
                     controller->m_footSfx
                 );
 
