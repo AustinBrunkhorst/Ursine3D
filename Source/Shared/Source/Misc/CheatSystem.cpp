@@ -17,6 +17,7 @@
 
 #include "PlayerIdComponent.h"
 #include "HealthComponent.h"
+#include "HitscanWeaponComponent.h"
 #include "GameEvents.h"
 
 #include <WorldEvent.h>
@@ -127,6 +128,35 @@ void CheatSystem::onUpdate(EVENT_HANDLER(ursine::ecs:::World))
         {
             if (player->GetComponent<Health>( )->GetHealth( ) <= 0.0f)
                 player->Dispatch( game::REVIVE_PLAYER, EventArgs::Empty );
+        }
+    }
+    if (kbManager->IsTriggeredDown(KEY_Y))
+    {
+        // Toggle immortality for both players
+        auto players = m_world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+
+        for (auto &player : players)
+        {
+            if (player->HasComponent<Health>( ))
+            {
+                auto health = player->GetComponent<Health>( );
+                auto inv = health->GetInvulnerable( );
+                health->SetInvulnerable( !inv );
+            }
+        }
+    }
+    if (kbManager->IsTriggeredDown(KEY_U))
+    {
+        // Toggle immortality for both players
+        auto players = m_world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+
+        for (auto &player : players)
+        {
+            auto weapon = player->GetComponentInChildren<HitscanWeapon>( );
+            if (weapon)
+            {
+                weapon->ToggleMaxDamage( );
+            }
         }
     }
 }

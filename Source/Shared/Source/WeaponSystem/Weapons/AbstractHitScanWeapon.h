@@ -14,6 +14,8 @@
 #include "AbstractWeapon.h"
 #include <Raycasting.h>
 
+const float MAX_GUN_DAMAGE = 1440.0f;
+
 
 #define HitscanEditorFields( )                     \
     EditorField(                                   \
@@ -97,6 +99,7 @@ struct AbstractHitscanWeapon : AbstractWeapon
 
     DamageType GetDamageType(void) const;
     void SetDamageType(DamageType type);
+    void ToggleMaxDamage(void);
 
     float GetDamageToApply(void) const;
     void  SetDamageToApply(float damage);
@@ -130,4 +133,7 @@ struct AbstractHitscanWeapon : AbstractWeapon
 
     // show debug info
     bool m_debug;
+
+    // toggle for damage cheat
+    bool m_maxDamage;
 };

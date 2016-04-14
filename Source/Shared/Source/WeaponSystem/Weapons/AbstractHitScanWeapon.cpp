@@ -25,6 +25,7 @@ AbstractHitscanWeapon::AbstractHitscanWeapon(void)
     , m_damageToApply(1.0f)
     , m_critModifier(1.0f)
     , m_alwaysDraw( false )
+    , m_maxDamage( false )
     , m_debug( false ) { }
 
 // Raycast type
@@ -102,6 +103,20 @@ DamageType AbstractHitscanWeapon::GetDamageType(void) const
 void AbstractHitscanWeapon::SetDamageType(DamageType type)
 {
     m_damageType = type;
+}
+
+void AbstractHitscanWeapon::ToggleMaxDamage(void)
+{
+    if (m_maxDamage)
+    {
+        SetDamageToApply( m_damageToApply );
+        m_maxDamage = false;
+    }
+    else
+    {
+        SetDamageToApply( MAX_GUN_DAMAGE );
+        m_maxDamage = true;
+    }
 }
 
 // Damage to apply
