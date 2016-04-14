@@ -81,9 +81,4 @@ void RepositionPlayersAndCloseDoorState::Enter(SegmentLogicStateMachine *machine
 
     if (animator)
         animator->StopGroupAnimators( );
-
-    auto audioEmitter = bossDoor->GetComponentInChildren<AudioEmitter>( );
-
-    if (audioEmitter)
-        audioEmitter->PushEvent( resources->GetDoorCloseSfx( ) );
 }
