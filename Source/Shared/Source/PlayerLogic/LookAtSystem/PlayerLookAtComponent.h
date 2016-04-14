@@ -44,6 +44,9 @@ public:
     void SetTimer(float time);
     void IncrementTimer(float dt);
 
+    bool ReticleActive(void) const;
+    void SetReticleActive(bool);
+
     const ursine::ecs::EntityHandle& GetCurrentEnemy(void) const;
     void SetCurrentEnemy(ursine::ecs::EntityHandle& entity);
 
@@ -62,6 +65,9 @@ private:
 
     Meta(Disable)
         ursine::ecs::EntityHandle m_currEnemy;
+
+    Meta(Disable)
+        bool m_reticleActive;
 
 
 } Meta(Enable, DisplayName("PlayerLookAt"));

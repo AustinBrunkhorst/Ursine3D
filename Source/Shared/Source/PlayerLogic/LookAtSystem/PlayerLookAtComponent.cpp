@@ -26,7 +26,7 @@ using namespace ursine;
 PlayerLookAt::PlayerLookAt(void) :
     BaseComponent( ),
     m_timer(0.0f),
-    m_delay(1.0f),
+    m_delay(2.0f),
     m_currEnemy(nullptr)
 {
 }
@@ -65,6 +65,16 @@ void PlayerLookAt::IncrementTimer(float dt)
     m_timer += dt;
 }
 
+bool PlayerLookAt::ReticleActive(void) const
+{
+    return m_active;
+}
+
+void PlayerLookAt::SetReticleActive(bool active)
+{
+    m_active = active;
+}
+
 const ursine::ecs::EntityHandle& PlayerLookAt::GetCurrentEnemy(void) const
 {
     return m_currEnemy;
@@ -88,6 +98,13 @@ void PlayerLookAt::onEnemyDeath(EVENT_HANDLER(ursine::ecs::Entity))
 
     if ( ui )
         ui->TriggerPlayerHUDEvent(trackEvent);
+
+    SetTimer( 0.0f );
+
+    m_currEnemy->Listener( this )
+        .Off( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+
+    m_currEnemy = nullptr;
 }
 
 void PlayerLookAt::OnInitialize(void)

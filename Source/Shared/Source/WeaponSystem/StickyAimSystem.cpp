@@ -87,7 +87,16 @@ void StickyAimSystem::onUpdate(EVENT_HANDLER(World))
             // if enemy then apply a modifier to players rotation
             if ( entity->GetRoot( )->HasComponent< Health >( ) && entity->GetRoot( )->GetComponent< Health >( )->GetHealthType( ) == HealthType::ENEMY_HEALTH )
             {
-                m_charControllers[ rayComps.first ]->SetRotationModifier(raycastComp->GetRotationModifier( ));
+                m_charControllers[ rayComps.first ]->SetRotationModifier( raycastComp->GetRotationModifier( ) );
+                raycastComp->SetEntityHit( entity );
+
+                continue;
+            }
+
+            // if enemy then apply a modifier to players rotation
+            if ( entity->HasComponent< Health >( ) && entity->GetComponent< Health >( )->GetHealthType( ) == HealthType::ENEMY_HEALTH )
+            {
+                m_charControllers[ rayComps.first ]->SetRotationModifier( raycastComp->GetRotationModifier( ) );
                 raycastComp->SetEntityHit( entity );
 
                 continue;

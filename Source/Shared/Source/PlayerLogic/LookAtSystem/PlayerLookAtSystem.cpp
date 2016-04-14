@@ -66,6 +66,9 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
     Health* enemyHealthComp;
 
     EntityHandle enemyHandle;
+
+    // send ui Event
+    auto *ui = m_world->GetSettings( )->GetComponent< UIScreensConfig >( );
     
     int id;
 
@@ -83,6 +86,10 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         {
             enemyHealthComp = enemyHandle->GetComponent< Health >( );
 
+            // if not on entity then on root
+            if ( enemyHealthComp == nullptr )
+                enemyHealthComp = enemyHandle->GetRoot( )->GetComponent< Health >( );
+
             // new obj
             if ( enemyHandle != playerLookComp->GetCurrentEnemy( ) )
             {
@@ -92,19 +99,26 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
                 // change curr enemy
                 playerLookComp->SetCurrentEnemy( enemyHandle );
-
-                // create track event for ui
-                ui_event::HealthTrackStart trackEvent;
-
-                trackEvent.playerID = id;
-                trackEvent.enemyName = "Enemy";
-                trackEvent.healthPercent = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
-
-                // send ui Event
-                auto *ui = m_world->GetSettings( )->GetComponent< UIScreensConfig >( );
+                playerLookComp->SetReticleActive( false );
 
                 if ( ui )
+                {
+                    // create track event for ui
+                    ui_event::HealthTrackStart trackEvent;
+
+                    trackEvent.playerID = id;
+                    trackEvent.enemyName = "Enemy";
+                    trackEvent.healthPercent = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
+
                     ui->TriggerPlayerHUDEvent( trackEvent );
+
+                    // crete reticle event
+                    ui_event::ReticleActive reticleEvent;
+                    reticleEvent.playerID = id;
+                    reticleEvent.active = true;
+
+                    ui->TriggerPlayerHUDEvent( reticleEvent );
+                }
 
                 // connect to enemyhit death event
                 enemyHandle->Listener( playerLookComp )
@@ -112,7 +126,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             }
 
             // not new
-            else
+            else if ( ui )
             {
                 // create track update event
                 ui_event::HealthTrackUpdate trackEvent;
@@ -120,40 +134,57 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
                 trackEvent.playerID = id;
                 trackEvent.healthPercent = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
 
-                // send ui Event
-                auto *ui = m_world->GetSettings( )->GetComponent< UIScreensConfig >( );
-
-                if ( ui )
-                    ui->TriggerPlayerHUDEvent(trackEvent);
+                ui->TriggerPlayerHUDEvent( trackEvent );
             }
 
             // set timer to 0.0f
             playerLookComp->SetTimer( 0.0f );
         }
+        
+        // not looking at enemy
+        else if ( playerLookComp->ReticleActive( ) )
+        {
+            playerLookComp->SetReticleActive( false );
 
-        // increment all active timers
-        playerLookComp->IncrementTimer( dt );
+            if ( ui )
+            {
+                // crete reticle event
+                ui_event::ReticleActive reticleEvent;
+                reticleEvent.playerID = id;
+                reticleEvent.active = false;
+
+                ui->TriggerPlayerHUDEvent( reticleEvent );
+            }
+
+        }
+
+        // increment timer
+        if (playerLookComp->GetCurrentEnemy( ))
+            playerLookComp->IncrementTimer( dt );
 
         // check if greater than delay
         if ( playerLookComp->GetTimer( ) >= playerLookComp->GetDelayTime( ) )
         {
-            // create track end event
-            ui_event::HealthTrackEnd trackEvent;
+            playerLookComp->SetTimer( 0.0f );
 
-            trackEvent.playerID = id;
-            trackEvent.enemyKilled = false;
-
-            // send ui Event
-            auto *ui = m_world->GetSettings( )->GetComponent< UIScreensConfig >( );
+            if ( playerLookComp->GetCurrentEnemy( ) == nullptr )
+                continue;
 
             if ( ui )
+            {
+                // create track end event
+                ui_event::HealthTrackEnd trackEvent;
+
+                trackEvent.playerID = id;
+                trackEvent.enemyKilled = false;
+
                 ui->TriggerPlayerHUDEvent( trackEvent );
+            }
 
             // disconnect from death event
             // connect to enemyhit death event
-            enemyHandle->Listener( playerLookComp )
+            playerLookComp->GetCurrentEnemy( )->Listener( playerLookComp )
                 .Off( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
-
         }
     }
 }
