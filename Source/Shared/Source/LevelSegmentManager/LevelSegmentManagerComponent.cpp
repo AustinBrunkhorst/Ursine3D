@@ -225,7 +225,7 @@ void LevelSegmentManager::initTutorialLogic(void)
     // After players are spawned tween their viewports
     auto introCin = lockCCState->AddTransition( tweenState, "Go To Tween Viewports" );
 
-    introCin->AddCondition<sm::TimerCondition>(TimeSpan::FromSeconds(16.0f));
+    introCin->AddCondition<sm::TimerCondition>(TimeSpan::FromSeconds(20.0f));
 
     // Unlock players
     tweenState->AddTransition( unlockCCState, "Go To Unlocking Player Controller" );

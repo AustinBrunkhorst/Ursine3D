@@ -23,6 +23,7 @@ class TutorialDialogueManager : public ursine::ecs::Component
 
 public:
     TutorialDialogueManager(void);
+    ~TutorialDialogueManager(void);
 
     void OnSceneReady(ursine::Scene *scene) override;
 

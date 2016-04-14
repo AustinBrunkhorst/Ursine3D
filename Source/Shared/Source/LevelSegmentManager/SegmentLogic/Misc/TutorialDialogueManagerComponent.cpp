@@ -31,6 +31,20 @@ TutorialDialogueManager::TutorialDialogueManager(void)
     , vineTutDialogueTimespan( 0.0f )
     , elevatorDialogueTimespan( 0.0f ) { }
 
+TutorialDialogueManager::~TutorialDialogueManager(void)
+{
+    auto world = GetOwner( )->GetWorld( );
+
+    if (!world)
+        return;
+
+    auto sm = world->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
+
+    if (sm.size( ))
+        sm[ 0 ]->GetComponent<LevelSegmentManager>( )->Listener( this )
+            .Off( LevelSegmentManagerEvents::SegmentChanged, &TutorialDialogueManager::onSegmentChange );
+}
+
 void TutorialDialogueManager::OnSceneReady(Scene *scene)
 {
     auto world = GetOwner( )->GetWorld( );
@@ -69,6 +83,7 @@ void TutorialDialogueManager::dispatchUIEventForSegment(LevelSegments segment)
             break;
         }
         case LevelSegments::Tut_MovementTutorial:
+        case LevelSegments::Tut_GateOpensTutorial:
         {
             lines = &movementTutDialogueLines;
             timespan = &movementTutDialogueTimespan;
@@ -81,6 +96,8 @@ void TutorialDialogueManager::dispatchUIEventForSegment(LevelSegments segment)
             break;
         }
         case LevelSegments::Tut_HipFireTutorial:
+        case LevelSegments::Tut_AimFireTutorial:
+        case LevelSegments::Tut_ShootMovingTargetsTutorial:
         {
             lines = &shootingTutDialogueLines;
             timespan = &shootingTutDialogueTimespan;
