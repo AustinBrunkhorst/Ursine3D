@@ -53,24 +53,12 @@ public:
     void onEnemyDeath(EVENT_HANDLER(ursine::ecs::Entity));
 
 protected:
-
     void OnInitialize(void) override;
 
 private:
-
     float m_delay;
+    float m_timer;
+    ursine::ecs::EntityHandle m_currEnemy;
+    bool m_reticleActive;
 
-    Meta(Disable)
-        float m_timer;
-
-    Meta(Disable)
-        ursine::ecs::EntityHandle m_currEnemy;
-
-    Meta(Disable)
-        bool m_reticleActive;
-
-
-} Meta(Enable, DisplayName("PlayerLookAt"));
-
-
-
+} Meta(Enable, DisplayName( "PlayerLookAt" ));

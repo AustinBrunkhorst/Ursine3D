@@ -67,12 +67,12 @@ void PlayerLookAt::IncrementTimer(float dt)
 
 bool PlayerLookAt::ReticleActive(void) const
 {
-    return m_active;
+    return m_reticleActive;
 }
 
 void PlayerLookAt::SetReticleActive(bool active)
 {
-    m_active = active;
+    m_reticleActive = active;
 }
 
 const ursine::ecs::EntityHandle& PlayerLookAt::GetCurrentEnemy(void) const

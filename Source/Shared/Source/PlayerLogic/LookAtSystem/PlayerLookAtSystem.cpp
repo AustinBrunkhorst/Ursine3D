@@ -93,9 +93,14 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             // new obj
             if ( enemyHandle != playerLookComp->GetCurrentEnemy( ) )
             {
+                auto &currentEnemy = playerLookComp->GetCurrentEnemy( );
+
                 // unsubsribe to old enemies death
-                playerLookComp->GetCurrentEnemy( )->Listener(playerLookComp)
-                    .Off(ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath);
+                if (currentEnemy)
+                {
+                    currentEnemy->Listener( playerLookComp )
+                        .Off( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+                }
 
                 // change curr enemy
                 playerLookComp->SetCurrentEnemy( enemyHandle );
