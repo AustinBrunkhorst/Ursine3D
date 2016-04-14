@@ -106,9 +106,6 @@ void TutorialDialogueManager::dispatchUIEventForSegment(LevelSegments segment)
         }
     }
 
-    if (lines == nullptr)
-        return;
-
     auto world = GetOwner( )->GetWorld( );
 
     if (!world)
@@ -123,6 +120,19 @@ void TutorialDialogueManager::dispatchUIEventForSegment(LevelSegments segment)
 
     if (!ui)
         return;
+
+    if (lines == nullptr)
+    {
+        if (segment > LevelSegments::BossRoom_Platforming)
+        {
+            // send clear dialogue event
+            ui_event::ClearDialogue event;
+
+            ui->TriggerPlayerHUDEvent( event );
+        }
+
+        return;
+    }
 
     ui_event::TutorialDialogue event;
 

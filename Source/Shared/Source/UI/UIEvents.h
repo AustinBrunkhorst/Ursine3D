@@ -81,6 +81,10 @@ namespace ui_event
         float totalTimeForDialogue;
     );
 
+    UI_EVENT( ClearDialogue,
+        ;
+    );
+
     UI_EVENT( ScreenFadeEffect,
         // Time it takes to fade into the color
         float fadeInTime;
