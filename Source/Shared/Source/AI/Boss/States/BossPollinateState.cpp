@@ -19,6 +19,7 @@
 #include "PlayerIDComponent.h"
 #include "HealthComponent.h"
 #include "EntityAnimatorComponent.h"
+#include "PlayAudioEventComponent.h"
 
 #include <ParticleEmitterComponent.h>
 #include <GhostComponent.h>
@@ -107,6 +108,7 @@ void BossPollinateState::Update(BossAIStateMachine *machine)
         if (floor)
         {
             floor->GetComponent<EntityAnimator>( )->Play( );
+            floor->GetComponent<PlayAudioEvent>( )->Play( );
             floor->GetComponentInChildren<Body>( )->SetDisableContactResponse( false );
         }
 

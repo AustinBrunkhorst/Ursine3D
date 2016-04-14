@@ -28,6 +28,12 @@ public:
         SetAudioEvent
     );
 
+    EditorField(
+        bool playOnAwake,
+        GetPlayOnAwake,
+        SetPlayOnAwake
+    );
+
     PlayAudioEvent(void);
 
     void OnSceneReady(ursine::Scene *scene) override;
@@ -35,8 +41,15 @@ public:
     const ursine::resources::ResourceReference &GetAudioEvent(void) const;
     void SetAudioEvent(const ursine::resources::ResourceReference &sfx);
 
+    bool GetPlayOnAwake(void) const;
+    void SetPlayOnAwake(bool toggle);
+
+    void Play(void);
+
 private:
     ursine::resources::ResourceReference m_event;
+
+    bool m_playOnAwake;
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
 

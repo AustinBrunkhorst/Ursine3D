@@ -20,12 +20,14 @@ using namespace resources;
 NATIVE_COMPONENT_DEFINITION( PlayAudioEvent );
 
 PlayAudioEvent::PlayAudioEvent(void)
-    : BaseComponent( ) { }
+    : BaseComponent( )
+    , m_playOnAwake( true ) { }
 
 void PlayAudioEvent::OnSceneReady(Scene *scene)
 {
-    GetOwner( )->GetWorld( )->Listener( this )
-        .On( WORLD_UPDATE, &PlayAudioEvent::onUpdate );
+    if (m_playOnAwake)
+        GetOwner( )->GetWorld( )->Listener( this )
+            .On( WORLD_UPDATE, &PlayAudioEvent::onUpdate );
 }
 
 const ResourceReference &PlayAudioEvent::GetAudioEvent(void) const
@@ -38,6 +40,23 @@ void PlayAudioEvent::SetAudioEvent(const ResourceReference &audioEvent)
     m_event = audioEvent;
 
     NOTIFY_COMPONENT_CHANGED( "audioEvent", m_event );
+}
+
+bool PlayAudioEvent::GetPlayOnAwake(void) const
+{
+    return m_playOnAwake;
+}
+
+void PlayAudioEvent::SetPlayOnAwake(bool toggle)
+{
+    m_playOnAwake = toggle;
+
+    NOTIFY_COMPONENT_CHANGED( "playOnAwake", m_playOnAwake );
+}
+
+void PlayAudioEvent::Play(void)
+{
+    GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent( m_event );
 }
 
 void PlayAudioEvent::onUpdate(EVENT_HANDLER(World))

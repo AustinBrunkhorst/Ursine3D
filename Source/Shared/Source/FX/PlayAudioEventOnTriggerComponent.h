@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** PlayAudioEventOnEntityAnimationFinishComponent.h
+** PlayAudioEventOnTriggerComponent.h
 **
 ** Author:
 ** - JordanEllis - j.ellis@digipen.edu
@@ -14,10 +14,9 @@
 #include <Component.h>
 
 #include <AudioEmitterComponent.h>
+#include <GhostComponent.h>
 
-#include "EntityAnimatorComponent.h"
-
-class PlayAudioEventOnEntityAnimationFinish : public ursine::ecs::Component
+class PlayAudioEventOnTrigger : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 
@@ -30,8 +29,10 @@ public:
         SetAudioEvent
     );
 
-    PlayAudioEventOnEntityAnimationFinish(void);
-    ~PlayAudioEventOnEntityAnimationFinish(void);
+    ursine::Array<std::string> triggerEntities;
+
+    PlayAudioEventOnTrigger(void);
+    ~PlayAudioEventOnTrigger(void);
 
     void OnSceneReady(ursine::Scene *scene) override;
 
@@ -41,13 +42,13 @@ public:
 private:
     ursine::resources::ResourceReference m_event;
 
-    void onAnimationFinish(EVENT_HANDLER(EntityAnimator));
+    void onTrigger(EVENT_HANDLER(ursine::ecs::Entity));
 
 } Meta(
     Enable
 ) EditorMeta(
     RequiresComponents(
         typeof( ursine::ecs::AudioEmitter ),
-        typeof( EntityAnimator )
+        typeof( ursine::ecs::Ghost )
     )
 );
