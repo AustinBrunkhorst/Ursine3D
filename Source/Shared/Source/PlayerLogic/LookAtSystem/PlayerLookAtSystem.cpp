@@ -86,12 +86,15 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         {
             enemyHealthComp = enemyHandle->GetComponent< Health >( );
 
-            // calculate enemy health percentage
-            float enemyHealthPercentage = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
-
             // if not on entity then on root
             if ( enemyHealthComp == nullptr )
                 enemyHealthComp = enemyHandle->GetRoot( )->GetComponent< Health >( );
+
+            if (!enemyHealthComp)
+                continue;
+
+            // calculate enemy health percentage
+            float enemyHealthPercentage = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
 
             // new obj
             if (enemyHandle != playerLookComp->GetCurrentEnemy( ))
