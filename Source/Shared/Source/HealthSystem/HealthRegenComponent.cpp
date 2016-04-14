@@ -38,27 +38,6 @@ HealthRegen::~HealthRegen(void)
             .Off( HealthEvents::HEALTH_DAMAGED, &HealthRegen::OnDamaged );
 }
 
-float HealthRegen::GetHealthRegenTime(void) const
-{
-    return m_healthRegenTime;
-}
-
-void  HealthRegen::SetHealthRegenTime(float time)
-{
-    m_healthRegenTime = time;
-}
-
-float HealthRegen::GetShieldRegenTime(void) const
-{
-    return m_shieldRegenTime;
-}
-
-void  HealthRegen::SetShieldRegenTime(float time)
-{
-    m_shieldRegenTime = time;
-}
-
-
 float HealthRegen::GetWaitTime(void) const
 {
     return m_waitTime;

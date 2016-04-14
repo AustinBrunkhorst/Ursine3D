@@ -96,7 +96,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             float enemyHealthPercentage = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
 
             // new obj
-            if (enemyHandle != playerLookComp->GetCurrentEnemy( ))
+            if (!playerLookComp->ReticleActive( ))
             {
                 auto currEnemy = playerLookComp->GetCurrentEnemy( );
 
@@ -177,7 +177,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         {
             playerLookComp->SetTimer( 0.0f );
 
-            if (playerLookComp->GetCurrentEnemy( ) == nullptr)
+            if (playerLookComp->GetCurrentEnemy() == nullptr)
                 continue;
 
             if (ui)

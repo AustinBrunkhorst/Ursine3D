@@ -38,8 +38,6 @@ protected:
 
 private:
 
-    void CalculateHealthToAdd(Health* healthComp, HealthRegen* regenComp);
-
     std::unordered_map< ursine::ecs::EntityHandle, HealthRegen* > m_healthRegens;
     std::unordered_map< ursine::ecs::EntityHandle, Health* > m_healthComps;
 } Meta(Enable, AutoAddEntitySystem);

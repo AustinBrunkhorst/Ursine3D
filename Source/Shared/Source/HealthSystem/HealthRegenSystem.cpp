@@ -88,21 +88,3 @@ void HealthRegenSystem::onUpdate(EVENT_HANDLER(World))
 
     }
 }
-
-void HealthRegenSystem::CalculateHealthToAdd(Health* healthComp, HealthRegen* regenComp)
-{
-    float percent = healthComp->GetHealth( ) / healthComp->GetMaxHealth( );
-    float missing = healthComp->GetMaxHealth( ) - healthComp->GetHealth( );
-
-    float healthToAdd = missing / ( regenComp->GetHealthRegenTime( ) * ( 1 - percent ) );
-
-    regenComp->SetHealthToAdd( healthToAdd );
-
-    percent = healthComp->GetShieldHealth( ) / healthComp->GetMaxShieldHealth( );
-    missing = healthComp->GetMaxShieldHealth( ) - healthComp->GetShieldHealth( );
-
-    healthToAdd = missing / ( regenComp->GetShieldRegenTime( ) * ( 1 - percent ) );
-
-    regenComp->SetShieldToAdd( healthToAdd );
-}
-

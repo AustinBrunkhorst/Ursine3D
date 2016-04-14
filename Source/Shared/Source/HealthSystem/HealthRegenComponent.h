@@ -22,15 +22,15 @@ class HealthRegen : public ursine::ecs::Component
 public:
 
     EditorField(
-        float HealthRegenTime,
-        GetHealthRegenTime,
-        SetHealthRegenTime
+        float HealthToAddPerFrame,
+        GetHealthToAdd,
+        SetHealthToAdd
     );
 
     EditorField(
-        float ShieldRegenTime,
-        GetShieldRegenTime,
-        SetShieldRegenTime
+        float ShieldToAddPerFrame,
+        GetShieldToAdd,
+        SetShieldToAdd
     );
 
     EditorField(
@@ -42,12 +42,6 @@ public:
     HealthRegen(void);
     ~HealthRegen(void);
 
-    float GetHealthRegenTime(void) const;
-    void SetHealthRegenTime(float time);
-
-    float GetShieldRegenTime(void) const;
-    void SetShieldRegenTime(float time);
-
     float GetWaitTime(void) const;
     void SetWaitTime(float time);
 
@@ -58,14 +52,10 @@ public:
     Meta(Disable)
     void ResetTimer(void);
 
-    Meta(Disable)
     float GetHealthToAdd(void) const;
-    Meta(Disable)
     void SetHealthToAdd(float healthToAdd);
 
-    Meta(Disable)
     float GetShieldToAdd(void) const;
-    Meta(Disable)
     void SetShieldToAdd(float shieldToAdd);
 
 protected:
