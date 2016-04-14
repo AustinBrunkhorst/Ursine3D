@@ -964,6 +964,7 @@ namespace ursine
                         Set(DEPTH_STENCIL_COUNT).
                         Set(DEPTH_STATE_NODEPTH_NOSTENCIL).
                         Set(SAMPLER_STATE_NO_WRAP_TEX, 0).
+                        Set(SAMPLER_STATE_SHADOW, 1).
                         Set(RASTER_STATE_SOLID_BACKCULL).
                         Set(BLEND_STATE_ADDITIVE).
                         Set(DXCore::TOPOLOGY_TRIANGLE_LIST).

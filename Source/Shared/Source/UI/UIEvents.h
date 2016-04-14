@@ -56,6 +56,11 @@ namespace ui_event
         bool enemyKilled;
     );
 
+    UI_EVENT( ReticleActive,
+        int playerID;
+        bool active;
+    );
+
     UI_EVENT( PlayerAmmoUpdated,
         int playerID;
         float percent;

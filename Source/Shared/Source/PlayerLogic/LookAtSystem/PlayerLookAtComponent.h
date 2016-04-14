@@ -44,6 +44,12 @@ public:
     void SetTimer(float time);
     void IncrementTimer(float dt);
 
+    float GetHealthPercent(void) const;
+    void SetHealthPercent(float);
+
+    bool ReticleActive(void) const;
+    void SetReticleActive(bool);
+
     const ursine::ecs::EntityHandle& GetCurrentEnemy(void) const;
     void SetCurrentEnemy(ursine::ecs::EntityHandle& entity);
 
@@ -57,14 +63,13 @@ private:
 
     float m_delay;
 
-    Meta(Disable)
-        float m_timer;
+    float m_timer;
 
-    Meta(Disable)
-        ursine::ecs::EntityHandle m_currEnemy;
+    float m_healthPercent;
+
+    ursine::ecs::EntityHandle m_currEnemy;
+
+    bool m_reticleActive;
 
 
 } Meta(Enable, DisplayName("PlayerLookAt"));
-
-
-
