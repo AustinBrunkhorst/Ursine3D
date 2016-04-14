@@ -12,7 +12,9 @@
 #pragma once
 
 #include <Component.h>
+
 #include <AudioItemEventData.h>
+#include <ArchetypeData.h>
 
 #include <AudioEmitterComponent.h>
 
@@ -36,10 +38,10 @@ public:
     );
 
     EditorResourceField(
-        ursine::resources::AudioItemEventData,
-        gooDamageSfx,
-        GetGooDamageSfx,
-        SetGooDamageSfx
+        ursine::resources::ArchetypeData,
+        damageSfxEmitter,
+        GetDamageSfxEmitter,
+        SetDamageSfxEmitter
     );
 
     SeedshotProjectile(void);
@@ -52,13 +54,13 @@ public:
     const ursine::resources::ResourceReference &GetSeedshotEndSfx(void) const;
     void SetSeedshotEndSfx(const ursine::resources::ResourceReference &seedshotEndSfx);
 
-    const ursine::resources::ResourceReference &GetGooDamageSfx(void) const;
-    void SetGooDamageSfx(const ursine::resources::ResourceReference &gooDamageSfx);
+    const ursine::resources::ResourceReference &GetDamageSfxEmitter(void) const;
+    void SetDamageSfxEmitter(const ursine::resources::ResourceReference &damageSfxEmitter);
 
 private:
     ursine::resources::ResourceReference m_seedshotSfx;
     ursine::resources::ResourceReference m_seedshotEndSfx;
-    ursine::resources::ResourceReference m_gooDamageSfx;
+    ursine::resources::ResourceReference m_damageSfxEmitter;
 
     void onDeath(EVENT_HANDLER(ursine::ecs::Entity));
 

@@ -56,21 +56,28 @@ void SeedshotProjectile::SetSeedshotEndSfx(const ResourceReference &seedshotEndS
     NOTIFY_COMPONENT_CHANGED( "seedshotEndSfx", m_seedshotEndSfx );
 }
 
-const ResourceReference &SeedshotProjectile::GetGooDamageSfx(void) const
+const ResourceReference &SeedshotProjectile::GetDamageSfxEmitter(void) const
 {
-    return m_gooDamageSfx;
+    return m_damageSfxEmitter;
 }
 
-void SeedshotProjectile::SetGooDamageSfx(const ResourceReference &gooDamageSfx)
+void SeedshotProjectile::SetDamageSfxEmitter(const ResourceReference &gooDamageSfx)
 {
-    m_gooDamageSfx = gooDamageSfx;
+    m_damageSfxEmitter = gooDamageSfx;
 
-    NOTIFY_COMPONENT_CHANGED( "gooDamageSfx", m_gooDamageSfx );
+    NOTIFY_COMPONENT_CHANGED( "damageSfxEmitter", m_damageSfxEmitter );
 }
 
 void SeedshotProjectile::onDeath(EVENT_HANDLER(Entity))
 {
     auto emitter = GetOwner( )->GetComponent<AudioEmitter>( );
     emitter->PushEvent( m_seedshotEndSfx );
-    emitter->PushEvent( m_gooDamageSfx );
+
+    auto damage = GetOwner( )->GetWorld( )->CreateEntityFromArchetype(
+        m_damageSfxEmitter
+    );
+
+    damage->GetTransform( )->SetWorldPosition( 
+        GetOwner( )->GetTransform( )->GetWorldPosition( )
+    );
 }
