@@ -2,6 +2,7 @@ package ui;
 
 import ursine.api.ui.Screen;
 import ursine.api.ui.ScreenManager;
+import ursine.api.events.EventManager;
 import ursine.api.input.GamepadManager;
 import ursine.api.input.KeyboardManager;
 import ursine.api.native.NativeBroadcastManager;
@@ -22,7 +23,15 @@ class ScreenLayoutCache {
     public function new() { }
 }
 
+typedef ScreenMessageEvent = {
+    var id : Int;
+    var message : String;
+    var data : Dynamic;
+};
+
 class ScreenManager implements ursine.api.ui.ScreenManager {
+    public var globalEvents : EventManager;
+
     // HTML attribute that declares what class is used for the screen logic
     private static inline var m_screenLogicMetaAttribute = 'data-screen-logic';
 
@@ -34,6 +43,7 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
 
     private var m_nativeManager : NativeScreenManager;
     private var m_screens : Map<ScreenID, Screen>;
+    private var m_screenMessageQueue : Map<ScreenID, Array<ScreenMessageEvent>>;
 
     private var m_container : js.html.DOMElement;
 
@@ -45,8 +55,11 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
     private var m_screenTypeCache : Map<String, Class<Dynamic>>;
 
     public function new(container : js.html.DOMElement) {
+        globalEvents = new EventManager( );
+
         m_nativeManager = new NativeScreenManager( );
         m_screens = new Map<ScreenID, Screen>( );
+        m_screenMessageQueue = new Map<ScreenID, Array<ScreenMessageEvent>>( );
 
         m_container = js.Browser.document.createDivElement( );
         {
@@ -119,6 +132,8 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
     }
 
     public function messageNativeGlobal(message : String, data : Dynamic) : Void {
+        globalEvents.trigger( message, data );
+
         m_nativeManager.messageGlobal( message, data );
     }
 
@@ -193,6 +208,8 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
     }
 
     private function createScreen(path : String, id : ScreenID, priority : Int, data : Dynamic) {
+        m_screenMessageQueue[ id ] = new Array<ScreenMessageEvent>( );
+
         // guid of the project this screen belongs to
         var guid = getProjectGUID( path );
 
@@ -322,6 +339,14 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
         var screen : Screen = Type.createInstance( layout.logicHandlerType, [ config ] );
 
         m_screens.set( id, screen );
+
+        var queued = m_screenMessageQueue[ id ];
+
+        // dispatch all of the queued messages
+        for (message in queued)
+            screen.events.trigger( message.message, message.data );
+
+        m_screenMessageQueue.remove( id );
     }
 
     private function getProjectGUID(path : String) {

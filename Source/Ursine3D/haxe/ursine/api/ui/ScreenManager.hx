@@ -1,7 +1,7 @@
 package ursine.api.ui;
 
 import ursine.api.ui.Screen;
-
+import ursine.api.events.EventManager;
 import ursine.api.timers.TimerManager;
 
 @:native( "NativeScreenManager" )
@@ -21,6 +21,8 @@ extern class NativeScreenManager {
 @:keepInit
 @:keepSub
 interface ScreenManager {
+    var globalEvents : EventManager;
+
     function getScreen(id : ScreenID) : Screen;
 
     function addScreen(path : String, initData : Dynamic, inputBlocking : Bool = true, priority : Int = 0) : ScreenID;

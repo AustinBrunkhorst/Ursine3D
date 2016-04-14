@@ -173,8 +173,23 @@ class ArrayTypeInspector implements IFieldInspectionOwner {
         return database.createFieldInspector( this, value, m_field, arrayType );
     }
 
+    private function expandAllItems() {
+        for (item in m_arrayItems)
+            item.opened = true;
+    }
+
+    private function collapseAllItems() {
+        for (item in m_arrayItems)
+            item.opened = false;
+    }
+
     private function openItemContextMenu(e : js.html.MouseEvent, handler : FieldInspectionHandler, container : ArrayItemContainer) {
         var menu = new ContextMenu( );
+
+        var expandAll = menu.addItem( 'Expand All', expandAllItems );
+        var collapseAll = menu.addItem( 'Collapse All', collapseAllItems );
+
+        menu.addSeparator( );
 
         var moveUp = menu.addItem( 'Move Up', function() {
             m_owner.entity.componentFieldArraySwap(
