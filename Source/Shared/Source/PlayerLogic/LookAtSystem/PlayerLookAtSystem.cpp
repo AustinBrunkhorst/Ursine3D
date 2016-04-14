@@ -90,8 +90,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             if ( enemyHealthComp == nullptr )
                 enemyHealthComp = enemyHandle->GetRoot( )->GetComponent< Health >( );
 
-            if (!enemyHealthComp)
-                continue;
+            UAssert( enemyHealthComp, "Error: The raycast component requires there to be a health component." );
 
             // calculate enemy health percentage
             float enemyHealthPercentage = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
