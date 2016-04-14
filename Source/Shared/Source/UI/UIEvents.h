@@ -65,6 +65,14 @@ namespace ui_event
         LevelSegments currentSegment;
     );
 
+    UI_EVENT( PlayerReviveToggle,
+        // True means revive trigger has been entered,
+        // false means revive trigger has been exited
+        bool toggle;
+        int playerReviving;
+        int playerDowned;
+    );
+
     UI_EVENT( PlayerReviveUpdate,
         int playerReviving;
         int playerDowned;
