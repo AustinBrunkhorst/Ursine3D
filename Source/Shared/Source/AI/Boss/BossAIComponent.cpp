@@ -446,6 +446,18 @@ void BossAI::SetIntroScream(const ResourceReference &audioEvent)
     NOTIFY_COMPONENT_CHANGED( "introScream", m_introScream );
 }
 
+const ResourceReference &BossAI::GetStageScream(void) const
+{
+    return m_stageScream;
+}
+
+void BossAI::SetStageScream(const ResourceReference &audioEvent)
+{
+    m_stageScream = audioEvent;
+
+    NOTIFY_COMPONENT_CHANGED( "stageScream", m_stageScream );
+}
+
 const ResourceReference &BossAI::GetDeathScream(void) const
 {
     return m_deathScream;
@@ -680,6 +692,7 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
+        auto stageScream = sm->AddState<BossPlayAudioEventState>( m_stageScream );
         auto enrage = sm->AddState<BossEnrageState>( );
         auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
@@ -688,6 +701,7 @@ void BossAI::OnInitialize(void)
         auto dazed = sm->AddState<BossDazedState>( );
         auto changePhaseState = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase3 );
 
+        stageScream->AddTransition( enrage, "Enrage" );
         enrage->AddTransition( invulnerable, "To Invulneralbe" );
         invulnerable->AddTransition( spawnVines, "To Spawn Vines" );
         spawnVines->AddTransition( seedshot, "To Seedshot" );
@@ -712,7 +726,7 @@ void BossAI::OnInitialize(void)
                  BossAIStateMachine::Health, sm::Comparison::LessThan, threshold 
              );
 
-        sm->SetInitialState( enrage );
+        sm->SetInitialState( stageScream );
 
         m_bossLogic[ 1 ].push_back( sm );
 
@@ -742,6 +756,7 @@ void BossAI::OnInitialize(void)
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase3, 1.75f );
         auto repositionBoss = sm->AddState<BossPhase3RepositionBoss>( );
         auto blankState = sm->AddState<BossPhase3RepositionBoss>( );
+        auto stageScream = sm->AddState<BossPlayAudioEventState>( m_stageScream );
         auto spawnBoss = sm->AddState<BossSpawnState>( 0.5f );
         auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
         auto seedshot = sm->AddState<BossSeedshotState>( );
@@ -767,7 +782,8 @@ void BossAI::OnInitialize(void)
                       ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
         spawnVines->AddTransition( blankState, "Pause" )
                   ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 11.0f ) );
-        blankState->AddTransition( spawnBoss, "Spawn Boss" );
+        blankState->AddTransition( stageScream, "Scream" );
+        stageScream->AddTransition( spawnBoss, "Spawn Boss" );
         spawnBoss->AddTransition( invulnerable, "Invulneralbe" )
                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 2.0f ) );
         invulnerable->AddTransition( seedshot, "Seedshot" )
@@ -828,6 +844,7 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
+        auto stageScream = sm->AddState<BossPlayAudioEventState>( m_stageScream );
         auto enrage = sm->AddState<BossEnrageState>( );
         auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
@@ -837,6 +854,7 @@ void BossAI::OnInitialize(void)
         auto pollinate = sm->AddState<BossPollinateState>( );
         auto changeTo5 = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase5 );
 
+        stageScream->AddTransition( enrage, "Scream" );
         enrage->AddTransition( invulnerable, "To Invulneralbe" );
         invulnerable->AddTransition( spawnVines, "To Spawn Vines" );
         spawnVines->AddTransition( sludgeshot, "To Seedshot" );
@@ -857,7 +875,7 @@ void BossAI::OnInitialize(void)
                         BossAIStateMachine::Health, sm::Comparison::Equal, 0.0f
                     );
 
-        sm->SetInitialState( enrage );
+        sm->SetInitialState( stageScream );
 
         m_bossLogic[ 3 ].push_back( sm );
 
