@@ -59,6 +59,44 @@ namespace ursine
                 .On( WORLD_UPDATE, &AudioSystem::onUpdate )
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &AudioSystem::onComponentAdded )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &AudioSystem::onComponentRemoved );
+
+            // create global emitter/listener
+            AkSoundPosition emitterPos;
+            AkListenerPosition listenerPos;
+
+
+            // Set Listener to pos 0,0,0 with up dir pointing pos Y, and forward dir pointing neg Z
+            // Set Emitter to pos 0,0,-1 with forward dir pointing pos Z
+            emitterPos.Position.X = 0;
+            emitterPos.Position.Y = 0;
+            emitterPos.Position.Z = 0;
+
+            emitterPos.Orientation.X = -1;
+            emitterPos.Orientation.Y = 0;
+            emitterPos.Orientation.Z = 0;
+
+            listenerPos.Position.X = 0;
+            listenerPos.Position.Y = 0;
+            listenerPos.Position.Z = 0;
+
+            listenerPos.OrientationFront.X = -1;
+            listenerPos.OrientationFront.Z = 0;
+            listenerPos.OrientationFront.Y = 0;
+
+            listenerPos.OrientationTop.X = 0;
+            listenerPos.OrientationTop.Z = 0;
+            listenerPos.OrientationTop.Y = 1;
+
+            AK::SoundEngine::RegisterGameObj(AUDIO_GLOBAL_OBJECT_ID);
+
+            // Set listener 8 to listen to global emitter
+            //AK::SoundEngine::SetActiveListeners(AUDIO_GLOBAL_OBJECT_ID, static_cast<AkUInt32>(ListenerMask::L8));
+
+            // Set emitter position
+            AK::SoundEngine::SetPosition(AUDIO_GLOBAL_OBJECT_ID, emitterPos);
+
+            // Set listener position
+            AK::SoundEngine::SetListenerPosition(listenerPos, static_cast<AkUInt32>(ListenerMask::L8));
         }
 
         void AudioSystem::OnSceneReady(Scene *scene)
@@ -72,7 +110,7 @@ namespace ursine
         void AudioSystem::OnRemove(void)
         {
             StopAllSounds();
-            DeleteAllAudioObjects( );
+            //DeleteAllAudioObjects( );
 
             m_world->Listener( this )
                 .Off( WORLD_UPDATE, &AudioSystem::onUpdate )

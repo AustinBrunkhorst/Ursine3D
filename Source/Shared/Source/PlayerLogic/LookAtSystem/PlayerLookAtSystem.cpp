@@ -1,4 +1,3 @@
-
 /* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2016 DigiPen Institute of Technology, All Rights Reserved.
@@ -19,12 +18,13 @@
 #include "HealthComponent.h"
 #include "UIEvents.h"
 #include "EntityEvent.h"
-#include <UI/UIScreensConfigComponent.h>
 
-ENTITY_SYSTEM_DEFINITION( PlayerLookAtSystem ) ;
+#include <UIScreensConfigComponent.h>
+
+ENTITY_SYSTEM_DEFINITION( PlayerLookAtSystem );
 
 using namespace ursine;
-using namespace ursine::ecs;
+using namespace ecs;
 
 namespace
 {
@@ -35,22 +35,22 @@ namespace
 ////  Base Weapon System  ////
 //////////////////////////////
 
-PlayerLookAtSystem::PlayerLookAtSystem(ursine::ecs::World* world)
-    : FilterSystem( world, Filter( ).All< PlayerLookAt, RaycastComponent, PlayerID >( ) )
+PlayerLookAtSystem::PlayerLookAtSystem(World *world)
+    : FilterSystem( world, Filter( ).All<PlayerLookAt, RaycastComponent, PlayerID>( ) )
 {
 }
 
 
-void PlayerLookAtSystem::Enable(const ursine::ecs::EntityHandle& entity)
+void PlayerLookAtSystem::Enable(const EntityHandle &entity)
 {
-    m_playerLookAtComps[ entity ] = entity->GetComponent< PlayerLookAt >( );
+    m_playerLookAtComps[ entity ] = entity->GetComponent<PlayerLookAt>( );
 
-    m_playerIDs[ entity ] = entity->GetComponent< PlayerID >( )->GetID( );
+    m_playerIDs[ entity ] = entity->GetComponent<PlayerID>( )->GetID( );
 
-    m_raycastComps[ entity ] = entity->GetComponent< RaycastComponent >( );
+    m_raycastComps[ entity ] = entity->GetComponent<RaycastComponent>( );
 }
 
-void PlayerLookAtSystem::Disable(const ursine::ecs::EntityHandle& entity)
+void PlayerLookAtSystem::Disable(const EntityHandle &entity)
 {
     m_playerLookAtComps.erase( entity );
     m_playerIDs.erase( entity );
@@ -61,15 +61,15 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 {
     float dt = Application::Instance->GetDeltaTime( );
 
-    RaycastComponent* rayComp;
-    PlayerLookAt* playerLookComp;
-    Health* enemyHealthComp;
+    RaycastComponent *rayComp;
+    PlayerLookAt *playerLookComp;
+    Health *enemyHealthComp;
 
     EntityHandle enemyHandle;
 
     // send ui Event
-    auto *ui = m_world->GetSettings( )->GetComponent< UIScreensConfig >( );
-    
+    auto *ui = m_world->GetSettings( )->GetComponent<UIScreensConfig>( );
+
     int id;
 
     for (auto playerLookIt : m_playerLookAtComps)
@@ -84,14 +84,18 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
         if (enemyHandle != nullptr)
         {
-            enemyHealthComp = enemyHandle->GetComponent< Health >( );
-
-            // calculate enemy health percentage
-            float enemyHealthPercentage = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
+            enemyHealthComp = enemyHandle->GetComponent<Health>( );
 
             // if not on entity then on root
-            if ( enemyHealthComp == nullptr )
-                enemyHealthComp = enemyHandle->GetRoot( )->GetComponent< Health >( );
+            if (enemyHealthComp == nullptr)
+                enemyHealthComp = enemyHandle->GetRoot( )->GetComponent<Health>( );
+
+            // couldn't find it
+            if (enemyHealthComp == nullptr)
+                continue;
+
+            // calculate enemy health percentage
+            auto enemyHealthPercentage = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
 
             // new obj
             if (enemyHandle != playerLookComp->GetCurrentEnemy( ))
@@ -101,8 +105,8 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
                 // unsubsribe to old enemies death
                 if (currEnemy)
                 {
-                    playerLookComp->GetCurrentEnemy( )->Listener(playerLookComp)
-                        .Off( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+                    playerLookComp->GetCurrentEnemy( )->Listener( playerLookComp )
+                        .Off( ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
                 }
 
                 // change curr enemy
@@ -131,7 +135,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
                 // connect to enemyhit death event
                 enemyHandle->Listener( playerLookComp )
-                    .On( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+                    .On( ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
             }
 
             // not new
@@ -149,7 +153,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             // set timer to 0.0f
             playerLookComp->SetTimer( 0.0f );
         }
-        
+
         // not looking at enemy
         else if (playerLookComp->ReticleActive( ))
         {
@@ -192,9 +196,9 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             // disconnect from death event
             // connect to enemyhit death event
             playerLookComp->GetCurrentEnemy( )->Listener( playerLookComp )
-                .Off( ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+                .Off( ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
 
-            playerLookComp->SetCurrentEnemy( ursine::ecs::EntityHandle( nullptr ) );
+            playerLookComp->SetCurrentEnemy( EntityHandle( nullptr ) );
         }
     }
 }

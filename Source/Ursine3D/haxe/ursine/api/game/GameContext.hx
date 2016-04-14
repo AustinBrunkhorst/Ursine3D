@@ -34,4 +34,8 @@ class GameAudioContext {
     public static inline function PlayGlobalEvent(event : String) {
         untyped AudioPlayGlobalEvent( event );
     }
+
+    public static inline function StopGlobalEvent(event : String) {
+        untyped AudioStopGlobalEvent( event );
+    }
 }

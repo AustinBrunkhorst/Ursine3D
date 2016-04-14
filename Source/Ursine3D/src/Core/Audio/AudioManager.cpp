@@ -74,14 +74,6 @@ namespace
 {
     const AkGameObjectID StartID = 100;
 
-    const std::string kInitBank = "INIT";
-    const std::string kMainBank = "MAIN";
-
-    const std::string kSecondaryBus = "MASTER_SECONDARY_BUS";
-
-    AkBankID BankID = AK_INVALID_BANK_ID;
-    AkBankID MainID = AK_INVALID_BANK_ID;
-
     std::unordered_map<std::string, AkPlayingID> &getCreatedGlobalEvents(void)
     {
         static std::unordered_map<std::string, AkPlayingID> globalEvents;
@@ -326,6 +318,7 @@ namespace ursine
         UAssert( AK::MusicEngine::Init( &musicInit ) == AK_Success,
             "Wwise: Cannot Initialize The Music Engine." 
         );
+
     }
 }
 
