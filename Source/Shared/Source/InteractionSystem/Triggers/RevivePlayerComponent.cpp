@@ -35,7 +35,7 @@ RevivePlayer::RevivePlayer(void) :
 RevivePlayer::~RevivePlayer(void)
 {
     GetOwner( )->GetRoot( )->Listener(this)
-        .On( game::REVIVE_PLAYER, &RevivePlayer::OnRevive );
+        .On( game::REVIVE_PLAYER, &RevivePlayer::OnReviveCheat );
 }
 
 float RevivePlayer::GetReviveTime(void) const
