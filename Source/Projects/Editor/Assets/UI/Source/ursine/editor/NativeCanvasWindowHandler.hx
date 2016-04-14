@@ -47,7 +47,8 @@ class NativeCanvasWindowHandler extends WindowHandler {
             x: bounds.left * js.Browser.window.devicePixelRatio,
             y: bounds.top * js.Browser.window.devicePixelRatio,
             width: bounds.width * js.Browser.window.devicePixelRatio,
-            height: bounds.height * js.Browser.window.devicePixelRatio
+            // @@@TODO: to account for resize border
+            height: (bounds.height - 5) * js.Browser.window.devicePixelRatio
         } );
     }
 }

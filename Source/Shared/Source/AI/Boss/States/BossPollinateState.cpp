@@ -23,6 +23,7 @@
 #include <ParticleEmitterComponent.h>
 #include <GhostComponent.h>
 #include <AnimatorComponent.h>
+#include <BodyComponent.h>
 #include <EntityEvent.h>
 
 using namespace ursine;
@@ -30,7 +31,8 @@ using namespace ecs;
 
 BossPollinateState::BossPollinateState(void)
     : BossAIState( "Boss Pollinate" )
-    , m_boss( nullptr ) { }
+    , m_boss( nullptr )
+    , m_floorDown( true ) { }
 
 void BossPollinateState::Enter(BossAIStateMachine *machine)
 {
@@ -96,6 +98,20 @@ void BossPollinateState::Update(BossAIStateMachine *machine)
 
     if (p2)
         tryDealDamage( p2 );
+
+    // If boty players are in the shield, raise the floor
+    if (!p1 && !p2 && m_floorDown)
+    {
+        auto floor = m_boss->GetPollinateGooFloor( );
+
+        if (floor)
+        {
+            floor->GetComponent<EntityAnimator>( )->Play( );
+            floor->GetComponentInChildren<Body>( )->SetDisableContactResponse( false );
+        }
+
+        m_floorDown = false;
+    }
 
     auto dt = Application::Instance->GetDeltaTime( );
 

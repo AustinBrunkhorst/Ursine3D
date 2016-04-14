@@ -60,6 +60,7 @@ private:
     void StopInteraction(const ursine::ecs::EntityHandle& entity) override;
     void InteractionComplete(void);
 
+    void messageUIToggle(const ursine::ecs::EntityHandle &reviver, bool toggle);
     void messageUIProgress(const ursine::ecs::EntityHandle &reviver, float time);
     void messageUISuccess(const ursine::ecs::EntityHandle &reviver);
 

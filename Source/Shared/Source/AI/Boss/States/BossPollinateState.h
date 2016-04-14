@@ -41,5 +41,7 @@ private:
 
     float m_counter;
 
+    bool m_floorDown;
+
     std::unordered_map<ursine::ecs::EntityHandle, float> m_damageMap;
 };

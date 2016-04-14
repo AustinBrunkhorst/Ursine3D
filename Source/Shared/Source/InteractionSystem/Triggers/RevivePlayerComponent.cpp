@@ -77,6 +77,8 @@ void RevivePlayer::StartInteraction(const ursine::ecs::EntityHandle& entity)
 
     if (m_times.find( entity ) == m_times.end( ))
         m_times[ entity ] = 0.0f;
+
+    messageUIToggle( entity, true );
 }
 
 void RevivePlayer::Interact(const ursine::ecs::EntityHandle& entity)
@@ -109,12 +111,40 @@ void RevivePlayer::StopInteraction(const ursine::ecs::EntityHandle& entity)
 {
     if (entity && m_times.find( entity ) != m_times.end( ))
         m_times[ entity ] = 0.0f;
+
+    messageUIToggle( entity, false );
 }
 
 void RevivePlayer::InteractionComplete(void)
 {
     GetOwner( )->GetRoot( )->Dispatch( game::REVIVE_PLAYER, ursine::ecs::EntityEventArgs::Empty );
     GetOwner( )->Delete( );
+}
+
+void RevivePlayer::messageUIToggle(const ursine::ecs::EntityHandle &reviver, bool toggle)
+{
+    auto world = GetOwner( )->GetWorld( );
+
+    if (!world)
+        return;
+
+    auto settings = world->GetSettings( );
+
+    if (!settings)
+        return;
+
+    auto ui = settings->GetComponent<UIScreensConfig>( );
+
+    if (!ui)
+        return;
+
+    ui_event::PlayerReviveToggle event;
+
+    event.toggle = toggle;
+    event.playerReviving = reviver->GetComponent<PlayerID>( )->GetID( );
+    event.playerDowned = GetOwner( )->GetRoot( )->GetComponent<PlayerID>( )->GetID( );
+
+    ui->TriggerPlayerHUDEvent( event );
 }
 
 void RevivePlayer::messageUIProgress(const EntityHandle &reviver, float time)

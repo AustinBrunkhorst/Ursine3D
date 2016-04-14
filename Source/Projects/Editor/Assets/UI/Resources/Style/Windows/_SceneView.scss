@@ -11,7 +11,8 @@
     left: 0;
     right: 0;
     top: 0;
-    bottom: 0;
+    // @@@TODO: to account for resize border
+    bottom: 5px;
     opacity: 0.5;
     pointer-events: none;
     transition: opacity 200ms ease;

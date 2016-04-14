@@ -1037,7 +1037,7 @@ ursine_editor_NativeCanvasWindowHandler.prototype = $extend(ursine_editor_Window
 	}
 	,onViewportInvalidated: function() {
 		var bounds = this.window.container.getBoundingClientRect();
-		this.m_nativeHandler.Event("viewportInvalidated",{ x : bounds.left * window.devicePixelRatio, y : bounds.top * window.devicePixelRatio, width : bounds.width * window.devicePixelRatio, height : bounds.height * window.devicePixelRatio});
+		this.m_nativeHandler.Event("viewportInvalidated",{ x : bounds.left * window.devicePixelRatio, y : bounds.top * window.devicePixelRatio, width : bounds.width * window.devicePixelRatio, height : (bounds.height - 5) * window.devicePixelRatio});
 	}
 	,__class__: ursine_editor_NativeCanvasWindowHandler
 });
@@ -1798,9 +1798,30 @@ ursine_editor_scene_component_inspectors_fields_ArrayTypeInspector.prototype = {
 		var arrayType = database.getNativeType(this.m_type.arrayType);
 		return database.createFieldInspector(this,value,this.m_field,arrayType);
 	}
+	,expandAllItems: function() {
+		var _g = 0;
+		var _g1 = this.m_arrayItems;
+		while(_g < _g1.length) {
+			var item = _g1[_g];
+			++_g;
+			item.opened = true;
+		}
+	}
+	,collapseAllItems: function() {
+		var _g = 0;
+		var _g1 = this.m_arrayItems;
+		while(_g < _g1.length) {
+			var item = _g1[_g];
+			++_g;
+			item.opened = false;
+		}
+	}
 	,openItemContextMenu: function(e,handler,container) {
 		var _g = this;
 		var menu = new ContextMenuControl();
+		var expandAll = menu.addItem("Expand All",$bind(this,this.expandAllItems));
+		var collapseAll = menu.addItem("Collapse All",$bind(this,this.collapseAllItems));
+		menu.addSeparator();
 		var moveUp = menu.addItem("Move Up",function() {
 			_g.m_owner.entity.m_handler.componentFieldArraySwap(_g.m_owner.component.type,_g.m_field.name,handler.arrayIndex,handler.arrayIndex - 1);
 		});
@@ -2429,8 +2450,10 @@ ursine_editor_scene_ui_ScreenLayoutCache.prototype = {
 };
 var ursine_editor_scene_ui_EditorScreenManager = function(container) {
 	ursine_editor_scene_ui_EditorScreenManager.instance = this;
+	this.globalEvents = new ursine_api_events_EventManager();
 	this.m_nativeManager = new NativeScreenManager();
 	this.m_screens = new haxe_ds_IntMap();
+	this.m_screenMessageQueue = new haxe_ds_IntMap();
 	var _this = window.document;
 	this.m_container = _this.createElement("div");
 	this.m_container.classList.add("screen-manager");
@@ -2480,6 +2503,7 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 		this.m_nativeManager.messageOwner(screen.getID(),message,data);
 	}
 	,messageNativeGlobal: function(message,data) {
+		this.globalEvents.trigger(message,data);
 		this.m_nativeManager.messageGlobal(message,data);
 	}
 	,clearScreens: function() {
@@ -2550,6 +2574,9 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 		if(this.m_screenLoadQueue.exists(guid)) this.m_screenLoadQueue.get(guid).push(callback); else this.m_screenLoadQueue.set(guid,[callback]);
 	}
 	,createScreen: function(path,id,priority,data) {
+		var v = [];
+		this.m_screenMessageQueue.h[id] = v;
+		v;
 		var guid = this.getProjectGUID(path);
 		var readyCallback = (function(f,a1,a2,id1,a3,a4) {
 			return function() {
@@ -2647,6 +2674,14 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 		var screen = Type.createInstance(layout.logicHandlerType,[config]);
 		if(SceneGetPlayState() == 2) screen.pause();
 		this.m_screens.h[id] = screen;
+		var queued = this.m_screenMessageQueue.h[id];
+		var _g = 0;
+		while(_g < queued.length) {
+			var message = queued[_g];
+			++_g;
+			screen.events.trigger(message.message,message.data);
+		}
+		this.m_screenMessageQueue.remove(id);
 	}
 	,getProjectGUID: function(path) {
 		return haxe_io_Path.normalize(path).split("/")[0];
@@ -2743,7 +2778,12 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 		var screen;
 		var key = e.id;
 		screen = this.m_screens.h[key];
-		if(screen != null) screen.events.trigger(e.message,e.data);
+		if(screen == null) ((function($this) {
+			var $r;
+			var key1 = e.id;
+			$r = $this.m_screenMessageQueue.h[key1];
+			return $r;
+		}(this))).push(e); else screen.events.trigger(e.message,e.data);
 	}
 	,onScreensCleared: function() {
 		this.clearScreens();

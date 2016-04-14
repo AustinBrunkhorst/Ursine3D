@@ -168,7 +168,7 @@ void EditorCameraSystem::onMouseScroll(EVENT_HANDLER(MouseManager))
     EVENT_ATTRS(MouseManager, MouseScrollArgs);
 
     // don't update on focus
-    if (!m_hasFocus)
+    if (!m_hasFocus || !m_hasMouseFocus)
         return;
 
     m_camera->lookZoomFactor -= args->delta.Y( ) * 15.0f;

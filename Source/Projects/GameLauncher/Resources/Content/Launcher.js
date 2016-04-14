@@ -108,13 +108,20 @@ Type.createInstance = function(cl,args) {
 };
 var haxe_IMap = function() { };
 haxe_IMap.__name__ = true;
-var haxe_Timer = function() { };
+var haxe_Timer = function(time_ms) {
+	var me = this;
+	this.id = setInterval(function() {
+		me.run();
+	},time_ms);
+};
 haxe_Timer.__name__ = true;
 haxe_Timer.prototype = {
 	stop: function() {
 		if(this.id == null) return;
 		clearInterval(this.id);
 		this.id = null;
+	}
+	,run: function() {
 	}
 	,__class__: haxe_Timer
 };
@@ -405,8 +412,10 @@ ursine_api_ui_ScreenManager.prototype = {
 	__class__: ursine_api_ui_ScreenManager
 };
 var ui_ScreenManager = function(container) {
+	this.globalEvents = new ursine_api_events_EventManager();
 	this.m_nativeManager = new NativeScreenManager();
 	this.m_screens = new haxe_ds_IntMap();
+	this.m_screenMessageQueue = new haxe_ds_IntMap();
 	var _this = window.document;
 	this.m_container = _this.createElement("div");
 	this.m_container.classList.add("screen-manager");
@@ -451,6 +460,7 @@ ui_ScreenManager.prototype = {
 		this.m_nativeManager.messageOwner(screen.getID(),message,data);
 	}
 	,messageNativeGlobal: function(message,data) {
+		this.globalEvents.trigger(message,data);
 		this.m_nativeManager.messageGlobal(message,data);
 	}
 	,clearScreens: function() {
@@ -521,6 +531,9 @@ ui_ScreenManager.prototype = {
 		if(this.m_screenLoadQueue.exists(guid)) this.m_screenLoadQueue.get(guid).push(callback); else this.m_screenLoadQueue.set(guid,[callback]);
 	}
 	,createScreen: function(path,id,priority,data) {
+		var v = [];
+		this.m_screenMessageQueue.h[id] = v;
+		v;
 		var guid = this.getProjectGUID(path);
 		var readyCallback = (function(f,a1,a2,id1,a3,a4) {
 			return function() {
@@ -615,6 +628,14 @@ ui_ScreenManager.prototype = {
 		var config = { project : project, owner : this, id : id, container : element, data : data};
 		var screen = Type.createInstance(layout.logicHandlerType,[config]);
 		this.m_screens.h[id] = screen;
+		var queued = this.m_screenMessageQueue.h[id];
+		var _g = 0;
+		while(_g < queued.length) {
+			var message = queued[_g];
+			++_g;
+			screen.events.trigger(message.message,message.data);
+		}
+		this.m_screenMessageQueue.remove(id);
 	}
 	,getProjectGUID: function(path) {
 		return haxe_io_Path.normalize(path).split("/")[0];
@@ -729,30 +750,140 @@ ursine_api_native_NativeBroadcastManager.prototype = {
 	}
 	,__class__: ursine_api_native_NativeBroadcastManager
 };
-var ursine_api_timers_Timer = function() { };
+var ursine_api_timers_Timer = function(duration) {
+	this.m_duration = duration;
+	this.m_remainingDuration = duration;
+	this.m_paused = false;
+	this.m_cancelled = false;
+	this.m_pausedFromGroup = false;
+	this.m_lastResumed = this.m_lastPaused = new Date().getTime();
+	this.m_repeat = 0;
+	this.m_repeatCallback = null;
+	this.m_completeCallback = null;
+	this.m_handle = new haxe_Timer(duration);
+	this.m_handle.run = $bind(this,this.tickFromRepeat);
+};
 ursine_api_timers_Timer.__name__ = true;
 ursine_api_timers_Timer.prototype = {
-	cancel: function() {
+	pause: function(fromGroup) {
+		if(fromGroup == null) fromGroup = false;
+		if(this.m_cancelled || this.m_paused) return;
+		this.m_handle.stop();
+		this.m_lastPaused = new Date().getTime();
+		this.m_remainingDuration -= this.m_lastPaused - this.m_lastResumed;
+		this.m_paused = true;
+		this.m_pausedFromGroup = fromGroup;
+	}
+	,resume: function() {
+		if(this.m_cancelled || !this.m_paused) return;
+		this.m_paused = false;
+		this.m_handle = new haxe_Timer(this.m_remainingDuration);
+		this.m_handle.run = $bind(this,this.tickFromPause);
+		this.m_lastResumed = new Date().getTime();
+	}
+	,cancel: function() {
 		this.m_handle.stop();
 		this.m_cancelled = true;
 	}
+	,tickFromPause: function() {
+		this.onTimerComplete();
+		this.m_handle.stop();
+		this.m_handle = new haxe_Timer(this.m_duration);
+		this.m_handle.run = $bind(this,this.tickFromRepeat);
+	}
+	,tickFromRepeat: function() {
+		this.onTimerComplete();
+	}
+	,onTimerComplete: function() {
+		if(this.m_repeatCallback) this.m_repeatCallback();
+		if(this.m_repeat == -1) return;
+		if(--this.m_repeat <= 0) {
+			if(this.m_completeCallback) this.m_completeCallback();
+			this.cancel();
+		}
+	}
 	,__class__: ursine_api_timers_Timer
 };
-var ursine_api_timers_TimerManager = function() { };
+var ursine_api_timers_TimerManager = function() {
+	this.m_groups = new haxe_ds_IntMap();
+	this.m_created = [];
+};
 ursine_api_timers_TimerManager.__name__ = true;
 ursine_api_timers_TimerManager.prototype = {
-	cancelAll: function() {
-		var $it0 = this.m_groups.iterator();
+	create: function(duration,group) {
+		if(group == null) group = 0;
+		var timer = new ursine_api_timers_Timer(duration);
+		timer.m_group = group;
+		var container = this.m_groups.h[group];
+		if(container == null) {
+			container = { timers : [timer], paused : false};
+			{
+				this.m_groups.h[group] = container;
+				container;
+			}
+		} else {
+			if(container.paused) timer.pause();
+			container.timers.push(timer);
+		}
+		this.m_created.push(timer);
+		return timer;
+	}
+	,isPaused: function(group) {
+		var container = this.m_groups.h[group];
+		if(container == null) return true; else return container.paused;
+	}
+	,pause: function(group,force) {
+		if(force == null) force = false;
+		var container = this.m_groups.h[group];
+		if(container == null) return;
+		container.paused = true;
+		var _g = 0;
+		var _g1 = container.timers;
+		while(_g < _g1.length) {
+			var timer = _g1[_g];
+			++_g;
+			timer.pause(!force);
+		}
+	}
+	,resume: function(group,force) {
+		if(force == null) force = false;
+		var container = this.m_groups.h[group];
+		if(container == null) return;
+		container.paused = false;
+		var _g = 0;
+		var _g1 = container.timers;
+		while(_g < _g1.length) {
+			var timer = _g1[_g];
+			++_g;
+			if(force || timer.m_pausedFromGroup) timer.resume();
+		}
+	}
+	,pauseAll: function(force) {
+		if(force == null) force = false;
+		var $it0 = this.m_groups.keys();
 		while( $it0.hasNext() ) {
 			var group = $it0.next();
-			var _g = 0;
-			var _g1 = group.timers;
-			while(_g < _g1.length) {
-				var timer = _g1[_g];
-				++_g;
-				this.cancel(timer);
-			}
+			this.pause(group,force);
 		}
+	}
+	,resumeAll: function(force) {
+		if(force == null) force = false;
+		var $it0 = this.m_groups.keys();
+		while( $it0.hasNext() ) {
+			var group = $it0.next();
+			this.resume(group,force);
+		}
+	}
+	,cancelAll: function() {
+		var _g = 0;
+		var _g1 = this.m_created;
+		while(_g < _g1.length) {
+			var timer = _g1[_g];
+			++_g;
+			timer.cancel();
+		}
+		this.m_groups = new haxe_ds_IntMap();
+		this.m_created = [];
 	}
 	,cancel: function(timer) {
 		var container = this.m_groups.h[timer.m_group];
