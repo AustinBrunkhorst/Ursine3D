@@ -64,7 +64,7 @@ void RevivePlayer::OnInitialize(void)
     GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this, Interactable::END);
 
     GetOwner( )->GetRoot( )->Listener( this )
-        .On( game::REVIVE_PLAYER, &RevivePlayer::OnRevive );
+        .On( game::REVIVE_PLAYER_CHEAT, &RevivePlayer::OnReviveCheat);
 }
 
 void RevivePlayer::StartInteraction(const ursine::ecs::EntityHandle& entity)
@@ -111,9 +111,7 @@ void RevivePlayer::Interact(const ursine::ecs::EntityHandle& entity)
         // revive player if time has been met
         if ( *time > m_reviveTime )
         {
-            messageUISuccess( queue->GetOwner( ) );
-
-            InteractionComplete( );
+            InteractionComplete( entity );
         }
     }
     
@@ -127,17 +125,20 @@ void RevivePlayer::StopInteraction(const ursine::ecs::EntityHandle& entity)
     messageUIToggle( entity, false );
 }
 
-void RevivePlayer::InteractionComplete(void)
+void RevivePlayer::InteractionComplete(const ursine::ecs::EntityHandle& entity)
 {
     GetOwner( )->Delete( );
     GetOwner( )->GetRoot( )->Dispatch( game::REVIVE_PLAYER, ursine::ecs::EntityEventArgs::Empty );
     revivedSfx( );
+
+    messageUISuccess( entity );
 }
 
-void RevivePlayer::OnRevive(EVENT_HANDLER(ursine::ecs::Entity))
+void RevivePlayer::OnReviveCheat(EVENT_HANDLER(ursine::ecs::Entity))
 {
-    GetOwner( )->Delete( );
-    revivedSfx( );
+    EVENT_ATTRS( ursine::ecs::Entity, ursine::EventArgs );
+
+    InteractionComplete( sender );
 }
 
 void RevivePlayer::messageUIToggle(const ursine::ecs::EntityHandle &reviver, bool toggle)

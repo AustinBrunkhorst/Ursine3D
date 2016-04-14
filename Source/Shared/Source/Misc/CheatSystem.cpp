@@ -16,6 +16,7 @@
 #include "CheatSystem.h"
 
 #include "PlayerIdComponent.h"
+#include "RevivePlayerComponent.h"
 #include "HealthComponent.h"
 #include "GameEvents.h"
 
@@ -121,12 +122,11 @@ void CheatSystem::onUpdate(EVENT_HANDLER(ursine::ecs:::World))
     if (kbManager->IsTriggeredDown(KEY_I))
     {
         // revive players
-        auto players = m_world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+        auto reviveObjects = m_world->GetEntitiesFromFilter( Filter( ).All<RevivePlayer>( ) );
 
-        for (auto &player : players)
+        for (auto &reviveEntity : reviveObjects )
         {
-            if (player->GetComponent<Health>( )->GetHealth( ) <= 0.0f)
-                player->Dispatch( game::REVIVE_PLAYER, EventArgs::Empty );
+            reviveEntity->Dispatch( game::REVIVE_PLAYER_CHEAT, EventArgs::Empty );
         }
     }
 }

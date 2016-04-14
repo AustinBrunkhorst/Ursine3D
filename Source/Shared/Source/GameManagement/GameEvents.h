@@ -35,6 +35,7 @@ namespace game
         ////  Player events  ////
         /////////////////////////
         REVIVE_PLAYER,
+        REVIVE_PLAYER_CHEAT,
 
 
         /////////////////////////////
