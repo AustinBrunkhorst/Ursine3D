@@ -136,9 +136,6 @@ void RevivePlayer::InteractionComplete(void)
 
 void RevivePlayer::OnRevive(EVENT_HANDLER(ursine::ecs::Entity))
 {
-    if (GetOwner( )->IsDeleting( ))
-        return;
-
     GetOwner( )->Delete( );
     revivedSfx( );
 }
