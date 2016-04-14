@@ -17,6 +17,8 @@
 #include "BossAIComponent.h"
 #include "HealthComponent.h"
 #include "ShieldFxComponent.h"
+#include "PlayerIDComponent.h"
+#include "GameEvents.h"
 
 #include <ParticleEmitterComponent.h>
 
@@ -59,5 +61,17 @@ void BossInvulnerableToggleState::Enter(BossAIStateMachine *machine)
             emitter->PushEvent( boss->GetShieldRebuildSfx( ) );
         else
             emitter->PushEvent( boss->GetShieldBreakSfx( ) );
+    }
+
+    if (!m_toggle)
+    {
+        auto world = boss->GetOwner( )->GetWorld( );
+
+        auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+
+        for (auto &player : players)
+        {
+            player->Dispatch( game::BOSS_SHIELD_DOWN, EventArgs::Empty );
+        }
     }
 }

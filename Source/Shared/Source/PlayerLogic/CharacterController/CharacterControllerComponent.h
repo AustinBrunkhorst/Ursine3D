@@ -109,6 +109,12 @@ public:
     );
 
     EditorField(
+        std::string footStepEmitterEntityName,
+        GetFootStepEmitterEntityName,
+        SetFootStepEmitterEntityName
+    );
+
+    EditorField(
         float stepSfxInterval,
         GetStepSfxInterval,
         SetStepSfxInterval
@@ -170,6 +176,11 @@ public:
     const ursine::resources::ResourceReference &GetFootSfx(void) const;
     void SetFootSfx(const ursine::resources::ResourceReference &audioEvent);
 
+    const std::string &GetFootStepEmitterEntityName(void) const;
+    void SetFootStepEmitterEntityName(const std::string &entityName);
+
+    ursine::ecs::EntityHandle GetFootStepEntity(void);
+
     float GetStepSfxInterval(void) const;
     void SetStepSfxInterval(float interval);
 
@@ -215,6 +226,8 @@ private:
     ursine::resources::ResourceReference m_footSfx;
     ursine::resources::ResourceReference m_jumpSfx;
     ursine::resources::ResourceReference m_landSfx;
+
+    std::string m_footStepEntityName;
 
     float m_stepInterval;
     float m_stepTimer;

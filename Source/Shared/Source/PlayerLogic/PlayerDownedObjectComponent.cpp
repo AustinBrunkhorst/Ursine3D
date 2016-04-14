@@ -89,6 +89,29 @@ void PlayerDownedObject::SetNotDeadSfx(const ResourceReference &sfx)
     NOTIFY_COMPONENT_CHANGED( "notDeadSfx", m_notDeadSfx );
 }
 
+const ResourceReference &PlayerDownedObject::GetBeingRevivedSfx(void) const
+{
+    return m_beingRevivedSfx;
+}
+
+void PlayerDownedObject::SetBeingRevivedSfx(const ResourceReference &sfx)
+{
+    m_beingRevivedSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "beingRevivedSfx", m_beingRevivedSfx );
+}
+
+const ResourceReference &PlayerDownedObject::GetRevivingSfx(void) const
+{
+    return m_revivingSfx;
+}
+
+void PlayerDownedObject::SetRevivingSfx(const ResourceReference &sfx)
+{
+    m_revivingSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "revivingSfx", m_revivingSfx);
+}
 
 void PlayerDownedObject::OnInitialize(void)
 {

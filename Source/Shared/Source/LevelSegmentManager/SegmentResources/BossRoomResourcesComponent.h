@@ -15,6 +15,7 @@
 
 #include <Component.h>
 #include <Array.h>
+#include <AudioItemEventData.h>
 #include <WorldData.h>
 
 class BossRoomResources : public ursine::ecs::Component
@@ -37,6 +38,17 @@ public:
 
     std::string bossTopEntityName;
     std::string bossDoorEntityName;
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        doorCloseSfx,
+        GetDoorCloseSfx,
+        SetDoorCloseSfx
+    );
+
+    const ursine::resources::ResourceReference &GetDoorCloseSfx(void) const;
+    void SetDoorCloseSfx(const ursine::resources::ResourceReference &audioEvent);
+
     std::string bossIntroCinCameraName;
     std::string bossTransitionCameraName;
 
@@ -67,5 +79,6 @@ public:
 
 private:
     ursine::resources::ResourceReference m_worldToMerge;
+    ursine::resources::ResourceReference m_doorCloseSfx;
 
 } Meta(Enable);

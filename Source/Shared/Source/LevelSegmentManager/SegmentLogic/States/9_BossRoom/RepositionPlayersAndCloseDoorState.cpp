@@ -21,6 +21,7 @@
 #include "EntityAnimatorGroupComponent.h"
 #include "BossRoomResourcesComponent.h"
 
+#include <AudioEmitterComponent.h>
 #include <World.h>
 
 using namespace ursine;
@@ -80,4 +81,9 @@ void RepositionPlayersAndCloseDoorState::Enter(SegmentLogicStateMachine *machine
 
     if (animator)
         animator->StopGroupAnimators( );
+
+    auto audioEmitter = bossDoor->GetComponentInChildren<AudioEmitter>( );
+
+    if (audioEmitter)
+        audioEmitter->PushEvent( resources->GetDoorCloseSfx( ) );
 }

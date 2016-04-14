@@ -35,6 +35,7 @@ using namespace ecs;
 Health::Health(void)
     : BaseComponent( )
     , EventDispatcher( this )
+    , m_displayName( "Enemy" )
     , m_type( ENEMY_HEALTH )
     , m_health( 100 )
     , m_maxHealth( 100 )
@@ -51,6 +52,18 @@ Health::~Health(void)
     GetOwner( )->Listener(this)
         .Off( game::REVIVE_PLAYER, &Health::onRevive )
         .Off( ursine::ecs::ENTITY_REMOVED, &Health::onDeath );
+}
+
+const std::string &Health::GetDisplayName(void) const
+{
+    return m_displayName;
+}
+
+void Health::SetDisplayName(const std::string &displayName)
+{
+    m_displayName = displayName;
+
+    NOTIFY_COMPONENT_CHANGED( "displayName", m_displayName );
 }
 
 HealthType Health::GetHealthType(void) const

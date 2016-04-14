@@ -57,6 +57,20 @@ public:
         SetNotDeadSfx
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        beingRevivedSfx,
+        GetBeingRevivedSfx,
+        SetBeingRevivedSfx
+    );
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        revivingSfx,
+        GetRevivingSfx,
+        SetRevivingSfx
+    );
+
 
     PlayerDownedObject(void);
     ~PlayerDownedObject(void);
@@ -73,6 +87,12 @@ public:
     const ursine::resources::ResourceReference &GetNotDeadSfx(void) const;
     void SetNotDeadSfx(const ursine::resources::ResourceReference &sfx);
 
+    const ursine::resources::ResourceReference &GetBeingRevivedSfx(void) const;
+    void SetBeingRevivedSfx(const ursine::resources::ResourceReference &sfx);
+
+    const ursine::resources::ResourceReference &GetRevivingSfx(void) const;
+    void SetRevivingSfx(const ursine::resources::ResourceReference &sfx);
+
 private:
 
     void OnInitialize(void) override;
@@ -87,6 +107,9 @@ private:
     ursine::resources::ResourceReference m_deathSfx;
     ursine::resources::ResourceReference m_whileDeadSfx;
     ursine::resources::ResourceReference m_notDeadSfx;
+
+    ursine::resources::ResourceReference m_beingRevivedSfx;
+    ursine::resources::ResourceReference m_revivingSfx;
 
 } Meta(
     Enable,

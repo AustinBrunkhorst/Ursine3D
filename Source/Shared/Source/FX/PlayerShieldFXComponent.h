@@ -48,6 +48,39 @@ public:
     );
 
     EditorField(
+        float hurtSfxMinDelay,
+        GetHurtSfxMinDelay,
+        SetHurtSfxMinDelay
+    );
+
+    EditorField(
+        float hurtSfxMaxDelay,
+        GetHurtSfxMaxDelay,
+        SetHurtSfxMaxDelay
+    );
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        heartBeatPlaySfx,
+        GetHeartBeatPlaySfx,
+        SetHeartBeatPlaySfx
+    );
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        heartBeatStopSfx,
+        GetHeartBeatStopSfx,
+        SetHeartBeatStopSfx
+    );
+
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        bossShieldDownSfx,
+        GetBossShieldDownSfx,
+        SetBossShieldDownSfx
+    );
+
+    EditorField(
         ursine::Color flashColor,
         GetFlashColor,
         SetFlashColor
@@ -79,6 +112,21 @@ public:
     const ursine::resources::ResourceReference &GetHurtSfx(void) const;
     void SetHurtSfx(const ursine::resources::ResourceReference &sfx);
 
+    float GetHurtSfxMinDelay(void) const;
+    void SetHurtSfxMinDelay(float delay);
+
+    float GetHurtSfxMaxDelay(void) const;
+    void SetHurtSfxMaxDelay(float delay);
+
+    const ursine::resources::ResourceReference &GetHeartBeatPlaySfx(void) const;
+    void SetHeartBeatPlaySfx(const ursine::resources::ResourceReference &sfx);
+
+    const ursine::resources::ResourceReference &GetHeartBeatStopSfx(void) const;
+    void SetHeartBeatStopSfx(const ursine::resources::ResourceReference &sfx);
+
+    const ursine::resources::ResourceReference &GetBossShieldDownSfx(void) const;
+    void SetBossShieldDownSfx(const ursine::resources::ResourceReference &sfx);
+
     const ursine::Color &GetFlashColor(void) const;
     void SetFlashColor(const ursine::Color &color);
 
@@ -91,8 +139,16 @@ private:
     ursine::resources::ResourceReference m_shieldBreakSfx;
     ursine::resources::ResourceReference m_shieldRebuildSfx;
     ursine::resources::ResourceReference m_hurtSfx;
+    ursine::resources::ResourceReference m_heartBeatPlaySfx;
+    ursine::resources::ResourceReference m_heartBeatStopSfx;
+    ursine::resources::ResourceReference m_bossShieldDownSfx;
+
+    float m_hurtSfxTimer;
+    float m_hurtSfxMinDelay, m_hurtSfxMaxDelay;
 
     ursine::Color m_flashColor;
+
+    bool m_playingHeartBeat;
 
     float m_duration;
     float m_timer;
@@ -104,6 +160,7 @@ private:
 
     void onUpdate(EVENT_HANDLER(ursine::ecs::World));
     void onHealthDamaged(EVENT_HANDLER(Health));
+    void onBossShieldDown(EVENT_HANDLER(ursine::ecs::Entity));
 
 } Meta(
     Enable

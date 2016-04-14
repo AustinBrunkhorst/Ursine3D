@@ -36,3 +36,18 @@ void BossRoomResources::SetWorldData(const ursine::resources::ResourceReference 
 
     NOTIFY_COMPONENT_CHANGED( "world", m_worldToMerge );
 }
+
+const ursine::resources::ResourceReference &BossRoomResources::GetDoorCloseSfx(void) const
+{
+    return m_doorCloseSfx;
+}
+
+void BossRoomResources::SetDoorCloseSfx(const ursine::resources::ResourceReference &audioEvent)
+{
+    m_doorCloseSfx = audioEvent;
+
+    if (!resourcesAreAvailable( ))
+        return;
+
+    NOTIFY_COMPONENT_CHANGED( "doorCloseSfx", m_doorCloseSfx );
+}

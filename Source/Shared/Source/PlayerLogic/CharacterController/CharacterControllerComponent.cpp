@@ -202,6 +202,23 @@ void CharacterController::SetFootSfx(const ResourceReference &audioEvent)
     NOTIFY_COMPONENT_CHANGED( "footSfx", m_footSfx );
 }
 
+const std::string &CharacterController::GetFootStepEmitterEntityName(void) const
+{
+    return m_footStepEntityName;
+}
+
+void CharacterController::SetFootStepEmitterEntityName(const std::string &entityName)
+{
+    m_footStepEntityName = entityName;
+
+    NOTIFY_COMPONENT_CHANGED( "footStepEmitterEntityName", m_footStepEntityName );
+}
+
+EntityHandle CharacterController::GetFootStepEntity(void)
+{
+    return GetOwner( )->GetChildByName( m_footStepEntityName );
+}
+
 float CharacterController::GetStepSfxInterval(void) const
 {
     return m_stepInterval;

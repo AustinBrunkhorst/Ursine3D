@@ -15,11 +15,13 @@
 
 #include "PlayerShieldFXComponent.h"
 
+#include "GameEvents.h"
 #include "ShieldFXComponent.h"
 
 #include <World.h>
 #include <Application.h>
 #include <AudioEmitterComponent.h>
+#include <LocalTimerManager.h>
 
 NATIVE_COMPONENT_DEFINITION( PlayerShieldFX );
 
@@ -32,7 +34,11 @@ PlayerShieldFX::PlayerShieldFX(void)
     , m_destroyed( false )
     , m_duration( 0.25f )
     , m_timer( 0.0f )
-    , m_initTimer( 0.1f ) { }
+    , m_initTimer( 0.1f )
+    , m_hurtSfxTimer( 0.0f )
+    , m_hurtSfxMinDelay( 1.0f )
+    , m_hurtSfxMaxDelay( 2.0f )
+    , m_playingHeartBeat( false ) { }
 
 PlayerShieldFX::~PlayerShieldFX(void)
 {
@@ -49,12 +55,18 @@ PlayerShieldFX::~PlayerShieldFX(void)
     if (health)
         health->Listener( this )
             .Off( HEALTH_DAMAGED, &PlayerShieldFX::onHealthDamaged );
+
+    GetOwner( )->Listener( this )
+        .Off( game::BOSS_SHIELD_DOWN, &PlayerShieldFX::onBossShieldDown );
 }
 
 void PlayerShieldFX::OnSceneReady(ursine::Scene *scene)
 {
     GetOwner( )->GetWorld( )->Listener( this )
         .On( WORLD_UPDATE, &PlayerShieldFX::onUpdate );
+
+    GetOwner( )->Listener( this )
+        .On( game::BOSS_SHIELD_DOWN, &PlayerShieldFX::onBossShieldDown );
 }
 
 const ResourceReference &PlayerShieldFX::GetShieldBreakSfx(void) const
@@ -91,6 +103,66 @@ void PlayerShieldFX::SetHurtSfx(const ResourceReference &sfx)
     m_hurtSfx = sfx;
 
     NOTIFY_COMPONENT_CHANGED( "hurtSfx", m_hurtSfx );
+}
+
+float PlayerShieldFX::GetHurtSfxMinDelay(void) const
+{
+    return m_hurtSfxMinDelay;
+}
+
+void PlayerShieldFX::SetHurtSfxMinDelay(float delay)
+{
+    m_hurtSfxMinDelay = delay;
+
+    NOTIFY_COMPONENT_CHANGED( "hurtSfxMinDelay", m_hurtSfxMinDelay );
+}
+
+float PlayerShieldFX::GetHurtSfxMaxDelay(void) const
+{
+    return m_hurtSfxMaxDelay;
+}
+
+void PlayerShieldFX::SetHurtSfxMaxDelay(float delay)
+{
+    m_hurtSfxMaxDelay = delay;
+
+    NOTIFY_COMPONENT_CHANGED( "hurtSfxMaxDelay", m_hurtSfxMaxDelay );
+}
+
+const ResourceReference &PlayerShieldFX::GetHeartBeatPlaySfx(void) const
+{
+    return m_heartBeatPlaySfx;
+}
+
+void PlayerShieldFX::SetHeartBeatPlaySfx(const ResourceReference &sfx)
+{
+    m_heartBeatPlaySfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "heartBeatPlaySfx", m_heartBeatPlaySfx );
+}
+
+const ResourceReference &PlayerShieldFX::GetHeartBeatStopSfx(void) const
+{
+    return m_heartBeatStopSfx;
+}
+
+void PlayerShieldFX::SetHeartBeatStopSfx(const ResourceReference &sfx)
+{
+    m_heartBeatStopSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "heartBeatStopSfx", m_heartBeatStopSfx );
+}
+
+const ResourceReference &PlayerShieldFX::GetBossShieldDownSfx(void) const
+{
+    return m_bossShieldDownSfx;
+}
+
+void PlayerShieldFX::SetBossShieldDownSfx(const ResourceReference &sfx)
+{
+    m_bossShieldDownSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "bossShieldDownSfx", m_bossShieldDownSfx );
 }
 
 const Color &PlayerShieldFX::GetFlashColor(void) const
@@ -221,6 +293,39 @@ void PlayerShieldFX::onUpdate(EVENT_HANDLER(World))
             }
         }
     }
+
+    // Update the heart beat sound effect
+    auto audioEmitter = GetOwner( )->GetComponent<AudioEmitter>( );
+
+    if (m_playingHeartBeat)
+    {
+        if (health->GetHealth( ) <= 0.0f)
+        {
+            audioEmitter->PushEvent( m_heartBeatStopSfx );
+            m_playingHeartBeat = false;
+        }
+    }
+    else
+    {
+        if (health->GetHealth( ) > 0.0f)
+        {
+            audioEmitter->PushEvent( m_heartBeatPlaySfx );
+            m_playingHeartBeat = true;
+        }
+    }
+
+    if (m_playingHeartBeat)
+    {
+        auto event = std::make_shared<AudioRTPC>( );
+
+        event->parameter = "Health";
+        event->val = 100.0f * (health->GetHealth( ) / health->GetMaxHealth( ));
+
+        audioEmitter->PushEvent( event );
+    }
+
+    if (m_hurtSfxTimer > 0.0f)
+        m_hurtSfxTimer -= dt;
 }
 
 void PlayerShieldFX::onHealthDamaged(EVENT_HANDLER(Health))
@@ -232,6 +337,22 @@ void PlayerShieldFX::onHealthDamaged(EVENT_HANDLER(Health))
         m_timer = m_duration;
     }
     else
+    {
+        if (m_hurtSfxTimer > 0.0f)
+            return;
+
         // play hurt sound effect
         GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent( m_hurtSfx );
+
+        m_hurtSfxTimer = math::Rand( m_hurtSfxMinDelay, m_hurtSfxMaxDelay );
+    }
+
+}
+
+void PlayerShieldFX::onBossShieldDown(EVENT_HANDLER(Entity))
+{
+    // delay it for a little bit
+    GetOwner( )->GetTimers( ).Create( TimeSpan::FromSeconds( math::Rand( 1.0f, 4.0f ) ) ).Completed( [=] {
+        GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent( m_bossShieldDownSfx );
+    } );
 }

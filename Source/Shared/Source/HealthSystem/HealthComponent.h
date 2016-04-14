@@ -61,6 +61,12 @@ class Health
 
 public:
     EditorField(
+        std::string displayName,
+        GetDisplayName,
+        SetDisplayName
+    );
+
+    EditorField(
         HealthType healthType,
         GetHealthType,
         SetHealthType
@@ -125,6 +131,9 @@ public:
     Health(void);
     ~Health(void);
 
+    const std::string &GetDisplayName(void) const;
+    void SetDisplayName(const std::string &displayName);
+
     HealthType GetHealthType(void) const;
     void SetHealthType(HealthType type);
 
@@ -174,6 +183,8 @@ private:
     void onRevive(EVENT_HANDLER(ursine::ecs::Entity));
 
     void sendDamageUIEvent(const ursine::ecs::EntityHandle &damager, float damage);
+
+    std::string m_displayName;
 
     HealthType m_type;
 
