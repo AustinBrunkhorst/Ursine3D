@@ -264,6 +264,11 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
     if (args->component == nullptr || !args->entity)
         return;
 
+    auto selected = args->entity->HasComponent<ecs::Selected>( );
+
+    if (!selected || m_project->GetScene( ).GetPlayState( ) == PS_PLAYING)
+        return;
+
     auto component = 
         meta::Variant( args->component, meta::variant_policy::WrapObject( ) );
 
@@ -289,6 +294,11 @@ void EditorEntityManager::onComponentRemoved(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::ComponentEventArgs);
 
+    auto selected = args->entity->HasComponent<ecs::Selected>( );
+
+    if (!selected || m_project->GetScene( ).GetPlayState( ) == PS_PLAYING)
+        return;
+
     Json message = Json::object {
         { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
         { "component", args->component->GetType( ).GetName( ) },
@@ -308,35 +318,37 @@ void EditorEntityManager::onComponentChanged(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorComponentChangedArgs);
 
-    if (args->entity->HasComponent<ecs::Selected>( ))
-    {
-        auto componentType = args->component->GetType( );
-        auto field = componentType.GetField( args->field );
+    auto selected = args->entity->HasComponent<ecs::Selected>( );
 
-        UAssert( field.IsValid( ),
-            "Notifying change of unknown field.\n"
-            "Component: %s\n"
-            "Field: %s",
-            componentType.GetName( ).c_str( ),
-            args->field.c_str( )
-        );
+    if (!selected || m_project->GetScene( ).GetPlayState( ) == PS_PLAYING)
+        return;
 
-        auto invokeHook = field.GetMeta( ).GetProperty<ForceSerializationHook>( ) != nullptr;
+    auto componentType = args->component->GetType( );
+    auto field = componentType.GetField( args->field );
 
-        Json message = Json::object {
-            { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
-            { "component", componentType.GetName( ) },
-            { "field", args->field },
-            { "value", args->value.GetType( ).SerializeJson( args->value, invokeHook ) }
-        };
+    UAssert( field.IsValid( ),
+        "Notifying change of unknown field.\n"
+        "Component: %s\n"
+        "Field: %s",
+        componentType.GetName( ).c_str( ),
+        args->field.c_str( )
+    );
 
-        m_editor->GetMainWindow( ).GetUI( )->Message(
-            UI_CMD_BROADCAST, 
-            channel::EntityManager, 
-            events::component::Changed,
-            message
-        );
-    }
+    auto invokeHook = field.GetMeta( ).GetProperty<ForceSerializationHook>( ) != nullptr;
+
+    Json message = Json::object {
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
+        { "component", componentType.GetName( ) },
+        { "field", args->field },
+        { "value", args->value.GetType( ).SerializeJson( args->value, invokeHook ) }
+    };
+
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST, 
+        channel::EntityManager, 
+        events::component::Changed,
+        message
+    );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -345,8 +357,11 @@ void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
 {
     EVENT_ATTRS(ecs::World, ecs::EditorComponentArrayModfiedArgs);
 
-    if (args->entity->HasComponent<ecs::Selected>( ))
-    {
+    auto selected = args->entity->HasComponent<ecs::Selected>( );
+
+    if (!selected || m_project->GetScene( ).GetPlayState( ) == PS_PLAYING)
+        return;
+
     #if defined(CONFIG_DEBUG)
         UAssert( args->component->GetType( ).GetField( args->field ).IsValid( ),
             "Notifying change of unknown field.\n"
@@ -357,35 +372,34 @@ void EditorEntityManager::onComponentArrayModified(EVENT_HANDLER(ecs::World))
         );
     #endif
 
-        Json::object message = Json::object {
-            { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
-            { "component", args->component->GetType( ).GetName( ) },
-            { "field", args->field },
-            { "index", static_cast<int>( args->modification.index ) }
-        };
+    Json::object message = Json::object {
+        { "uniqueID", static_cast<int>( args->entity->GetID( ) ) },
+        { "component", args->component->GetType( ).GetName( ) },
+        { "field", args->field },
+        { "index", static_cast<int>( args->modification.index ) }
+    };
 
-        if (args->modification.value.IsValid( ))
-        {
-            // note: false is to ensure no serialization hooks are called
-            message[ "value" ] = args->modification.value.GetType( ).SerializeJson( args->modification.value, false );
-        }
-        else
-        {
-            message[ "value" ] = nullptr;
-        }
-
-        static std::unordered_map<ArrayModifyAction, std::string> actionToType
-        {
-            { AMODIFY_INSERT, events::component::ArrayInserted },
-            { AMODIFY_SET, events::component::ArraySet },
-            { AMODIFY_REMOVE, events::component::ArrayRemove }
-        };
-
-        m_editor->GetMainWindow( ).GetUI( )->Message(
-            UI_CMD_BROADCAST, 
-            channel::EntityManager, 
-            actionToType[ args->modification.action ],
-            message
-        );
+    if (args->modification.value.IsValid( ))
+    {
+        // note: false is to ensure no serialization hooks are called
+        message[ "value" ] = args->modification.value.GetType( ).SerializeJson( args->modification.value, false );
     }
+    else
+    {
+        message[ "value" ] = nullptr;
+    }
+
+    static std::unordered_map<ArrayModifyAction, std::string> actionToType
+    {
+        { AMODIFY_INSERT, events::component::ArrayInserted },
+        { AMODIFY_SET, events::component::ArraySet },
+        { AMODIFY_REMOVE, events::component::ArrayRemove }
+    };
+
+    m_editor->GetMainWindow( ).GetUI( )->Message(
+        UI_CMD_BROADCAST, 
+        channel::EntityManager, 
+        actionToType[ args->modification.action ],
+        message
+    );
 }

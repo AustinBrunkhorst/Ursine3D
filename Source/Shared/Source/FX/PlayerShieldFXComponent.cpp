@@ -16,6 +16,7 @@
 #include "PlayerShieldFXComponent.h"
 
 #include "GameEvents.h"
+#include "SlimePitComponent.h"
 #include "ShieldFXComponent.h"
 
 #include <World.h>
@@ -189,6 +190,18 @@ void PlayerShieldFX::SetFlashDuration(float duration)
     NOTIFY_COMPONENT_CHANGED( "flashDuration", m_duration );
 }
 
+const ResourceReference &PlayerShieldFX::GetSlimeDamageSfx(void) const
+{
+    return m_slimeDamageSfx;
+}
+
+void PlayerShieldFX::SetSlimeDamageSfx(const ResourceReference &sfx)
+{
+    m_slimeDamageSfx = sfx;
+
+    NOTIFY_COMPONENT_CHANGED( "slimeDamageSfx", m_slimeDamageSfx );
+}
+
 void PlayerShieldFX::onUpdate(EVENT_HANDLER(World))
 {
     auto health = GetOwner( )->GetComponent<Health>( );
@@ -330,6 +343,8 @@ void PlayerShieldFX::onUpdate(EVENT_HANDLER(World))
 
 void PlayerShieldFX::onHealthDamaged(EVENT_HANDLER(Health))
 {
+    EVENT_ATTRS(Health, HealthEventArgs);
+
     auto health = GetOwner( )->GetComponent<Health>( );
 
     if (health->GetShieldHealth( ) > 0.0f)
@@ -347,6 +362,10 @@ void PlayerShieldFX::onHealthDamaged(EVENT_HANDLER(Health))
         m_hurtSfxTimer = math::Rand( m_hurtSfxMinDelay, m_hurtSfxMaxDelay );
     }
 
+    if (args->damager->GetRoot( )->HasComponent<SlimePit>( ))
+    {
+        GetOwner( )->GetComponent<AudioEmitter>( )->PushEvent( m_slimeDamageSfx );
+    }
 }
 
 void PlayerShieldFX::onBossShieldDown(EVENT_HANDLER(Entity))

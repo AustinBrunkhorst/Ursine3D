@@ -98,6 +98,13 @@ public:
         SetFlashDuration
     );
 
+    EditorResourceField(
+        ursine::resources::AudioItemEventData,
+        slimeDamageSfx,
+        GetSlimeDamageSfx,
+        SetSlimeDamageSfx
+    );
+
     PlayerShieldFX(void);
     ~PlayerShieldFX(void);
 
@@ -133,6 +140,9 @@ public:
     float GetFlashDuration(void) const;
     void SetFlashDuration(float duration);
 
+    const ursine::resources::ResourceReference &GetSlimeDamageSfx(void) const;
+    void SetSlimeDamageSfx(const ursine::resources::ResourceReference &sfx);
+
 private:
     bool m_destroyed;
 
@@ -142,6 +152,7 @@ private:
     ursine::resources::ResourceReference m_heartBeatPlaySfx;
     ursine::resources::ResourceReference m_heartBeatStopSfx;
     ursine::resources::ResourceReference m_bossShieldDownSfx;
+    ursine::resources::ResourceReference m_slimeDamageSfx;
 
     float m_hurtSfxTimer;
     float m_hurtSfxMinDelay, m_hurtSfxMaxDelay;
