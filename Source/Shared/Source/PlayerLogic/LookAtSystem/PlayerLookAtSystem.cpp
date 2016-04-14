@@ -96,7 +96,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             float enemyHealthPercentage = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
 
             // new obj
-            if (!playerLookComp->ReticleActive( ))
+            if (!playerLookComp->ReticleActive( ) || playerLookComp->GetCurrentEnemy( ) != enemyHandle)
             {
                 auto currEnemy = playerLookComp->GetCurrentEnemy( );
 
@@ -132,8 +132,9 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
                 }
 
                 // connect to enemyhit death event
-                enemyHandle->Listener( playerLookComp )
-                    .On( ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+                enemyHandle->Listener(playerLookComp)
+                    .On(ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath);
+
             }
 
             // not new
