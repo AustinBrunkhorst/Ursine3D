@@ -30,46 +30,58 @@ namespace
 {
     void SendReticleActiveEvent(UIScreensConfig* ui, int id, bool state)
     {
-        // crete reticle event
-        ui_event::ReticleActive reticleEvent;
-        reticleEvent.playerID = id;
-        reticleEvent.active = state;
+        if ( ui )
+        {
+            // crete reticle event
+            ui_event::ReticleActive reticleEvent;
+            reticleEvent.playerID = id;
+            reticleEvent.active = state;
 
-        ui->TriggerPlayerHUDEvent(reticleEvent);
+            ui->TriggerPlayerHUDEvent(reticleEvent);
+        }
     }
 
     void SendHealthTrackStartEvent(UIScreensConfig* ui, int id, const std::string& dispName, float healthPercent)
     {
-        // create track event for ui
-        ui_event::HealthTrackStart trackEvent;
+        if ( ui )
+        {
+            // create track event for ui
+            ui_event::HealthTrackStart trackEvent;
 
-        trackEvent.playerID = id;
-        trackEvent.enemyName = dispName;
-        trackEvent.healthPercent = healthPercent;
+            trackEvent.playerID = id;
+            trackEvent.enemyName = dispName;
+            trackEvent.healthPercent = healthPercent;
 
-        ui->TriggerPlayerHUDEvent(trackEvent);
+            ui->TriggerPlayerHUDEvent(trackEvent);
+        }
     }
 
     void SendHealthTrackUpdateEvent(UIScreensConfig* ui, int id, float healthPercent)
     {
-        // create track update event
-        ui_event::HealthTrackUpdate trackEvent;
+        if ( ui )
+        {
+            // create track update event
+            ui_event::HealthTrackUpdate trackEvent;
 
-        trackEvent.playerID = id;
-        trackEvent.healthPercent = healthPercent;
+            trackEvent.playerID = id;
+            trackEvent.healthPercent = healthPercent;
 
-        ui->TriggerPlayerHUDEvent(trackEvent);
+            ui->TriggerPlayerHUDEvent(trackEvent);
+        }
     }
 
     void SendHealthTrackEndEvent(UIScreensConfig* ui, int id)
     {
-        // create track end event
-        ui_event::HealthTrackEnd trackEvent;
+        if ( ui )
+        {
+            // create track end event
+            ui_event::HealthTrackEnd trackEvent;
 
-        trackEvent.playerID = id;
-        trackEvent.enemyKilled = false;
+            trackEvent.playerID = id;
+            trackEvent.enemyKilled = false;
 
-        ui->TriggerPlayerHUDEvent(trackEvent);
+            ui->TriggerPlayerHUDEvent(trackEvent);
+        }
     }
 
 } // unnamed namespace
@@ -147,7 +159,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
                 auto &currEnemyHealth = playerLookComp->GetCurrentEnemyHealth( );
 
                 // unsubsribe to old enemies death
-                if (currEnemyHealth)
+                if (currEnemyHealth != nullptr)
                 {
                     currEnemyHealth->Listener( playerLookComp )
                         .Off( HealthEvents::HEALTH_ZERO, &PlayerLookAt::onEnemyDeath );
@@ -159,21 +171,17 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
                 playerLookComp->SetReticleActive( true );
                 playerLookComp->SetHealthPercent( enemyHealthPercentage );
 
-                if (ui)
-                {
-                    SendHealthTrackStartEvent( ui, id, enemyHealthComp->GetDisplayName( ), enemyHealthPercentage );
-
-                    SendReticleActiveEvent( ui, id, true );
-                }
+                // send ui events
+                SendHealthTrackStartEvent( ui, id, enemyHealthComp->GetDisplayName( ), enemyHealthPercentage );
+                SendReticleActiveEvent( ui, id, true );
 
                 // connect to enemyhit death event
                 enemyHealthComp->Listener(playerLookComp)
                     .On( HealthEvents::HEALTH_ZERO, &PlayerLookAt::onEnemyDeath );
-
             }
 
             // not new
-            else if (ui && enemyHealthPercentage != playerLookComp->GetHealthPercent( ))
+            else if (enemyHealthPercentage != playerLookComp->GetHealthPercent( ))
             {
                 SendHealthTrackUpdateEvent( ui, id, enemyHealthPercentage );
             }
@@ -187,11 +195,8 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         {
             playerLookComp->SetReticleActive( false );
 
-            if (ui)
-            {
-                SendReticleActiveEvent( ui, id, false );
-            }
-        }
+            SendReticleActiveEvent( ui, id, false );
+        } 
 
         // increment timer
         if (!playerLookComp->ReticleActive( ))
@@ -202,23 +207,19 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         {
             playerLookComp->SetTimer( 0.0f );
 
+            SendHealthTrackEndEvent(ui, id);
+
             auto currEnemy = playerLookComp->GetCurrentEnemy( );
 
             if (currEnemy == nullptr)
                 continue;
 
-            if (ui)
-            {
-                SendHealthTrackEndEvent( ui, id );
-            }
-
             // disconnect from death event
             // connect to enemyhit death event
-            Health *health = currEnemy->GetRoot( )->GetComponent<Health>( );
-
-            if ( health )
+            auto currEnemyHealth = playerLookComp->GetCurrentEnemyHealth( );
+            if (currEnemyHealth != nullptr)
             {
-                health->Listener( playerLookComp )
+                currEnemyHealth->Listener( playerLookComp )
                     .Off( HEALTH_ZERO, &PlayerLookAt::onEnemyDeath );
             }
 
@@ -228,4 +229,4 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
     }
 }
 
-void 
+
