@@ -140,7 +140,7 @@ void TutorialDialogueManager::dispatchUIEventForSegment(LevelSegments segment)
 
     if (lines == nullptr)
     {
-        if (segment > LevelSegments::BossRoom_Platforming)
+        if (segment > LevelSegments::BossRoom_Platforming && segment < LevelSegments::BossRoom_Phase5)
         {
             // send clear dialogue event
             ui_event::ClearDialogue event;
