@@ -56,7 +56,7 @@ const ursine::resources::ResourceReference& RevivePlayer::GetTexture(void) const
 void RevivePlayer::SetTexture(const ursine::resources::ResourceReference& texture)
 {
     m_texture = texture;
-    NOTIFY_COMPONENT_CHANGED("Texture", m_texture);
+    NOTIFY_COMPONENT_CHANGED( "Texture", m_texture );
 }
 
 void RevivePlayer::OnInitialize(void)
@@ -64,7 +64,7 @@ void RevivePlayer::OnInitialize(void)
     GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this, Interactable::END);
 
     GetOwner( )->Listener( this )
-        .On( game::REVIVE_PLAYER_CHEAT, &RevivePlayer::OnReviveCheat);
+        .On( game::REVIVE_PLAYER_CHEAT, &RevivePlayer::OnReviveCheat );
 }
 
 void RevivePlayer::StartInteraction(const ursine::ecs::EntityHandle& entity)
@@ -115,7 +115,9 @@ void RevivePlayer::Interact(const ursine::ecs::EntityHandle& entity)
 
             health->SetShieldHealth( health->GetMaxShieldHealth( ) );
 
-            InteractionComplete( entity );
+            messageUISuccess(entity);
+
+            InteractionComplete( );
         }
     }
     
@@ -129,20 +131,20 @@ void RevivePlayer::StopInteraction(const ursine::ecs::EntityHandle& entity)
     messageUIToggle( entity, false );
 }
 
-void RevivePlayer::InteractionComplete(const ursine::ecs::EntityHandle& entity)
+void RevivePlayer::InteractionComplete(void)
 {
     GetOwner( )->Delete( );
     GetOwner( )->GetRoot( )->Dispatch( game::REVIVE_PLAYER, ursine::ecs::EntityEventArgs::Empty );
     revivedSfx( );
-
-    messageUISuccess( entity );
 }
 
 void RevivePlayer::OnReviveCheat(EVENT_HANDLER(ursine::ecs::Entity))
 {
     EVENT_ATTRS( ursine::ecs::Entity, ursine::EventArgs );
 
-    InteractionComplete( sender );
+    messageUISuccess( ursine::ecs::EntityHandle( nullptr ) );
+
+    InteractionComplete( );
 }
 
 void RevivePlayer::messageUIToggle(const ursine::ecs::EntityHandle &reviver, bool toggle)
@@ -197,7 +199,7 @@ void RevivePlayer::messageUIProgress(const EntityHandle &reviver, float time)
     ui->TriggerPlayerHUDEvent( event );
 }
 
-void RevivePlayer::messageUISuccess(const EntityHandle &reviver)
+void RevivePlayer::messageUISuccess(const EntityHandle &)
 {
     auto world = GetOwner( )->GetWorld( );
 
@@ -216,8 +218,14 @@ void RevivePlayer::messageUISuccess(const EntityHandle &reviver)
 
     ui_event::PlayerReviveSuccess event;
 
-    event.playerReviving = reviver->GetComponent<PlayerID>( )->GetID( );
     event.playerRevived = GetOwner( )->GetRoot( )->GetComponent<PlayerID>( )->GetID( );
+
+    if ( event.playerRevived == 1 )
+        event.playerReviving = 0;
+
+    else
+        event.playerReviving = 1;
+    
 
     ui->TriggerPlayerHUDEvent( event );
 }

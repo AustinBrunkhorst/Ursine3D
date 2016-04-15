@@ -58,7 +58,7 @@ private:
     void StartInteraction(const ursine::ecs::EntityHandle& entity) override;
     void Interact(const ursine::ecs::EntityHandle& entity) override;
     void StopInteraction(const ursine::ecs::EntityHandle& entity) override;
-    void InteractionComplete(const ursine::ecs::EntityHandle& entity);
+    void InteractionComplete(void);
 
     void OnReviveCheat(EVENT_HANDLER(ursine::ecs::Entity));
 
