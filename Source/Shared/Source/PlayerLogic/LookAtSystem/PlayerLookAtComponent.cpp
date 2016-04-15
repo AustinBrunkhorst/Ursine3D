@@ -99,12 +99,12 @@ void PlayerLookAt::SetCurrentEnemy(ursine::ecs::EntityHandle& entity)
     m_currEnemy = entity;
 }
 
-Health* PlayerLookAt::GetCurrentEnemyHealth(void) const
+const ecs::Component::Handle<Health> &PlayerLookAt::GetCurrentEnemyHealth(void) const
 {
     return m_currEnemyHealth;
 }
 
-void PlayerLookAt::SetCurrentEnemyHealth(Health* healthComp)
+void PlayerLookAt::SetCurrentEnemyHealth(const Handle<Health> &healthComp)
 {
     m_currEnemyHealth = healthComp;
 }

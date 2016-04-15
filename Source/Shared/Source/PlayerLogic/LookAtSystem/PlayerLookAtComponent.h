@@ -27,8 +27,9 @@ namespace ursine
 class PlayerLookAt : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
-public:
 
+public:
+    Meta(Enable)
     PlayerLookAt(void);
     ~PlayerLookAt(void);
 
@@ -36,7 +37,7 @@ public:
         float DelayTime,
         GetDelayTime,
         SetDelayTime
-        );
+    );
 
     float GetDelayTime(void) const;
     void SetDelayTime(float time);
@@ -54,9 +55,8 @@ public:
     const ursine::ecs::EntityHandle& GetCurrentEnemy(void) const;
     void SetCurrentEnemy(ursine::ecs::EntityHandle& entity);
 
-    Health* GetCurrentEnemyHealth(void) const;
-
-    void SetCurrentEnemyHealth(Health* healthComp);
+    const Handle<Health> &GetCurrentEnemyHealth(void) const;
+    void SetCurrentEnemyHealth(const Handle<Health> &healthComp);
 
     void onEnemyDeath(EVENT_HANDLER(ursine::ecs::Entity));
 
@@ -74,9 +74,9 @@ private:
 
     ursine::ecs::EntityHandle m_currEnemy;
 
-    Health* m_currEnemyHealth;
+    Handle<Health> m_currEnemyHealth;
 
     bool m_reticleActive;
 
 
-} Meta(Enable, DisplayName("PlayerLookAt"));
+} Meta(Enable, WhiteListMethods, DisplayName("PlayerLookAt"));
