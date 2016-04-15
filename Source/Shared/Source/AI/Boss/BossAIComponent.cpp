@@ -667,6 +667,7 @@ void BossAI::OnInitialize(void)
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
         auto playScream = sm->AddState<BossPlayAudioEventState>( m_introScream );
+        auto stageScream = sm->AddState<BossPlayAudioEventState>( m_stageScream );
         auto spawnBoss = sm->AddState<BossSpawnState>( 1.0f, true );
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 3.0f );
         auto spawnVines2 = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase1, 0.5f );
@@ -686,7 +687,8 @@ void BossAI::OnInitialize(void)
                 ->AddCondition<sm::IntCondition>( 
                     BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
                 );
-        vulnerable->AddTransition( dazed, "To Dazed" );
+        vulnerable->AddTransition( stageScream, "To Scream" );
+        stageScream->AddTransition( dazed, "To Dazed" );
 
         // Go back to spawning vines if the reset timer is up
         dazed->AddTransition( invulnerable2, "Back To Invulnerable" )
@@ -729,6 +731,7 @@ void BossAI::OnInitialize(void)
         auto spawnVines = sm->AddState<BossSpawnVinesState>( LevelSegments::BossRoom_Phase2, 1.0f );
         auto seedshot = sm->AddState<BossSeedshotState>( );
         auto dazed = sm->AddState<BossDazedState>( );
+        auto scream = sm->AddState<BossPlayAudioEventState>(m_stageScream);
         auto changePhaseState = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase3 );
 
         stageScream->AddTransition( enrage, "Enrage" );
@@ -739,7 +742,8 @@ void BossAI::OnInitialize(void)
                 ->AddCondition<sm::IntCondition>( 
                     BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 
                 );
-        vulnerable->AddTransition( dazed, "To Dazed" );
+        vulnerable->AddTransition( scream, "Scream" );
+        scream->AddTransition( dazed, "To Dazed" );
 
         // Go back to spawning vines if the reset timer is up
         dazed->AddTransition( invulnerable, "Back To Invulnerable" )
@@ -806,6 +810,7 @@ void BossAI::OnInitialize(void)
         auto repositionCenter = sm->AddState<BossPhase3RepositionBoss>( false, true );
         auto spawnCenter = sm->AddState<BossSpawnState>( );
         auto changePhaseState = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase4 );
+        auto scream = sm->AddState<BossPlayAudioEventState>( m_stageScream );
 
         goUnderground->AddTransition( waitTillTrigger, "To Waiting For Trigger" );
         waitTillTrigger->AddTransition( repositionBoss, "To Reposition Boss" );
@@ -836,7 +841,8 @@ void BossAI::OnInitialize(void)
                   ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( m_phase3AfterSludgeshotDelay ) );
         goUnderground4->AddTransition( reposition3, "Reposition" );
         reposition3->AddTransition( spawn3, "Spawn again" );
-        spawn3->AddTransition( sludgeshot, "Sludgeshot" );
+        spawn3->AddTransition( scream, "Scream" );
+        scream->AddTransition( sludgeshot, "Sludgeshot" );
         
 
         // Go to the center position and become dazed once the bosses health has droped below the threshold
@@ -886,6 +892,7 @@ void BossAI::OnInitialize(void)
         auto seedshot = sm->AddState<BossSeedshotState>( );
         auto pollinate = sm->AddState<BossPollinateState>( );
         auto changeTo5 = sm->AddState<BossChangePhaseState>( LevelSegments::BossRoom_Phase5 );
+        auto scream = sm->AddState<BossPlayAudioEventState>( m_stageScream );
 
         stageScream->AddTransition( enrage, "Scream" );
         enrage->AddTransition( invulnerable, "To Invulneralbe" );
@@ -901,7 +908,8 @@ void BossAI::OnInitialize(void)
         sludgeshot->AddTransition( vulnerable, "Vulnerable" )
                   ->AddCondition<sm::IntCondition>( BossAIStateMachine::VineCount, sm::Comparison::Equal, 0 );
 
-        vulnerable->AddTransition( pollinate, "To Pollinate" );
+        vulnerable->AddTransition( scream, "Scream" );
+        scream->AddTransition( pollinate, "To Pollinate" );
 
         pollinate->AddTransition( changeTo5, "Change to 5" )
                  ->AddCondition<sm::FloatCondition>( 
