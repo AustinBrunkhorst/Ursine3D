@@ -27,15 +27,17 @@ JSFunction(GameContextSetWindowFullScreen)
 
 JSFunction(GameSetVolume)
 {
-    if (arguments.size() != 2)
-        JSThrow("Invalid arguments.", nullptr);
+    if (arguments.size( ) != 2)
+        JSThrow( "Invalid arguments.", nullptr );
 
-    auto volume = static_cast<float>(arguments[0]->GetDoubleValue());
-    auto outputType = arguments[1]->GetStringValue();
+    auto volume = static_cast<float>( arguments[ 0 ]->GetDoubleValue( ) );
+    auto outputType = arguments[ 1 ]->GetStringValue( );
 
-    GetCoreSystem(Editor)->GetProject()->GetScene().GetGameContext()->SetVolume(volume, outputType);
+    ursine::Application::PostMainThread( [=] {
+        GetCoreSystem( GameLauncher )->GetScene( ).GetGameContext( )->SetVolume( volume, outputType );
+    } );
 
-    return CefV8Value::CreateBool(true);
+    return CefV8Value::CreateBool( true );
 }
 
 JSFunction(GameContextExitGame)
