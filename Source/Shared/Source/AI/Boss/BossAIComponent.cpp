@@ -399,6 +399,18 @@ void BossAI::SetPollinateSafetyShieldEntityName(const std::string &name)
     NOTIFY_COMPONENT_CHANGED( "pollinateSafetyShieldEntityName", m_pollinateSafetyShield );
 }
 
+const std::string &BossAI::GetPollinateSafetyArrowsEntityName(void) const
+{
+    return m_pollinateSafetyArrows;
+}
+
+void BossAI::SetPollinateSafetyArrowsEntityName(const std::string &name)
+{
+    m_pollinateSafetyArrows = name;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateSafetyArrowsEntityName", m_pollinateSafetyArrows );
+}
+
 const std::string &BossAI::GetPollinateGooFloorEntityName(void) const
 {
     return m_pollinateGooFloor;
@@ -547,6 +559,11 @@ EntityHandle BossAI::GetPollinateSafetyShield(void)
 EntityHandle BossAI::GetPollinateGooFloor(void)
 {
     return GetOwner( )->GetWorld( )->GetEntityFromName( m_pollinateGooFloor );
+}
+
+EntityHandle BossAI::GetPollinateSafetyArrows(void)
+{
+    return GetOwner( )->GetWorld( )->GetEntityFromName( m_pollinateSafetyArrows );
 }
 
 void BossAI::AddSpawnedVine(EntityHandle vine)
@@ -705,7 +722,7 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
-        auto stageScream = sm->AddState<BossPlayAudioEventState>( m_stageScream );
+        auto stageScream = sm->AddState<BossPlayAudioEventState>( m_stageScream, TimeSpan::FromSeconds( 2.0f ) );
         auto enrage = sm->AddState<BossEnrageState>( );
         auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );

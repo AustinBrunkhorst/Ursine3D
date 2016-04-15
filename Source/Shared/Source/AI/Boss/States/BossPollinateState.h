@@ -38,6 +38,7 @@ private:
 
     ursine::ecs::EntityHandle m_safetyShield;
     ursine::ecs::EntityHandle m_pollinateSmogEntity;
+    ursine::ecs::EntityHandle m_safetyArrows;
 
     float m_counter;
 

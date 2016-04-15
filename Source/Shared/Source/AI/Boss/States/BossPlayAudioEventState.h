@@ -18,11 +18,14 @@
 class BossPlayAudioEventState : public BossAIState
 {
 public:
-    BossPlayAudioEventState(ursine::resources::ResourceReference &resource);
+    BossPlayAudioEventState(
+        ursine::resources::ResourceReference &resource,
+        ursine::TimeSpan delay = ursine::TimeSpan( 0 )
+    );
 
     void Enter(BossAIStateMachine *machine) override;
 
 private:
     ursine::resources::ResourceReference &m_resource;
-
+    ursine::TimeSpan m_delay;
 };

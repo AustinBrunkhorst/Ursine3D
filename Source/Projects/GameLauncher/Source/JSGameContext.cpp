@@ -34,7 +34,7 @@ JSFunction(GameSetVolume)
     auto outputType = arguments[ 1 ]->GetStringValue( );
 
     ursine::Application::PostMainThread( [=] {
-        GetCoreSystem( GameLauncher )->GetScene( ).GetGameContext( )->SetVolume( volume, outputType );
+        GetCoreSystem( GameLauncher )->GetScene( )->GetGameContext( )->SetVolume( volume, outputType );
     } );
 
     return CefV8Value::CreateBool( true );
