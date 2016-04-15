@@ -63,8 +63,10 @@ public:
     DECLARE_SETTING( bool, windowFullScreen );
     DECLARE_SETTING( bool, windowResizable );
 
-    EditorAnnotate( "Initial world run in the built game" )
-    DECLARE_RESOURCE_SETTING( ursine::resources::WorldData, startingWorld );
+    Meta(ForceEditorType( "GameManagerSelector" ), Getter( "GetgameManager" ), Setter( "SetgameManager" ))
+    std::string gameManager;
+
+    GETTER_SETTER( std::string, gameManager );
 
 private:
     void OnInitialize(void) override;

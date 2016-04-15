@@ -3,6 +3,18 @@
 
 #include "Constructor.h"
 
+namespace std
+{
+    template<>
+    struct hash<ursine::meta::Type>
+    {
+        size_t operator()(const ursine::meta::Type &type) const
+        {
+            return boost::hash_value( type.GetID( ) );
+        }
+    };
+}
+
 namespace ursine
 {
     namespace meta

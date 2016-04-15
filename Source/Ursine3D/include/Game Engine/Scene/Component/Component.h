@@ -22,6 +22,8 @@
 #include "ResourceManager.h"
 #include "ResourceReference.h"
 
+#include "EntityHandle.h"
+
 namespace ursine
 {
     class Scene;

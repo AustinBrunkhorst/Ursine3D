@@ -26,3 +26,6 @@ JSFunction(GameSetVolume);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(GameContextExitGame);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(GameContextGetAvailableManagers);

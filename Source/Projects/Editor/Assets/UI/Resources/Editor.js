@@ -2085,6 +2085,36 @@ ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector.pr
 	}
 	,__class__: ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector
 });
+var ursine_editor_scene_component_inspectors_fields_GameManagerSelectorInspector = function(owner,instance,field,type) {
+	var _g = this;
+	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
+	this.m_managers = GameContextGetAvailableManagers();
+	var _this = window.document;
+	this.m_displayText = _this.createElement("div");
+	this.m_displayText.classList.add("game-manager-selector");
+	this.m_displayText.addEventListener("click",function(e) {
+		var selector = new ItemSelectionPopupControl(_g.m_managers);
+		selector.addEventListener("item-selected",$bind(_g,_g.onGameManagerSelected));
+		window.document.body.appendChild(selector);
+		selector.show(e.clientX,e.clientY);
+	});
+	this.inspector.container.appendChild(this.m_displayText);
+	this.updateValue(instance);
+};
+$hxClasses["ursine.editor.scene.component.inspectors.fields.GameManagerSelectorInspector"] = ursine_editor_scene_component_inspectors_fields_GameManagerSelectorInspector;
+ursine_editor_scene_component_inspectors_fields_GameManagerSelectorInspector.__name__ = ["ursine","editor","scene","component","inspectors","fields","GameManagerSelectorInspector"];
+ursine_editor_scene_component_inspectors_fields_GameManagerSelectorInspector.__super__ = ursine_editor_scene_component_inspectors_FieldInspectionHandler;
+ursine_editor_scene_component_inspectors_fields_GameManagerSelectorInspector.prototype = $extend(ursine_editor_scene_component_inspectors_FieldInspectionHandler.prototype,{
+	updateValue: function(value) {
+		this.m_displayText.innerText = value;
+		this.m_displayText.classList.toggle("empty",value.length == 0);
+		this.m_instance = value;
+	}
+	,onGameManagerSelected: function(e) {
+		this.notifyChanged(this.m_field,e.detail.item);
+	}
+	,__class__: ursine_editor_scene_component_inspectors_fields_GameManagerSelectorInspector
+});
 var ursine_editor_scene_component_inspectors_fields_NumberFieldInspector = function(owner,instance,field,type) {
 	var _g = this;
 	ursine_editor_scene_component_inspectors_FieldInspectionHandler.call(this,owner,instance,field,type);
@@ -3610,6 +3640,7 @@ ursine_editor_scene_component_inspectors_components_LightInspector.m_lightTypeSp
 ursine_editor_scene_component_inspectors_fields_BooleanFieldInspector.__meta__ = { obj : { fieldInspector : ["bool"]}};
 ursine_editor_scene_component_inspectors_fields_ColorFieldInspector.__meta__ = { obj : { fieldInspector : ["ursine::Color"]}};
 ursine_editor_scene_component_inspectors_fields_EntitySystemSelectorInspector.__meta__ = { obj : { fieldInspector : ["EntitySystemSelector"]}};
+ursine_editor_scene_component_inspectors_fields_GameManagerSelectorInspector.__meta__ = { obj : { fieldInspector : ["GameManagerSelector"]}};
 ursine_editor_scene_component_inspectors_fields_NumberFieldInspector.__meta__ = { obj : { fieldInspector : ["int","unsigned int","float","double"]}};
 ursine_editor_scene_component_inspectors_fields_ResourceReferenceInspector.__meta__ = { obj : { fieldInspector : ["ResourceReference"]}};
 ursine_editor_scene_component_inspectors_fields_StringFieldInspector.__meta__ = { obj : { fieldInspector : ["std::string"]}};

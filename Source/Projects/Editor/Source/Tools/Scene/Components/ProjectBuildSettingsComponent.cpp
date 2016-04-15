@@ -37,14 +37,7 @@ ProjectBuildSettings::ProjectBuildSettings(void)
     windowFullScreen = settings.windowFullScreen;
     windowResizable = settings.windowResizable;
 
-    try
-    {
-        startingWorld = GUIDStringGenerator( )( settings.startingWorld );
-    }
-    catch (...)
-    {
-        startingWorld = kNullGUID;
-    }
+    gameManager = settings.manager;
 }
 
 ProjectBuildSettings::~ProjectBuildSettings(void) 
@@ -65,7 +58,7 @@ void ProjectBuildSettings::Save(void)
     settings.windowTitle = windowTitle;
     settings.windowFullScreen = windowFullScreen;
     settings.windowResizable = windowResizable;
-    settings.startingWorld = startingWorld.GetGUIDString( );
+    settings.manager = gameManager;
 
     project->WriteConfig( );
 
