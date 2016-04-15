@@ -37,6 +37,10 @@ namespace ursine
             // A component has been removed from an entity
             WORLD_ENTITY_COMPONENT_REMOVED,
 
+            // For when the volume is changed
+            // @Austin there has to be a better place for this in the code
+            WORLD_VOLUME_CHANGE,
+
         #if defined(URSINE_WITH_EDITOR)
 
             // Update event called specifically for editor systems
@@ -105,6 +109,17 @@ namespace ursine
             ScreenFocusArgs(WorldEventType type, bool focused)
                 : WorldEventArgs( type )
                 , focused( focused ) { }
+        };
+
+        struct VolumeChangeArgs : WorldEventArgs
+        {
+            float volume;
+            std::string outputType;
+
+            VolumeChangeArgs(float volume, const std::string &outputType)
+                : WorldEventArgs( WORLD_VOLUME_CHANGE )
+                , volume( volume )
+                , outputType( outputType ) { }
         };
 
     #if defined(URSINE_WITH_EDITOR)
