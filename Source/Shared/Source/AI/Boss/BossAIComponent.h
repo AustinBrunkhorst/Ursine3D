@@ -201,6 +201,12 @@ public:
     );
 
     EditorField(
+        float phase3AfterSludgeshotDelay,
+        GetPhase3AfterSludgeshotDelay,
+        SetPhase3AfterSludgeshotDelay
+    );
+
+    EditorField(
         int phase4NumSludgeshots,
         GetPhase4NumSludgeshots,
         SetPhase4NumSludgeshots
@@ -329,6 +335,9 @@ public:
 
     float GetPhase3SludgeshotAnimScalar(void) const;
     void SetPhase3SludgeshotAnimScalar(float scalar);
+
+    float GetPhase3AfterSludgeshotDelay(void) const;
+    void SetPhase3AfterSludgeshotDelay(float delay);
 
     int GetPhase4NumSludgeshots(void) const;
     void SetPhase4NumSludgeshots(int num);
@@ -474,6 +483,8 @@ private:
     int m_phase3NumSludgeshots;
 
     float m_phase3SludgeshotAnimScalar;
+
+    float m_phase3AfterSludgeshotDelay;
 
     int m_phase4NumSludgeshots;
 

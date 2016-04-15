@@ -19,26 +19,16 @@ void EditorGameContext::SetWindowFullScreen(bool fullScreen)
     // do nothing
 }
 
-bool EditorGameContext::IsMusicMuted(void) const
+void EditorGameContext::SetVolume(float volume, const std::string &outputType) const
 {
-    // always false
-    return false;
-}
+    auto world = m_project->GetScene( ).GetActiveWorld( );
 
-void EditorGameContext::MuteMusic(bool muted)
-{
-    
-}
+    if (world)
+    {
+        ursine::ecs::VolumeChangeArgs args( volume, outputType );
 
-bool EditorGameContext::IsAudioMuted(void) const
-{
-    // always false
-    return false;
-}
-
-void EditorGameContext::MuteAudio(bool muted)
-{
-    
+        world->Dispatch( ursine::ecs::WORLD_VOLUME_CHANGE, &args );
+    }
 }
 
 void EditorGameContext::ExitGame(void)

@@ -92,6 +92,7 @@ BossAI::BossAI(void)
     , m_phase3HealthThreshold( 25.0f )
     , m_phase3NumSludgeshots( 2 )
     , m_phase3SludgeshotAnimScalar( 1.0f )
+    , m_phase3AfterSludgeshotDelay( 2.0f )
     , m_phase4NumSludgeshots( 2 )
     , m_phase4SeedshotDuration( 15.0f )
     , m_segment( LevelSegments::Empty )
@@ -348,6 +349,18 @@ void BossAI::SetPhase3SludgeshotAnimScalar(float scalar)
     m_phase3SludgeshotAnimScalar = scalar;
 
     NOTIFY_COMPONENT_CHANGED( "phase3SludgeshotAnimScalar", m_phase3SludgeshotAnimScalar);
+}
+
+float BossAI::GetPhase3AfterSludgeshotDelay(void) const
+{
+    return m_phase3AfterSludgeshotDelay;
+}
+
+void BossAI::SetPhase3AfterSludgeshotDelay(float delay)
+{
+    m_phase3AfterSludgeshotDelay = delay;
+
+    NOTIFY_COMPONENT_CHANGED( "phase3AfterSludgeshotDelay", m_phase3AfterSludgeshotDelay );
 }
 
 int BossAI::GetPhase4NumSludgeshots(void) const
@@ -768,7 +781,8 @@ void BossAI::OnInitialize(void)
         auto spawn2 = sm->AddState<BossSpawnState>( 0.5f );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );
         auto enraged = sm->AddState<BossEnrageState>( );
-        auto sludgeshot = sm->AddState<BossSludgeshotState>( m_phase3NumSludgeshots, m_phase3SludgeshotAnimScalar );
+        auto sludgeshot = sm->AddState<BossSludgeshotState>( m_phase3NumSludgeshots, m_phase3SludgeshotAnimScalar, true );
+        auto emptyState = sm->AddState<BossEmptyState>( );
         auto goUnderground4 = sm->AddState<BossUndergroundState>( );
         auto reposition3 = sm->AddState<BossPhase3RepositionBoss>( false );
         auto spawn3 = sm->AddState<BossSpawnState>( 1.0f, false );
@@ -800,7 +814,9 @@ void BossAI::OnInitialize(void)
         repositionBoss2->AddTransition( spawn2, "Spawn on pedistal" );
         spawn2->AddTransition( enraged, "Enraged that mother fucker" );
         enraged->AddTransition( sludgeshot, "Sludgeshot" );
-        sludgeshot->AddTransition( goUnderground4, "Go Underground" );
+        sludgeshot->AddTransition( emptyState, "To EMpty Pause" );
+        emptyState->AddTransition( goUnderground4, "Go Underground" )
+                  ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( m_phase3AfterSludgeshotDelay ) );
         goUnderground4->AddTransition( reposition3, "Reposition" );
         reposition3->AddTransition( spawn3, "Spawn again" );
         spawn3->AddTransition( sludgeshot, "Sludgeshot" );

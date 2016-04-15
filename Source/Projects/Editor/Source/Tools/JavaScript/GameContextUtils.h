@@ -22,16 +22,7 @@ Meta(Enable, ExposeJavaScript)
 JSFunction(GameContextSetWindowFullScreen);
 
 Meta(Enable, ExposeJavaScript)
-JSFunction(GameContextIsMusicMuted);
-
-Meta(Enable, ExposeJavaScript)
-JSFunction(GameContextMuteMusic);
-
-Meta(Enable, ExposeJavaScript)
-JSFunction(GameContextIsAudioMuted);
-
-Meta(Enable, ExposeJavaScript)
-JSFunction(GameContextMuteAudio);
+JSFunction(GameSetVolume);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(GameContextExitGame);
