@@ -100,7 +100,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             // new obj
             if (!playerLookComp->ReticleActive( ) || playerLookComp->GetCurrentEnemy( ) != enemyHandle)
             {
-                auto currEnemyHealth = playerLookComp->GetCurrentEnemyHealth( );
+                auto &currEnemyHealth = playerLookComp->GetCurrentEnemyHealth( );
 
                 // unsubsribe to old enemies death
                 if (currEnemyHealth)
