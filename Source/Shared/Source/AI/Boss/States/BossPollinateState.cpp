@@ -142,7 +142,7 @@ void BossPollinateState::Update(BossAIStateMachine *machine)
     if (!target)
         return;
 
-    auto targetPos = p1->GetTransform( )->GetWorldPosition( );
+    auto targetPos = target->GetTransform( )->GetWorldPosition( );
     auto bossTrans = m_boss->GetOwner( )->GetTransform( );
 
     targetPos.Y( ) = bossTrans->GetWorldPosition( ).Y( );
