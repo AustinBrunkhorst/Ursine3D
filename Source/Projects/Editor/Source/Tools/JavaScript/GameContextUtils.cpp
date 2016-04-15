@@ -17,6 +17,8 @@
 
 #include "Editor.h"
 
+using namespace ursine;
+
 JSFunction(GameContextGetWindowFullScreen)
 {
     return CefV8Value::CreateBool(
@@ -54,4 +56,20 @@ JSFunction(GameContextExitGame)
     GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetGameContext( )->ExitGame( );
 
     return CefV8Value::CreateBool( true );
+}
+
+JSFunction(GameContextGetAvailableManagers)
+{
+    Json::array managers;
+
+    auto types = typeof( GameManager ).GetDerivedClasses( );
+
+    for (auto &type : types)
+        managers.emplace_back( type.GetName( ) );
+
+    CefRefPtr<CefV8Value> items;
+
+    JsonSerializer::Deserialize( managers, items );
+
+    return items;
 }

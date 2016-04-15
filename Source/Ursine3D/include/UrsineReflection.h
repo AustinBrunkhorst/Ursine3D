@@ -80,6 +80,7 @@
 #include "NativeComponents.h"
 #include "NativeEntitySystems.h"
 #include "GameSettings.h"
+#include "GameManager.h"
 
 // define it last
 #define URSINE_REFLECTION_INCLUDED

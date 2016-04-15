@@ -182,7 +182,7 @@ $max-header-width: 225px;
     }
   }
 
-  .entity-system-selector {
+  .entity-system-selector, .game-manager-selector {
     cursor: pointer;
     vertical-align: middle;
     line-height: 23px;
@@ -196,7 +196,7 @@ $max-header-width: 225px;
 
       &:before {
         display: block;
-        content: 'Invalid System';
+        content: 'Invalid';
       }
     }
   }

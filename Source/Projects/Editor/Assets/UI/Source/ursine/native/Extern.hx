@@ -78,6 +78,10 @@ class Extern {
         return untyped __js__( "ProjectOpenNew()" );
     }
 
+    public static inline function GameContextGetAvailableManagers() {
+        return untyped __js__( "GameContextGetAvailableManagers()" );
+    }
+
     public static inline function SceneSaveWorld() {
         return untyped __js__( "SceneSaveWorld()" );
     }

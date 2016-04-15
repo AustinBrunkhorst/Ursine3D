@@ -405,7 +405,7 @@
                                 confirm.close( );
                             } );
 
-                            confirm.buttons.appendChild( btnOk );
+                            confirm.buttonsContainer.appendChild( btnOk );
                         }
 
                         var btnCancel = new ButtonControl( );
@@ -414,7 +414,7 @@
 
                             btnCancel.addEventListener( 'click', confirm.close.bind( confirm ) );
 
-                            confirm.buttons.appendChild( btnCancel );
+                            confirm.buttonsContainer.appendChild( btnCancel );
                         }
 
                         confirm.show( NotificationConfig.infiniteDuration );
