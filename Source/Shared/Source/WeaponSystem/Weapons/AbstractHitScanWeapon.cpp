@@ -24,6 +24,7 @@ AbstractHitscanWeapon::AbstractHitscanWeapon(void)
     , m_drawDuration( 0.2f )
     , m_damageToApply(1.0f)
     , m_critModifier(1.0f)
+    , m_realDamage( m_damageToApply )
     , m_alwaysDraw( false )
     , m_maxDamage( false )
     , m_debug( false ) { }
@@ -109,7 +110,7 @@ void AbstractHitscanWeapon::ToggleMaxDamage(void)
 {
     if (m_maxDamage)
     {
-        SetDamageToApply( m_damageToApply );
+        SetDamageToApply( m_realDamage );
         m_maxDamage = false;
     }
     else

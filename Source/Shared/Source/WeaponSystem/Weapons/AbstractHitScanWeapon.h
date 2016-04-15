@@ -122,6 +122,9 @@ struct AbstractHitscanWeapon : AbstractWeapon
     // scalar to apply to damage
     float m_critModifier;
 
+    // stored actual damage
+    float m_realDamage;
+
     // particle to spawn where shot collide
     ursine::resources::ResourceReference m_shotParticle;
 
