@@ -21,6 +21,7 @@
 
 #include <ParticleEmitterComponent.h>
 #include <AnimatorComponent.h>
+#include <LocalTimerManager.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -41,6 +42,11 @@ void BossDeathState::Enter(BossAIStateMachine *machine)
     auto emitter = boss->GetOwner( )->GetComponent<AudioEmitter>( );
     emitter->PushEvent( boss->GetShieldBreakSfx( ) );
     emitter->PushEvent( boss->GetDeathScream( ) );
+
+    boss->GetOwner( )->GetTimers( ).Create( TimeSpan::FromSeconds( 2.0f ) )
+        .Repeat( 4 ).Repeated( [=] {
+            emitter->PushEvent( boss->GetStageScream( ) );
+        } );
 
     boss->GetPollinateSmogEntity( )->GetComponent<ParticleEmitter>( )->SetEmitRate( 0.0f );
 

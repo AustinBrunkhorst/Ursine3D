@@ -140,6 +140,19 @@ void TutorialDialogueManager::dispatchUIEventForSegment(LevelSegments segment)
 
     auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
 
+    if (lines == nullptr)
+    {
+        if (segment > LevelSegments::BossRoom_Platforming && segment < LevelSegments::BossRoom_Phase5)
+        {
+            // send clear dialogue event
+            ui_event::ClearDialogue event;
+
+            ui->TriggerPlayerHUDEvent( event );
+        }
+
+        return;
+    }
+
     ui_event::TutorialDialogue event;
 
     event.dialogueLines = *lines;

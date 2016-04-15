@@ -122,12 +122,12 @@ void AnimateParticleReset::Play(void)
 {
     m_playing = true;
     m_changeTimer = 0.0f;
-    m_durationTimer = 0.0f;
+    m_durationTimer = m_startDuration;
 }
 
 void AnimateParticleReset::onUpdate(EVENT_HANDLER(World))
 {
-    if (!m_playing)
+    if (!m_playing || !m_emitter->GetEmitting( ))
         return;
 
     auto dt = Application::Instance->GetDeltaTime( );

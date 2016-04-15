@@ -17,13 +17,13 @@
 
 #include <WorldData.h>
 
+#include "LevelSegmentManagerComponent.h"
+
 class EndingCreditsResources : public ursine::ecs::Component
 {
     NATIVE_COMPONENT;
 
 public:
-    EndingCreditsResources(void);
-
     EditorResourceField(
         ursine::resources::WorldData,
         world,
@@ -31,10 +31,29 @@ public:
         SetWorldData
     );
 
+    EndingCreditsResources(void);
+    ~EndingCreditsResources(void);
+
+    void OnSceneReady(ursine::Scene *scene) override;
+
+    ursine::Array<std::string> phase5Text;
+    float phase5TextDuration;
+
+    ursine::Array<std::string> creditsText;
+    float creditsTextDuration;
+
     const ursine::resources::ResourceReference &GetWorldData(void) const;
     void SetWorldData(const ursine::resources::ResourceReference &world);
 
 private:
     ursine::resources::ResourceReference m_worldToMerge;
 
-} Meta(Enable);
+    void onSegmentChange(EVENT_HANDLER(LevelSegmentManager));
+
+} Meta(
+    Enable
+) EditorMeta(
+    RequiresComponents(
+        typeof(LevelSegmentManager)
+    )
+);
