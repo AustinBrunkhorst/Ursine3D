@@ -28,6 +28,50 @@ using namespace ecs;
 
 namespace
 {
+    void SendReticleActiveEvent(UIScreensConfig* ui, int id, bool state)
+    {
+        // crete reticle event
+        ui_event::ReticleActive reticleEvent;
+        reticleEvent.playerID = id;
+        reticleEvent.active = state;
+
+        ui->TriggerPlayerHUDEvent(reticleEvent);
+    }
+
+    void SendHealthTrackStartEvent(UIScreensConfig* ui, int id, const std::string& dispName, float healthPercent)
+    {
+        // create track event for ui
+        ui_event::HealthTrackStart trackEvent;
+
+        trackEvent.playerID = id;
+        trackEvent.enemyName = dispName;
+        trackEvent.healthPercent = healthPercent;
+
+        ui->TriggerPlayerHUDEvent(trackEvent);
+    }
+
+    void SendHealthTrackUpdateEvent(UIScreensConfig* ui, int id, float healthPercent)
+    {
+        // create track update event
+        ui_event::HealthTrackUpdate trackEvent;
+
+        trackEvent.playerID = id;
+        trackEvent.healthPercent = healthPercent;
+
+        ui->TriggerPlayerHUDEvent(trackEvent);
+    }
+
+    void SendHealthTrackEndEvent(UIScreensConfig* ui, int id)
+    {
+        // create track end event
+        ui_event::HealthTrackEnd trackEvent;
+
+        trackEvent.playerID = id;
+        trackEvent.enemyKilled = false;
+
+        ui->TriggerPlayerHUDEvent(trackEvent);
+    }
+
 } // unnamed namespace
 
 
@@ -117,21 +161,9 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
                 if (ui)
                 {
-                    // create track event for ui
-                    ui_event::HealthTrackStart trackEvent;
+                    SendHealthTrackStartEvent( ui, id, enemyHealthComp->GetDisplayName( ), enemyHealthPercentage );
 
-                    trackEvent.playerID = id;
-                    trackEvent.enemyName = enemyHealthComp->GetDisplayName( );
-                    trackEvent.healthPercent = enemyHealthPercentage;
-
-                    ui->TriggerPlayerHUDEvent( trackEvent );
-
-                    // crete reticle event
-                    ui_event::ReticleActive reticleEvent;
-                    reticleEvent.playerID = id;
-                    reticleEvent.active = true;
-
-                    ui->TriggerPlayerHUDEvent( reticleEvent );
+                    SendReticleActiveEvent( ui, id, true );
                 }
 
                 // connect to enemyhit death event
@@ -143,13 +175,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             // not new
             else if (ui && enemyHealthPercentage != playerLookComp->GetHealthPercent( ))
             {
-                // create track update event
-                ui_event::HealthTrackUpdate trackEvent;
-
-                trackEvent.playerID = id;
-                trackEvent.healthPercent = enemyHealthPercentage;
-
-                ui->TriggerPlayerHUDEvent( trackEvent );
+                SendHealthTrackUpdateEvent( ui, id, enemyHealthPercentage );
             }
 
             // set timer to 0.0f
@@ -163,12 +189,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
             if (ui)
             {
-                // crete reticle event
-                ui_event::ReticleActive reticleEvent;
-                reticleEvent.playerID = id;
-                reticleEvent.active = false;
-
-                ui->TriggerPlayerHUDEvent( reticleEvent );
+                SendReticleActiveEvent( ui, id, false );
             }
         }
 
@@ -188,13 +209,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
             if (ui)
             {
-                // create track end event
-                ui_event::HealthTrackEnd trackEvent;
-
-                trackEvent.playerID = id;
-                trackEvent.enemyKilled = false;
-
-                ui->TriggerPlayerHUDEvent( trackEvent );
+                SendHealthTrackEndEvent( ui, id );
             }
 
             // disconnect from death event
@@ -212,3 +227,5 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         }
     }
 }
+
+void 
