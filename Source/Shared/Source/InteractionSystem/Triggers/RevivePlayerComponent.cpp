@@ -111,6 +111,10 @@ void RevivePlayer::Interact(const ursine::ecs::EntityHandle& entity)
         // revive player if time has been met
         if ( *time > m_reviveTime )
         {
+            auto health = entity->GetComponent<Health>( );
+
+            health->SetShieldHealth( health->GetMaxShieldHealth( ) );
+
             InteractionComplete( entity );
         }
     }
