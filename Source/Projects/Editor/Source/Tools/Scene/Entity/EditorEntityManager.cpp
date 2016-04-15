@@ -266,7 +266,7 @@ void EditorEntityManager::onComponentAdded(EVENT_HANDLER(ecs::World))
 
     auto selected = args->entity->HasComponent<ecs::Selected>( );
 
-    if (!selected || m_project->GetScene( ).GetPlayState( ) == PS_PLAYING)
+    if (!args->component->Is<ecs::Selected>( ) && (!selected || m_project->GetScene( ).GetPlayState( ) == PS_PLAYING))
         return;
 
     auto component = 
@@ -296,7 +296,7 @@ void EditorEntityManager::onComponentRemoved(EVENT_HANDLER(ecs::World))
 
     auto selected = args->entity->HasComponent<ecs::Selected>( );
 
-    if (!selected || m_project->GetScene( ).GetPlayState( ) == PS_PLAYING)
+    if (!args->component->Is<ecs::Selected>( ) && (!selected || m_project->GetScene( ).GetPlayState( ) == PS_PLAYING))
         return;
 
     Json message = Json::object {

@@ -20,6 +20,7 @@
 #include <UIScreenData.h>
 
 #include <WorldData.h>
+#include <GameManager.h>
 
 #define DECLARE_SCREEN(screenName)                                                                                           \
 public:                                                                                                                      \
@@ -63,6 +64,7 @@ class UIScreensConfig : public ursine::ecs::Component
     NATIVE_COMPONENT;
 
 public:
+    UIScreensConfig(ursine::GameManager *manager);
     UIScreensConfig(void);
 
     DECLARE_SCREEN( Splash );

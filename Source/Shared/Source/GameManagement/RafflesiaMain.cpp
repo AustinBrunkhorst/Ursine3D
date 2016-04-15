@@ -2,13 +2,21 @@
 
 #include "RafflesiaMain.h"
 
-RafflesiaMain::RafflesiaMain(ursine::GameContext *context, const ursine::Json &configObj)
-    : GameManager( context, configObj )
+using namespace ursine;
+
+RafflesiaMain::RafflesiaMain(void)
 {
 
 }
 
 RafflesiaMain::~RafflesiaMain(void)
 {
+    printf( "destruct\n" );
+}
 
+void RafflesiaMain::OnInitialize(GameContext *context, const Json &configObj)
+{
+    GameManager::OnInitialize( context, configObj );
+
+    printf( "AYYY BOYES\n" );
 }

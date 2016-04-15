@@ -38,6 +38,7 @@ class Editor {
     private var m_statusTextContainer : js.html.DivElement;
 
     private var m_toolsContainer : js.html.Element;
+    private var m_btnGameStart : js.html.Element;
     private var m_btnPlay : js.html.Element;
     private var m_btnToggle : js.html.Element;
     private var m_btnStep : js.html.Element;
@@ -202,13 +203,24 @@ class Editor {
     private function initSimulationPlayback() {
         m_toolsContainer = js.Browser.document.querySelector( '#simulation-tools' );
 
+        m_btnGameStart = js.Browser.document.querySelector( '#simulation-run-game' );
         m_btnPlay = js.Browser.document.querySelector( '#simulation-play' );
         m_btnToggle = js.Browser.document.querySelector( '#simulation-toggle' );
         m_btnStep = js.Browser.document.querySelector( '#simulation-step' );
         m_btnStop = js.Browser.document.querySelector( '#simulation-stop' );
 
+        untyped ToolTip.bind( m_btnGameStart, 'Run Game' );
+        untyped ToolTip.bind( m_btnToggle, 'Toggle Editor' );
+        untyped ToolTip.bind( m_btnPlay, 'Play Scene' );
+        untyped ToolTip.bind( m_btnStep, 'Step Frame' );
+        untyped ToolTip.bind( m_btnStop, 'Stop Running' );
+
+        m_btnGameStart.addEventListener( 'click', function() {
+            Extern.SceneStartGame( );
+        } );
+
         m_btnPlay.addEventListener( 'click', function() {
-            Extern.SceneSetPlayState( ScenePlayState.Playing );
+            Extern.SceneStartPlaying( );
         } );
 
         m_btnToggle.addEventListener( 'click', function() {

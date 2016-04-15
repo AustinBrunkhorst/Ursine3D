@@ -15,14 +15,16 @@
 
 #include <Scene.h>
 
-NATIVE_COMPONENT_DEFINITION( UIScreensConfig );
+NATIVE_COMPONENT_DEFINITION( UIScreensConfig )
 
 using namespace ursine;
 using namespace ecs;
 
-UIScreensConfig::UIScreensConfig(void)
+UIScreensConfig::UIScreensConfig(GameManager *manager)
     : BaseComponent( ) { }
 
+UIScreensConfig::UIScreensConfig(void)
+    : BaseComponent( ) { }
 
 const resources::ResourceReference &UIScreensConfig::GetStartingGameplayWorld(void)
 {

@@ -14,18 +14,22 @@ namespace ursine
     public:
         typedef std::shared_ptr<GameManager> Handle;
 
-        GameManager(GameContext *context, const ursine::Json &configObj);
+        GameManager(void);
         ~GameManager(void);
+
+        GameContext *GetContext(void);
 
         template<typename T>
         ecs::Component *GetConfigComponent(void);
+
+        virtual void OnInitialize(GameContext *context, const ursine::Json &configObj);
 
     protected:
         GameContext *m_context;
 
     private:
         std::unordered_map<meta::Type, ecs::Component*> m_configComponents;
-    } Meta(WhiteListMethods);
+    } Meta(WhiteListMethods, EnablePtrType);
 }
 
 #include "GameManager.hpp"

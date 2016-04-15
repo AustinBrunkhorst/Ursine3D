@@ -122,6 +122,14 @@ class Extern {
         return untyped __js__( "SceneSave()" );
     }
 
+    public static inline function SceneStartGame() {
+        return untyped __js__( "SceneStartGame()" );
+    }
+
+    public static inline function SceneStartPlaying() {
+        return untyped __js__( "SceneStartPlaying()" );
+    }
+
     public static inline function SceneGetPlayState() : ScenePlayState {
         return untyped __js__( "SceneGetPlayState()" );
     }

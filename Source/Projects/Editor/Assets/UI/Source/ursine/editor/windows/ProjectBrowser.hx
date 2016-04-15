@@ -1,6 +1,7 @@
 package ursine.editor.windows;
 
 import ursine.native.Extern;
+import ursine.editor.scene.ScenePlayState;
 import ursine.editor.resources.ResourceItem;
 
 import ursine.controls.ContextMenu;
@@ -115,6 +116,18 @@ class ProjectBrowser extends WindowHandler {
     @:keep
     public function uworld_DblClickHandler(e : js.html.CustomEvent) {
         var resource : ResourceItem = e.detail.resource;
+
+        if (Extern.SceneGetPlayState( ) != ScenePlayState.InEditor) {
+            var notification = new Notification(
+                NotificationType.Error,
+                'World loading is disabled while a game is running.',
+                'Error'
+            );
+
+            notification.show( );
+
+            return;
+        }
 
         Extern.SceneSetActiveWorld( resource.guid );
     }

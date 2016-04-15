@@ -26,6 +26,7 @@
 #include <Color.h>
 
 #include <UIConfig.h>
+#include <Notification.h>
 
 using namespace ursine;
 
@@ -167,6 +168,69 @@ bool Project::CreateEditorResource(const ursine::GUID &resourceGUID) const
     }
 }
 
+void Project::StartGame(void)
+{
+    auto managerType = meta::Type::GetFromName( m_config.buildSettings.manager );
+
+    if (!managerType.IsValid( ) || 
+        !managerType.GetBaseClasses( ).count( typeof( GameManager ) ))
+    {
+        NotificationConfig error;
+
+        error.type = NOTIFY_ERROR;
+        error.header = "Run Game";
+        error.message = 
+            "Unknown or invalid Game Manager <strong class=\"highlight\">"+ 
+                m_config.buildSettings.manager +
+            "</strong>";
+
+        EditorPostNotification( error );
+
+        return;
+    }
+
+    m_scene.SetActiveWorld( nullptr );
+
+    auto ctor = managerType.GetDynamicConstructor( );
+
+    if (!ctor.IsValid( ))
+    {
+        NotificationConfig error;
+
+        error.type = NOTIFY_ERROR;
+        error.header = "Run Game";
+        error.message = 
+            "Game Manager <strong class=\"highlight\">"+ 
+                m_config.buildSettings.manager +
+            "</strong> missing default constructor";
+
+        EditorPostNotification( error );
+
+        return;
+    }
+
+    auto *manager = ctor.Invoke( ).GetValue<GameManager*>( );
+
+    m_gameContext->SetManager( manager );
+
+    m_scene.SetPlayState( PS_PLAYING );
+
+    manager->OnInitialize( 
+        m_gameContext, 
+        m_config.buildSettings.managerConfiguration 
+    );
+}
+
+void Project::StartPlaying(void)
+{
+    if (!m_scene.GetActiveWorld( ))
+        return;
+
+    m_gameContext->SetManager( nullptr );
+
+    m_scene.SetPlayState( PS_PLAYING );
+}
+
 void Project::initialize(const ProjectConfig &config)
 {
     m_config = config;
@@ -233,6 +297,11 @@ void Project::initializeScene(const resources::ResourceReference &startingWorld)
     );
 }
 
+bool Project::inGameRunMode(void) const
+{
+    return m_gameContext->GetManager( ) != nullptr;
+}
+
 void Project::onSceneWorldChanged(EVENT_HANDLER(Scene))
 {
     EVENT_ATTRS(Scene, SceneWorldChangedArgs);
@@ -245,6 +314,15 @@ void Project::onSceneWorldChanged(EVENT_HANDLER(Scene))
     {
         m_lastOpenedWorld = kNullGUID;
     }
+
+    auto active = m_scene.GetActiveWorld( );
+
+    if (!active)
+        return;
+
+    active->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode(
+        m_scene.GetPlayState( ) != PS_PLAYING
+    );
 }
 
 void Project::onScenePlayStateChanged(EVENT_HANDLER(Scene))
@@ -257,6 +335,10 @@ void Project::onScenePlayStateChanged(EVENT_HANDLER(Scene))
     // going from editor to play mode
     if (oldState == PS_EDITOR && (newState == PS_PLAYING || newState == PS_PAUSED))
     {
+        // do nothing in game run mode
+        if (inGameRunMode( ))
+            return;
+
         auto *oldWorld = m_scene.GetActiveWorld( );
 
         m_worldCache = ecs::WorldSerializer::Serialize( oldWorld );
@@ -274,18 +356,32 @@ void Project::onScenePlayStateChanged(EVENT_HANDLER(Scene))
     {
         m_scene.GetScreenManager( ).ClearScreens( );
 
-        auto *cachedWorld = ecs::WorldSerializer::Deserialize( m_worldCache );
+        if (inGameRunMode( ))
+        {
+            delete m_gameContext->GetManager( );
 
-        m_scene.SetActiveWorld( ecs::World::Handle( cachedWorld ) );
+            m_gameContext->SetManager( nullptr );
 
-        cachedWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( true );
+            SetEmptyScene( );
+        }
+        else
+        {
+            auto *cachedWorld = ecs::WorldSerializer::Deserialize( m_worldCache );
+
+            m_scene.SetActiveWorld( ecs::World::Handle( cachedWorld ) );
+        }
     }
     // switching between playing and paused
     else
     {
-        m_scene.GetActiveWorld( )->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( 
-            newState == PS_PAUSED
-        );
+        auto active = m_scene.GetActiveWorld( );
+
+        if (active)
+        {
+            active->GetSettings( )->GetComponent<ecs::WorldConfig>( )->SetInEditorMode( 
+                newState == PS_PAUSED
+            );
+        }
     }
 }
 

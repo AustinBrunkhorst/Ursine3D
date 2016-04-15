@@ -57,7 +57,8 @@ namespace ursine
 
         m_activeWorld = world;
 
-        m_activeWorld->setOwner( this );
+        if (m_activeWorld)
+            m_activeWorld->setOwner( this );
 
         Dispatch( SCENE_WORLD_CHANGED, &e );
     }

@@ -130,8 +130,14 @@ ToolTipItem.prototype._updatePosition = function() {
 
     var x = Math.min( this._mouseX, window.innerWidth - bounds.width );
 
+    if (x < 0)
+        x = 0;
+
     // y is offset by the height to align it above the cursor
     var y = Math.min( this._mouseY - bounds.height, window.innerHeight - bounds.height );
+
+    if (y < 0)
+        y = 0;
 
     this._ttElement.style.left = x +'px';
     this._ttElement.style.top = y +'px';

@@ -5,7 +5,7 @@
 #include "Project.h"
 
 EditorGameContext::EditorGameContext(Project *project)
-    : GameContext( this )
+    : GameContext( &project->GetScene( ), this )
     , m_project( project ) { }
 
 bool EditorGameContext::GetWindowFullScreen(void) const

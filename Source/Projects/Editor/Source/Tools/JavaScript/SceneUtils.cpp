@@ -243,6 +243,24 @@ JSFunction(SceneDeleteSelectedEntities)
     return CefV8Value::CreateBool( true );
 }
 
+JSFunction(SceneStartGame)
+{
+    Application::PostMainThread( [=] {
+        getProject( )->StartGame( );
+    } );
+
+    return CefV8Value::CreateUndefined( );
+}
+
+JSFunction(SceneStartPlaying)
+{
+    Application::PostMainThread( [=] {
+        getProject( )->StartPlaying( );
+    } );
+
+    return CefV8Value::CreateUndefined( );
+}
+
 JSFunction(SceneGetPlayState)
 {
     return CefV8Value::CreateUInt(

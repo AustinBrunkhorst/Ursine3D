@@ -957,12 +957,21 @@ ursine_editor_Editor.prototype = {
 	}
 	,initSimulationPlayback: function() {
 		this.m_toolsContainer = window.document.querySelector("#simulation-tools");
+		this.m_btnGameStart = window.document.querySelector("#simulation-run-game");
 		this.m_btnPlay = window.document.querySelector("#simulation-play");
 		this.m_btnToggle = window.document.querySelector("#simulation-toggle");
 		this.m_btnStep = window.document.querySelector("#simulation-step");
 		this.m_btnStop = window.document.querySelector("#simulation-stop");
+		ToolTip.bind(this.m_btnGameStart,"Run Game");
+		ToolTip.bind(this.m_btnToggle,"Toggle Editor");
+		ToolTip.bind(this.m_btnPlay,"Play Scene");
+		ToolTip.bind(this.m_btnStep,"Step Frame");
+		ToolTip.bind(this.m_btnStop,"Stop Running");
+		this.m_btnGameStart.addEventListener("click",function() {
+			SceneStartGame();
+		});
 		this.m_btnPlay.addEventListener("click",function() {
-			ursine_native_Extern.SceneSetPlayState(1);
+			SceneStartPlaying();
 		});
 		this.m_btnToggle.addEventListener("click",function() {
 			var currentState = SceneGetPlayState();
@@ -3166,6 +3175,11 @@ ursine_editor_windows_ProjectBrowser.prototype = $extend(ursine_editor_WindowHan
 	}
 	,uworld_DblClickHandler: function(e) {
 		var resource = e.detail.resource;
+		if(SceneGetPlayState() != 0) {
+			var notification = new NotificationControl(2,"World loading is disabled while a game is running.","Error");
+			notification.show();
+			return;
+		}
 		ursine_native_Extern.SceneSetActiveWorld(resource.guid);
 	}
 	,__class__: ursine_editor_windows_ProjectBrowser

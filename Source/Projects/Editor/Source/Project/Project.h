@@ -55,6 +55,9 @@ public:
 
     bool CreateEditorResource(const ursine::GUID &resourceGUID) const;
 
+    void StartGame(void);
+    void StartPlaying(void);
+
 private:
     friend class Editor;
 
@@ -65,10 +68,13 @@ private:
 
     void initializeScene(const ursine::resources::ResourceReference &startingWorld);
 
+    bool inGameRunMode(void) const;
+
     void onSceneWorldChanged(EVENT_HANDLER(ursine::Scene));
     void onScenePlayStateChanged(EVENT_HANDLER(ursine::Scene));
 
     void onResourceModified(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+
 
     ProjectConfig m_config;
 

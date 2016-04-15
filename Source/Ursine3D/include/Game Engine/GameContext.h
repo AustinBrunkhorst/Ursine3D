@@ -10,8 +10,7 @@ namespace ursine
     class GameContext : public EventDispatcher<GameContextEventType>
     {
     public:
-        GameContext(void *defaultSender)
-            : EventDispatcher( defaultSender ) { }
+        GameContext(Scene *scene, void *defaultSender);
 
         virtual ~GameContext(void) { }
 
@@ -22,9 +21,11 @@ namespace ursine
 
         virtual void ExitGame(void) = 0;
 
+        GameManager *GetManager(void);
         void SetManager(GameManager *manager);
 
     protected:
+        Scene *m_scene;
         GameManager *m_manager;
-    } Meta(Register);
+    };
 }
