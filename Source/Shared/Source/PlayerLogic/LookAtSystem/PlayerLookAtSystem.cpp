@@ -100,17 +100,18 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             // new obj
             if (!playerLookComp->ReticleActive( ) || playerLookComp->GetCurrentEnemy( ) != enemyHandle)
             {
-                auto currEnemy = playerLookComp->GetCurrentEnemy( );
+                auto currEnemyHealth = playerLookComp->GetCurrentEnemyHealth( );
 
                 // unsubsribe to old enemies death
-                if (currEnemy)
+                if (currEnemyHealth)
                 {
-                    playerLookComp->GetCurrentEnemy( )->Listener( playerLookComp )
-                        .Off( ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+                    currEnemyHealth->Listener( playerLookComp )
+                        .Off( HealthEvents::HEALTH_ZERO, &PlayerLookAt::onEnemyDeath );
                 }
 
                 // change curr enemy
                 playerLookComp->SetCurrentEnemy( enemyHandle );
+                playerLookComp->SetCurrentEnemyHealth( enemyHealthComp );
                 playerLookComp->SetReticleActive( true );
                 playerLookComp->SetHealthPercent( enemyHealthPercentage );
 
@@ -134,8 +135,8 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
                 }
 
                 // connect to enemyhit death event
-                enemyHandle->Listener(playerLookComp)
-                    .On(ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath);
+                enemyHealthComp->Listener(playerLookComp)
+                    .On( HealthEvents::HEALTH_ZERO, &PlayerLookAt::onEnemyDeath );
 
             }
 
@@ -180,7 +181,9 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         {
             playerLookComp->SetTimer( 0.0f );
 
-            if (playerLookComp->GetCurrentEnemy() == nullptr)
+            auto currEnemy = playerLookComp->GetCurrentEnemy( );
+
+            if (currEnemy == nullptr)
                 continue;
 
             if (ui)
@@ -196,9 +199,15 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
             // disconnect from death event
             // connect to enemyhit death event
-            playerLookComp->GetCurrentEnemy( )->Listener( playerLookComp )
-                .Off( ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath );
+            Health *health = currEnemy->GetRoot( )->GetComponent<Health>( );
 
+            if ( health )
+            {
+                health->Listener( playerLookComp )
+                    .Off( HEALTH_ZERO, &PlayerLookAt::onEnemyDeath );
+            }
+
+            playerLookComp->SetCurrentEnemyHealth( nullptr );
             playerLookComp->SetCurrentEnemy( EntityHandle( nullptr ) );
         }
     }
