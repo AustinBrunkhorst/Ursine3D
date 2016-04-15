@@ -114,6 +114,9 @@ void VineUprootState::Update(VineAIStateMachine *machine)
                 m_state = UprootState::UprootDelay;
                 m_delayTimer = ai->GetUprootDelay( );
 
+                // correct the look at position if it is too close to another vine
+                correctPosition( ai->GetOwner( ), lookAtPosition );
+
                 aiTrans->SetWorldPosition( lookAtPosition );
 
                 return;
@@ -278,3 +281,34 @@ void VineUprootState::onVineDeath(EVENT_HANDLER(Health))
     m_finished = true;
 }
 
+void VineUprootState::correctPosition(EntityHandle thisVine, SVec3 &position)
+{
+    // iterate through all vines and see if position is too close
+    auto vines = thisVine->GetWorld( )->GetEntitiesFromFilter(
+        Filter( ).All<VineAI>( )
+    );
+
+    auto thisPos = position;
+
+    thisPos.Y( ) = 0.0f;
+
+    for (auto &vine : vines)
+    {
+        if (vine != thisVine)
+        {
+            auto pos = vine->GetTransform( )->GetWorldPosition( );
+
+            pos.Y( ) = 0.0f;
+
+            auto dist = SVec3::Distance( pos, thisPos );
+
+            if (dist < 10.0f)
+            {
+                auto dir = SVec3::Normalize( -pos );
+
+                position += dir * dist;
+                return;
+            }
+        }
+    }
+}

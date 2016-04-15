@@ -54,4 +54,7 @@ private:
     void onAnimationFinished(EVENT_HANDLER(ursine::ecs::Entity));
 
     void onVineDeath(EVENT_HANDLER(ursine::ecs::Entity));
+
+    void correctPosition(ursine::ecs::EntityHandle thisVine, ursine::SVec3 &position);
+
 };
