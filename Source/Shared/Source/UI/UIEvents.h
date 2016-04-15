@@ -108,4 +108,8 @@ namespace ui_event
 
         ursine::Color screenColor;
     );
+
+    UI_EVENT( SpawnEndingCredits,
+        ;
+    );
 }

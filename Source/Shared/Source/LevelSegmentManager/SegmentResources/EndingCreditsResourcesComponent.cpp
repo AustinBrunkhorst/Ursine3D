@@ -66,6 +66,7 @@ void EndingCreditsResources::onSegmentChange(EVENT_HANDLER(LevelSegmentManager))
 
     ursine::Array<std::string> *text = nullptr;
     float *duration = nullptr;
+    bool endingCredits = false;
 
     switch (args->segment)
     {
@@ -79,6 +80,10 @@ void EndingCreditsResources::onSegmentChange(EVENT_HANDLER(LevelSegmentManager))
         {
             text = &creditsText;
             duration = &creditsTextDuration;
+
+            // Create a timer telling the UI to spawn the ending credits
+            endingCredits = true;
+
             break;
         }
     }
@@ -107,4 +112,14 @@ void EndingCreditsResources::onSegmentChange(EVENT_HANDLER(LevelSegmentManager))
     event.totalTimeForDialogue = *duration;
 
     ui->TriggerPlayerHUDEvent( event );
+
+    if (endingCredits)
+    {
+        GetOwner( )->GetTimers( ).Create( TimeSpan::FromSeconds( *duration ) )
+            .Completed( [=] {
+                ui_event::SpawnEndingCredits creditsEvent;
+
+                ui->TriggerPlayerHUDEvent( creditsEvent );
+            } );
+    }
 }
