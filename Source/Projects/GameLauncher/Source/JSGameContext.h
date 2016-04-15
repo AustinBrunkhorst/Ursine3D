@@ -22,7 +22,10 @@ Meta(Enable, ExposeJavaScript)
 JSFunction(GameContextSetWindowFullScreen);
 
 Meta(Enable, ExposeJavaScript)
-JSFunction(GameSetVolume);
+JSFunction(GameContextGetVolume);
+
+Meta(Enable, ExposeJavaScript)
+JSFunction(GameContextSetVolume);
 
 Meta(Enable, ExposeJavaScript)
 JSFunction(GameContextExitGame);

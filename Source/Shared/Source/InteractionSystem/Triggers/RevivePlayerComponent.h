@@ -11,24 +11,28 @@
 **
 ** -------------------------------------------------------------------------*/
 
-
 #include <Component.h>
+
 #include "BaseInteraction.h"
 #include "TextureData.h"
 
-namespace ursine{
-    namespace ecs{
+#include "UIScreensConfigComponent.h"
+
+namespace ursine
+{
+    namespace ecs
+    {
         class EntityHandle;
     }
 }
 
-class RevivePlayer 
+class RevivePlayer
     : public ursine::ecs::Component
     , public Interaction
 {
-    NATIVE_COMPONENT
-public:
+    NATIVE_COMPONENT;
 
+public:
     RevivePlayer(void);
     ~RevivePlayer(void);
 
@@ -36,7 +40,8 @@ public:
         float ReviveTime,
         GetReviveTime,
         SetReviveTime
-        );
+    );
+
     float GetReviveTime(void) const;
     void SetReviveTime(float time);
 
@@ -45,22 +50,24 @@ public:
         Texture,
         GetTexture,
         SetTexture
-        );
-    const ursine::resources::ResourceReference& GetTexture(void) const;
-    void SetTexture(const ursine::resources::ResourceReference& texture);
+    );
 
+    const ursine::resources::ResourceReference &GetTexture(void) const;
+    void SetTexture(const ursine::resources::ResourceReference &texture);
 
 protected:
     void OnInitialize(void) override;
 
 private:
     // interaction logic
-    void StartInteraction(const ursine::ecs::EntityHandle& entity) override;
-    void Interact(const ursine::ecs::EntityHandle& entity) override;
-    void StopInteraction(const ursine::ecs::EntityHandle& entity) override;
+    void StartInteraction(const ursine::ecs::EntityHandle &entity) override;
+    void Interact(const ursine::ecs::EntityHandle &entity) override;
+    void StopInteraction(const ursine::ecs::EntityHandle &entity) override;
     void InteractionComplete(void);
 
     void OnReviveCheat(EVENT_HANDLER(ursine::ecs::Entity));
+
+    UIScreensConfig *getUI(void);
 
     void messageUIToggle(const ursine::ecs::EntityHandle &reviver, bool toggle);
     void messageUIProgress(const ursine::ecs::EntityHandle &reviver, float time);
@@ -80,10 +87,8 @@ private:
 
     // texture to display
     ursine::resources::ResourceReference m_texture;
-
 } Meta(Enable,
     DisplayName( "RevivePlayer" )
 ) EditorMeta(
     RequiresComponents( typeof( Interactable ) )
 );
-

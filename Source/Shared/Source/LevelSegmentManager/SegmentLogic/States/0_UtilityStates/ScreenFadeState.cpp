@@ -39,7 +39,13 @@ void ScreenFadeState::Enter(SegmentLogicStateMachine *machine)
         "Scene was null."    
     );
 
-    auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+    auto manager = scene->GetGameContext( )->GetManager( );
+
+    UAssert( manager != nullptr,
+        "Manager was null."
+    );
+
+    auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
 
     UAssert( ui != nullptr,
         "UIConfig was null."    

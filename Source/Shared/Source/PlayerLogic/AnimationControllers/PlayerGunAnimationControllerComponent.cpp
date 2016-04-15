@@ -23,6 +23,8 @@
 #include <TriggerCondition.h>
 #include <BoolCondition.h>
 
+#include <Scene.h>
+
 NATIVE_COMPONENT_DEFINITION(PlayerGunAnimationController);
 
 using namespace ursine;
@@ -295,10 +297,16 @@ void PlayerGunAnimationController::onShoot(EVENT_HANDLER(Entity))
         "Scene was null."    
     );
 
-    auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+    auto manager = scene->GetGameContext( )->GetManager( );
+
+    UAssert( manager != nullptr,
+        "Manager was null."
+    );
+
+    auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
 
     UAssert( ui != nullptr,
-        "UIConfig was null."
+        "UIConfig was null."    
     );
 
     auto root = sender->GetRoot( );

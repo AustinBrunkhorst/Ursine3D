@@ -165,6 +165,8 @@ namespace ursine
             static bool CompareComponentsAscending(const Component *a, const Component *b);
             static bool CompareComponentsDescending(const Component *a, const Component *b);
 
+            static void ConfigureComponents(void);
+
         private:
             friend class World;
             friend class WorldSerializer;

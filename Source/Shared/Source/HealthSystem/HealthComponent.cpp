@@ -25,7 +25,7 @@
 #include "UIScreensConfigComponent.h"
 #include "GameEvents.h"
 
-#include <Application.h>
+#include <Scene.h>
 
 NATIVE_COMPONENT_DEFINITION( Health );
 
@@ -99,17 +99,17 @@ void Health::SetHealth(const float health)
         healthEvent.playerID = player->GetID( );
         healthEvent.percent = m_health / m_maxHealth;
 
-        auto world = GetOwner( )->GetWorld( );
+        auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
 
-        if (!world)
+        if (!scene)
             return;
 
-        auto settings = world->GetSettings( );
+        auto manager = scene->GetGameContext( )->GetManager( );
 
-        if (!settings)
+        if (!manager)
             return;
 
-        auto *ui = settings->GetComponent<UIScreensConfig>( );
+        auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
 
         if (ui)
             ui->TriggerPlayerHUDEvent( healthEvent );
@@ -372,17 +372,17 @@ void Health::sendDamageUIEvent(const EntityHandle &damager, float damage)
             damageEvent.right = true;
     }
 
-    auto world = GetOwner( )->GetWorld( );
+    auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
 
-    if (!world)
+    if (!scene)
         return;
 
-    auto settings = world->GetSettings( );
+    auto manager = scene->GetGameContext( )->GetManager( );
 
-    if (!settings)
+    if (!manager)
         return;
 
-    auto *ui = settings->GetComponent<UIScreensConfig>( );
+    auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
 
     if (ui)
         ui->TriggerPlayerHUDEvent( damageEvent );

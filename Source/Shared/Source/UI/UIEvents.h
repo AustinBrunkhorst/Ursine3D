@@ -14,6 +14,7 @@ namespace ui_event
 {
     namespace global
     {
+        const auto MainMenuEntered = "MainMenuEntered";
         const auto GameStart = "GameplayStart";
         const auto GamePause = "GameplayPause";
         const auto GameResume = "GameplayResume";

@@ -12,6 +12,8 @@
 
 #include <FilterSystem.h>
 
+#include "UIScreensConfigComponent.h"
+
 //////////////////////
 ////  Predefines  ////
 //////////////////////
@@ -26,7 +28,7 @@ class RaycastComponent;
 class PlayerLookAtSystem
     : public ursine::ecs::FilterSystem
 {
-    ENTITY_SYSTEM ;
+    ENTITY_SYSTEM;
 
 public:
     PlayerLookAtSystem(ursine::ecs::World* world);
@@ -37,9 +39,13 @@ protected:
     void Disable(const ursine::ecs::EntityHandle& entity) override;
 
 private:
+    UIScreensConfig *m_ui;
+
     std::unordered_map< ursine::ecs::EntityHandle, int > m_playerIDs;
     std::unordered_map< ursine::ecs::EntityHandle, RaycastComponent* > m_raycastComps;
     std::unordered_map< ursine::ecs::EntityHandle, PlayerLookAt* > m_playerLookAtComps;
+
+    void OnSceneReady(ursine::Scene *scene) override;
 
 } Meta(Enable, AutoAddEntitySystem);
 

@@ -83,11 +83,16 @@ namespace ursine
         if (!screen)
             return CefV8Value::CreateBool( false );
 
-        m_manager->MessageScreenNative(
-            screen, 
-            arguments[ 1 ]->GetStringValue( ),
-            JsonSerializer::Serialize( arguments[ 2 ] )
-        );
+        auto event = arguments[ 1 ]->GetStringValue( );
+        auto data = JsonSerializer::Serialize( arguments[ 2 ] );
+
+        Application::PostMainThread( [=] {
+            m_manager->MessageScreenNative(
+                screen, 
+                event,
+                data
+            );
+        } );
 
         return CefV8Value::CreateBool( true );
     }
@@ -96,11 +101,13 @@ namespace ursine
     {
         if (arguments.size( ) != 2)
             JSThrow( "Invalid arguments.", nullptr );
+        
+        auto event = arguments[ 0 ]->GetStringValue( );
+        auto data = JsonSerializer::Serialize( arguments[ 1 ] );
 
-        m_manager->MessageGlobalNative(
-            arguments[ 0 ]->GetStringValue( ),
-            JsonSerializer::Serialize( arguments[ 1 ] )
-        );
+        Application::PostMainThread( [=] {
+            m_manager->MessageGlobalNative( event, data );
+        } );
 
         return CefV8Value::CreateBool( true );
     }

@@ -18,6 +18,7 @@
 /////////////////////////////////
 
 #include "GameManagement/RafflesiaConfigComponent.h"
+#include "GameManagement/GameAudioConfig.h"
 
 /////////////////////////////////
 //        Health System        //

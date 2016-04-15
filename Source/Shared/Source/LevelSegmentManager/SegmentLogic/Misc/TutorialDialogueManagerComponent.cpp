@@ -16,6 +16,8 @@
 #include "UIEvents.h"
 #include "UIScreensConfigComponent.h"
 
+#include <Scene.h>
+
 NATIVE_COMPONENT_DEFINITION( TutorialDialogueManager );
 
 using namespace ursine;
@@ -123,33 +125,20 @@ void TutorialDialogueManager::dispatchUIEventForSegment(LevelSegments segment)
         }
     }
 
-    auto world = GetOwner( )->GetWorld( );
-
-    if (!world)
+    if (!lines || !timespan)
         return;
 
-    auto settings = world->GetSettings( );
+    auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
 
-    if (!settings)
+    if (!scene)
         return;
 
-    auto ui = settings->GetComponent<UIScreensConfig>( );
+    auto manager = scene->GetGameContext( )->GetManager( );
 
-    if (!ui)
+    if (!manager)
         return;
 
-    if (lines == nullptr)
-    {
-        if (segment > LevelSegments::BossRoom_Platforming)
-        {
-            // send clear dialogue event
-            ui_event::ClearDialogue event;
-
-            ui->TriggerPlayerHUDEvent( event );
-        }
-
-        return;
-    }
+    auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
 
     ui_event::TutorialDialogue event;
 

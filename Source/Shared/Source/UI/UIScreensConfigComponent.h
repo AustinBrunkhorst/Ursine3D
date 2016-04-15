@@ -75,10 +75,20 @@ public:
 
     EditorResourceField(
         ursine::resources::WorldData,
+        mainMenuWorld,
+        GetMainMenuWorld,
+        SetMainMenuWorld
+    );
+
+    EditorResourceField(
+        ursine::resources::WorldData,
         startingGameplayWorld,
         GetStartingGameplayWorld,
         SetStartingGameplayWorld
     );
+
+    const ursine::resources::ResourceReference &GetMainMenuWorld(void);
+    void SetMainMenuWorld(const ursine::resources::ResourceReference &world);
 
     const ursine::resources::ResourceReference &GetStartingGameplayWorld(void);
     void SetStartingGameplayWorld(const ursine::resources::ResourceReference &world);
@@ -86,7 +96,12 @@ public:
 private:
     std::unordered_map<ursine::GUID, ursine::UIScreenID, ursine::GUIDHasher> m_created;
 
+    ursine::resources::ResourceReference m_mainMenuWorld;
     ursine::resources::ResourceReference m_startingGameplayWorld;
+
+    ursine::GameManager *m_gameManager;
+
+    ursine::Scene *getScene(void) const;
 
     ursine::UIScreen *addScreen(
         const ursine::resources::ResourceReference &reference,

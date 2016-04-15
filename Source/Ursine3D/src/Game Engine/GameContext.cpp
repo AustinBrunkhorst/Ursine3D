@@ -9,6 +9,11 @@ namespace ursine
         , m_scene( scene )
         , m_manager( nullptr ) { }
 
+    Scene *GameContext::GetScene(void)
+    {
+        return m_scene;
+    }
+
     GameManager *GameContext::GetManager(void)
     {
         return m_manager;

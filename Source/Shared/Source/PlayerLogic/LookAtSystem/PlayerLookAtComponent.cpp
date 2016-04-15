@@ -10,34 +10,35 @@
 ** -------------------------------------------------------------------------*/
 
 #include <Precompiled.h>
+
 #include "PlayerLookAtComponent.h"
 #include "ComponentIncludes.h"
 #include "EntityEvent.h"
 #include "PlayerIdComponent.h"
 #include "HealthComponent.h"
-#include "UIEvents.h"
-#include <UI/UIScreensConfigComponent.h>
+#include "UIScreensConfigComponent.h"
 
+#include <Scene.h>
 
-NATIVE_COMPONENT_DEFINITION(PlayerLookAt);
+NATIVE_COMPONENT_DEFINITION( PlayerLookAt );
 
 using namespace ursine;
 
 
 PlayerLookAt::PlayerLookAt(void) :
-    BaseComponent( ),
-    m_delay( 2.0f ),
-    m_timer( 0.0f ),
-    m_healthPercent( 0.0f ),
-    m_currEnemy( nullptr ),
-    m_currEnemyHealth( nullptr ),
-    m_reticleActive( false )
+    BaseComponent( )
+    , m_delay( 2.0f )
+    , m_timer( 0.0f )
+    , m_healthPercent( 0.0f )
+    , m_currEnemy( nullptr )
+    , m_currEnemyHealth( nullptr )
+    , m_reticleActive( false )
 {
 }
 
 PlayerLookAt::~PlayerLookAt(void)
 {
-    if ( m_currEnemyHealth != nullptr )
+    if (m_currEnemyHealth != nullptr)
     {
         m_currEnemyHealth->Listener( this )
             .Off( HealthEvents::HEALTH_ZERO, &PlayerLookAt::onEnemyDeath );
@@ -89,12 +90,12 @@ void PlayerLookAt::SetReticleActive(bool active)
     m_reticleActive = active;
 }
 
-const ursine::ecs::EntityHandle& PlayerLookAt::GetCurrentEnemy(void) const
+const ursine::ecs::EntityHandle &PlayerLookAt::GetCurrentEnemy(void) const
 {
     return m_currEnemy;
 }
 
-void PlayerLookAt::SetCurrentEnemy(ursine::ecs::EntityHandle& entity)
+void PlayerLookAt::SetCurrentEnemy(ursine::ecs::EntityHandle &entity)
 {
     m_currEnemy = entity;
 }
@@ -114,32 +115,44 @@ void PlayerLookAt::onEnemyDeath(EVENT_HANDLER(ursine::ecs::Entity))
     // dont have to check if entity has player id because
     // this would not be called if it did not have it
 
-    auto *ui = GetOwner()->GetWorld()->GetSettings()->GetComponent<UIScreensConfig>();
+    auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
 
-    if (ui)
+    if (!scene)
+        goto skipUI;
+
+    auto manager = scene->GetGameContext( )->GetManager( );
+
+    if (!manager)
+        goto skipUI;
+
+    auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
+
+    if (!ui)
+        goto skipUI;
+
+    int id = GetOwner( )->GetComponent<PlayerID>( )->GetID( );
+
+    ui_event::HealthTrackEnd trackEvent;
+    trackEvent.enemyKilled = true;
+    trackEvent.playerID = id;
+
+    ui->TriggerPlayerHUDEvent( trackEvent );
+
+    // crete reticle event
+    ui_event::ReticleActive reticleEvent;
+    reticleEvent.playerID = id;
+    reticleEvent.active = false;
+
+    ui->TriggerPlayerHUDEvent( reticleEvent );
+
+skipUI:
+
+    SetTimer( 0.0f );
+
+    if (m_currEnemyHealth)
     {
-        int id = GetOwner()->GetComponent< PlayerID >()->GetID();
-
-        ui_event::HealthTrackEnd trackEvent;
-        trackEvent.enemyKilled = true;
-        trackEvent.playerID = id;
-
-        ui->TriggerPlayerHUDEvent(trackEvent);
-
-        // crete reticle event
-        ui_event::ReticleActive reticleEvent;
-        reticleEvent.playerID = id;
-        reticleEvent.active = false;
-
-        ui->TriggerPlayerHUDEvent(reticleEvent);
-    }
-
-    SetTimer(0.0f);
-
-    if ( m_currEnemyHealth )
-    {
-        m_currEnemyHealth->Listener(this)
-            .Off(HealthEvents::HEALTH_ZERO, &PlayerLookAt::onEnemyDeath);
+        m_currEnemyHealth->Listener( this )
+            .Off( HealthEvents::HEALTH_ZERO, &PlayerLookAt::onEnemyDeath );
     }
 
     m_currEnemy = nullptr;
@@ -153,5 +166,3 @@ void PlayerLookAt::OnInitialize(void)
     //GetOwner( )->Listener( this )
     //    .On( game::FIRE_END, &BaseWeapon::TriggerReleased );
 }
-
-

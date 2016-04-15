@@ -24,6 +24,7 @@
 
 #include <SweptControllerComponent.h>
 #include <AudioEmitterComponent.h>
+#include <Scene.h>
 
 NATIVE_COMPONENT_DEFINITION( PlayerDownedObject );
 
@@ -169,19 +170,24 @@ void PlayerDownedObject::onZeroHealth(EVENT_HANDLER(Health))
 
     animator->AnimateDeath( );
 
-    // turn off the hud for this player
-    auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+    auto *scene = world->GetOwner( );
+    UIScreensConfig *ui = nullptr;
 
-    UAssert( ui != nullptr,
-        "UIConfig was null."    
-    );
+    if (scene)
+    {
+        auto manager = scene->GetGameContext( )->GetManager( );
+
+        if (manager)
+            ui = manager->GetConfigComponent<UIScreensConfig>( );
+    }
 
     ui_event::ToggleHUD e;
 
     e.toggled = false;
     e.playerID = owner->GetComponent<PlayerID>( )->GetID( );
 
-    ui->TriggerPlayerHUDEvent( e );
+    if (ui)
+        ui->TriggerPlayerHUDEvent( e );
 
     // If both players are dead, send event that both players are dead... lol
     auto players = world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
@@ -220,8 +226,19 @@ void PlayerDownedObject::onRevive(EVENT_HANDLER(Entity))
 
     animator->AnimateRevival( );
 
-    // turn on the hud for this player
-    auto *ui = owner->GetWorld( )->GetSettings( )->GetComponent<UIScreensConfig>( );
+    auto *scene = owner->GetWorld( )->GetOwner( );
+
+    UAssert( scene != nullptr,
+        "Scene was null."    
+    );
+
+    auto manager = scene->GetGameContext( )->GetManager( );
+
+    UAssert( manager != nullptr,
+        "Manager was null."
+    );
+
+    auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
 
     UAssert( ui != nullptr,
         "UIConfig was null."    

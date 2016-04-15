@@ -21,10 +21,24 @@ using namespace ursine;
 using namespace ecs;
 
 UIScreensConfig::UIScreensConfig(GameManager *manager)
-    : BaseComponent( ) { }
+    : BaseComponent( )
+    , m_gameManager( manager ) { }
 
 UIScreensConfig::UIScreensConfig(void)
-    : BaseComponent( ) { }
+    : BaseComponent( )
+    , m_gameManager( nullptr ) { }
+
+const resources::ResourceReference &UIScreensConfig::GetMainMenuWorld(void)
+{
+    return m_mainMenuWorld;
+}
+
+void UIScreensConfig::SetMainMenuWorld(const ursine::resources::ResourceReference &world)
+{
+    m_mainMenuWorld = world;
+
+    NOTIFY_COMPONENT_CHANGED( "mainMenuWorld", m_mainMenuWorld );
+}
 
 const resources::ResourceReference &UIScreensConfig::GetStartingGameplayWorld(void)
 {
@@ -38,13 +52,21 @@ void UIScreensConfig::SetStartingGameplayWorld(const resources::ResourceReferenc
     NOTIFY_COMPONENT_CHANGED( "startingGameplayWorld", m_startingGameplayWorld );
 }
 
+Scene *UIScreensConfig::getScene(void) const
+{
+    if (m_gameManager)
+        return m_gameManager->GetContext( )->GetScene( );
+
+    return GetOwner( )->GetWorld( )->GetOwner( );
+}
+
 UIScreen *UIScreensConfig::addScreen(
     const resources::ResourceReference &reference, 
     const UIScreenConfig &config, 
     const Json &initData
 )
 {
-    auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
+    auto *scene = getScene( );
 
     UAssert( scene, 
         "Scene was null." 
@@ -64,7 +86,7 @@ UIScreen *UIScreensConfig::addScreen(
 
 UIScreen *UIScreensConfig::getScreen(const resources::ResourceReference &reference) const
 {
-    auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
+    auto *scene = getScene( );
 
     UAssert( scene, 
         "Scene was null." 

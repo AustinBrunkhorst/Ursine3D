@@ -65,7 +65,7 @@ namespace ursine
 
             static void SetTrigger(const std::string &name, AkGameObjectID obj);
 
-            static void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id = AUDIO_GLOBAL_OBJECT_ID);
+            static void SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id = AK_INVALID_GAME_OBJECT);
 
             static void PostAudioEvent(const std::string param, AkGameObjectID id = AUDIO_GLOBAL_OBJECT_ID);
 

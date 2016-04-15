@@ -18,11 +18,11 @@
 #include "HealthComponent.h"
 #include "PlayerDownedObjectComponent.h"
 #include "GameEvents.h"
-#include "UIScreensConfigComponent.h"
 
+#include <Scene.h>
 #include <AudioEmitterComponent.h>
 
-NATIVE_COMPONENT_DEFINITION( RevivePlayer ) ;
+NATIVE_COMPONENT_DEFINITION( RevivePlayer );
 
 using namespace ursine;
 using namespace ecs;
@@ -147,19 +147,26 @@ void RevivePlayer::OnReviveCheat(EVENT_HANDLER(ursine::ecs::Entity))
     InteractionComplete( );
 }
 
+UIScreensConfig *RevivePlayer::getUI(void)
+{
+    auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
+
+    if (!scene)
+        return nullptr;
+
+    auto manager = scene->GetGameContext( )->GetManager( );
+
+    if (!manager)
+        return nullptr;
+
+    auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
+
+    return ui;
+}
+
 void RevivePlayer::messageUIToggle(const ursine::ecs::EntityHandle &reviver, bool toggle)
 {
-    auto world = GetOwner( )->GetWorld( );
-
-    if (!world)
-        return;
-
-    auto settings = world->GetSettings( );
-
-    if (!settings)
-        return;
-
-    auto ui = settings->GetComponent<UIScreensConfig>( );
+    auto *ui = getUI( );
 
     if (!ui)
         return;
@@ -175,17 +182,7 @@ void RevivePlayer::messageUIToggle(const ursine::ecs::EntityHandle &reviver, boo
 
 void RevivePlayer::messageUIProgress(const EntityHandle &reviver, float time)
 {
-    auto world = GetOwner( )->GetWorld( );
-
-    if (!world)
-        return;
-
-    auto settings = world->GetSettings( );
-
-    if (!settings)
-        return;
-
-    auto ui = settings->GetComponent<UIScreensConfig>( );
+    auto *ui = getUI( );
 
     if (!ui)
         return;
@@ -201,17 +198,7 @@ void RevivePlayer::messageUIProgress(const EntityHandle &reviver, float time)
 
 void RevivePlayer::messageUISuccess(const EntityHandle &)
 {
-    auto world = GetOwner( )->GetWorld( );
-
-    if (!world)
-        return;
-
-    auto settings = world->GetSettings( );
-
-    if (!settings)
-        return;
-
-    auto ui = settings->GetComponent<UIScreensConfig>( );
+    auto *ui = getUI( );
 
     if (!ui)
         return;

@@ -59,7 +59,7 @@ private:
     void initWindow(void);
     void initGraphics(void);
     void initUI(void);
-    void initStartingWorld(void);
+    void initBuildSettings(void);
 
     void onAppUpdate(EVENT_HANDLER(ursine::Application));
 

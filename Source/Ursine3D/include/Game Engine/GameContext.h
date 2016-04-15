@@ -17,9 +17,12 @@ namespace ursine
         virtual bool GetWindowFullScreen(void) const = 0;
         virtual void SetWindowFullScreen(bool fullScreen) = 0;
 
-        virtual void SetVolume(float volume, const std::string &outputType) const = 0;
+        virtual float GetVolume(const std::string &outputType) const = 0;
+        virtual void SetVolume(float volume, const std::string &outputType) = 0;
 
         virtual void ExitGame(void) = 0;
+
+        Scene *GetScene(void);
 
         GameManager *GetManager(void);
         void SetManager(GameManager *manager);

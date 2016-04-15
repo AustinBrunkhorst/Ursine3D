@@ -19,7 +19,7 @@
 #include "UIEvents.h"
 #include "EntityEvent.h"
 
-#include <UIScreensConfigComponent.h>
+#include <Scene.h>
 
 ENTITY_SYSTEM_DEFINITION( PlayerLookAtSystem );
 
@@ -93,6 +93,7 @@ namespace
 
 PlayerLookAtSystem::PlayerLookAtSystem(World *world)
     : FilterSystem( world, Filter( ).All<PlayerLookAt, RaycastComponent, PlayerID>( ) )
+    , m_ui( nullptr )
 {
 }
 
@@ -113,6 +114,16 @@ void PlayerLookAtSystem::Disable(const EntityHandle &entity)
     m_raycastComps.erase( entity );
 }
 
+void PlayerLookAtSystem::OnSceneReady(Scene *scene)
+{
+    auto manager = scene->GetGameContext( )->GetManager( );
+
+    if (!manager)
+        return;
+
+    m_ui = manager->GetConfigComponent<UIScreensConfig>( );
+}
+
 void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 {
     float dt = Application::Instance->GetDeltaTime( );
@@ -122,9 +133,6 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
     Health *enemyHealthComp;
 
     EntityHandle enemyHandle;
-
-    // send ui Event
-    auto *ui = m_world->GetSettings( )->GetComponent<UIScreensConfig>( );
 
     int id;
 
@@ -150,6 +158,9 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
 
             UAssert( enemyHealthComp, "Error: The raycast component requires there to be a health component." );
 
+            if (enemyHealthComp->GetHealth( ) <= 0.0f)
+                continue;
+
             // calculate enemy health percentage
             float enemyHealthPercentage = enemyHealthComp->GetHealth( ) / enemyHealthComp->GetMaxHealth( );
 
@@ -172,8 +183,8 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
                 playerLookComp->SetHealthPercent( enemyHealthPercentage );
 
                 // send ui events
-                SendHealthTrackStartEvent( ui, id, enemyHealthComp->GetDisplayName( ), enemyHealthPercentage );
-                SendReticleActiveEvent( ui, id, true );
+                SendHealthTrackStartEvent( m_ui, id, enemyHealthComp->GetDisplayName( ), enemyHealthPercentage );
+                SendReticleActiveEvent( m_ui, id, true );
 
                 // connect to enemyhit death event
                 enemyHealthComp->Listener(playerLookComp)
@@ -183,7 +194,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
             // not new
             else if (enemyHealthPercentage != playerLookComp->GetHealthPercent( ))
             {
-                SendHealthTrackUpdateEvent( ui, id, enemyHealthPercentage );
+                SendHealthTrackUpdateEvent( m_ui, id, enemyHealthPercentage );
             }
 
             // set timer to 0.0f
@@ -195,7 +206,7 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         {
             playerLookComp->SetReticleActive( false );
 
-            SendReticleActiveEvent( ui, id, false );
+            SendReticleActiveEvent( m_ui, id, false );
         } 
 
         // increment timer
@@ -207,12 +218,12 @@ void PlayerLookAtSystem::onUpdate(EVENT_HANDLER(World))
         {
             playerLookComp->SetTimer( 0.0f );
 
-            SendHealthTrackEndEvent(ui, id);
-
             auto currEnemy = playerLookComp->GetCurrentEnemy( );
 
             if (currEnemy == nullptr)
                 continue;
+
+            SendHealthTrackEndEvent( m_ui, id );
 
             // disconnect from death event
             // connect to enemyhit death event

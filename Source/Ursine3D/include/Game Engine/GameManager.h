@@ -20,12 +20,14 @@ namespace ursine
         GameContext *GetContext(void);
 
         template<typename T>
-        ecs::Component *GetConfigComponent(void);
+        T *GetConfigComponent(void);
 
-        virtual void OnInitialize(GameContext *context, const ursine::Json &configObj);
+        virtual void OnInitialize(GameContext *context, const Json &configObj);
 
     protected:
         GameContext *m_context;
+
+        ecs::World *setWorld(const resources::ResourceReference &resource, bool loadConfiguredSystems = true);
 
     private:
         std::unordered_map<meta::Type, ecs::Component*> m_configComponents;

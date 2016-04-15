@@ -9,20 +9,12 @@ class GameContext {
         return untyped __js__( "GameContextSetWindowFullScreen(fullScreen)" );
     }
 
-    public static inline function IsMusicMuted() {
-        return untyped __js__( "GameContextIsMusicMuted()" );
+    public static function GetVolume(target : String) : Float {
+        return untyped __js__( "GameContextGetVolume(target)" );
     }
 
-    public static function MuteMusic(muted : Bool) {
-        return untyped __js__( "GameContextMuteMusic(muted)" );
-    }
-
-    public static inline function IsAudioMuted() {
-        return untyped __js__( "GameContextIsAudioMuted()" );
-    }
-
-    public static function MuteAudio(muted : Bool) {
-        return untyped __js__( "GameContextMuteAudio(muted)" );
+    public static function SetVolume(target : String, value : Float) {
+        return untyped __js__( "GameContextSetVolume(value,target)" );
     }
 
     public static inline function ExitGame() {

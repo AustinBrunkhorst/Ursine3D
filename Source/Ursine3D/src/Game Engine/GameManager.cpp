@@ -2,6 +2,9 @@
 
 #include "GameManager.h"
 
+#include "WorldSerializer.h"
+#include "WorldData.h"
+
 namespace ursine
 {
     GameManager::GameManager(void)
@@ -76,13 +79,33 @@ namespace ursine
 
         #endif
 
-            auto instance = ctor.Invoke( context );
+            auto *config = ctor.Invoke( context ).GetValue<ecs::Component*>( );
+            auto instance = ObjectVariant( config );
 
             instance.GetType( ).DeserializeJson( instance, entry.second );
 
-            auto *config = ctor.Invoke( context ).GetValue<ecs::Component*>( );
-
             m_configComponents[ configType ] = config;
         }
+    }
+
+    ecs::World *GameManager::setWorld(const resources::ResourceReference &resource, bool loadConfiguredSystems/* = true*/)
+    {
+        auto *scene = m_context->GetScene( );
+
+        auto *data = resource.Load<resources::WorldData>( scene->GetResourceManager( ) );
+
+        if (!data)
+            return nullptr;
+
+        auto json = ecs::WorldSerializer::Serialize( data->GetData( ).get( ) );
+
+        auto *world = ecs::WorldSerializer::Deserialize( json );
+
+        scene->SetActiveWorld( ecs::World::Handle( world ) );
+
+        if (loadConfiguredSystems)
+            scene->LoadConfiguredSystems( );
+
+        return world;
     }
 }

@@ -20,6 +20,7 @@
 #include "PlayerIdComponent.h"
 
 #include <AnimatorComponent.h>
+#include <Scene.h>
 #include <World.h>
 
 GunReloadFinishedState::GunReloadFinishedState(void)
@@ -36,7 +37,13 @@ void GunReloadFinishedState::Enter(AnimatorControllerStateMachine *machine)
         "Scene was null."    
     );
 
-    auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+    auto manager = scene->GetGameContext( )->GetManager( );
+
+    UAssert( manager != nullptr,
+        "Manager was null."
+    );
+
+    auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
 
     UAssert( ui != nullptr,
         "UIConfig was null."    

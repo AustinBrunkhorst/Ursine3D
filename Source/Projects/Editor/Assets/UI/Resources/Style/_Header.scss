@@ -81,7 +81,7 @@ body {
     &#simulation-run-game {
       opacity: 1;
 
-      @include icon-half( $icon-half-display, $font-size );
+      @include icon-regular( $icon-regular-gamepad, $font-size );
     }
 
     &#simulation-play {

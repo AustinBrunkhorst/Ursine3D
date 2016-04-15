@@ -25,7 +25,19 @@ JSFunction(GameContextSetWindowFullScreen)
     return CefV8Value::CreateBool( true );
 }
 
-JSFunction(GameSetVolume)
+JSFunction(GameContextGetVolume)
+{
+    if (arguments.size( ) != 1)
+        JSThrow( "Invalid arguments.", nullptr );
+
+    auto outputType = arguments[ 0 ]->GetStringValue( );
+
+    return CefV8Value::CreateDouble(
+        GetCoreSystem( GameLauncher )->GetScene( )->GetGameContext( )->GetVolume( outputType )
+    );
+}
+
+JSFunction(GameContextSetVolume)
 {
     if (arguments.size( ) != 2)
         JSThrow( "Invalid arguments.", nullptr );

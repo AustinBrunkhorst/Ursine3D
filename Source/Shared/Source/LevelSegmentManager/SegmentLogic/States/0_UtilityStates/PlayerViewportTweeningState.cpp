@@ -21,6 +21,7 @@
 #include "PlayerIDComponent.h"
 #include "UIScreensConfigComponent.h"
 
+#include <Scene.h>
 #include <CameraComponent.h>
 
 using namespace ursine;
@@ -386,15 +387,19 @@ void PlayerViewportTweeningState::Exit(SegmentLogicStateMachine *machine)
 
 void PlayerViewportTweeningState::turnOffPlayerHUD(const EntityHandle &entity)
 {
-    auto world = entity->GetWorld( );
-
-    auto *scene = world->GetOwner( );
+    auto *scene = entity->GetWorld( )->GetOwner( );
 
     UAssert( scene != nullptr,
         "Scene was null."    
     );
 
-    auto *ui = world->GetSettings( )->GetComponent<UIScreensConfig>( );
+    auto manager = scene->GetGameContext( )->GetManager( );
+
+    UAssert( manager != nullptr,
+        "Manager was null."
+    );
+
+    auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
 
     UAssert( ui != nullptr,
         "UIConfig was null."    

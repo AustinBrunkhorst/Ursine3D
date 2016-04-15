@@ -4,6 +4,8 @@
 
 #include "Project.h"
 
+#include "AudioSystem.h"
+
 EditorGameContext::EditorGameContext(Project *project)
     : GameContext( &project->GetScene( ), this )
     , m_project( project ) { }
@@ -19,16 +21,18 @@ void EditorGameContext::SetWindowFullScreen(bool fullScreen)
     // do nothing
 }
 
-void EditorGameContext::SetVolume(float volume, const std::string &outputType) const
+float EditorGameContext::GetVolume(const std::string &outputType) const
 {
-    auto world = m_project->GetScene( ).GetActiveWorld( );
+    auto search = m_volumeCache.find( outputType );
 
-    if (world)
-    {
-        ursine::ecs::VolumeChangeArgs args( volume, outputType );
+    return search == m_volumeCache.end( ) ? 1.0f : search->second;
+}
 
-        world->Dispatch( ursine::ecs::WORLD_VOLUME_CHANGE, &args );
-    }
+void EditorGameContext::SetVolume(float volume, const std::string &outputType)
+{
+    ursine::ecs::AudioSystem::SetRealTimeParameter( outputType, volume * 100.0f );
+
+    m_volumeCache[ outputType ] = volume;
 }
 
 void EditorGameContext::ExitGame(void)

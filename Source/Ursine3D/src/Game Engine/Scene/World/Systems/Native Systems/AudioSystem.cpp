@@ -71,10 +71,7 @@ namespace ursine
 
         void AudioSystem::OnSceneReady(Scene *scene)
         {
-            auto settings = m_world->GetSettings( );
 
-            if (!settings->HasComponent<AudioConfig>( ))
-                settings->AddComponent<AudioConfig>( );
         }
 
         void AudioSystem::OnRemove(void)

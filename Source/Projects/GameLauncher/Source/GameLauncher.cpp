@@ -105,7 +105,7 @@ void GameLauncher::OnInitialize(void)
     m_scene = new Scene( );
     m_scene->GetResourceManager( ).SetResourceDirectory( kGameResourcesPath );
 
-    m_gameContext = new GameLauncherGameContext( );
+    m_gameContext = new GameLauncherGameContext( m_scene );
 
     m_scene->SetGameContext( m_gameContext );
 
@@ -117,11 +117,11 @@ void GameLauncher::OnInitialize(void)
     if (m_settings.windowFullScreen)
     {
         // make sure we have time to switch into fullscreen
-        Application::PostMainThread( std::bind( &GameLauncher::initStartingWorld, this ) );
+        Application::PostMainThread( std::bind( &GameLauncher::initBuildSettings, this ) );
     }
     else
     {
-        initStartingWorld( );
+        initBuildSettings( );
     }
 
     Application::Instance->Connect(
@@ -133,6 +133,10 @@ void GameLauncher::OnInitialize(void)
 
 void GameLauncher::OnRemove(void)
 {
+    delete m_gameContext->GetManager( );
+
+    m_gameContext->SetManager( nullptr );
+
     m_scene->SetGameContext( nullptr );
 
     delete m_gameContext;
@@ -285,25 +289,32 @@ void GameLauncher::initUI(void)
     m_scene->GetScreenManager( ).SetUI( m_window.ui );
 }
 
-void GameLauncher::initStartingWorld(void)
+void GameLauncher::initBuildSettings(void)
 {
-    resources::ResourceReference worldRef;
-    
-    try
-    {
-        worldRef = GUIDStringGenerator( )( m_settings.startingWorld );    
-    }
-    catch (...)
-    {
-        worldRef = kNullGUID;
-    }
+    // make sure components are configured
+    ecs::EntityManager::ConfigureComponents( );
 
-    UAssert( m_scene->SetActiveWorld( worldRef, false ),
-        "Unable to load starting world.\nguid: %s",
-        m_settings.startingWorld.c_str( )
+    auto managerType = meta::Type::GetFromName( m_settings.manager );
+
+    UAssert( managerType.IsValid( ) && managerType.GetBaseClasses( ).count( typeof( GameManager ) ),
+        "Unknown or invalid Game Manager '%s'.",
+        m_settings.manager.c_str( )
     );
 
-    m_scene->LoadConfiguredSystems( );
+    auto ctor = managerType.GetDynamicConstructor( );
+
+    UAssert( ctor.IsValid( ), 
+        "Game Manager '%s' missing default constructor." 
+    );
+
+    auto *manager = ctor.Invoke( ).GetValue<GameManager*>( );
+
+    m_gameContext->SetManager( manager );
+
+    manager->OnInitialize( 
+        m_gameContext, 
+        m_settings.managerConfiguration 
+    );
 }
 
 void GameLauncher::onAppUpdate(EVENT_HANDLER(ursine::Application))

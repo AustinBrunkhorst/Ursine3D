@@ -33,45 +33,6 @@ namespace ursine
 {
     namespace ecs
     {
-        namespace
-        {
-            void configureComponents(void)
-            {
-                static bool configured = false;
-
-                if (configured)
-                    return;
-
-                configured = true;
-
-                auto componentType = typeof( Component );
-
-                ComponentTypeID nextID = 0;
-
-                for (auto derived : componentType.GetDerivedClasses( ))
-                {
-                    auto setter = derived.GetStaticMethod( "SetComponentID", { typeof( ComponentTypeID ) } );
-
-                    UAssert( setter.IsValid( ),
-                        "Native component '%s' doesn't have a static method SetComponentID.\n"
-                        "Most likely missing NATIVE_COMPONENT in declaration",
-                        derived.GetName( ).c_str( )
-                    );
-
-                    UAssert( nextID < kMaxComponentCount, "We're maxed out son." );
-
-                    setter.Invoke( nextID++ );
-
-                    auto &defaultCtor = derived.GetDynamicConstructor( );
-
-                    UAssert( defaultCtor.IsValid( ), 
-                        "Component type '%s' doesn't have a default dynamic constructor.",
-                        derived.GetName( ).c_str( )
-                    );
-                }
-            }
-        }
-
         ////////////////////////////////////////////////////////////////////////
         // Constructors/Destructors
         ////////////////////////////////////////////////////////////////////////
@@ -81,7 +42,7 @@ namespace ursine
             , m_nextEntityID( 0 )
             , m_nextComponentUID( 0 )
         {
-            configureComponents( );
+            ConfigureComponents( );
         }
 
         EntityManager::~EntityManager(void)
@@ -526,6 +487,42 @@ namespace ursine
         bool EntityManager::CompareComponentsDescending(const Component *a, const Component *b)
         {
             return b->m_uniqueID < a->m_uniqueID;
+        }
+
+        void EntityManager::ConfigureComponents(void)
+        {
+            static bool configured = false;
+
+            if (configured)
+                return;
+
+            configured = true;
+
+            auto componentType = typeof( Component );
+
+            ComponentTypeID nextID = 0;
+
+            for (auto derived : componentType.GetDerivedClasses( ))
+            {
+                auto setter = derived.GetStaticMethod( "SetComponentID", { typeof( ComponentTypeID ) } );
+
+                UAssert( setter.IsValid( ),
+                    "Native component '%s' doesn't have a static method SetComponentID.\n"
+                    "Most likely missing NATIVE_COMPONENT in declaration",
+                    derived.GetName( ).c_str( )
+                );
+
+                UAssert( nextID < kMaxComponentCount, "We're maxed out son." );
+
+                setter.Invoke( nextID++ );
+
+                auto &defaultCtor = derived.GetDynamicConstructor( );
+
+                UAssert( defaultCtor.IsValid( ), 
+                    "Component type '%s' doesn't have a default dynamic constructor.",
+                    derived.GetName( ).c_str( )
+                );
+            }
         }
 
         ////////////////////////////////////////////////////////////////////////

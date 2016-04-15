@@ -6,9 +6,10 @@
 
 #include <Application.h>
 #include <GfxAPI.h>
+#include <AudioSystem.h>
 
-GameLauncherGameContext::GameLauncherGameContext(void)
-    : GameContext( this )
+GameLauncherGameContext::GameLauncherGameContext(ursine::Scene *scene)
+    : GameContext( scene, this )
     , m_launcher( GetCoreSystem( GameLauncher ) ) { }
 
 bool GameLauncherGameContext::GetWindowFullScreen(void) const
@@ -43,21 +44,18 @@ void GameLauncherGameContext::SetWindowFullScreen(bool fullScreen)
     GetCoreSystem( ursine::graphics::GfxAPI )->SetFullscreenState( fullScreen );
 }
 
-void GameLauncherGameContext::SetVolume(float volume, const std::string &outputType) const
+float GameLauncherGameContext::GetVolume(const std::string &outputType) const
 {
-    auto scene = m_launcher->GetScene( );
+    auto search = m_volumeCache.find( outputType );
 
-    if (!scene)
-        return;
+    return search == m_volumeCache.end( ) ? 1.0f : search->second;
+}
 
-    auto world = scene->GetActiveWorld( );
+void GameLauncherGameContext::SetVolume(float volume, const std::string &outputType)
+{
+    ursine::ecs::AudioSystem::SetRealTimeParameter( outputType, volume * 100.0f );
 
-    if (!world)
-        return;
-
-    ursine::ecs::VolumeChangeArgs args( volume, outputType );
-
-    world->Dispatch( ursine::ecs::WORLD_VOLUME_CHANGE, &args );
+    m_volumeCache[ outputType ] = volume;
 }
 
 void GameLauncherGameContext::ExitGame(void)
