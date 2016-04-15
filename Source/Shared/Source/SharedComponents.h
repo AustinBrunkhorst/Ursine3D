@@ -173,6 +173,8 @@
 #include "FX/PlayAudioEventComponent.h"
 #include "FX/PlayAudioEventOnEntityAnimationFinishComponent.h"
 #include "FX/PlayAudioEventOnTriggerComponent.h"
+#include "FX/ParticleEmitterEnableDelayComponent.h"
+#include "FX/ResetParticleCountOnAnimationEventComponent.h"
 
 /////////////////////////////////
 //             Misc            //
