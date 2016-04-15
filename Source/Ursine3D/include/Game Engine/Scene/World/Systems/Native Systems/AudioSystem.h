@@ -93,6 +93,8 @@ namespace ursine
 
             void onUpdate(EVENT_HANDLER(World));
 
+            void initializeGlobalEmitterListener(void);
+
         } Meta(Enable, WhiteListMethods, AutoAddEntitySystem);
     }
 }

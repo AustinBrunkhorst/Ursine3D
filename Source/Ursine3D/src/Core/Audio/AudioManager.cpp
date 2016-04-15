@@ -30,6 +30,8 @@
 
 #include <AK/MusicEngine/Common/AkMusicEngine.h>
 
+#include <AK/SoundEngine/Common/AkQueryParameters.h>
+
 #include "AudioID.h"
 #include "SoundFrameClient.h"
 
@@ -319,6 +321,16 @@ namespace ursine
             "Wwise: Cannot Initialize The Music Engine." 
         );
 
+        AkSoundPosition emitterPos = { { 0,0,0 },{ 0,0,-1 } };
+        AkListenerPosition listenerPos = { { 0,0,1 },{ 0,1,0 },{ 0,0,0 } };
+
+        AK::SoundEngine::RegisterGameObj( AUDIO_GLOBAL_OBJECT_ID );
+
+        //// Set emitter position
+        AK::SoundEngine::SetPosition(AUDIO_GLOBAL_OBJECT_ID, emitterPos);
+
+        //// Set listener position
+        AK::SoundEngine::SetListenerPosition( listenerPos, static_cast<AkUInt32>( ListenerIndex::L8 ) );
     }
 }
 
