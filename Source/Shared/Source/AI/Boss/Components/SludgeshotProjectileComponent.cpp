@@ -291,7 +291,7 @@ void SludgeshotProjectile::onAnimationCompleted(EVENT_HANDLER(EntityAnimator))
 
     auto aoeTrans = aoe->GetTransform( );
 
-    aoeTrans->SetWorldScale( SVec3( m_range, 0.0f, m_range ) );
+    aoeTrans->SetWorldScale( SVec3( m_range, 1.0f, m_range ) );
     aoeTrans->SetWorldPosition( position );
 }
 

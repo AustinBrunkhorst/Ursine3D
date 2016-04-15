@@ -93,12 +93,17 @@ void SludgeshotAoe::onUpdate(EVENT_HANDLER(World))
         // If it's time to die
         if (m_lifeTime <= 0.0f)
         {
-            auto emitter = GetOwner( )->GetComponent<ParticleEmitter>( );
+            auto emitters = GetOwner( )->GetComponentsInChildren<ParticleEmitter>( );
 
-            m_fadeOutTimer = emitter->GetLifetime( ) + emitter->GetLifetimeRange( );
-            m_fadeOutTime = m_fadeOutTimer;
+            m_fadeOutTimer = -1.0f;
 
-            emitter->SetEmitting( false );
+            for (auto &emitter : emitters)
+            {
+                m_fadeOutTimer = math::Max( emitter->GetLifetime( ) + emitter->GetLifetimeRange( ), m_fadeOutTimer );
+                m_fadeOutTime = m_fadeOutTimer;
+
+                emitter->SetEmitting( false );
+            }
 
             m_originalScale = GetOwner( )->GetTransform( )->GetWorldScale( ).X( );
 
@@ -145,7 +150,7 @@ void SludgeshotAoe::onUpdate(EVENT_HANDLER(World))
 
         // Set the new scale
         GetOwner( )->GetTransform( )->SetWorldScale(
-            SVec3( 1.0f, 0.0f, 1.0f ) * m_originalScale * (m_fadeOutTimer / m_fadeOutTime)
+            SVec3( 1.0f, 0.0f, 1.0f ) * m_originalScale * (m_fadeOutTimer / m_fadeOutTime) + SVec3( 0.0f, 1.0f, 0.0f )
         );
     }
 

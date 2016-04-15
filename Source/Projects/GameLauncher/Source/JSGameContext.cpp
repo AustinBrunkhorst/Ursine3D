@@ -25,42 +25,17 @@ JSFunction(GameContextSetWindowFullScreen)
     return CefV8Value::CreateBool( true );
 }
 
-JSFunction(GameContextIsMusicMuted)
+JSFunction(GameSetVolume)
 {
-    return CefV8Value::CreateBool(
-        GetCoreSystem( GameLauncher )->GetScene( )->GetGameContext( )->IsMusicMuted( )
-    );
-}
+    if (arguments.size() != 2)
+        JSThrow("Invalid arguments.", nullptr);
 
-JSFunction(GameContextMuteMusic)
-{
-    if (arguments.size( ) != 1)
-        JSThrow( "Invalid arguments.", nullptr );
+    auto volume = static_cast<float>(arguments[0]->GetDoubleValue());
+    auto outputType = arguments[1]->GetStringValue();
 
-    auto state = arguments[ 0 ]->GetBoolValue( );
+    GetCoreSystem(Editor)->GetProject()->GetScene().GetGameContext()->SetVolume(volume, outputType);
 
-    GetCoreSystem( GameLauncher )->GetScene( )->GetGameContext( )->MuteMusic( state );
-
-    return CefV8Value::CreateBool( true );
-}
-
-JSFunction(GameContextIsAudioMuted)
-{
-    return CefV8Value::CreateBool(
-        GetCoreSystem( GameLauncher )->GetScene( )->GetGameContext( )->IsAudioMuted( )
-    );
-}
-
-JSFunction(GameContextMuteAudio)
-{
-    if (arguments.size( ) != 1)
-        JSThrow( "Invalid arguments.", nullptr );
-
-    auto state = arguments[ 0 ]->GetBoolValue( );
-
-    GetCoreSystem( GameLauncher )->GetScene( )->GetGameContext( )->MuteAudio( state );
-
-    return CefV8Value::CreateBool( true );
+    return CefV8Value::CreateBool(true);
 }
 
 JSFunction(GameContextExitGame)

@@ -16,6 +16,8 @@
 #include "BossAIStateMachine.h"
 #include "BossAIComponent.h"
 #include "ShieldFXComponent.h"
+#include "HealthComponent.h"
+#include "PlayerIDComponent.h"
 
 #include <ParticleEmitterComponent.h>
 #include <AnimatorComponent.h>
@@ -41,6 +43,12 @@ void BossDeathState::Enter(BossAIStateMachine *machine)
     emitter->PushEvent( boss->GetDeathScream( ) );
 
     boss->GetPollinateSmogEntity( )->GetComponent<ParticleEmitter>( )->SetEmitRate( 0.0f );
+
+    // Set both players to invulnerable
+    auto players = boss->GetOwner( )->GetWorld( )->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+
+    for (auto &player : players)
+        player->GetComponent<Health>( )->SetInvulnerable( true );
 }
 
 void BossDeathState::Update(BossAIStateMachine *machine)
