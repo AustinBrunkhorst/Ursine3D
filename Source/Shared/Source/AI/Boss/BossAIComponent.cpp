@@ -399,6 +399,18 @@ void BossAI::SetPollinateSafetyShieldEntityName(const std::string &name)
     NOTIFY_COMPONENT_CHANGED( "pollinateSafetyShieldEntityName", m_pollinateSafetyShield );
 }
 
+const std::string &BossAI::GetPollinateSafetyArrowsEntityName(void) const
+{
+    return m_pollinateSafetyArrows;
+}
+
+void BossAI::SetPollinateSafetyArrowsEntityName(const std::string &name)
+{
+    m_pollinateSafetyArrows = name;
+
+    NOTIFY_COMPONENT_CHANGED( "pollinateSafetyArrowsEntityName", m_pollinateSafetyArrows );
+}
+
 const std::string &BossAI::GetPollinateGooFloorEntityName(void) const
 {
     return m_pollinateGooFloor;
@@ -547,6 +559,11 @@ EntityHandle BossAI::GetPollinateSafetyShield(void)
 EntityHandle BossAI::GetPollinateGooFloor(void)
 {
     return GetOwner( )->GetWorld( )->GetEntityFromName( m_pollinateGooFloor );
+}
+
+EntityHandle BossAI::GetPollinateSafetyArrows(void)
+{
+    return GetOwner( )->GetWorld( )->GetEntityFromName( m_pollinateSafetyArrows );
 }
 
 void BossAI::AddSpawnedVine(EntityHandle vine)

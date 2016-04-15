@@ -148,6 +148,12 @@ public:
         SetPollinateSafetyShieldEntityName
     );
 
+    EditorField(
+        std::string pollinateSafetyArrowsEntityName,
+        GetPollinateSafetyArrowsEntityName,
+        SetPollinateSafetyArrowsEntityName
+    );
+
     EditorResourceField(
         ursine::resources::ArchetypeData,
         vineArchetype,
@@ -309,6 +315,9 @@ public:
     const std::string &GetPollinateGooFloorEntityName(void) const;
     void SetPollinateGooFloorEntityName(const std::string &name);
 
+    const std::string &GetPollinateSafetyArrowsEntityName(void) const;
+    void SetPollinateSafetyArrowsEntityName(const std::string &name);
+
     const ursine::resources::ResourceReference &GetPollinateArchetype(void) const;
     void SetPollinateArchetype(const ursine::resources::ResourceReference &pollinateArchetype);
 
@@ -377,6 +386,8 @@ public:
     ursine::ecs::EntityHandle GetPollinateSafetyShield(void);
 
     ursine::ecs::EntityHandle GetPollinateGooFloor(void);
+
+    ursine::ecs::EntityHandle GetPollinateSafetyArrows(void);
 
     void AddSpawnedVine(ursine::ecs::EntityHandle vine);
     const std::vector<ursine::ecs::EntityHandle> &GetVines(void) const;
@@ -449,6 +460,8 @@ private:
     float m_pollinateTickAmount;
 
     std::string m_pollinateSmogEntity;
+
+    std::string m_pollinateSafetyArrows;
 
     // Invulnerable emitter
     std::string m_invulnerableEmitterEntity;

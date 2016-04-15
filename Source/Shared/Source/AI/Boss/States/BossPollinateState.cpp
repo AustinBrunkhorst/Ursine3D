@@ -59,6 +59,15 @@ void BossPollinateState::Enter(BossAIStateMachine *machine)
     m_pollinateSmogEntity = m_boss->GetPollinateSmogEntity( );
 
     m_counter = 0.0f;
+
+    m_safetyArrows = m_boss->GetPollinateSafetyArrows( );
+
+    auto models = m_safetyArrows->GetComponentsInChildren<Model3D>( );
+
+    for (auto &model : models)
+    {
+        model->SetActive( true );
+    }
 }
 
 void BossPollinateState::Update(BossAIStateMachine *machine)
@@ -158,6 +167,13 @@ void BossPollinateState::Exit(BossAIStateMachine *machine)
     // unsubscribe from everything
     animator->GetOwner( )->Listener( this )
         .Off( ENTITY_ANIMATION_STATE_EVENT, &BossPollinateState::onAnimationEvent );
+
+    auto models = m_safetyArrows->GetComponentsInChildren<Model3D>( );
+
+    for (auto &model : models)
+    {
+        model->SetActive( false );
+    }
 }
 
 void BossPollinateState::onAnimationEvent(EVENT_HANDLER(Entity))
