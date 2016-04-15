@@ -43,24 +43,21 @@ void GameLauncherGameContext::SetWindowFullScreen(bool fullScreen)
     GetCoreSystem( ursine::graphics::GfxAPI )->SetFullscreenState( fullScreen );
 }
 
-bool GameLauncherGameContext::IsMusicMuted(void) const
+void GameLauncherGameContext::SetVolume(float volume, const std::string &outputType) const
 {
-    return false;
-}
+    auto scene = m_launcher->GetScene( );
 
-void GameLauncherGameContext::MuteMusic(bool muted)
-{
-    
-}
+    if (!scene)
+        return;
 
-bool GameLauncherGameContext::IsAudioMuted(void) const
-{
-    return false;
-}
+    auto world = scene->GetActiveWorld( );
 
-void GameLauncherGameContext::MuteAudio(bool muted)
-{
-    
+    if (!world)
+        return;
+
+    ursine::ecs::VolumeChangeArgs args( volume, outputType );
+
+    world->Dispatch( ursine::ecs::WORLD_VOLUME_CHANGE, &args );
 }
 
 void GameLauncherGameContext::ExitGame(void)

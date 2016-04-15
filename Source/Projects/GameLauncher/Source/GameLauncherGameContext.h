@@ -14,11 +14,7 @@ public:
     bool GetWindowFullScreen(void) const override;
     void SetWindowFullScreen(bool fullScreen) override;
 
-    bool IsMusicMuted(void) const override;
-    void MuteMusic(bool muted) override;
-
-    bool IsAudioMuted(void) const override;
-    void MuteAudio(bool muted) override;
+    void SetVolume(float volume, const std::string &outputType) const;
 
     void ExitGame(void) override;
 

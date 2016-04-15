@@ -14,6 +14,7 @@
 #include "ComponentIncludes.h"
 #include "EntityEvent.h"
 #include "PlayerIdComponent.h"
+#include "HealthComponent.h"
 #include "UIEvents.h"
 #include <UI/UIScreensConfigComponent.h>
 
@@ -29,16 +30,17 @@ PlayerLookAt::PlayerLookAt(void) :
     m_timer( 0.0f ),
     m_healthPercent( 0.0f ),
     m_currEnemy( nullptr ),
+    m_currEnemyHealth( nullptr ),
     m_reticleActive( false )
 {
 }
 
 PlayerLookAt::~PlayerLookAt(void)
 {
-    if ( m_currEnemy != nullptr )
+    if ( m_currEnemyHealth != nullptr )
     {
-        m_currEnemy->Listener(this)
-            .Off(ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath);
+        m_currEnemyHealth->Listener( this )
+            .Off( HealthEvents::HEALTH_ZERO, &PlayerLookAt::onEnemyDeath );
     }
 }
 
@@ -97,6 +99,16 @@ void PlayerLookAt::SetCurrentEnemy(ursine::ecs::EntityHandle& entity)
     m_currEnemy = entity;
 }
 
+Health* PlayerLookAt::GetCurrentEnemyHealth(void) const
+{
+    return m_currEnemyHealth;
+}
+
+void PlayerLookAt::SetCurrentEnemyHealth(Health* healthComp)
+{
+    m_currEnemyHealth = healthComp;
+}
+
 void PlayerLookAt::onEnemyDeath(EVENT_HANDLER(ursine::ecs::Entity))
 {
     // dont have to check if entity has player id because
@@ -124,10 +136,14 @@ void PlayerLookAt::onEnemyDeath(EVENT_HANDLER(ursine::ecs::Entity))
 
     SetTimer(0.0f);
 
-    m_currEnemy->Listener(this)
-        .Off(ursine::ecs::ENTITY_REMOVED, &PlayerLookAt::onEnemyDeath);
+    if ( m_currEnemyHealth )
+    {
+        m_currEnemyHealth->Listener(this)
+            .Off(HealthEvents::HEALTH_ZERO, &PlayerLookAt::onEnemyDeath);
+    }
 
     m_currEnemy = nullptr;
+    m_currEnemyHealth = nullptr;
 
     m_reticleActive = false;
 }

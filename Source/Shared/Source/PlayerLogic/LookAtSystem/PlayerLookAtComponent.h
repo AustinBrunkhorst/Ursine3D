@@ -14,6 +14,7 @@
 
 #include <Component.h>
 
+class Health;
 
 namespace ursine
 {
@@ -53,6 +54,10 @@ public:
     const ursine::ecs::EntityHandle& GetCurrentEnemy(void) const;
     void SetCurrentEnemy(ursine::ecs::EntityHandle& entity);
 
+    Health* GetCurrentEnemyHealth(void) const;
+
+    void SetCurrentEnemyHealth(Health* healthComp);
+
     void onEnemyDeath(EVENT_HANDLER(ursine::ecs::Entity));
 
 protected:
@@ -68,6 +73,8 @@ private:
     float m_healthPercent;
 
     ursine::ecs::EntityHandle m_currEnemy;
+
+    Health* m_currEnemyHealth;
 
     bool m_reticleActive;
 

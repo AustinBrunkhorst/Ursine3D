@@ -34,8 +34,8 @@ RevivePlayer::RevivePlayer(void) :
 
 RevivePlayer::~RevivePlayer(void)
 {
-    GetOwner( )->GetRoot( )->Listener(this)
-        .On( game::REVIVE_PLAYER, &RevivePlayer::OnRevive );
+    GetOwner( )->Listener(this)
+        .On( game::REVIVE_PLAYER, &RevivePlayer::OnReviveCheat );
 }
 
 float RevivePlayer::GetReviveTime(void) const
@@ -56,15 +56,15 @@ const ursine::resources::ResourceReference& RevivePlayer::GetTexture(void) const
 void RevivePlayer::SetTexture(const ursine::resources::ResourceReference& texture)
 {
     m_texture = texture;
-    NOTIFY_COMPONENT_CHANGED("Texture", m_texture);
+    NOTIFY_COMPONENT_CHANGED( "Texture", m_texture );
 }
 
 void RevivePlayer::OnInitialize(void)
 {
     GetOwner( )->GetComponent<Interactable>( )->SetUpInteractable(this, Interactable::END);
 
-    GetOwner( )->GetRoot( )->Listener( this )
-        .On( game::REVIVE_PLAYER, &RevivePlayer::OnRevive );
+    GetOwner( )->Listener( this )
+        .On( game::REVIVE_PLAYER_CHEAT, &RevivePlayer::OnReviveCheat );
 }
 
 void RevivePlayer::StartInteraction(const ursine::ecs::EntityHandle& entity)
@@ -111,7 +111,11 @@ void RevivePlayer::Interact(const ursine::ecs::EntityHandle& entity)
         // revive player if time has been met
         if ( *time > m_reviveTime )
         {
-            messageUISuccess( queue->GetOwner( ) );
+            auto health = entity->GetComponent<Health>( );
+
+            health->SetShieldHealth( health->GetMaxShieldHealth( ) );
+
+            messageUISuccess(entity);
 
             InteractionComplete( );
         }
@@ -134,10 +138,13 @@ void RevivePlayer::InteractionComplete(void)
     revivedSfx( );
 }
 
-void RevivePlayer::OnRevive(EVENT_HANDLER(ursine::ecs::Entity))
+void RevivePlayer::OnReviveCheat(EVENT_HANDLER(ursine::ecs::Entity))
 {
-    GetOwner( )->Delete( );
-    revivedSfx( );
+    EVENT_ATTRS( ursine::ecs::Entity, ursine::EventArgs );
+
+    messageUISuccess( ursine::ecs::EntityHandle( nullptr ) );
+
+    InteractionComplete( );
 }
 
 void RevivePlayer::messageUIToggle(const ursine::ecs::EntityHandle &reviver, bool toggle)
@@ -192,7 +199,7 @@ void RevivePlayer::messageUIProgress(const EntityHandle &reviver, float time)
     ui->TriggerPlayerHUDEvent( event );
 }
 
-void RevivePlayer::messageUISuccess(const EntityHandle &reviver)
+void RevivePlayer::messageUISuccess(const EntityHandle &)
 {
     auto world = GetOwner( )->GetWorld( );
 
@@ -211,8 +218,14 @@ void RevivePlayer::messageUISuccess(const EntityHandle &reviver)
 
     ui_event::PlayerReviveSuccess event;
 
-    event.playerReviving = reviver->GetComponent<PlayerID>( )->GetID( );
     event.playerRevived = GetOwner( )->GetRoot( )->GetComponent<PlayerID>( )->GetID( );
+
+    if ( event.playerRevived == 1 )
+        event.playerReviving = 0;
+
+    else
+        event.playerReviving = 1;
+    
 
     ui->TriggerPlayerHUDEvent( event );
 }
