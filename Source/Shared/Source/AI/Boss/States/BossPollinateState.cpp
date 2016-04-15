@@ -135,6 +135,19 @@ void BossPollinateState::Update(BossAIStateMachine *machine)
             (m_counter / 10.0f) * 50
         );
     }
+
+    // face towards player 1
+    auto target = p1 ? p1 : p2;
+
+    if (!target)
+        return;
+
+    auto targetPos = target->GetTransform( )->GetWorldPosition( );
+    auto bossTrans = m_boss->GetOwner( )->GetTransform( );
+
+    targetPos.Y( ) = bossTrans->GetWorldPosition( ).Y( );
+
+    bossTrans->LookAt( targetPos, 30.0f );
 }
 
 void BossPollinateState::Exit(BossAIStateMachine *machine)
