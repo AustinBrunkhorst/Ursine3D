@@ -705,7 +705,7 @@ void BossAI::OnInitialize(void)
     {
         auto sm = std::make_shared<BossAIStateMachine>( this );
 
-        auto stageScream = sm->AddState<BossPlayAudioEventState>( m_stageScream );
+        auto stageScream = sm->AddState<BossPlayAudioEventState>( m_stageScream, TimeSpan::FromSeconds( 2.0f ) );
         auto enrage = sm->AddState<BossEnrageState>( );
         auto invulnerable = sm->AddState<BossInvulnerableToggleState>( true );
         auto vulnerable = sm->AddState<BossInvulnerableToggleState>( false );

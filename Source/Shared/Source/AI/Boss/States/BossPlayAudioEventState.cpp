@@ -20,19 +20,26 @@
 #include <AudioManager.h>
 #include <AudioItemEventData.h>
 #include <World.h>
+#include <LocalTimerManager.h>
 #include <Scene.h>
 
 using namespace ursine;
 using namespace ecs;
 using namespace resources;
 
-BossPlayAudioEventState::BossPlayAudioEventState(ResourceReference &resource)
+BossPlayAudioEventState::BossPlayAudioEventState(
+    ResourceReference &resource, ursine::TimeSpan delay
+)
     : BossAIState( "Play Audio Event" )
-    , m_resource( resource ) { }
+    , m_resource( resource )
+    , m_delay( delay ) { }
 
 void BossPlayAudioEventState::Enter(BossAIStateMachine *machine)
 {
-    auto emitter = machine->GetBoss( )->GetOwner( )->GetComponent<AudioEmitter>( );
+    auto boss = machine->GetBoss( )->GetOwner( );
+    auto emitter = boss->GetComponent<AudioEmitter>( );
 
-    emitter->PushEvent( m_resource );
+    boss->GetTimers( ).Create( m_delay ).Completed( [=] {
+        emitter->PushEvent( m_resource );
+    } );
 }
