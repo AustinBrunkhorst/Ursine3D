@@ -110,12 +110,12 @@ void AbstractHitscanWeapon::ToggleMaxDamage(void)
 {
     if (m_maxDamage)
     {
-        SetDamageToApply( m_realDamage );
+        SetDamage( m_realDamage );
         m_maxDamage = false;
     }
     else
     {
-        SetDamageToApply( MAX_GUN_DAMAGE );
+        SetDamage( MAX_GUN_DAMAGE );
         m_maxDamage = true;
     }
 }
@@ -130,6 +130,11 @@ void AbstractHitscanWeapon::SetDamageToApply(float damage)
 {
     m_damageToApply = damage;
     m_realDamage = damage;
+}
+
+void AbstractHitscanWeapon::SetDamage(float damage)
+{
+    m_damageToApply = damage;
 }
 
 // Crit modifier

@@ -102,7 +102,8 @@ struct AbstractHitscanWeapon : AbstractWeapon
     void ToggleMaxDamage(void);
 
     float GetDamageToApply(void) const;
-    void  SetDamageToApply(float damage);
+    void SetDamageToApply(float damage);
+    void SetDamage(float damage);
 
     float GetCritModifier(void) const;
     void SetCritModifier(float modifier);
