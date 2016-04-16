@@ -129,6 +129,7 @@ float AbstractHitscanWeapon::GetDamageToApply(void) const
 void AbstractHitscanWeapon::SetDamageToApply(float damage)
 {
     m_damageToApply = damage;
+    m_realDamage = damage;
 }
 
 // Crit modifier
