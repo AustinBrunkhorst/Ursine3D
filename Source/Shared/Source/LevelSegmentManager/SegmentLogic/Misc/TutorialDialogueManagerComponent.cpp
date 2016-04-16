@@ -31,7 +31,9 @@ TutorialDialogueManager::TutorialDialogueManager(void)
     , shootingTutDialogueTimespan( 0.0f )
     , reviveTutDialogueTimespan( 0.0f )
     , vineTutDialogueTimespan( 0.0f )
-    , elevatorDialogueTimespan( 0.0f ) { }
+    , elevatorDialogueTimespan( 0.0f )
+    , m_currentTimespan( nullptr ) 
+    , m_currentLines( nullptr ) { }
 
 TutorialDialogueManager::~TutorialDialogueManager(void)
 {
@@ -125,8 +127,11 @@ void TutorialDialogueManager::dispatchUIEventForSegment(LevelSegments segment)
         }
     }
 
-    if (!lines || !timespan)
+    if (!lines || !timespan || lines == m_currentLines || m_currentTimespan == timespan)
         return;
+
+    m_currentLines = lines;
+    m_currentTimespan = timespan;
 
     auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
 

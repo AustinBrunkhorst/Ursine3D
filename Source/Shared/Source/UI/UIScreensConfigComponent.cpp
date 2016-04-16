@@ -22,10 +22,14 @@ using namespace ecs;
 
 UIScreensConfig::UIScreensConfig(GameManager *manager)
     : BaseComponent( )
+    , m_debugMode( false ) 
+    , m_debugSegment( LevelSegments_enum::Empty )
     , m_gameManager( manager ) { }
 
 UIScreensConfig::UIScreensConfig(void)
     : BaseComponent( )
+    , m_debugMode( false )
+    , m_debugSegment( LevelSegments_enum::Empty ) 
     , m_gameManager( nullptr ) { }
 
 const resources::ResourceReference &UIScreensConfig::GetMainMenuWorld(void)
@@ -33,7 +37,7 @@ const resources::ResourceReference &UIScreensConfig::GetMainMenuWorld(void)
     return m_mainMenuWorld;
 }
 
-void UIScreensConfig::SetMainMenuWorld(const ursine::resources::ResourceReference &world)
+void UIScreensConfig::SetMainMenuWorld(const resources::ResourceReference &world)
 {
     m_mainMenuWorld = world;
 
@@ -50,6 +54,43 @@ void UIScreensConfig::SetStartingGameplayWorld(const resources::ResourceReferenc
     m_startingGameplayWorld = world;
 
     NOTIFY_COMPONENT_CHANGED( "startingGameplayWorld", m_startingGameplayWorld );
+}
+
+
+bool UIScreensConfig::GetDebugMode(void) const
+{
+    return m_debugMode;
+}
+
+void UIScreensConfig::SetDebugMode(bool debug)
+{
+    m_debugMode = debug;
+
+    NOTIFY_COMPONENT_CHANGED( "debugMode", m_debugMode );
+}
+
+LevelSegments UIScreensConfig::GetDebugSegment(void) const
+{
+    return m_debugSegment;
+}
+
+void UIScreensConfig::SetDebugSegment(LevelSegments segment)
+{
+    m_debugSegment = segment;
+
+    NOTIFY_COMPONENT_CHANGED( "debugSegment", m_debugSegment );
+}
+
+const resources::ResourceReference &UIScreensConfig::GetDebugWorld(void)
+{
+    return m_debugWorld;
+}
+
+void UIScreensConfig::SetDebugWorld(const resources::ResourceReference &world)
+{
+    m_debugWorld = world;
+
+    NOTIFY_COMPONENT_CHANGED( "debugWorld", m_debugWorld );
 }
 
 Scene *UIScreensConfig::getScene(void) const

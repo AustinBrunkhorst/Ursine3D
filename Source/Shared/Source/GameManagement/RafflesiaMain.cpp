@@ -3,6 +3,7 @@
 #include "RafflesiaMain.h"
 
 #include "UIScreensConfigComponent.h"
+#include "LevelSegmentManagerComponent.h"
 
 #include <GameContext.h>
 #include <Scene.h>
@@ -45,7 +46,29 @@ void RafflesiaMain::OnInitialize(GameContext *context, const Json &configObj)
 
     auto *ui = GetConfigComponent<UIScreensConfig>( );
 
-    ui->AddSplash( );
+    if (ui->GetDebugMode( ))
+    {
+        auto segment = ui->GetDebugSegment( );
+
+        auto *world = setWorld( ui->GetDebugWorld( ), false );
+
+        if (segment != LevelSegments_enum::Empty)
+        {
+            auto segmentManagers = world->GetEntitiesFromFilter( ecs::Filter( ).All<LevelSegmentManager>( ) );
+
+            if (!segmentManagers.empty( ))
+                segmentManagers[ 0 ]->GetComponent<LevelSegmentManager>( )->SetCurrentSegment( segment );
+
+            if (!ui->HasPlayerHUD( ))
+                ui->AddPlayerHUD( );
+        }
+
+        m_context->GetScene( )->LoadConfiguredSystems( );
+    }
+    else
+    {
+        ui->AddSplash( );
+    }
 }
 
 void RafflesiaMain::onWindowFocusChanged(EVENT_HANDLER(ursine::GameContext))
@@ -55,9 +78,22 @@ void RafflesiaMain::onWindowFocusChanged(EVENT_HANDLER(ursine::GameContext))
     if (args->focused)
     {
         auto *ui = GetConfigComponent<UIScreensConfig>( );
+
+        if (!ui)
+            return;
+
+        auto *scene = m_context->GetScene( );
         auto *hud = ui->GetPlayerHUD( );
 
-        if (hud)
+        auto *screenData = ui->GetPauseRef( ).Load<resources::UIScreenData>( 
+            scene->GetResourceManager( )
+        );
+
+        if (!screenData)
+            return;
+
+        // add pause screen if it doesn't exist
+        if (hud && !scene->GetScreenManager( ).GetScreen( screenData->GetPath( ) ))
         {
             UIScreenConfig config;
 

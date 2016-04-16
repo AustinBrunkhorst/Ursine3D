@@ -140,6 +140,9 @@ namespace ursine
             }
             else
             {
+                gGraphics->StartFrame( );
+                gGraphics->EndFrame( );
+
                 // avoid empty cycles when the application is not active
                 SDL_Delay( 120 );
             }

@@ -83,7 +83,7 @@ namespace ursine
                 SetGeometryFade
             );
 
-            EditorOnlyField(
+            EditorField(
                 bool orientToVelocity,
                 GetVelocityOrient,
                 SetVelocityOrient

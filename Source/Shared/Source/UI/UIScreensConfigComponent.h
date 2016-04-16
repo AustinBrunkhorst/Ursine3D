@@ -87,17 +87,40 @@ public:
         SetStartingGameplayWorld
     );
 
+    EditorField(bool debugMode, GetDebugMode, SetDebugMode);
+    EditorField(LevelSegments debugSegment, GetDebugSegment, SetDebugSegment);
+
+    EditorResourceField(
+        ursine::resources::WorldData,
+        debugWorld,
+        GetDebugWorld,
+        SetDebugWorld
+    );
+
     const ursine::resources::ResourceReference &GetMainMenuWorld(void);
     void SetMainMenuWorld(const ursine::resources::ResourceReference &world);
 
     const ursine::resources::ResourceReference &GetStartingGameplayWorld(void);
     void SetStartingGameplayWorld(const ursine::resources::ResourceReference &world);
 
+    bool GetDebugMode(void) const;
+    void SetDebugMode(bool debug);
+
+    LevelSegments GetDebugSegment(void) const;
+    void SetDebugSegment(LevelSegments segment);
+
+    const ursine::resources::ResourceReference &GetDebugWorld(void);
+    void SetDebugWorld(const ursine::resources::ResourceReference &world);
+
 private:
     std::unordered_map<ursine::GUID, ursine::UIScreenID, ursine::GUIDHasher> m_created;
 
     ursine::resources::ResourceReference m_mainMenuWorld;
     ursine::resources::ResourceReference m_startingGameplayWorld;
+
+    bool m_debugMode;
+    LevelSegments m_debugSegment;
+    ursine::resources::ResourceReference m_debugWorld;
 
     ursine::GameManager *m_gameManager;
 

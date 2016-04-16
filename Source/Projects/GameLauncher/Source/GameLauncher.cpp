@@ -228,7 +228,7 @@ void GameLauncher::initGraphics(void)
 
     graphics::GfxConfig gfxConfig;
 
-    gfxConfig.fullscreen = m_settings.windowFullScreen;
+    gfxConfig.fullscreen = false;// m_settings.windowFullScreen;
       
     auto window = m_window.window;
     auto &size = window->GetSize( );

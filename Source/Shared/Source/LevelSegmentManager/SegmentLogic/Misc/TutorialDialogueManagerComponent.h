@@ -58,4 +58,7 @@ private:
 
     void dispatchUIEventForSegment(LevelSegments segment);
 
+    float *m_currentTimespan;
+    ursine::Array<std::string> *m_currentLines;
+
 } Meta( Enable );
