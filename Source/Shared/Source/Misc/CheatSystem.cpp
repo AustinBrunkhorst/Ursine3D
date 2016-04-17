@@ -19,6 +19,7 @@
 #include "RevivePlayerComponent.h"
 #include "HealthComponent.h"
 #include "HitscanWeaponComponent.h"
+#include "LevelSegmentManagerComponent.h"
 #include "GameEvents.h"
 
 #include <WorldEvent.h>
@@ -159,20 +160,40 @@ void CheatSystem::onUpdate(EVENT_HANDLER(ursine::ecs:::World))
             }
         }
     }
+
+    skipSegmentCheat( kbManager );
 }
 
-int CheatSystem::killTeamCheat(void)
+void CheatSystem::skipSegmentCheat(KeyboardManager *kbManager)
 {
-    auto *kbManager = GetCoreSystem(KeyboardManager);
+    auto sm = m_world->GetEntitiesFromFilter( Filter( ).All<LevelSegmentManager>( ) );
 
-    if (kbManager->IsTriggeredDown(KEY_F9))
-    {
-        return 1;
-    }
-    if (kbManager->IsTriggeredDown(KEY_F10))
-    {
-        return 2;
-    }
+    if (!sm.size( ))
+        return;
 
-    return -1;
+    auto smManager = sm[ 0 ]->GetComponent<LevelSegmentManager>( );
+    auto current = smManager->GetCurrentSegment( );
+    auto desired = current;
+
+    if (kbManager->IsTriggeredDown( KEY_1 ))
+        desired = LevelSegments::Tut_OpeningCinematic;
+    else if (kbManager->IsTriggeredDown( KEY_2 ))
+        desired = LevelSegments::BossRoom_Platforming;
+    else if (kbManager->IsTriggeredDown( KEY_3 ))
+        desired = LevelSegments::BossRoom_Introduction;
+    else if (kbManager->IsTriggeredDown( KEY_4 ))
+        desired = LevelSegments::BossRoom_Phase1;
+    else if (kbManager->IsTriggeredDown( KEY_5 ))
+        desired = LevelSegments::BossRoom_Phase2;
+    else if (kbManager->IsTriggeredDown( KEY_6 ))
+        desired = LevelSegments::BossRoom_Phase3;
+    else if (kbManager->IsTriggeredDown( KEY_7 ))
+        desired = LevelSegments::BossRoom_Phase4;
+    else if (kbManager->IsTriggeredDown( KEY_8 ))
+        desired = LevelSegments::BossRoom_Phase5;
+    else if (kbManager->IsTriggeredDown( KEY_9 ))
+        desired = LevelSegments::EndingCredits;
+
+    // if (desired != current)
+        // create new world and set the new segment
 }
