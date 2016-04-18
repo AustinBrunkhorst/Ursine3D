@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+**
+** AudioItemEventData.h
+**
+** Author:
+** - Jason Burch - j.orion@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include "ResourceData.h"

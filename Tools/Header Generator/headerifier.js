@@ -9,7 +9,7 @@ dot.templateSettings.varname = 'file';
 var templates = dot.process( { path: './templates' });
 
 var options = {
-    cwd: 'C:/Game Development/Ursine3D/Source/Ursine3D/src',
+    cwd: 'C:/Users/CJ/Desktop/Ursine3D/Source/Projects/',
     matchBase: true
 };
 
@@ -34,6 +34,10 @@ var authorTable = {
         name: 'Matt Yan',
         email: 'm.yan@digipen.edu'
     },
+    'cehnehd3h': {
+        name: 'Matt Yan',
+        email: 'm.yan@digipen.edu'
+    },
     'CJsion3': {
         name: 'CJ Payne',
         email: 'cj.payne@digipen.edu'
@@ -41,6 +45,10 @@ var authorTable = {
     'Jordan Ellis': {
         name: 'Jordan Ellis',
         email: 'j.ellis@digipen.edu'
+    },
+    'Chad George': {
+        name: 'Chad George',
+        email: 'c.george@digipen.edu'
     }
 };
 
@@ -74,6 +82,8 @@ function getAuthor(file, callback) {
     var blameCommand = 'git --no-pager log -1 --first-parent --pretty=format:"%an" "'+ file +'"';
 
     exec( blameCommand, function(error, username, stderr) {
+        console.log( username );
+        
         var author = authorTable[ username ];
 
         if (!author) {

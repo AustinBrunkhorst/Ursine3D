@@ -1,16 +1,15 @@
-/*---------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
-** ?2015 DigiPen Institute of Technology, All Rights Reserved.
+** © 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** StateBlender.h
 **
 ** Author:
-** - Matt Yan - m.yan@digipen.edu
-** - Hyung Jun Park - park.hyungjun@digipen.edu
+** - Park Hyung Jun - park.hyungjun@digipen.edu
 **
 ** Contributors:
 ** - <list in same format as author if applicable>
-**-------------------------------------------------------------------------*/
+** --------------------------------------------------------------------------*/
 
 #pragma once
 
