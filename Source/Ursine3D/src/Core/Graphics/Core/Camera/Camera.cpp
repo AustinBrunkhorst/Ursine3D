@@ -236,10 +236,22 @@ namespace ursine
             return SVec3( pos.X( ), pos.Y( ), pos.Z( ) );
         }
 
+        void Camera::GetScreenDimensions(float& width, float& height)
+        {
+            width = m_screenWidth;
+            height = m_screenHeight;
+        }
+
         void Camera::SetScreenDimensions(const float width, const float height)
         {
             m_screenWidth = width;
             m_screenHeight = height;
+        }
+
+        void Camera::GetScreenPosition(float& x, float& y)
+        {
+            x = m_screenX;
+            y = m_screenY;
         }
 
         void Camera::SetScreenPosition(const float x, const float y)

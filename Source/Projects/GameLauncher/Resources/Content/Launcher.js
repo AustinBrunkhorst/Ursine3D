@@ -425,8 +425,8 @@ var ui_ScreenManager = function(container) {
 	this.m_screenLoadQueue = new haxe_ds_StringMap();
 	this.m_screenLayoutCache = new haxe_ds_StringMap();
 	this.m_screenTypeCache = new haxe_ds_StringMap();
-	var kbManager = new NativeKeyboardManager();
-	var gpManager = new NativeGamepadManager();
+	NativeKeyboardManager.instance = new NativeKeyboardManager();
+	NativeGamepadManager.instance = new NativeGamepadManager();
 	var bm = ursine_api_native_NativeBroadcastManager.instance;
 	bm.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited)).on("ScreensCleared",$bind(this,this.onScreensCleared)).on("GlobalMessage",$bind(this,this.onGlobalMessage));
 	bm.getChannel("GamepadManager").on("GamepadButtonDown",$bind(this,this.onGamepadBtnDown)).on("GamepadButtonUp",$bind(this,this.onGamepadBtnUp)).on("GamepadConnected",$bind(this,this.onGamepadConnected)).on("GamepadDisconnected",$bind(this,this.onGamepadDisconnected));

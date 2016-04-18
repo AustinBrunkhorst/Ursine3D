@@ -2504,8 +2504,8 @@ var ursine_editor_scene_ui_EditorScreenManager = function(container) {
 	this.m_screenTypeCache = new haxe_ds_StringMap();
 	this.m_lastPlayState = 0;
 	this.m_stepTimer = null;
-	var kbManager = new NativeKeyboardManager();
-	var gpManager = new NativeGamepadManager();
+	NativeKeyboardManager.instance = new NativeKeyboardManager();
+	NativeGamepadManager.instance = new NativeGamepadManager();
 	var bm = ursine_editor_Editor.instance.broadcastManager;
 	bm.getChannel("ResourcePipeline").on("ResourceModified",$bind(this,this.onResourceModified));
 	bm.getChannel("SceneManager").on("PlayStateChanged",$bind(this,this.onScenePlayStateChanged)).on("FrameStepped",$bind(this,this.onSceneFrameStepped));

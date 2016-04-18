@@ -75,8 +75,8 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
         m_screenLayoutCache = new Map<String, ScreenLayoutCache>( );
         m_screenTypeCache = new Map<String, Class<Dynamic>>( );
 
-        var kbManager = new KeyboardManager( );
-        var gpManager = new GamepadManager( );
+        KeyboardManager.instance = new KeyboardManager( );
+        GamepadManager.instance = new GamepadManager( );
 
         var bm = NativeBroadcastManager.instance;
 

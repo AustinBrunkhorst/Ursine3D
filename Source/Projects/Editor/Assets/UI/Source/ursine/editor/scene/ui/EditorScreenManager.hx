@@ -93,8 +93,8 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
         m_lastPlayState = ScenePlayState.InEditor;
         m_stepTimer = null;
 
-        var kbManager = new KeyboardManager( );
-        var gpManager = new GamepadManager( );
+        KeyboardManager.instance = new KeyboardManager( );
+        GamepadManager.instance = new GamepadManager( );
 
         var bm = Editor.instance.broadcastManager;
 

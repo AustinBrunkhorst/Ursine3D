@@ -93,9 +93,11 @@ namespace ursine
             SVec3 ScreenToWorld(const Vec2 &screenPos, const float depth);
 
             //DO NOT CALL set screen dimensions
+            void GetScreenDimensions(float &width, float &height);
             void SetScreenDimensions(const float width, const float height);
 
             //DO NOT CALL set screen pixel positions
+            void GetScreenPosition(float &x, float &y);
             void SetScreenPosition(const float x, const float y);
 
             // check to see if a given mask will pass this camera's mask

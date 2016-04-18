@@ -23,8 +23,9 @@ namespace
     const auto kRedistributablesDir = "Resources/Installer/Redistributable";
 
     const std::vector<fs::path> kRedistributableFiles {
-        "D3D11InstallHelper.dll",
-        "d3dredist_x64.exe",
+        "DSETUP.dll",
+        "dsetup32.dll",
+        "dxsetup.exe",
         "vcredist140_x64.exe"
     };
 

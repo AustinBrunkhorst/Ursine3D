@@ -25,7 +25,7 @@ extern class GamepadConnectionEvent {
 
 @:native( "NativeGamepadManager" )
 extern class GamepadManager {
-    var instance : GamepadManager;
+    static var instance : GamepadManager;
 
     function new() : Void;
 

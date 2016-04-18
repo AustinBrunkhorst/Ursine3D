@@ -139,11 +139,12 @@ Section "install"
 
 	CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
 	CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\${CONFIG_DISPLAYNAME}.lnk" "$INSTDIR\${CONFIG_EXECUTABLE_FILE}"
+	CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\${CONFIG_UNINSTALLER_FILE}"
 
 	!insertmacro MUI_STARTMENU_WRITE_END
 
 	ExecWait '"$INSTDIR\redist\vcredist140_x64.exe" /q /norestart'
-	ExecWait '"$INSTDIR\redist\d3dredist_x64.exe"'
+	ExecWait '"$INSTDIR\redist\dxsetup.exe" /silent'
 	RMDir /r "$INSTDIR\redist"
 SectionEnd
  
@@ -164,6 +165,7 @@ Section "uninstall"
 
 	# remove start menu folder
 	Delete "$SMPROGRAMS\$1\${CONFIG_DISPLAYNAME}.lnk"
+	Delete "$SMPROGRAMS\$1\Uninstall.lnk"
 	RMDir "$SMPROGRAMS\$1\"
 
 	# remove icon file
