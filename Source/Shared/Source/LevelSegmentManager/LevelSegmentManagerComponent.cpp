@@ -695,7 +695,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
         repositionPlayers->AddTransition( turnOnDeadParticles, "Tween back in" )
                          ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 7.0f ) );
         turnOnDeadParticles->AddTransition( tweenIn, "Tween back in" )
-                           ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 3.0f ) );
+                           ->AddCondition<sm::TimerCondition>( TimeSpan::FromSeconds( 7.0f ) );
         tweenIn->AddTransition( turnOffCinematicCam, "Turn cam off" );
         turnOffCinematicCam->AddTransition( playerWinOff, "Turn Off Win" );
         playerWinOff->AddTransition( unlockPlayers, "Unlock players" );

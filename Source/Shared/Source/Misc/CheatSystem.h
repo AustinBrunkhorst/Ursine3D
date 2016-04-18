@@ -15,6 +15,8 @@
 
 #include <EntitySystem.h>
 
+#include <KeyboardManager.h>
+
 class CheatSystem : public ursine::ecs::EntitySystem
 {
     ENTITY_SYSTEM;
@@ -28,6 +30,6 @@ private:
 
     void onUpdate(EVENT_HANDLER(ursine::ecs:::World));
 
-    int killTeamCheat(void);
+    void skipSegmentCheat(ursine::KeyboardManager *kbManager);
 
 } Meta(Enable);
