@@ -14,6 +14,7 @@
 #include "InputControllerComponent.h"
 #include <CommandQueueComponent.h>
 #include <SystemConfig.h>
+#include <GamepadManager.h>
 
 ENTITY_SYSTEM_DEFINITION(InputControllerSystem);
 
@@ -27,7 +28,20 @@ InputControllerSystem::InputControllerSystem(ursine::ecs::World* world)
 
 void InputControllerSystem::Process(const ursine::ecs::EntityHandle &entity)
 {
-    auto *inputController = entity->GetComponent<InputController>( );
+    auto *inputController = entity->GetComponent<InputController>();
+
+    auto player = entity->GetComponent<PlayerID>( );
+
+    if (player->GetID( ) == 0)
+    {
+        // check to see if there aren't any controllers connected
+        auto connected = GetCoreSystem( GamepadManager )->NumConnected( );
+
+        if (connected == 0 && !inputController->GetKeyBoard( ))
+            inputController->SetKeyBoard( true );
+        else if (connected != 0 && inputController->GetKeyBoard( ))
+            inputController->SetKeyBoard( false );
+    }
 
     auto &actionList = inputController->GetActionList( );
 

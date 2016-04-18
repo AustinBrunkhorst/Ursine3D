@@ -30,4 +30,3 @@ void PlayerID::SetID(const int id)
 {
     m_id = id;
 }
-
