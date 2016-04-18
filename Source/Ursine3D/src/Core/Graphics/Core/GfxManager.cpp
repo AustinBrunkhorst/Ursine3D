@@ -110,6 +110,7 @@ namespace ursine
             LogMessage("GPU Info", 1);
             gfxInfo->Initialize();
             gfxInfo->SetDimensions(config.windowWidth, config.windowHeight);
+            gfxInfo->SetGlobalDimensions(config.windowWidth, config.windowHeight);
 
             wHND = config.handleToWindow;
 
@@ -662,7 +663,7 @@ namespace ursine
             dxCore->GetDeviceContext()->RSSetViewports(
                 1,
                 &vpData
-                );
+            );
 
             // clear it
             dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
@@ -735,6 +736,44 @@ namespace ursine
             //end rendering
             m_rendering = false;
             m_threadRender = false;
+        }
+
+        void CalculateViewportInfo(
+            float &finalWidth, float &finalHeight, 
+            float &finalX, float &finalY, 
+            float gWidth, float gHeight, 
+            float currWidth, float currHeight)
+        {
+            // calculate global ratio
+            float globalRatio = gHeight / gWidth;
+
+            // calculate current
+            float currentRatio = currHeight / currWidth;
+
+            // RATIO = HEIGHT / WIDTH
+            // width = height / ratio
+            // height = ratio * width
+
+
+
+            // if currentRatio is less than global, it's currently too wide
+            if (currentRatio < globalRatio)
+            {
+                finalHeight = currHeight;
+                finalWidth = finalHeight / globalRatio;
+            }
+
+             // if currentRatio is greater that global, it's currently too tall
+            else
+            {
+                finalWidth = currWidth;
+                finalHeight = globalRatio * finalWidth;
+            }
+
+
+            // default position is now:
+            finalX = gWidth  / 2.f - finalWidth / 2.f;
+            finalY = gHeight / 2.f - finalHeight / 2.f;
         }
 
         void GfxManager::renderScene_Deferred(Camera &camera, int index)
