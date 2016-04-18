@@ -23,4 +23,5 @@ private:
     void onGameplayResumed(EVENT_HANDLER(ursine::UIScreenManager));
     void onGameplayExited(EVENT_HANDLER(ursine::UIScreenManager));
     void onGameplayRestarted(EVENT_HANDLER(ursine::UIScreenManager));
+    void onGameplaySkip(EVENT_HANDLER(ursine::UIScreenManager));
 } Meta(Enable);

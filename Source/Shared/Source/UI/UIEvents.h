@@ -21,6 +21,7 @@ namespace ui_event
         const auto GameResume = "GameplayResume";
         const auto GameExit = "GameplayExit";
         const auto GameRestart = "GameRestart";
+        const auto GameSkip = "GameSkip";
     }
 
     UI_EVENT( ToggleHUD,
