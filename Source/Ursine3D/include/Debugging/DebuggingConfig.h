@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+**
+** DebuggingConfig.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #define URSINE_FFL __FILE__, __FUNCTION__, __LINE__

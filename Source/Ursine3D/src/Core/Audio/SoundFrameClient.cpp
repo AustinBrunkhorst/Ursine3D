@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+**
+** SoundFrameClient.cpp
+**
+** Author:
+** - Chad George - c.george@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include <UrsinePrecompiled.h>
 #include "SoundFrameClient.h"
 

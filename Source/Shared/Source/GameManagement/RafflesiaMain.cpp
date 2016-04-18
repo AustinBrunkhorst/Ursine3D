@@ -26,7 +26,8 @@ RafflesiaMain::~RafflesiaMain(void)
         .Off( ui_event::global::GamePause, &RafflesiaMain::onGameplayPaused )
         .Off( ui_event::global::GameResume, &RafflesiaMain::onGameplayResumed )
         .Off( ui_event::global::GameExit, &RafflesiaMain::onGameplayExited )
-        .Off( ui_event::global::GameRestart, &RafflesiaMain::onGameplayRestarted );
+        .Off( ui_event::global::GameRestart, &RafflesiaMain::onGameplayRestarted )
+        .Off( ui_event::global::GameSkip, &RafflesiaMain::onGameplaySkip );
 }
 
 void RafflesiaMain::SpawnEndingCredits(void)
@@ -55,7 +56,8 @@ void RafflesiaMain::OnInitialize(GameContext *context, const Json &configObj)
         .On( ui_event::global::GamePause, &RafflesiaMain::onGameplayPaused )
         .On( ui_event::global::GameResume, &RafflesiaMain::onGameplayResumed )
         .On( ui_event::global::GameExit, &RafflesiaMain::onGameplayExited )
-        .On( ui_event::global::GameRestart, &RafflesiaMain::onGameplayRestarted );
+        .On( ui_event::global::GameRestart, &RafflesiaMain::onGameplayRestarted )
+        .On( ui_event::global::GameSkip, &RafflesiaMain::onGameplaySkip );
 
     auto *ui = GetConfigComponent<UIScreensConfig>( );
 
@@ -194,6 +196,29 @@ void RafflesiaMain::onGameplayRestarted(EVENT_HANDLER(UIScreenManager))
     );
 
     managers[ 0 ]->GetComponent<LevelSegmentManager>( )->SetCurrentSegment( currentSegment );
+
+    m_context->GetScene( )->LoadConfiguredSystems( );
+}
+
+void RafflesiaMain::onGameplaySkip(EVENT_HANDLER(UIScreenManager))
+{
+    EVENT_ATTRS(UIScreenManager, UIScreenMessageArgs);
+
+    auto *scene = m_context->GetScene( );
+    auto *ui = GetConfigComponent<UIScreensConfig>( );
+    auto world = scene->GetActiveWorld( );
+
+    auto *newWorld = setWorld( ui->GetStartingGameplayWorld( ), false );
+
+    auto managers = newWorld->GetEntitiesFromFilter( ecs::Filter( ).All<LevelSegmentManager>( ) );
+
+    UAssert( !managers.empty( ),
+        "No new level segment managers." 
+    );
+
+    managers[ 0 ]->GetComponent<LevelSegmentManager>( )->SetCurrentSegment( 
+        static_cast<LevelSegments>( args->data[ "Segment" ].int_value( ) )
+    );
 
     m_context->GetScene( )->LoadConfiguredSystems( );
 }

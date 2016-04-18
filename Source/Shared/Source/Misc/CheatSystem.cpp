@@ -27,6 +27,8 @@
 #include <CoreSystem.h>
 #include <KeyboardManager.h>
 #include <SystemManager.h>
+#include <Scene.h>
+#include <GameContext.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -162,26 +164,6 @@ void CheatSystem::onUpdate(EVENT_HANDLER(ursine::ecs:::World))
         }
     }
 
-    if (kbManager->IsTriggeredDown(KEY_T))
-    {
-        // Tell player one that he is using the keyboard
-        auto players = m_world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
-
-        for (auto &player : players)
-        {
-            auto comp = player->GetComponent<PlayerID>( );
-
-            if (comp->GetID( ) == 0)
-            {
-                auto input = player->GetComponent<InputController>( );
-
-                input->SetKeyBoard( !input->GetKeyBoard( ) );
-                
-                return;
-            }
-        }
-    }
-
     skipSegmentCheat( kbManager );
 }
 
@@ -215,6 +197,21 @@ void CheatSystem::skipSegmentCheat(KeyboardManager *kbManager)
     else if (kbManager->IsTriggeredDown( KEY_9 ))
         desired = LevelSegments::EndingCredits;
 
-    // if (desired != current)
-        // create new world and set the new segment
+    if (desired != current)
+    {
+        Application::Instance->PostMainThread( [=] {
+
+            // create new world and set the new segment
+            // by sending an event to the screen manager
+            auto message = ui_event::global::GameSkip;
+        
+            auto data = Json::object( );
+            data[ "Segment" ] = static_cast<int>( desired );
+        
+            UIScreenMessageArgs args( message, data );
+
+            m_world->GetOwner( )->GetScreenManager( ).Dispatch( ui_event::global::GameSkip, &args );
+
+        } );
+    }
 }
