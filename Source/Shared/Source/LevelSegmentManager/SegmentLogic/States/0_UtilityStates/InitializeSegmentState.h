@@ -26,7 +26,8 @@ public:
     InitializeSegmentState(
         const ursine::resources::ResourceReference &loadInWorld,
         LevelSegments unloadSegment,
-        bool stopAllSounds = true
+        bool stopAllSounds = true,
+        bool removePrevious = false
     );
 
     void Enter(SegmentLogicStateMachine *machine) override;
@@ -39,6 +40,8 @@ private:
     LevelSegmentManager *m_segmentManager;
 
     bool m_stopAllSounds;
+
+    bool m_removePrevious;
 
     void onEntityAdded(EVENT_HANDLER(ursine::ecs::World));
 };

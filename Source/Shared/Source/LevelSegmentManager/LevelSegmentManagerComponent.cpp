@@ -716,7 +716,7 @@ void LevelSegmentManager::initBossRoomLogic(void)
         // initial state for spawning the level
         auto initState = initStateM->AddState<InitializeSegmentState>(
             endingCreditsResources->GetWorldData( ),
-            LevelSegments::Empty
+            LevelSegments::Empty, true, true
         );
 
         initStateM->SetInitialState( initState );

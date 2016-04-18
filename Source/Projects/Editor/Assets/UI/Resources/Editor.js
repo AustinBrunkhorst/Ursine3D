@@ -2509,7 +2509,7 @@ var ursine_editor_scene_ui_EditorScreenManager = function(container) {
 	var bm = ursine_editor_Editor.instance.broadcastManager;
 	bm.getChannel("ResourcePipeline").on("ResourceModified",$bind(this,this.onResourceModified));
 	bm.getChannel("SceneManager").on("PlayStateChanged",$bind(this,this.onScenePlayStateChanged)).on("FrameStepped",$bind(this,this.onSceneFrameStepped));
-	bm.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited)).on("ScreensCleared",$bind(this,this.onScreensCleared));
+	bm.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited)).on("ScreensCleared",$bind(this,this.onScreensCleared)).on("GlobalMessage",$bind(this,this.onGlobalMessage));
 	bm.getChannel("GamepadManager").on("GamepadButtonDown",$bind(this,this.onGamepadBtnDown)).on("GamepadButtonUp",$bind(this,this.onGamepadBtnUp)).on("GamepadConnected",$bind(this,this.onGamepadConnected)).on("GamepadDisconnected",$bind(this,this.onGamepadDisconnected));
 	bm.getChannel("KeyboardManager").on("KeyboardKeyDown",$bind(this,this.onKeyDown)).on("KeyboardKeyUp",$bind(this,this.onKeyUp));
 	this.onScenePlayStateChanged();
@@ -2546,6 +2546,11 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 		this.m_nativeManager.messageGlobal(message,data);
 	}
 	,clearScreens: function() {
+		var $it0 = this.m_screens.iterator();
+		while( $it0.hasNext() ) {
+			var screen = $it0.next();
+			screen.exit();
+		}
 		this.m_container.innerHTML = "";
 		this.m_screens = new haxe_ds_IntMap();
 	}
@@ -2826,6 +2831,9 @@ ursine_editor_scene_ui_EditorScreenManager.prototype = {
 	}
 	,onScreensCleared: function() {
 		this.clearScreens();
+	}
+	,onGlobalMessage: function(e) {
+		this.globalEvents.trigger(e.message,e.data);
 	}
 	,onScreenExited: function(e) {
 		var screen;

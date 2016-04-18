@@ -29,6 +29,19 @@ RafflesiaMain::~RafflesiaMain(void)
         .Off( ui_event::global::GameRestart, &RafflesiaMain::onGameplayRestarted );
 }
 
+void RafflesiaMain::SpawnEndingCredits(void)
+{
+    Application::PostMainThread( [=] {
+        auto *ui = GetConfigComponent<UIScreensConfig>( );
+
+        setWorld( ui->GetEndingCreditsWorld( ) );
+
+        ui_event::SpawnEndingCredits creditsEvent;
+
+        ui->TriggerPlayerHUDEvent( creditsEvent );
+    } );
+}
+
 void RafflesiaMain::OnInitialize(GameContext *context, const Json &configObj)
 {
     GameManager::OnInitialize( context, configObj );
@@ -54,13 +67,13 @@ void RafflesiaMain::OnInitialize(GameContext *context, const Json &configObj)
 
         if (segment != LevelSegments_enum::Empty)
         {
+            if (!ui->HasPlayerHUD( ))
+                ui->AddPlayerHUD( );
+
             auto segmentManagers = world->GetEntitiesFromFilter( ecs::Filter( ).All<LevelSegmentManager>( ) );
 
             if (!segmentManagers.empty( ))
                 segmentManagers[ 0 ]->GetComponent<LevelSegmentManager>( )->SetCurrentSegment( segment );
-
-            if (!ui->HasPlayerHUD( ))
-                ui->AddPlayerHUD( );
         }
 
         m_context->GetScene( )->LoadConfiguredSystems( );
@@ -75,6 +88,10 @@ void RafflesiaMain::onWindowFocusChanged(EVENT_HANDLER(ursine::GameContext))
 {
     EVENT_ATTRS(ursine::GameContext, GameContextWindowFocusArgs);
 
+    auto *scene = m_context->GetScene( );
+
+    scene->GetScreenManager( ).MessageGlobalRemote( ui_event::global::WindowFocusChanged, args->focused );
+
     if (args->focused)
     {
         auto *ui = GetConfigComponent<UIScreensConfig>( );
@@ -82,7 +99,6 @@ void RafflesiaMain::onWindowFocusChanged(EVENT_HANDLER(ursine::GameContext))
         if (!ui)
             return;
 
-        auto *scene = m_context->GetScene( );
         auto *hud = ui->GetPlayerHUD( );
 
         auto *screenData = ui->GetPauseRef( ).Load<resources::UIScreenData>( 
@@ -156,4 +172,28 @@ void RafflesiaMain::onGameplayExited(EVENT_HANDLER(UIScreenManager))
 void RafflesiaMain::onGameplayRestarted(EVENT_HANDLER(UIScreenManager))
 {
     EVENT_ATTRS(UIScreenManager, UIScreenMessageArgs);
+
+    auto *scene = m_context->GetScene( );
+    auto *ui = GetConfigComponent<UIScreensConfig>( );
+    auto world = scene->GetActiveWorld( );
+
+    auto currentManagers = world->GetEntitiesFromFilter( ecs::Filter( ).All<LevelSegmentManager>( ) );
+
+    UAssert( !currentManagers.empty( ), 
+        "No level segment managers." 
+    );
+
+    auto currentSegment = currentManagers[ 0 ]->GetComponent<LevelSegmentManager>( )->GetCurrentSegment( );
+
+    auto *newWorld = setWorld( ui->GetStartingGameplayWorld( ), false );
+
+    auto managers = newWorld->GetEntitiesFromFilter( ecs::Filter( ).All<LevelSegmentManager>( ) );
+
+    UAssert( !managers.empty( ),
+        "No new level segment managers." 
+    );
+
+    managers[ 0 ]->GetComponent<LevelSegmentManager>( )->SetCurrentSegment( currentSegment );
+
+    m_context->GetScene( )->LoadConfiguredSystems( );
 }

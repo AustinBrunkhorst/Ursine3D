@@ -428,7 +428,7 @@ var ui_ScreenManager = function(container) {
 	var kbManager = new NativeKeyboardManager();
 	var gpManager = new NativeGamepadManager();
 	var bm = ursine_api_native_NativeBroadcastManager.instance;
-	bm.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited)).on("ScreensCleared",$bind(this,this.onScreensCleared));
+	bm.getChannel("ScreenManager").on("ScreenAdded",$bind(this,this.onScreenAdded)).on("ScreenMessaged",$bind(this,this.onScreenMessaged)).on("ScreenExited",$bind(this,this.onScreenExited)).on("ScreensCleared",$bind(this,this.onScreensCleared)).on("GlobalMessage",$bind(this,this.onGlobalMessage));
 	bm.getChannel("GamepadManager").on("GamepadButtonDown",$bind(this,this.onGamepadBtnDown)).on("GamepadButtonUp",$bind(this,this.onGamepadBtnUp)).on("GamepadConnected",$bind(this,this.onGamepadConnected)).on("GamepadDisconnected",$bind(this,this.onGamepadDisconnected));
 	bm.getChannel("KeyboardManager").on("KeyboardKeyDown",$bind(this,this.onKeyDown)).on("KeyboardKeyUp",$bind(this,this.onKeyUp));
 	window.addEventListener("resize",$bind(this,this.invalidateScreenViewport));
@@ -464,6 +464,11 @@ ui_ScreenManager.prototype = {
 		this.m_nativeManager.messageGlobal(message,data);
 	}
 	,clearScreens: function() {
+		var $it0 = this.m_screens.iterator();
+		while( $it0.hasNext() ) {
+			var screen = $it0.next();
+			screen.exit();
+		}
 		this.m_container.innerHTML = "";
 		this.m_screens = new haxe_ds_IntMap();
 	}
@@ -658,6 +663,9 @@ ui_ScreenManager.prototype = {
 		var key = e.id;
 		screen = this.m_screens.h[key];
 		if(screen != null) screen.events.trigger(e.message,e.data);
+	}
+	,onGlobalMessage: function(e) {
+		this.globalEvents.trigger(e.message,e.data);
 	}
 	,onScreensCleared: function() {
 		this.clearScreens();

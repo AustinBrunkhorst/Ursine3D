@@ -14,6 +14,7 @@ namespace ui_event
 {
     namespace global
     {
+        const auto WindowFocusChanged = "WindowFocusChanged";
         const auto MainMenuEntered = "MainMenuEntered";
         const auto GameStart = "GameplayStart";
         const auto GamePause = "GameplayPause";
@@ -111,6 +112,10 @@ namespace ui_event
     );
 
     UI_EVENT( SpawnEndingCredits,
+        ;
+    );
+
+    UI_EVENT( StopTutorialMusic,
         ;
     );
 }

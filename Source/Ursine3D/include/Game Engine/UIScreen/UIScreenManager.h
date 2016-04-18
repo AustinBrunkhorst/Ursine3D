@@ -84,6 +84,11 @@ namespace ursine
             const Json &data
         );
 
+        void MessageGlobalRemote(
+            const std::string &message,
+            const Json &data
+        );
+
         // Removes all screens
         void ClearScreens(void);
 

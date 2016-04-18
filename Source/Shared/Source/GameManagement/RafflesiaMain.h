@@ -10,6 +10,8 @@ public:
     RafflesiaMain(void);
     ~RafflesiaMain(void);
 
+    void SpawnEndingCredits(void);
+
 private:
     void OnInitialize(ursine::GameContext *context, const ursine::Json &configObj) override;
 

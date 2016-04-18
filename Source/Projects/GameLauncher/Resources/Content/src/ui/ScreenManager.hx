@@ -84,7 +84,8 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
             .on( 'ScreenAdded', onScreenAdded )
             .on( 'ScreenMessaged', onScreenMessaged )
             .on( 'ScreenExited', onScreenExited )
-            .on( 'ScreensCleared', onScreensCleared );
+            .on( 'ScreensCleared', onScreensCleared )
+            .on( 'GlobalMessage', onGlobalMessage );
 
         bm.getChannel( 'GamepadManager' )
             .on( GamepadEventType.ButtonDown, onGamepadBtnDown )
@@ -138,6 +139,9 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
     }
 
     public function clearScreens() {
+        for (screen in m_screens)
+            screen.exit( );
+
         m_container.innerHTML = '';
         m_screens = new Map<ScreenID, Screen>( );
     }
@@ -383,6 +387,10 @@ class ScreenManager implements ursine.api.ui.ScreenManager {
 
         if (screen != null)
             screen.events.trigger( e.message, e.data );
+    }
+
+    private function onGlobalMessage(e : Dynamic) {
+        globalEvents.trigger( e.message, e.data );
     }
 
     private function onScreensCleared() {

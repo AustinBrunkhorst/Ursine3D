@@ -18,9 +18,11 @@
 #include "VineSpawnerComponent.h"
 #include "SegmentLogicStateMachine.h"
 #include "LevelSegmentManagerComponent.h"
+#include "UIScreensConfigComponent.h"
 
 #include <ResourceReference.h>
 #include <World.h>
+#include <Scene.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -74,5 +76,23 @@ void TutorialVineHandlerState::onVineDeath(EVENT_HANDLER(Health))
     if (m_vineCount <= 0)
     {
         m_machine->GetSegmentManager( )->SetCurrentSegment( LevelSegments::Tut_DoorOpenTutorial );
+
+        // send event to UI to let it know stop playing the music
+        auto world = m_machine->GetSegmentManager( )->GetOwner( )->GetWorld( );
+        auto *scene = world->GetOwner( );
+
+        if (!scene)
+            return;
+
+        auto manager = scene->GetGameContext( )->GetManager( );
+
+        if (!manager)
+            return;
+
+        auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
+
+        ui_event::StopTutorialMusic event;
+
+        ui->TriggerPlayerHUDEvent( event );
     }
 }

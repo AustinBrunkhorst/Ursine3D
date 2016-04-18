@@ -54,7 +54,8 @@ namespace ursine
         UAssert( m_browser, "Unable to create UIView." );
 
         Application::Instance->Listener( this )
-            .On( APP_UPDATE, &UIView::onUpdate );
+            .On( APP_UPDATE, &UIView::onUpdate )
+            .On( APP_INACTIVE_UPDATE, &UIView::onUpdate );
 
         m_keyboardManager = GetCoreSystem( KeyboardManager );
         m_mouseManager = GetCoreSystem( MouseManager );
@@ -87,7 +88,8 @@ namespace ursine
     void UIView::Close(void)
     {
         Application::Instance->Listener( this )
-            .Off( APP_UPDATE, &UIView::onUpdate );
+            .Off( APP_UPDATE, &UIView::onUpdate )
+            .Off( APP_INACTIVE_UPDATE, &UIView::onUpdate );
 
         m_window->Listener( this )
             .Off( WINDOW_FOCUS_CHANGED, &UIView::onWindowFocus );

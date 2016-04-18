@@ -113,7 +113,7 @@ void GameLauncher::OnInitialize(void)
     initWindow( );
     initGraphics( );
     initUI( );
-
+    
     if (m_settings.windowFullScreen)
     {
         // make sure we have time to switch into fullscreen
@@ -345,6 +345,8 @@ void GameLauncher::onWindowFocusChanged(EVENT_HANDLER(ursine::Window))
     GameContextWindowFocusArgs e( args->focused );
 
     m_gameContext->Dispatch( GC_WINDOW_FOCUS_CHANGED, &e );
+
+    Application::Instance->Dispatch( APP_INACTIVE_UPDATE, EventArgs::Empty );
 }
 
 void GameLauncher::onWindowResize(EVENT_HANDLER(ursine::Window))

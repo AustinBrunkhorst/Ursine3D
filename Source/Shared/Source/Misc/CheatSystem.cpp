@@ -15,6 +15,7 @@
 
 #include "CheatSystem.h"
 
+#include "InputControllerComponent.h"
 #include "PlayerIdComponent.h"
 #include "RevivePlayerComponent.h"
 #include "HealthComponent.h"
@@ -156,6 +157,25 @@ void CheatSystem::onUpdate(EVENT_HANDLER(ursine::ecs:::World))
             if (weapon)
             {
                 weapon->ToggleMaxDamage( );
+            }
+        }
+    }
+    if (kbManager->IsTriggeredDown(KEY_T))
+    {
+        // Tell player one that he is using the keyboard
+        auto players = m_world->GetEntitiesFromFilter( Filter( ).All<PlayerID>( ) );
+
+        for (auto &player : players)
+        {
+            auto comp = player->GetComponent<PlayerID>( );
+
+            if (comp->GetID( ) == 0)
+            {
+                auto input = player->GetComponent<InputController>( );
+
+                input->SetKeyBoard( !input->GetKeyBoard( ) );
+                
+                return;
             }
         }
     }

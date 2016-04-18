@@ -56,6 +56,17 @@ void UIScreensConfig::SetStartingGameplayWorld(const resources::ResourceReferenc
     NOTIFY_COMPONENT_CHANGED( "startingGameplayWorld", m_startingGameplayWorld );
 }
 
+const resources::ResourceReference &UIScreensConfig::GetEndingCreditsWorld(void)
+{
+    return m_endingCreditsWorld;
+}
+
+void UIScreensConfig::SetEndingCreditsWorld(const resources::ResourceReference &world)
+{
+    m_endingCreditsWorld = world;
+
+    NOTIFY_COMPONENT_CHANGED( "endingCreditsWorld", m_endingCreditsWorld );
+}
 
 bool UIScreensConfig::GetDebugMode(void) const
 {

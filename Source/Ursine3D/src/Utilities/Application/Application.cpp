@@ -144,7 +144,7 @@ namespace ursine
                 gGraphics->EndFrame( );
 
                 // avoid empty cycles when the application is not active
-                SDL_Delay( 120 );
+                std::this_thread::sleep_for( std::chrono::milliseconds( 250 ) );
             }
 
             m_frameRateController.FrameEnd( );

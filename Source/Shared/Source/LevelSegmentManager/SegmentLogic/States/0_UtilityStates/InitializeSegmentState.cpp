@@ -18,6 +18,8 @@
 #include "SegmentLogicStateIncludes.h"
 #include "UnloadResourceComponent.h"
 
+#include "RafflesiaMain.h"
+
 #include <World.h>
 #include <Scene.h>
 #include <AudioSystem.h>
@@ -28,20 +30,32 @@ using namespace ecs;
 
 InitializeSegmentState::InitializeSegmentState(
     const resources::ResourceReference &loadInWorld,
-    LevelSegments unloadSegment, bool stopAllSounds
+    LevelSegments unloadSegment, bool stopAllSounds, bool removePrevious
 )
     : SegmentLogicState( "Initialize Segment State" )
     , m_loadInWorld( loadInWorld )
     , m_unloadSegment( unloadSegment )
     , m_segmentManager( nullptr )
     , m_stopAllSounds( stopAllSounds )
+    , m_removePrevious( removePrevious )
 {
 }
 
 void InitializeSegmentState::Enter(SegmentLogicStateMachine *machine)
 {
     m_segmentManager = machine->GetSegmentManager( );
+
     auto world = m_segmentManager->GetOwner( )->GetWorld( );
+
+    if (m_removePrevious)
+    {
+        auto *gameManager = static_cast<RafflesiaMain*>( world->GetOwner( )->GetGameContext( )->GetManager( ) );
+
+        if (gameManager)
+            gameManager->SpawnEndingCredits( );
+
+        return;
+    }
 
     // subscribe to entity added events so we can add the unload resource component
     world->Listener( this )

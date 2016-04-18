@@ -606,6 +606,9 @@ namespace ursine
 
                 // end frame
                 manager->internalEndFrame();
+
+                if (!Application::Instance->IsActive( ))
+                    std::this_thread::sleep_for( std::chrono::milliseconds( 250 ) );
             }while(true);
         }
 

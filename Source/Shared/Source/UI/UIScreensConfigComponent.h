@@ -87,6 +87,13 @@ public:
         SetStartingGameplayWorld
     );
 
+    EditorResourceField(
+        ursine::resources::WorldData,
+        endingCreditsWorld,
+        GetEndingCreditsWorld,
+        SetEndingCreditsWorld
+    );
+
     EditorField(bool debugMode, GetDebugMode, SetDebugMode);
     EditorField(LevelSegments debugSegment, GetDebugSegment, SetDebugSegment);
 
@@ -103,6 +110,9 @@ public:
     const ursine::resources::ResourceReference &GetStartingGameplayWorld(void);
     void SetStartingGameplayWorld(const ursine::resources::ResourceReference &world);
 
+    const ursine::resources::ResourceReference &GetEndingCreditsWorld(void);
+    void SetEndingCreditsWorld(const ursine::resources::ResourceReference &world);
+
     bool GetDebugMode(void) const;
     void SetDebugMode(bool debug);
 
@@ -117,6 +127,7 @@ private:
 
     ursine::resources::ResourceReference m_mainMenuWorld;
     ursine::resources::ResourceReference m_startingGameplayWorld;
+    ursine::resources::ResourceReference m_endingCreditsWorld;
 
     bool m_debugMode;
     LevelSegments m_debugSegment;

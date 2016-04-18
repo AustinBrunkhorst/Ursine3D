@@ -18,6 +18,8 @@
 #include "UIEvents.h"
 #include "UIScreensConfigComponent.h"
 
+#include <Scene.h>
+
 NATIVE_COMPONENT_DEFINITION( EndingCreditsResources );
 
 using namespace ursine;
@@ -91,20 +93,17 @@ void EndingCreditsResources::onSegmentChange(EVENT_HANDLER(LevelSegmentManager))
     if (!duration)
         return;
 
-    auto world = GetOwner( )->GetWorld( );
+    auto *scene = GetOwner( )->GetWorld( )->GetOwner( );
 
-    if (!world)
+    if (!scene)
         return;
 
-    auto settings = world->GetSettings( );
+    auto manager = scene->GetGameContext( )->GetManager( );
 
-    if (!settings)
+    if (!manager)
         return;
 
-    auto ui = settings->GetComponent<UIScreensConfig>( );
-
-    if (!ui)
-        return;
+    auto *ui = manager->GetConfigComponent<UIScreensConfig>( );
 
     ui_event::TutorialDialogue event;
 

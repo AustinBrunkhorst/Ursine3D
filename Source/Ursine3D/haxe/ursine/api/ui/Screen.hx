@@ -4,6 +4,8 @@ import ursine.api.events.EventManager;
 import ursine.api.events.IEventContainer;
 import ursine.api.timers.TimerManager;
 
+import js.html.Audio;
+
 typedef ScreenID = UInt;
 
 typedef ScreenConfig = {
@@ -15,6 +17,10 @@ typedef ScreenConfig = {
 };
 
 class Screen implements IEventContainer {
+    public static var activeMusicAudio : Array<Audio> = new Array<Audio>( );
+
+    public var createdMusicAudio : Array<Audio>;
+
     public var events : EventManager;
     public var timers(default, null) : TimerManager;
 
@@ -32,6 +38,8 @@ class Screen implements IEventContainer {
     private var m_paused : Bool;
 
     public function new(config : ScreenConfig) {
+        createdMusicAudio = new Array<Audio>( );
+
         events = new EventManager( );
         timers = new TimerManager( );
 
@@ -45,6 +53,8 @@ class Screen implements IEventContainer {
         m_paused = false;
 
         invalidateViewport( );
+
+        m_owner.globalEvents.on( 'WindowFocusChanged', onWindowFocusChanged );
     }
 
     public function getID() : ScreenID {
@@ -80,6 +90,10 @@ class Screen implements IEventContainer {
 
     public function addLocalScreen(path : String, initData : Dynamic = null, inputBlocking : Bool = false, priority : Int = 0) : ScreenID {
         return m_owner.addScreen( '${m_project}/${path}', initData, inputBlocking, priority );
+    }
+
+    public function getQualifedPath(path : String) {
+        return 'http://game/${m_project}/${path}';
     }
 
     public function exit() {
@@ -134,6 +148,11 @@ class Screen implements IEventContainer {
         m_paused = false;
     }
 
+    public function setAllBackgroundMusicVolume(volume : Float) {
+        for (audio in activeMusicAudio)
+            audio.volume = volume;
+    }
+
     public function invalidateViewport() {
         var aspectContainer = m_container.querySelector( '.aspect-ratio-container' );
 
@@ -146,5 +165,16 @@ class Screen implements IEventContainer {
             host.clientWidth / m_baseScreenWidth,
             host.clientHeight / m_baseScreenHeight
         );
+    }
+
+    private function onWindowFocusChanged(focused : Bool) {
+        for (audio in createdMusicAudio) {
+            if (focused) {
+                if (audio.paused && !audio.ended)
+                    audio.play( );
+            } else {
+                audio.pause( );
+            }
+        }
     }
 }

@@ -29,6 +29,7 @@ namespace
         namespace manager
         {
             const auto ScreensCleared = "ScreensCleared";
+            const auto GlobalMessage = "GlobalMessage";
         }
 
         namespace screen
@@ -186,6 +187,14 @@ namespace ursine
         UIScreenMessageArgs args( message, data );
 
         Dispatch( message, &args );
+    }
+
+    void UIScreenManager::MessageGlobalRemote(const std::string &message, const Json &data)
+    {
+        messageUI( events::manager::GlobalMessage, Json::object { 
+            { "message", message },
+            { "data", data }
+        } );
     }
 
     void UIScreenManager::ClearScreens(void)

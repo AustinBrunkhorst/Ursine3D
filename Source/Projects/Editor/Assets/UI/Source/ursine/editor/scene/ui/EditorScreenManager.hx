@@ -1,5 +1,6 @@
 package ursine.editor.scene.ui;
 
+import ursine.controls.ProgressBar;
 import ursine.native.Extern;
 
 import ursine.editor.resources.ResourceItem;
@@ -108,7 +109,8 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
             .on( 'ScreenAdded', onScreenAdded )
             .on( 'ScreenMessaged', onScreenMessaged )
             .on( 'ScreenExited', onScreenExited )
-            .on( 'ScreensCleared', onScreensCleared );
+            .on( 'ScreensCleared', onScreensCleared )
+            .on( 'GlobalMessage', onGlobalMessage );
 
         bm.getChannel( 'GamepadManager' )
             .on( GamepadEventType.ButtonDown, onGamepadBtnDown )
@@ -162,6 +164,9 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
     }
 
     public function clearScreens() {
+        for (screen in m_screens)
+            screen.exit( );
+
         m_container.innerHTML = '';
         m_screens = new Map<ScreenID, Screen>( );
     }
@@ -524,6 +529,10 @@ class EditorScreenManager implements ursine.api.ui.ScreenManager {
 
     private function onScreensCleared() {
         clearScreens( );
+    }
+
+    private function onGlobalMessage(e : Dynamic) {
+        globalEvents.trigger( e.message, e.data );
     }
 
     private function onScreenExited(e : Dynamic) {
