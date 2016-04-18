@@ -50,9 +50,6 @@ namespace ursine
 
             void GetDimensions(unsigned &w, unsigned &h);
             void SetDimensions(unsigned w, unsigned h);
-
-            void GetGlobalDimensions(unsigned &w, unsigned &h);
-            void SetGlobalDimensions(unsigned w, unsigned h);
         private:
             unsigned m_modeCount;
             DXGI_MODE_DESC *m_displayModeList;
@@ -61,9 +58,6 @@ namespace ursine
             bool m_useVSync;
             unsigned m_windowWidth;
             unsigned m_windowHeight;
-
-            unsigned m_globalWidth;
-            unsigned m_globalHeight;
 
             unsigned m_maxSampleCount;
             unsigned m_maxSampleQuality;
