@@ -24,42 +24,6 @@ namespace ursine
     {
         GfxManager *RenderPass::m_manager = nullptr;
 
-        static void CalculateViewportInfo(
-            float &finalWidth, float &finalHeight,
-            float &finalX, float &finalY,
-            float gWidth, float gHeight,
-            float currWidth, float currHeight)
-        {
-            // calculate global ratio
-            float globalRatio = gHeight / gWidth;
-
-            // calculate current
-            float currentRatio = currHeight / currWidth;
-
-            // RATIO = HEIGHT / WIDTH
-            // width = height / ratio
-            // height = ratio * width
-
-            // if currentRatio is less than global, it's currently too wide
-            if (currentRatio < globalRatio)
-            {
-                finalHeight = currHeight;
-                finalWidth = finalHeight / globalRatio;
-            }
-
-            // if currentRatio is greater that global, it's currently too tall
-            else
-            {
-                finalWidth = currWidth;
-                finalHeight = globalRatio * finalWidth;
-            }
-
-
-            // default position is now:
-            finalX = gWidth / 2.f - finalWidth / 2.f;
-            finalY = gHeight / 2.f - finalHeight / 2.f;
-        }
-
         RenderPass::RenderPass(
             std::string name
         )
@@ -280,14 +244,10 @@ namespace ursine
             //set directx viewport
             Viewport &gameVP = m_manager->viewportManager->GetViewport(m_manager->m_GameViewport);
             D3D11_VIEWPORT gvp = gameVP.GetViewportData();
-
-            unsigned globalWidth, globalHeight;
-            m_manager->gfxInfo->GetGlobalDimensions( globalWidth, globalHeight );
             
             float w, h, x, y;
             currentCamera.GetViewportPosition( x, y );
             currentCamera.GetDimensions( w, h );
-
 
             w *= gvp.Width;
             h *= gvp.Height;
@@ -302,18 +262,6 @@ namespace ursine
             vpData.TopLeftY = y;
             vpData.MinDepth = 0;
             vpData.MaxDepth = 1;
-
-#if defined(URSINE_WITH_EDITOR)
-            CalculateViewportInfo(
-                vpData.Width, vpData.Height, 
-                vpData.TopLeftX, vpData.TopLeftY, 
-                static_cast<float>(globalWidth), static_cast<float>(globalHeight), 
-                gvp.Width, gvp.Height
-            );
-
-            vpData.TopLeftX += gvp.TopLeftX;
-            vpData.TopLeftY += gvp.TopLeftY;
-#endif
 
             m_manager->dxCore->GetDeviceContext()->RSSetViewports(
                 1, 

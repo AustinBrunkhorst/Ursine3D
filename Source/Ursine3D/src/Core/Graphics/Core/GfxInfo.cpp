@@ -137,16 +137,5 @@ namespace ursine
             m_windowWidth = w;
             m_windowHeight = h;
         }
-
-        void GfxInfo::GetGlobalDimensions(unsigned &w, unsigned &h)
-        {
-            w = m_globalWidth;
-            h = m_globalHeight;
-        }
-        void GfxInfo::SetGlobalDimensions(unsigned w, unsigned h)
-        {
-            m_globalWidth = w;
-            m_globalHeight = h;
-        }
     }
 }
