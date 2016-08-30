@@ -56,7 +56,7 @@ namespace ProjectGenerator.Forms
                 Directory.CreateDirectory( m_binaryDir );
 
             var cmakeArgs = string.Format(
-                "-DCMAKE_MODULE_PATH=\"{0}\" -G \"{1}\" \"{2}\"",
+                "-D CMAKE_MODULE_PATH:PATH=\"{0}\" -G \"{1}\" \"{2}\"",
                 CMakeProject.ModuleDirectory.Replace( '\\', '/' ),
                 generator.Name.Replace( '\\', '/' ),
                 m_sourceDir
@@ -176,9 +176,9 @@ namespace ProjectGenerator.Forms
 
         private void openCMakeGUIToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var guiArgs = string.Format( 
+            var guiArgs = string.Format(
                 "\"{0}\"",
-                m_sourceDir
+                m_binaryDir
             );
 
             Process.Start( new ProcessStartInfo( )
