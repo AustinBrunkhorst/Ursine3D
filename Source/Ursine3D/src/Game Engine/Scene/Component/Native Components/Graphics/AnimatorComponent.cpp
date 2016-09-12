@@ -1,23 +1,11 @@
-/* ----------------------------------------------------------------------------
-** Team Bear King
-** © 2016 DigiPen Institute of Technology, All Rights Reserved.
-**
-** AnimatorComponent.cpp
-**
-** Author:
-** - Park Hyung Jun - park.hyungjun@digipen.edu
-**
-** Contributors:
-** - <list in same format as author if applicable>
-** --------------------------------------------------------------------------*/
-
-﻿/*----------------------------------------------------------------------------
+/*----------------------------------------------------------------------------
 * *Team Bear King
 * *© 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
 * *AnimatorComponent.cpp
 **
 **Author:
+**- Matt Yan - m.yan@digipen.edu
 **- Jordan Ellis - j.ellis@digipen.edu
 **- Hyung Jun Park - park.hyungjun@digipen.edu
 *
@@ -166,8 +154,6 @@ namespace ursine
 
         void Animator::updateState(AnimationState **currSt, const Animation **currAni,
                                 AnimationState **futSt, const Animation **futAni,
-                                //const std::vector<Animation*> &currAnimVec,
-                                //const std::vector<Animation*> &futAnimVec,
                                 float dt, float &transFactor)
         {
             // Increment the current state's time marker
@@ -206,8 +192,6 @@ namespace ursine
 
         void Animator::animationLoop(AnimationState **currSt, const Animation **currAni,
                                     AnimationState **futSt, const Animation **futAni,
-                                    //const std::vector<Animation*> &currAnimVec,
-                                    //const std::vector<Animation*> &futAnimVec,
                                     float dt, float &transFactor,
                                     StateBlender *stateBlender)
         {

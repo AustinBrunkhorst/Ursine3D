@@ -1,16 +1,3 @@
-/* ----------------------------------------------------------------------------
-** Team Bear King
-** © 2016 DigiPen Institute of Technology, All Rights Reserved.
-**
-** AnimatorComponent.h
-**
-** Author:
-** - Park Hyung Jun - park.hyungjun@digipen.edu
-**
-** Contributors:
-** - <list in same format as author if applicable>
-** --------------------------------------------------------------------------*/
-
 /*---------------------------------------------------------------------------
 **Team Bear King
 **?2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -19,6 +6,7 @@
 **
 **Author:
 **- Matt Yan - m.yan@digipen.edu
+**- Jordan Ellis - j.ellis@digipen.edu
 **- Hyung Jun Park - park.hyungjun@digipen.edu
 *
 **Contributors:
