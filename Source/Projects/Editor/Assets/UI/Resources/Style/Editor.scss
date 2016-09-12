@@ -5,9 +5,13 @@
 @import 'Global';
 
 @import 'Menus';
+@import 'Tooltips';
 @import 'Notifications';
 @import 'Header';
-@import 'Main';
+@import 'EditorMain';
+@import 'StatusBar';
 
 @import 'Windows/EntityInspector';
 @import 'Windows/SceneOutline';
+@import 'Windows/SceneView';
+@import 'Windows/ProjectBrowser';

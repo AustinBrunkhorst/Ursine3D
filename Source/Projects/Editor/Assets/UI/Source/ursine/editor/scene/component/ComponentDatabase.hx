@@ -18,8 +18,12 @@ import ursine.editor.scene.component.inspectors.FieldInspectors;
 // Map<String, Dynamic>
 typedef NativeMeta = Dynamic;
 
-// Map<String, Dynamic>
-typedef NativeEnum = Dynamic;
+extern class EnumEntry {
+    var key : String;
+    var value : Dynamic;
+}
+
+typedef NativeEnum = Array<EnumEntry>;
 
 extern class NativeField {
     var name : String;
@@ -83,6 +87,26 @@ class ComponentDatabase {
 
     public function getNativeType(name : String) : NativeType {
         return m_typeDB.get( name );
+    }
+
+    public function getEnumValue(enewm : NativeEnum, key : String) : Dynamic {
+        var result = Lambda.find( enewm, function(entry : EnumEntry) {
+            return entry.key == key;
+        } );
+
+        return result == null ? null : result.value;
+    }
+
+    public function getEnumNumberValue(enewm : NativeEnum, value : Dynamic) : Dynamic {
+        // the value already is a number
+        if (!Std.is( value, String ))
+            return value;
+
+        var result = Lambda.find( enewm, function(entry : EnumEntry) {
+            return entry.key == value;
+        } );
+
+        return result == null ? null : result.value;
     }
 
     public function getComponentTypes() : Array<String> {

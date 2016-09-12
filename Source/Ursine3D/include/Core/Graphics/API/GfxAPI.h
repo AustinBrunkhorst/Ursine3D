@@ -1,3 +1,5 @@
+#pragma once
+
 /* ----------------------------------------------------------------------------
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
@@ -10,8 +12,6 @@
 ** Contributors:
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
-
-#pragma once
 
 #include "GfxConfig.h"
 #include "GfxAPIDefines.h"
@@ -30,7 +30,8 @@ namespace ursine
     {
         class GfxAPI : public core::CoreSystem
         {
-            CORE_SYSTEM
+            CORE_SYSTEM;
+
         private:
             struct privateData;
 
@@ -63,7 +64,7 @@ namespace ursine
             ~GfxAPI(void);
 
             void OnInitialize(void) override;
-             void OnRemove(void) override;
+            void OnRemove(void) override;
 
             // initialize graphics manager
             void StartGraphics(GfxConfig config);
@@ -111,9 +112,18 @@ namespace ursine
                                         const int destinationX, const int destinationY);
 
             // get current object that is moused over
-            ursine::ecs::EntityUniqueID GetMousedOverID(void);
+            ecs::EntityID GetMousedOverID(void);
 
             SVec3 GetMousedOverWorldPosition( const GfxHND &cameraHandle );
+            
+            float GetLightStepValue(void) const;
+            void SetLightStepValue(float steps);
+
+            float GetGlobalEmissive(void) const;
+            void SetGlobalEmissive(float value);
+
+            GfxHND GetLightMapTexture(void);
+            void SetLightMapTexture(GfxHND handle);
             
             // private members
         private:

@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -35,9 +35,12 @@ namespace ursine
             friend class RenderableManager;
         public:
             Renderable(void);
-            void Initialize(void);
-            void SetEntityUniqueID(const ecs::EntityUniqueID id);
-            ecs::EntityUniqueID GetEntityUniqueID() const;
+
+            virtual void Initialize(void);
+
+            void SetEntityID(ecs::EntityID id);
+            ecs::EntityID GetEntityID(void) const;
+
             void SetOverdraw(bool draw);
             bool GetOverdraw() const;
 
@@ -50,8 +53,10 @@ namespace ursine
             bool GetActive(void) const;
             void SetActive(const bool isActive);
 
-        private:
-            ecs::EntityUniqueID m_entityID;
+        protected:
+            virtual void Uninitialize(GfxManager *mgr);
+
+            ecs::EntityID m_entityID;
             bool m_active;
             bool m_useOverdraw;
             bool m_useDebugRendering;
@@ -64,12 +69,12 @@ namespace ursine
         {
             friend class RenderableManager;
         public:
-            const SMat4 &GetWorldMatrix(void);
+            const SMat4 &GetWorldMatrix(void) const;
             void SetWorldMatrix(const SMat4 &matrix);
 
             Model(void);
 
-        private:
+        protected:
             SMat4 m_transform;
         };
 
@@ -79,52 +84,144 @@ namespace ursine
         {
             friend class RenderableManager;
         public:
+            struct FragmentData
+            {
+                // global times
+                float time;
+                float maxTime;
+
+                float globalTime;
+
+                // forces
+                float verticalForce;
+                float horizontalForce;
+                float outwardForce;
+                float gravityForce;
+                float randomForce;
+
+                // etc
+                // pulse rate
+                float pulseSpeed;
+                float fadeAmount;
+                float transparencyThreshold;
+                float normalOffset;
+                float spinScalar;
+
+                SVec4 color;
+
+                float seed;
+
+                float xUV, yUV;
+            };
+
+        public:
             Model3D(void);
-            void Initialize(void);
+            void Initialize(void) override;
+
+            void InitializeFragment(void);
 
             const char *GetModelName(void);
-            void SetModel(std::string modelName);
+            void SetModelName(std::string modelName);
 
-            const char *GetMaterialslName(void);
-            void SetMaterial(std::string materialName);
+            GfxHND GetModelHandle(void) const;
+            void SetModelHandle(GfxHND handle);
 
+            GfxHND GetTextureHandle(void);
+            void SetTextureHandle(GfxHND handle);
+
+            GfxHND GetFragmentTextureHandle(void);
+            void SetFragmentTextureHandle(GfxHND handle);
+
+            GfxHND GetNormalTextureHandle(void);
+            void SetNormalTextureHandle(GfxHND handle);
+
+            void GetMaterialData(float &emiss, float &pow, float &intensity) const;
             void SetMaterialData(float emiss, float pow, float intensity);
-            void GetMaterialData(float &emiss, float &pow, float &intensity);
 
-			void SetEmissive(float emiss);
-			float GetEmissive(void) const;
+            float GetEmissive(void) const;
+            void SetEmissive(float emiss);
 
-			void SetSpecularPower(float power);
-			float GetSpecularPower(void) const;
+            float GetSpecularPower(void) const;
+            void SetSpecularPower(float power);
 
-			void SetSpecularIntensity(float intensity);
-			float GetSpecularIntensity(void) const;
+            float GetSpecularIntensity(void) const;
+            void SetSpecularIntensity(float intensity);
 
-            void SetAnimationTime(const float time);
             float &GetAnimationTime(void);
+            void SetAnimationTime(const float time);
 
-            void SetColor(const Color color);
             const Color &GetColor() const;
+            void SetColor(const Color color);
 
             std::vector<SMat4> &GetMatrixPalette(void);
+            std::vector<SMat4> &GetMatrixPaletteIT(void);
 
             int GetMeshIndex(void) const;
             void SetMeshIndex(const int index);
 
+            bool GetShadowCaster(void) const;
+            void SetShaderCaster(bool castShadow);
+
+            const Vec2 &GetTextureUVOffset(void) const;
+            void SetTextureUVOffset(const Vec2 &offset);
+
+            const Vec2 &GetTextureUVScalar(void) const;
+            void SetTextureUVScalar(const Vec2 &scalar);
+
+            const Vec2 &GetEmissiveTextureUVOffset(void) const;
+            void SetEmissiveTextureUVOffset(const Vec2 &offset);
+
+            const Vec2 &GetEmissiveTextureUVScalar(void) const;
+            void SetEmissiveTextureUVScalar(const Vec2 &scalar);
+
+            bool GetDoesFragment(void) const;
+            void SetDoesFragment(bool doesFragment);
+
+            float GetFragTime(void) const;
+            void SetFragTime(float time);
+
+            bool GetIsVisible(void) const;
+            void SetIsVisible(bool isVisible);
+
+            bool GetIsWarping(void) const;
+            void SetIsWarping(bool isWarping);
+
+            FragmentData &GetFragmentData(void);
+
         private:
-            float m_emissive;
-            float m_specPow;
-            float m_specIntensity;
-            Color m_color;
-            std::string m_modelResourceName;
-            std::string m_materialTextureName;
+            float               m_emissive;
+            float               m_specPow;
+            float               m_specIntensity;
+            Color               m_color;
+            std::string         m_modelResourceName;
 
-            float m_animationTime;
+            GfxHND              m_modelHandle;
+            GfxHND              m_textureHandle;
+            GfxHND              m_fragmentTextureHandle;
+            GfxHND              m_normalHandle;
 
-            std::vector<SMat4> m_matrixPalette;
+            float               m_animationTime;
+            std::vector<SMat4>  m_matrixPalette;
+            std::vector<SMat4>  m_matrixPaletteIT;
+
+            Vec2                m_textureUVOffset;
+            Vec2                m_textureUVScalar;
+
+            Vec2                m_emissiveTextureUVOffset;
+            Vec2                m_emissiveTextureUVScalar;
 
             // for multimaps
-            int m_meshIndex;
+            int                 m_meshIndex;
+
+            bool                m_shadowCaster;
+
+            bool                m_doesFragment;
+
+            bool                m_isVisible;
+
+            bool                m_doesWarp;
+
+            FragmentData        m_fragData;
         };
 
         /////////////////////////////////////////////////////////////////
@@ -136,8 +233,10 @@ namespace ursine
             Billboard2D(void);
 
             const char *GetTextureName(void);
-
             void SetTexture(std::string texName);
+
+            GfxHND GetTextureHandle(void) const;
+            void SetTextureHandle(GfxHND handle);
 
             void SetDimensions(float width, float height);
             void GetDimensions(float &width, float &height);
@@ -155,12 +254,15 @@ namespace ursine
             ursine::SVec3 m_position;
             Color m_color;
             std::string m_textureName;
+            GfxHND m_textureHandle;
         };
 
         /////////////////////////////////////////////////////////////
         // LIGHT ////////////////////////////////////////////////////
         class Light : public Renderable
         {
+            friend class RenderableManager;
+
         public:
             //enum for the different types of lights
             enum LightType
@@ -201,9 +303,28 @@ namespace ursine
             void SetSpotlightAngles(const float inner, const float outer);
 
             void SetSpotlightTransform(const SMat4 &transf);
-            const SMat4 &GetSpotlightTransform(void);
+            const SMat4 &GetSpotlightTransform(void) const;
+
+            SMat4 GenerateViewSpaceShadowTransform(void) const;
+            SMat4 GenerateViewSpaceShadowProjection(void) const;
+
+            SMat4 GenerateShadowView(void) const;
+            SMat4 GenerateShadowProjection(void) const;
+
+            unsigned GetShadowmapWidth(void) const;
+            void SetShadowmapWidth(unsigned width);
+
+            GfxHND GetShadowmapHandle(void) const;
+            void SetShadowmapHandle(GfxHND handle);
+
+            bool GetRenderShadows(void) const;
+            void SetRenderShadows(bool renderShadows);
+
+            Light &operator=(Light &rhs);
 
         private:
+            void Uninitialize(GfxManager *mgr) override;
+
             LightType m_type;
             SVec3 m_position;
             Color m_color;
@@ -213,6 +334,10 @@ namespace ursine
 
             Vec2 m_spotlightAngles;
             SMat4 m_spotlightTransform;
+
+            unsigned m_shadowmapWidth;
+            GfxHND m_shadowmap;
+            bool m_renderShadows;
         };
 
         /////////////////////////////////////////////////////////////
@@ -245,6 +370,7 @@ namespace ursine
             int SpawnParticle(void);
 
             void DestroyParticle(const int index);
+            void DestroyAllParticles(void);
 
             const SVec3 &GetPosition(void) const;
             void SetPosition(const SVec3 &position);
@@ -252,14 +378,23 @@ namespace ursine
             const Color &GetColor(void) const;
             void SetColor(const Color &color);
 
-            const std::string &GetParticleTexture(void) const;
-            void SetParticleTexture(const std::string &texName);
+            GfxHND GetTextureHandle(void) const;
+            void SetTextureHandle(GfxHND handle);
 
             bool GetAdditive(void) const;
             void SetAdditive(const bool useAdditive);
 
             bool GetSystemSpace(void) const;
             void SetSystemSpace(const bool useWorldCoordinates);
+
+            const SMat4 &GetTransform(void) const;
+            void SetTransform(const SMat4 &transform);
+
+            bool GetVelocityOrient(void) const;
+            void SetVelocityOrient(bool velocityOrient);
+
+            float GetFadeScalar(void) const;
+            void SetFadeScalar(float scalar);
         private:
             // members
             unsigned m_backIndex;
@@ -267,12 +402,86 @@ namespace ursine
             std::vector<Particle_CPU> m_cpuParticleData;
             SVec3 m_position;
 
-            std::string m_textureName;
+            GfxHND m_textureHandle;
 
             Color m_particleColor;
 
             bool m_useAdditive;
             bool m_worldSpace;
+            bool m_velocityOrient;
+
+            float m_fadeScalar;
+
+            SMat4 m_transform;
+        };
+
+        /////////////////////////////////////////////////////////////
+        // SPRITE TEXT //////////////////////////////////////////////
+        class SpriteText : public Renderable
+        {
+        public:
+            enum Alignment
+            {
+                ALIGN_LEFT,
+                ALIGN_CENTER,
+                ALIGN_RIGHT,
+
+                ALIGN_COUNT
+            };
+
+        public:
+            SpriteText(void);
+            void Initialize(void);
+
+            float GetSize(void) const;
+            void SetSize(float size);
+
+            float GetWidth(void) const;
+            void SetWidth(float size);
+
+            float GetHeight(void) const;
+            void SetHeight(float size);
+
+            const SVec3 &GetPosition(void) const;
+            void SetPosition(const SVec3 &position);
+
+            const std::string &GetText(void) const;
+            void SetText(const std::string &text);
+
+            float GetPPU(void) const;
+            void SetPPU(float ppu);
+
+            Alignment GetAlignment(void) const;
+            void SetAlignment(Alignment alignment);
+
+            bool GetFilter(void) const;
+            void SetFilter(bool useFilter);
+
+            const Color &GetColor(void) const;
+            void SetColor(const Color &color);
+
+            GfxHND GetFontHandle(void) const;
+            void SetFontHandle(GfxHND handle);
+
+        private:
+            float m_size;
+
+            float m_widthScalar;
+            float m_heightScalar;
+
+            bool m_filter;
+
+            Color m_color;
+
+            SVec3 m_position;
+
+            std::string m_text;
+
+            float m_ppu;
+
+            Alignment m_alignment;
+
+            GfxHND m_fontHandle;
         };
     }
 }

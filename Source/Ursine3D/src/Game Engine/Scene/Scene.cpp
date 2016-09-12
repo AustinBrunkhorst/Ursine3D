@@ -20,29 +20,73 @@
 
 #include "Notification.h"
 
+#include "WorldData.h"
+
 namespace ursine
 {
     Scene::Scene(void)
-        : m_playState( PS_EDITOR )
+        : EventDispatcher( this )
+        , m_paused( false )
+        , m_gameContext( nullptr )
         , m_viewport( 0 )
-        , m_world( std::make_shared<ecs::World>( ) )
-    {
-        
-    }
+        , m_activeWorld( nullptr ) { }
 
     Scene::~Scene(void)
     {
-
+        m_activeWorld = nullptr;
     }
 
-    ecs::World *Scene::GetWorld(void)
+    GameContext *Scene::GetGameContext(void)
     {
-        return m_world.get( );
+        return m_gameContext;
     }
 
-    void Scene::SetWorld(ecs::World *world)
+    void Scene::SetGameContext(GameContext *context)
     {
-        m_world = ecs::World::Handle( world );
+        m_gameContext = context;
+    }
+
+    ecs::World *Scene::GetActiveWorld(void) const
+    {
+        return m_activeWorld.get( );
+    }
+
+    void Scene::SetActiveWorld(ecs::World::Handle world)
+    {
+        SceneWorldChangedArgs e( m_activeWorld, nullptr );
+
+        m_activeWorld = world;
+
+        if (m_activeWorld)
+            m_activeWorld->setOwner( this );
+
+        Dispatch( SCENE_WORLD_CHANGED, &e );
+    }
+
+    bool Scene::SetActiveWorld(const resources::ResourceReference &reference, bool ignoreCache /*= true*/)
+    {
+        auto *worldData = reference.Load<resources::WorldData>( m_resourceManager, ignoreCache );
+
+        if (!worldData)
+            return false;
+
+        SceneWorldChangedArgs e( m_activeWorld, &reference );
+
+        m_activeWorld = worldData->GetData( );
+
+        UAssert( m_activeWorld,
+            "Resource world data was null."    
+        );
+
+        m_activeWorld->setOwner( this );
+
+        Dispatch( SCENE_WORLD_CHANGED, &e );
+
+        // make sure it doesn't stay in the cache
+        if (ignoreCache)
+            m_resourceManager.UnloadReference( reference );
+
+        return true;
     }
 
     graphics::GfxHND Scene::GetViewport(void) const
@@ -55,54 +99,43 @@ namespace ursine
         m_viewport = viewport;
     }
 
-    ScenePlayState Scene::GetPlayState(void) const
+    void Scene::SetPaused(bool paused)
     {
-        return m_playState;
+        m_paused = paused;
     }
 
-    void Scene::SetPlayState(ScenePlayState state)
+    bool Scene::IsPaused(void) const
     {
-        m_playState = state;
+        return m_paused;
     }
 
-    void Scene::Step(void) const
+    UIScreenManager &Scene::GetScreenManager(void)
     {
-        m_world->Update( );
+        return m_screenManager;
+    }
+
+    resources::ResourceManager &Scene::GetResourceManager(void)
+    {
+        return m_resourceManager;
     }
 
     void Scene::Update(DeltaTime dt) const
     {
-        switch (m_playState)
-        {
-        case PS_PAUSED:
-        case PS_EDITOR:
-            m_world->EditorUpdate( );
-            break;
-        case PS_PLAYING:
-            m_world->Update( );
-            break;
-        }
+        if (m_activeWorld && !m_paused)
+            m_activeWorld->Update( );
     }
 
     void Scene::Render(void) const
     {
-        switch (m_playState)
-        {
-        case PS_PAUSED:
-        case PS_EDITOR:
-            m_world->EditorRender( );
-            break;
-        case PS_PLAYING:
-            m_world->Render( );
-            break;
-        }
+        if (m_activeWorld)
+            m_activeWorld->Render( );
     }
 
     void Scene::LoadConfiguredSystems(void)
     {
-        auto *config = m_world->GetSettings( )->GetComponent<ecs::WorldConfig>( );
+        auto *config = m_activeWorld->GetSettings( )->GetComponent<ecs::WorldConfig>( );
 
-        auto *systemManager = m_world->GetSystemManager( );
+        auto *systemManager = m_activeWorld->GetSystemManager( );
 
         for (auto &system : config->GetSystems( ))
         {
@@ -112,15 +145,19 @@ namespace ursine
 
             auto type = meta::Type::GetFromName( system.type );
 
+        #if defined(URSINE_WITH_EDITOR)
+
             if (!type.IsValid( ))
             {
                 NotificationConfig error;
 
                 error.type = NOTIFY_ERROR;
                 error.header = "Play System";
-                error.message = "Unknown world play system configured.";
+                error.message = "Unknown world play system <strong class=\"highlight\">"+ system.type +"</strong> configured.";
 
                 EditorPostNotification( error );
+
+                continue;
             }
 
             if (systemManager->HasSystem( type ))
@@ -132,7 +169,23 @@ namespace ursine
                 error.message = "World play system <strong class=\"highlight\">" + type.GetName( ) + "</strong> already exists.";
 
                 EditorPostNotification( error );
+
+                continue;
             }
+
+        #else
+
+            UAssert( type.IsValid( ),
+                "Unknown world play system '%s' configured.",
+                system.type.c_str( )
+            );
+
+            UAssert( !systemManager->HasSystem( type ),
+                "World play system '%s' already exists.",
+                type.GetName( ).c_str( )
+            );
+
+        #endif
 
             systemManager->AddSystem( type );
         }

@@ -1,0 +1,144 @@
+@import 'Config';
+@import 'Utils';
+@import 'Icons';
+
+body {
+  background: #191919;
+}
+
+#wrapper {
+  margin: 50px;
+}
+
+#logo {
+  margin: 0 auto;
+  display: block;
+}
+
+#header {
+  margin-top: 20px;
+  font-size: 38px;
+  text-align: center;
+  font-weight: bold;
+  color: #d4d4d4;
+  text-shadow: 0 2px 2px rgba(black, 0.75);
+}
+
+#version {
+  margin-top: 5px;
+  margin-bottom: 20px;
+  font-size: 20px;
+  text-align: center;
+  color: #6b6b6b;
+}
+
+#actions {
+  display: block;
+  margin: 0 auto;
+  width: 250px;
+
+  li {
+    display: block;
+    padding: 10px;
+    margin-top: 5px;
+    color: #999999;
+    background: #2d2d30;
+    cursor: pointer;
+    transition: all $duration-transition-btn ease;
+    $icon-size: 16px;
+
+    &:hover {
+      color: #c8c8c8;
+      background: #3e3e40;
+
+      &:before {
+        color: $color-accent;
+      }
+    }
+
+    &:before {
+      display: inline-block !important;
+      margin: 0 10px;
+      color: #868689;
+      transition: all $duration-transition-btn ease;
+    }
+
+    &.new {
+      @include icon-half( $icon-half-flash, $icon-size );
+    }
+
+    &.open {
+      @include icon-half( $icon-half-folder-open, $icon-size );
+    }
+  }
+}
+
+#new-project-modal {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  padding: 25px;
+  background: rgba(black, 0.65);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $duration-transition-btn ease;
+
+  &.active {
+    opacity: 1;
+    pointer-events: all;
+  }
+
+  #project-options {
+    display: block;
+    margin: 0 auto;
+    padding: 25px;
+    background: #2d2d30;
+    border: 1px solid #3f3f46;
+    box-shadow: 0 2px 3px 0 rgba(black, 0.75);
+    color: #e8e8e8;
+
+    li {
+      display: block;
+      margin-bottom: 10px;
+
+      input[is=x-text-input] {
+        padding: 5px;
+      }
+
+      button {
+        border: 1px solid #3f3f46;
+      }
+
+      &.buttons {
+        margin-top: 20px;
+        text-align: right;
+
+        button {
+          min-width: 80px;
+          text-align: center;
+        }
+      }
+
+      .name {
+        margin-bottom: 10px;
+        text-shadow: 0 1px 1px rgba(black, 0.75);
+      }
+
+      .value {
+        input {
+          width: 100%;
+        }
+
+        #project-new-location {
+          width: calc(100% - 40px);
+        }
+
+        #btn-project-new-location-browse {
+          width: 40px;
+        }
+      }
+    }
+  }
+}

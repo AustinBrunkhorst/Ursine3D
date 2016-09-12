@@ -36,6 +36,8 @@ namespace ursine
             m_renderMode = VIEWPORT_RENDER_DEFERRED;
 
             m_cameraMask = 0;
+
+            m_clearColor = Color( 0.f, 0.f, 0.f, 1.f );
         }
 
         void Camera::Uninitialize(void) { }
@@ -59,13 +61,13 @@ namespace ursine
             {
                 return SMat4( DirectX::XMMatrixPerspectiveFovLH( m_fov * 3.14f / 180.f,
                                                                  m_screenWidth / m_screenHeight,
-                                                                 m_nearPlane, m_farPlane ) );
+                                                                 m_farPlane, m_nearPlane) );
             }
             else
             {
                 return SMat4( DirectX::XMMatrixOrthographicLH( m_size *
                                                                (m_screenWidth / m_screenHeight),
-                                                               m_size, m_nearPlane, m_farPlane ) );
+                                                               m_size, m_farPlane, m_nearPlane) );
             }
         }
 
@@ -102,10 +104,6 @@ namespace ursine
 
         void Camera::SetPlanes(const float nearPlane, const float farPlane)
         {
-            UAssert( nearPlane < farPlane, 
-                "Near and far planes cannot be the same!"
-            );
-
             m_nearPlane = nearPlane;
             m_farPlane = farPlane;
         }
@@ -238,10 +236,22 @@ namespace ursine
             return SVec3( pos.X( ), pos.Y( ), pos.Z( ) );
         }
 
+        void Camera::GetScreenDimensions(float& width, float& height)
+        {
+            width = m_screenWidth;
+            height = m_screenHeight;
+        }
+
         void Camera::SetScreenDimensions(const float width, const float height)
         {
             m_screenWidth = width;
             m_screenHeight = height;
+        }
+
+        void Camera::GetScreenPosition(float& x, float& y)
+        {
+            x = m_screenX;
+            y = m_screenY;
         }
 
         void Camera::SetScreenPosition(const float x, const float y)
@@ -258,7 +268,7 @@ namespace ursine
 
             // check to see if the whitelist bit is set
             if (renderMask & (0x1u << 63u))
-                return (renderMask - (0x1u << 63u)) == m_entityID;
+                return (renderMask - (0x1u << 63u)) == m_entity->GetID( );
 
             // else, return the regular mask comparison
             return (renderMask & m_cameraMask) != 0;
@@ -276,14 +286,14 @@ namespace ursine
             m_cameraMask = renderMask;
         }
 
-        ecs::EntityID Camera::GetEntityID(void) const
+        const ecs::EntityHandle &Camera::GetEntity(void) const
         {
-            return m_entityID;
+            return m_entity;
         }
 
-        void Camera::SetEntityID(const ecs::EntityID id)
+        void Camera::SetEntity(const ecs::EntityHandle id)
         {
-            m_entityID = id;
+            m_entity = id;
         }
 
         void Camera::CalculateVectors(const SVec3 &up)
@@ -295,6 +305,16 @@ namespace ursine
 
             m_up = SVec3::Cross( -m_look, m_right );
             m_up.Normalize( );
+        }
+
+        const Color &Camera::GetClearColor(void) const
+        {
+            return m_clearColor;
+        }
+
+        void Camera::SetClearColor(const Color &color)
+        {
+            m_clearColor = color;
         }
     }
 }

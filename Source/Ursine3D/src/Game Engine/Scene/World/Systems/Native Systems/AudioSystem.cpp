@@ -14,285 +14,366 @@
 #include "UrsinePrecompiled.h"
 
 #include "AudioSystem.h"
+
+#include "AudioConfigComponent.h"
+#include "AudioEmitterComponent.h"
 #include "ListenerComponent.h"
+
+#include "AudioEventInfo.h"
+
+namespace
+{
+    AkSoundPosition g_emitterPos = { {0,0,0}, {-1,0,0} };
+    AkListenerPosition g_listenerPos = { {0,0,0}, {-1,0,0}, {0,1,0} };
+}
 
 namespace ursine
 {
-	namespace ecs
-	{
-		ENTITY_SYSTEM_DEFINITION(AudioSystem);
+    namespace ecs
+    {
+        ENTITY_SYSTEM_DEFINITION( AudioSystem );
 
-		AudioSystem::AudioSystem(World *world)
-			: EntitySystem(world)
-			, m_nextEmptyID(AUDIO_UNALLOCATED_ID + 1)
-		{
-			m_audioMan = GetCoreSystem(AudioManager);
-		}
+        AudioSystem::AudioSystem(World *world)
+            : EntitySystem( world )
+            , m_nextEmptyID( AUDIO_UNALLOCATED_ID + 1 )
+        {
+            m_audioMan = GetCoreSystem( AudioManager );
+        }
 
-		void AudioSystem::CreateAudioObject(AkGameObjectID& id)
-		{
-			id = m_nextEmptyID++;
-			m_audioMan->RegisterObject(id, 0);
-		}
+        void AudioSystem::CreateAudioObject(AkGameObjectID &id)
+        {
+            id = m_nextEmptyID++;
+            m_audioMan->RegisterObject( id, 0 );
+        }
 
-		void AudioSystem::DeleteAudioObject(AkGameObjectID& id)
-		{
-			m_audioMan->UnRegisterObject(id);
-		}
+        void AudioSystem::DeleteAudioObject(AkGameObjectID &id)
+        {
+            m_audioMan->UnRegisterObject( id );
+        }
 
-		void AudioSystem::OnInitialize(void)
-		{
-			m_world->Listener(this)
-				.On(WORLD_UPDATE, &AudioSystem::onUpdate)
-				.On(WORLD_ENTITY_COMPONENT_ADDED, &AudioSystem::onComponentAdded)
-				.On(WORLD_ENTITY_COMPONENT_REMOVED, &AudioSystem::onComponentRemoved);
-		}
+        void AudioSystem::DeleteAllAudioObjects(void)
+        {
+            if (AK::SoundEngine::UnregisterAllGameObj(  ) != AK_Success)
+            {
+                UWarning("Wwise: Cannot Unregister ALL game objects");
+            }
+        }
 
-		void AudioSystem::OnRemove(void)
-		{
-			m_world->Listener(this)
-				.Off(WORLD_UPDATE, &AudioSystem::onUpdate)
-				.Off(WORLD_ENTITY_COMPONENT_ADDED, &AudioSystem::onComponentAdded)
-				.Off(WORLD_ENTITY_COMPONENT_REMOVED, &AudioSystem::onComponentRemoved);
-		}
+        void AudioSystem::OnInitialize(void)
+        {
+            m_world->Listener( this )
+                .On( WORLD_UPDATE, &AudioSystem::onUpdate )
+                .On( WORLD_ENTITY_COMPONENT_ADDED, &AudioSystem::onComponentAdded )
+                .On( WORLD_ENTITY_COMPONENT_REMOVED, &AudioSystem::onComponentRemoved );
 
-		void AudioSystem::onComponentAdded(EVENT_HANDLER(World))
-		{
-			EVENT_ATTRS(World, ComponentEventArgs);
+            AK::SoundEngine::RegisterGameObj( AUDIO_GLOBAL_OBJECT_ID );
+        }
 
-			if (args->component->Is<AudioEmitter>())
-			{
-				m_emitters.emplace(
-					args->entity->GetUniqueID(),
-					static_cast<AudioEmitter*>(const_cast<Component*>(args->component))
-					);
-				auto& handle = m_emitters[args->entity->GetUniqueID()]->m_handle;
-				CreateAudioObject(handle);
-				AssignListener(handle, m_emitters[args->entity->GetUniqueID()]->GetListeners());
-			}
+        void AudioSystem::OnSceneReady(Scene *scene)
+        {
 
-			else if (args->component->Is<AudioListener>())
-			{
-				m_listeners.emplace(
-					args->entity->GetUniqueID(),
-					static_cast<AudioListener*>(const_cast<Component*>(args->component))
-					);
-				m_listeners[args->entity->GetUniqueID()]->SetListenerIndex(m_audioMan->GetListener());
-			}
-		}
+        }
 
-		void AudioSystem::onComponentRemoved(EVENT_HANDLER(World))
-		{
-			EVENT_ATTRS(World, ComponentEventArgs);
+        void AudioSystem::OnRemove(void)
+        {
+            StopAllSounds( );
 
-			if (args->component->Is<AudioEmitter>())
-			{
-				auto search = m_emitters.find(args->entity->GetUniqueID());
+            AK::SoundEngine::ClearPreparedEvents(  );
 
-				if (search != m_emitters.end())
-				{
-					DeleteAudioObject(m_emitters[args->entity->GetUniqueID()]->m_handle);
-					m_emitters.erase(search);
-				}
-			}
+            m_world->Listener( this )
+                .Off( WORLD_UPDATE, &AudioSystem::onUpdate )
+                .Off( WORLD_ENTITY_COMPONENT_ADDED, &AudioSystem::onComponentAdded )
+                .Off( WORLD_ENTITY_COMPONENT_REMOVED, &AudioSystem::onComponentRemoved );
+        }
 
-			else if (args->component->Is<AudioListener>())
-			{
-				auto search = m_listeners.find(args->entity->GetUniqueID());
+        void AudioSystem::onComponentAdded(EVENT_HANDLER(World))
+        {
+            EVENT_ATTRS(World, ComponentEventArgs);
 
-				if (search != m_listeners.end())
-				{
-					m_audioMan->FreeListener(m_listeners[args->entity->GetUniqueID()]->GetListenerIndex());
-					m_listeners.erase(search);
-				}
-					
-			}
-		}
+            if (args->component->Is<AudioEmitter>( ))
+            {
+                m_emitters.emplace(
+                    args->entity,
+                    static_cast<AudioEmitter*>( const_cast<Component*>( args->component ) )
+                );
 
-		void AudioSystem::onUpdate(EVENT_HANDLER(World))
-		{
-			// walk through all emitters
-			// update positions
-			// Post Events
-			for (auto &emitter : m_emitters)
-			{
-				auto mute = emitter.second->GetMute();
+                auto emitter = m_emitters[ args->entity ];
+                auto &handle = emitter->m_handle;
 
-				if (mute)
-					continue;
+                CreateAudioObject( handle );
+                AssignListener( handle, m_emitters[ args->entity ]->GetListenerMask( ) );
 
-				auto& dirty = emitter.second->m_dirty;
+                emitter->SetAttenuationScalingFactor( emitter->GetAttenuationScalingFactor( ) );
+            }
 
-				auto& handle = emitter.second->m_handle;
-				auto entity = m_world->GetEntity(emitter.first);
+            else if (args->component->Is<AudioListener>( ))
+            {
+                m_listeners.emplace(
+                    args->entity,
+                    static_cast<AudioListener*>( const_cast<Component*>( args->component ) )
+                );
+            }
+        }
 
-				if (!entity)
-					continue;
+        void AudioSystem::onComponentRemoved(EVENT_HANDLER(World))
+        {
+            EVENT_ATTRS(World, ComponentEventArgs);
 
-				auto trans = entity->GetTransform();
+            if (args->component->Is<AudioEmitter>( ))
+            {
+                auto search = m_emitters.find( args->entity );
 
-				if (dirty)
-					SetObject3DPosition(handle, trans->GetWorldPosition(), 
-						trans->GetForward());
+                if (search != m_emitters.end( ))
+                {
+                    auto &emitter = m_emitters[ args->entity ];
+                    auto handle = emitter->m_handle;
 
-				while (!emitter.second->SoundsEmpty())
-				{
-					m_audioMan->PlayEvent(emitter.second->GetFrontSound(), handle);
-					emitter.second->PopFrontSound();
-				}
-			}
+                    // post all remaining events
+                    while (!emitter->EmptyEvent( ))
+                    {
+                        auto postedEvent = emitter->GetEvent( );
+                        PostAudioEventInfo( postedEvent, handle );
+                        emitter->PopEvent( );
+                    }
 
-			for (auto &listener : m_listeners)
-			{
-				auto& dirty = listener.second->m_dirty;
+                    DeleteAudioObject( handle );
+                    m_emitters.erase( search );
+                }
+            }
 
-				auto index = listener.second->GetListenerIndex();
+            else if (args->component->Is<AudioListener>( ))
+            {
+                auto search = m_listeners.find( args->entity );
 
-				auto entity = m_world->GetEntity(listener.first);
+                if (search != m_listeners.end( ))
+                {
+                    m_listeners.erase( search );
+                }
+            }
+        }
 
-				if (!entity)
-					return;
+        void AudioSystem::onUpdate(EVENT_HANDLER(World))
+        {
+            for (auto &listener : m_listeners)
+            {
+                auto index = listener.second->GetListenerIndex( );
 
-				auto trans = entity->GetTransform();
+                auto entity = listener.first;
 
-				if (dirty)
-					SetListener3DPosition(trans->GetForward(), trans->GetUp(), 
-						trans->GetWorldPosition(), index);
-			}
-		}
+                if (!entity || index == ListenerIndex::NONE)
+                    continue;
 
-		void AudioSystem::SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id)
-		{
-			if (AK::SoundEngine::SetRTPCValue(param.c_str(), (AkRtpcValue)value, id) != AK_Success)
-			{
-				UWarning("Wwise: Cannot Set RTPC value: %s", param.c_str());
-			}
-		}
+                auto trans = entity->GetTransform();
 
-		void AudioSystem::AssignListener(AkGameObjectID obj, ListenerIndex listeners)
-		{
-			if (listeners == ListenerIndex::None)
-			{
-				UWarning("Wwise: Cannot Set Zero Active Listeners");
-				return;
-			}
+                    SetListener3DPosition( trans->GetForward( ), trans->GetUp( ),
+                    trans->GetWorldPosition( ), index );
+            }
 
-			if (AK::SoundEngine::SetActiveListeners(obj, static_cast<AkUInt32>(listeners)) != AK_Success)
-			{
-				UWarning("Wwise: Cannot Set Active Listeners");
-			}
-		}
+            // walk through all emitters
+            // update positions
+            // Post Events
+            for (auto &emitter : m_emitters)
+            {
+                auto &handle = emitter.second->m_handle;
+                auto entity = emitter.first;
+                auto eventQ = emitter.second;
+                auto &stopSoundFlag = emitter.second->checkStopFlag( );
+                auto mask = emitter.second->GetListenerMask( );
 
-		void AudioSystem::SetListener3DPosition(const AkVector orientation_forward,
-			const AkVector orientation_up, const AkVector position, const ListenerIndex listeners)
-		{
-			if (position.X == 0 &&
-				position.Y == 0 &&
-				position.Z == 0)
-				return;
+                // I need to find out a way to access all of the events from the emitter's queues
 
-			AkListenerPosition listenerPosition;
-			// up and forward have to be orthogonal and normalized
-			listenerPosition.OrientationTop = orientation_up;
-			listenerPosition.OrientationFront = orientation_forward;
-			listenerPosition.Position = position;
+                if (!entity)
+                    continue;
 
-			if (AK::SoundEngine::SetListenerPosition(listenerPosition, static_cast<AkUInt32>(listeners)) != AK_Success)
-			{
-				UWarning("Wwise: Cannot Set Listener Postion");
-			}
-		}
+                auto trans = entity->GetTransform( );
 
-		void AudioSystem::SetListener3DPosition(const SVec3 orientation_forward,
-			const SVec3 orientation_up, const SVec3 position, const ListenerIndex listeners)
-		{
-			if (position.X() == 0 &&
-				position.Y() == 0 &&
-				position.Z() == 0)
-				return;
+                    SetObject3DPosition( handle, trans->GetWorldPosition( ),
+                        trans->GetForward( ) );
 
-			AkListenerPosition listenerPosition;
-			// up and forward have to be orthogonal and normalized
-			listenerPosition.OrientationTop = orientation_up.ToWwise();
-			listenerPosition.OrientationFront = orientation_forward.ToWwise();
-			listenerPosition.Position = position.ToWwise();
+                    AssignListener( handle, mask );
 
-			if (AK::SoundEngine::SetListenerPosition(listenerPosition, static_cast<AkUInt32>(listeners)) != AK_Success)
-			{
-				UWarning("Wwise: Cannot Set Listener Postion");
-			}
-		}
+                while (!eventQ->EmptyEvent( ))
+                {
+                    auto postedEvent = eventQ->GetEvent( );
+                    PostAudioEventInfo( postedEvent, handle );
+                    eventQ->PopEvent( );
+                }
 
-		void AudioSystem::SetObject3DPosition(AkGameObjectID obj, const AkSoundPosition position)
-		{
-			if (AK::SoundEngine::SetPosition(obj, position) != AK_Success)
-			{
-				UWarning("Wwise: Cannot Set Object 3D Position");
-			}
-		}
+                if (stopSoundFlag)
+                {
+                    StopAllSounds( handle );
+                    stopSoundFlag = false;
+                }
+            }
+        }
 
-		void AudioSystem::SetMultipleObject3DPosition(AkGameObjectID obj, const AkSoundPosition* positions,
-			AkUInt16 num_positions, AK::SoundEngine::MultiPositionType type)
-		{
-			// MultiPositionType_MultiSources 	
-			// Simulate multiple sources in one sound playing, adding volumes. 
-			// For instance, all the torches on your level emitting using only one sound.
+        void AudioSystem::initializeGlobalEmitterListener(void)
+        {
+            AK::SoundEngine::RegisterGameObj( AUDIO_GLOBAL_OBJECT_ID );
 
-			// MultiPositionType_MultiDirections
-			// Simulate one sound coming from multiple directions. Useful for repositioning 
-			// sounds based on wall openings or to simulate areas like forest or rivers
+            // Set listener 8 to listen to global emitter
+            //AK::SoundEngine::SetActiveListeners( AUDIO_GLOBAL_OBJECT_ID, static_cast<AkUInt32>( ListenerMask::L8 ) );
 
-			if (SetMultiplePositions(obj, positions, num_positions, type) != AK_Success)
-			{
-				UWarning("Wwise: Cannot Set Mutiple Object 3D Position");
-			}
-		}
+            // Set emitter position
+            AK::SoundEngine::SetPosition( AUDIO_GLOBAL_OBJECT_ID, g_emitterPos );
 
-		void AudioSystem::SetSoundObstructionAndOcclusion(AkGameObjectID obstruction,
-			const AkUInt32 listeners, const AkReal32 obstruction_level, const AkReal32 occlusion_level)
-		{
-			if (AK::SoundEngine::SetObjectObstructionAndOcclusion(obstruction, listeners,
-				obstruction_level, occlusion_level) != AK_Success)
-			{
-				UWarning("Wwise: Cannot Set Obstruction and Occlusion");
-			}
-		}
+            // Set listener position
+            AK::SoundEngine::SetListenerPosition( g_listenerPos, static_cast<AkUInt32>( ListenerMask::L8 ) );
+        }
 
-		void AudioSystem::SetGameState(const std::string name, const std::string state)
-		{
-			// global state change
-			if (AK::SoundEngine::SetState(name.c_str(), state.c_str()))
-			{
-				UWarning("Wwise: Cannot Set State");
-			}
-		}
+        void AudioSystem::SetRealTimeParameter(const std::string param, const float value, AkGameObjectID id)
+        {
+            if (AK::SoundEngine::SetRTPCValue( param.c_str( ), ( AkRtpcValue )value, id ) != AK_Success)
+            {
+                UWarning( "Wwise: Cannot Set RTPC value: %s", param.c_str( ) );
+            }
+        }
 
-		void AudioSystem::SetObjectSwitch(const std::string name, const std::string state, AkGameObjectID obj)
-		{
-			// specific states for each object
-			if (AK::SoundEngine::SetSwitch(name.c_str(), state.c_str(), obj))
-			{
-				UWarning("Wwise: Cannot Set Switch");
-			}
-		}
+        void AudioSystem::StopAllSounds(void)
+        {
+            AK::SoundEngine::StopAll( );
+        }
 
-		void AudioSystem::SetTrigger(const std::string name, AkGameObjectID obj)
-		{
-			if (AK::SoundEngine::PostTrigger(name.c_str(), obj))
-			{
-				UWarning("Wwise: Cannot Post Trigger");
-			}
-		}
+        void AudioSystem::StopAllSounds(AkGameObjectID id)
+        {
+            AK::SoundEngine::StopAll( id );
+        }
 
-		void AudioSystem::SetObject3DPosition(AkGameObjectID obj, const SVec3 position, const SVec3 orientation)
-		{
-			AkSoundPosition pos;
-			pos.Position = position.ToWwise();
-			pos.Orientation = orientation.ToWwise();
-			if (AK::SoundEngine::SetPosition(obj, pos) != AK_Success)
-			{
-				UWarning("Wwise: Cannot Set Object 3D Position");
-			}
-		}
-	}
+        void AudioSystem::PostAudioEvent(const std::string param, AkGameObjectID id)
+        {
+            auto manager = GetCoreSystem( AudioManager );
+            manager->PlayEvent( param, id );
+        }
+
+        void AudioSystem::PostAudioEventInfo(AudioEvent::Handle event, AkGameObjectID id)
+        {
+            event->ApplyParams( id );
+        }
+
+        void AudioSystem::AssignListener(AkGameObjectID obj, ListenerMask listeners)
+        {
+            if (AK::SoundEngine::SetActiveListeners( obj, static_cast<AkUInt32>( listeners ) ) != AK_Success)
+            {
+                UWarning( "Wwise: Cannot Set Active Listeners" );
+            }
+        }
+
+        void AudioSystem::SetListener3DPosition(const AkVector orientation_forward,
+            const AkVector orientation_up, const AkVector position, const ListenerMask listeners)
+        {
+            AkListenerPosition listenerPosition;
+            // up and forward have to be orthogonal and normalized
+            listenerPosition.OrientationTop = orientation_up;
+            listenerPosition.OrientationFront = orientation_forward;
+            listenerPosition.Position = position;
+
+            if (AK::SoundEngine::SetListenerPosition( listenerPosition, static_cast<AkUInt32>( listeners ) ) != AK_Success)
+            {
+                UWarning( "Wwise: Cannot Set Listener Postion" );
+            }
+        }
+
+        void AudioSystem::SetListener3DPosition(
+            const SVec3 orientationForward,
+            const SVec3 orientationUp,
+            const SVec3 position,
+            const ListenerIndex index
+        )
+        {
+            AkListenerPosition listenerPosition;
+            // up and forward have to be orthogonal and normalized
+            listenerPosition.OrientationTop = orientationUp.ToWwise( );
+            listenerPosition.OrientationFront = orientationForward.ToWwise( );
+            listenerPosition.Position = position.ToWwise( );
+
+            AkUInt32 listener = static_cast<AkUInt32>( index );
+
+            if (AK::SoundEngine::SetListenerPosition( listenerPosition, listener ) != AK_Success)
+            {
+                UWarning( "Wwise: Cannot Set Listener Postion" );
+            }
+        }
+
+        void AudioSystem::SetObject3DPosition(AkGameObjectID obj, const AkSoundPosition position)
+        {
+            if (AK::SoundEngine::SetPosition( obj, position ) != AK_Success)
+            {
+                UWarning( "Wwise: Cannot Set Object 3D Position" );
+            }
+        }
+
+        void AudioSystem::SetMultipleObject3DPosition(
+            AkGameObjectID obj,
+            const AkSoundPosition *positions,
+            AkUInt16 numPositions,
+            AK::SoundEngine::MultiPositionType type
+        )
+        {
+            // MultiPositionType_MultiSources     
+            // Simulate multiple sources in one sound playing, adding volumes. 
+            // For instance, all the torches on your level emitting using only one sound.
+
+            // MultiPositionType_MultiDirections
+            // Simulate one sound coming from multiple directions. Useful for repositioning 
+            // sounds based on wall openings or to simulate areas like forest or rivers
+
+            if (SetMultiplePositions( obj, positions, numPositions, type ) != AK_Success)
+            {
+                UWarning( "Wwise: Cannot Set Mutiple Object 3D Position" );
+            }
+        }
+
+        void AudioSystem::SetSoundObstructionAndOcclusion(
+            AkGameObjectID obstruction,
+            const AkUInt32 listeners,
+            const AkReal32 obstructionLevel,
+            const AkReal32 occlusion_level
+        )
+        {
+            if (AK::SoundEngine::SetObjectObstructionAndOcclusion( obstruction, listeners,
+                obstructionLevel, occlusion_level ) != AK_Success)
+            {
+                UWarning( "Wwise: Cannot Set Obstruction and Occlusion" );
+            }
+        }
+
+        void AudioSystem::SetGameState(const std::string &group, const std::string &state)
+        {
+            // global state change
+            if (AK::SoundEngine::SetState( group.c_str( ), state.c_str( ) ))
+            {
+                // Commenting this out so that we don't get frame hitches
+                // - Jordan
+                // UWarning( "Wwise: Cannot Set State" );
+            }
+        }
+
+        void AudioSystem::SetObjectSwitch(const std::string &group, const std::string &state, AkGameObjectID obj)
+        {
+            // specific states for each object
+            if (AK::SoundEngine::SetSwitch( group.c_str( ), state.c_str( ), obj ))
+            {
+                UWarning( "Wwise: Cannot Set Switch" );
+            }
+        }
+
+        void AudioSystem::SetTrigger(const std::string &name, AkGameObjectID obj)
+        {
+            if (AK::SoundEngine::PostTrigger( name.c_str( ), obj ))
+            {
+                UWarning( "Wwise: Cannot Post Trigger" );
+            }
+        }
+
+        void AudioSystem::SetObject3DPosition(AkGameObjectID obj, const SVec3 position, const SVec3 orientation)
+        {
+            AkSoundPosition pos;
+            pos.Position = position.ToWwise( );
+            pos.Orientation = orientation.ToWwise( );
+            if (AK::SoundEngine::SetPosition( obj, pos ) != AK_Success)
+            {
+                UWarning( "Wwise: Cannot Set Object 3D Position" );
+            }
+        }
+    }
 }

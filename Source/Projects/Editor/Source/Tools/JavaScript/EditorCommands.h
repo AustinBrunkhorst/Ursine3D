@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+**
+** EditorCommands.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 #include <NativeJSFunction.h>
@@ -20,10 +33,10 @@ namespace editor_commands
     JSFunction(CreateEmptyEntity);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
-    JSFunction(CreateEntityFromArchetype);
+    JSFunction(CreatePlane);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
-    JSFunction(CreatePlane);
+    JSFunction(CreateCamera);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
     JSFunction(CreateBox);
@@ -44,5 +57,14 @@ namespace editor_commands
     JSFunction(CreateDirectionalLight);
 
     Meta(Enable, ExposeJavaScript, EditorCommand)
+    JSFunction(CreateParticleSystem);
+
+    Meta(Enable, ExposeJavaScript, EditorCommand)
+    JSFunction(CreateSpriteText);
+
+    Meta(Enable, ExposeJavaScript, EditorCommand)
     JSFunction(InspectEditorUI);
+
+    Meta(Enable, ExposeJavaScript, EditorCommand)
+    JSFunction(ReloadEditorUI);
 }

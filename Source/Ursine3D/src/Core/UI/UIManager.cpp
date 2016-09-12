@@ -24,14 +24,15 @@ namespace ursine
     {
         auto *app = Application::Instance;
 
-#if defined(PLATFORM_WINDOWS)
+    #if defined(PLATFORM_WINDOWS)
 
         CefMainArgs mainArgs( GetModuleHandle( nullptr ) );
 
-#else
+    #else
+
         CefMainArgs mainArgs( app->GetArgC( ), app->GetArgV( ) );
 
-#endif
+    #endif
         CefSettings settings;
 
         settings.no_sandbox = true;
@@ -41,32 +42,32 @@ namespace ursine
         settings.single_process = true;
         settings.multi_threaded_message_loop = false;
 
-#if defined(CONFIG_DEBUG)
+    #if defined(CONFIG_DEBUG)
 
         settings.log_severity = LOGSEVERITY_WARNING;
         settings.uncaught_exception_stack_size = 1;
 
-#else
+    #else
 
         settings.log_severity = LOGSEVERITY_DISABLE;
 
-#endif
+    #endif
 
-#if defined(URSINE_WITH_EDITOR)
+    #if defined(URSINE_WITH_EDITOR)
 
-        settings.remote_debugging_port = REMOTE_DEBUGGING_PORT;
+        settings.remote_debugging_port = kUIDebuggingPort;
 
-#endif
+    #endif
 
         settings.background_color = CefColorSetARGB( 0, 0, 0, 0 );
 
         UICore::Instance = new UICore( );
 
-        URSINE_TODO( "configurable handlers" );
-        UAssert( CefInitialize( mainArgs, settings, UICore::Instance, nullptr ),
-            "Unable to initialize CEF." );
-
         CefEnableHighDPISupport( );
+
+        UAssert( CefInitialize( mainArgs, settings, UICore::Instance, nullptr ),
+            "Unable to initialize CEF." 
+        );
 
         app->Connect( APP_UPDATE, this, &UIManager::onAppUpdate );
     }
@@ -87,13 +88,17 @@ namespace ursine
         settings.javascript_access_clipboard = STATE_ENABLED;
         settings.javascript_dom_paste = STATE_ENABLED;
         settings.local_storage = STATE_DISABLED;
-        settings.application_cache = STATE_DISABLED;
         settings.databases = STATE_DISABLED;
         settings.caret_browsing = STATE_DISABLED;
         settings.file_access_from_file_urls = STATE_ENABLED;
         settings.universal_access_from_file_urls = STATE_ENABLED;
 
         return new UIView( window, settings, url );
+    }
+
+    void UIManager::OnRegisterCustomSchemes(CefRefPtr<CefSchemeRegistrar> registrar)
+    {
+        registrar->AddCustomScheme( "http", true, true, false );
     }
 
     void UIManager::onAppUpdate(EVENT_HANDLER(Application))

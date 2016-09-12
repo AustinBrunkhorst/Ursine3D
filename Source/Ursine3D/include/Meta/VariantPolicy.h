@@ -16,9 +16,14 @@ namespace ursine
     {
         namespace variant_policy
         {
-            /** @brief Wraps an Object pointer, rather than copying the value
-            */
+            /** @brief Wraps an Object pointer, rather than copying the value.
+             *         This also ensures base class pointers can resolve their inherited type
+             */
             struct WrapObject { };
+
+            /** @brief Uses a reference to a value rather than copying it
+             */
+            struct NoCopy { };
         }
     }
 }

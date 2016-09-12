@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -16,7 +16,8 @@
 #include "WorldSerializer.h"
 #include "EntitySerializer.h"
 
-#include <NameManager.h>
+#include "WorldConfigComponent.h"
+#include "SystemManager.h"
 
 namespace ursine
 {
@@ -31,13 +32,12 @@ namespace ursine
             const auto kVersion = "0.0";
         }
 
-        WorldSerializer::WorldSerializer(void)
+        Json WorldSerializer::Serialize(World *world)
         {
+            UAssertCatchable( world != nullptr,
+                "input was null."    
+            );
 
-        }
-
-        Json WorldSerializer::Serialize(World *world) const
-        {
             Json::object data;
 
             data[ kKeyVersion ] = kVersion;
@@ -46,7 +46,7 @@ namespace ursine
 
             EntitySerializer entitySerializer;
 
-            auto *settingsEntity = world->GetSettings( );
+            auto &settingsEntity = world->GetSettings( );
 
             data[ kKeySettings ] = 
                 entitySerializer.Serialize( settingsEntity );
@@ -60,7 +60,7 @@ namespace ursine
                 if (entityID == settingsEntity->m_id)
                     continue;
 
-                auto *entity = world->m_entityManager->GetEntity( entityID );
+                auto entity = world->m_entityManager->GetEntityByID( entityID );
 
                 // only serialize if enabled
                 if (entity->IsSerializationEnabled( ))
@@ -76,11 +76,11 @@ namespace ursine
             return data;
         }
 
-        World *WorldSerializer::Deserialize(const std::string &filename) const
+        World *WorldSerializer::Deserialize(const std::string &filename)
         {
             std::string data;
 
-            if (!fs::LoadText( filename, data ))
+            if (!fs::LoadAllText( filename, data ))
                 throw SerializationException( "Unable to read world file." );
 
             std::string jsonError;
@@ -100,7 +100,7 @@ namespace ursine
             return Deserialize( worldData );
         }
 
-        World *WorldSerializer::Deserialize(const Json &worldData) const
+        World *WorldSerializer::Deserialize(const Json &worldData)
         {
             auto &versionData = worldData[ kKeyVersion ];
 
@@ -151,9 +151,62 @@ namespace ursine
                 );
             }
 
-            world->DispatchLoad( );
-
             return world;
+        }
+
+        void WorldSerializer::MergeDeserialize(World::Handle from, World *to)
+        {
+            EntitySerializer entitySerializer;
+
+            // merge the existing systems in the world config
+            auto toSystemManager = to->GetSystemManager( );
+
+            auto &newSettings = from->GetSettings( );
+            auto newConfig = newSettings->GetComponent<WorldConfig>( );
+            auto &newSystems = newConfig->GetSystems( );
+
+            for (auto &newSystem : newSystems)
+            {
+                auto systemType = meta::Type::GetFromName( newSystem.type );
+
+            #if defined(URSINE_WITH_EDITOR)
+
+                if (!systemType.IsValid( ))
+                {
+                    UWarning( 
+                        "Attempting to import unknown system '%s'.",
+                        newSystem.type.c_str( )
+                    );
+
+                    continue;
+                }
+
+            #else
+
+                UAssert( systemType.IsValid( ),
+                    "Attempting to import unknown system '%s'.",
+                    newSystem.type.c_str( )
+                );
+
+            #endif
+
+                // If the new system isn't found, add it to the current systems
+                if (!toSystemManager->HasSystem( systemType ))
+                    toSystemManager->AddSystem( systemType );
+            }
+
+            // Add the world's entities to the existing world
+            auto em = from->GetEntityManager( );
+            EntitySerializer serializer;
+
+            auto toAddEntities = em->GetRootEntities( );
+
+            for (auto &entityData : toAddEntities)
+            {
+                auto data = serializer.Serialize( entityData );
+
+                serializer.Deserialize( to, data );
+            }
         }
     }
 }

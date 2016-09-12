@@ -74,7 +74,7 @@ namespace ursine
 
             //create APIs
             ResourceMgr.Initialize();
-            ResourceMgr.SetPrivates(m_privates->gfxCore_->modelManager, m_privates->gfxCore_->textureManager);
+            ResourceMgr.SetPrivates(m_privates->gfxCore_->modelManager, m_privates->gfxCore_->textureManager, m_privates->gfxCore_->fontManager);
             RenderableMgr.Initialize();
             RenderableMgr.SetPrivates(m_privates->gfxCore_->renderableManager);
             CameraMgr.Initialize();
@@ -151,7 +151,7 @@ namespace ursine
             m_privates->gfxCore_->RenderToDynamicTexture(srcWidth, srcHeight, input, inputWidth, inputHeight, destTexture, destinationX, destinationX);
         }
 
-        ursine::ecs::EntityUniqueID GfxAPI::GetMousedOverID()
+        ecs::EntityID GfxAPI::GetMousedOverID()
         {
             return m_privates->gfxCore_->GetCurrentUniqueID();
         }
@@ -159,6 +159,36 @@ namespace ursine
         SVec3 GfxAPI::GetMousedOverWorldPosition(const GfxHND& cameraHandle)
         {
             return m_privates->gfxCore_->GetCurrentWorldPosition( cameraHandle );
+        }
+
+        float GfxAPI::GetLightStepValue(void) const
+        {
+            return m_privates->gfxCore_->m_lightSteps;
+        }
+
+        void GfxAPI::SetLightStepValue(float steps)
+        {
+            m_privates->gfxCore_->m_lightSteps = steps;
+        }
+
+        float GfxAPI::GetGlobalEmissive(void) const
+        {
+            return m_privates->gfxCore_->m_globalEmissive;
+        }
+
+        void GfxAPI::SetGlobalEmissive(float value)
+        {
+            m_privates->gfxCore_->m_globalEmissive = value;
+        }
+
+        GfxHND GfxAPI::GetLightMapTexture(void)
+        {
+            return m_privates->gfxCore_->m_lightMapTexture;
+        }
+
+        void GfxAPI::SetLightMapTexture(GfxHND handle)
+        {
+            m_privates->gfxCore_->m_lightMapTexture = handle;
         }
     }
 }

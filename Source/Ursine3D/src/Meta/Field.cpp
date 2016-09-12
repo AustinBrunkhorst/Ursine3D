@@ -39,6 +39,13 @@ namespace ursine
             , m_getter( getter )
             , m_setter( setter ) { }
 
+        const Field &Field::Invalid(void)
+        {
+            static Field field;
+
+            return field;
+        }
+
         bool Field::SetValue(Variant &instance, const Variant &value, const Method &setter)
         {
              // read only?
@@ -80,6 +87,11 @@ namespace ursine
         Variant Field::GetValue(const Variant &instance) const
         {
             return m_getter->GetValue( instance );
+        }
+
+        Variant Field::GetValueReference(const Variant &instance) const
+        {
+            return m_getter->GetValueReference( instance );
         }
 
         bool Field::SetValue(Variant &instance, const Variant &value) const

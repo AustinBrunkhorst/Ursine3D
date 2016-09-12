@@ -19,7 +19,7 @@
 
 namespace ursine
 {
-	class Scene;
+    class Scene;
 }
 
 class EntityHandler : public ursine::NativeJSClass
@@ -33,6 +33,8 @@ public:
     JSMethod(isRemovalEnabled);
     JSMethod(isHierarchyChangeEnabled);
     JSMethod(isVisibleInEditor);
+    JSMethod(setVisibleInEditor);
+    JSMethod(enableSerialization);
 
     JSMethod(remove);
 
@@ -52,6 +54,7 @@ public:
     JSMethod(componentFieldArrayUpdate);
     JSMethod(componentFieldArrayInsert);
     JSMethod(componentFieldArrayRemove);
+    JSMethod(componentFieldArraySwap);
     JSMethod(componentFieldArrayGetLength);
 
     JSMethod(componentButtonInvoke);
@@ -66,8 +69,9 @@ public:
     JSMethod(clone);
 
 private:
-	ursine::Scene::Handle m_scene;
-    ursine::ecs::EntityUniqueID m_handle;
-    
-    ursine::ecs::Entity *getEntity(void);  
+    const ursine::ecs::EntityHandle &getHandle(void) const;
+
+    ursine::Scene *m_scene;
+    ursine::ecs::World *m_world;
+    ursine::ecs::EntityHandle m_handle;
 } Meta(Enable);

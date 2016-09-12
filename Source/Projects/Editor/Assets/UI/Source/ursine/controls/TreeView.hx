@@ -3,6 +3,7 @@ package ursine.controls;
 @:native( "TreeViewControl" )
 extern class TreeView extends PolymerElement {
     var empty : Bool;
+    var enableModification : Bool;
 
     function new() : Void;
 

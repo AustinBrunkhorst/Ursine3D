@@ -1,15 +1,10 @@
 package ursine.editor.menus;
 
-@menuIndex( 2 )
+@menuIndex( 4 )
 class EntityMenu extends MenuItemHandler {
     @mainMenuItem( "Entity/Create/Empty" )
     static function doCreateEmpty() {
-        untyped __js__( "editor_commands_CreateEntity()" );
-    }
-
-    @mainMenuItem( "Entity/Create/From Archetype" )
-    static function doCreateFromArchetype() {
-        untyped __js__( "editor_commands_CreateEntityFromArchetype()" );
+        untyped __js__( "editor_commands_CreateEmptyEntity()" );
     }
 
     @mainMenuItem( "Entity/Create/Plane", true )

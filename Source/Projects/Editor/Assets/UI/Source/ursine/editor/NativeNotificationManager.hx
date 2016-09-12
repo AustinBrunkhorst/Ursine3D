@@ -1,6 +1,7 @@
 package ursine.editor;
 
 import ursine.native.Extern;
+import ursine.api.native.NativeBroadcastManager;
 
 import ursine.controls.Button;
 import ursine.controls.Notification;
@@ -18,6 +19,8 @@ class NativeNotificationManager {
 
     private function onCreated(e : Dynamic) {
         var notification = new Notification( e.type, e.message, e.header );
+
+        notification.mode = e.mode;
 
         notification.dismissible = e.dismissible;
 
@@ -55,7 +58,7 @@ class NativeNotificationManager {
                 Extern.NotificationButtonCallback( id, index );
             }.bind( i ) );
 
-            notification.buttons.appendChild( element );
+            notification.buttonsContainer.appendChild( element );
 
             ++i;
         }

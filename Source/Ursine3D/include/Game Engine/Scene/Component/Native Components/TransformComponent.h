@@ -43,15 +43,15 @@ namespace ursine
                 SetLocalPosition
             );
 
-			EditorField( 
+            EditorField( 
                 SVec3 scale,
                 GetLocalScale,
                 SetLocalScale
             );
 
-            Meta(ForceEditorType( typeof( ursine::SVec3 ) ))
-            Meta(EditorGetter( "GetLocalEulerEditor" ))
-            Meta(EditorSetter( "SetLocalEulerEditor" ))
+            EditorMeta(ForceEditorType( typeof( ursine::SVec3 ) ))
+            EditorMeta(EditorGetter( "GetLocalEulerEditor" ))
+            EditorMeta(EditorSetter( "SetLocalEulerEditor" ))
             EditorField( 
                 SQuat rotation,
                 GetLocalRotation,
@@ -70,6 +70,8 @@ namespace ursine
             Transform &operator=(const Transform &transform);
 
             void OnInitialize(void) override;
+
+            void OnSerialize(Json::object &output) const override;
 
             ////////////////////////////////////////////////////////////////////
             // Position
@@ -105,6 +107,16 @@ namespace ursine
             SVec3 GetWorldEuler(void) const;
 
             void LookAt(const SVec3 &worldPosition);
+            void LookAt(const SVec3 &worldPosition, float degreesPerSecond);
+            void LookAt(const SVec3 &worldPosition, float degreesPerSecond, float seconds);
+
+            // Rotate by a given amount in world space
+            void RotateWorld(const SVec3 &euler);
+            void RotateWorld(const SVec3 &normal, float degrees);
+
+            // Rotate by a given amount in local space
+            void RotateLocal(const SVec3 &euler);
+            void RotateLocal(const SVec3 &normal, float degrees);
 
             ////////////////////////////////////////////////////////////////////
             // Scale
@@ -150,9 +162,11 @@ namespace ursine
             // Hierarchy
             ////////////////////////////////////////////////////////////////////
 
-			Handle<Transform> GetRoot(void) const;
+            Handle<Transform> &GetRoot(void);
+            const Handle<Transform> &GetRoot(void) const;
 
-			Handle<Transform> GetParent(void) const;
+            Handle<Transform> &GetParent(void);
+            const Handle<Transform> &GetParent(void) const;
 
             // Check to see if this transform is a 
             // child (anywhere in the hierarchy) of the given parent
@@ -175,10 +189,10 @@ namespace ursine
 
             // Find child by their index in the list
             // If the index is too large, return nullptr
-			Handle<Transform> GetChild(uint index);
-            const Handle<Transform> GetChild(uint index) const;
+            Handle<Transform> &GetChild(uint index);
+            const Handle<Transform> &GetChild(uint index) const;
 
-            const std::vector< Handle<Transform> > &GetChildren(void) const;
+            const std::vector<Handle<Transform>> &GetChildren(void) const;
 
             // Find this transform's index in relation to the other children
             uint GetSiblingIndex(void) const;
@@ -201,11 +215,11 @@ namespace ursine
             // Gets a component of the specified type in this entity's parent (type safe)
             // nullptr if it doesn't exist
             template<class ComponentType>
-            inline ComponentType *GetComponentInParent(void) const;
+            inline ComponentType *GetComponentInParents(void) const;
 
             // Gets a component of the specified type id in this entity's parent
             // nullptr if it doesn't exist. Use the type safe version when possible
-            Component *GetComponentInParent(ComponentTypeID id) const;
+            Component *GetComponentInParents(ComponentTypeID id) const;
 
             // Gets the components of the specified type in this entity's children (type safe)
             // nullptr if it doesn't exist
@@ -256,7 +270,7 @@ namespace ursine
 
             void dispatchAndSetDirty(bool transChanged, bool scaleChanged, bool rotChanged);
             void dispatchAndSetDirty(const TransformChangedArgs *args);
-            void dispatchParentChange(Handle<Transform> oldParent, Handle<Transform> newParent) const;
+            void dispatchParentChange(const Handle<Transform> &oldParent, const Handle<Transform> &newParent) const;
 
             void onParentDirty(EVENT_HANDLER(Entity));
 
@@ -273,14 +287,15 @@ namespace ursine
             bool genericAddChild(Handle<Transform> child);
 
             void setParent(Handle<Transform> oldParent, Handle<Transform> newParent, bool removing = false);
-			
-			void setRoot(Handle<Transform> root);
+            
+            void setRoot(Handle<Transform> root);
 
         } Meta(
             Enable,
             WhiteListMethods,
-            DisableComponentRemoval, 
             DisplayName( "Transform" )
+        ) EditorMeta(
+            DisableComponentRemoval
         );
     }
 }

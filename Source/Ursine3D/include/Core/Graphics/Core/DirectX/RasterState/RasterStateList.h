@@ -11,29 +11,13 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      RasterStateList.h
-Module:         Graphics
-Purpose:        enums of raster states
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 namespace ursine
 {
     namespace graphics
     {
-        enum RASTER_STATES
+        enum RASTER_STATES : unsigned
         {
             RASTER_STATE_SOLID_BACKCULL = 0,
             RASTER_STATE_SOLID_FRONTCULL,
@@ -42,6 +26,8 @@ namespace ursine
             RASTER_STATE_WIREFRAME_FRONTCULL,
             RASTER_STATE_WIREFRAME_NOCULL,
             RASTER_STATE_LINE_RENDERING,
+            RASTER_STATE_SHADOW_RENDER,
+            RASTER_STATE_OUTLINE,
             RASTER_STATE_UI,
             RASTER_STATE_COUNT
         };

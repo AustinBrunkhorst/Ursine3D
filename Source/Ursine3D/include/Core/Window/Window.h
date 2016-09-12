@@ -23,6 +23,8 @@
 
 namespace ursine
 {
+    class WindowManager;
+
     class Window 
         : public EventDispatcher<WindowEventType>
     {
@@ -30,6 +32,13 @@ namespace ursine
         typedef std::shared_ptr<Window> Handle;
 
         ~Window(void);
+
+        WindowManager *GetManager(void);
+
+        void SetTitle(const std::string &title);
+
+        void SetBordered(bool bordered);
+        void SetResizable(bool resizable);
 
         const Vec2 &GetSize(void) const;
         void SetSize(const Vec2 &size);
@@ -48,10 +57,16 @@ namespace ursine
         bool IsFullScreen(void) const;
         void SetFullScreen(bool fullscreen);
 
+        bool IsMaximized(void) const;
+        void SetMaximized(bool maximized);
+        void SetMinimized(bool minimized);
+
         bool IsShown(void) const;
         void Show(bool show);
 
-        void SetIcon(const std::string &filename);
+        float GetDPIScaleFactor(void) const;
+
+        void SetIcon(const std::string &fileName);
 
         int GetDisplayIndex(void) const;
 
@@ -76,7 +91,12 @@ namespace ursine
         // determines if the window is currently shown
         bool m_isShown;
 
+        // determines if this window is explicitly maximized
+        bool m_isMaximized;
+
         uint32 m_id;
+
+        float m_dpiScale;
 
         WindowManager *m_manager;
         InternalWindowHandle m_handle;

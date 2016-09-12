@@ -29,10 +29,12 @@ namespace ursine
     Application *Application::Instance = nullptr;
 
     Application::Application(int argc, char *argv[])
-        : m_isRunning( true )
+        : EventDispatcher( this )
+        , m_isRunning( true )
         , m_isActive( true )
         , m_argc( argc )
         , m_argv( argv )
+        , m_platformEvents( this )
     {
         Instance = this;
 
@@ -130,14 +132,19 @@ namespace ursine
             {
                 gGraphics->StartFrame( );
 
+                flushTasks( );
+
                 Dispatch( APP_UPDATE, this, EventArgs::Empty );
 
                 gGraphics->EndFrame( );
             }
             else
             {
+                gGraphics->StartFrame( );
+                gGraphics->EndFrame( );
+
                 // avoid empty cycles when the application is not active
-                SDL_Delay( 120 );
+                std::this_thread::sleep_for( std::chrono::milliseconds( 250 ) );
             }
 
             m_frameRateController.FrameEnd( );
@@ -174,6 +181,11 @@ namespace ursine
         return m_dt;
     }
 
+    TimeSpan Application::GetTimeSinceStartup(void) const
+    {
+        return TimeSpan( static_cast<int>( SDL_GetTicks( ) ) );
+    }
+
     FrameRateController &Application::GetFrameRateController(void)
     {
         return m_frameRateController;
@@ -182,5 +194,28 @@ namespace ursine
     EventDispatcher<uint32> &Application::GetPlatformEvents(void)
     {
         return m_platformEvents;
+    }
+
+    void Application::PostMainThread(Task task)
+    {
+        std::lock_guard<std::mutex> lock( Instance->m_mutex );
+
+        Instance->m_tasks.push_back( task );
+    }
+
+    void Application::flushTasks(void)
+    {
+        decltype( m_tasks ) copy;
+
+        // lock the vector
+        {
+            std::lock_guard<std::mutex> lock( m_mutex );
+
+            copy = std::move( m_tasks );
+        }
+
+        // iterate through all tasks and execute them
+        for (auto &callback : copy)
+            callback( );
     }
 }

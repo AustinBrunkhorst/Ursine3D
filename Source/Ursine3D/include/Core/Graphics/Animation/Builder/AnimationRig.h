@@ -62,7 +62,7 @@ namespace ursine
             const SVec3& bindTrans,
             const SVec3& bindScale,
             const SQuat& bindRotation,
-            const unsigned parentID
+            unsigned parentID
         );
 
         // gettors and setters //////////////////////////////////////
@@ -73,9 +73,9 @@ namespace ursine
         const std::vector<SMat4> &GetOffsetMatrices(void) const;
 
         const std::vector<AnimationBone> &GetBoneData(void) const;
-        AnimationBone &GetBone(const unsigned boneID);
+        AnimationBone *GetBone(unsigned boneID);
 
-        unsigned GetParentID(const unsigned childID) const;
+        unsigned GetParentID(unsigned childID) const;
 
         unsigned GetBoneCount(void) const;
 

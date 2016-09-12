@@ -1,23 +1,47 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+**
+** Component.cpp
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #include "UrsinePrecompiled.h"
 
 #include "Component.h"
+
+#include "Scene.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        void Component::Initialize(void)
+        bool Component::resourcesAreAvailable(void) const
+        {
+            return m_owner->GetWorld( )->GetOwner( ) != nullptr;
+        }
+
+        void Component::onInitialize(void)
         {
         #if defined(URSINE_WITH_EDITOR)
-
             auto type = GetType( );
             auto fields = type.GetFields( );
 
-            auto instance = meta::Variant { this, meta::variant_policy::WrapObject( ) };
+            auto instance = ObjectVariant( this );
+
+            m_hasResources = false;
 
             for (auto &field : fields)
             {
-                if (field.GetType( ).IsArray( ))
+                auto fieldType = field.GetType( );
+
+                // array types
+                if (fieldType.IsArray( ))
                 {
                     auto fieldInstance = field.GetValue( instance );
 
@@ -27,7 +51,7 @@ namespace ursine
                     {
                         EVENT_ATTRS(meta::Variant, ArrayModificationArgs);
 
-                        auto *owner = GetOwner( );
+                        auto &owner = GetOwner( );
                         
                         if (owner)
                         {
@@ -43,27 +67,68 @@ namespace ursine
                     events.Connect<EventArgs>( AMODIFY_SET, onModification );
                     events.Connect<EventArgs>( AMODIFY_REMOVE, onModification );
                 }
+                else if (!m_hasResources && fieldType == typeof( ursine::resources::ResourceReference ))
+                {
+                    m_hasResources = true;
+                }
             }
-
-            m_baseInitialized = true;
 
         #endif
 
             OnInitialize( );
         }
 
-		template<>
-		Transform *Component::Handle<Transform>::operator->(void)
-		{
-			return m_entity->GetTransform( );
-		}
+        void Component::onSceneReady(Scene *scene)
+        {
+        #if defined(URSINE_WITH_EDITOR)
 
-		template<>
-		const Transform *Component::Handle<Transform>::operator->(void) const
-		{
-			return m_entity->GetTransform( );
-		}
+            if (m_hasResources)
+            {
+                scene->Connect( 
+                    SCENE_RESOURCE_MODIFIED,
+                    this, 
+                    &Component::onResourceModifed 
+                );
 
-        void Component::OnInitialize(void) { }
+                m_resourceEventDestructors.emplace_back( [=] {
+                    scene->Disconnect( SCENE_RESOURCE_MODIFIED, this, &Component::onResourceModifed );
+                } );
+            }
+
+        #endif
+
+            OnSceneReady( scene );
+        }
+
+        #if defined(URSINE_WITH_EDITOR)
+
+        void Component::onBeforeRemove(void)
+        {
+            for (auto &dtor : m_resourceEventDestructors)
+                dtor( );
+
+            m_resourceEventDestructors.clear( );
+        }
+
+        void Component::onResourceModifed(EVENT_HANDLER(Scene))
+        {
+            EVENT_ATTRS(Scene, SceneResourceModifiedArgs);
+
+            if (!m_owner)
+                return;
+
+            auto search = m_resourceModificationCallbacks.find( args->resourceGUID );
+
+            if (search != m_resourceModificationCallbacks.end( ))
+                search->second( );
+        }
+
+        #endif
+
+        template<>
+        Transform *Component::Handle<Transform>::operator->(void) const
+        {
+            return m_entity->GetTransform( );
+        }
     }
 }

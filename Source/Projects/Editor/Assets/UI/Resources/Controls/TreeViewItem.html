@@ -47,11 +47,14 @@
                 this._textMouseMoveHandler = this._onTextMouseMove.bind( this );
 
                 this._lastDragTarget = null;
+                this._dragEnabled = false;
             },
             attached: function() {
                 this._onItemsChanged( );
 
                 this.listen( this.child, 'items-changed', '_onItemsChanged' );
+
+                this._dragEnabled = (this.rootView.enableModification === true);
             },
 
             get child() {
@@ -80,11 +83,16 @@
             },
             _onOpenedChanged: function() {
                 this.classList.toggle( 'opened', this.opened );
+
+                this.fire( 'open-changed', { } );
             },
             _onDraggingChanged: function() {
                 this.classList.toggle( 'dragging', this.dragging );
             },
             _onTextMouseDown: function(e) {
+                if (!this._dragEnabled)
+                    return;
+
                 document.addEventListener( 'mouseup', this._textMouseUpHandler, true );
                 document.addEventListener( 'mousemove', this._textMouseMoveHandler, true );
             },

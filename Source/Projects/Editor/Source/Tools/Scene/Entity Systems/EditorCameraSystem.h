@@ -13,9 +13,7 @@
 
 #pragma once
 
-#include <EntitySystem.h>
-
-#include <GfxAPI.h>
+#include <FilterSystem.h>
 
 namespace ursine
 {
@@ -44,7 +42,7 @@ public:
     void SetMouseFocus(bool focus);
 
     ursine::ecs::Camera *GetEditorCamera(void);
-    ursine::ecs::Entity *GetEditorCameraEntity(void);
+    const ursine::ecs::EntityHandle &GetEditorCameraEntity(void);
 
     ursine::SVec3 GetEditorFocusPosition(void);
     float GetCamZoom(void);
@@ -53,16 +51,14 @@ private:
     bool m_hasFocus;
     bool m_hasMouseFocus;
 
-    ursine::ecs::Entity *m_cameraEntity;
+    ursine::ecs::EntityHandle m_cameraEntity;
 
     ursine::ecs::Camera *m_camera;
-    float m_camZoom;
-    ursine::SVec3 m_camPos;
 
     ursine::TweenID m_focusTransition;
 
     void OnInitialize(void) override;
-    void OnAfterLoad(void) override;
+    void OnSceneReady(ursine::Scene *scene) override;
     void OnRemove(void) override;
 
     // events
@@ -72,5 +68,7 @@ private:
     // updating camera methods
     void updateCameraKeys(float dt);
     void updateCameraMouse(float dt);
+
+    void updateCameraTransform(void);
 
 } Meta(Enable, WhiteListMethods, AutoAddEntitySystem);

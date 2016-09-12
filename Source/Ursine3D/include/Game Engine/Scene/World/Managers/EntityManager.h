@@ -34,6 +34,7 @@ namespace ursine
         class Component;
         class World;
         class Filter;
+        class EntityHandle;
 
         class EntityManager final : public WorldManager
         {
@@ -42,31 +43,31 @@ namespace ursine
             ~EntityManager(void);
 
             // Creates an entity with only a transform
-            Entity *Create(void);
+            EntityHandle Create(void);
 
             // Creates a clone of an entity
-            Entity *Clone(Entity *entity);
+            EntityHandle Clone(const EntityHandle &entity);
 
             // Gets all entities without a parent
-            EntityVector GetRootEntities(void);
+            EntityHandleVector GetRootEntities(void);
 
             // Gets all active entities
-            const EntityVector &GetActiveEntities(void) const;
+            EntityHandleVector GetActiveEntities(void) const;
 
             // Gets all entities who match this filter
-            EntityVector GetEntities(const Filter &aspect) const;
+            EntityHandleVector GetEntities(const Filter &aspect) const;
+
+            // Finds an entity with the given handle
+            Entity *GetEntity(const EntityHandle &handle) const;
 
             // Finds an entity with the given id
-            Entity *GetEntity(EntityID id);
-
-            // Finds an entity with the given unique id
-            Entity *GetEntityUnique(EntityUniqueID id) const;
+            EntityHandle GetEntityByID(EntityID id) const;
 
             // Called right when an entity is requested to be removed
-            void BeforeRemove(Entity *entity);
+            void BeforeRemove(const EntityHandle &entity);
 
             // Removes the given entity from the world
-            void Remove(Entity *entity);
+            void Remove(const EntityHandle &entity);
 
             ////////////////////////////////////////////////////////////////////
             // Components
@@ -74,17 +75,17 @@ namespace ursine
 
             // Adds a component to the entity [type safe]
             template<class ComponentType>
-            void AddComponent(Entity *entity, ComponentType *component);
+            void AddComponent(const EntityHandle &entity, ComponentType *component);
 
             // Adds a component to the entity [non type safe]
-            void AddComponent(Entity *entity, Component *component);
+            void AddComponent(const EntityHandle &entity, Component *component);
 
             // Removes a component from the entity [type safe]
             template<class ComponentType>
-            void RemoveComponent(Entity *entity);
+            void RemoveComponent(const EntityHandle &entity);
 
             // Removes a component from the entity [non type safe]
-            void RemoveComponent(Entity *entity, ComponentTypeID id);
+            void RemoveComponent(const EntityHandle &entity, ComponentTypeID id);
 
             // Gets an entity's component of the specified type (type safe)
             // nullptr if it doesn't exist.
@@ -117,11 +118,11 @@ namespace ursine
             // Gets a component of the specified type in this entity's parent (type safe)
             // nullptr if it doesn't exist
             template<class ComponentType>
-            inline ComponentType *GetComponentInParent(const Entity *entity) const;
+            inline ComponentType *GetComponentInParents(const Entity *entity) const;
 
             // Gets a component of the specified type id in this entity's parent
             // nullptr if it doesn't exist. Use the type safe version when possible
-            Component *GetComponentInParent(const Entity *entity, ComponentTypeID id) const;
+            Component *GetComponentInParents(const Entity *entity, ComponentTypeID id) const;
 
             // Gets the components of the specified type in this entity's children (type safe)
             // nullptr if it doesn't exist
@@ -161,9 +162,13 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             // predicate for comparing components based on unique ID
-            static bool CompareComponents(const Component *a, const Component *b);
+            static bool CompareComponentsAscending(const Component *a, const Component *b);
+            static bool CompareComponentsDescending(const Component *a, const Component *b);
+
+            static void ConfigureComponents(void);
 
         private:
+            friend class World;
             friend class WorldSerializer;
             friend class EntitySerializer;
 
@@ -171,25 +176,19 @@ namespace ursine
             std::array<ComponentVector, kMaxComponentCount> m_componentTypes;
 
             // inactive entities
-            std::vector<Entity *> m_inactive;
+            std::vector<EntityID> m_inactive;
 
             // active entities
-            std::vector<Entity *> m_active;
+            std::vector<EntityID> m_active;
 
             // all entities
-            std::deque<Entity> m_cache;
+            std::vector<Entity> m_cache;
 
             // entity event handlers
             std::vector<Entity::EventDispatcher> m_events;
 
-            // unique id to entity map
-            std::unordered_map<EntityUniqueID, Entity*> m_unique;
-
             // next available entity ID
             EntityID m_nextEntityID;
-
-            // next unique entity ID
-            EntityUniqueID m_nextEntityUID;
 
             // next unique component unique ID
             ComponentUniqueID m_nextComponentUID;
@@ -197,24 +196,32 @@ namespace ursine
             // the hierarchy that all entities reside in
             Hierarchy m_hierarchy;
 
+            // initalizes all entities and their components
+            void initializeScene(void);
+
+            Entity *getEntityByID(EntityID id) const;
+
             // creates an empty entity and adds it to the world
-            Entity *create(void);
+            EntityHandle create(void);
 
             // dispatches the entity creation event with this entity
-            void dispatchCreated(Entity *entity);
+            void dispatchCreated(const EntityHandle &entity);
 
             // internal method for adding a component to the entity
-            void addComponent(Entity *entity, Component *component);
+            void addComponent(const EntityHandle &entity, Component *component);
 
             // internal method for removing a component from an entity
             // returns true if the component was removed
-            void removeComponent(Entity *entity, ComponentTypeID id, bool dispatch = false);
+            void removeComponent(const EntityHandle &entity, ComponentTypeID id, bool dispatch = false);
 
-            // initializes all components after the Transform
-            void initializeComponents(Entity *entity);
+            // calls onInitialize on all components
+            void initializeComponents(const EntityHandle &entity);
+
+            // calls onSceneReady on all components
+            void initializeComponentsForScene(const EntityHandle &entity);
 
             // removes and deconstructs all components from this entity
-            void clearComponents(Entity *entity, bool dispatch = false);
+            void clearComponents(const EntityHandle &entity, bool dispatch = false);
         };
     }
 }

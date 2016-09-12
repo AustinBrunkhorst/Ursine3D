@@ -21,7 +21,7 @@ class EntityInspector extends WindowHandler {
     public static var instance : EntityInspector;
 
     // width in pixels to consider the window to be "small"
-    private static var m_smallWindowWidth = 245;
+    private static inline var m_smallWindowWidth = 245;
 
     private var m_inspectedEntity : Entity = null;
 
@@ -59,6 +59,10 @@ class EntityInspector extends WindowHandler {
         m_inspectedEntity = entity;
 
         initializeInspection( );
+    }
+
+    public function getComponentHandler(componentType : String) {
+        return m_componentHandlers[ componentType ];
     }
 
     private function onInspectedEntityComponentAdded(e) {
@@ -223,7 +227,8 @@ class EntityInspector extends WindowHandler {
             .filter( function(type) {
                 var componentType = db.getComponentType( type );
 
-                var isHidden = Reflect.hasField( componentType.meta, Property.HiddenInInspector );
+                var isHidden = Reflect.hasField( componentType.meta, Property.HiddenInInspector ) ||
+                               Reflect.hasField( componentType.meta, Property.HiddenInSelector );
 
                 // entity must not already have this component and this component type must not be
                 // explicitly hidden

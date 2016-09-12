@@ -32,6 +32,11 @@ namespace ursine
         private:
             physics::EmptyCollider m_emptyCollider;
         
-        } Meta(Enable, HiddenInInspector, DisableSerialization);
+        } Meta(
+            Enable, 
+            DisableSerialization
+        ) EditorMeta(
+            HiddenInInspector
+        );
     }
 }

@@ -11,6 +11,8 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
+#pragma once
+
 // All native components are to be added here
 
 #include "RenderMask.h"
@@ -28,6 +30,8 @@
 #include "LightComponent.h"
 #include "Billboard2DComponent.h"
 #include "AnimatorComponent.h"
+#include "RigComponent.h"
+#include "BoneComponent.h"
 #include "FBXSceneRootNodeComponent.h"
 #include "ParticleSystemComponent.h"
 #include "ParticleEmitterComponent.h"
@@ -35,6 +39,10 @@
 #include "ParticleAnimatorComponent.h"
 #include "ParticleAttractorComponent.h"
 #include "ParticleTwisterComponent.h"
+#include "ParticlePathAnimatorComponent.h"
+#include "SpriteTextComponent.h"
+#include "GraphicsSettingsComponent.h"
+#include "FragmentationComponent.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // Physics
@@ -42,6 +50,8 @@
 
 #include "RigidbodyComponent.h"
 #include "BodyComponent.h"
+#include "GhostComponent.h"
+
 #include "SphereColliderComponent.h"
 #include "BoxColliderComponent.h"
 #include "CylinderColliderComponent.h"
@@ -51,6 +61,7 @@
 #include "ConvexDecompColliderComponent.h"
 #include "BvhTriangleMeshColliderComponent.h"
 #include "EmptyColliderComponent.h"
+
 #include "PhysicsSettingsComponent.h"
 
 #include "SweptControllerComponent.h"
@@ -59,5 +70,6 @@
 // Audio
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "AudioConfigComponent.h"
 #include "AudioEmitterComponent.h"
 #include "ListenerComponent.h"

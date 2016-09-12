@@ -37,16 +37,16 @@ namespace ursine
                 D3D11_BLEND_DESC blendDesc;
                 ZeroMemory(&blendDesc, sizeof(blendDesc));
                 blendDesc.AlphaToCoverageEnable = false;
-                blendDesc.IndependentBlendEnable = true;
+                blendDesc.IndependentBlendEnable = false;
                 blendDesc.RenderTarget[ 0 ].BlendEnable = TRUE;
 
                 blendDesc.RenderTarget[ 0 ].BlendOp = D3D11_BLEND_OP_ADD;
                 blendDesc.RenderTarget[ 0 ].SrcBlend = D3D11_BLEND_SRC_ALPHA;
                 blendDesc.RenderTarget[ 0 ].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
 
-                blendDesc.RenderTarget[ 0 ].BlendOpAlpha = D3D11_BLEND_OP_MAX;
-                blendDesc.RenderTarget[ 0 ].SrcBlendAlpha = D3D11_BLEND_ONE;
-                blendDesc.RenderTarget[ 0 ].DestBlendAlpha = D3D11_BLEND_ONE;
+                blendDesc.RenderTarget[ 0 ].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+                blendDesc.RenderTarget[ 0 ].SrcBlendAlpha = D3D11_BLEND_ZERO;
+                blendDesc.RenderTarget[ 0 ].DestBlendAlpha = D3D11_BLEND_ZERO;
 
                 blendDesc.RenderTarget[ 0 ].RenderTargetWriteMask = 0x0F;
 
@@ -122,7 +122,15 @@ namespace ursine
 
             void BlendStateManager::SetBlendState(const BLEND_STATES state)
             {
-                if (m_currentState == state)
+                if(state == BLEND_STATE_COUNT )
+                {
+                    m_currentState = state;
+                    float blendFactor[ 4 ] = { 1.f, 1.f, 1.f, 1.f };
+                    m_deviceContext->OMSetBlendState(nullptr, blendFactor, 0xffffffff);
+                    return;
+                }
+
+                if ( m_currentState == state )
                     return;
 
                 m_currentState = state;

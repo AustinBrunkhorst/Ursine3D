@@ -24,18 +24,11 @@ namespace ursine
             // Lifetime
             ///////////////////////////////////////////////////////////////////
 
+            // When this entities hierarchy has finished serializing
+            ENTITY_HIERARCHY_SERIALIZED,
+
             // Before an entity is removed from the world
             ENTITY_REMOVED,
-
-            ///////////////////////////////////////////////////////////////////
-            // Components
-            ///////////////////////////////////////////////////////////////////
-
-            // A new component was added
-            ENTITY_COMPONENT_ADDED,
-
-            // An existing component was removed
-            ENTITY_COMPONENT_REMOVED,
 
             ///////////////////////////////////////////////////////////////////
             // Transform
@@ -47,14 +40,28 @@ namespace ursine
             // An entities parent has changed
             ENTITY_PARENT_CHANGED,
 
-			///////////////////////////////////////////////////////////////////
-			// Physics
-			///////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////
+            // Physics
+            ///////////////////////////////////////////////////////////////////
 
-			// A collision is persisting between this entity and the other entity.
-			// NOTE: This event is only sent when one of the two objects has a 
-			// non-kinematic (or static) rigidbody attached.
-			ENTITY_COLLISION_PERSISTED,
+            // A collision is persisting between this entity and the other entity.
+            // NOTE: This event is only sent when one of the two objects has a 
+            // non-kinematic (or static) rigidbody attached.
+            ENTITY_COLLISION_PERSISTED,
+
+            ///////////////////////////////////////////////////////////////////
+            // Animation
+            ///////////////////////////////////////////////////////////////////
+
+            // This event is sent when a non-looping animation finishes
+            ENTITY_ANIMATION_FINISH,
+
+            // This is sent when a animation state's event is triggered
+            ENTITY_ANIMATION_STATE_EVENT,
+
+            // This event is sent when animation bone manipulation is allowed
+            // through editing the bone's transform component
+            ENTITY_ANIMATION_BONE_MANIPULATION_VALID,
 
             ///////////////////////////////////////////////////////////////////
             // Particle Systems

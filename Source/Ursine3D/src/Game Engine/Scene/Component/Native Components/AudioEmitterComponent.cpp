@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -15,83 +15,135 @@
 
 #include "AudioEmitterComponent.h"
 
+#include "AudioItemEventData.h"
+
+#include <AK/SoundEngine/Common/AkSoundEngine.h>
+
 namespace ursine
 {
-	namespace ecs
-	{
-		NATIVE_COMPONENT_DEFINITION(AudioEmitter);
+    using namespace resources;
 
-		AudioEmitter::AudioEmitter(void)
-			: BaseComponent()
-		    , m_loop(false)
-			, m_mute(false)
-		    , m_listeners(ListenerIndex::One)
-		    , m_volume(100.0f)  { }
+    namespace ecs
+    {
+        NATIVE_COMPONENT_DEFINITION(AudioEmitter);
 
-		float AudioEmitter::GetVolume() const
-		{
-			return m_volume;
-		}
+        AudioEmitter::AudioEmitter(void)
+            : BaseComponent( )
+            , m_listenerMask( ListenerMask::NONE )
+            , m_stopSounds( false )
+            , m_attenuationScalar( 1.0f ) { }
 
-		void AudioEmitter::SetVolume(float volume)
-		{
-			m_volume = math::Clamp(volume, 0.0f, 100.0f);
-			NOTIFY_COMPONENT_CHANGED("Volume", m_volume);
-		}
+        AudioEmitter::~AudioEmitter(void)
+        {
+            AudioComponentBase::OnRemove( GetOwner( ) );
+        }
 
-		bool AudioEmitter::GetMute() const
-		{
-			return m_mute;
-		}
+        void AudioEmitter::OnInitialize(void)
+        {
+            AudioComponentBase::OnInitialize( GetOwner( ) );
 
-		void AudioEmitter::SetMute(bool mute)
-		{
-			m_mute = mute;
-		}
+            AK::SoundEngine::SetAttenuationScalingFactor( m_handle, m_attenuationScalar );
+        }
 
-		bool AudioEmitter::GetLoop() const
-		{
-			return m_loop;
-		}
+        ListenerMask AudioEmitter::GetListenerMask(void) const
+        {
+            return m_listenerMask;
+        }
 
-		void AudioEmitter::SetLoop(bool loop)
-		{
-			m_loop = loop;
-		}
+    #if defined(URSINE_WITH_EDITOR)
 
-		AudioEmitter::~AudioEmitter(void)
-		{
-		
-		}
+        void AudioEmitter::PushTestSound(void)
+        {
+            PushEvent( m_testEvent );
+        }
 
-		void AudioEmitter::OnInitialize(void)
-		{
-		}
+    #endif
 
-		std::string AudioEmitter::GetFrontSound(void)
-		{
-			return m_soundsFAF.front();
-		}
+        void AudioEmitter::PushEvent(const AudioEvent::Handle event)
+        {
+            m_events.push( event );
+        }
 
-		void AudioEmitter::PopFrontSound(void)
-		{
-			m_soundsFAF.pop();
-		}
+        void AudioEmitter::PushEvent(const resources::ResourceReference &eventResource)
+        {
+            auto world = GetOwner( )->GetWorld( );
 
-		bool AudioEmitter::SoundsEmpty()
-		{
-			return m_soundsFAF.empty();
-		}
+            if (!world)
+                return;
 
-		void AudioEmitter::AddSoundToPlayQueue(std::string sound)
-		{
-			if (!m_mute)
-				m_soundsFAF.push( sound );
-		}
+            auto scene = world->GetOwner( );
 
-		ListenerIndex AudioEmitter::GetListeners()
-		{
-			return m_listeners;
-		}
-	}
+            if (!scene)
+                return;
+
+            auto event = eventResource.Load<AudioItemEventData>( scene->GetResourceManager( ) );
+
+            if (!event)
+                return;
+
+            auto newEvent = std::make_shared<AudioGeneric>( );
+
+            newEvent->name = event->GetEvent( );
+
+            PushEvent( newEvent );
+        }
+
+        AudioEvent::Handle AudioEmitter::GetEvent(void)
+        {
+            return m_events.front( );
+        }
+
+        void AudioEmitter::PopEvent(void)
+        {
+            m_events.pop( );
+        }
+
+        bool AudioEmitter::EmptyEvent(void)
+        {
+            return m_events.empty( );
+        }
+
+        bool& AudioEmitter::checkStopFlag(void)
+        {
+            return m_stopSounds;
+        }
+
+        void AudioEmitter::StopAllCurrentSounds(void)
+        {
+            m_stopSounds = true;
+        }
+
+        void AudioEmitter::SetListenerMask(ListenerMask mask)
+        {
+            m_listenerMask = mask;
+
+            NOTIFY_COMPONENT_CHANGED( "listenerMask", m_listenerMask );
+        }
+
+        const ResourceReference &AudioEmitter::GetTestEvent(void) const
+        {
+            return m_testEvent;
+        }
+
+        void AudioEmitter::SetTestEvent(const ResourceReference &audioEvent)
+        {
+            m_testEvent = audioEvent;
+
+            NOTIFY_COMPONENT_CHANGED( "TestEvent", m_testEvent );
+        }
+
+        float AudioEmitter::GetAttenuationScalingFactor(void) const
+        {
+            return m_attenuationScalar;
+        }
+
+        void AudioEmitter::SetAttenuationScalingFactor(float scalar)
+        {
+            m_attenuationScalar = scalar;
+
+            NOTIFY_COMPONENT_CHANGED( "attenuationScalingFactor", m_attenuationScalar );
+
+            AK::SoundEngine::SetAttenuationScalingFactor( m_handle, m_attenuationScalar );
+        }
+    }
 }

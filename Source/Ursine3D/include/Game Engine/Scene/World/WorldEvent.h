@@ -27,12 +27,6 @@ namespace ursine
             // The world is being rendered
             WORLD_RENDER,
 
-            // Update event called specifically for editor systems
-            WORLD_EDITOR_UPDATE,
-
-            // Render event called specifically for editor systems
-            WORLD_EDITOR_RENDER,
-
             // An entity was created
             WORLD_ENTITY_ADDED,
             // An entity was removed
@@ -43,21 +37,32 @@ namespace ursine
             // A component has been removed from an entity
             WORLD_ENTITY_COMPONENT_REMOVED,
 
-            // The screen that owns this world's focus state changed
-            WORLD_SCREEN_FOCUS_CHANGED,
+            // For when the volume is changed
+            // @Austin there has to be a better place for this in the code
+            WORLD_VOLUME_CHANGE,
 
         #if defined(URSINE_WITH_EDITOR)
+
+            // Update event called specifically for editor systems
+            WORLD_EDITOR_UPDATE,
+            // Render event called specifically for editor systems
+            WORLD_EDITOR_RENDER,
 
             // An entity's name changed
             WORLD_EDITOR_ENTITY_NAME_CHANGED = 0x100,
             // An entity's parent has changed
             WORLD_EDITOR_ENTITY_PARENT_CHANGED,
+            // An entity's visibilty to the editor has changed
+            WORLD_EDITOR_ENTITY_VISIBILITY_CHANGED,
             // A component's field has changed
             WORLD_EDITOR_ENTITY_COMPONENT_CHANGED,
             // A component's array field has been modified
-            WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED
+            WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED,
 
         #endif
+
+            // Starting index for events defined out of engine
+            WORLD_EVENT_USER
         };
 
         struct WorldEventArgs : EventArgs
@@ -70,19 +75,19 @@ namespace ursine
 
         struct EntityEventArgs : WorldEventArgs
         {
-            Entity *entity;
+            EntityHandle entity;
 
-            EntityEventArgs(WorldEventType type, Entity *entity)
+            EntityEventArgs(WorldEventType type, const EntityHandle &entity)
                 : WorldEventArgs( type )
                 , entity( entity ) { }
         };
 
         struct ComponentEventArgs : WorldEventArgs
         {
-            Entity *entity;
+            EntityHandle entity;
             Component *component;
 
-            ComponentEventArgs(WorldEventType type, Entity *entity, Component *component)
+            ComponentEventArgs(WorldEventType type, const EntityHandle &entity, Component *component)
                 : WorldEventArgs( type )
                 , entity( entity )
                 , component( component ) { }
@@ -92,7 +97,7 @@ namespace ursine
         {
             ComponentTypeMask oldTypeMask;
 
-            ComponentRemovedEventArgs(WorldEventType type, Entity *entity, Component *component, ComponentTypeMask oldTypeMask)
+            ComponentRemovedEventArgs(WorldEventType type, const EntityHandle &entity, Component *component, ComponentTypeMask oldTypeMask)
                 : ComponentEventArgs( type, entity, component )
                 , oldTypeMask( oldTypeMask ) { }
         };
@@ -106,13 +111,24 @@ namespace ursine
                 , focused( focused ) { }
         };
 
+        struct VolumeChangeArgs : WorldEventArgs
+        {
+            float volume;
+            std::string outputType;
+
+            VolumeChangeArgs(float volume, const std::string &outputType)
+                : WorldEventArgs( WORLD_VOLUME_CHANGE )
+                , volume( volume )
+                , outputType( outputType ) { }
+        };
+
     #if defined(URSINE_WITH_EDITOR)
 
         struct EditorEntityNameChangedArgs : EntityEventArgs
         {
             std::string newName;
 
-            EditorEntityNameChangedArgs(WorldEventType type, Entity *entity, const std::string &newName)
+            EditorEntityNameChangedArgs(WorldEventType type, const EntityHandle &entity, const std::string &newName)
                 : EntityEventArgs( type, entity )
                 , newName( newName ) { }
         };
@@ -125,7 +141,7 @@ namespace ursine
 
             EditorComponentChangedArgs(
                 WorldEventType type,
-                Entity *entity,
+                const EntityHandle &entity,
                 Component *component,
                 const std::string &field,
                 const meta::Variant &value
@@ -141,7 +157,7 @@ namespace ursine
             const ArrayModificationArgs &modification;
             std::string field;
 
-            EditorComponentArrayModfiedArgs(const ArrayModificationArgs &args, Entity *entity, Component *component, const std::string &field)
+            EditorComponentArrayModfiedArgs(const ArrayModificationArgs &args, const EntityHandle &entity, Component *component, const std::string &field)
                 : ComponentEventArgs( WORLD_EDITOR_COMPONENT_ARRAY_MODIFIED, entity, component )
                 , modification( args )
                 , field( field ) { }

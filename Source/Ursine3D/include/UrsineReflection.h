@@ -38,6 +38,10 @@
 #include "GfxAPI.h"
 #include "Color.h"
 
+/// Resource Management
+
+#include "ResourcePipeline.h"
+
 /// UI
 
 #include "UIManager.h"
@@ -56,7 +60,7 @@
 
 /// Screen Management
 
-#include "ScreenManager.h"
+#include "UIScreenManager.h"
 
 /// Audio
 
@@ -64,17 +68,19 @@
 
 /// Utilities
 
-#include "Utilities/Timer/TimerManager.h"
-#include "Utilities/Tween/TweenManager.h"
+#include "TimerManager.h"
+#include "TweenManager.h"
 
 #include "JSKeyboardManager.h"
 #include "JSGamepadManager.h"
-#include "JSScreenManager.h"
+#include "JSUIScreenManager.h"
 
 /// Game Engine
 
 #include "NativeComponents.h"
 #include "NativeEntitySystems.h"
+#include "GameSettings.h"
+#include "GameManager.h"
 
 // define it last
 #define URSINE_REFLECTION_INCLUDED

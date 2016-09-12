@@ -17,6 +17,7 @@
 
 #include "KeyboardModifiers.h"
 #include "KeyboardManager.h"
+#include "WindowManager.h"
 #include "MouseManager.h"
 
 #if defined(PLATFORM_WINDOWS)
@@ -27,8 +28,13 @@
 
 namespace ursine
 {
-    UIView::UIView(Window::Handle window, const CefBrowserSettings &settings, const std::string &url)
-        : m_window( window )
+    UIView::UIView(
+        Window::Handle window, 
+        const CefBrowserSettings &settings,
+        const std::string &url
+    )
+        : EventDispatcher( this )
+        , m_window( window )
     {
         CefWindowInfo info;
 
@@ -45,9 +51,11 @@ namespace ursine
             nullptr 
         );
 
-        UAssert( m_browser, "Unable to create UIView" );
+        UAssert( m_browser, "Unable to create UIView." );
 
-        auto *app = Application::Instance;
+        Application::Instance->Listener( this )
+            .On( APP_UPDATE, &UIView::onUpdate )
+            .On( APP_INACTIVE_UPDATE, &UIView::onUpdate );
 
         m_keyboardManager = GetCoreSystem( KeyboardManager );
         m_mouseManager = GetCoreSystem( MouseManager );
@@ -79,6 +87,10 @@ namespace ursine
 
     void UIView::Close(void)
     {
+        Application::Instance->Listener( this )
+            .Off( APP_UPDATE, &UIView::onUpdate )
+            .Off( APP_INACTIVE_UPDATE, &UIView::onUpdate );
+
         m_window->Listener( this )
             .Off( WINDOW_FOCUS_CHANGED, &UIView::onWindowFocus );
 
@@ -117,22 +129,43 @@ namespace ursine
         return m_browser != nullptr;
     }
 
-    void UIView::Message(UIMessageCommand command, const std::string &target, const std::string &message, const Json &data)
+    void UIView::Message(
+        UIMessageCommand command, 
+        const std::string &target, 
+        const std::string &message, 
+        const Json &data
+    )
     {
-        auto processMessage = CefProcessMessage::Create( target );
+        // queue up messages if it's still loading
+        if (m_browser->IsLoading( ))
+        {
+            m_preLoadQueue.emplace_back( );
 
-        auto args = processMessage->GetArgumentList( );
+            auto &queued = m_preLoadQueue.back( );
 
-        args->SetSize( 3 );
+            queued.command = command;
+            queued.target = target;
+            queued.message = message;
+            queued.data = data;
 
-        args->SetInt( 0, command );
-        args->SetString( 1, message );
-        args->SetString( 2, data.dump( ) );
+            return;
+        }
 
-        m_browser->SendProcessMessage( PID_RENDERER, processMessage );
+        std::lock_guard<std::mutex> lock( m_messageMutex );
+
+        m_messageQueue.emplace_back( Json::array {
+            { target },
+            { message },
+            { data }
+        } );
     }
 
     CefRefPtr<CefRenderHandler> UIView::GetRenderHandler(void)
+    {
+        return this;
+    }
+
+    CefRefPtr<CefLifeSpanHandler> UIView::GetLifeSpanHandler(void)
     {
         return this;
     }
@@ -142,7 +175,51 @@ namespace ursine
         return this;
     }
 
-    bool UIView::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString &message, const CefString &source, int line)
+    CefRefPtr<CefLoadHandler> UIView::GetLoadHandler(void)
+    {
+        return this;
+    }
+
+    bool UIView::OnBeforePopup(
+        CefRefPtr<CefBrowser> browser,
+        CefRefPtr<CefFrame> frame,
+        const CefString &targetURL,
+        const CefString &targetFrameName,
+        WindowOpenDisposition targetDisposition,
+        bool userGesture,
+        const CefPopupFeatures &popupFeatures,
+        CefWindowInfo &windowInfo,
+        CefRefPtr<CefClient> &client,
+        CefBrowserSettings &settings,
+        bool *noJavaScriptAccess
+    )
+    {
+        windowInfo.SetAsPopup(
+            static_cast<CefWindowHandle>( m_window->GetPlatformHandle( ) ),
+            targetFrameName
+        );
+
+        UIPopupArgs e;
+
+        e.name = targetFrameName.ToString( );
+        e.browser = browser;
+        e.frame = frame;
+        e.popupFeatures = &popupFeatures;
+        e.windowInfo = &windowInfo;
+        e.client = &client;
+        e.settings = &settings;
+
+        Dispatch( UI_POPUP_CREATED, &e );
+
+        return false;
+    }
+
+    bool UIView::OnConsoleMessage(
+        CefRefPtr<CefBrowser> browser, 
+        const CefString &message, 
+        const CefString &source, 
+        int line
+    )
     {
         SetConsoleColor( CC_TEXT_BRIGHT_GREEN );
 
@@ -150,15 +227,15 @@ namespace ursine
 
         SetConsoleColor( CC_TEXT_BRIGHT_YELLOW );
 
-        auto filename = fs::path( source ).filename( ).string( );
+        auto fileName = fs::path( source ).filename( ).string( );
 
-        if (!filename.empty( ))
+        if (!fileName.empty( ))
         {
             printf( "[" );
 
             SetConsoleColor( CC_TEXT_YELLOW );
 
-            printf( "%s", filename.c_str( ) );
+            printf( "%s", fileName.c_str( ) );
 
             SetConsoleColor( CC_TEXT_WHITE );
 
@@ -182,11 +259,16 @@ namespace ursine
         return false;
     }
 
-    void UIView::OnCursorChange(CefRefPtr<CefBrowser> browser, CefCursorHandle cursor, CursorType type, const CefCursorInfo &customCursorInfo)
+    void UIView::OnCursorChange(
+        CefRefPtr<CefBrowser> browser, 
+        CefCursorHandle cursor, 
+        CursorType type, 
+        const CefCursorInfo &customCursorInfo
+    )
     {
         auto handle = m_window->GetPlatformHandle( );
 
-#if defined(PLATFORM_WINDOWS)
+    #if defined(PLATFORM_WINDOWS)
 
         SetClassLongPtr( 
             static_cast<HWND>( handle ), 
@@ -195,7 +277,62 @@ namespace ursine
         );
 
         SetCursor( cursor );
-#endif
+    #endif
+    }
+
+    void UIView::OnLoadEnd(
+        CefRefPtr<CefBrowser> browser, 
+        CefRefPtr<CefFrame> frame, 
+        int httpStatusCode
+    )
+    {
+        // squared to have a more drastic effect
+        m_browser->GetHost( )->SetZoomLevel( 
+            pow( m_window->GetDPIScaleFactor( ), 2.0f ) - 1.0f
+        );
+
+        // dispatch all of the queued messages
+        for (auto &message : m_preLoadQueue)
+        {
+            Message( 
+                message.command, 
+                message.target, 
+                message.message, 
+                message.data 
+            );
+        }
+
+        m_preLoadQueue.clear( );
+
+        Dispatch( UI_LOADED, EventArgs::Empty );
+    }
+
+    void UIView::onUpdate(EVENT_HANDLER(Application))
+    {
+        decltype( m_messageQueue ) copy;
+
+        // lock the message
+        {
+            std::lock_guard<std::mutex> lock( m_messageMutex );
+
+            copy = std::move( m_messageQueue );
+        }
+
+        // no messages queued
+        if (copy.empty( ))
+            return;
+
+        // iterate through all tasks and execute them
+        auto processMessage = CefProcessMessage::Create( "." );
+
+        auto args = processMessage->GetArgumentList( );
+
+        args->SetSize( 2 );
+
+        args->SetInt( 0, UI_CMD_BROADCAST );
+        args->SetString( 1, Json( copy ).dump( ) );
+
+        m_browser->SendProcessMessage( PID_RENDERER, processMessage );
     }
 
     void UIView::onKeyboard(EVENT_HANDLER(KeyboardManager))

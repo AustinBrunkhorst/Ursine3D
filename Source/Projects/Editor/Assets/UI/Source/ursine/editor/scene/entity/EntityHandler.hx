@@ -10,6 +10,8 @@ extern class EntityHandler {
     function isRemovalEnabled() : Bool;
     function isHierarchyChangeEnabled() : Bool;
     function isVisibleInEditor() : Bool;
+    function setVisibleInEditor(visible : Bool) : Void;
+    function enableSerialization(enable : Bool) : Void;
 
     function remove() : Void;
 
@@ -30,6 +32,7 @@ extern class EntityHandler {
     function componentFieldArrayUpdate(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void;
     function componentFieldArrayInsert(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void;
     function componentFieldArrayRemove(componentName : String, fieldName : String, index : UInt) : Void;
+    function componentFieldArraySwap(componentName : String, fieldName : String, index1 : UInt, index2 : UInt) : Void;
     function componentFieldArrayGetLength(componentName : String, fieldName : String) : UInt;
 
     function componentButtonInvoke(componentName : String, buttonName : String) : Void;

@@ -13,4 +13,6 @@ import ursine.editor.scene.component.inspectors.fields.VectorFieldInspector;
 import ursine.editor.scene.component.inspectors.fields.ColorFieldInspector;
 
 
+import ursine.editor.scene.component.inspectors.fields.ResourceReferenceInspector;
 import ursine.editor.scene.component.inspectors.fields.EntitySystemSelectorInspector;
+import ursine.editor.scene.component.inspectors.fields.GameManagerSelectorInspector;

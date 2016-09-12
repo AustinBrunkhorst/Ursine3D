@@ -8,32 +8,66 @@
 ** - Matt Yan - m.yan@digipen.edu
 ** --------------------------------------------------------------------------*/
 
-#include "Precompiled.h"
-
+#include <Precompiled.h>
 #include "PlayerTwoAxisAction.h"
 
-#include <PlayerInputComponent.h>
+PlayerTwoAxisAction::AxisBinding::AxisBinding(Binding left, Binding right, Binding up, Binding down, game::GameEvents commandEvent)
+    : m_left( left )
+    , m_right( right )
+    , m_up( up )
+    , m_down( down )
+    , m_eventToSend( commandEvent )
+{ }
 
+PlayerTwoAxisAction::AxisBinding::AxisBinding(const AxisBinding& rhs)
+    : m_left( rhs.m_left )
+    , m_right( rhs.m_right )
+    , m_up( rhs.m_up )
+    , m_down( rhs.m_down )
+    , m_eventToSend( rhs.m_eventToSend )
+{ }
 
 PlayerTwoAxisAction::PlayerTwoAxisAction()
-    : m_left()
-    , m_right()
-    , m_up()
-    , m_down() {}
+    : m_action( nullptr )
+    , m_owner( ursine::ecs::EntityHandle::Invalid( ) )
+{ }
 
-
-PlayerTwoAxisAction::PlayerTwoAxisAction(const PlayerAction &leftAction, const PlayerAction &rightAction, const PlayerAction &upAction, const PlayerAction &downAction)
-    : m_left(leftAction)
-    , m_right(rightAction)
-    , m_up(upAction)
-    , m_down(downAction) {}
-
-bool PlayerTwoAxisAction::Acting()
+PlayerTwoAxisAction::PlayerTwoAxisAction(PlayerAction *action, const ursine::ecs::EntityHandle &owner)
+    : m_action( action )
+    , m_owner( owner )
 {
-    return m_left.StickLeft() || m_right.StickRight() || m_up.StickUp() || m_down.StickDown();
 }
 
-ursine::Vec2 PlayerTwoAxisAction::GetAxis()
+PlayerTwoAxisAction& PlayerTwoAxisAction::AddAxisBinding(AxisBinding& binding)
 {
-    return m_left.GetAxis();
+    m_axisBindings.push_back(binding);
+    return *this;
+}
+
+void PlayerTwoAxisAction::ProcessCommands(void)
+{
+    for ( auto bindings : m_axisBindings )
+    {
+        if ( Acting(bindings) )
+        {
+            game::MovementEventArgs axisChange(m_axis);
+            m_owner->Dispatch(bindings.m_eventToSend, &axisChange);
+        }
+    }
+}
+
+bool PlayerTwoAxisAction::Acting(AxisBinding& bindings)
+{
+    if (
+        m_action->StickLeft(bindings.m_left)   ||
+        m_action->StickRight(bindings.m_right) ||
+        m_action->StickUp(bindings.m_up)       ||
+        m_action->StickDown(bindings.m_down)
+       )
+    {
+        m_action->GetAxis(bindings.m_left, m_axis);
+        return true;
+    }
+
+    return false;
 }

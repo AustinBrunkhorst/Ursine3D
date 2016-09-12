@@ -17,6 +17,7 @@
 #include "SMat4.h"
 #include "ViewportRenderModes.h"
 #include "EntityConfig.h"
+#include "Color.h"
 
 namespace ursine
 {
@@ -92,9 +93,11 @@ namespace ursine
             SVec3 ScreenToWorld(const Vec2 &screenPos, const float depth);
 
             //DO NOT CALL set screen dimensions
+            void GetScreenDimensions(float &width, float &height);
             void SetScreenDimensions(const float width, const float height);
 
             //DO NOT CALL set screen pixel positions
+            void GetScreenPosition(float &x, float &y);
             void SetScreenPosition(const float x, const float y);
 
             // check to see if a given mask will pass this camera's mask
@@ -104,8 +107,11 @@ namespace ursine
             unsigned GetMask(void) const;
             void SetMask(const unsigned long long renderMask);
 
-            ecs::EntityID GetEntityID(void) const;
-            void SetEntityID(const ecs::EntityID id);
+            const ecs::EntityHandle &GetEntity(void) const;
+            void SetEntity(const ecs::EntityHandle handle);
+
+            const Color &GetClearColor(void) const;
+            void SetClearColor(const Color &color);
 
         private:
             // calcualte all vectors based upon up
@@ -115,7 +121,7 @@ namespace ursine
             unsigned long long m_cameraMask;
 
             // entity ID
-            ecs::EntityUniqueID m_entityID;
+            ecs::EntityHandle m_entity;
 
             // field of view, near, var
             float m_fov;
@@ -136,7 +142,7 @@ namespace ursine
             // forward or deferred?
             ViewportRenderMode m_renderMode;
 
-            // these are the dimensions of this camera's viewport
+            // these are the dimensions of this camera's viewport, normalized on -1, 1 range
             float m_width;
             float m_height;
             float m_xPos;
@@ -147,6 +153,8 @@ namespace ursine
             float m_screenY;
             float m_screenWidth;
             float m_screenHeight;
+
+            Color m_clearColor;
         };
     }
 }

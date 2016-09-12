@@ -13,50 +13,62 @@
 
 #pragma once
 
+#include "GameContext.h"
+
 #include "World.h"
+
+#include "UIScreenManager.h"
+#include "ResourceManager.h"
+
 #include "GFXAPIDefines.h"
-#include <Core/Graphics/API/GfxAPI.h>
+
+#include "SceneEvent.h"
+
+#include "DeltaTime.h"
 
 namespace ursine
 {
-    class GfxAPI;
-
-    enum ScenePlayState
-    {
-        PS_EDITOR,
-        PS_PLAYING,
-        PS_PAUSED
-    };
-
-    class Scene
+    class Scene : public EventDispatcher<uint32>
     {
     public:
-        typedef std::shared_ptr<Scene> Handle;
-
         Scene(void);
-        ~Scene(void);
+        virtual ~Scene(void);
 
-        ecs::World *GetWorld(void);
-        void SetWorld(ecs::World *world);
+        GameContext *GetGameContext(void);
+        void SetGameContext(GameContext *context);
+
+        ecs::World *GetActiveWorld(void) const;
+
+        void SetActiveWorld(ecs::World::Handle world);
+        bool SetActiveWorld(const resources::ResourceReference &reference, bool ignoreCache = true);
 
         graphics::GfxHND GetViewport(void) const;
         void SetViewport(graphics::GfxHND viewport);
 
-        ScenePlayState GetPlayState(void) const;
-        void SetPlayState(ScenePlayState state);
+        virtual void SetPaused(bool paused);
+        virtual bool IsPaused(void) const;
 
-        void Step(void) const;
+        UIScreenManager &GetScreenManager(void);
+        resources::ResourceManager &GetResourceManager(void);
 
-        void Update(DeltaTime dt) const;
-        void Render(void) const;
+        virtual void Update(DeltaTime dt) const;
+        virtual void Render(void) const;
 
         void LoadConfiguredSystems(void);
 
-    private:
-        ScenePlayState m_playState;
+    protected:
+        Scene(const Scene &rhs) = delete;
+        Scene &operator=(const Scene &rhs) = delete;
+
+        bool m_paused;
+
+        GameContext *m_gameContext;
 
         graphics::GfxHND m_viewport;
 
-        ecs::World::Handle m_world;
+        ecs::World::Handle m_activeWorld;
+
+        UIScreenManager m_screenManager;
+        resources::ResourceManager m_resourceManager;
     };
 }

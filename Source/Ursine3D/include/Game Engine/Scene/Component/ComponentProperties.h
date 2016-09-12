@@ -15,6 +15,40 @@
 
 #include "Meta.h"
 
+#pragma region Global Properties
+
+/** @brief Disable serialization of this object
+ */
+struct DisableSerialization : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+};
+
+/** @brief Displays an enum field as a bit mask editor
+ */
+struct BitMaskEditor : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+};
+
+/** @brief Declares what resource type this field expects
+ */
+struct ResourceType : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+
+    const std::string typeName;
+
+    ResourceType(const ursine::meta::Type &type)
+        : typeName( type.GetName( ) ) { }
+};
+
+#pragma endregion
+
+#pragma region Editor Specific Properties
+
+#if defined(URSINE_WITH_EDITOR)
+
 /** @brief Makes sure this component can't be removed from an entity in the editor.
  */
 struct DisableComponentRemoval : ursine::meta::MetaProperty
@@ -29,16 +63,16 @@ struct HiddenInInspector : ursine::meta::MetaProperty
     META_OBJECT;
 };
 
-/** @brief Disable serialization of this object
+/** @brief Makes sure this component doesn't display in the "Add Component" dialog.
  */
-struct DisableSerialization : ursine::meta::MetaProperty
+struct HiddenInSelector : ursine::meta::MetaProperty
 {
     META_OBJECT;
 };
 
-/** @brief Displays an enum field as a bit mask editor
+/** @brief Forces the editor to use the serialization hook on this component
  */
-struct BitMaskEditor : ursine::meta::MetaProperty
+struct ForceSerializationHook : ursine::meta::MetaProperty
 {
     META_OBJECT;
 };
@@ -132,3 +166,26 @@ struct InputRange : ursine::meta::MetaProperty
         , step( step )
         , format( format ) { }
 };
+
+/** @brief Enables mutli-line editor support on string fields
+ */
+struct MultiLineEditor : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+};
+
+/** @brief Annotates a symbol so that the default tooltip is overriden
+ */
+struct Annotation : ursine::meta::MetaProperty
+{
+    META_OBJECT;
+
+    const std::string text;
+
+    Annotation(const char *text)
+        : text( text ) { }
+};
+
+#endif
+
+#pragma endregion

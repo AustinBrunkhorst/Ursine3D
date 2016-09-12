@@ -16,6 +16,8 @@
 #include "DDSTextureLoader.h"
 #include <d3d11.h>
 #include "DXErrorHandling.h"
+#include "InternalResourceByteCode.h"
+#include "FontManager.h"
 
 namespace ursine
 {
@@ -34,6 +36,16 @@ namespace ursine
             return wCharOutput;
         }
 
+        // public methods
+
+        TextureManager::TextureManager()
+            : m_device( nullptr )
+            , m_deviceContext( nullptr )
+            , m_textureCount( 2 )
+            , m_textureCache( { Texture(), Texture() } )
+        {
+        }
+
         void TextureManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *context, std::string filePath)
         {
             m_device = device;
@@ -41,61 +53,37 @@ namespace ursine
 
             m_textureCount = 0;
 
-            /////////////////////////////////////////////////////////////////
-            // LOADING TEXTURES /////////////////////////////////////////////
-            char buffer[ 512 ];
-            std::ifstream input;
-            std::string fileText = filePath;
-            fileText.append("TEXTURELIST.8.0.gfx");
-            input.open(fileText, std::ios_base::in);
-
-            UAssert(input.is_open(), "Failed to open texture list file! (Path '%s')", filePath.c_str());
-            while (input.eof() == false)
+            ///////////////////////////////////////////////////////////////////
+            // CREATE DEFAULT TEXTURE
             {
-                //zero it out
-                memset(buffer, 0, sizeof(char) * 512);
+                InitalizeTexture(
+                    const_cast<uint8_t*>( graphics_resources::kMissingTexture ), 
+                    5608 * sizeof( uint8_t ), 
+                    32, 
+                    32, 
+                    m_textureCache[ INTERNAL_MISSING_TEX ]
+                );
 
-                //get the line
-                input.getline(buffer, 512);
-
-                //if nothing on line, or # comment, continue;
-                if (buffer[ 0 ] == '#' || strlen(buffer) == 0)
-                    continue;
-
-                //use string, and vector for holding tokens
-                std::string data(buffer);
-                std::vector<std::string> tokens;
-
-                //deal with data, chop it up by space
-                size_t pos = data.find_first_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", 0);
-                while (pos != std::string::npos)
-                {
-                    size_t end = data.find_first_of(" ", pos + 1);
-                    if (end - pos > 1)
-                        tokens.push_back(data.substr(pos, end - pos + 1));
-                    pos = data.find_first_of(" ", end);
-                }
-
-                //0 is filename
-                tokens[ 0 ].insert(0, filePath);
-                tokens[ 0 ].pop_back();
-                //1 is name
-                tokens[ 1 ].erase(0, 1);
-                tokens[ 1 ].pop_back();
-                //width
-                unsigned width = atoi(tokens[ 2 ].c_str());
-                //height
-                unsigned height = atoi(tokens[ 2 ].c_str());
-
-
-                TextureLoadBackend(tokens[ 1 ], tokens[ 0 ], width, height);
+                LoadTextureToGPU( m_textureCache[ INTERNAL_MISSING_TEX ] );
             }
 
-            input.close();
+            ///////////////////////////////////////////////////////////////////
+            // CREATE BLANK TEXTURE
+            {
+                InitalizeTexture(
+                    const_cast<uint8_t*>(graphics_resources::kBlankTexture),
+                    232 * sizeof(uint8_t),
+                    4,
+                    4,
+                    m_textureCache[ INTERNAL_BLANK_TEX ]
+                );
+
+                LoadTextureToGPU(m_textureCache[ INTERNAL_BLANK_TEX ]);
+            }
 
             /////////////////////////////////////////////////////////////////
             // CREATING SAMPLER STATES //////////////////////////////////////
-            m_samplerStateList_.resize(SAMPLER_COUNT);
+            m_samplerStateList_.resize(SAMPLER_STATE_COUNT);
 
             HRESULT result;
             D3D11_SAMPLER_DESC samplerDesc;
@@ -116,7 +104,26 @@ namespace ursine
             samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
             //Create the texture sampler state.
-            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_WRAP_TEX ]);
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_WRAP_TEX ]);
+            UAssert(result == S_OK, "Failed to make sampler state!");
+
+            // Texture Wrap /////////////////////////////////////////////////
+            samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+            samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+            samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+            samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+            samplerDesc.MipLODBias = 0.0f;
+            samplerDesc.MaxAnisotropy = 16;
+            samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+            samplerDesc.BorderColor[ 0 ] = 0;
+            samplerDesc.BorderColor[ 1 ] = 0;
+            samplerDesc.BorderColor[ 2 ] = 0;
+            samplerDesc.BorderColor[ 3 ] = 0;
+            samplerDesc.MinLOD = 0;
+            samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+            //Create the texture sampler state.
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_NO_WRAP_TEX ]);
             UAssert(result == S_OK, "Failed to make sampler state!");
 
             // no sampling //////////////////////////////////////////////////
@@ -135,26 +142,34 @@ namespace ursine
             samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
             //Create the texture sampler state.
-            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_NO_FILTERING ]);
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_NO_FILTERING ]);
+            UAssert(result == S_OK, "Failed to make sampler state!");
+
+            // shadow sampler //////////////////////////////////////////////////
+            samplerDesc.Filter = D3D11_FILTER_COMPARISON_MIN_MAG_LINEAR_MIP_POINT;
+            samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+            samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+            samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+            samplerDesc.MipLODBias = 0.0f;
+            samplerDesc.MaxAnisotropy = 0;
+            samplerDesc.ComparisonFunc = D3D11_COMPARISON_GREATER;
+            samplerDesc.BorderColor[ 0 ] = 1.0;
+            samplerDesc.BorderColor[ 1 ] = 1.0;
+            samplerDesc.BorderColor[ 2 ] = 1.0;
+            samplerDesc.BorderColor[ 3 ] = 1.0;
+            samplerDesc.MinLOD = 0;
+            samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+            //Create the texture sampler state.
+            result = device->CreateSamplerState(&samplerDesc, &m_samplerStateList_[ SAMPLER_STATE_SHADOW ]);
             UAssert(result == S_OK, "Failed to make sampler state!");
         }
 
         void TextureManager::Uninitialize(void)
         {
-            for (auto i : m_textureList)
-            {
-                if (i.second != nullptr)
-                {
-                    RELEASE_RESOURCE(i.second->m_shaderResource);
-                    RELEASE_RESOURCE(i.second->m_texture2d);
-                }
+            m_textureCache.clear( );
 
-                delete i.second;
-            }
-
-            m_textureList.clear();
-
-            for (int x = 0; x < SAMPLER_COUNT; ++x)
+            for (int x = 0; x < SAMPLER_STATE_COUNT; ++x)
             {
                 RELEASE_RESOURCE(m_samplerStateList_[ x ])
             }
@@ -163,27 +178,182 @@ namespace ursine
             m_deviceContext = nullptr;
         }
 
-        void TextureManager::MapTextureByName(const std::string name, const unsigned int bufferIndex)
+        GfxHND TextureManager::CreateTexture(const uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height)
         {
-            if( m_textureList[ name ] == nullptr )
-                m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureList[ "Blank" ]->m_shaderResource);
-            else
-                m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureList[ name ]->m_shaderResource);
+            // if this texture already exists and we are updating it, release the prior resource, keep old ID
+            size_t internalID;
+
+
+            GfxHND handle;
+            _RESOURCEHND *id = HND_RSRCE( handle );
+
+            internalID = m_textureCache.size( );
+            m_textureCache.emplace_back( );
+
+            // load it up into CPU memory
+            InitalizeTexture(
+                binaryData,
+                binarySize,
+                width,
+                height,
+                m_textureCache[ internalID ]
+            );
+
+            // initialize handle
+            id->ID_ = SANITY_RESOURCE;
+            id->Type_ = ID_TEXTURE;
+            id->Index_ = static_cast<unsigned>( internalID );
+
+            return handle;
         }
+
+        void TextureManager::DestroyTexture(GfxHND &handle)
+        {
+            int id;
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
+            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+
+            id = hnd->Index_;
+
+            Texture &texture = m_textureCache[ id ];
+            RELEASE_RESOURCE(texture.m_shaderResource);
+            RELEASE_RESOURCE(texture.m_texture2d);
+
+            delete[] texture.m_binaryData;
+            texture.m_binarySize = 0;
+            texture.m_width = 0;
+            texture.m_height = 0;
+            texture.m_internalID = 0;
+            texture.m_referenceCount = 0;
+
+            handle = 0;
+        }
+
+        void TextureManager::LoadTexture(GfxHND handle)
+        {
+            int id;
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+
+            if (handle != 0)
+            {
+                UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get texture with invalid handle!");
+                UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get texture with handle of invalid type!");
+            }
+
+            id = hnd->Index_;
+
+            if (id == 0)
+                return;
+
+            // if it doesn't exist on the GPU, load it up
+            if (m_textureCache[ id ].m_referenceCount == 0)
+            {
+                m_loadingTexture = true;
+                LoadTextureToGPU(m_textureCache[ id ]);
+                m_loadingTexture = false;
+            }
+
+            ++(m_textureCache[ id ].m_referenceCount);
+        }
+
+        void TextureManager::UnloadTexture(GfxHND handle)
+        {
+            URSINE_TODO( "Fix this." );
+            return;
+            int id;
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+
+            if (handle > INTERNAL_BLANK_TEX)
+            {
+                UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get texture with invalid handle!");
+                UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get texture with handle of invalid type!");
+            }
+
+            id = hnd->Index_;
+            if (id <= INTERNAL_BLANK_TEX)
+                return;
+
+            --(m_textureCache[ id ].m_referenceCount);
+            
+            // if out of references, free up the GPU
+            if (m_textureCache[ id ].m_referenceCount == 0)
+            {
+                RELEASE_RESOURCE(m_textureCache[ id ].m_shaderResource);
+                RELEASE_RESOURCE(m_textureCache[ id ].m_texture2d);
+            }
+        }
+
+        void TextureManager::LoadFontTextures(GfxHND font, FontManager *manager)
+        {
+            if (font == 0)
+                return;
+
+            auto &bmf = manager->GetBitmapFont( font );
+
+            for(auto &tex : bmf.GetPageData( ))
+            {
+                auto handle = manager->GetTextureHandle(
+                    font, 
+                    tex
+                );
+
+                LoadTexture( handle );
+            }
+        }
+
+        void TextureManager::UnloadFontTextures(GfxHND font, FontManager *manager)
+        {
+            if(font == 0)
+                return;
+
+            auto &bmf = manager->GetBitmapFont( font );
+
+            for(auto &tex : bmf.GetPageData( ))
+            {
+                auto handle = manager->GetTextureHandle(
+                    font, 
+                    tex
+                );
+
+                UnloadTexture( handle );
+            }
+        }
+
 
         void TextureManager::MapTextureByID(const unsigned ID, const unsigned int bufferIndex)
         {
-            m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_hashTextureList[ ID ]->m_shaderResource);
+            if (ID == INTERNAL_MISSING_TEX || ID > m_textureCache.size() || m_textureCache[ ID ].m_shaderResource == nullptr || 
+                m_textureCache[ ID ].m_shaderResource == nullptr)
+            {
+                m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureCache[ INTERNAL_MISSING_TEX ].m_shaderResource);
+                return;
+            }
+
+            UAssert( m_textureCache[ ID ].m_shaderResource != nullptr, "tried to bind without creating texture on GPU!" );
+
+            m_deviceContext->PSSetShaderResources(bufferIndex, 1, &m_textureCache[ ID ].m_shaderResource);
         }
 
-        void TextureManager::MapSamplerState(const Sampler type, const unsigned bufferIndex)
+        void TextureManager::MapTextureArrayByIDs(const unsigned bufferIndex, std::initializer_list<unsigned> IDs)
         {
+            std::vector<ID3D11ShaderResourceView *> textureArray;
+
+            // create this buffer
+            for(auto &x : IDs)
+            {
+                textureArray.push_back(m_textureCache[x].m_shaderResource);
+            }
+
+            // map all of them!
+            m_deviceContext->PSSetShaderResources(static_cast<UINT>(bufferIndex), static_cast<UINT>(textureArray.size( )), textureArray.data( ));
+        }
+
+        void TextureManager::MapSamplerState(const SAMPLER_STATES type, const unsigned bufferIndex)
+        {
+            if( type == SAMPLER_STATE_COUNT)
+                return;
             m_deviceContext->PSSetSamplers(bufferIndex, 1, &m_samplerStateList_[ type ]);
-        }
-
-        unsigned TextureManager::GetTextureIDByName(const std::string name)
-        {
-            return m_lookupTextureList[ name ];
         }
 
         GfxHND TextureManager::CreateDynamicTexture(const unsigned width, const unsigned height)
@@ -193,14 +363,10 @@ namespace ursine
             GfxHND handle;
             _RESOURCEHND *id = HND_RSRCE(handle);
 
-            //create a name for this guy
-            std::stringstream strName;
-            strName << "DynamicTex" << m_textureCount;
+            size_t internalID = m_textureCache.size( );
 
-            std::string name = strName.str();
+            m_textureCache.push_back( Texture( ) );
 
-            //alloc texture
-            m_textureList[ name ] = new Texture();
 
             //setup texture2d desc
             desc.Width = width;
@@ -215,7 +381,7 @@ namespace ursine
             desc.MiscFlags = 0;
 
             //create the texture2d
-            result = m_device->CreateTexture2D(&desc, nullptr, &m_textureList[ name ]->m_texture2d);
+            result = m_device->CreateTexture2D(&desc, nullptr, &m_textureCache[ internalID ].m_texture2d);
             UAssert(result == S_OK, "Failed to create texture2D description! (Error '%s')", DXCore::GetDXErrorMessage(result));
 
             //create shader resource
@@ -225,18 +391,12 @@ namespace ursine
             shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
             shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
-            result = m_device->CreateShaderResourceView(m_textureList[ name ]->m_texture2d, &shaderResourceViewDesc, &m_textureList[ name ]->m_shaderResource);
+            result = m_device->CreateShaderResourceView(m_textureCache[ internalID ].m_texture2d, &shaderResourceViewDesc, &m_textureCache[ internalID ].m_shaderResource);
             UAssert(result == S_OK, "Failed to create shader resource view! (Error '%s')", DXCore::GetDXErrorMessage(result));
-
-            //set information
-            m_textureList[ name ]->m_width = width;
-            m_textureList[ name ]->m_height = height;
-            m_lookupTextureList[ name ] = m_textureCount;
-            m_hashTextureList[ m_textureCount ] = m_textureList[ name ];
 
             id->ID_ = SANITY_RESOURCE;
             id->Type_ = ID_TEXTURE;
-            id->Index_ = m_textureCount++;
+            id->Index_ = internalID;
 
             return handle;
         }
@@ -255,14 +415,7 @@ namespace ursine
 
             id = hnd->Index_;
 
-            //make sure valid resource was given
-            UAssert(m_hashTextureList[ id ] != nullptr, "Tried to get invalid dynamic texture!");
-
-            //check to see if this texture is actually a dynamic texture
-            //if it's static, its tex2d ptr will be null
-            UAssert(m_hashTextureList[ id ]->m_texture2d != nullptr, "Tried to get static texture!");
-
-            return m_hashTextureList[ id ];
+            return &m_textureCache[ id ];
         }
 
         void TextureManager::ResizeDynamicTexture(GfxHND &handle, const unsigned width, const unsigned height)
@@ -282,20 +435,13 @@ namespace ursine
 
             id = hnd->Index_;
 
-            //make sure valid resource was given
-            UAssert(m_hashTextureList[ id ] != nullptr, "Tried to resize invalid dynamic texture!");
-
-            //check to see if this texture is actually a dynamic texture
-                //if it's static, its tex2d ptr will be null
-            UAssert(m_hashTextureList[ id ]->m_texture2d != nullptr, "Tried to resize static texture!");
-
             //release current resources
-            RELEASE_RESOURCE(m_hashTextureList[ id ]->m_shaderResource);
-            RELEASE_RESOURCE(m_hashTextureList[ id ]->m_texture2d);
+            RELEASE_RESOURCE(m_textureCache[ id ].m_shaderResource);
+            RELEASE_RESOURCE(m_textureCache[ id ].m_texture2d);
 
             //re-create the buffers, update the values in the texture
-            m_hashTextureList[ id ]->m_width = width;
-            m_hashTextureList[ id ]->m_height = height;
+            m_textureCache[ id ].m_width = width;
+            m_textureCache[ id ].m_height = height;
 
             //set data
             desc.Width = width;
@@ -310,7 +456,7 @@ namespace ursine
             desc.MiscFlags = 0;
 
             //create the 2d tex
-            result = m_device->CreateTexture2D(&desc, nullptr, &m_hashTextureList[ id ]->m_texture2d);
+            result = m_device->CreateTexture2D(&desc, nullptr, &m_textureCache[ id ].m_texture2d);
             UAssert(result == S_OK, "Failed to create texture2D description! (Error '%s')", DXCore::GetDXErrorMessage(result));
 
             //create shader resource
@@ -320,7 +466,7 @@ namespace ursine
             shaderResourceViewDesc.Texture2D.MipLevels = 1;
 
             //create shader resource
-            result = m_device->CreateShaderResourceView(m_hashTextureList[ id ]->m_texture2d, &shaderResourceViewDesc, &m_hashTextureList[ id ]->m_shaderResource);
+            result = m_device->CreateShaderResourceView(m_textureCache[ id ].m_texture2d, &shaderResourceViewDesc, &m_textureCache[ id ].m_shaderResource);
             UAssert(result == S_OK, "Failed to create shader resource view! (Error '%s')", DXCore::GetDXErrorMessage(result));
         }
 
@@ -338,32 +484,42 @@ namespace ursine
 
             id = hnd->ID_;
 
-            //make sure valid resource was given
-            UAssert(m_hashTextureList[ id ] != nullptr, "Tried to destroy invalid dynamic texture!");
-
-            //check to see if this texture is actually a dynamic texture
-            //if it's static, its tex2d ptr will be null
-            UAssert(m_hashTextureList[ id ]->m_texture2d != nullptr, "Tried to destroy static texture!");
-        
-            RELEASE_RESOURCE(m_hashTextureList[ id ]->m_shaderResource);
-            RELEASE_RESOURCE(m_hashTextureList[ id ]->m_texture2d);
+            RELEASE_RESOURCE(m_textureCache[ id ].m_shaderResource);
+            RELEASE_RESOURCE(m_textureCache[ id ].m_texture2d);
 
             handle = 0;
-        }   
+        }
 
-        void TextureManager::TextureLoadBackend(const std::string name, const std::string path, const unsigned width, const unsigned height)
+        void TextureManager::GetBinaryInformation(GfxHND handle, uint8_t **dataPtr, size_t &binarySize)
+        {
+            int id;
+            _RESOURCEHND *hnd = HND_RSRCE(handle);
+            UAssert(hnd->ID_ == SANITY_RESOURCE, "Attempted to get dynamic texture with invalid handle!");
+            UAssert(hnd->Type_ == ID_TEXTURE, "Attempted to get dynamic texture with handle of invalid type!");
+
+            id = hnd->Index_;
+
+            Texture &texture = m_textureCache[ id ];
+
+            *dataPtr = texture.m_binaryData;
+            binarySize = texture.m_binarySize;
+        }
+
+        bool TextureManager::IsLoading() const
+        {
+            return m_loadingTexture;
+        }
+
+        // private methods
+
+        void TextureManager::LoadTextureToGPU(Texture &texture) const
         {
             HRESULT result;
             D3D11_TEXTURE2D_DESC desc;
 
-            LogMessage("Texture: %s", 2, name.c_str());
-            LogMessage("Path: %s", 3, path.c_str());
-            LogMessage("Width: %i", 3, width);
-            LogMessage("Height: %i", 3, height);
-
             //width/height
-            desc.Width = width;
-            desc.Height = height;
+            desc.Width = texture.m_width;
+            desc.Height = texture.m_height;
             desc.MipLevels = desc.ArraySize = 1;
             desc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
             desc.SampleDesc.Count = 2;
@@ -373,17 +529,30 @@ namespace ursine
             desc.CPUAccessFlags = 0;
             desc.MiscFlags = 0;
 
-            m_textureList[ name ] = new Texture();
+            result = DirectX::CreateDDSTextureFromMemory(
+                m_device, 
+                texture.m_binaryData, 
+                texture.m_binarySize, 
+                nullptr, 
+                &texture.m_shaderResource
+            );
 
-            result = DirectX::CreateDDSTextureFromFile(m_device, strToWchart(path), nullptr, &m_textureList[ name ]->m_shaderResource);
+            UAssert( result == S_OK, "Failed to load texture (%s)", DXCore::GetDXErrorMessage(result) );
+        }
 
-            UAssert(result != HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND), "Texture '%s' was not found!", path.c_str());
-            UAssert(result == S_OK, "Failed to load texture: '%s'", name.c_str());
+        void TextureManager::InitalizeTexture(const uint8_t *binaryData, size_t binarySize, unsigned width, unsigned height, Texture &texture) const
+        {
+            texture.m_binaryData = new uint8_t[ binarySize ];
+            texture.m_binarySize = binarySize;
+            memcpy(texture.m_binaryData, binaryData, binarySize);
 
-            m_textureList[ name ]->m_width = width;
-            m_textureList[ name ]->m_height = height;
-            m_lookupTextureList[ name ] = m_textureCount;
-            m_hashTextureList[ m_textureCount++ ] = m_textureList[ name ];
+            uint32_t dwMagicNumber = *(const uint32_t*)(binaryData);
+
+            UAssert(0x20534444 == dwMagicNumber, "Binary .dds file has mismatching magic number! (%u provided)", dwMagicNumber);
+
+            texture.m_width = width;
+            texture.m_height = height;
+            texture.m_referenceCount = 0;
         }
     }
 }

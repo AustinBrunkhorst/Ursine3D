@@ -21,8 +21,6 @@ namespace ursine
 {
     class TimeSpan
     {
-        int m_milliseconds;
-
     public:
         static const int MillisPerSecond = 1000;
         static const int MillisPerMinute = MillisPerSecond * 60;
@@ -84,6 +82,9 @@ namespace ursine
         static TimeSpan FromMinutes(float value);
         static TimeSpan FromHours(float value);
         static TimeSpan FromDays(float value);
+
+    private:
+        int m_milliseconds;
     };
 
     extern template

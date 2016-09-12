@@ -33,10 +33,10 @@ namespace ursine
                 1.0f
             );
 
-		    m_gfx->DrawingMgr.DrawLine(
-			    from.getX( ), from.getY( ), from.getZ( ),
-			    to.getX( ),   to.getY( ),   to.getZ( )
-		    );
+            m_gfx->DrawingMgr.DrawLine(
+                from.getX( ), from.getY( ), from.getZ( ),
+                to.getX( ),   to.getY( ),   to.getZ( )
+            );
         }
 
         void DebugDrawer::drawContactPoint(const btVector3& PointOnB, const btVector3& normalOnB, 
@@ -51,7 +51,7 @@ namespace ursine
 
             m_gfx->DrawingMgr.SetSize( 8.0f );
 
-		    m_gfx->DrawingMgr.DrawPoint(
+            m_gfx->DrawingMgr.DrawPoint(
                 PointOnB.getX( ), 
                 PointOnB.getY( ), 
                 PointOnB.getZ( )
@@ -59,12 +59,12 @@ namespace ursine
 
             m_gfx->DrawingMgr.SetSize(4.0f);
 
-		    auto normP = PointOnB + normalOnB * distance;
+            auto normP = PointOnB + normalOnB * distance;
 
-		    m_gfx->DrawingMgr.DrawLine(
-			    PointOnB.getX( ), PointOnB.getY( ), PointOnB.getZ( ),
-			    normP.getX( ),    normP.getY( ),    normP.getZ( )
-		    );
+            m_gfx->DrawingMgr.DrawLine(
+                PointOnB.getX( ), PointOnB.getY( ), PointOnB.getZ( ),
+                normP.getX( ),    normP.getY( ),    normP.getZ( )
+            );
         }
 
         void DebugDrawer::reportErrorWarning(const char* warningString)

@@ -25,6 +25,7 @@ namespace ursine
     {
         class Rigidbody;
         class Body;
+        class Ghost;
 
         class PhysicsSystem 
             : public EntitySystem
@@ -34,22 +35,30 @@ namespace ursine
         public:
             friend class Rigidbody;
 
-            Meta(DisableNonDynamic)
+            Meta(Enable, DisableNonDynamic)
             PhysicsSystem(World *world);
 
             bool Raycast(const ursine::physics::RaycastInput &input, ursine::physics::RaycastOutput &output,
                          ursine::physics::RaycastType type = physics::RAYCAST_CLOSEST_HIT,
-                         bool debugDraw = false, float drawDuration = 2.0f, bool alwaysDrawLine = false, 
-                         Color colorBegin = Color::Blue, Color colorEnd = Color::Blue );
+                         bool debugDraw = false, float drawDuration = 2.0f, Color color = Color::Blue, bool alwaysDrawLine = false);
 
-			bool Sweep(Rigidbody *body, const SVec3 &velocity, float dt, 
-					   ursine::physics::SweepOutput &output, ursine::physics::SweepType type, bool sorted = false);
+            bool Sweep(Rigidbody *body, const SVec3 &velocity, float dt, 
+                       ursine::physics::SweepOutput &output, ursine::physics::SweepType type, bool sorted = false);
+
+            bool Sweep(Body *body, const SVec3 &velocity, float dt,
+                       ursine::physics::SweepOutput &output, ursine::physics::SweepType type, bool sorted = false);
+
+            bool Sweep(Ghost *body, const SVec3 &velocity, float dt,
+                       ursine::physics::SweepOutput &output, ursine::physics::SweepType type, bool sorted = false);
 
             void SetGravity(const SVec3 &gravity);
             SVec3 GetGravity(void) const;
 
             void SetEnableDebugDraw(bool enable);
             bool GetEnableDebugDraw(void) const;
+
+            void SetPlaymodeDebugDraw(bool enable);
+            bool GetPlaymodeDebugDraw(void) const;
 
             void ClearContacts(Rigidbody *rigidbody);
 
@@ -62,22 +71,27 @@ namespace ursine
             DebugSystem *m_debugSystem;
 
             bool m_enableDebugDraw;
+            bool m_playmodeDebugDraw;
 
             std::vector<Rigidbody*> m_rigidbodies;
             std::vector<Body*> m_bodies;
+            std::vector<Ghost*> m_ghosts;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
 
-            void OnAfterLoad(void) override;
+            void OnSceneReady(Scene *scene) override;
 
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));
 
             void onUpdate(EVENT_HANDLER(World));
 
-            void addCollider(Entity *entity, physics::ColliderBase *collider, bool emptyCollider = false);
-            void removeCollider(Entity *entity);
+            void addCollider(const EntityHandle &entity, physics::ColliderBase *collider, bool emptyCollider = false);
+            void removeCollider(const EntityHandle &entity);
+
+            bool sweep(physics::BodyBase *body, physics::ColliderBase *collider, const SVec3 &velocity, 
+                       float dt, physics::SweepOutput &output, physics::SweepType type, bool sorted);
 
     #if defined(URSINE_WITH_EDITOR)
 
@@ -85,8 +99,8 @@ namespace ursine
 
     #endif
 
-            void removeExistingCollider(Entity *entity, ComponentTypeID newCollider);
+            void removeExistingCollider(const EntityHandle &entity, ComponentTypeID newCollider);
 
-        } Meta(Enable, AutoAddEntitySystem);
+        } Meta(Enable, WhiteListMethods, AutoAddEntitySystem);
     }
 }

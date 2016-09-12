@@ -4,17 +4,41 @@
 
 $icon-size: 22px;
 
+@keyframes loading {
+  0% {
+    border: 0 solid #48484d;
+  }
+
+  20% {
+    border: 8px solid #48484d;
+    width: 0;
+    height: 0;
+  }
+
+  100% {
+    border: 8px solid #48484d;
+    width: 100%;
+    height: 100%;
+  }
+}
+
 :host {
   position: relative;
   display: block;
   min-width: 200px;
   max-width: 485px;
-  padding: 7px;
+  padding: 10px;
   margin-bottom: 12px;
   background: #48484d;
   border: 1px solid #6d6d75;
   box-shadow: 0 4px 3px rgba(black, 0.40);
   pointer-events: all !important;
+  transform: translateX(100%);
+  transition: transform 225ms ease;
+
+  &.active {
+    transform: translateX(0);
+  }
 
   &:hover {
     .btn-close {
@@ -61,6 +85,30 @@ $icon-size: 22px;
     }
   }
 
+  // loading
+  &[type="5"] {
+    .icon {
+      position: relative;
+      width: $icon-size;
+      height: $icon-size;
+      margin-right: 3px;
+      background-color: $color-accent;
+      border-radius: 50%;
+
+      &:after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        border: 0 solid #48484d;
+        transform: translate(-50%, -50%);
+        animation: loading 1000ms ease-out forwards infinite;
+      }
+
+    }
+  }
+
   .icon {
     display: inline-block;
     padding-right: 3px;
@@ -97,6 +145,7 @@ $icon-size: 22px;
     display: block;
     padding-top: 10px;
     font-size: 12px;
+    white-space: normal;
     color: #cccccc;
   }
 

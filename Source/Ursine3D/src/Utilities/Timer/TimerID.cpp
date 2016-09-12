@@ -34,6 +34,9 @@ namespace ursine
 
     bool TimerID::IsActive(void) const
     {
+        if (!IsValid( ))
+            return false;
+
         auto timer = m_manager->get( m_id );
 
         return timer && !timer->m_deleting;
@@ -41,6 +44,9 @@ namespace ursine
 
     bool TimerID::IsPaused(void) const
     {
+        if (!IsValid( ))
+            return true;
+
         auto timer = m_manager->get( m_id );
 
         if (!timer)
@@ -51,6 +57,9 @@ namespace ursine
 
     void TimerID::Pause(void)
     {
+        if (!IsValid( ))
+            return;
+
         auto timer = m_manager->get( m_id );
 
         if (timer)
@@ -59,15 +68,23 @@ namespace ursine
 
     void TimerID::Resume(void)
     {
+        if (!IsValid( ))
+            return;
+
         auto timer = m_manager->get( m_id );
 
         if (timer)
             timer->m_paused = false;
     }
 
-    void TimerID::Cancel(void) const
+    void TimerID::Cancel(void)
     {
+        if (!IsValid( ))
+            return;
+
         m_manager->cancel( m_id );
+
+        m_manager = nullptr;
     }
 
     TimerID &TimerID::Repeat(int count)

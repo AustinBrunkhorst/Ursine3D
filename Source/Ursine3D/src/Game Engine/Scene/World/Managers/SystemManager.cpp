@@ -85,6 +85,9 @@ namespace ursine
 
         bool SystemManager::HasSystem(const meta::Type &systemType)
         {
+			if (!systemType.IsValid( ))
+				return false;
+
             auto systemID = systemType.GetStaticField( "SystemID" )
                 .GetValue( )
                 .GetValue<SystemTypeID>( );
@@ -94,6 +97,10 @@ namespace ursine
 
         void SystemManager::AddSystem(const meta::Type &systemType)
         {
+			UAssert( systemType.IsValid( ),
+				"Attempting to add invalid system type."
+			);
+
             auto systemID = systemType.GetStaticField( "SystemID" )
                 .GetValue( )
                 .GetValue<SystemTypeID>( );
@@ -125,8 +132,10 @@ namespace ursine
             if (m_initialized)
                 system->OnInitialize( );
 
-            if (m_loaded)
-                system->OnAfterLoad( );
+            auto *scene = m_world->GetOwner( );
+
+            if (scene != nullptr)
+                system->OnSceneReady( scene );
         }
 
         const meta::Type::List &SystemManager::GetExposedTypes(void)
@@ -137,7 +146,6 @@ namespace ursine
         SystemManager::SystemManager(World *world)
             : WorldManager( world )
             , m_initialized( false )
-            , m_loaded( false )
         {
             configureSystems( );
 
@@ -215,15 +223,15 @@ namespace ursine
             m_initialized = true;
         }
 
-        void SystemManager::onAfterLoad(void)
+        void SystemManager::initializeScene(void)
         {
+            auto *scene = m_world->GetOwner( );
+
             for (auto system : m_systems)
             {
                 if (system)
-                    system->OnAfterLoad( );
+                    system->OnSceneReady( scene );
             }
-
-            m_loaded = true;
         }
     }
 }

@@ -30,13 +30,13 @@ inline void *operator new(unsigned int size)
     return pointer;
 }
 
-inline void* operator new(unsigned int size, const char *filename, int line)
+inline void* operator new(unsigned int size, const char *fileName, int line)
 {
     void *pointer = malloc(size);
 
     UAssert(pointer, "Bad allocation.");
 
-    ursine::MemoryWatcher::Add(pointer, size, filename, line);
+    ursine::MemoryWatcher::Add(pointer, size, fileName, line);
 
     return pointer;
 }
@@ -48,7 +48,7 @@ inline void operator delete(void *pointer)
     free(pointer);
 }
 
-inline void operator delete(void *pointer, const char *filename, int line)
+inline void operator delete(void *pointer, const char *fileName, int line)
 {
     ursine::MemoryWatcher::Remove(pointer);
 

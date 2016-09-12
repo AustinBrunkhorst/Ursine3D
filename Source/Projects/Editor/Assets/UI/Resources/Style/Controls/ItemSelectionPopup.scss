@@ -54,7 +54,7 @@
       }
 
       &:hover, &.selected {
-        background: darken($color-accent, 25%);
+        background: desaturate($color-accent, 15%);
         transition: background $duration-transition-btn ease;
       }
     }

@@ -17,7 +17,7 @@
 
 #include "GfxDefines.h"
 #include "Mesh.h"
-#include "..\..\..\..\..\include\Core\Graphics\Core\Models\Mesh.h"
+#include "VertexDefinitions.h"
 
 namespace ursine
 {
@@ -68,6 +68,21 @@ namespace ursine
             return m_rawIndexData;
         }
 
+        std::vector<Vec3> &Mesh::GetRawNormals(void)
+        {
+            return m_rawNormData;
+        }
+
+        std::vector<Vec3> &Mesh::GetRawBinormals(void)
+        {
+            return m_rawNBinormData;
+        }
+
+        std::vector<Vec3> &Mesh::GetRawTangent(void)
+        {
+            return m_rawTangentmData;
+        }
+
         ID3D11Buffer *&Mesh::GetVertexBuffer(void)
         {
             return m_vertexBuffer;
@@ -98,25 +113,64 @@ namespace ursine
             m_rawIndexData.resize(indexCount);
         }
 
+        unsigned Mesh::GetNormalCount(void) const
+        {
+            return static_cast<unsigned>(m_rawNormData.size());
+        }
+
+        void Mesh::SetNormalCount(const unsigned normalCount)
+        {
+            m_rawNormData.resize(normalCount);
+        }
+
+        unsigned Mesh::GetBinormalCount(void) const
+        {
+            return static_cast<unsigned>(m_rawNBinormData.size());
+        }
+
+        void Mesh::SetBinormalCount(const unsigned normalCount)
+        {
+            m_rawNBinormData.resize(normalCount);
+        }
+
+        unsigned Mesh::GetTangentCount(void) const
+        {
+            return static_cast<unsigned>(m_rawTangentmData.size());
+        }
+
+        void Mesh::SetTangentCount(const unsigned normalCount)
+        {
+            m_rawTangentmData.resize(normalCount);
+        }
+
         const Material &Mesh::GetMaterial(void)
         {
             return m_material;
         }
+
         Mesh *Mesh::GetParent(void)
         {
             return m_parent;
         }
+
         void Mesh::SetParent(Mesh *parent)
         {
             m_parent = parent;
         }
+
         const SMat4 & Mesh::GetLocalToParentTransform(void) const
         {
             return m_localToParent;
         }
+
         void Mesh::SetLocalToParentTransform(const SMat4 &transform)
         {
             m_localToParent = transform;
+        }
+
+        std::vector<AnimationVertex> & Mesh::GetRawModelData()
+        {
+            return m_rawModelData;
         }
     }
 }

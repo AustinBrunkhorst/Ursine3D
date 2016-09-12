@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -22,10 +22,12 @@
 #include "Billboard2DComponent.h"
 #include "CameraComponent.h"
 #include "ParticleSystemComponent.h"
-#include "AnimatorComponent.h"
+#include "SpriteTextComponent.h"
+#include "FragmentationComponent.h"
 
 #include "GfxAPI.h"
 #include "RenderableComponentBase.h"
+#include "GraphicsSettingsComponent.h"
 
 namespace ursine
 {
@@ -35,6 +37,7 @@ namespace ursine
 
         RenderSystem::RenderSystem(World *world)
             : EntitySystem( world )
+            , EventDispatcher( this )
             , m_worldConfig( nullptr )
         {
             m_graphics = GetCoreSystem( graphics::GfxAPI );
@@ -53,10 +56,10 @@ namespace ursine
         void RenderSystem::OnInitialize(void)
         {
             m_world->Listener( this )
-                .On( WORLD_UPDATE, &RenderSystem::onUpdate )
                 .On( WORLD_RENDER, &RenderSystem::onRender )
-                .On( WORLD_EDITOR_UPDATE, &RenderSystem::onEditorUpdate )
+            #if defined(URSINE_WITH_EDITOR)
                 .On( WORLD_EDITOR_RENDER, &RenderSystem::onEditorRender )
+            #endif
                 .On( WORLD_ENTITY_COMPONENT_ADDED, &RenderSystem::onComponentAdded )
                 .On( WORLD_ENTITY_COMPONENT_REMOVED, &RenderSystem::onComponentRemoved );
         }
@@ -64,17 +67,22 @@ namespace ursine
         void RenderSystem::OnRemove(void)
         {
             m_world->Listener( this )
-                .Off( WORLD_UPDATE, &RenderSystem::onUpdate )
                 .Off( WORLD_RENDER, &RenderSystem::onRender )
-                .Off( WORLD_EDITOR_UPDATE, &RenderSystem::onEditorUpdate )
+            #if defined(URSINE_WITH_EDITOR)
                 .Off( WORLD_EDITOR_RENDER, &RenderSystem::onEditorRender )
+            #endif
                 .Off( WORLD_ENTITY_COMPONENT_ADDED, &RenderSystem::onComponentAdded )
                 .Off( WORLD_ENTITY_COMPONENT_REMOVED, &RenderSystem::onComponentRemoved );
         }
 
-        void RenderSystem::OnAfterLoad(void)
+        void RenderSystem::OnSceneReady(Scene *scene)
         {
             m_worldConfig = m_world->GetSettings( )->GetComponent<WorldConfig>( );
+
+            auto levelSettings = m_world->GetSettings();
+
+            if (!levelSettings->HasComponent<GraphicsSettings>())
+                levelSettings->AddComponent<GraphicsSettings>();
         }
 
         bool RenderSystem::cameraSortPredicate(Component::Handle<Camera> a, Component::Handle<Camera> b)
@@ -108,15 +116,17 @@ namespace ursine
             {
                 addRenderable( args->entity, static_cast<Light*>( component )->m_base );
             }
-            else if (component->Is<Animator>( ))
-            {
-                m_animators.emplace_back(
-                    static_cast<Animator*>( component )
-                );
-            }
             else if (component->Is<ParticleSystem>( ))
             {
                 addRenderable( args->entity, static_cast<ParticleSystem*>( component )->m_base );
+            }
+            else if(component->Is<SpriteText>( ))
+            {
+                addRenderable( args->entity, static_cast<SpriteText*>( component )->m_base.get( ) );
+            }
+            else if(component->Is<ModelFragmenter>( ))
+            {
+                m_fragmenters.push_back( static_cast<ModelFragmenter*>(component) );
             }
         }
 
@@ -144,29 +154,21 @@ namespace ursine
                 removeRenderable( args->entity, static_cast<Billboard2D*>( component )->m_base );
             else if (component->Is<Light>( ))
                 removeRenderable( args->entity, static_cast<Light*>( component )->m_base );
-            else if (component->Is<Animator>( ))
+            else if (component->Is<ParticleSystem>( ))
+                removeRenderable( args->entity, static_cast<ParticleSystem*>( component )->m_base );
+            else if (component->Is<SpriteText>( ))
+                removeRenderable( args->entity, static_cast<SpriteText*>( component )->m_base.get( ) );
+            else if(component->Is<ModelFragmenter>( ))
             {
                 auto search = std::find(
-                    m_animators.begin( ),
-                    m_animators.end( ),
-                    static_cast<Animator*>( component )
+                    m_fragmenters.begin( ),
+                    m_fragmenters.end( ),
+                    static_cast<ModelFragmenter*>( component )
                 );
 
-                if (search != m_animators.end( ))
-                    m_animators.erase( search );
+                if (search != m_fragmenters.end( ))
+                    m_fragmenters.erase( search );
             }
-            else if (component->Is<ParticleSystem>( ))
-            {
-                removeRenderable( args->entity, static_cast<ParticleSystem*>( component )->m_base );
-            }
-        }
-
-        void RenderSystem::onUpdate(EVENT_HANDLER(World))
-        {
-            auto dt = Application::Instance->GetDeltaTime( );
-
-            for (auto &animator : m_animators)
-                animator->UpdateAnimation( dt );
         }
 
         void RenderSystem::onRender(EVENT_HANDLER(World))
@@ -181,11 +183,15 @@ namespace ursine
             {
                 auto camera = m_cameras[ i ];
 
-				if (camera->m_dirty)
-					camera->updateRenderer( );
+                if (camera->dirty)
+                    camera->updateRenderer( );
 
-                if (!camera->GetActive( ) || camera->IsEditorCamera( ))
-                    continue;
+                // kinda ugly, eventually make an editor render system
+                if (!camera->GetActive( ) 
+                #if defined(URSINE_WITH_EDITOR)
+                    || camera->IsEditorCamera( )
+                #endif
+                ) continue;
 
                 renderCamera( camera, e, RENDER_HOOK );
             }
@@ -193,17 +199,7 @@ namespace ursine
             m_graphics->EndScene( );
         }
 
-        void RenderSystem::onEditorUpdate(EVENT_HANDLER(World))
-        {
-            auto dt = Application::Instance->GetDeltaTime( );
-
-            for (auto &animator : m_animators)
-            {
-                // update only if selected
-                if (animator.GetEntity( )->HasComponent<Selected>( ))
-                    animator->UpdateAnimation( dt );
-            }
-        }
+        #if defined(URSINE_WITH_EDITOR)
 
         void RenderSystem::onEditorRender(EVENT_HANDLER(World))
         {
@@ -230,6 +226,8 @@ namespace ursine
             m_graphics->EndScene( );
         }
 
+        #endif
+
         void RenderSystem::renderObjects(void)
         {
             for (auto &mapPair : m_renderableMap)
@@ -238,21 +236,26 @@ namespace ursine
 
                 for (auto &rend : renderableVec)
                 {
-                    if (rend->m_dirty)
-					{
-						rend->m_dirty = false;
+                    if (rend->dirty)
+                    {
+                        rend->dirty = false;
 
                         rend->m_updateRenderer( );
-					}
+                    }
 
                     m_graphics->RenderObject( rend->m_handle );
                 }
             }
+
+            float dt = Application::Instance->GetDeltaTime( );
+
+            for(auto &fragmenter : m_fragmenters) 
+                fragmenter->Update( dt );
         }
 
         void RenderSystem::renderCamera(Component::Handle<Camera> camera, RenderHookArgs &args, RenderSystemEventType hook)
         {
-            if (camera->m_dirty)
+            if (camera->dirty)
                 camera->updateRenderer( );
 
             args.camera = camera->m_handle;
@@ -262,28 +265,29 @@ namespace ursine
             m_graphics->RenderScene( 0.0f, camera->m_handle );
         }
 
-        void RenderSystem::addRenderable(Entity *entity, RenderableComponentBase *renderable)
+        void RenderSystem::addRenderable(const EntityHandle &entity, RenderableComponentBase *renderable)
         {
-            m_renderableMap[ entity->GetUniqueID( ) ].push_back( renderable );
+            m_renderableMap[ entity->GetID( ) ].push_back( renderable );
         }
 
-        void RenderSystem::removeRenderable(Entity *entity, RenderableComponentBase *renderable)
+        void RenderSystem::removeRenderable(const EntityHandle &entity, RenderableComponentBase *renderable)
         {
-            // See if we have a renderable vector for this entity
-            auto id = entity->GetUniqueID( );
-            auto vecSearch = m_renderableMap.find( id );
+            // see if we have a renderable vector for this entity
+            auto id = entity->GetID( );
 
-            if (vecSearch != m_renderableMap.end( ))
+            auto search = m_renderableMap.find( id );
+
+            if (search != m_renderableMap.end( ))
             {
-                // If so, see if we have this component's base class in the vector
+                // if so, see if we have this component's base class in the vector
                 auto &renderableVec = m_renderableMap[ id ];
                 auto renderableSearch = std::find( renderableVec.begin( ), renderableVec.end( ), renderable );
 
-                // If so remove it
+                // if so remove it
                 if (renderableSearch != renderableVec.end( ))
                     renderableVec.erase( renderableSearch );
 
-                // If vector is empty, remove it from the map
+                // if vector is empty, remove it from the map
                 if (renderableVec.size( ) == 0)
                     m_renderableMap.erase( id );
             }

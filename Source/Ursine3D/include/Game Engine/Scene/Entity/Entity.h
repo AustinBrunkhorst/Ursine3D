@@ -17,12 +17,13 @@
 #include "ComponentConfig.h"
 #include "SystemConfig.h"
 
+#include "EntityHandle.h"
+
 #include "TransformComponent.h"
 
 #include "EventDispatcher.h"
 
 #include <string>
-#include <type_traits>
 
 namespace ursine
 {
@@ -41,16 +42,14 @@ namespace ursine
             typedef uint32 EventID;
             typedef EventDispatcher<EventID> EventDispatcher;
 
+            Entity(const Entity &&rhs);
+
             ////////////////////////////////////////////////////////////////////
             // State/Identification
             ////////////////////////////////////////////////////////////////////
 
-            // Active ID
+            // ID of this entity
             EntityID GetID(void) const;
-
-            // Unique ID (basically the total number of entities added to the 
-            // world when this entity was created)
-            EntityUniqueID GetUniqueID(void) const;
 
             // Determines if the entity is currently being deleted
             bool IsDeleting(void) const;
@@ -109,7 +108,7 @@ namespace ursine
             ////////////////////////////////////////////////////////////////////
 
             // Creates a clone of this entity
-            Entity *Clone(void);
+            EntityHandle Clone(void);
 
             // Gets the local timer manager for this entity
             LocalTimerManager &GetTimers(void);
@@ -157,52 +156,52 @@ namespace ursine
             // (chances are you don't need to use it)
             ComponentVector GetComponents(void) const;
 
-			////////////////////////////////////////////////////////////////////
-			// Hierarchy
-			////////////////////////////////////////////////////////////////////
+            ////////////////////////////////////////////////////////////////////
+            // Hierarchy
+            ////////////////////////////////////////////////////////////////////
 
             // Gets children of this entity
             const std::vector<EntityID> *GetChildren(void) const;
 
-			// Gets a component of the specified type in this entity's children (type safe) (depth first)
-			// nullptr if it doesn't exist
-			template<class ComponentType>
-			inline ComponentType *GetComponentInChildren(void) const;
+            // Gets a component of the specified type in this entity's children (type safe) (depth first)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline ComponentType *GetComponentInChildren(void) const;
 
-			// Gets a component of the specified type id in this entity's children (depth first)
-			// nullptr if it doesn't exist. Use the type safe version when possible
-			Component *GetComponentInChildren(ComponentTypeID id) const;
+            // Gets a component of the specified type id in this entity's children (depth first)
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            Component *GetComponentInChildren(ComponentTypeID id) const;
 
             // Gets a child by desired name
             // nullptr if it doesn't exist
-            Entity* GetChildByName(const std::string& name) const;
+            EntityHandle GetChildByName(const std::string& name) const;
 
-			// Gets a component of the specified type in this entity's parent (type safe)
-			// nullptr if it doesn't exist
-			template<class ComponentType>
-			inline ComponentType *GetComponentInParent(void) const;
+            // Gets a component of the specified type in this entity's parents (type safe)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline ComponentType *GetComponentInParents(void) const;
 
-			// Gets a component of the specified type id in this entity's parent
-			// nullptr if it doesn't exist. Use the type safe version when possible
-			Component *GetComponentInParent(ComponentTypeID id) const;
+            // Gets a component of the specified type id in this entity's parents
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            Component *GetComponentInParents(ComponentTypeID id) const;
 
-			// Gets the components of the specified type in this entity's children (type safe)
-			// nullptr if it doesn't exist
-			template<class ComponentType>
-			inline std::vector<ComponentType*> GetComponentsInChildren(void) const;
+            // Gets the components of the specified type in this entity's children (type safe)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline std::vector<ComponentType*> GetComponentsInChildren(void) const;
 
-			// Gets the components of the specified type id in this entity's children
-			// nullptr if it doesn't exist. Use the type safe version when possible
-			ComponentVector GetComponentsInChildren(ComponentTypeID id) const;
+            // Gets the components of the specified type id in this entity's children
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            ComponentVector GetComponentsInChildren(ComponentTypeID id) const;
 
-			// Gets the components of the specified type in this entity's parents (type safe)
-			// nullptr if it doesn't exist
-			template<class ComponentType>
-			inline std::vector<ComponentType*> GetComponentsInParents(void) const;
+            // Gets the components of the specified type in this entity's parents (type safe)
+            // nullptr if it doesn't exist
+            template<class ComponentType>
+            inline std::vector<ComponentType*> GetComponentsInParents(void) const;
 
-			// Gets the components of the specified type id in this entity's parents
-			// nullptr if it doesn't exist. Use the type safe version when possible
-			ComponentVector GetComponentsInParents(ComponentTypeID id) const;
+            // Gets the components of the specified type id in this entity's parents
+            // nullptr if it doesn't exist. Use the type safe version when possible
+            ComponentVector GetComponentsInParents(ComponentTypeID id) const;
 
             // Find this entity's index in relation to the other children
             uint GetSiblingIndex(void) const;
@@ -213,11 +212,8 @@ namespace ursine
             // Sets this entity's index in the parent's children list
             void SetSiblingIndex(uint index) const;
 
-			const Entity *GetParent(void) const;
-			Entity *GetParent(void);
-
-			const Entity *GetRoot(void) const;
-			Entity *GetRoot(void);
+            const EntityHandle &GetParent(void) const;
+            const EntityHandle &GetRoot(void) const;
 
             ////////////////////////////////////////////////////////////////////
             // Events
@@ -252,12 +248,14 @@ namespace ursine
         private:
             // entity manager needs to be able to construct entities
             friend class EntityManager;
+            friend class Hierarchy;
             friend class WorldSerializer;
             friend class EntitySerializer;
 
             // access ids directly
             friend class NameManager;
             friend class UtilityManager;
+            friend class EntityHandle;
 
             // emplace_back access constructor
             friend class std::allocator<Entity>;
@@ -278,8 +276,8 @@ namespace ursine
             // active id in the entity manager
             EntityID m_id;
 
-            // unique id in the entity manager
-            EntityUniqueID m_uniqueID;
+            // current version of this entity
+            EntityIDVersion m_version;
 
             // world it's attached to
             World *m_world;
@@ -295,7 +293,6 @@ namespace ursine
 
             // disable copy and assign
             Entity(const Entity &rhs) = delete;
-            Entity(const Entity &&rhs) = delete;
             Entity &operator=(const Entity &rhs) = delete;
 
             Entity(World *world, EntityID id);
@@ -311,8 +308,8 @@ namespace ursine
             // resets data for this entity
             void reset(void);
 
-			// set the entity and all of it's children's deleting flags
-			void setDeletingTrue(void);
+            // set the entity and all of it's children's deleting flags
+            void setDeletingTrue(void);
         };
     }
 }

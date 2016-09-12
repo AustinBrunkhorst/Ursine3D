@@ -18,18 +18,23 @@ namespace ursine
 {
     namespace graphics
     {
-        void RenderableManager::Initialize(void)
+        void RenderableManager::Initialize(GfxManager *manager)
         {
             m_currentRenderableModel3D.resize(MAX_RENDERABLES);
             m_currentRenderableBillboards.resize(MAX_RENDERABLES);
             m_currentRenderableLights.resize(MAX_RENDERABLES);
+            m_currentRenderableParticleSystems.resize(MAX_RENDERABLES);
+            m_currentRenderableSpriteText.resize(MAX_RENDERABLES);
 
             m_renderableModel3D.resize(MAX_RENDERABLES);
             m_renderableBillboards.resize(MAX_RENDERABLES);
             m_renderableLights.resize(MAX_RENDERABLES);
             m_renderableParticleSystems.resize(MAX_RENDERABLES);
+            m_renderableSpriteText.resize(MAX_RENDERABLES);
 
             m_handleList.resize(RENDERABLE_TYPE_COUNT);
+
+            m_manager = manager;
 
             for (unsigned x = 0; x < RENDERABLE_TYPE_COUNT; ++x)
             {
@@ -53,20 +58,24 @@ namespace ursine
             switch (type)
             {
             case RENDERABLE_MODEL3D:
-                m_renderableModel3D[ newRender->Index_ ].m_active = true;
-                m_renderableModel3D[ newRender->Index_ ].Initialize( );
+                m_currentRenderableModel3D[ newRender->Index_ ].m_active = true;
+                m_currentRenderableModel3D[ newRender->Index_ ].Initialize( );
                 break;
             case RENDERABLE_LIGHT:
-                m_renderableLights[ newRender->Index_ ].m_active = true;
-                m_renderableLights[ newRender->Index_ ].Initialize( );
+                m_currentRenderableLights[ newRender->Index_ ].m_active = true;
+                m_currentRenderableLights[ newRender->Index_ ].Initialize( );
                 break;
             case RENDERABLE_BILLBOARD2D:
-                m_renderableBillboards[ newRender->Index_ ].m_active = true;
-                m_renderableBillboards[ newRender->Index_ ].Initialize();
+                m_currentRenderableBillboards[ newRender->Index_ ].m_active = true;
+                m_currentRenderableBillboards[ newRender->Index_ ].Initialize();
                 break;
             case RENDERABLE_PS:
-                m_renderableParticleSystems[ newRender->Index_ ].m_active = true;
-                m_renderableParticleSystems[ newRender->Index_ ].Initialize();
+                m_currentRenderableParticleSystems[ newRender->Index_ ].m_active = true;
+                m_currentRenderableParticleSystems[ newRender->Index_ ].Initialize();
+                break;
+            case RENDERABLE_SPRITE_TEXT:
+                m_currentRenderableSpriteText[ newRender->Index_ ].m_active = true;
+                m_currentRenderableSpriteText[ newRender->Index_ ].Initialize();
                 break;
             default:
                 UAssert(false, "Tried to add an invalid renderable!");
@@ -84,40 +93,39 @@ namespace ursine
 
             UAssert(rend->Index_ != ID_RENDERABLE, "attempted to free a non-valid renderable handle");
 
-            m_handleList[ rend->Type_ ].push(rend->Index_);
-
             switch (rend->Type_)
             {
             case RENDERABLE_MODEL3D:
-                UAssert(m_renderableModel3D[ rend->Index_ ].m_active == true, "Attempted to free an already free model3d!");
-				m_renderableModel3D[ rend->Index_ ].m_active = false;
-                break; 
-            case RENDERABLE_BILLBOARD2D:
-                UAssert(m_renderableBillboards[ rend->Index_ ].m_active == true, "Attempted to free an already free billboard2d!");
-                m_renderableBillboards[ rend->Index_ ].m_active = false;
+                m_currentRenderableModel3D[ rend->Index_ ].Uninitialize( m_manager );
                 break;
             case RENDERABLE_LIGHT:
-                UAssert(m_renderableLights[ rend->Index_ ].m_active == true, "Attempted to free an already free light!");
-				m_renderableLights[ rend->Index_ ].m_active = false;
+                m_currentRenderableLights[ rend->Index_ ].Uninitialize( m_manager );
+                break;
+            case RENDERABLE_BILLBOARD2D:
+                m_currentRenderableBillboards[ rend->Index_ ].Uninitialize( m_manager );
                 break;
             case RENDERABLE_PS:
-                UAssert(m_renderableParticleSystems[ rend->Index_ ].m_active == true, "Attempted to free an already free light!");
-                m_renderableParticleSystems[ rend->Index_ ].m_active = false;
+                m_currentRenderableParticleSystems[ rend->Index_ ].Uninitialize( m_manager );
+                break;
+            case RENDERABLE_SPRITE_TEXT:
+                m_currentRenderableSpriteText[ rend->Index_ ].Uninitialize( m_manager );
                 break;
             default:
-                UAssert(false, "Attempted to destroy corrupted handle!");
-                break;
+                UAssert(false, "Tried to destroy an invalid renderable!");
             }
+
+            m_handleList[ rend->Type_ ].push(rend->Index_);
 
             handle = 0;
         }
 
         void RenderableManager::CacheFrame(void)
         {
-            //m_renderableModel3D = m_currentRenderableModel3D;
-            //m_renderablePrimitives = m_currentRenderablePrimitives;
-            //m_renderableBillboards = m_currentRenderableBillboards;
-            //m_renderableLights = m_currentRenderableLights;
-        }
+            m_renderableModel3D             = m_currentRenderableModel3D;
+            m_renderableBillboards          = m_currentRenderableBillboards;
+            m_renderableLights              = m_currentRenderableLights;
+            m_renderableParticleSystems     = m_currentRenderableParticleSystems;
+            m_renderableSpriteText          = m_currentRenderableSpriteText;
+        }   
     }
 }

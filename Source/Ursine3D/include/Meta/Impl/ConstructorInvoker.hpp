@@ -347,76 +347,76 @@ namespace ursine
             template<typename _>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType( ), variant_policy::WrapObject( ) };
+                return ObjectVariant( new ClassType( ) );
             }
 
             template<typename _, typename A1>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType(
+                return ObjectVariant( new ClassType(
                     arguments[ 0 ].GetValue<A1>( )
-                ), variant_policy::WrapObject( ) };
+                ) );
             }
 
             template<typename _, typename A1, typename A2>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType(
+                return ObjectVariant( new ClassType(
                     arguments[ 0 ].GetValue<A1>( ),
                     arguments[ 1 ].GetValue<A2>( )
-                ), variant_policy::WrapObject( ) };
+                ) );
             }
 
             template<typename _, typename A1, typename A2, typename A3>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType(
+                return ObjectVariant( new ClassType(
                     arguments[ 0 ].GetValue<A1>( ),
                     arguments[ 1 ].GetValue<A2>( ),
                     arguments[ 2 ].GetValue<A3>( )
-                ), variant_policy::WrapObject( ) };
+                ) );
             }
 
             template<typename _, typename A1, typename A2, typename A3, typename A4>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType(
+                return ObjectVariant( new ClassType(
                     arguments[ 0 ].GetValue<A1>( ),
                     arguments[ 1 ].GetValue<A2>( ),
                     arguments[ 2 ].GetValue<A3>( ),
                     arguments[ 3 ].GetValue<A4>( )
-                ), variant_policy::WrapObject( ) };
+                ) );
             }
 
             template<typename _, typename A1, typename A2, typename A3, typename A4, typename A5>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType(
+                return ObjectVariant( new ClassType(
                     arguments[ 0 ].GetValue<A1>( ),
                     arguments[ 1 ].GetValue<A2>( ),
                     arguments[ 2 ].GetValue<A3>( ),
                     arguments[ 3 ].GetValue<A4>( ),
                     arguments[ 4 ].GetValue<A5>( )
-                ), variant_policy::WrapObject( ) };
+                ) );
             }
 
             template<typename _, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType(
+                return ObjectVariant( new ClassType(
                     arguments[ 0 ].GetValue<A1>( ),
                     arguments[ 1 ].GetValue<A2>( ),
                     arguments[ 2 ].GetValue<A3>( ),
                     arguments[ 3 ].GetValue<A4>( ),
                     arguments[ 4 ].GetValue<A5>( ),
                     arguments[ 5 ].GetValue<A6>( )
-                ), variant_policy::WrapObject( ) };
+                ) );
             }
 
             template<typename _, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6, typename A7>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType(
+                return ObjectVariant( new ClassType(
                     arguments[ 0 ].GetValue<A1>( ),
                     arguments[ 1 ].GetValue<A2>( ),
                     arguments[ 2 ].GetValue<A3>( ),
@@ -424,13 +424,13 @@ namespace ursine
                     arguments[ 4 ].GetValue<A5>( ),
                     arguments[ 5 ].GetValue<A6>( ),
                     arguments[ 6 ].GetValue<A7>( )
-                ), variant_policy::WrapObject( ) };
+                ) );
             }
 
             template<typename _, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6, typename A7, typename A8>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType(
+                return ObjectVariant( new ClassType(
                     arguments[ 0 ].GetValue<A1>( ),
                     arguments[ 1 ].GetValue<A2>( ),
                     arguments[ 2 ].GetValue<A3>( ),
@@ -439,13 +439,13 @@ namespace ursine
                     arguments[ 5 ].GetValue<A6>( ),
                     arguments[ 6 ].GetValue<A7>( ),
                     arguments[ 7 ].GetValue<A8>( )
-                ), variant_policy::WrapObject( ) };
+                ) );
             }
 
             template<typename _, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6, typename A7, typename A8, typename A9>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType(
+                return ObjectVariant( new ClassType(
                     arguments[ 0 ].GetValue<A1>( ),
                     arguments[ 1 ].GetValue<A2>( ),
                     arguments[ 2 ].GetValue<A3>( ),
@@ -455,13 +455,13 @@ namespace ursine
                     arguments[ 6 ].GetValue<A7>( ),
                     arguments[ 7 ].GetValue<A8>( ),
                     arguments[ 8 ].GetValue<A9>( )
-                ), variant_policy::WrapObject( ) };
+                ) );
             }
 
             template<typename _, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6, typename A7, typename A8, typename A9, typename A10>
             Variant invoke(const ArgumentList &arguments) const
             {
-                return { new ClassType(
+                return ObjectVariant( new ClassType(
                     arguments[ 0 ].GetValue<A1>( ),
                     arguments[ 1 ].GetValue<A2>( ),
                     arguments[ 2 ].GetValue<A3>( ),
@@ -472,7 +472,7 @@ namespace ursine
                     arguments[ 7 ].GetValue<A8>( ),
                     arguments[ 8 ].GetValue<A9>( ),
                     arguments[ 9 ].GetValue<A10>( )
-                ), variant_policy::WrapObject( ) };
+                ) );
             }
         };
     }

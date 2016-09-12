@@ -35,9 +35,14 @@
 // Native JavaScript Bindings
 ///////////////////////////////////////////////////////////////////////////////
 
+#include "Tools/JavaScript/LauncherUtils.h"
+#include "Tools/JavaScript/ProjectUtils.h"
+#include "Tools/JavaScript/FileUtils.h"
 #include "Tools/JavaScript/EditorCommands.h"
 #include "Tools/JavaScript/DebugUtils.h"
 #include "Tools/JavaScript/SceneUtils.h"
 #include "Tools/JavaScript/EntityUtils.h"
 #include "Tools/JavaScript/ComponentUtils.h"
 #include "Tools/JavaScript/NotificationUtils.h"
+#include "Tools/JavaScript/GameContextUtils.h"
+#include "Tools/JavaScript/WaypointUtils.h"

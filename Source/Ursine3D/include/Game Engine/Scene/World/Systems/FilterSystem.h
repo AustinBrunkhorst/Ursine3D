@@ -23,6 +23,8 @@
 
 #include "EntityProcessor.h"
 
+#include <unordered_set>
+
 namespace ursine
 {
     namespace ecs
@@ -49,23 +51,25 @@ namespace ursine
 
         protected:
             const Filter m_filter;
-            std::unordered_map<EntityUniqueID, Entity*> m_active;
+            std::unordered_set<EntityHandle> m_active;
 
-            void Add(Entity *entity);
-            void Remove(Entity *entity);
+            void Add(const EntityHandle &entity);
+            void Remove(const EntityHandle &entity);
 
-            virtual void Enable(Entity *entity);
-            virtual void Disable(Entity *entity);
+            virtual void Enable(const EntityHandle &entity);
+            virtual void Disable(const EntityHandle &entity);
 
-            virtual void OnInitialize(void) override;
             virtual void Initialize(void);
-            virtual void OnRemove(void) override;
+            virtual void Remove(void);
 
             // Setting the update type must happen before OnInitialize is called
             void SetUpdateType(WorldEventType updateType);
             WorldEventType GetUpdateType(void) const;
 
         private:
+            void OnInitialize(void) override final;
+            void OnRemove(void) override final;
+
             EventHandlerPriority m_updatePriority;
             
             // The world event that this filter system subscribes to (Editor vs Playmode)

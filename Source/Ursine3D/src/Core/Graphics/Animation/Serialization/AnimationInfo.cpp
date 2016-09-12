@@ -16,97 +16,106 @@
 
 namespace ursine
 {
-	namespace graphics
-	{
-		namespace ufmt_loader
-		{
-			void AnimData::ReleaseData()
-			{
-				keyIndices.clear();
-				keyframes.clear();
-			}
+    namespace graphics
+    {
+        namespace ufmt_loader
+        {
+            AnimInfo::AnimInfo(void)
+                : name( "" )
+                , animCount( 0 )
+                , animDataArr( 0 ) { }
 
-			AnimInfo::~AnimInfo()
-			{
-				ReleaseData();
-			}
+            AnimInfo::~AnimInfo(void)
+            {
+                name = "";
+                
+                animCount = 0;
+                
+                for (auto iter : animDataArr)
+                {
+                    iter.keyIndices.clear( );
+                    iter.keyframes.clear( );
+                }
+            }
+            
+            void AnimInfo::Read(resources::ResourceReader &input)
+            {
+                input.Read( name );
+                
+                input.Read( animCount );
 
-			void AnimInfo::ReleaseData()
-			{
-				for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
-					(*iter).ReleaseData();
-			}
+                animDataArr.resize( animCount );
 
-			bool AnimInfo::SerializeIn(HANDLE hFile)
-			{
-				DWORD nByteRead;
-				unsigned int i = 0, j = 0, k = 0, l = 0;
-				char tmp_name[MAXTEXTLEN];
-				ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
-				name = tmp_name;
-				ReadFile(hFile, &animCount, sizeof(unsigned int), &nByteRead, nullptr);
-				animDataArr.resize(animCount);
-				for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
-				{
-					// serializing counts
-					ReadFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nByteRead, nullptr);
-					iter->clipname = tmp_name;
-					ReadFile(hFile, &iter->clipCount, sizeof(unsigned int), &nByteRead, nullptr);
-					ReadFile(hFile, &iter->boneCount, sizeof(unsigned int), &nByteRead, nullptr);
-					iter->keyIndices.resize(iter->clipCount);
-					iter->keyframes.resize(iter->clipCount);
-					for (j = 0; j < animDataArr[i].clipCount; ++j)
-					{
-						iter->keyIndices[j].resize(iter->boneCount);
-						iter->keyframes[j].resize(iter->boneCount);
-						for (k = 0; k < iter->boneCount; ++k)
-						{
-							ReadFile(hFile, &iter->keyIndices[j][k], sizeof(unsigned int), &nByteRead, nullptr);
-							iter->keyframes[j][k].resize(iter->keyIndices[j][k]);
-							for (l = 0; l <iter->keyIndices[j][k]; ++l)
-							{
-								ReadFile(hFile, &iter->keyframes[j][k][l], sizeof(FBX_DATA::KeyFrame), &nByteRead, nullptr);
-							}
-						}
-					}
-				}
-				return true;
-			}
+                for (auto &animation : animDataArr)
+                {
+                    input.Read( animation.clipname );
 
-			bool AnimInfo::SerializeOut(HANDLE hFile)
-			{
-				DWORD nBytesWrite;
-				unsigned int i = 0, j = 0, k = 0, l = 0;
+                    input.Read( animation.clipCount );
+                    input.Read( animation.boneCount );
 
-				if (INVALID_HANDLE_VALUE != hFile)
-				{
-					char tmp_name[MAXTEXTLEN];
-					lstrcpy(tmp_name, name.c_str());
-					WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-					WriteFile(hFile, &animCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-					for (auto iter = animDataArr.begin(); iter != animDataArr.end(); ++iter)
-					{
-						// serializing counts
-						lstrcpy(tmp_name, iter->clipname.c_str());
-						WriteFile(hFile, &tmp_name, sizeof(char) * MAXTEXTLEN, &nBytesWrite, nullptr);
-						WriteFile(hFile, &iter->clipCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-						WriteFile(hFile, &iter->boneCount, sizeof(unsigned int), &nBytesWrite, nullptr);
-						for (j = 0; j < iter->clipCount; ++j)
-						{
-							for (k = 0; k < iter->boneCount; ++k)
-							{
-								WriteFile(hFile, &iter->keyIndices[j][k], sizeof(unsigned int), &nBytesWrite, nullptr);
-								for (l = 0; l < iter->keyIndices[j][k]; ++l)
-								{
-									FBX_DATA::KeyFrame* currKF = &iter->keyframes[j][k][l];
-									WriteFile(hFile, currKF, sizeof(FBX_DATA::KeyFrame), &nBytesWrite, nullptr);
-								}
-							}
-						}
-					}
-				}
-				return true;
-			}
-		};
-	};
+                    animation.keyIndices.resize( animation.clipCount );
+                    animation.keyframes.resize( animation.clipCount );
+                    
+                    unsigned int i = 0, j = 0;
+
+                    for (i = 0; i < animation.clipCount; ++i)
+                    {
+                        animation.keyIndices[ i ].resize( animation.boneCount );
+                        animation.keyframes[ i ].resize( animation.boneCount );
+
+                        for (j = 0; j < animation.boneCount; ++j)
+                        {
+                            auto &boneIndicies = animation.keyIndices[ i ][ j ];
+
+                            input.Read( boneIndicies );
+
+                            animation.keyframes[ i ][ j ].resize( boneIndicies );
+
+                            input.ReadBytes( 
+                                &animation.keyframes[ i ][ j ][ 0 ], 
+                                sizeof( FBX_DATA::KeyFrame ) * boneIndicies 
+                            );
+                        }
+                    }
+                }
+            }
+
+            void AnimInfo::Write(resources::pipeline::ResourceWriter &output)
+            {
+                output.Write( name );
+
+                output.Write( animCount );
+
+                for (auto &animation : animDataArr)
+                {
+                    output.Write( animation.clipname );
+
+                    output.Write( animation.clipCount );
+                    output.Write( animation.boneCount );
+
+                    unsigned int i = 0, j = 0;
+
+                    for (i = 0; i < animation.clipCount; ++i)
+                    {
+                        for (j = 0; j < animation.boneCount; ++j)
+                        {
+                            auto boneIndicies = animation.keyIndices[ i ][ j ];
+
+                            output.Write( boneIndicies );
+
+                            output.WriteBytes( 
+                                &animation.keyframes[ i ][ j ][ 0 ], 
+                                sizeof( FBX_DATA::KeyFrame ) * boneIndicies 
+                            );
+                        }
+                    }
+                }
+            }
+
+            bool AnimInfo::IsValid(void) const
+            {
+                return !animDataArr.empty( );
+            }
+        };
+    };
 };

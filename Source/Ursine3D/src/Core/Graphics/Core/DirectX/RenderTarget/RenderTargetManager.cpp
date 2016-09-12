@@ -24,10 +24,11 @@ namespace ursine
     {
         namespace DXCore
         {
-            void RenderTargetManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext)
+            void RenderTargetManager::Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext, GfxInfo *gfxInfo)
             {
                 m_device = device;
                 m_deviceContext = devicecontext;
+                m_gfxInfo = gfxInfo;
 
                 m_renderTargets.resize(RENDER_TARGET_COUNT);
 
@@ -66,6 +67,7 @@ namespace ursine
                 m_deferredTextureMap = new ID3D11Texture2D*[ 3 ];
                 m_deferredRenderTargetView = new ID3D11RenderTargetView*[ 3 ];
                 m_deferredShaderMap = new ID3D11ShaderResourceView*[ 3 ];
+                m_forwardRenderTargetView = new ID3D11RenderTargetView*[ 3 ];
 
                 //deferred render targets
                 CreateRenderTarget(RENDER_TARGET_DEFERRED_COLOR, DXGI_FORMAT_R8G8B8A8_UNORM, width, height);
@@ -89,6 +91,10 @@ namespace ursine
                 m_deferredRenderTargetView[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->RenderTargetView;
                 m_deferredShaderMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->ShaderMap;
                 m_deferredTextureMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->TextureMap;
+
+                m_forwardRenderTargetView[ 0 ] = m_renderTargets[ RENDER_TARGET_SWAPCHAIN ]->RenderTargetView;
+                m_forwardRenderTargetView[ 1 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_NORMAL ]->RenderTargetView;
+                m_forwardRenderTargetView[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->RenderTargetView;
             }
 
             void RenderTargetManager::UnInitializeAllRenderTargets(void)
@@ -98,11 +104,13 @@ namespace ursine
                     m_deferredTextureMap[ x ] = nullptr;
                     m_deferredRenderTargetView[ x ] = nullptr;
                     m_deferredShaderMap[ x ] = nullptr;
+                    m_forwardRenderTargetView[ x ] = nullptr;
                 }
 
                 delete[] m_deferredTextureMap;
                 delete[] m_deferredRenderTargetView;
                 delete[] m_deferredShaderMap;
+                delete[] m_forwardRenderTargetView;
             }
 
             void RenderTargetManager::CreateTargets(void)
@@ -124,16 +132,21 @@ namespace ursine
 
             void RenderTargetManager::SetRenderTarget(const RENDER_TARGETS target, ID3D11DepthStencilView *view)
             {
-                if (m_currentTarget == target)
+                /*if (m_currentTarget == target)
                     return;
 
-                m_currentTarget = target;
+                m_currentTarget = target;*/
                 m_deviceContext->OMSetRenderTargets(1, &m_renderTargets[ target ]->RenderTargetView, view);
             }
 
             void RenderTargetManager::SetDeferredTargets(ID3D11DepthStencilView *view)
             {
                 m_deviceContext->OMSetRenderTargets(3, m_deferredRenderTargetView, view);
+            }
+
+            void RenderTargetManager::SetForwardTargets(ID3D11DepthStencilView* view)
+            {
+                m_deviceContext->OMSetRenderTargets(3, m_forwardRenderTargetView, view);
             }
 
             RENDER_TARGETS RenderTargetManager::CreateRT(const unsigned width, const unsigned height)
@@ -187,6 +200,10 @@ namespace ursine
                 m_deferredRenderTargetView[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->RenderTargetView;
                 m_deferredShaderMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->ShaderMap;
                 m_deferredTextureMap[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->TextureMap;
+
+                m_forwardRenderTargetView[ 0 ] = m_renderTargets[ RENDER_TARGET_SWAPCHAIN ]->RenderTargetView;
+                m_forwardRenderTargetView[ 1 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_NORMAL ]->RenderTargetView;
+                m_forwardRenderTargetView[ 2 ] = m_renderTargets[ RENDER_TARGET_DEFERRED_SPECPOW ]->RenderTargetView;
             }
 
             void RenderTargetManager::ResizeEngineTargets(const unsigned width, const unsigned height)
@@ -230,8 +247,8 @@ namespace ursine
                 textureDesc.MipLevels = 1;
                 textureDesc.ArraySize = 1;
                 textureDesc.Format = format;
-                textureDesc.SampleDesc.Count = 1;
-                textureDesc.SampleDesc.Quality = 0;
+                textureDesc.SampleDesc.Count = m_gfxInfo->GetSampleCount( );
+                textureDesc.SampleDesc.Quality = m_gfxInfo->GetSampleQuality( );
                 textureDesc.Usage = D3D11_USAGE_DEFAULT;
                 textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
                 textureDesc.CPUAccessFlags = 0;
@@ -242,7 +259,7 @@ namespace ursine
                 ///////////////////////////////////////////////////////////////
                 // Setup the description of the render target view.
                 renderTargetViewDesc.Format = textureDesc.Format;
-                renderTargetViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+                renderTargetViewDesc.ViewDimension = textureDesc.SampleDesc.Count > 1 ? D3D11_RTV_DIMENSION_TEXTURE2DMS : D3D11_RTV_DIMENSION_TEXTURE2D;
                 renderTargetViewDesc.Texture2D.MipSlice = 0;
 
                 result = m_device->CreateRenderTargetView(m_renderTargets[ target ]->TextureMap, &renderTargetViewDesc, &m_renderTargets[ target ]->RenderTargetView);
@@ -251,7 +268,7 @@ namespace ursine
                 ///////////////////////////////////////////////////////////////
                 // Setup the description of the shader resource view.
                 shaderResourceViewDesc.Format = textureDesc.Format;
-                shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+                shaderResourceViewDesc.ViewDimension = renderTargetViewDesc.ViewDimension == D3D11_RTV_DIMENSION_TEXTURE2D ? D3D11_SRV_DIMENSION_TEXTURE2D : D3D11_SRV_DIMENSION_TEXTURE2DMS;
                 shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
                 shaderResourceViewDesc.Texture2D.MipLevels = 1;
 

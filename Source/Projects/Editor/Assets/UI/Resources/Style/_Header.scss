@@ -26,6 +26,11 @@ body {
   $font-size: 22px;
 
   &.running {
+    #simulation-run-game {
+      opacity: 0;
+      pointer-events: none;
+    }
+
     #simulation-play {
       opacity: 0;
       pointer-events: none;
@@ -71,6 +76,12 @@ body {
 
     &.disabled {
       opacity: 0.5;
+    }
+
+    &#simulation-run-game {
+      opacity: 1;
+
+      @include icon-regular( $icon-regular-gamepad, $font-size );
     }
 
     &#simulation-play {

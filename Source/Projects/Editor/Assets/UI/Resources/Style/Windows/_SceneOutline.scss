@@ -1,0 +1,32 @@
+@import '../Config';
+@import '../Utils';
+@import '../Icons';
+
+.scene-outline-window {
+  x-tree-view.root-view {
+    min-height: 100%;
+
+    x-tree-view-item {
+      -webkit-transition: -webkit-filter $duration-transition-btn ease;
+    }
+
+    &.inactive {
+      x-tree-view-item:not(:hover):not(.selected) {
+        -webkit-filter: grayscale(100%) opacity(0.25);
+      }
+
+      x-tree-view-item.selected x-tree-view-item,
+      x-tree-view-item:hover x-tree-view-item {
+        -webkit-filter: none !important;
+      }
+    }
+
+    x-tree-view-item {
+      -webkit-filter: none;
+    }
+  }
+
+  x-tree-view-item.hidden {
+    display: none;
+  }
+}

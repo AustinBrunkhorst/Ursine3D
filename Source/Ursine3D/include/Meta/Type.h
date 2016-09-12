@@ -404,7 +404,7 @@ namespace ursine
              *         assuming it's a class type.
              *  @return Set of fields for this type.
              */
-            std::vector<Field> GetFields(void) const;
+            const std::vector<Field> &GetFields(void) const;
 
             /** @brief Gets a specific field for this type.
              *  @param name Name of the field.
@@ -429,8 +429,15 @@ namespace ursine
              */
             const Global &GetStaticField(const std::string &name) const;
 
+            template<typename ClassType>
+            static Json SerializeJson(const ClassType &instance, bool invokeHook = true);
+
             Json SerializeJson(const Variant &instance, bool invokeHook = true) const;
             Json SerializeJson(const Variant &instance, SerializationGetterOverride getterOverride, bool invokeHook = true) const;
+
+            template<typename ClassType>
+            static ClassType DeserializeJson(const Json &value);
+
             Variant DeserializeJson(const Json &value) const;
             Variant DeserializeJson(const Json &value, const Constructor &ctor) const;
             void DeserializeJson(Variant &instance, const Json &value) const;

@@ -2,12 +2,14 @@ package ursine.editor.menus;
 
 import ursine.native.Extern;
 
-@menuIndex( 3 )
+import ursine.controls.Notification;
+import ursine.editor.scene.ScenePlayState;
+
+@menuIndex( 5 )
 class DebugMenu extends MenuItemHandler {
     @mainMenuItem( "Debug/Editor UI/Reload" )
     static function doEditorReload() {
-        // TODO: fix javascript context issues after reload
-        //js.Browser.location.reload( true );
+        untyped __js__( "editor_commands_ReloadEditorUI()" );
     }
 
     @mainMenuItem( "Debug/Editor UI/Inspect" )

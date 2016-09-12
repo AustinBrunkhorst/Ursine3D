@@ -15,33 +15,46 @@
 
 #include "ListenerComponent.h"
 
+#if defined(URSINE_WITH_EDITOR)
+
+#include "Notification.h"
+
+#endif
+
+#include "SystemManager.h"
+#include "AudioSystem.h"
+
 namespace ursine
 {
-	namespace ecs
-	{
-		NATIVE_COMPONENT_DEFINITION( AudioListener );
+    namespace ecs
+    {
+        NATIVE_COMPONENT_DEFINITION( AudioListener );
 
-		AudioListener::AudioListener()
-			: BaseComponent( )
-			, m_listenerIndex( ListenerIndex::None ) { }
+        AudioListener::AudioListener(void)
+            : BaseComponent( )
+            , m_listenerIndex( ListenerIndex::NONE ) { }
 
-		void AudioListener::SetListenerIndex(ListenerIndex index)
-		{
-			m_listenerIndex = index;
-		}
+        AudioListener::~AudioListener(void)
+        {
+            AudioComponentBase::OnRemove( GetOwner( ) );
+        }
 
-		ListenerIndex AudioListener::GetListenerIndex(void)
-		{
-			return m_listenerIndex;
-		}
+        void AudioListener::OnInitialize(void)
+        {
+            AudioComponentBase::OnInitialize( GetOwner( ) );
+        }
 
-		AudioListener::~AudioListener(void)
-		{
+        ListenerIndex AudioListener::GetListenerIndex(void) const
+        {
+            return m_listenerIndex;
+        }
 
-		}
+        void AudioListener::SetListenerIndex(ListenerIndex index)
+        {
+            m_listenerIndex = index;
 
-		void AudioListener::OnInitialize(void)
-		{
-		}
-	}
+            NOTIFY_COMPONENT_CHANGED( "listener", m_listenerIndex );
+        }
+
+    }
 }

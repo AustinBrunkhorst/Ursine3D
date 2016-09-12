@@ -44,7 +44,7 @@ class LightInspector extends ComponentInspectionHandler {
         setType( typeInstance );
     }
 
-    private function setType(type : UInt) {
+    private function setType(type) {
         var database = Editor.instance.componentDatabase;
 
         var componentType = database.getComponentType( component.type );
@@ -53,7 +53,7 @@ class LightInspector extends ComponentInspectionHandler {
         while (m_typeFields.length > 0)
             m_typeFields.pop( ).remove( );
 
-        var fields = m_typeToFields[ type ];
+        var fields = m_typeToFields[ database.getEnumNumberValue( m_lightTypeEnum, type ) ];
 
         // add type fields
         for (fieldName in fields) {
@@ -83,27 +83,34 @@ class LightInspector extends ComponentInspectionHandler {
     }
 
     private function initTypeToFields() {
-        m_lightTypeEnum = Editor.instance.componentDatabase.getNativeType( m_lightTypeName ).enumValue;
+        var database = Editor.instance.componentDatabase;
+
+        m_lightTypeEnum = database.getNativeType( m_lightTypeName ).enumValue;
         m_typeToFields = new Map<UInt, Array<String>>( );
 
-        m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeDirectional ) ] = [
+        m_typeToFields[ database.getEnumValue( m_lightTypeEnum, m_lightTypeDirectional ) ] = [
+            "active",
             "color",
             "intensity",
             "renderMask"
         ];
 
-        m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypePoint ) ] = [
+        m_typeToFields[ database.getEnumValue( m_lightTypeEnum, m_lightTypePoint ) ] = [
+            "active",
             "color",
             "intensity",
             "radius",
             "renderMask"
         ];
 
-        m_typeToFields[ Reflect.field( m_lightTypeEnum, m_lightTypeSpot ) ] = [
+        m_typeToFields[ database.getEnumValue( m_lightTypeEnum, m_lightTypeSpot ) ] = [
+            "active",
             "color",
             "intensity",
             "spotlightAngles",
-            "renderMask"
+            "renderMask",
+            "shadowResolution",
+            "castShadows"
         ];
     }
 }

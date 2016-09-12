@@ -16,6 +16,7 @@
 #include "EntitySerializer.h"
 
 #include "NameManager.h"
+#include "EntityEvent.h"
 
 namespace ursine
 {
@@ -53,7 +54,7 @@ namespace ursine
             
         }
 
-        Json EntitySerializer::Serialize(Entity *entity) const
+        Json EntitySerializer::Serialize(const EntityHandle &entity) const
         {
             Json::object data;
 
@@ -64,10 +65,11 @@ namespace ursine
             return data;
         }
 
-        Json EntitySerializer::SerializeArchetype(Entity *entity) const
+        Json EntitySerializer::SerializeArchetype(const EntityHandle &entity) const
         {
             Json::object data;
 
+            data[ kKeyEntityName ] = entity->GetName( );
             data[ kKeyArchetypeVersion ] = kSerializationVersion;
             data[ kKeyEntityComponents ] = serializeComponents( entity );
             data[ kKeyEntityChildren ] = serializeChildren( entity );
@@ -75,7 +77,7 @@ namespace ursine
             return data;
         }
 
-        Entity *EntitySerializer::Deserialize(
+        EntityHandle EntitySerializer::Deserialize(
             World *world,
             const Json &data,
             const char *version
@@ -83,7 +85,7 @@ namespace ursine
         {
             auto *entityManager = world->m_entityManager;
 
-            auto *entity = entityManager->create( );
+            auto entity = entityManager->create( );
 
             deserializeInstance( entity, data, version );
 
@@ -92,7 +94,7 @@ namespace ursine
             return entity;
         }
 
-        Entity *EntitySerializer::DeserializeArchetype(World *world, const Json &data) const
+        EntityHandle EntitySerializer::DeserializeArchetype(World *world, const Json &data) const
         {
             const char *version;
 
@@ -114,7 +116,7 @@ namespace ursine
             return Deserialize( world, data, version );
         }
 
-        Json EntitySerializer::serializeComponents(const Entity *entity) const
+        Json EntitySerializer::serializeComponents(const EntityHandle &entity) const
         {
             Json::object data;
 
@@ -126,10 +128,7 @@ namespace ursine
                 if (componentType.GetMeta( ).GetProperty<DisableSerialization>( ))
                     continue;
 
-                auto instance = meta::Variant { 
-                    component, 
-                    meta::variant_policy::WrapObject( )
-                };
+                auto instance = ObjectVariant( component );
 
                 auto serialized = instance.SerializeJson( );
 
@@ -142,18 +141,18 @@ namespace ursine
             return data;
         }
 
-        Json EntitySerializer::serializeChildren(const Entity *entity) const
+        Json EntitySerializer::serializeChildren(const EntityHandle &entity) const
         {
             Json::array data;
 
             auto *entityManager = entity->m_world->m_entityManager;
 
-            auto &children = *entityManager->m_hierarchy.GetChildren( entity );
+            auto &children = *entityManager->m_hierarchy.GetChildren( entity->m_id );
 
             // serialize all children
             for (auto childID : children)
             {
-                auto *child = entityManager->GetEntity( childID );
+                auto child = entityManager->GetEntityByID( childID );
 
                 if (child->IsSerializationEnabled( ))
                     data.emplace_back( Serialize( child ) );
@@ -163,7 +162,7 @@ namespace ursine
         }
 
         void EntitySerializer::deserializeInstance(
-            Entity *entity, 
+            const EntityHandle &entity, 
             const Json &data,
             const char *version
         ) const
@@ -173,7 +172,7 @@ namespace ursine
             if (name.is_string( ))
             {
                 entity->m_world->m_nameManager
-                    ->setName( entity, name.string_value( ) );
+                    ->setName( entity->m_id, name.string_value( ) );
             }
 
             auto *entityManager = entity->m_world->m_entityManager;
@@ -190,13 +189,15 @@ namespace ursine
             {
                 for (auto &childData : childrenData.array_items( ))
                 {
-                    auto *child = entityManager->create( );
+                    auto child = entityManager->create( );
 
-					deserializeInstance( child, childData, version );
+                    deserializeInstance( child, childData, version );
 
-					entity->m_transform->AddChildAlreadyInLocal( child->m_transform );
+                    entity->m_transform->AddChildAlreadyInLocal( child->m_transform );
                 }
             }
+
+            entity->Dispatch( ENTITY_HIERARCHY_SERIALIZED, EventArgs::Empty );
         }
 
         Component *EntitySerializer::createComponent(const std::string &typeName) const
@@ -239,7 +240,7 @@ namespace ursine
             return ctor.Invoke( ).GetValue<Component*>( );
         }
 
-        void EntitySerializer::deserializeComponents(Entity *entity, const Json &data) const
+        void EntitySerializer::deserializeComponents(const EntityHandle &entity, const Json &data) const
         {
             if (!data.is_object( ))
             {
@@ -314,10 +315,7 @@ namespace ursine
 
         void EntitySerializer::deserializeComponent(Component *component, const Json &data) const
         {
-            auto instance = meta::Variant {
-                component, 
-                meta::variant_policy::WrapObject( ) 
-            };
+            auto instance = ObjectVariant( component );
 
             instance.GetType( ).DeserializeJson( instance, data );
         }

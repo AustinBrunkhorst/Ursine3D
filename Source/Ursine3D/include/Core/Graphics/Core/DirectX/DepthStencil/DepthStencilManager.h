@@ -11,27 +11,14 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      DepthStencilManager.h
-Module:         Graphics
-Purpose:        manager for handling depth states
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
 #pragma once
 
 #include "D3D11Forward.h"
 #include <vector>
 #include "DepthStencilList.h"
+#include "GfxInfo.h"
 
+enum DXGI_FORMAT;
 
 namespace ursine
 {
@@ -41,25 +28,46 @@ namespace ursine
         {
             class DepthStencilManager
             {
+                struct DepthStencil
+                {
+                    ID3D11DepthStencilView      *depthStencilView;
+                    ID3D11Texture2D             *depthStencilTex2D;
+                    ID3D11ShaderResourceView    *depthStencilSRV;
+
+                    unsigned width;
+                    unsigned height;
+                };
+
             public:
-                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext, const int width, const int height);
+                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext, const int width, const int height, GfxInfo *gfxInfo);
                 void Uninitialize(void);
 
                 ID3D11DepthStencilView *GetDepthStencilView(const DEPTH_STENCIL_LIST stencil);
                 ID3D11ShaderResourceView *GetDepthStencilSRV(const DEPTH_STENCIL_LIST stencil);
 
-                void Resize(const int width, const int height);
+                GfxHND CreateShadowmapDepthTarget(unsigned width, unsigned height);
+                void DestroyShadowmapDepthTarget(GfxHND &handle);
 
-                void Invalidate(void);
+                DepthStencil &GetShadowmapDepthStencil(GfxHND handle);
+
+                void ResizeShadowmapDepthTarget(GfxHND handle, unsigned width, unsigned height);
+
+                void ResizeMainDepthTargets(const int width, const int height);
+
             private:
-                ID3D11Device *m_device;
+                void createInternalDepthTarget(DEPTH_STENCIL_LIST target, unsigned width, unsigned height, DXGI_FORMAT depthBufferDescFormat, DXGI_FORMAT viewDescFormat, DXGI_FORMAT srvFormat);
+                void createShadowmapTarget(unsigned index, unsigned width, unsigned height, DXGI_FORMAT depthBufferDescFormat, DXGI_FORMAT viewDescFormat, DXGI_FORMAT srvFormat);
+                
+                void destroyTarget(DepthStencil &depthTarget);
+
+                ID3D11Device        *m_device;
                 ID3D11DeviceContext *m_deviceContext;
 
-                std::vector<ID3D11DepthStencilView*> m_depthStencilViewArray;
-                std::vector<ID3D11Texture2D*> m_depthStencilTextureArray;
-                std::vector<ID3D11ShaderResourceView*> m_depthStencilResourceArray;
+                GfxInfo             *m_gfxInfo;
 
-                DEPTH_STENCIL_LIST m_currentState;
+                std::vector<DepthStencil>   m_depthStencilArray;
+                std::vector<DepthStencil>   m_shadowMapArray;
+                std::stack<unsigned>        m_shadowmapFreeStack;
             };
         }
     }

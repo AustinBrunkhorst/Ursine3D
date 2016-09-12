@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.2.3)
 
 include(MetaGeneration)
 
@@ -19,6 +19,7 @@ set(URSINE_DEPENDENCIES_INCLUDE_DIRS
     ${WWise_INCLUDE_DIRS}   
     ${BulletPhysics_INCLUDE_DIRS}
     ${FBX_INCLUDE_DIRS}
+    ${FileWatcher_INCLUDE_DIRS} 
 )
 
 set(URSINE_DEPENDENCIES_INCLUDE_DIRS "${URSINE_DEPENDENCIES_INCLUDE_DIRS}" PARENT_SCOPE)
@@ -32,9 +33,10 @@ set(URSINE_STATIC_LIBS
     ${BulletPhysics_LIBS}
     ${WWise_STATIC_LIBS}
     ${FBX_STATIC_LIBS}
+    ${FileWatcher_STATIC_LIBS}
 )
 
-set(URSINE_STATIC_LIBS "${URSINE_STATIC_LIBS}" PARENT_SCOPE)
+set(URSINE_STATIC_LIBS "${URSINE_STATIC_LIBS}" PARENT_SCOPE) 
 
 # shared libraries
 set(URSINE_SHARED_LIBS
@@ -137,11 +139,17 @@ if (MSVC)
         # type of shader to compile (vs, ps, gs, etc.)
         string(TOLOWER ${shader_type} shader_type)
 
+        # skip include only from build
+        if (shader_type STREQUAL "_h")
+            list(REMOVE_ITEM URSINE_SHADER_FILES ${shader})
+
+            continue( )
+        endif( )
+
         # default to vertex shader
         set(vs_shader_type "Vertex")
 
         # map to correct Visual Studio FXCompiler shader type
-
         if (shader_type STREQUAL "ps")
             set(vs_shader_type "Pixel")
         elseif (shader_type STREQUAL "gs")
@@ -210,6 +218,7 @@ endif ()
 # Exported Properties
 # ------------------------------------------------------------------------------
 
+set(URSINE_LIST_FILE ${CMAKE_CURRENT_LIST_FILE} PARENT_SCOPE)
 set(URSINE_DIR_SOURCE "${CMAKE_CURRENT_SOURCE_DIR}/${URSINE_DIR_INCLUDE}" PARENT_SCOPE)
 set(URSINE_DIR_INCLUDE "${CMAKE_CURRENT_SOURCE_DIR}/${URSINE_DIR_SOURCE}" PARENT_SCOPE)
 set(URSINE_HEADER_FILES "${URSINE_INC}" PARENT_SCOPE)

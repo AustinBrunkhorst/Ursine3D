@@ -20,6 +20,12 @@
 #include <SDL_syswm.h>
 #include <SDL_image.h>
 
+namespace
+{
+    // DPI which represents 100% zoom
+    const auto kBaseDPIFactor = 96.0f;
+}
+
 namespace ursine
 {
      Window::Window(WindowManager *manager, InternalWindowHandle handle)
@@ -27,7 +33,9 @@ namespace ursine
         , m_isFocused( true )
         , m_isFullscreen( false )
         , m_isShown( false )
+        , m_isMaximized( false )
         , m_id( SDL_GetWindowID( handle ) )
+        , m_dpiScale( 1.0f )
         , m_manager( manager )
         , m_handle( handle )
     {
@@ -36,11 +44,59 @@ namespace ursine
         SDL_GetWindowSize( handle, &width, &height );
 
         m_size.Set( static_cast<float>( width ), static_cast<float>( height ) );
+
+#if defined(PLATFORM_WINDOWS)
+
+        auto hwnd = static_cast<HWND>( GetPlatformHandle( ) );
+
+        auto dc = GetDC( hwnd );
+
+        auto dpiX = GetDeviceCaps( dc, LOGPIXELSX );
+        auto dpiY = GetDeviceCaps( dc, LOGPIXELSY );
+
+        m_dpiScale = math::Min( dpiX, dpiY ) / kBaseDPIFactor;
+
+        ReleaseDC( hwnd, dc );
+
+#endif
     }
 
     Window::~Window(void)
     {
         SDL_DestroyWindow( m_handle );
+    }
+
+    WindowManager *Window::GetManager(void)
+    {
+        return m_manager;
+    }
+
+    void Window::SetTitle(const std::string &title)
+    {
+        SDL_SetWindowTitle( m_handle, title.c_str( ) );
+    }
+
+    void Window::SetBordered(bool bordered)
+    {
+        SDL_SetWindowBordered( m_handle, bordered ? SDL_TRUE : SDL_FALSE );
+    }
+
+    void Window::SetResizable(bool resizable)
+    {
+    #if defined(PLATFORM_WINDOWS)
+
+        auto hwnd = static_cast<HWND>( GetPlatformHandle( ) );
+
+        auto styleFlags = GetWindowLong( hwnd, GWL_STYLE );
+
+        if (resizable)
+            utils::FlagSet( styleFlags, WS_SIZEBOX );
+        else
+            utils::FlagUnset( styleFlags, WS_SIZEBOX );
+
+        SetWindowLong( hwnd, GWL_STYLE, styleFlags );
+
+    #endif
     }
 
     const Vec2 &Window::GetSize(void) const
@@ -146,6 +202,29 @@ namespace ursine
         m_isFullscreen = fullscreen;
     }
 
+    bool Window::IsMaximized(void) const
+    {
+        return m_isMaximized;
+    }
+
+    void Window::SetMaximized(bool maximized)
+    {
+        if (maximized)
+            SDL_MaximizeWindow( m_handle );
+        else
+            SDL_RestoreWindow( m_handle );
+
+        m_isMaximized = maximized;
+    }
+
+    void Window::SetMinimized(bool minimized)
+    {
+        if (minimized)
+            SDL_MinimizeWindow( m_handle );
+        else
+            SDL_RestoreWindow( m_handle );
+    }
+
     bool Window::IsShown(void) const
     {
         return m_isShown;
@@ -165,9 +244,14 @@ namespace ursine
         m_isShown = show;
     }
 
-    void Window::SetIcon(const std::string &filename)
+    float Window::GetDPIScaleFactor(void) const
     {
-        auto surface = IMG_Load( filename.c_str( ) );
+        return m_dpiScale;
+    }
+
+    void Window::SetIcon(const std::string &fileName)
+    {
+        auto surface = IMG_Load( fileName.c_str( ) );
 
         SDL_SetWindowIcon( m_handle, surface );
 

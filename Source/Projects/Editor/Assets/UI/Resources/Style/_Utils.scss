@@ -64,8 +64,8 @@
   }
 }
 
-@mixin icon-half($name, $font-size: 12px) {
-  &:before {
+@mixin icon-half($name, $font-size: 12px, $selector: 'before') {
+  &:#{$selector} {
     display: block;
     content: $name;
     font-family: 'Icons Half';
@@ -73,8 +73,8 @@
   }
 }
 
-@mixin icon-regular($name, $font-size: 24px) {
-  &:before {
+@mixin icon-regular($name, $font-size: 24px, $selector: 'before') {
+  &:#{$selector} {
     display: block;
     content: $name;
     font-family: 'Icons Regular';

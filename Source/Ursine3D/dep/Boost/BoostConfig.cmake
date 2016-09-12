@@ -12,11 +12,11 @@ set(BOOST_ALL_NO_LIB ON)
 add_definitions(-DBOOST_ALL_NO_LIB)
 
 find_package(Boost 1.59.0 REQUIRED 
-	COMPONENTS 
-	system
-	filesystem
-	program_options
-	regex
+    COMPONENTS 
+    system
+    filesystem
+    program_options
+    regex
 )
 
 # use the variable format for ursine_project( ) dependency info

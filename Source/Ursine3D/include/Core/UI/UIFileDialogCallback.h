@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -20,7 +20,7 @@ namespace ursine
     class UIFileDialogCallback : public CefRunFileDialogCallback
     {
     public:
-        typedef std::function<void(int, fs::FileList)> Callback;
+        typedef std::function<void(int, const fs::PathList&)> Callback;
 
         UIFileDialogCallback(Callback callback);
 

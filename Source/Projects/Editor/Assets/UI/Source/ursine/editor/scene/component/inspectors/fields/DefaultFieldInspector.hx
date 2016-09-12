@@ -32,7 +32,10 @@ class DefaultFieldInspector extends FieldInspectionHandler implements IFieldInsp
             if (m_isBitMaskEditor) {
                 loadEnumBitMaskValue( value );
             } else {
-                m_comboInput.value = value;
+                m_comboInput.value = Editor.instance.componentDatabase.getEnumNumberValue(
+                    m_type.enumValue,
+                    value
+                );
             }
         } else if (m_arrayInspector != null) {
             m_arrayInspector.updateValue( value );
@@ -93,24 +96,22 @@ class DefaultFieldInspector extends FieldInspectionHandler implements IFieldInsp
         m_comboInput = new ComboInput( );
         m_enumValueOptions = new Map<String, js.html.OptionElement>( );
 
-        var values = Reflect.fields( m_type.enumValue );
-
-        for (key in values) {
+        for (entry in m_type.enumValue) {
             var option = js.Browser.document.createOptionElement( );
 
-            option.text = key;
-            option.value = Reflect.field( m_type.enumValue, key );
+            option.text = entry.key;
+            option.value = entry.value;
 
             m_comboInput.appendChild( option );
 
-            m_enumValueOptions[ key ] = option;
+            m_enumValueOptions[ entry.key ] = option;
         }
 
         m_isBitMaskEditor = Reflect.field( m_field.meta, 'BitMaskEditor' ) != null;
 
         if (m_isBitMaskEditor) {
             m_comboInput.multiple = true;
-            m_comboInput.size = Std.int( Math.min( 10, values.length ) );
+            m_comboInput.size = Std.int( Math.min( 10, m_type.enumValue.length ) );
         }
 
         m_comboInput.addEventListener( 'change', function(e) {
@@ -149,14 +150,10 @@ class DefaultFieldInspector extends FieldInspectionHandler implements IFieldInsp
     }
 
     private function loadEnumBitMaskValue(value : Dynamic) : Void {
-        var values = Reflect.fields( m_type.enumValue );
+        for (entry in m_type.enumValue) {
+            var option = m_enumValueOptions[ entry.key ];
 
-        for (key in values) {
-            var option = m_enumValueOptions[ key ];
-
-            var keyValue : Int = Reflect.field( m_type.enumValue, key );
-
-            option.selected = (value & keyValue) == keyValue;
+            option.selected = (value & entry.value) == entry.value;
         }
     }
 

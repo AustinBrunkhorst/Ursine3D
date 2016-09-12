@@ -149,6 +149,42 @@ x-main-menu, x-context-menu {
       &.file-save {
         @include icon-half( $icon-half-floppy-save, $context-menu-icon-size );
       }
+
+      &.open-file {
+        @include icon-half( $icon-half-open-file, $context-menu-icon-size );
+      }
+
+      &.folder-closed {
+        @include icon-half( $icon-half-folder-close, $context-menu-icon-size );
+      }
+      
+      &.arrow-up {
+        @include icon-half( $icon-half-arrow-up, $context-menu-icon-size );
+      }
+
+      &.arrow-down {
+        @include icon-half( $icon-half-arrow-down, $context-menu-icon-size );
+      }
+
+      &.checkmark {
+        @include icon-half( $icon-half-ok, $context-menu-icon-size );
+      }
+
+      &.settings {
+        @include icon-half( $icon-half-cog, $context-menu-icon-size );
+      }
+
+      &.export {
+        @include icon-half( $icon-half-export, $context-menu-icon-size );
+      }
+
+      &.installer {
+        @include icon-half( $icon-half-compressed, $context-menu-icon-size );
+      }
+
+      &.invalid {
+        @include icon-half( $icon-half-ban-circle, $context-menu-icon-size );
+      }
     }
   }
 }

@@ -44,13 +44,19 @@ namespace ursine
 {
     JSConstructor(JSGamepadManager)
         : m_manager( GetCoreSystem( GamepadManager ) )
-        , m_browser( CefV8Context::GetEnteredContext( )->GetBrowser( ) )
     {
         m_manager->Listener( this )
             .On( GP_BUTTON_DOWN, &JSGamepadManager::onGamepadButtonDown )
             .On( GP_BUTTON_UP, &JSGamepadManager::onGamepadButtonUp )
             .On( GP_CONNECTED, &JSGamepadManager::onGamepadConnected )
             .On( GP_DISCONNECTED, &JSGamepadManager::onGamepadDisconnected );
+
+        static const auto thisType = decltypeof( *this );
+
+        auto value = context->GetValue( thisType.GetName( ) );
+
+        // create static instance value
+        value->SetValue( "instance", thisContext, V8_PROPERTY_ATTRIBUTE_DONTDELETE );
     }
 
     JSGamepadManager::~JSGamepadManager(void)

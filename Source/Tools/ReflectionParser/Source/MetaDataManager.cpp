@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -126,8 +126,8 @@ void MetaDataManager::CompileTemplateData(
         native_property::WhiteListMethods,
         native_property::DisableNonDynamicCtor,
         native_property::DynamicCtorWrap,
-        native_property::DisablePtrType,
-        native_property::DisableConstPtrType,
+        native_property::EnablePtrType,
+        native_property::EnableConstPtrType,
         native_property::EnableArrayType,
         native_property::DisplayName,
         native_property::ExplicitGetter,
@@ -186,7 +186,7 @@ std::vector<MetaDataManager::Property> MetaDataManager::extractProperties(
     result.RemoveAll( ConstructorTokenType::Whitespace );
 
     auto &tokens = result.GetTokens( );
-    auto tokenCount = tokens.size( );
+    int tokenCount = static_cast<int>( tokens.size( ) );
 
     // case where there is only one identifier, which means there's one property
     // with a default constructor

@@ -21,7 +21,12 @@
 #include "Rigidbody.h"
 #include "RigidbodyComponent.h"
 
+#include "Ghost.h"
+#include "GhostComponent.h"
+
 #include "EntityEvent.h"
+
+#include "World.h"
 
 namespace ursine
 {
@@ -40,9 +45,15 @@ namespace ursine
                 &m_collisionConfig
             );
 
-            m_dynamicsWorld->setGravity({ 
-                gravity.X( ), gravity.Y( ), gravity.Z( ) 
-            });
+            m_dynamicsWorld->setGravity( {
+                gravity.X( ), 
+                gravity.Y( ), 
+                gravity.Z( )
+            } );
+
+            // Needed to enable the use of ghost objects
+            m_dynamicsWorld->getBroadphase( )->getOverlappingPairCache( )
+                ->setInternalGhostPairCallback( &m_ghostCallback );
 
         #endif
         }
@@ -106,7 +117,7 @@ namespace ursine
         #endif
         }
 
-        void Simulation::RemoveBody(Body* body)
+        void Simulation::RemoveBody(Body *body)
         {
         #ifdef BULLET_PHYSICS
 
@@ -115,7 +126,29 @@ namespace ursine
         #endif
         }
 
-        void Simulation::SetGravity(const SVec3& gravity)
+        void Simulation::AddGhost(Ghost* ghost)
+        {
+        #ifdef BULLET_PHYSICS
+
+            m_dynamicsWorld->addCollisionObject( 
+                ghost, 
+                btBroadphaseProxy::SensorTrigger,
+                btBroadphaseProxy::AllFilter & ~btBroadphaseProxy::SensorTrigger
+            );
+
+        #endif
+        }
+
+        void Simulation::RemoveGhost(Ghost* ghost)
+        {
+        #ifdef BULLET_PHYSICS
+
+            m_dynamicsWorld->removeCollisionObject( ghost );
+
+        #endif
+        }
+
+        void Simulation::SetGravity(const SVec3 &gravity)
         {
         #ifdef BULLET_PHYSICS
 
@@ -137,7 +170,7 @@ namespace ursine
         #endif
         }
 
-        bool Simulation::Raycast(const RaycastInput& input, RaycastOutput& output, RaycastType type)
+        bool Simulation::Raycast(const RaycastInput &input, RaycastOutput &output, RaycastType type, ursine::ecs::World* world)
         {
             output.entity.clear( );
             output.hit.clear( );
@@ -183,6 +216,38 @@ namespace ursine
                 else
                     return false;
             }
+            else if ( type == RAYCAST_CLOSEST_NON_GHOST )
+            {
+                ClosestNonGhostRayResultCallback closestHit(start, end, world);
+
+                m_dynamicsWorld->rayTest(start, end, closestHit);
+
+                if ( closestHit.hasHit( ) )
+                {
+                    auto &hitP = closestHit.m_hitPointWorld;
+                    auto &normP = closestHit.m_hitNormalWorld;
+
+                    output.hit.emplace_back(
+                        hitP.getX( ),
+                        hitP.getY( ),
+                        hitP.getZ( )
+                        );
+
+                    output.normal.emplace_back(
+                        normP.getX( ),
+                        normP.getY( ),
+                        normP.getZ( )
+                        );
+
+                    output.entity.push_back(
+                        closestHit.m_collisionObject->getUserIndex( )
+                        );
+
+                    return true;
+                }
+                else
+                    return false;
+            }
             else // RAYCAST_ALL_HITS
             {
                 btDynamicsWorld::AllHitsRayResultCallback allHit( start, end );
@@ -222,103 +287,103 @@ namespace ursine
         #endif
         }
 
-	    bool Simulation::Sweep(ColliderBase* collider, BodyBase *body, const SVec3& velocity, 
-							   float dt, SweepOutput& output, SweepType type, bool sorted)
-	    {
-			// clear output
-			output.entity.clear( );
-			output.time.clear( );
-			output.hit.clear( );
-			output.normal.clear( );
+        bool Simulation::Sweep(ColliderBase *collider, BodyBase *body, const SVec3 &velocity,
+            float dt, SweepOutput &output, SweepType type, bool sorted)
+        {
+            // clear output
+            output.entity.clear( );
+            output.time.clear( );
+            output.hit.clear( );
+            output.normal.clear( );
 
-		#ifdef BULLET_PHYSICS
+        #ifdef BULLET_PHYSICS
 
-			if (!collider->isConvex( ))
-				return false;
+            if (!collider->isConvex( ))
+                return false;
 
-			auto convexCollider = reinterpret_cast<btConvexShape*>( collider );
+            auto convexCollider = reinterpret_cast<btConvexShape*>( collider );
 
-			// form the start and end transforms
-			btVector3 posChange = (velocity * dt).ToBullet( );
-			auto start = body->getWorldTransform( );
-			auto end = btTransform( start.getRotation( ), start.getOrigin( ) + posChange );
+            // form the start and end transforms
+            btVector3 posChange = (velocity * dt).ToBullet( );
+            auto start = body->getWorldTransform( );
+            auto end = btTransform( start.getRotation( ), start.getOrigin( ) + posChange );
 
-			if (type == SWEEP_CLOSEST_HIT)
-			{
-				SweepClosestHitNotMeCallback callback( 
-					body, start.getOrigin( ), end.getOrigin( ), 
-					m_overlappingPairCache.getOverlappingPairCache( ), m_dispatcher 
-				);
+            if (type == SWEEP_CLOSEST_HIT)
+            {
+                SweepClosestHitNotMeCallback callback( 
+                    body, start.getOrigin( ), end.getOrigin( ), 
+                    m_overlappingPairCache.getOverlappingPairCache( ), m_dispatcher 
+                );
 
-				m_dynamicsWorld->convexSweepTest( convexCollider, start, end, callback );
+                m_dynamicsWorld->convexSweepTest( convexCollider, start, end, callback );
 
-				if (callback.hasHit( ))
-				{
-					output.entity.push_back( callback.m_hitCollisionObject->getUserIndex( ) );
-					output.hit.push_back(SVec3( callback.m_hitPointWorld ));
-					output.normal.push_back(SVec3( callback.m_hitNormalWorld ));
-					output.time.push_back( callback.m_closestHitFraction * dt );
+                if (callback.hasHit( ))
+                {
+                    output.entity.push_back( callback.m_hitCollisionObject->getUserIndex( ) );
+                    output.hit.push_back( SVec3( callback.m_hitPointWorld ) );
+                    output.normal.push_back( SVec3( callback.m_hitNormalWorld ) );
+                    output.time.push_back( callback.m_closestHitFraction * dt );
 
-					return true;
-				}
-			}
-			else // Sweep test hit all
-			{
-				SweepAllHitNotMeCallback callback( 
-					body, start.getOrigin( ), end.getOrigin( ), 
-					m_overlappingPairCache.getOverlappingPairCache( ), m_dispatcher 
-				);
+                    return true;
+                }
+            }
+            else // Sweep test hit all
+            {
+                SweepAllHitNotMeCallback callback( 
+                    body, start.getOrigin( ), end.getOrigin( ), 
+                    m_overlappingPairCache.getOverlappingPairCache( ), m_dispatcher 
+                );
 
-				m_dynamicsWorld->convexSweepTest( convexCollider, start, end, callback );
+                m_dynamicsWorld->convexSweepTest( convexCollider, start, end, callback );
 
-				if (callback.hasHit( ))
-				{
-					size_t size = callback.m_hitCollisionObject.size( );
+                if (callback.hasHit( ))
+                {
+                    size_t size = callback.m_hitCollisionObject.size( );
 
-					// Sort the results based on time
-					if (sorted)
-					{
-						for (size_t i = 0; i < size; ++i)
-						{
-							auto newtime = callback.m_hitFraction[ i ] * dt;
-							auto insert = 0;
+                    // Sort the results based on time
+                    if (sorted)
+                    {
+                        for (size_t i = 0; i < size; ++i)
+                        {
+                            auto newtime = callback.m_hitFraction[ i ] * dt;
+                            auto insert = 0;
 
-							// Walk the array of times to find the index that is greater than the new time
-							for (auto &t : output.time)
-							{
-								if (t >= newtime)
-									break;
-								else
-									++insert;
-							}
+                            // Walk the array of times to find the index that is greater than the new time
+                            for (auto &t : output.time)
+                            {
+                                if (t >= newtime)
+                                    break;
+                                else
+                                    ++insert;
+                            }
 
-							output.time.insert( output.time.begin( ) + insert,  newtime );
-							output.entity.insert( output.entity.begin( ) + insert, callback.m_hitCollisionObject[ i ]->getUserIndex( ) );
-							output.hit.insert(output.hit.begin( ) + insert, SVec3( callback.m_hitPointWorld[ i ] ));
-							output.normal.insert(output.normal.begin( ) + insert, SVec3( callback.m_hitNormalWorld[ i ] ));
-						}
-					}
-					else
-					{
-						for (size_t i = 0; i < size; ++i)
-						{
-							output.entity.push_back( callback.m_hitCollisionObject[ i ]->getUserIndex( ) );
-							output.hit.push_back(SVec3( callback.m_hitPointWorld[ i ] ));
-							output.normal.push_back(SVec3( callback.m_hitNormalWorld[ i ] ));
-							output.time.push_back( callback.m_hitFraction[ i ] * dt );
-						}
-					}
+                            output.time.insert( output.time.begin( ) + insert, newtime );
+                            output.entity.insert( output.entity.begin( ) + insert, callback.m_hitCollisionObject[ i ]->getUserIndex( ) );
+                            output.hit.insert( output.hit.begin( ) + insert, SVec3( callback.m_hitPointWorld[ i ] ) );
+                            output.normal.insert( output.normal.begin( ) + insert, SVec3( callback.m_hitNormalWorld[ i ] ) );
+                        }
+                    }
+                    else
+                    {
+                        for (size_t i = 0; i < size; ++i)
+                        {
+                            output.entity.push_back( callback.m_hitCollisionObject[ i ]->getUserIndex( ) );
+                            output.hit.push_back( SVec3( callback.m_hitPointWorld[ i ] ) );
+                            output.normal.push_back( SVec3( callback.m_hitNormalWorld[ i ] ) );
+                            output.time.push_back( callback.m_hitFraction[ i ] * dt );
+                        }
+                    }
 
-					return true;
-				}
-			}
+                    return true;
+                }
+            }
 
-			return false;
+            return false;
 
-		#endif
-	    }
+        #endif
+        }
 
-	    void Simulation::ClearContacts(Rigidbody& rigidbody)
+        void Simulation::ClearContacts(Rigidbody &rigidbody)
         {
         #ifdef BULLET_PHYSICS
 
@@ -330,46 +395,44 @@ namespace ursine
         #endif
         }
 
-	    void Simulation::DispatchCollisionEvents(void)
-	    {
-			CollisionEventArgs args;
+        void Simulation::DispatchCollisionEvents(void)
+        {
+        #ifdef BULLET_PHYSICS
 
-		#ifdef BULLET_PHYSICS
+            auto *dispatcher = m_dynamicsWorld->getDispatcher( );
+            int numManifolds = dispatcher->getNumManifolds( );
 
-			auto *dispatcher = m_dynamicsWorld->getDispatcher( );
-			int numManifolds = dispatcher->getNumManifolds( );
+            for (int i = 0; i < numManifolds; ++i)
+            {
+                auto *manifold = dispatcher->getManifoldByIndexInternal( i );
 
-			for (int i = 0; i < numManifolds; ++i)
-			{
-				auto *manifold = dispatcher->getManifoldByIndexInternal( i );
+                auto *objA = static_cast<const BodyBase*>( manifold->getBody0( ) );
+                auto *objB = static_cast<const BodyBase*>( manifold->getBody1( ) );
 
-				auto *objA = static_cast<const BodyBase*>( manifold->getBody0( ) );
-				auto *objB = static_cast<const BodyBase*>( manifold->getBody1( ) );
+                // Get each body's entity pointer
+                auto &entityA = getEntityHandle( objA ),
+                     &entityB = getEntityHandle( objB );
+                
+                bool sendA = contactCallbackEnabled( objA ), 
+                     sendB = contactCallbackEnabled( objB );
 
-				// Get each body's entity pointer
-				ecs::Entity *entityA = getEntityPointer( objA ), 
-					        *entityB = getEntityPointer( objB );
-				
-				bool sendA = contactCallbackEnabled( objA ), 
-					 sendB = contactCallbackEnabled( objB );
+                // Process the event for Entity A
+                if (sendA)
+                {
+                    dispatchContactEvent( objA, objB, entityA, entityB, manifold );
+                }
 
-				// Process the event for Entity A
-				if (sendA)
-				{
-					dispatchContactEvent( objA, objB, entityA, entityB, manifold );
-				}
+                // Process the event for Entity B
+                if (sendB)
+                {
+                    dispatchContactEvent( objB, objA, entityB, entityA, manifold );
+                }
+            }
 
-				// Process the event for Entity B
-				if (sendB)
-				{
-					dispatchContactEvent( objB, objA, entityB, entityA, manifold );
-				}
-			}
+        #endif
+        }
 
-		#endif
-	    }
-
-	    void Simulation::destroySimulation(void)
+        void Simulation::destroySimulation(void)
         {
         #ifdef BULLET_PHYSICS
 
@@ -382,81 +445,95 @@ namespace ursine
         #endif
         }
 
-		bool Simulation::contactCallbackEnabled(const BodyBase *body)
+        bool Simulation::contactCallbackEnabled(const BodyBase *body)
         {
-	        // Determine whether the entities have contact callbacks enabled
-			if (body->getInternalType( ) == BT_BODY)
-				return static_cast<ecs::Body*>( body->getUserPointer( ) )->GetEnableContactCallback( );
-			
-			if (body->getInternalType( ) == BT_RIGID_BODY)
-				return static_cast<ecs::Rigidbody*>( body->getUserPointer( ) )->GetEnableContactCallback( );
-			
-			return false;
+            // Determine whether the entities have contact callbacks enabled
+            if (body->getInternalType( ) == BT_BODY)
+                return static_cast<ecs::Body*>( body->getUserPointer( ) )->GetEnableContactCallback( );
+            
+            if (body->getInternalType( ) == BT_RIGID_BODY)
+                return static_cast<ecs::Rigidbody*>( body->getUserPointer( ) )->GetEnableContactCallback( );
+            
+            if (body->getInternalType( ) == BT_GHOST)
+                return static_cast<ecs::Ghost*>( body->getUserPointer( ) )->GetEnableContactCallback( );
+            
+            return false;
         }
 
-	    void Simulation::dispatchContactEvent(const BodyBase* thisBody, const BodyBase* otherBody, 
-											  ecs::Entity* thisEntity, ecs::Entity* otherEntity, PersistentManifold *manifold)
-	    {
-			CollisionEventArgs args;
-
-			args.thisEntity = thisEntity;
-			args.otherEntity = otherEntity;
-
-		#ifdef BULLET_PHYSICS
-
-			auto numContacts = manifold->getNumContacts( );
-			
-			// To determine if a manifold bullet has is just starting,
-			// or persisting, we look at the lifetime (frames) of each contact
-			int greatestLifetime = 0;
-
-			for (int i = 0; i < numContacts; ++i)
-			{
-				args.contacts.emplace_back( );
-				auto &contact = args.contacts.back( );
-
-				btManifoldPoint &pt = manifold->getContactPoint( i );
-
-				contact.normal = SVec3( pt.m_normalWorldOnB );
-				contact.point = SVec3( pt.getPositionWorldOnB( ) );
-				contact.appliedImpulse = pt.getAppliedImpulse( );
-				contact.penDistance = pt.getDistance( );
-				calculateContactRelativeVelocity( thisBody, otherBody, &contact );
-
-				greatestLifetime = math::Max( greatestLifetime, pt.getLifeTime( ) );
-			}
-
-			thisEntity->Dispatch( ecs::ENTITY_COLLISION_PERSISTED, &args );
-
-		#endif
-	    }
-
-	    ecs::Entity *Simulation::getEntityPointer(const BodyBase *body)
+        void Simulation::dispatchContactEvent(
+            const BodyBase *thisBody,
+            const BodyBase *otherBody,
+            const ecs::EntityHandle &thisEntity,
+            const ecs::EntityHandle &otherEntity,
+            PersistentManifold *manifold
+        )
         {
-	        return static_cast<ecs::Component*>( body->getUserPointer( ) )->GetOwner( );
+            CollisionEventArgs args;
+
+            args.thisEntity = thisEntity;
+            args.otherEntity = otherEntity;
+
+        #ifdef BULLET_PHYSICS
+
+            auto numContacts = manifold->getNumContacts( );
+            
+            // To determine if a manifold bullet has is just starting,
+            // or persisting, we look at the lifetime (frames) of each contact
+            int greatestLifetime = 0;
+
+            for (int i = 0; i < numContacts; ++i)
+            {
+                args.contacts.emplace_back( );
+                auto &contact = args.contacts.back( );
+
+                btManifoldPoint &pt = manifold->getContactPoint( i );
+
+                contact.normal = SVec3( pt.m_normalWorldOnB );
+                contact.point = SVec3( pt.getPositionWorldOnB( ) );
+                contact.appliedImpulse = pt.getAppliedImpulse( );
+                contact.penDistance = pt.getDistance( );
+                calculateContactRelativeVelocity( thisBody, otherBody, &contact );
+
+                greatestLifetime = math::Max( greatestLifetime, pt.getLifeTime( ) );
+            }
+
+            // This is an edge case
+            if (args.contacts.size( ) == 0)
+                return;
+
+            thisEntity->Dispatch( ecs::ENTITY_COLLISION_PERSISTED, &args );
+
+        #endif
         }
 
-		 void Simulation::calculateContactRelativeVelocity(const BodyBase *thisBody, 
-														  const BodyBase *otherBody, 
-														  Contact *contact)
-	    {
-		#ifdef BULLET_PHYSICS
+        const ecs::EntityHandle &Simulation::getEntityHandle(const BodyBase *body)
+        {
+            return static_cast<ecs::Component*>( body->getUserPointer( ) )->GetOwner( );
+        }
 
-			// Calculate the relative velocity
-			contact->relativeVelocity = SVec3( thisBody->getInterpolationLinearVelocity( ) );
+        void Simulation::calculateContactRelativeVelocity(
+            const BodyBase *thisBody,
+                                                          const BodyBase *otherBody, 
+            Contact *contact
+        )
+        {
+        #ifdef BULLET_PHYSICS
 
-			SVec3 otherVelocity;
+            // Calculate the relative velocity
+            contact->relativeVelocity = SVec3( thisBody->getInterpolationLinearVelocity( ) );
 
-			auto linVel = otherBody->getInterpolationLinearVelocity( );
-			auto angVel = otherBody->getInterpolationAngularVelocity( );
-			auto center = otherBody->getWorldTransform( ).getOrigin( );
-			auto point = contact->point.ToBullet( );
+            SVec3 otherVelocity;
 
-			otherVelocity = SVec3( angVel.cross( point - center ) + linVel );
+            auto linVel = otherBody->getInterpolationLinearVelocity( );
+            auto angVel = otherBody->getInterpolationAngularVelocity( );
+            auto center = otherBody->getWorldTransform( ).getOrigin( );
+            auto point = contact->point.ToBullet( );
 
-			contact->relativeVelocity = contact->relativeVelocity - otherVelocity;
+            otherVelocity = SVec3( angVel.cross( point - center ) + linVel );
 
-		#endif
-	    }
+            contact->relativeVelocity = contact->relativeVelocity - otherVelocity;
+
+        #endif
+        }
     }
 }

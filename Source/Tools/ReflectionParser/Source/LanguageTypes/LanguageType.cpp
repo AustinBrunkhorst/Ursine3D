@@ -16,13 +16,13 @@
 #include "LanguageType.h"
 
 LanguageType::LanguageType(
-	const Cursor &cursor, 
+    const Cursor &cursor, 
     const Namespace &currentNamespace
 )
     : m_metaData( cursor )
     , m_enabled( m_metaData.GetFlag( native_property::Enable ) )
-    , m_ptrTypeEnabled( !m_metaData.GetFlag( native_property::DisablePtrType ) )
-    , m_constPtrTypeEnabled( !m_metaData.GetFlag( native_property::DisableConstPtrType ) )
+    , m_ptrTypeEnabled( m_metaData.GetFlag( native_property::EnablePtrType ) )
+    , m_constPtrTypeEnabled( m_metaData.GetFlag( native_property::EnableConstPtrType ) )
     , m_arrayTypeEnabled( m_metaData.GetFlag( native_property::EnableArrayType ) )
     , m_accessModifier( cursor.GetAccessModifier( ) )
     , m_rootCursor( cursor )

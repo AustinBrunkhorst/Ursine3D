@@ -15,6 +15,8 @@
 
 #include "NativeJSClassHandler.h"
 
+#include "NativeJSClass.h"
+
 namespace ursine
 {
     NativeJSClassHandler::NativeJSClassHandler(meta::Type classType)
@@ -22,7 +24,8 @@ namespace ursine
         , m_constructor( classType.GetDynamicConstructor( { 
             typeof( CefRefPtr<CefV8Value> ), 
             typeof( const CefV8ValueList& ),
-            typeof( CefString& )
+            typeof( CefString& ),
+            typeof( CefRefPtr<CefV8Value> )
         } ) )
         , m_prototypeHandler( new PrototypeHandler( ) )
     {
@@ -34,7 +37,7 @@ namespace ursine
 
     void NativeJSClassHandler::Bind(CefRefPtr<CefV8Value> object)
     {
-        auto &className = m_classType.GetName( );
+        auto className = m_classType.GetName( );
 
         object->SetValue(
             className, 
@@ -48,23 +51,27 @@ namespace ursine
         {
             auto &methodName = method.GetName( );
 
-            m_prototypeHandler->methods.emplace(
-                std::make_pair(
-                    methodName,
-                    std::make_pair(
-                        object->CreateFunction( methodName, m_prototypeHandler ),
-                        method
-                    )
-                )
+            auto handler = object->CreateFunction( methodName, m_prototypeHandler );
+
+            auto result = m_prototypeHandler->methods.emplace(
+                make_pair( methodName, std::make_pair( handler, method ) )
             );
+
+            // if it already exists, update the handler
+            if (!result.second)
+                result.first->second.first = handler;
         }
     }
 
     void NativeJSClassHandler::UnBind(CefRefPtr<CefV8Value> object)
     {
+        m_instances.clear( );
+
         // release function handler instances
         for (auto &method : m_prototypeHandler->methods)
             method.second.first = nullptr;
+
+        object->DeleteValue( m_classType.GetName( ) );
     }
 
     bool NativeJSClassHandler::Execute(
@@ -77,9 +84,17 @@ namespace ursine
     {
         auto object = context->CreateObject( nullptr );
 
-        object->SetUserData( 
-            new InstanceWrapper( m_constructor, context, arguments, exception )
+        auto wrapper = new InstanceWrapper( 
+            m_constructor, 
+            context, 
+            arguments, 
+            exception, 
+            object 
         );
+
+        m_instances.push_back( wrapper );
+
+        object->SetUserData( wrapper );
 
         for (auto &method : m_prototypeHandler->methods)
         {
@@ -99,16 +114,18 @@ namespace ursine
         const CefString &name, 
         CefRefPtr<CefV8Value> context, 
         const CefV8ValueList &arguments, 
-        CefRefPtr<CefV8Value> &retval, CefString &exception)
+        CefRefPtr<CefV8Value> &retval, 
+        CefString &exception
+    )
     {
-        auto data = context->GetUserData( );
-
-        auto *wrapper = static_cast<InstanceWrapper *>( data.get( ) );
-
         auto search = methods.find( name );
 
         if (search == methods.end( ))
             return false;
+
+        auto data = context->GetUserData( );
+
+        auto *wrapper = static_cast<InstanceWrapper*>( data.get( ) );
 
         auto result = search->second.second.Invoke(
             wrapper->instance,
@@ -128,12 +145,18 @@ namespace ursine
         const meta::Constructor &constructor, 
         CefRefPtr<CefV8Value> context,
         const CefV8ValueList &arguments,
-        CefString &exception
+        CefString &exception,
+        CefRefPtr<CefV8Value> thisContext
     )
         : instance( 
-            constructor.Invoke( context, std::move( arguments ), std::move( exception ) )
+            constructor.Invoke( context, std::move( arguments ), std::move( exception ), thisContext )
         )
     {
         
+    }
+
+    NativeJSClassHandler::InstanceWrapper::~InstanceWrapper(void)
+    {
+        delete &instance.GetValue<NativeJSClass>( );
     }
 }

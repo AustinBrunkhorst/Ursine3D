@@ -14,6 +14,7 @@
 #pragma once
 
 #include "UIConfig.h"
+#include "UIViewEvent.h"
 
 #include "Window.h"
 
@@ -33,9 +34,9 @@
 
 #include "MouseButton.h"
 
-#include <include/cef_client.h>
-#include <include/cef_v8.h>
-#include <include/cef_display_handler.h>
+#include <cef_client.h>
+#include <cef_v8.h>
+#include <cef_display_handler.h>
 
 namespace ursine
 {
@@ -43,8 +44,11 @@ namespace ursine
     class MouseManager;
 
     class UIView 
-        : public CefClient
+        : public EventDispatcher<UIViewEventType>
+        , public CefClient
+        , public CefLifeSpanHandler
         , public CefDisplayHandler
+        , public CefLoadHandler
         , public UIRendererType
     {
     public:
@@ -61,10 +65,28 @@ namespace ursine
 
         bool IsValid(void) const;
 
-        void Message(UIMessageCommand command, const std::string &target, const std::string &message, const Json &data);
+        void Message(
+            UIMessageCommand command, 
+            const std::string &target, 
+            const std::string &message, 
+            const Json &data
+        );
 
     private:
         friend class UIManager;
+
+        struct QueuedMessage
+        {
+            UIMessageCommand command;
+            std::string target;
+            std::string message;
+            Json data;
+        };
+
+        std::vector<QueuedMessage> m_preLoadQueue;
+        Json::array m_messageQueue;
+
+        std::mutex m_messageMutex;
 
         CefRect m_viewport;
         Window::Handle m_window;
@@ -74,14 +96,38 @@ namespace ursine
         KeyboardManager *m_keyboardManager;
         MouseManager *m_mouseManager;
 
-        UIView(Window::Handle window, const CefBrowserSettings &settings, const std::string &url);
+        UIView(
+            Window::Handle window, 
+            const CefBrowserSettings &settings, 
+            const std::string &url
+        );
 
         ////////////////////////////////////////////////////////////////////
         // Handler Getters
         ////////////////////////////////////////////////////////////////////
 
         CefRefPtr<CefRenderHandler> GetRenderHandler(void) override;
+        CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler(void) override;
         CefRefPtr<CefDisplayHandler> GetDisplayHandler(void) override;
+        CefRefPtr<CefLoadHandler> GetLoadHandler(void) override;
+
+        ////////////////////////////////////////////////////////////////////
+        // LifeSpanHandler Methods
+        ////////////////////////////////////////////////////////////////////
+
+        bool OnBeforePopup(
+            CefRefPtr<CefBrowser> browser,
+            CefRefPtr<CefFrame> frame,
+            const CefString &targetURL,
+            const CefString &targetFrameName,
+            WindowOpenDisposition targetDisposition,
+            bool userGesture,
+            const CefPopupFeatures &popupFeatures,
+            CefWindowInfo &windowInfo,
+            CefRefPtr<CefClient> &client,
+            CefBrowserSettings &settings,
+            bool *noJavaScriptAccess
+        ) override;
 
         ////////////////////////////////////////////////////////////////////
         // DisplayHandler Methods
@@ -90,17 +136,32 @@ namespace ursine
         bool OnConsoleMessage(CefRefPtr<CefBrowser> browser,
             const CefString &message,
             const CefString &source,
-            int line) override;
+            int line
+        ) override;
 
         void OnCursorChange(CefRefPtr<CefBrowser> browser,
             CefCursorHandle cursor,
             CursorType type,
-            const CefCursorInfo &customCursorInfo) override;
+            const CefCursorInfo &customCursorInfo
+        ) override;
+
+
+        ////////////////////////////////////////////////////////////////////
+        // LoadHandler Methods
+        ////////////////////////////////////////////////////////////////////
+
+        void OnLoadEnd(
+            CefRefPtr<CefBrowser> browser,
+            CefRefPtr<CefFrame> frame,
+            int httpStatusCode
+        );
 
         ////////////////////////////////////////////////////////////////////
         // Event Handlers
         ////////////////////////////////////////////////////////////////////
         
+        void onUpdate(EVENT_HANDLER(Application));
+
         void onKeyboard(EVENT_HANDLER(MouseManager));
         void onText(EVENT_HANDLER(MouseManager));
         void onMouseMove(EVENT_HANDLER(MouseManager));

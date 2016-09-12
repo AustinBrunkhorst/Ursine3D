@@ -1,3 +1,16 @@
+/* ----------------------------------------------------------------------------
+** Team Bear King
+** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+**
+** RenderMask.h
+**
+** Author:
+** - Austin Brunkhorst - a.brunkhorst@digipen.edu
+**
+** Contributors:
+** - <list in same format as author if applicable>
+** --------------------------------------------------------------------------*/
+
 #pragma once
 
 namespace ursine
@@ -19,6 +32,6 @@ namespace ursine
             M9 = 1 << 9,
             Meta(Disable)
             MEditorTool = 1 << 10
-        } Meta(Enable);
+        } Meta(Enable, BitMaskEditor);
     }
 }

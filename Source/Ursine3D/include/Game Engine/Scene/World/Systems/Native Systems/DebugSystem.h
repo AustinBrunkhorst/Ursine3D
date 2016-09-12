@@ -35,14 +35,33 @@ namespace ursine
             DebugSystem(World *world);
 
             void DrawLine(const SVec3 &start, const SVec3 &end, 
-                          const Color &color, float duration);
-
-            void DrawLine(const SVec3 &start, const SVec3 &end,
-                          const Color &colorBegin, const Color &colorEnd,
-                          float duration );
+                          const Color &color, float duration, bool overdraw = false);
 
             void DrawPoint(const SVec3 &point, float size, 
-                           const Color &color, float duration);
+                           const Color &color, float duration, bool overdraw = false);
+
+            void DrawSphere(const SVec3 &center, float radius,
+                            const Color &color, float duration, bool overdraw = false);
+
+            void DrawSphereFaded(const SVec3 &center, float radius, const SVec3 &cameraLook,
+                                 const SVec3 &cameraPos, const Color &color, float duration, 
+                                 bool overdraw = false);
+
+            void DrawCircle(const SVec3 &center, const SVec3 &normal, float radius,
+                            const Color &color, float duration, bool overdraw = false);
+
+            void DrawCircleFaded(const SVec3 &center, const SVec3 &normal, float radius,
+                                 const SVec3 &cameraLook, const SVec3 &cameraPos, const Color &color, 
+                                 float duration, bool overdraw = false);
+
+            void DrawRay(const SVec3 &start, const SVec3 &direction, float length, 
+                         const Color &color,float duration, bool overdraw = false);
+
+            void DrawCube(const SVec3 &center, float size,
+                          const Color &color, float duration, bool overdraw = false);
+
+            void DrawCone(const SVec3 &tipPosition, SVec3 focusPosition,
+                          float focalLength, float focalAngleDegrees);
 
         private:
 
@@ -52,6 +71,7 @@ namespace ursine
             void OnRemove(void) override;
 
             void onUpdate(EVENT_HANDLER(World));
+            void onWorldUpdate(EVENT_HANDLER(World));
 
             // We keep track of draw requests so that we can
             // persist them for a period of time
@@ -59,34 +79,28 @@ namespace ursine
             {
                 float duration;
                 float timer;
+                bool overdraw;
 
                 virtual void Draw(graphics::DrawingAPI &drawer) = 0;
 
-                Request(float duration)
+                Request(float duration, bool overdraw)
                     : duration( duration )
-                    , timer( 0.0f ) { }
+                    , timer( 0.0f ) 
+                    , overdraw(overdraw) { }
             };
 
             struct LineRequest : Request
             {
                 SVec3 start, end;
-                Color colorStart, colorEnd;
+                Color color;
 
                 LineRequest(const SVec3 &start, const SVec3 &end,
-                            const Color &color, float duration)
-                    : Request( duration )
+                            const Color &color, float duration, 
+                            bool useOverdraw)
+                    : Request( duration, useOverdraw)
                     , start( start )
                     , end( end )
-                    , colorStart( color ) 
-                    , colorEnd( color ) { }
-
-                LineRequest(const SVec3 &start, const SVec3 &end,
-                            const Color &colorStart, const Color &colorEnd, float duration )
-                    : Request( duration )
-                    , start( start )
-                    , end( end )
-                    , colorStart( colorStart )
-                    , colorEnd( colorEnd ) { }
+                    , color( color ) { }
 
                 void Draw(graphics::DrawingAPI &draw) override;
             };
@@ -98,8 +112,9 @@ namespace ursine
                 Color color;
 
                 PointRequest(const SVec3 point, float size,
-                             const Color &color, float duration)
-                    : Request( duration )
+                             const Color &color, float duration, 
+                             bool useOverdraw)
+                    : Request( duration, useOverdraw)
                     , point( point )
                     , size( size )
                     , color( color ) { }

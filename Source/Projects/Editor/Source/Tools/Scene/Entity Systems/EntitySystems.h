@@ -17,4 +17,6 @@
 #include "GridRenderer.h"
 #include "EditorToolSystem.h"
 #include "EditorIconSystem.h"
+#include "EditorDebugDrawSystems.h"
+#include "WaypointConnectorSystem.h"
 #include <SharedSystems.h>

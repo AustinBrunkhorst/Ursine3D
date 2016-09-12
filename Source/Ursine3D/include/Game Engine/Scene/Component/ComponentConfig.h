@@ -56,15 +56,17 @@
 
 #if defined(URSINE_WITH_EDITOR)
 
-#define NOTIFY_COMPONENT_CHANGED(displayName, value)                                                \
-    auto *__owner = GetOwner( );                                                                    \
-    if (__owner)                                                                                    \
-    {                                                                                               \
-        ursine::ecs::EditorComponentChangedArgs __e {                                               \
-            ursine::ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, __owner, this, displayName, value   \
-        };                                                                                          \
-        __owner->GetWorld( )->Dispatch( ursine::ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, &__e ); \
-    }                                                                                               \
+#define NOTIFY_COMPONENT_CHANGED(displayName, value)                                                    \
+    {                                                                                                   \
+        auto &__owner = GetOwner( );                                                                    \
+        if (__owner)                                                                                    \
+        {                                                                                               \
+            ursine::ecs::EditorComponentChangedArgs __e {                                               \
+                ursine::ecs::WORLD_EDITOR_ENTITY_COMPONENT_CHANGED, __owner, this, displayName, value   \
+            };                                                                                          \
+            __owner->GetWorld( )->Dispatch( __e.type, &__e );                                           \
+        }                                                                                               \
+    }                                                                                                   
 
 #else
 
@@ -80,10 +82,10 @@ namespace ursine
 
         // Maximum number of components able to be stored (number of bits able
         // to be stored in ComponentTypeMask).
-        const uint8 kMaxComponentCount = 128;
+        const uint32 kMaxComponentCount = 256;
 
         // Type for unique ids mapped to component types
-        typedef uint8 ComponentTypeID;
+        typedef uint32 ComponentTypeID;
 
         // Type for IDs representing unique instances of components
         typedef uint32 ComponentUniqueID;

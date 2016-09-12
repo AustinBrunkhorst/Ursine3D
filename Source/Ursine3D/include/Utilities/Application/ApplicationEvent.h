@@ -19,6 +19,7 @@ namespace ursine
 {
     enum ApplicationEventType
     {
-        APP_UPDATE
+        APP_UPDATE,
+        APP_INACTIVE_UPDATE
     };
 }

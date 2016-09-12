@@ -56,35 +56,49 @@ namespace ProjectGenerator.Forms
                 Directory.CreateDirectory( m_binaryDir );
 
             var cmakeArgs = string.Format(
-                "-DCMAKE_MODULE_PATH=\"{0}\" -G \"{1}\" \"{2}\"",
+                "-D CMAKE_MODULE_PATH:PATH=\"{0}\" -G \"{1}\" \"{2}\"",
                 CMakeProject.ModuleDirectory.Replace( '\\', '/' ),
                 generator.Name.Replace( '\\', '/' ),
                 m_sourceDir
             );
 
-            m_cmakeProcess = new Process
+            try
             {
-                StartInfo =
+                m_cmakeProcess = new Process
                 {
-                    CreateNoWindow = true,
-                    RedirectStandardError = true,
-                    RedirectStandardOutput = true,
-                    FileName = CMakeGenerator.ExecutableName,
-                    Arguments = cmakeArgs,
-                    UseShellExecute = false,
-                    WorkingDirectory = m_binaryDir
-                },
-                EnableRaisingEvents = true
-            };
+                    StartInfo =
+                    {
+                        CreateNoWindow = true,
+                        RedirectStandardError = true,
+                        RedirectStandardOutput = true,
+                        FileName = CMakeGenerator.ExecutableName,
+                        Arguments = cmakeArgs,
+                        UseShellExecute = false,
+                        WorkingDirectory = m_binaryDir
+                    },
+                    EnableRaisingEvents = true
+                };
 
 
-            m_cmakeProcess.OutputDataReceived += cmakeOnData;
-            m_cmakeProcess.ErrorDataReceived += cmakeOnError;
-            m_cmakeProcess.Exited += cmakeOnExit;
+                m_cmakeProcess.OutputDataReceived += cmakeOnData;
+                m_cmakeProcess.ErrorDataReceived += cmakeOnError;
+                m_cmakeProcess.Exited += cmakeOnExit;
 
-            m_cmakeProcess.Start( );
-            m_cmakeProcess.BeginOutputReadLine( );
-            m_cmakeProcess.BeginErrorReadLine( );
+                m_cmakeProcess.Start( );
+                m_cmakeProcess.BeginOutputReadLine( );
+                m_cmakeProcess.BeginErrorReadLine( );
+            }
+            catch
+            {
+                MessageBox.Show( 
+                    string.Format( "Unable to execute \"{0}\".\n\nMake sure your path is correct.", CMakeGenerator.ExecutableName ),
+                    "Error",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Error 
+                );
+
+                Close( );
+            }
         }
 
         private void cmakeOnData(object sender, DataReceivedEventArgs e)
@@ -162,9 +176,9 @@ namespace ProjectGenerator.Forms
 
         private void openCMakeGUIToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var guiArgs = string.Format( 
+            var guiArgs = string.Format(
                 "\"{0}\"",
-                m_sourceDir
+                m_binaryDir
             );
 
             Process.Start( new ProcessStartInfo( )

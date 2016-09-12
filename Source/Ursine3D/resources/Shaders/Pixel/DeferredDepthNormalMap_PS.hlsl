@@ -1,42 +1,50 @@
-//texture
-Texture2D shaderTexture : register(t0);
+#include "../Headers/GeometryCommon_H.hlsl"
 
-Texture2D normalMap : register(t1);
+// texture
+Texture2D gShaderTexture    : register(t0);
+Texture2D gNormalMap        : register(t1);
 
-//sample type
-SamplerState SampleType : register(s0);
+// sample type
+SamplerState SampleType     : register(s0);
 
-struct PixelInputType
+cbuffer MaterialBuffer      : register(b10)
 {
-  float4 position : SV_POSITION;
-  float4 normal : NORMAL;
-  float2 uv : UV;
-  float4 depth : DEPTH;
+    float emissive;
+    float specularPower;
+    float specularIntensity;
+    int objID;
 };
 
-//this is where we output to each render target
-struct PixelOutputType
+cbuffer PrimColorBuffer : register(b5)
 {
-  float4 depth  : SV_Target0;
-  float4 normal : SV_Target1;
-  float4 color  : SV_Target2;
+    float4 color;
+}
+
+struct PS_INPUT
+{
+    float4 Pos          : SV_POSITION;
+    float4 normal       : NORMAL;
+    float4 tangent      : TANGENT;
+    float4 bitangent    : BITANGENT;
+    float2 uv           : UV;
+    float2 emisiveTex          : EM_UV;
 };
 
-PixelOutputType main( PixelInputType input )
+PS_GBUFFER_OUT main(PS_INPUT input)
 {
-  //these need to be stored
-  float specularPower = 1;
-float specularIntensity = 1;
+    float4 baseColor = float4(gShaderTexture.Sample(SampleType, input.uv).xyz * color.xyz, color.a);
+    float3 normal = input.normal.xyz;
 
-PixelOutputType output;
+    // sample
+    float3 normalValue = (gNormalMap.Sample(SampleType, input.emisiveTex).xyz);
 
-// Sample the color from the texture and store it for output to the render target.
-output.color = float4(shaderTexture.Sample( SampleType, input.uv ).xyz, specularPower);
+    float3x3 texSpace = float3x3(input.tangent.xyz, input.bitangent.xyz, input.normal.xyz);
 
-// Store the normal for output to the render target.
-output.normal = float4(normalize( input.normal ).xyz, specularPower);
+    // calculate final normal based upon bitan tan and normal
+    float3 finalNormal = normalize( mul(normalValue, texSpace) );
 
-output.depth = float4(input.depth.xyz, specularIntensity);
+    PS_GBUFFER_OUT buff = PackGBuffer(baseColor, normal, specularIntensity, specularPower, emissive * normalValue.x, objID);
 
-return output;
+
+    return buff;
 }

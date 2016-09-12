@@ -60,8 +60,6 @@ namespace ursine
             CefProcessId sourceProcess,
             CefRefPtr<CefProcessMessage> message) override;
 
-        bool initNativeBroadcaster(CefRefPtr<CefV8Value> global);
-
-        void broadcast(CefRefPtr<CefBrowser> browser, const std::string &target, CefRefPtr<CefListValue> args);
+        void broadcast(CefRefPtr<CefBrowser> browser, CefRefPtr<CefListValue> args);
     };
 }

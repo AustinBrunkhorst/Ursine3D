@@ -15,6 +15,7 @@
 
 #include "BoxColliderComponent.h"
 #include "RigidbodyComponent.h"
+#include "GhostComponent.h"
 #include "EntityEvent.h"
 #include "PhysicsSystem.h"
 #include "CollisionEventArgs.h"
@@ -80,7 +81,7 @@ namespace ursine
 
             if (rigidbody)
             {
-                GetOwner( )->GetWorld( )->GetEntitySystem( PhysicsSystem )
+                GetOwner( )->GetWorld( )->GetEntitySystem<PhysicsSystem>( )
                     ->ClearContacts( rigidbody );
 
                 rigidbody->SetAwake( );

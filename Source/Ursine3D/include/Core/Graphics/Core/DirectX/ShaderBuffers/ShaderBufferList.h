@@ -20,7 +20,7 @@ namespace ursine
 {
     namespace graphics
     {
-        enum COMPUTE_BUFFER_LIST
+        enum COMPUTE_BUFFER_LIST : unsigned
         {
             COMPUTE_BUFFER_ID = 0,
             COMPUTE_BUFFER_ID_CPU,
@@ -28,7 +28,7 @@ namespace ursine
             COMPUTE_BUFFER_COUNT
         };
 
-        enum BUFFER_LIST
+        enum BUFFER_LIST : unsigned
         {
             BUFFER_CAMERA = 0,
             BUFFER_TRANSFORM,
@@ -45,6 +45,17 @@ namespace ursine
             BUFFER_MATRIX_PAL,
             BUFFER_MOUSEPOS,
             BUFFER_PARTICLEDATA,
+            BUFFER_SHADOWMAP,
+            BUFFER_TEX_OFFSET,
+            BUFFER_LIGHT_FALLOFF,
+
+            BUFFER_FRAG_VS,
+            BUFFER_FRAG_GS,
+            BUFFER_FRAG_PS,
+
+            // non-default
+            BUFFER_GLYPHDATA,   // 6
+            BUFFER_TEXTDATA,    // 7
 
             BUFFER_COUNT,
 
@@ -70,9 +81,9 @@ namespace ursine
             DirectX::XMFLOAT4 lightPosition;
         };
 
-        struct InvProjBuffer
+        struct invViewBuffer
         {
-            DirectX::XMMATRIX invProj;
+            DirectX::XMMATRIX invView;
             float nearPlane;
             float farPlane;
         };
@@ -125,6 +136,8 @@ namespace ursine
             float innerAngle;
             DirectX::XMFLOAT3 diffuseColor;
             float outerAngle;
+            DirectX::XMFLOAT3 falloffValues;
+            float lightSize;
         };
 
         struct MatrixPalette
@@ -135,6 +148,7 @@ namespace ursine
         struct MatrixPalBuffer
         {
             MatrixPalette matPal;
+            //MatrixPalette matPalIT;
         };
 
         struct MouseBuffer
@@ -153,6 +167,112 @@ namespace ursine
         struct ParticleBuffer
         {
             Particle_GPU data[ 1024 ];
+        };
+
+        struct Glyph
+        {
+            DirectX::XMFLOAT2 screenPosition;
+            DirectX::XMFLOAT2 glyphPosition;
+            DirectX::XMFLOAT2 glyphSize;
+            DirectX::XMFLOAT2 buffer;
+        };
+
+        struct GlyphBuffer
+        {
+            Glyph glyphData[ 1024 ];
+        };
+
+        struct SpriteTextBuffer
+        {
+            DirectX::XMFLOAT3 worldPosition;
+            float offset;
+
+            DirectX::XMFLOAT2 sizeScalar;
+            DirectX::XMFLOAT2 textureDimensions;
+        };
+
+        struct ShadowProjectionBuffer
+        {
+            DirectX::XMMATRIX invCam;
+            DirectX::XMMATRIX lightView;
+            DirectX::XMMATRIX lightProj;
+        };
+
+        struct TextureUVOffset
+        {
+            DirectX::XMFLOAT2 diffuseUV;
+            DirectX::XMFLOAT2 diffuseScalar;
+
+            DirectX::XMFLOAT2 emissiveUV;
+            DirectX::XMFLOAT2 emissiveScalar;
+        };
+
+        struct FalloffBuffer
+        {
+            float lightSteps;
+            float borderCutoff;
+            float farDistance;
+            float buffer;
+        };
+
+        struct FragmentationVSBuffer
+        {
+            // normal offset scalar
+            float normalOffset;
+            DirectX::XMFLOAT3 buffer;
+        };
+
+        struct FragmentationGSBuffer
+        {
+            // vertical force value
+            float verticalForce;
+
+            // horizontal force value
+            float horizontalForce;
+
+            // outward force value
+            float outwardForce;
+
+            // gravity force value
+            float gravityForce;
+
+            // time
+            float time;
+
+            float randomForce;
+
+            float spinScalar;
+
+            float seed;
+
+            float globalTime;
+
+            DirectX::XMFLOAT3 buffer;
+        };
+
+        struct FragmentationPSBuffer
+        {
+            // pulse rate
+            float pulseSpeed;
+
+            // fade
+            float fadeAmount;
+
+            // time
+            float time;
+
+            // start/end time
+            float startTime;
+            float endTime;
+
+            // normal transparency
+            float transparencyThreshold;
+
+            float globalTime;
+
+            float buffer;
+
+            DirectX::XMFLOAT4 color;
         };
     }
 }

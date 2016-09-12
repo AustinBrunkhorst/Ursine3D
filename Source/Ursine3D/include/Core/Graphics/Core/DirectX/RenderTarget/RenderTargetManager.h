@@ -34,6 +34,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 #include "RenderTargetList.h"
 #include "D3D11Forward.h"
 #include <dxgiformat.h>
+#include "GfxInfo.h"
 
 namespace ursine
 {
@@ -53,7 +54,7 @@ namespace ursine
             class RenderTargetManager
             {
             public:
-                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext);
+                void Initialize(ID3D11Device *device, ID3D11DeviceContext *devicecontext, GfxInfo *gfxInfo);
                 void Uninitialize(void);
                 void InitializeAllRenderTargets(const unsigned width, const unsigned height);
                 void UnInitializeAllRenderTargets(void);
@@ -63,6 +64,7 @@ namespace ursine
                 void SetRenderTarget(const RENDER_TARGETS target, ID3D11DepthStencilView *view);
 
                 void SetDeferredTargets(ID3D11DepthStencilView *view);
+                void SetForwardTargets(ID3D11DepthStencilView *view);
 
                 RENDER_TARGETS CreateRT(const unsigned width, const unsigned height);
                 void DestroyRT(RENDER_TARGETS rt);
@@ -78,6 +80,8 @@ namespace ursine
                 ID3D11Device *m_device;
                 ID3D11DeviceContext *m_deviceContext;
 
+                GfxInfo *m_gfxInfo;
+
                 //the targets
                 std::vector<RenderTarget*> m_renderTargets;
                 std::list<RENDER_TARGETS> m_availableTargets;
@@ -86,6 +90,9 @@ namespace ursine
                 ID3D11RenderTargetView **m_deferredRenderTargetView;
                 ID3D11ShaderResourceView **m_deferredShaderMap;
                 ID3D11Texture2D **m_deferredTextureMap;
+
+                // forward rendering
+                ID3D11RenderTargetView **m_forwardRenderTargetView;
 
                 //what target am I on?
                 RENDER_TARGETS m_currentTarget;

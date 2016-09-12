@@ -13,32 +13,87 @@
 
 #pragma once
 
-#include <Scene.h>
-#include <UIView.h>
+#include "ProjectConfig.h"
+#include "ProjectGameBuilder.h"
+#include "ProjectGameInstaller.h"
 
-class EditorEntityManager;
+#include "ProjectPreferenceStore.h"
+
+#include "EditorGameContext.h"
+
+#include "EditorScene.h"
+
+#include "EditorSceneManager.h"
+#include "EditorEntityManager.h"
+
+#include "EditorResourcePipelineManager.h"
+
+#include <ResourcePipelineManager.h>
 
 class Project
 {
 public:
-    typedef std::shared_ptr<Project> Handle;
-
-    Project(ursine::UIView::Handle ui);
+    Project(void);
     ~Project(void);
 
-    ursine::Scene::Handle GetScene(void);
-    ursine::UIView::Handle GetUI(void);
+    ProjectConfig &GetConfig(void);
+    void WriteConfig(void);
 
-    ursine::ScenePlayState GetPlayState(void) const;
-    void SetPlayState(ursine::ScenePlayState state);
+    ProjectPreferenceStore &GetPreferenceStore(void);
 
-    void SetWorld(ursine::ecs::World *world);
+    ProjectGameBuilder &GetGameBuilder(void);
+    ProjectGameInstaller &GetGameInstaller(void);
+
+    ursine::rp::ResourcePipelineManager &GetResourcePipeline(void);
+    ursine::resources::ResourceManager &GetBuiltInResourceManager(void);
+
+    EditorScene &GetScene(void);
+
+    void SetEmptyScene(void);
+
+    const ursine::GUID &GetLastOpenedWorld(void);
+
+    bool CreateEditorResource(const ursine::GUID &resourceGUID) const;
+
+    void StartGame(void);
+    void StartPlaying(void);
+
 private:
+    friend class Editor;
+
+    Project(const Project &rhs) = delete;
+    Project &operator=(const Project &rhs) = delete;
+
+    void initialize(const ProjectConfig &config);
+
+    void initializeScene(const ursine::resources::ResourceReference &startingWorld);
+
+    bool inGameRunMode(void) const;
+
+    void onSceneWorldChanged(EVENT_HANDLER(ursine::Scene));
+    void onScenePlayStateChanged(EVENT_HANDLER(ursine::Scene));
+
+    void onResourceModified(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+
+
+    ProjectConfig m_config;
+
+    ProjectPreferenceStore m_preferences;
+
+    ursine::rp::ResourcePipelineManager m_resourcePipeline;
+    ursine::resources::ResourceManager m_builtInResourceManager;
+
+    ProjectGameBuilder m_gameBuilder;
+    ProjectGameInstaller m_gameInstaller;
+
+    EditorScene m_scene;
     ursine::Json m_worldCache;
+    ursine::resources::ResourceReference m_playedWorld;
 
-    ursine::UIView::Handle m_ui;
+    EditorGameContext *m_gameContext;
+    EditorSceneManager *m_sceneManager;
+    EditorEntityManager *m_entityManager;
+    EditorResourcePipelineManager *m_pipelineManager;
 
-    ursine::Scene::Handle m_scene;
-
-    EditorEntityManager m_entityManager;
+    ursine::GUID m_lastOpenedWorld;
 };

@@ -1,0 +1,43 @@
+<link rel="import" href="../LIB/Polymer/polymer.html">
+
+<dom-module id="x-progress-bar">
+    <link rel="import" type="css" href="../Style/Controls/ProgressBar.css">
+    <template>
+        <div id="progress"></div>
+        <div id="display-text">{{displayText}}</div>
+    </template>
+    <script>
+        var ProgressBarControl = Polymer({
+            properties: {
+                displayText: {
+                    type: String,
+                    value: ''
+                },
+                min: {
+                    type: Number,
+                    value: 0,
+                    observer: '_invalidateProgress'
+                },
+                max: {
+                    type: Number,
+                    value: 100,
+                    observer: '_invalidateProgress'
+                },
+                value: {
+                    type: Number,
+                    value: 0,
+                    observer: '_invalidateProgress'
+                }
+            },
+
+            _invalidateProgress: function() {
+                var range = this.max - this.min;
+                var value = Math.min( Math.max( this.value, this.min ), this.max );
+
+                var percent = (value - this.min) / range;
+
+                this.$.progress.style.width = (percent * 100) +'%';
+            }
+        });
+    </script>
+</dom-module>

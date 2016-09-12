@@ -51,7 +51,7 @@ namespace ursine
             static_cast<int>( location.Y( ) ), 
             static_cast<int>( size.X( ) ), 
             static_cast<int>( size.Y( ) ),
-            SDL_WINDOW_HIDDEN | flags
+            SDL_WINDOW_HIDDEN | SDL_WINDOW_ALLOW_HIGHDPI | flags
         );
 
         auto window = Window::Handle( new Window( this, handle ) );
@@ -61,6 +61,21 @@ namespace ursine
 
         if (utils::IsFlagSet( flags, SDL_WINDOW_FULLSCREEN_DESKTOP ))
             window->m_isFullscreen = true;
+
+        m_created[ window->m_id ] = window;
+
+        return window;
+    }
+
+    Window::Handle WindowManager::CreateFrom(const void *data)
+    {
+        auto *handle = SDL_CreateWindowFrom( data );
+
+        // failed to create handle
+        if (!handle)
+            return nullptr;
+
+        auto window = Window::Handle( new Window( this, handle ) );
 
         m_created[ window->m_id ] = window;
 

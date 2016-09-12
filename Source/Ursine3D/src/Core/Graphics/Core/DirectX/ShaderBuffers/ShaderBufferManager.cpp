@@ -41,7 +41,7 @@ namespace ursine
                 MakeBuffer<TransformBuffer>(BUFFER_TRANSFORM);
                 MakeBuffer<DirectionalLightBuffer>(BUFFER_DIRECTIONAL_LIGHT);
                 MakeBuffer<PointLightBuffer>(BUFFER_POINT_LIGHT);
-                MakeBuffer<InvProjBuffer>(BUFFER_INV_PROJ);
+                MakeBuffer<invViewBuffer>(BUFFER_INV_PROJ);
                 MakeBuffer<PrimitiveColorBuffer>(BUFFER_PRIM_COLOR);
                 MakeBuffer<PointGeometryBuffer>(BUFFER_POINT_GEOM);
                 MakeBuffer<BillboardSpriteBuffer>(BUFFER_BILLBOARDSPRITE);
@@ -52,23 +52,32 @@ namespace ursine
 				MakeBuffer<MatrixPalBuffer>(BUFFER_MATRIX_PAL);
                 MakeBuffer<MouseBuffer>(BUFFER_MOUSEPOS);
                 MakeBuffer<ParticleBuffer>(BUFFER_PARTICLEDATA);
+                MakeBuffer<GlyphBuffer>(BUFFER_GLYPHDATA);
+                MakeBuffer<SpriteTextBuffer>(BUFFER_TEXTDATA);
+                MakeBuffer<ShadowProjectionBuffer>(BUFFER_SHADOWMAP);
+                MakeBuffer<TextureUVOffset>(BUFFER_TEX_OFFSET);
+                MakeBuffer<FalloffBuffer>(BUFFER_LIGHT_FALLOFF);
+
+                MakeBuffer<FragmentationVSBuffer>( BUFFER_FRAG_VS );
+                MakeBuffer<FragmentationGSBuffer>( BUFFER_FRAG_GS );
+                MakeBuffer<FragmentationPSBuffer>( BUFFER_FRAG_PS );
 
                 // COMPUTE SHADERS //////////////////////////////////
                 //GPU-readonly buffer that can only be written to by the CPU 
-                MakeComputeBuffer<MouseBuffer>(1, COMPUTE_BUFFER_MOUSEPOS, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE);
+                MakeStructuredBuffer<MouseBuffer>(1, COMPUTE_BUFFER_MOUSEPOS, D3D11_USAGE_DYNAMIC, D3D11_BIND_SHADER_RESOURCE, D3D11_CPU_ACCESS_WRITE);
                 //requires SRV to set 
-                MakeComputeSRV(1, COMPUTE_BUFFER_MOUSEPOS);
+                MakeStructuredSRV(1, COMPUTE_BUFFER_MOUSEPOS);
 
                 //this is output from compute shader, GPU write only. CPU can't read
                 //                   type     1 element  buffer enum           usage                  binding         cpu access
-                MakeComputeBuffer<ComputeIDOutput>(1, COMPUTE_BUFFER_ID, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 0);
+                MakeStructuredBuffer<ComputeIDOutput>(1, COMPUTE_BUFFER_ID, D3D11_USAGE_DEFAULT, D3D11_BIND_UNORDERED_ACCESS, 0);
 
                 //requires UAV to write as compute output
-                MakeComputeUAV(1, COMPUTE_BUFFER_ID);
+                MakeStructuredUAV(1, COMPUTE_BUFFER_ID);
 
                 //create a buffer for copying data from the gpu onto the cpu
                 //                   type     1 element  buffer enum           usage           binding     cpu access
-                MakeComputeBuffer<ComputeIDOutput>(1, COMPUTE_BUFFER_ID_CPU, D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ, false);
+                MakeStructuredBuffer<ComputeIDOutput>(1, COMPUTE_BUFFER_ID_CPU, D3D11_USAGE_STAGING, 0, D3D11_CPU_ACCESS_READ, false);
             }
 
             void ShaderBufferManager::Uninitialize(void)
@@ -203,7 +212,7 @@ namespace ursine
             }
 
             template<typename T>
-            void ShaderBufferManager::MakeComputeBuffer(const int count, const COMPUTE_BUFFER_LIST type, unsigned usageFlag, unsigned bindFlags, unsigned cpuAccess, bool bufferStruct2D)
+            void ShaderBufferManager::MakeStructuredBuffer(const int count, const COMPUTE_BUFFER_LIST type, unsigned usageFlag, unsigned bindFlags, unsigned cpuAccess, bool bufferStruct2D)
             {
                 HRESULT result;
                 D3D11_BUFFER_DESC inputDesc;
@@ -219,7 +228,7 @@ namespace ursine
                 UAssert(result == S_OK, "Failed to make compute buffer! (type: %i)  (Error '%s')", type, GetDXErrorMessage(result));
             }
 
-            void ShaderBufferManager::MakeComputeSRV(const int count, const COMPUTE_BUFFER_LIST type)
+            void ShaderBufferManager::MakeStructuredSRV(const int count, const COMPUTE_BUFFER_LIST type)
             {
                 HRESULT result;
 
@@ -234,7 +243,7 @@ namespace ursine
                 UAssert(result == S_OK, "Failed to make compute buffer srv! (type: %i)  (Error '%s')", type, GetDXErrorMessage(result));
             }
 
-            void ShaderBufferManager::MakeComputeUAV(const int count, const COMPUTE_BUFFER_LIST type)
+            void ShaderBufferManager::MakeStructuredUAV(const int count, const COMPUTE_BUFFER_LIST type)
             {
                 //since this will be output, we need to define a UAV
                 HRESULT result;

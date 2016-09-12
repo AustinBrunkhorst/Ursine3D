@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -16,69 +16,82 @@
 #include "Component.h"
 #include "AudioComponentBase.h"
 #include "ListenerMasks.h"
+#include "AudioEventInfo.h"
+
+#include <AudioItemEventData.h>
+
 #include <queue>
 
 namespace ursine
 {
-	namespace ecs
-	{
-		class AudioEmitter 
+    namespace ecs
+    {
+        class AudioEmitter 
             : public Component
             , public AudioComponentBase
-		{
-			NATIVE_COMPONENT;
+        {
+            NATIVE_COMPONENT;
 
-		public:
-            Meta(InputRange( 0.0f, 100.0f, 1, "{{value}}%" ))
-			EditorField(
-				float Volume,
-				GetVolume,
-				SetVolume
-			);
-
-			EditorField(
-				bool Loop,
-				GetLoop,
-				SetLoop
-			);
-
-			EditorField(
-				bool Mute,
-				GetMute,
-				SetMute
-			);
+        public:
+            EditorMeta(BitMaskEditor)
+            EditorField(
+                ListenerMask listenerMask,
+                GetListenerMask,
+                SetListenerMask
+            );
 
             Meta(Enable)
-			AudioEmitter(void);
-			~AudioEmitter(void);
+            AudioEmitter(void);
+            ~AudioEmitter(void);
 
-			float GetVolume(void) const;
-			void SetVolume(float volume);
+            EditorResourceField(
+                ursine::resources::AudioItemEventData,
+                TestEvent,
+                GetTestEvent,
+                SetTestEvent
+            );
 
-			bool GetLoop(void) const;
-			void SetLoop(bool loop);
+            EditorButton(
+                PushTestSound,
+                "Play Sound"
+            );
 
-			bool GetMute(void) const;
-			void SetMute(bool mute);
+            EditorField(
+                float attenuationScalingFactor,
+                GetAttenuationScalingFactor,
+                SetAttenuationScalingFactor
+            );
 
-			std::string GetFrontSound(void);
-			void PopFrontSound(void);
-			bool SoundsEmpty(void);
-			void AddSoundToPlayQueue(std::string sound);
+            ListenerMask GetListenerMask(void) const;
+            void SetListenerMask(ListenerMask mask);
 
-			ListenerIndex GetListeners(void);
+            const ursine::resources::ResourceReference &GetTestEvent(void) const;
+            void SetTestEvent(const ursine::resources::ResourceReference &audioEvent);
 
-			void OnInitialize(void) override;
+            float GetAttenuationScalingFactor(void) const;
+            void SetAttenuationScalingFactor(float scalar);
 
-		private:
-			bool m_loop;
-			bool m_mute;
-			ListenerIndex m_listeners;
-			float m_volume;
-			
-			// fire and forget
-			std::queue<std::string> m_soundsFAF;
+            void PushEvent(const AudioEvent::Handle event);
+            void PushEvent(const resources::ResourceReference &eventResource);
 
-		} Meta(Enable, WhiteListMethods, DisplayName( "Audio Emitter" ));
-	}
+            AudioEvent::Handle GetEvent(void);
+            void PopEvent(void);
+            bool EmptyEvent(void);
+
+            bool& checkStopFlag(void);
+
+            void StopAllCurrentSounds(void);
+
+        private:
+            ListenerMask m_listenerMask;
+            std::queue<AudioEvent::Handle> m_events;
+            ursine::resources::ResourceReference m_testEvent;
+            bool m_stopSounds;
+
+            float m_attenuationScalar;
+
+            void OnInitialize(void) override;
+            
+        } Meta(Enable, WhiteListMethods, DisplayName( "AudioEmitter" ));
+    }
 }

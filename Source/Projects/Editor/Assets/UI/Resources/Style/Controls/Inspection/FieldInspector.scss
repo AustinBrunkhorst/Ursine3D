@@ -8,14 +8,17 @@ $max-header-width: 225px;
   flex-wrap: nowrap;
 
   #header {
+    overflow: hidden;
     display: block;
     flex: 1 1 $max-header-width;
     width: 35%;
     max-width: $max-header-width;
     margin: 5px 0;
-    padding-right: 3px;
+    padding: 0 3px 1px 0;
     color: #dcdcdc;
     font-size: 13px;
+    text-overflow: ellipsis;
+    cursor: default;
   }
 
   #container {
@@ -179,7 +182,7 @@ $max-header-width: 225px;
     }
   }
 
-  .entity-system-selector {
+  .entity-system-selector, .game-manager-selector {
     cursor: pointer;
     vertical-align: middle;
     line-height: 23px;
@@ -193,7 +196,26 @@ $max-header-width: 225px;
 
       &:before {
         display: block;
-        content: 'Invalid System';
+        content: 'Invalid';
+      }
+    }
+  }
+
+  .resource-reference {
+    cursor: pointer;
+    vertical-align: middle;
+    line-height: 23px;
+    text-align: center;
+    color: $color-accent;
+    word-wrap: break-word;
+    transition: color $duration-transition-btn ease;
+
+    &.invalid {
+      color: #cf6753;
+
+      &:before {
+        display: block;
+        content: 'Invalid Resource';
       }
     }
   }

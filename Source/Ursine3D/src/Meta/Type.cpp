@@ -503,46 +503,32 @@ namespace ursine
 
         ///////////////////////////////////////////////////////////////////////
 
-        std::vector<Field> Type::GetFields(void) const
+        const std::vector<Field> &Type::GetFields(void) const
         {
             URSINE_TODO( "recursively get base class fields" );
 
-            std::vector<Field> fields;
-
-            auto &handle = database.types[ m_id ].fields;
-
-            for (auto &field : handle)
-                fields.emplace_back( field.second );
-
-            return fields;
+            return database.types[ m_id ].fields;
         }
 
         ///////////////////////////////////////////////////////////////////////
 
         const Field &Type::GetField(const std::string &name) const
         {
-            return database.types[ m_id ].fields[ name ];
+            return database.types[ m_id ].GetField( name );
         }
 
         ///////////////////////////////////////////////////////////////////////
 
         std::vector<Global> Type::GetStaticFields(void) const
         {
-            std::vector<Global> fields;
-
-            auto &handle = database.types[ m_id ].staticFields;
-
-            for (auto &field : handle)
-                fields.emplace_back( field.second );
-
-            return fields;
+            return database.types[ m_id ].staticFields;
         }
 
         ///////////////////////////////////////////////////////////////////////
 
         const Global &Type::GetStaticField(const std::string &name) const
         {
-            return database.types[ m_id ].staticFields[ name ];
+            return database.types[ m_id ].GetStaticField( name );
         }
 
         ///////////////////////////////////////////////////////////////////////
@@ -581,12 +567,22 @@ namespace ursine
                 return { instance.ToBool( ) };
             }
 
-            if (IsPrimitive( ) || IsEnum( ))
+            auto &meta = GetMeta( );
+            auto isEnum = IsEnum( );
+
+            // number, or non-associative enum
+            if (IsPrimitive( ) || (isEnum && meta.GetProperty<BitMaskEditor>( )))
             {
                 if (IsFloatingPoint( ) || !IsSigned( ))
                     return { instance.ToDouble( ) };
  
                 return { instance.ToInt( ) };
+            }
+
+            // associative enum value
+            if (isEnum)
+            {
+                return GetEnum( ).GetKey( instance );
             }
 
             if (*this == typeof( std::string ))
@@ -600,9 +596,13 @@ namespace ursine
 
             for (auto &field : fields)
             {
-                auto value = field.second.GetValue( instance );
+                auto value = field.GetValue( instance );
 
-                object[ field.first ] = value.SerializeJson( );
+                auto json = value.SerializeJson( );
+
+                value.m_base->OnSerialize( const_cast<Json::object&>( json.object_items( ) ) );
+
+                object[ field.GetName( ) ] = json;
             }
 
 			if (invokeHook)
@@ -647,12 +647,22 @@ namespace ursine
                 return { instance.ToBool( ) };
             }
 
-            if (IsPrimitive( ) || IsEnum( ))
+            auto &meta = GetMeta( );
+            auto isEnum = IsEnum( );
+
+            // number, or non-associative enum
+            if (IsPrimitive( ) || (isEnum && meta.GetProperty<BitMaskEditor>( )))
             {
                 if (IsFloatingPoint( ) || !IsSigned( ))
                     return { instance.ToDouble( ) };
  
                 return { instance.ToInt( ) };
+            }
+
+            // associative enum value
+            if (isEnum)
+            {
+                return GetEnum( ).GetKey( instance );
             }
 
             if (*this == typeof( std::string ))
@@ -666,9 +676,13 @@ namespace ursine
 
             for (auto &field : fields)
             {
-                auto value = getterOverride( instance, field.second );
+                auto value = getterOverride( instance, field );
 
-                object[ field.first ] = value.SerializeJson( );
+                auto json = value.SerializeJson( );
+
+                value.m_base->OnSerialize( const_cast<Json::object&>( json.object_items( ) ) );
+
+                object[ field.GetName( ) ] = json;
             }
 
 			if (invokeHook)
@@ -738,7 +752,19 @@ namespace ursine
             }
             else if (IsEnum( ))
             {
-                return { value.int_value( ) };
+                // number literal
+                if (value.is_number( ))
+                    return { value.int_value( ) };
+
+                // associative value
+                auto enumValue = GetEnum( ).GetValue( value.string_value( ) );
+
+                // make sure we can find the key
+                if (enumValue.IsValid( ))
+                    return enumValue;
+                
+                // use the default value as we couldn't find the key
+                return Create( );
             }
             else if (*this == typeof( std::string ))
             {
@@ -761,7 +787,7 @@ namespace ursine
 
             for (auto &field : fields)
             {
-                auto fieldType = field.second.GetType( );
+                auto fieldType = field.GetType( );
 
                 UAssert( fieldType.IsValid( ),
                     "Unknown type for field '%s' in base type '%s'. Is this type reflected?",
@@ -769,13 +795,15 @@ namespace ursine
                     GetName( ).c_str( )
                 );
 
-				auto &fieldData = value[ field.first ];
+				auto &fieldData = value[ field.GetName( ) ];
 
 				if (!fieldData.is_null( ))
 				{
-					field.second.SetValue( instance, 
-						fieldType.DeserializeJson( fieldData )
-					);
+                    auto fieldValue = fieldType.DeserializeJson( fieldData );
+
+                    fieldValue.m_base->OnDeserialize( fieldData );
+
+					field.SetValue( instance, fieldValue );
 				}
             }
 

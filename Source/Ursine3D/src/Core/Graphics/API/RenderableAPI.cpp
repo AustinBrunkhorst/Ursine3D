@@ -36,22 +36,22 @@ namespace ursine
 
         Model3D &RenderableAPI::GetModel3D(GfxHND &handle)
         {
-            return m_privates->renderMgr->GetRenderable<Model3D>(handle);
+            return m_privates->renderMgr->GetCurrentRenderableByID<Model3D>(static_cast<unsigned>(handle & 0xFFFF));
         }
 
         Billboard2D &RenderableAPI::GetBillboard2D(GfxHND &handle)
         {
-            return m_privates->renderMgr->GetRenderable<Billboard2D>(handle);
+            return m_privates->renderMgr->GetCurrentRenderableByID<Billboard2D>(static_cast<unsigned>(handle & 0xFFFF));
         }
 
         Light &RenderableAPI::GetLight(GfxHND &handle)
         {
-            return m_privates->renderMgr->GetRenderable<Light>(handle);
+            return m_privates->renderMgr->GetCurrentRenderableByID<Light>(static_cast<unsigned>(handle & 0xFFFF));
         }
 
         ParticleSystem &RenderableAPI::GetParticleSystem(GfxHND & handle)
         {
-            return m_privates->renderMgr->GetRenderable<ParticleSystem>(handle);
+            return m_privates->renderMgr->GetCurrentRenderableByID<ParticleSystem>(static_cast<unsigned>(handle & 0xFFFF));
         }
 
         void RenderableAPI::SetPrivates(void *priv)
@@ -67,6 +67,11 @@ namespace ursine
         void RenderableAPI::Uninitialize(void)
         {
             delete m_privates;
+        }
+
+        SpriteText& RenderableAPI::GetSpriteText(GfxHND& handle)
+        {
+            return m_privates->renderMgr->GetCurrentRenderableByID<SpriteText>(static_cast<unsigned>(handle & 0xFFFF));
         }
     }
 }

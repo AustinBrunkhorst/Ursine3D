@@ -256,7 +256,7 @@ namespace ursine
 
         auto index = static_cast<GamepadIndex>( which );
 
-        if (index + 1u > m_gamepads.size( ))
+        if (index >= m_gamepads.size( ))
             m_gamepads.resize( index + 1u );
 
         auto &gamepad = m_gamepads[ index ];

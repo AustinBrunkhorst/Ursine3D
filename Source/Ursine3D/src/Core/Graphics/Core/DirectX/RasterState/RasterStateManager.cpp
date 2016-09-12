@@ -16,7 +16,6 @@
 #include <d3d11.h>
 #include "DXErrorHandling.h"
 
-
 namespace ursine
 {
     namespace graphics
@@ -96,7 +95,7 @@ namespace ursine
                 //Setup the raster description which will determine how and what polygons will be drawn.
                 rasterDesc.AntialiasedLineEnable = true;
                 rasterDesc.CullMode = D3D11_CULL_BACK;
-                rasterDesc.DepthBias = 0;
+                rasterDesc.DepthBias = -5;
                 rasterDesc.DepthBiasClamp = 0.0f;
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
@@ -114,7 +113,7 @@ namespace ursine
                 //Setup the raster description which will determine how and what polygons will be drawn.
                 rasterDesc.AntialiasedLineEnable = true;
                 rasterDesc.CullMode = D3D11_CULL_FRONT;
-                rasterDesc.DepthBias = 0;
+                rasterDesc.DepthBias = -5;
                 rasterDesc.DepthBiasClamp = 0.0f;
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
@@ -132,7 +131,7 @@ namespace ursine
                 //Setup the raster description which will determine how and what polygons will be drawn.
                 rasterDesc.AntialiasedLineEnable = true;
                 rasterDesc.CullMode = D3D11_CULL_NONE;
-                rasterDesc.DepthBias = 0;
+                rasterDesc.DepthBias = -5;
                 rasterDesc.DepthBiasClamp = 0.0f;
                 rasterDesc.DepthClipEnable = false;
                 rasterDesc.FillMode = D3D11_FILL_WIREFRAME;
@@ -148,7 +147,7 @@ namespace ursine
                 ///////////////////////////////////////////////////////////////
                 // LINE RENDERING
                 //Setup the raster description which will determine how and what polygons will be drawn.
-                rasterDesc.AntialiasedLineEnable = false;
+                rasterDesc.AntialiasedLineEnable = true;
                 rasterDesc.CullMode = D3D11_CULL_NONE;
                 rasterDesc.DepthBias = 0;
                 rasterDesc.DepthBiasClamp = 0.0f;
@@ -161,6 +160,42 @@ namespace ursine
 
                 //Create the rasterizer state from the description we just filled out.
                 result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_LINE_RENDERING ]);
+                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
+
+                ///////////////////////////////////////////////////////////////
+                // SHADOW RENDERING
+                //Setup the raster description which will determine how and what polygons will be drawn.
+                rasterDesc.AntialiasedLineEnable = true;
+                rasterDesc.CullMode = D3D11_CULL_FRONT;
+                rasterDesc.DepthBias = -1;
+                rasterDesc.DepthBiasClamp = 0.0f;
+                rasterDesc.DepthClipEnable = false;
+                rasterDesc.FillMode = D3D11_FILL_SOLID;
+                rasterDesc.FrontCounterClockwise = false;
+                rasterDesc.MultisampleEnable = true;
+                rasterDesc.ScissorEnable = false;
+                rasterDesc.SlopeScaledDepthBias = -1.0f;
+
+                //Create the rasterizer state from the description we just filled out.
+                result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_SHADOW_RENDER ]);
+                UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
+
+                ///////////////////////////////////////////////////////////////
+                // OUTLINE RENDERING
+                //Setup the raster description which will determine how and what polygons will be drawn.
+                rasterDesc.AntialiasedLineEnable = true;
+                rasterDesc.CullMode = D3D11_CULL_NONE;
+                rasterDesc.DepthBias = 0;
+                rasterDesc.DepthBiasClamp = 0.0f;
+                rasterDesc.DepthClipEnable = false;
+                rasterDesc.FillMode = D3D11_FILL_SOLID;
+                rasterDesc.FrontCounterClockwise = false;
+                rasterDesc.MultisampleEnable = true;
+                rasterDesc.ScissorEnable = false;
+                rasterDesc.SlopeScaledDepthBias = 0.0f;
+
+                //Create the rasterizer state from the description we just filled out.
+                result = m_device->CreateRasterizerState(&rasterDesc, &m_rasterStateArray[ RASTER_STATE_OUTLINE ]);
                 UAssert(result == S_OK, "Failed to make rasterizer state! (Error '%s')", GetDXErrorMessage(result));
 
                 ///////////////////////////////////////////////////////////////
@@ -205,7 +240,12 @@ namespace ursine
 
                 m_currentState = state;
 
-                m_deviceContext->RSSetState(m_rasterStateArray[ state ]);
+                if ( state == RASTER_STATE_COUNT )
+                {
+                    m_currentState = RASTER_STATE_SOLID_BACKCULL;
+                }
+
+                m_deviceContext->RSSetState(m_rasterStateArray[ m_currentState ]);
             }
 
             void RasterStateManager::Invalidate(void)

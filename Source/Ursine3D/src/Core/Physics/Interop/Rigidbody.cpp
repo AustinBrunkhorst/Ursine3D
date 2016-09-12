@@ -29,9 +29,9 @@ namespace ursine
             , m_simulation( nullptr )
             , m_emptyCollider( true )
             , m_enableSleeping( true )
-			, m_ghost( false )
-			, m_continuousCollisionDetection( false )
-			, m_motionState( bodyType )
+            , m_disableContactResponse( false )
+            , m_continuousCollisionDetection( false )
+            , m_motionState( bodyType )
         {
         #ifdef BULLET_PHYSICS
 
@@ -43,8 +43,8 @@ namespace ursine
 
         #endif
 
-            SetBodyFlag( bodyType );
-			SetSleepToggle( m_enableSleeping );
+            SetBodyFlag( bodyType, false );
+            SetSleepToggle( m_enableSleeping );
         }
 
         void Rigidbody::SetSimulation(Simulation *simulation)
@@ -66,7 +66,7 @@ namespace ursine
         #endif
         }
 
-	    int Rigidbody::GetUserID(void)
+        int Rigidbody::GetUserID(void)
         {
         #ifdef BULLET_PHYSICS
 
@@ -75,80 +75,88 @@ namespace ursine
         #endif
         }
 
-		void Rigidbody::SetUserPointer(void* ptr)
-		{
-		#ifdef BULLET_PHYSICS
-
-			setUserPointer( ptr );
-
-		#endif
-		}
-
-		void *Rigidbody::GetUserPointer(void)
-		{
-		#ifdef BULLET_PHYSICS
-
-			return getUserPointer( );
-
-		#endif
-		}
-
-		Rigidbody *Rigidbody::DownCast(BodyBase* body)
-		{
-		#ifdef BULLET_PHYSICS
-
-			if (!body || body->getInternalType( ) != BT_RIGID_BODY)
-				return nullptr;
-
-			return reinterpret_cast<Rigidbody*>( body );
-
-		#endif
-		}
-
-		const Rigidbody* Rigidbody::DownCast(const BodyBase* body)
-		{
-		#ifdef BULLET_PHYSICS
-
-			if (!body || body->getInternalType() != BT_RIGID_BODY)
-				return nullptr;
-
-			return reinterpret_cast<const Rigidbody*>( body );
-
-		#endif
-		}
-
-        void Rigidbody::SetBodyFlag(BodyFlag bodyFlag)
-        {			
+        void Rigidbody::SetUserPointer(void* ptr)
+        {
         #ifdef BULLET_PHYSICS
 
-			if (m_bodyType != BF_DYNAMIC)
-			{
-				// unset the old flag
-				setCollisionFlags( getCollisionFlags( ) & ~m_bodyType );
-			}
+            setUserPointer( ptr );
 
-			if (bodyFlag != BF_DYNAMIC)
-			{
-				// set the new flag
-				setCollisionFlags( getCollisionFlags( ) | bodyFlag );
-				setActivationState( DISABLE_DEACTIVATION );
-			}
-			else
-			{
-				if (m_enableSleeping)
-					forceActivationState( ACTIVE_TAG );
-				else
-					forceActivationState( DISABLE_DEACTIVATION );
-			}
+        #endif
+        }
+
+        void *Rigidbody::GetUserPointer(void)
+        {
+        #ifdef BULLET_PHYSICS
+
+            return getUserPointer( );
+
+        #endif
+        }
+
+        Rigidbody *Rigidbody::DownCast(BodyBase* body)
+        {
+        #ifdef BULLET_PHYSICS
+
+            if (!body || body->getInternalType( ) != BT_RIGID_BODY)
+                return nullptr;
+
+            return reinterpret_cast<Rigidbody*>( body );
+
+        #endif
+        }
+
+        const Rigidbody* Rigidbody::DownCast(const BodyBase* body)
+        {
+        #ifdef BULLET_PHYSICS
+
+            if (!body || body->getInternalType() != BT_RIGID_BODY)
+                return nullptr;
+
+            return reinterpret_cast<const Rigidbody*>( body );
+
+        #endif
+        }
+
+        void Rigidbody::SetBodyFlag(BodyFlag bodyFlag, bool remove)
+        {            
+        #ifdef BULLET_PHYSICS
+
+			auto addRemove = remove && m_simulation && GetUserPointer( );
+
+            if (addRemove)
+                m_simulation->RemoveRigidbody( this );
+
+            if (m_bodyType != BF_DYNAMIC)
+            {
+                // unset the old flag
+                setCollisionFlags( getCollisionFlags( ) & ~m_bodyType );
+            }
+
+            if (bodyFlag != BF_DYNAMIC)
+            {
+                // set the new flag
+                setCollisionFlags( getCollisionFlags( ) | bodyFlag );
+                setActivationState( DISABLE_DEACTIVATION );
+            }
+            else
+            {
+                if (m_enableSleeping)
+                    forceActivationState( ACTIVE_TAG );
+                else
+                    forceActivationState( DISABLE_DEACTIVATION );
+            }
 
             m_bodyType = bodyFlag;
 
             if (m_simulation && (bodyFlag == BF_STATIC || bodyFlag == BF_KINEMATIC))
                 m_simulation->ClearContacts( *this );
 
+            if (addRemove)
+                m_simulation->AddRigidbody( this );
+
             SetMass( m_mass );
 
-			m_motionState.m_bodyFlag = bodyFlag;
+            m_motionState.m_bodyFlag = bodyFlag;
 
         #endif
 
@@ -178,19 +186,19 @@ namespace ursine
                 btVector3( pos.X( ), pos.Y( ), pos.Z( ) )
             );
 
-			setWorldTransform( trans );
+            setWorldTransform( trans );
 
-			// Set the graphics world transform directly (this is because of kinematic bodies)
-			m_motionState.m_graphicsWorldTrans = trans * m_motionState.m_centerOfMassOffset;
+            // Set the graphics world transform directly (this is because of kinematic bodies)
+            m_motionState.m_graphicsWorldTrans = trans * m_motionState.m_centerOfMassOffset;
 
         #endif
 
             if (m_bodyType != BF_STATIC)
-			{
+            {
                 SetAwake( );
-			}
+            }
 
-			updateCCD( );
+            updateCCD( );
         }
 
         void Rigidbody::GetTransform(ecs::Transform *transform)
@@ -203,16 +211,16 @@ namespace ursine
 
         #ifdef BULLET_PHYSICS
 
-			btTransform trans;
-			
-			if (m_bodyType == BF_STATIC)
-			{
-				trans = getWorldTransform( );
-			}
-			else
-			{
-				m_motionState.getWorldTransform( trans );
-			}
+            btTransform trans;
+            
+            if (m_bodyType == BF_STATIC)
+            {
+                trans = getWorldTransform( );
+            }
+            else
+            {
+                m_motionState.getWorldTransform( trans );
+            }
 
             auto rot = trans.getRotation( );
             auto pos = trans.getOrigin( );
@@ -370,12 +378,12 @@ namespace ursine
         #endif
         }
 
-	    const SVec3& Rigidbody::GetGravity(void) const
-	    {
-			return m_gravity;
-	    }
+        const SVec3& Rigidbody::GetGravity(void) const
+        {
+            return m_gravity;
+        }
 
-	    void Rigidbody::SetMass(float mass)
+        void Rigidbody::SetMass(float mass)
         {
             m_mass = mass;
 
@@ -452,7 +460,7 @@ namespace ursine
         #endif
         }
 
-	    SVec3 Rigidbody::GetAngularVelocity(void) const
+        SVec3 Rigidbody::GetAngularVelocity(void) const
         {
             SVec3 angVel;
 
@@ -471,44 +479,44 @@ namespace ursine
             return angVel;
         }
 
-		void Rigidbody::SetGhost(bool enable)
-		{
-			m_ghost = enable;
+        void Rigidbody::SetDisableContactResponse(bool disable)
+        {
+            m_disableContactResponse = disable;
 
-			if (m_ghost)
-			{
-			#ifdef BULLET_PHYSICS
+            if (m_disableContactResponse)
+            {
+            #ifdef BULLET_PHYSICS
 
-				setCollisionFlags( getCollisionFlags( ) | CF_NO_CONTACT_RESPONSE );
+                setCollisionFlags( getCollisionFlags( ) | CF_NO_CONTACT_RESPONSE );
 
-			#endif
-			}
-			else
-			{
-			#ifdef BULLET_PHYSICS
+            #endif
+            }
+            else
+            {
+            #ifdef BULLET_PHYSICS
 
-				setCollisionFlags( getCollisionFlags( ) & ~CF_NO_CONTACT_RESPONSE );
+                setCollisionFlags( getCollisionFlags( ) & ~CF_NO_CONTACT_RESPONSE );
 
-			#endif
-			}
-		}
+            #endif
+            }
+        }
 
-	    bool Rigidbody::GetGhost(void) const
-		{
-			return m_ghost;
-		}
+        bool Rigidbody::GetDisableContactResponse(void) const
+        {
+            return m_disableContactResponse;
+        }
 
-		void Rigidbody::SetContinuousCollisionDetection(bool enable)
-		{
-			m_continuousCollisionDetection = enable;
+        void Rigidbody::SetContinuousCollisionDetection(bool enable)
+        {
+            m_continuousCollisionDetection = enable;
 
-			updateCCD( );
-		}
+            updateCCD( );
+        }
 
-		bool Rigidbody::GetContinuousCollisionDetection(void) const
-		{
-			return m_continuousCollisionDetection;
-		}
+        bool Rigidbody::GetContinuousCollisionDetection(void) const
+        {
+            return m_continuousCollisionDetection;
+        }
 
         void Rigidbody::AddForce(const SVec3& force)
         {
@@ -581,13 +589,13 @@ namespace ursine
 
         void Rigidbody::addToSimulation(void)
         {
-            if (m_simulation)
+            if (m_simulation && GetUserPointer( ))
                 m_simulation->AddRigidbody( this );
         }
 
         void Rigidbody::removeFromSimulation(void)
         {
-            if (m_simulation)
+            if (m_simulation && GetUserPointer( ))
                 m_simulation->RemoveRigidbody( this );
         }
 
@@ -602,14 +610,14 @@ namespace ursine
         #endif
         }
 
-		void Rigidbody::updateCCD(void)
+        void Rigidbody::updateCCD(void)
         {
-		#ifdef BULLET_PHYSICS
+        #ifdef BULLET_PHYSICS
 
-			if (m_continuousCollisionDetection)
-			{
-				// get the maximum scale factor
-				btVector3 min, max;
+            if (m_continuousCollisionDetection)
+            {
+                // get the maximum scale factor
+                btVector3 min, max;
 
                 auto shape = getCollisionShape( );
 
@@ -618,22 +626,22 @@ namespace ursine
 
                 shape->getAabb( getWorldTransform( ), min, max );
 
-				float maxExtent = math::Max( 
-					math::Max(
-						max.x( ) - min.x( ), max.y( ) - min.y( ) 
-					), max.z( ) - min.z( )
-				);
+                float maxExtent = math::Max( 
+                    math::Max(
+                        max.x( ) - min.x( ), max.y( ) - min.y( ) 
+                    ), max.z( ) - min.z( )
+                );
 
-				setCcdMotionThreshold( maxExtent );
-				setCcdSweptSphereRadius( maxExtent * 0.2f );
-			}
-			else
-			{
-				setCcdMotionThreshold( 0.0f );
-				setCcdSweptSphereRadius( 0.0f );
-			}
+                setCcdMotionThreshold( maxExtent );
+                setCcdSweptSphereRadius( maxExtent * 0.2f );
+            }
+            else
+            {
+                setCcdMotionThreshold( 0.0f );
+                setCcdSweptSphereRadius( 0.0f );
+            }
 
-		#endif
+        #endif
         }
     }
 }

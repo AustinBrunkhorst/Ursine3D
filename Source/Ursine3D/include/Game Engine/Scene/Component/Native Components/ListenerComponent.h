@@ -19,29 +19,34 @@
 
 namespace ursine
 {
-	namespace ecs
-	{
-		class AudioListener 
+    namespace ecs
+    {
+        class AudioListener 
             : public Component
             , public AudioComponentBase
-		{
-			NATIVE_COMPONENT;
+        {
+            NATIVE_COMPONENT;
 
-		public:
+        public:
+            EditorField(
+                ListenerIndex listener,
+                GetListenerIndex, 
+                SetListenerIndex
+            );
+
             Meta(Enable)
-			AudioListener(void);
-			~AudioListener(void);
+            AudioListener(void);
+            ~AudioListener(void);
 
-            ursine::Array<ursine::Color> testing;
+            void OnInitialize(void) override;
 
-			ListenerIndex GetListenerIndex(void);
-			void SetListenerIndex(ListenerIndex index);
+            ListenerIndex GetListenerIndex(void) const;
+            void SetListenerIndex(ListenerIndex index);
 
-			void OnInitialize(void) override;
+        private:
+             ListenerIndex m_listenerIndex;
 
-		private:
-			 ListenerIndex m_listenerIndex;
 
-		} Meta(Enable, WhiteListMethods, DisplayName( "Audio Listener 3D" ));
-	}
+        } Meta(Enable, WhiteListMethods, DisplayName( "AudioListener" ));
+    }
 }

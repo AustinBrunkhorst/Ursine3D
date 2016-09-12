@@ -2,6 +2,7 @@ package ursine.editor.scene.component.inspectors.fields;
 
 import ursine.controls.TextInput;
 import ursine.editor.scene.component.ComponentDatabase;
+import ursine.native.Property;
 
 @fieldInspector( "std::string" )
 class StringFieldInspector extends FieldInspectionHandler {
@@ -11,6 +12,10 @@ class StringFieldInspector extends FieldInspectionHandler {
         super( owner, instance, field, type );
 
         m_string = new TextInput( );
+
+        // TODO: <textarea>
+        if (Reflect.hasField( field.meta, Property.MultiLineEditor )) { }
+            //m_string.multiline = true;
 
         m_string.addEventListener( 'change', function() {
             notifyChanged( m_field, m_string.value );

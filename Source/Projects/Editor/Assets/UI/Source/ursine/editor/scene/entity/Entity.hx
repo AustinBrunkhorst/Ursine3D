@@ -1,12 +1,11 @@
 package ursine.editor.scene.entity;
 
-import ursine.controls.PolymerElement;
 import ursine.native.Extern;
 
 import ursine.editor.scene.component.ComponentInspection;
 
-import ursine.utils.EventManager;
-import ursine.utils.IEventContainer;
+import ursine.api.events.EventManager;
+import ursine.api.events.IEventContainer;
 
 @:keepSub
 class Entity implements IEventContainer {
@@ -60,23 +59,36 @@ class Entity implements IEventContainer {
         return m_handler.isRemovalEnabled( );
     }
 
-    public function isHierarchyChangeEnabled() : Bool {
+    public inline function isHierarchyChangeEnabled() : Bool {
         return m_handler.isHierarchyChangeEnabled( );
     }
 
-    public function isVisibleInEditor() : Bool {
+    public inline function isVisibleInEditor() : Bool {
         return m_handler.isVisibleInEditor( );
     }
 
-    public function remove() : Void {
+    public inline function setVisibleInEditor(visible : Bool) : Void {
+        m_handler.setVisibleInEditor( visible );
+
+        events.trigger( EntityEvent.EntityEditorVisibilityChanged, {
+            entity: this,
+            visibile: visible
+        } );
+    }
+
+    public inline function enableSerialization(enable : Bool) : Void {
+        return m_handler.enableSerialization( enable );
+    }
+
+    public inline function remove() : Void {
         m_handler.remove( );
     }
 
-    public function getName() : String {
+    public inline function getName() : String {
         return m_handler.getName( );
     }
 
-    public function setName(name : String) : Void {
+    public inline function setName(name : String) : Void {
         m_handler.setName( name );
     }
 
@@ -95,43 +107,43 @@ class Entity implements IEventContainer {
             m_handler.removeComponent( 'Selected' );
     }
 
-    public function inspect() : Array<ComponentInspection> {
+    public inline function inspect() : Array<ComponentInspection> {
         return m_handler.inspect( );
     }
 
-    public function inspectComponent(component : String) : ComponentInspection {
+    public inline function inspectComponent(component : String) : ComponentInspection {
         return m_handler.inspectComponent( component );
     }
 
-    public function hasComponent(name : String) : Bool {
+    public inline function hasComponent(name : String) : Bool {
         return m_handler.hasComponent( name );
     }
 
-    public function addComponent(name : String) : Void {
+    public inline function addComponent(name : String) : Void {
         m_handler.addComponent( name );
     }
 
-    public function removeComponent(name : String) : Void {
+    public inline function removeComponent(name : String) : Void {
         m_handler.removeComponent( name );
     }
 
-    public function componentSet(componentName : String, value : Dynamic) : Void {
+    public inline function componentSet(componentName : String, value : Dynamic) : Void {
         m_handler.componentSet( componentName, value );
     }
 
-    public function componentFieldUpdate(componentName : String, fieldName : String, value : Dynamic) : Void {
+    public inline function componentFieldUpdate(componentName : String, fieldName : String, value : Dynamic) : Void {
         m_handler.componentFieldUpdate( componentName, fieldName, value );
     }
 
-    public function componentFieldArrayUpdate(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void {
+    public inline function componentFieldArrayUpdate(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void {
         m_handler.componentFieldArrayUpdate( componentName, fieldName, index, value );
     }
 
-    public function componentFieldArrayInsert(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void {
+    public inline function componentFieldArrayInsert(componentName : String, fieldName : String, index : UInt, value : Dynamic) : Void {
         m_handler.componentFieldArrayInsert( componentName, fieldName, index, value );
     }
 
-    public function componentFieldArrayPush(componentName : String, fieldName : String, value : Dynamic) : Void {
+    public inline function componentFieldArrayPush(componentName : String, fieldName : String, value : Dynamic) : Void {
         m_handler.componentFieldArrayInsert(
             componentName,
             fieldName,
@@ -140,11 +152,15 @@ class Entity implements IEventContainer {
         );
     }
 
-    public function componentFieldArrayRemove(componentName : String, fieldName : String, index : UInt) : Void {
+    public inline function componentFieldArrayRemove(componentName : String, fieldName : String, index : UInt) : Void {
         m_handler.componentFieldArrayRemove( componentName, fieldName, index );
     }
 
-    public function componentButtonInvoke(componentName : String, buttonName : String) : Void {
+    public inline function componentFieldArraySwap(componentName : String, fieldName : String, index1 : UInt, index2 : UInt) : Void {
+        m_handler.componentFieldArraySwap( componentName, fieldName, index1, index2 );
+    }
+
+    public inline function componentButtonInvoke(componentName : String, buttonName : String) : Void {
         m_handler.componentButtonInvoke( componentName, buttonName );
     }
 
@@ -165,23 +181,23 @@ class Entity implements IEventContainer {
         return parentUniqueID == null ? null : new Entity( parentUniqueID );
     }
 
-    public function setParent(parent : Entity) : Bool {
+    public inline function setParent(parent : Entity) : Bool {
         return m_handler.setParent( parent == null ? null : parent.uniqueID );
     }
 
-    public function getSiblingIndex() : UInt {
+    public inline function getSiblingIndex() : UInt {
         return m_handler.getSiblingIndex( );
     }
 
-    public function setSiblingIndex(index : UInt) : Void {
+    public inline function setSiblingIndex(index : UInt) : Void {
         m_handler.setSiblingIndex( index );
     }
 
-    public function saveAsArchetype() : Void {
+    public inline function saveAsArchetype() : Void {
         m_handler.saveAsArchetype( );
     }
 
-    public function clone() : Entity {
+    public inline function clone() : Entity {
         return new Entity( m_handler.clone( ) );
     }
 

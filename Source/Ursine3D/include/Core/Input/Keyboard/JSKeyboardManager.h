@@ -37,5 +37,5 @@ namespace ursine
 
         void onKeyboardKeyDown(EVENT_HANDLER(KeyboardManager));
         void onKeyboardKeyUp(EVENT_HANDLER(KeyboardManager));
-    } Meta(Enable, DisplayName( "KeyboardManager" ));
+    } Meta(Enable, DisplayName( "NativeKeyboardManager" ));
 }

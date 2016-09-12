@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -31,6 +31,7 @@ namespace ursine
         class WorldConfig;
         class Camera;
         class Animator;
+        class ModelFragmenter;
 
         enum RenderSystemEventType
         {
@@ -53,6 +54,7 @@ namespace ursine
             ENTITY_SYSTEM;
 
         public:
+            Meta(Enable)
             RenderSystem(World *world);
             ~RenderSystem(void);
 
@@ -60,14 +62,17 @@ namespace ursine
 
         private:
             typedef std::vector<RenderableComponentBase *> RenderableVector;
-            typedef std::unordered_map<EntityUniqueID, RenderableVector> RenderableMap;
+            typedef std::unordered_map<EntityID, RenderableVector> RenderableMap;
+            typedef std::vector<RenderableComponentBase *> RenderableVector;
+
+            std::vector<Component::Handle<ModelFragmenter>> m_fragmenters;
 
             graphics::GfxAPI *m_graphics;
             Component::Handle<WorldConfig> m_worldConfig;
 
             void OnInitialize(void) override;
             void OnRemove(void) override;
-            void OnAfterLoad(void) override;
+            void OnSceneReady(Scene *scene) override;
 
             // vector of cameras sorted based on their render layer (low to high)
             std::vector<Component::Handle<Camera>> m_cameras;
@@ -76,22 +81,22 @@ namespace ursine
 
             RenderableMap m_renderableMap;
 
-            std::vector<Component::Handle<Animator>> m_animators;
-
             void onComponentAdded(EVENT_HANDLER(World));
             void onComponentRemoved(EVENT_HANDLER(World));
 
-            void onUpdate(EVENT_HANDLER(World));
             void onRender(EVENT_HANDLER(World));
 
-            void onEditorUpdate(EVENT_HANDLER(World));
+        #if defined(URSINE_WITH_EDITOR)
+
             void onEditorRender(EVENT_HANDLER(World));
+
+        #endif
 
             void renderObjects(void);
             void renderCamera(Component::Handle<Camera> camera, RenderHookArgs &args, RenderSystemEventType hook);
 
-            void addRenderable(Entity *entity, RenderableComponentBase *renderable);
-            void removeRenderable(Entity *entity, RenderableComponentBase *renderable);
-        } Meta(Enable, AutoAddEntitySystem);
+            void addRenderable(const EntityHandle &entity, RenderableComponentBase *renderable);
+            void removeRenderable(const EntityHandle &entity, RenderableComponentBase *renderable);
+        } Meta(Enable, WhiteListMethods, AutoAddEntitySystem);
     }
 }

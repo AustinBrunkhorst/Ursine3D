@@ -1,6 +1,6 @@
 /* ----------------------------------------------------------------------------
 ** Team Bear King
-** © 2016 DigiPen Institute of Technology, All Rights Reserved.
+** ?2016 DigiPen Institute of Technology, All Rights Reserved.
 **
 ** Particle.h
 **
@@ -50,6 +50,8 @@ namespace ursine
 
             // in what direction is this particle accelerating?
             SVec3 acceleration;
+
+            float roll;
         };
     }
 }

@@ -11,29 +11,13 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-/* Start Header ---------------------------------------------------------------
-Copyright (C) 2015 DigiPen Institute of Technology. Reproduction or
-disclosure of this file or its contents without the prior written
-consent of DigiPen Institute of Technology is prohibited.
-=============================================================================*/
-/*!
-File Name:      GfxDefines.h
-Module:         Graphics
-Purpose:        Gfx global defines
-Language:       C++
-
-Project:        Graphics Prototype
-Author:         Matt Yan, m.yan@digipen.edu
-*/
-/*- End Header --------------------------------------------------------------*/
-
 #pragma once
 
 #include "GfxLogging.h"
 
 
 //gpu defines
-#define MAX_CONST_BUFF          15
+#define MAX_CONST_BUFF          14
 
 //gfx defines
 #define RELEASE_RESOURCE(resource) \
@@ -52,11 +36,23 @@ Author:         Matt Yan, m.yan@digipen.edu
 //max cameras
 #define MAX_CAMERAS             32
 
+#if defined(URSINE_WITH_EDITOR)
+
 //max points/lines
 #define MAX_DRAW_OBJ            800019
 
 //max renderables of each type
-#define MAX_RENDERABLES         512
+#define MAX_RENDERABLES         2000
+
+#else
+
+//max points/lines
+#define MAX_DRAW_OBJ            64
+
+//max renderables of each type
+#define MAX_RENDERABLES         1024
+
+#endif
 
 //max draw calls for a single scene
 #define MAX_DRAW_CALLS          2048
@@ -64,12 +60,28 @@ Author:         Matt Yan, m.yan@digipen.edu
 #define MAX_BONE_COUNT          60
 
 //handle IDs
-#define ID_RENDERABLE 170
-#define ID_TEXTURE    113
-#define ID_MODEL      146
-#define ID_CAMERA     123
-#define ID_VIEWPORT   42
-#define ID_UI         87
+#define ID_RENDERABLE   170
+#define ID_TEXTURE      113
+#define ID_MODEL        146
+#define ID_ANIMATION    213
+#define ID_CAMERA       123
+#define ID_VIEWPORT     42
+#define ID_UI           87
+#define ID_FONT         243
+#define ID_DEPTH_TARGET 97
+
+// internal IDs for models
+#define INTERNAL_CUBE               0
+#define INTERNAL_SPHERE             1
+#define INTERNAL_CONE               2
+#define INTERNAL_QUAD               3
+#define INTERNAL_POINT_INDICES      4
+
+#define INTERNAL_GEOMETRY_COUNT     5
+
+// internal IDs for textured
+#define INTERNAL_MISSING_TEX        0
+#define INTERNAL_BLANK_TEX          1
 
 //sanity values
 #define SANITY_RESOURCE 73

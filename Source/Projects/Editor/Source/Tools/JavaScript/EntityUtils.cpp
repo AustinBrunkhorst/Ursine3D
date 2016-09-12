@@ -1,4 +1,4 @@
-/* ----------------------------------------------------------------------------
+﻿/* ----------------------------------------------------------------------------
 ** Team Bear King
 ** © 2015 DigiPen Institute of Technology, All Rights Reserved.
 **
@@ -24,9 +24,9 @@ using namespace std::placeholders;
 
 JSFunction(CreateEntity)
 {
-    auto world = GetCoreSystem( Editor )->GetProject( )->GetScene( )->GetWorld( );
+    auto *world = GetCoreSystem( Editor )->GetProject( )->GetScene( ).GetActiveWorld( );
 
-    auto *entity = world->CreateEntity( );
+    auto entity = world->CreateEntity( );
 
-    return CefV8Value::CreateUInt( entity->GetUniqueID( ) );
+    return CefV8Value::CreateUInt( entity->GetID( ) );
 }

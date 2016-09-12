@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="Style/Editor.css" />
+
+    <script src="LIB/Polymer/webcomponents.min.js"></script>
+
+    <script src="Script/NativeExterns.js"></script>
+    <script src="Script/ObjectUtils.js"></script>
+    <script src="Script/MathUtils.js"></script>
+    <script src="Script/ElementUtils.js"></script>
+
+    <!-- Controls -->
+    <link rel="import" href="Controls/Button.html" />
+    <link rel="import" href="Controls/TextInput.html" />
+    <link rel="import" href="Controls/NumberInput.html" />
+    <link rel="import" href="Controls/ComboInput.html" />
+    <link rel="import" href="Controls/CheckBoxInput.html" />
+    <link rel="import" href="Controls/ColorInput.html" />
+    <link rel="import" href="Controls/ProgressBar.html" />
+    <link rel="import" href="Controls/TreeView.html" />
+    <link rel="import" href="Controls/TreeViewItem.html" />
+    <link rel="import" href="Controls/MenuItem.html" />
+    <link rel="import" href="Controls/MenuSeparator.html" />
+    <link rel="import" href="Controls/Menu.html" />
+    <link rel="import" href="Controls/MainMenu.html" />
+    <link rel="import" href="Controls/ContextMenu.html" />
+    <link rel="import" href="Controls/EditorWindow.html" />
+    <link rel="import" href="Controls/ProjectBrowser.html" />
+    <link rel="import" href="Controls/Notification.html" />
+    <link rel="import" href="Controls/ItemSelectionPopup.html" />
+    <link rel="import" href="Controls/ResourceReferenceSelectionPopup.html" />
+
+    <link rel="import" href="Controls/Docking/DockContainer.html" />
+    <link rel="import" href="Controls/Docking/DockColumn.html" />
+    <link rel="import" href="Controls/Docking/DockNode.html" />
+
+    <link rel="import" href="Controls/Inspection/ComponentInspector.html" />
+    <link rel="import" href="Controls/Inspection/FieldInspector.html" />
+    <link rel="import" href="Controls/Inspection/ArrayItemContainer.html" />
+</head>
+<body>
+    <div id="tooltip-container"></div>
+    <div id="notification-container"></div>
+    <div id="context-menu-container"></div>
+    <div id="notification-modal-container"></div>
+    <div id="fullscreen-container"></div>
+	<div id="header-toolbar">
+        <div id="simulation-tools">
+            <div id="simulation-run-game"></div>
+            <div id="simulation-play"></div>
+            <div id="simulation-toggle"></div>
+            <div id="simulation-step"></div>
+            <div id="simulation-stop"></div>
+        </div>
+    </div>
+    <div id="main-dock-container"></div>
+    <div id="status-bar">
+        <span></span>
+    </div>
+</body>
+<script type="text/javascript" src="Editor.js"></script>
+</html>

@@ -15,53 +15,121 @@
 
 #include <CoreSystem.h>
 
-#include <Window.h>
-#include <UIView.h>
-#include <NotificationManager.h>
+#include "EditorPreferences.h"
 
 #include "Project.h"
+#include "EditorWindow.h"
 
-class NativeEditorTool;
+#include <TimerManager.h>
+#include <NotificationManager.h>
 
 class Editor : public ursine::core::CoreSystem
 {
-    CORE_SYSTEM
+    CORE_SYSTEM;
+
 public:
     Meta(Enable, DisableNonDynamic)
     Editor(void);
     ~Editor(void);
 
-    void OnInitialize(void) override;
-    void OnRemove(void) override;
-    
-    ursine::Window::Handle GetMainWindow(void) const;
-    ursine::UIView::Handle GetMainUI(void) const;
+    ///////////////////////////////////////////////////////////////////////////
+    // Misc
+    ///////////////////////////////////////////////////////////////////////////
 
-    Project::Handle GetProject(void) const;
+    const EditorWindow &GetMainWindow(void) const;
+
+    EditorPreferences &GetPreferences(void);
+    Project *GetProject(void);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Notifications
+    ///////////////////////////////////////////////////////////////////////////
 
     ursine::NotificationManager &GetNotificationManager(void);
 
     ursine::Notification PostNotification(const ursine::NotificationConfig &config);
-    
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Projects
+    ///////////////////////////////////////////////////////////////////////////
+
+    void CreateNewProject(const std::string &name, const std::string &directory);
+    void LoadProject(const std::string &filename);
+
+    void SetProjectStatus(const std::string &status);
+
 private:
+    struct
+    {
+        std::string uiEntryPoint;
+
+        ursine::Vec2 windowSize;
+        ursine::uint32 windowFlags;
+        
+        void (Editor::*updateHandler)(EVENT_HANDLER(ursine::Application));
+    } m_startupConfig;
+    
     ursine::graphics::GfxAPI *m_graphics;
 
     ursine::NotificationManager m_notificationManager;
 
-    struct
-    {
-        ursine::Window::Handle window;
-        ursine::UIView::Handle ui;
-    } m_mainWindow;
+    EditorWindow m_mainWindow;
 
-    Project::Handle m_project;
+    EditorPreferences m_preferences;
+    Project *m_project;
 
+    ursine::TimerID m_buildPipelineFocusTimeout;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Core System
+    ///////////////////////////////////////////////////////////////////////////
+
+    void OnInitialize(void) override;
+    void OnRemove(void) override;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Preferences
+    ///////////////////////////////////////////////////////////////////////////
+
+    void loadPreferences(void);
+    void writePreferences(void);
+
+    std::string findAvailableProject(void) const;
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Initialization
+    ///////////////////////////////////////////////////////////////////////////
+
+    void startup(void);
+
+    void initializeWindow(void);
     void initializeGraphics(void);
-    void initializeScene(void);
+    void initializeUI(void);
 
-    void onAppUpdate(EVENT_HANDLER(ursine::Application));
+    void initializeProject(const std::string &filename);
 
-    void onFocusChange(EVENT_HANDLER( ursine::Window ));
+    ///////////////////////////////////////////////////////////////////////////
+    // Utilities
+    ///////////////////////////////////////////////////////////////////////////
+
+    void exitSplashScreen(void);
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Event Handlers
+    ///////////////////////////////////////////////////////////////////////////
+
+    void onUILoaded(EVENT_HANDLER(ursine::UIView));
+    void onUIPopup(EVENT_HANDLER(ursine::UIView));
+
+    void onLauncherUpdate(EVENT_HANDLER(ursine::Application));
+    void onEditorUpdate(EVENT_HANDLER(ursine::Application));
 
     void onMainWindowResize(EVENT_HANDLER(ursine::Window));
+    void onMainWindowFocusChanged(EVENT_HANDLER(ursine::Window));
+
+    void onPipelinePreBuildItemStart(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+    void onPipelinePreBuildItemPreviewStart(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+    void onPipelinePreBuildComplete(EVENT_HANDLER(ursine::rp::ResourcePipelineManager));
+
+    void onSceneWorldChanged(EVENT_HANDLER(ursine::Scene));
 } Meta(Enable, WhiteListMethods);

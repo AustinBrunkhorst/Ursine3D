@@ -25,6 +25,8 @@ namespace ursine
 {
     namespace graphics
     {
+        struct AnimationVertex;
+
         class Mesh
         {
         public:
@@ -43,6 +45,9 @@ namespace ursine
             // raw data
             std::vector<Vec3> &GetRawVertices(void);
             std::vector<UINT> &GetRawIndices(void);
+            std::vector<Vec3> &GetRawNormals(void);
+            std::vector<Vec3> &GetRawBinormals(void);
+            std::vector<Vec3> &GetRawTangent(void);
             
             // vert data
             ID3D11Buffer *&GetVertexBuffer(void);
@@ -54,6 +59,18 @@ namespace ursine
             unsigned GetIndexCount(void) const;
             void SetIndexCount(const unsigned indexCount);
 
+            // normal data
+            unsigned GetNormalCount(void) const;
+            void SetNormalCount(const unsigned normalCount);
+
+            // binormal data
+            unsigned GetBinormalCount(void) const;
+            void SetBinormalCount(const unsigned binormalCount);
+
+            // tangent data
+            unsigned GetTangentCount(void) const;
+            void SetTangentCount(const unsigned tangentCount);
+
             // getting material data
             const Material &GetMaterial(void);
 
@@ -63,6 +80,8 @@ namespace ursine
 
             const SMat4 &GetLocalToParentTransform(void) const;
             void SetLocalToParentTransform(const SMat4 &transform);
+
+            std::vector<AnimationVertex> &GetRawModelData(void);
 
         private:
             // name
@@ -78,6 +97,12 @@ namespace ursine
             // raw mesh data for physics stuff
             std::vector<Vec3> m_rawVertData;
             std::vector<UINT> m_rawIndexData;
+            std::vector<Vec3> m_rawNormData;
+            std::vector<Vec3> m_rawNBinormData;
+            std::vector<Vec3> m_rawTangentmData;
+
+            // raw binary data
+            std::vector<AnimationVertex> m_rawModelData;
 
             // material data
             Material m_material;
