@@ -19,44 +19,15 @@
 #pragma warning (disable : 4244)
 #pragma warning (disable : 4267)
 
-void Swap(void *a, void *b)
-{
-    void *temp;
-    temp = *(void**)a;
-    *(void**)a = *(void**)b;
-    *(void**)b = temp;
-}
-
-// Debug Test file
-//void DebugPrint()
-//{
-//    std::ofstream fout;
-//    std::string nm = m_Model->name.c_str();
-//    nm += ".txt";
-//    fout.open(nm);
-//
-//    fout << "Name : " << iter.name << std::endl;
-//    fout << "PI : " << iter.mParentIndex << std::endl;
-//    fout << "BP : " << iter.bindPosition.x << "," << iter.bindPosition.y << "," << iter.bindPosition.z << std::endl;
-//    fout << "BR : " << iter.bindRotation.x << "," << iter.bindRotation.y << "," << iter.bindRotation.z << std::endl;
-//    fout << "BS : " << iter.bindScaling.x << "," << iter.bindScaling.y << "," << iter.bindScaling.z << std::endl;
-//    fout << "SP : " << iter.boneSpacePosition.x << "," << iter.boneSpacePosition.y << "," << iter.boneSpacePosition.z << std::endl;
-//    fout << "SR : " << iter.boneSpaceRotation.x << "," << iter.boneSpaceRotation.y << "," << iter.boneSpaceRotation.z << std::endl;
-//    fout << "SS : " << iter.boneSpaceScaling.x << "," << iter.boneSpaceScaling.y << "," << iter.boneSpaceScaling.z << std::endl;
-//
-//    if (fout.is_open() == true)
-//        fout.close();
-//}
-
 namespace ursine
 {
     namespace graphics
     {
-        CFBXLoader::CFBXLoader() :
-            mSdkManager(nullptr),
-            mScene(nullptr),
-            m_Model(nullptr),
-            mConverter(nullptr)
+        CFBXLoader::CFBXLoader()
+            : mSdkManager(nullptr)
+            , mScene(nullptr)
+            , m_Model(nullptr)
+            , mConverter(nullptr)
         {
         }
 
@@ -1411,9 +1382,8 @@ namespace ursine
         void CFBXLoader::ProcessAnimation(FbxAnimStack* animStack, FbxTime start, FbxTime end, FbxNode* pNode)
         {
             m_AnimationFlag.second = true;
-            std::set< FbxTime > keyTimes;
+
             int nbAnimLayers = animStack->GetMemberCount<FbxAnimLayer>();
-            FbxString lOutputString;
 
             FBX_DATA::AnimationData animationData;
 
@@ -1435,7 +1405,6 @@ namespace ursine
 
         void CFBXLoader::ProcessAnimation(FbxAnimLayer* animLayer, FbxTime start, FbxTime end, FbxNode* pNode, FBX_DATA::AnimationClip& animClip)
         {
-            FbxString lOutputString;
             FbxNodeAttribute* attr = pNode->GetNodeAttribute();
             if (attr && attr->GetAttributeType() && attr->GetAttributeType() == FbxNodeAttribute::eSkeleton)
             {
