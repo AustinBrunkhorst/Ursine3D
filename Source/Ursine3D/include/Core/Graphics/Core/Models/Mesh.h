@@ -71,13 +71,6 @@ namespace ursine
             unsigned GetTangentCount(void) const;
             void SetTangentCount(const unsigned tangentCount);
 
-            // getting material data
-            const Material &GetMaterial(void);
-
-            // parent data
-            Mesh *GetParent(void);
-            void SetParent(Mesh *parent);
-
             const SMat4 &GetLocalToParentTransform(void) const;
             void SetLocalToParentTransform(const SMat4 &transform);
 
@@ -103,12 +96,6 @@ namespace ursine
 
             // raw binary data
             std::vector<AnimationVertex> m_rawModelData;
-
-            // material data
-            Material m_material;
-
-            // what mesh is the parent of this mesh
-            Mesh *m_parent;
 
             // transform to place this mesh in parent's space
             SMat4 m_localToParent;

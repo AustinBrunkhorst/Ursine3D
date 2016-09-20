@@ -28,7 +28,6 @@ namespace ursine
             , m_vertexBuffer(nullptr)
             , m_indexBuffer(nullptr)
             , m_material()
-            , m_parent(nullptr)
         {
         }
 
@@ -141,21 +140,6 @@ namespace ursine
         void Mesh::SetTangentCount(const unsigned normalCount)
         {
             m_rawTangentmData.resize(normalCount);
-        }
-
-        const Material &Mesh::GetMaterial(void)
-        {
-            return m_material;
-        }
-
-        Mesh *Mesh::GetParent(void)
-        {
-            return m_parent;
-        }
-
-        void Mesh::SetParent(Mesh *parent)
-        {
-            m_parent = parent;
         }
 
         const SMat4 & Mesh::GetLocalToParentTransform(void) const
