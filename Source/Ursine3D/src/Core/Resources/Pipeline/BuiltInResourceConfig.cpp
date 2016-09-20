@@ -21,6 +21,7 @@
 #include "ArchetypeProcessor.h"
 #include "UIScreenProcessor.h"
 #include "AudioItemProcessor.h"
+#include "U3DContentProcessor.h"
 
 namespace ursine
 {
@@ -28,6 +29,7 @@ namespace ursine
     const char * const rp::kResourceTypeArchetypeExtension = "uatype";
     const char * const rp::kResourceTypeUIScreenExtension = "ui";
     const char * const rp::kResourceTypeAudioEventExtension = "uaevent";
+    const char * const rp::kResourceType3DContentExtension = "u3dcontent";
 
     const rp::TypePairMap &rp::GetBuiltInResourceHandlers(void)
     {
@@ -35,7 +37,8 @@ namespace ursine
             { kResourceTypeWorldExtension,      { typeof( JsonImporter ), typeof( WorldProcessor ) } },
             { kResourceTypeArchetypeExtension,  { typeof( JsonImporter ), typeof( ArchetypeProcessor ) } },
             { kResourceTypeUIScreenExtension,   { typeof( JsonImporter ), typeof( UIScreenProcessor ) } },
-            { kResourceTypeAudioEventExtension, { typeof( JsonImporter ), typeof( AudioItemProcessor ) } }
+            { kResourceTypeAudioEventExtension, { typeof( JsonImporter ), typeof( AudioItemProcessor ) } },
+            { kResourceType3DContentExtension,  { typeof( JsonImporter ), typeof( U3DContentProcessor ) } }
         };
 
         return handlers;

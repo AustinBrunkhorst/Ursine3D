@@ -25,13 +25,16 @@ namespace ursine
 
     resources::ResourceData::Handle rp::FBXImporter::Import(ResourceImportContext &context)
     {
-        auto output = std::make_shared<U3DContentData>( );
+        auto output = std::make_shared<U3DContentJsonShit>( );
         auto fileName = context.resource->GetSourceFileName( );
-
+        
         UAssertCatchable( importFBX( fileName.string( ), output.get( ) ),
             "Unable to import FBX file.\nfile: %s",
              fileName.string( ).c_str( )
         );
+
+        // Json object for Mesh, Rig, and Animation data
+        // Then create the U3DContentData with (json, json, json)
 
         // TODO: Return the intermediary data to the processor
         return output;

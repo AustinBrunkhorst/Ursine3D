@@ -34,9 +34,10 @@ namespace ursine
 
             meta::Type GetReaderType(void) override;
 
-            URigData       m_rigData;
-            UModelData     m_modelData;
-            UAnimationData m_animationData;
+            // TODO: Should this be changed into the data classes?
+            Json m_rigData;
+            Json m_modelData;
+            Json m_animationData;
 
         } Meta(Register);
     }

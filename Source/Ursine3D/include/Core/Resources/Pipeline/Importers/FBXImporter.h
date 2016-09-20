@@ -41,7 +41,7 @@ namespace ursine
                 DisplayName( "FBXImporter" ),
                 ResourceImporterConfig(
                     ExtensionList{ "fbx" },
-                    typeof( ursine::rp::U3DContentProcessor )
+                    typeof( ursine::rp::PassThroughProcessor )
                 )
             );
         }

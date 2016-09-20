@@ -32,6 +32,16 @@ namespace ursine
 
             meta::Type GetReaderType(void) override;
 
+            // raw mesh data for physics stuff
+            std::vector<Vec3> m_rawVertData;
+            std::vector<UINT> m_rawIndexData;
+            std::vector<Vec3> m_rawNormData;
+            std::vector<Vec3> m_rawNBinormData;
+            std::vector<Vec3> m_rawTangentmData;
+
+            // raw binary data
+            std::vector<AnimationVertex> m_rawModelData;
+
         } Meta(Register);
     }
 }

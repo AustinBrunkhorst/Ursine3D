@@ -87,16 +87,6 @@ namespace ursine
             ID3D11Buffer *m_vertexBuffer;
             ID3D11Buffer *m_indexBuffer;
 
-            // raw mesh data for physics stuff
-            std::vector<Vec3> m_rawVertData;
-            std::vector<UINT> m_rawIndexData;
-            std::vector<Vec3> m_rawNormData;
-            std::vector<Vec3> m_rawNBinormData;
-            std::vector<Vec3> m_rawTangentmData;
-
-            // raw binary data
-            std::vector<AnimationVertex> m_rawModelData;
-
             // transform to place this mesh in parent's space
             SMat4 m_localToParent;
         };

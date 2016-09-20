@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** UAnimationReader.h
+** U3DContentReader.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -19,18 +19,18 @@ namespace ursine
 {
     namespace resources
     {
-        class UAnimationReader : public ResourceTypeReader
+        class U3DContentReader : public ResourceTypeReader
         {
             RESOURCE_TYPE_READER;
 
         public:
-            UAnimationReader(void);
+            U3DContentReader(void);
 
         private:
             ResourceData::Handle Read(ResourceReader &input) override;
         } Meta(
             Enable,
-            DisplayName( "UAnimationReader" )
+            DisplayName( "U3DContentReader" )
         );
     }
 }

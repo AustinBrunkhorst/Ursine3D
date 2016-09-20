@@ -21,8 +21,9 @@ namespace ursine
 
     resources::ResourceData::Handle rp::U3DContentProcessor::Process(ResourceData::Handle input, ResourceProcessorContext& context)
     {
-        // TODO: [J] How do I get the config?
-        return input;
-    }
+        // TODO: [J] How do I get the config? How do I ensure ModelData/RigData/AnimationData get generated?
+        auto *json = expectInput<JsonData>( input );
 
+        return std::make_shared<U3DContentData>( json->GetData( ) );
+    }
 }
