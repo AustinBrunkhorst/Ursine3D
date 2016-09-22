@@ -29,15 +29,16 @@ namespace ursine
 
         public:
 
+            // TODO: Should this be changed into the data classes?
+            // TODO: [J] Do this differently
+            URigData rig;
+            UModelData model;
+            UAnimationData animationData;
+
         private:
             void Write(pipeline::ResourceWriter &output) override;
 
             meta::Type GetReaderType(void) override;
-
-            // TODO: Should this be changed into the data classes?
-            Json m_rigData;
-            Json m_modelData;
-            Json m_animationData;
 
         } Meta(Register);
     }

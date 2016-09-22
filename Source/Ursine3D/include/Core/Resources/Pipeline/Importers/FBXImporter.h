@@ -34,7 +34,13 @@ namespace ursine
             private:
                 ResourceData::Handle Import(ResourceImportContext &context) override;
 
-                bool importFBX(const std::string &fileName, U3DContentData *content);
+                bool importFBX(const char *fileName, U3DContentData *content);
+
+                void buildModel(FbxScene *scene, UModelData &modelData);
+
+                void getVertsAndIndices(FbxMesh *mesh, UMeshData *meshData);
+
+                void getNormalBinormalAndTangents(FbxMesh *mesh, UMeshData *meshData);
 
             } Meta(
                 Enable,

@@ -41,13 +41,6 @@ namespace ursine
 
             unsigned GetID(void) const;
             void SetID(const unsigned id);
-
-            // raw data
-            std::vector<Vec3> &GetRawVertices(void);
-            std::vector<UINT> &GetRawIndices(void);
-            std::vector<Vec3> &GetRawNormals(void);
-            std::vector<Vec3> &GetRawBinormals(void);
-            std::vector<Vec3> &GetRawTangent(void);
             
             // vert data
             ID3D11Buffer *&GetVertexBuffer(void);

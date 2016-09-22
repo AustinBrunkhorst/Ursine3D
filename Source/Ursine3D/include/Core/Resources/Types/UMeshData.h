@@ -27,20 +27,17 @@ namespace ursine
 
         public:
 
+            // TODO: [J] Encapsulate?
+            std::vector<Vec3> verts;
+            std::vector<uint> indices;
+            std::vector<Vec3> normals;
+            std::vector<Vec3> binormal;
+            std::vector<Vec3> tangent;
+
         private:
             void Write(pipeline::ResourceWriter &output) override;
 
             meta::Type GetReaderType(void) override;
-
-            // raw mesh data for physics stuff
-            std::vector<Vec3> m_rawVertData;
-            std::vector<UINT> m_rawIndexData;
-            std::vector<Vec3> m_rawNormData;
-            std::vector<Vec3> m_rawNBinormData;
-            std::vector<Vec3> m_rawTangentmData;
-
-            // raw binary data
-            std::vector<AnimationVertex> m_rawModelData;
 
         } Meta(Register);
     }

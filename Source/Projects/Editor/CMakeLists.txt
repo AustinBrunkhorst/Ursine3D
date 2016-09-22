@@ -29,7 +29,7 @@ include_directories(${${GAME_LOGIC_TARGET}_INCLUDE_DIRS})
 ursine_project(Editor
     FOLDER "Engine"
     TYPE EXE
-    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX FileWatcher
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX FileWatcher Assimp 
     COPY_SHADERS "Assets/Shaders/"
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"

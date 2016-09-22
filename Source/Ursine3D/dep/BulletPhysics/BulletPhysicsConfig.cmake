@@ -39,24 +39,5 @@ set(BulletPhysics_STATIC_LIBS
     optimized ${DIR_LIB}/Release/LinearMath${LIB_EXT}
     optimized ${DIR_LIB}/Release/BulletWorldImporter${LIB_EXT}
     optimized ${DIR_LIB}/Release/BulletFileLoader${LIB_EXT}
-    optimized ${DIR_LIB}/Release/HACD${LIB_EXT})
-
-# Shared Libraries
-
-set(DEBUG_EXPR $<CONFIG:debug>)
-set(RELEASE_EXPR $<NOT:${DEBUG_EXPR}>)
-
-set(BulletPhysics_SHARED_LIBS 
-    "${DIR_LIB}/$<${DEBUG_EXPR}:Debug>$<${RELEASE_EXPR}:Release>/*${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    "${DIR_LIB}/$<${DEBUG_EXPR}:Debug>$<${RELEASE_EXPR}:Release>/*.bin"
-)
-
-set(BulletPhysics_SHARED_LIBS_Debug 
-    "${DIR_LIB}/Debug/*${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    "${DIR_LIB}/Debug/*.bin"
-)
-
-set(BulletPhysics_SHARED_LIBS_Release 
-    "${DIR_LIB}/Release/*${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    "${DIR_LIB}/Release/*.bin"
+    optimized ${DIR_LIB}/Release/HACD${LIB_EXT}
 )

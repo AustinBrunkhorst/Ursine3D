@@ -14,6 +14,7 @@
 #pragma once
 
 #include "ResourceData.h"
+#include "UMeshData.h"
 
 namespace ursine
 {
@@ -27,19 +28,16 @@ namespace ursine
             UModelData(const UModelData &other);
             ~UModelData(void);
 
-            void AddMesh(graphics::Mesh *mesh);
-            graphics::Mesh *GetMesh(uint index) const;
+            void AddMesh(UMeshData *mesh);
+            UMeshData *GetMesh(uint index) const;
 
         private:
             void Write(pipeline::ResourceWriter &output) override;
 
             meta::Type GetReaderType(void) override;
 
-            // TODO: [J] Look into not dynamically allocating these
-            std::vector<graphics::Mesh*> m_meshes;
-
-            // TODO: [J] Functions for this
-            bool m_onGPU;
+            // TODO: [J] Improve the cache coherency
+            std::vector<UMeshData*> m_meshes;
 
         } Meta(Register);
     }

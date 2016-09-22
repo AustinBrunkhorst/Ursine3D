@@ -85,7 +85,7 @@ macro (ursine_project PROJECT_NAME)
 
         foreach (DEPENDENCY ${PROJ_DEPENDS})
             if ("${DEP_${DEPENDENCY}_DIR}" STREQUAL "")
-                message(FATAL_ERROR "Unknown dependency \"${DEPENDENCY}\".")
+                message(FATAL_ERROR "Unknown dependency \"${DEPENDENCY}\" for project \"${PROJECT_NAME}\".")
             endif ()
 
             # copy shared libraries

@@ -1,6 +1,0 @@
-*.cpp
-*.c
-*.h
-*.lib
-!Debug
-!Release
