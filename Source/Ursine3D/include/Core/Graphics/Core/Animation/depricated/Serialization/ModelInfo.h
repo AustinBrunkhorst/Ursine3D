@@ -24,7 +24,7 @@ namespace ursine
     {
         namespace ufmt_loader
         {
-            class ModelInfo : public ISerialize
+            /*class ModelInfo : public ISerialize
             {
             public:
                 std::string name;
@@ -52,7 +52,7 @@ namespace ursine
 
                 void Read(resources::ResourceReader &input) override;
                 void Write(resources::pipeline::ResourceWriter &output) override;
-            };
+            };*/
         };
     };
 };

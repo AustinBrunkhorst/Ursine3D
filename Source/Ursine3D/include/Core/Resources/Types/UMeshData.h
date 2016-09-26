@@ -19,25 +19,31 @@ namespace ursine
 {
     namespace resources
     {
-        // TODO: [J] This shouldn't be here?
-        // I don't think we need a resource reader/writer
-        class UMeshData : public ResourceData
+        // TODO: [J] Make this a resource of it's own
+        class UMeshData //: public ResourceData
         {
-            RESOURCE_DATA;
+            //RESOURCE_DATA;
+
+            friend class UModelData;
 
         public:
 
+            typedef std::shared_ptr<UMeshData> Handle;
+
             // TODO: [J] Encapsulate?
-            std::vector<Vec3> verts;
+            std::vector<SVec3> verts;
             std::vector<uint> indices;
-            std::vector<Vec3> normals;
-            std::vector<Vec3> binormal;
-            std::vector<Vec3> tangent;
+            std::vector<SVec3> normals;
+            std::vector<SVec3> tangents;
+            std::vector<SVec3> bitangents;
+
+            void SetName(const std::string &name);
+            const std::string &GetName(void) const;
 
         private:
-            void Write(pipeline::ResourceWriter &output) override;
+            void Write(pipeline::ResourceWriter &output);// override;
 
-            meta::Type GetReaderType(void) override;
+            meta::Type GetReaderType(void);// override;
 
         } Meta(Register);
     }

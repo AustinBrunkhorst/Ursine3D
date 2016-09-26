@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** U3DContentProcessorOptions.cpp
+** UModelImporter.cpp
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,18 +13,24 @@
 
 #include "UrsinePrecompiled.h"
 
-#include "U3DContentProcessorOptions.h"
+#include "UModelImporter.h"
+
+#include "ResourceReader.h"
+#include "ResourceImportContext.h"
+
+#include "UModelData.h"
+#include "UModelReader.h"
 
 namespace ursine
 {
     namespace resources
     {
-        namespace pipeline
+        ResourceData::Handle rp::UModelImporter::Import(ResourceImportContext &context)
         {
-            U3DContentProcessorOptions::U3DContentProcessorOptions(void)
-                : processRig( false )
-                , processModel( false )
-                , processAnimations( false ) { }
+            ResourceReader resource( context.resource->GetSourceFileName( ) );
+            UModelReader reader;
+
+            return reader.Read( resource );
         }
     }
 }

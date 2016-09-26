@@ -2,7 +2,7 @@
 ** Team Bear King
 ** © 2016 DigiPen Institute of Technology, All Rights Reserved.
 **
-** U3DContentProcessor.h
+** UModelImporter.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu
@@ -13,9 +13,8 @@
 
 #pragma once
 
-#include "ResourceProcessor.h"
-
-#include "Options/U3DContentProcessorOptions.h"
+#include "ResourceImporter.h"
+#include "BuiltInResourceConfig.h"
 
 namespace ursine
 {
@@ -23,20 +22,19 @@ namespace ursine
     {
         namespace pipeline
         {
-            class U3DContentProcessor : public ResourceProcessor
+            // TODO: [J] Remove this when we're no longer writing to the source directory
+            class UModelImporter : public ResourceImporter
             {
-                RESOURCE_PROCESSOR;
+                RESOURCE_IMPORTER;
 
-            public:
-                U3DContentProcessor(void);
+                ResourceData::Handle Import(ResourceImportContext &context) override;
 
-            private:
-                ResourceData::Handle Process(ResourceData::Handle input, ResourceProcessorContext &context) override;
             } Meta(
                 Enable,
-                DisplayName( "U3DContentProcessor" ),
-                ResourceProcessorConfig(
-                    typeof( ursine::rp::U3DContentProcessorOptions )
+                DisplayName( "UModelImporter" ),
+                ResourceImportConfig(
+                    ExtensionList{ kResourceTypeModelExtension },
+                    typeof( ursine::rp::PassThroughProcessor )
                 )
             );
         }

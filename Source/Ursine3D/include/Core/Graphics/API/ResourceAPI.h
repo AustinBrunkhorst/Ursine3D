@@ -15,7 +15,7 @@
 
 #include "GFXAPIDefines.h"
 #include "ModelResource.h"
-#include "ModelInfo.h"
+#include "UModelData.h"
 #include "AnimationInfo.h"
 #include "GUID.h"
 #include "FontData.h"
@@ -62,8 +62,7 @@ namespace ursine
             /////////////////////////////////////////////////////////
 
             // create a model
-            bool CheckModelExistence(const std::string &modelName);
-            GfxHND CreateModel(const ufmt_loader::ModelInfo &modelInfo);
+            GfxHND CreateModel(const resources::UModelData::Handle &modelInfo);
             void DestroyModel(GfxHND &handle);
 
             // load/unload from GPU
@@ -72,11 +71,6 @@ namespace ursine
 
             // get model data
             ModelResource *GetModelResource(GfxHND handle);
-
-            // get a model info
-            ufmt_loader::ModelInfo *GetModelInfo(const GfxHND &handle);
-            ufmt_loader::ModelInfo *GetModelInfoNByName(const std::string &name);
-
 
             /////////////////////////////////////////////////////////
             // Animation

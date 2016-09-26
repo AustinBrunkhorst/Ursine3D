@@ -14,6 +14,7 @@
 #include "UrsinePrecompiled.h"
 
 #include "UMeshData.h"
+#include "UMeshReader.h"
 
 namespace ursine
 {
@@ -21,7 +22,54 @@ namespace ursine
     {
         void UMeshData::Write(pipeline::ResourceWriter &output)
         {
-            
+            output.Write( verts.size( ) );
+
+            for (auto &vert : verts)
+            {
+                output.Write( vert.X( ) );
+                output.Write( vert.Y( ) );
+                output.Write( vert.Z( ) );
+            }
+
+            output.Write( indices.size( ) );
+
+            for (auto &index : indices)
+            {
+                output.Write( index );
+            }
+
+            output.Write( normals.size( ) );
+
+            for (auto &norm : normals)
+            {
+                output.Write( norm.X( ) );
+                output.Write( norm.Y( ) );
+                output.Write( norm.Z( ) );
+            }
+
+            output.Write( tangents.size( ) );
+
+            for (auto &tang : tangents)
+            {
+                output.Write( tang.X( ) );
+                output.Write( tang.Y( ) );
+                output.Write( tang.Z( ) );
+            }
+
+            output.Write( bitangents.size( ) );
+
+            for (auto &bi : bitangents)
+            {
+                output.Write( bi.X( ) );
+                output.Write( bi.Y( ) );
+                output.Write( bi.Z( ) );
+            }
         }
+
+        meta::Type UMeshData::GetReaderType(void)
+        {
+            return typeof(UMeshReader);
+        }
+
     }
 }

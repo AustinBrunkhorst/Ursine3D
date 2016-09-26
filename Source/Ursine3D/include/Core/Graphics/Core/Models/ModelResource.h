@@ -14,13 +14,13 @@
 #pragma once
 
 #include "D3D11Forward.h"
-#include "Mesh.h"
-#include "LvlHierarchy.h"
+#include "MeshResource.h"
 
 namespace ursine
 {
     namespace graphics
     {
+        // TODO: [J] Keep this?
         class ModelResource
         {
         public:
@@ -28,17 +28,17 @@ namespace ursine
             ~ModelResource(void);
 
             // add a mesh to this model
-            void AddMesh(Mesh *newMesh);
+            void AddMesh(MeshResource *newMesh);
 
             // get mesh by index or name
-            Mesh *GetMesh(const unsigned index) const;
-            Mesh *GetMesh(const std::string &name);
+            MeshResource *GetMesh(const unsigned index) const;
+            MeshResource *GetMesh(const std::string &name);
 
             // get num of meshes
             unsigned GetMeshCount(void) const;
 
             // get the vector of meshes
-            const std::vector<Mesh *> &GetMeshArray(void) const;
+            const std::vector<MeshResource *> &GetMeshArray(void) const;
             
             void IncrementReference(void);
             void DecrementReference(void);
@@ -51,13 +51,13 @@ namespace ursine
 
         private:
             // root mesh of this model
-            Mesh *m_rootNode;
+            MeshResource *m_rootNode;
 
             // array of all meshes in this array
-            std::vector<Mesh *> m_meshArray;
+            std::vector<MeshResource *> m_meshArray;
 
             // map for name lookup... This might need to get changed
-            std::unordered_map<std::string, Mesh *> m_meshMap;
+            std::unordered_map<std::string, MeshResource *> m_meshMap;
             
             bool m_onGPU;
 

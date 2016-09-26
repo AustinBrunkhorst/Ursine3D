@@ -22,7 +22,7 @@ namespace ursine
 {
     namespace graphics
     {
-        namespace ufmt_loader
+        /*namespace ufmt_loader
         {
             struct MeshVertex
             {
@@ -118,6 +118,6 @@ namespace ursine
                 void Read(resources::ResourceReader &input) override;
                 void Write(resources::pipeline::ResourceWriter &output) override;
             };
-        };
-    };
-};
+        }*/
+    }
+}

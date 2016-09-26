@@ -20,24 +20,37 @@ namespace ursine
 {
     namespace resources
     {
+        namespace pipeline
+        {
+            // TODO: [J] Remove this shit
+            class Content3DImporter;
+        }
+
         class UModelData : public ResourceData
         {
             RESOURCE_DATA;
 
-        public:
-            UModelData(const UModelData &other);
-            ~UModelData(void);
+            // TODO: [J] Remove this dependency (needed for Write function)
+            friend class pipeline::Content3DImporter;
 
-            void AddMesh(UMeshData *mesh);
-            UMeshData *GetMesh(uint index) const;
+        public:
+
+            typedef std::shared_ptr<UModelData> Handle;
+
+            // TODO: [J] Add the meshes' names?
+            void AddMesh(UMeshData::Handle mesh);
+            const UMeshData *GetMesh(uint index) const;
+
+            uint GetNumMeshes(void) const;
+
+            const std::string &GetName(void) const;
 
         private:
             void Write(pipeline::ResourceWriter &output) override;
 
             meta::Type GetReaderType(void) override;
 
-            // TODO: [J] Improve the cache coherency
-            std::vector<UMeshData*> m_meshes;
+            std::vector<UMeshData::Handle> m_meshes;
 
         } Meta(Register);
     }

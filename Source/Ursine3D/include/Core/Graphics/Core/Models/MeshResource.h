@@ -27,13 +27,14 @@ namespace ursine
     {
         struct AnimationVertex;
 
-        class Mesh
+        // TODO: [J] Find a way to get rid of this?
+        class MeshResource
         {
         public:
             // constructor
-            Mesh();
+            MeshResource();
 
-            ~Mesh(void);
+            ~MeshResource(void);
 
             // set name stuff
             const std::string &GetName(void) const;
@@ -41,33 +42,12 @@ namespace ursine
 
             unsigned GetID(void) const;
             void SetID(const unsigned id);
-            
-            // vert data
+
             ID3D11Buffer *&GetVertexBuffer(void);
-            unsigned GetVertexCount(void) const;
-            void SetVertexCount(const unsigned vertCount);
-
-            // index data
             ID3D11Buffer *&GetIndexBuffer(void);
-            unsigned GetIndexCount(void) const;
-            void SetIndexCount(const unsigned indexCount);
-
-            // normal data
-            unsigned GetNormalCount(void) const;
-            void SetNormalCount(const unsigned normalCount);
-
-            // binormal data
-            unsigned GetBinormalCount(void) const;
-            void SetBinormalCount(const unsigned binormalCount);
-
-            // tangent data
-            unsigned GetTangentCount(void) const;
-            void SetTangentCount(const unsigned tangentCount);
 
             const SMat4 &GetLocalToParentTransform(void) const;
             void SetLocalToParentTransform(const SMat4 &transform);
-
-            std::vector<AnimationVertex> &GetRawModelData(void);
 
         private:
             // name

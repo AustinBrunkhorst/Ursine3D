@@ -20,7 +20,7 @@ namespace ursine
 {
     namespace graphics
     {
-        namespace ufmt_loader
+        /*namespace ufmt_loader
         {
             ModelInfo::ModelInfo(void)
                 : mmeshCount( 0 )
@@ -142,6 +142,6 @@ namespace ursine
                     }
                 }
             }
-        };
-    };
-};
+        }*/
+    }
+}

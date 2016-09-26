@@ -266,7 +266,9 @@ namespace ursine
 
     int AnimationBuilder::LoadBoneData(const graphics::ufmt_loader::ModelInfo &modelData, const std::string &name)
     {
-        unsigned boneCount = modelData.mboneCount;
+        // TODO: [J] Fix this
+        return 0;
+        /*unsigned boneCount = modelData.mboneCount;
 
         // vector of vectors for storing binary tree
         std::vector<std::vector<unsigned> >hierarchy;
@@ -296,7 +298,7 @@ namespace ursine
 
         // save the data in the maps, return
         m_name2Rig[name] = rig;
-        return rigIndex;
+        return rigIndex;*/
     }
 
     float AnimationBuilder::linearInterpolation(float &coeff1, float &coeff2, float transRate)

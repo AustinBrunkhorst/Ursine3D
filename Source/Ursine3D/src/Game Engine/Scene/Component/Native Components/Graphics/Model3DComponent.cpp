@@ -458,7 +458,7 @@ namespace ursine
             if (!m_model)
                 return "";
 
-            auto info = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetModelInfo( m_model->GetModelHandle( ) );
+            auto info = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetModel( m_model->GetModelHandle( ) );
 
             if (!info)
                 return "";

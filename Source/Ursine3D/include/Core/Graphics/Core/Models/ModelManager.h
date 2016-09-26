@@ -35,8 +35,7 @@ namespace ursine
             void Uninitialize(void);
 
             // create/destry model
-            bool CheckModelExistence(const std::string &modelName);
-            GfxHND CreateModel(const ufmt_loader::ModelInfo &modelInfo);
+            GfxHND CreateModel(resources::UModelData::Handle model);
             void DestroyModel(GfxHND &handle);
 
             // load/unload model from gpu
@@ -72,18 +71,20 @@ namespace ursine
             void DestroyAnimation(GfxHND &handle);
 
             // getting info
-            ufmt_loader::ModelInfo *GetModelInfo(GfxHND handle);
+            // TODO: [J] Change the name of this / possibly remove it
+            const resources::UModelData *GetModel(GfxHND handle);
             ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
             ModelResource *GetModel(const unsigned ID);
 
             // getting model info by name
-            ufmt_loader::ModelInfo *GetModelInfoByName(const std::string &name);
+            // TODO: [J] Remove this?
+            const resources::UModelData *GetModelByName(const std::string &name);
 
             bool IsLoading(void) const;
 
         private:
             void waitForLoading(void) const;
-            void InitializeModel(const ufmt_loader::ModelInfo &modelInfo, ModelResource &modelresource);
+            void InitializeModel(resources::UModelData::Handle modelData, ModelResource &modelresource);
             void loadModelToGPU(ModelResource &model);
             void unloadModelFromGPU(ModelResource &model);
 
@@ -97,9 +98,9 @@ namespace ursine
             std::atomic<bool> m_loadingModel;
 
             std::unordered_map<unsigned, ModelResource> m_modelCache;
-            std::unordered_map<unsigned, ufmt_loader::ModelInfo> m_modelInfoCache;
+            std::unordered_map<unsigned, resources::UModelData::Handle> m_modelInfoCache;
 
-            std::unordered_map<std::string, ufmt_loader::ModelInfo*> m_modelInfoTable;
+            std::unordered_map<std::string, resources::UModelData::Handle> m_modelInfoTable;
 
             // animation
             unsigned m_nextAnimationID;

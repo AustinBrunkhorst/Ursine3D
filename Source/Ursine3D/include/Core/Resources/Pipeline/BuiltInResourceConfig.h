@@ -30,6 +30,7 @@ namespace ursine
             extern const char * const kResourceTypeArchetypeExtension;
             extern const char * const kResourceTypeUIScreenExtension;
             extern const char * const kResourceTypeAudioEventExtension;
+            extern const char * const kResourceTypeModelExtension;
 
             ///////////////////////////////////////////////////////////////////
             // Utility Functions

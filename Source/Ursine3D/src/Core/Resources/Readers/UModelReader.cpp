@@ -15,17 +15,32 @@
 
 #include "UModelReader.h"
 
+#include "UModelData.h"
+#include "UMeshReader.h"
+
 namespace ursine
 {
     namespace resources
     {
+        // TODO: [J] Remove the "model" concept all together?
+        // I.E make everything run off of meshes, and the "Model"
+        // generated object would just be a hierarchy of entities
         UModelReader::UModelReader(void) { }
 
         ResourceData::Handle UModelReader::Read(ResourceReader &input)
         {
-            // TODO: [J] input.read(shit);
+            auto output = std::make_shared<UModelData>( );
+            size_t numMeshes = 0;
+            UMeshReader reader;
 
-            return std::make_shared<UModelData>( /* shit */ );
+            input.Read<size_t>(numMeshes);
+
+            while (numMeshes > 0)
+            {
+                output->AddMesh(
+                    reader.Read( input )
+                );
+            }
         }
     }
 }

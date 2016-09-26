@@ -16,12 +16,12 @@
 #include "BuiltInResourceConfig.h"
 
 #include "JsonImporter.h"
+#include "UModelImporter.h"
 
 #include "WorldProcessor.h"
 #include "ArchetypeProcessor.h"
 #include "UIScreenProcessor.h"
 #include "AudioItemProcessor.h"
-#include "U3DContentProcessor.h"
 
 namespace ursine
 {
@@ -29,7 +29,9 @@ namespace ursine
     const char * const rp::kResourceTypeArchetypeExtension = "uatype";
     const char * const rp::kResourceTypeUIScreenExtension = "ui";
     const char * const rp::kResourceTypeAudioEventExtension = "uaevent";
-    const char * const rp::kResourceType3DContentExtension = "u3dcontent";
+
+    // TODO: [J] This shouldn't be needed once the refactor is in place
+    const char * const rp::kResourceTypeModelExtension = "umodel";
 
     const rp::TypePairMap &rp::GetBuiltInResourceHandlers(void)
     {
@@ -38,7 +40,7 @@ namespace ursine
             { kResourceTypeArchetypeExtension,  { typeof( JsonImporter ), typeof( ArchetypeProcessor ) } },
             { kResourceTypeUIScreenExtension,   { typeof( JsonImporter ), typeof( UIScreenProcessor ) } },
             { kResourceTypeAudioEventExtension, { typeof( JsonImporter ), typeof( AudioItemProcessor ) } },
-            { kResourceType3DContentExtension,  { typeof( JsonImporter ), typeof( U3DContentProcessor ) } }
+            { kResourceTypeModelExtension,      { typeof( UModelImporter ),  typeof( PassThroughProcessor ) } }
         };
 
         return handlers;

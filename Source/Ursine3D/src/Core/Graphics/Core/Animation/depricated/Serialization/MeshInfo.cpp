@@ -20,7 +20,7 @@ namespace ursine
 {
     namespace graphics
     {
-        namespace ufmt_loader
+        /*namespace ufmt_loader
         {
             MeshInfo::MeshInfo(void) 
                 : meshVtxInfoCount( 0 )
@@ -199,6 +199,6 @@ namespace ursine
                         output.Write( &iter );
                 }
             }
-        };
-    };
-};
+        }*/
+    }
+}

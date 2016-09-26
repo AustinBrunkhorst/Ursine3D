@@ -34,7 +34,7 @@ namespace ursine
                 delete x;
         }
 
-        void ModelResource::AddMesh(Mesh *newMesh)
+        void ModelResource::AddMesh(MeshResource *newMesh)
         {
             if (m_meshArray.size() == 0)
                 m_rootNode = newMesh;
@@ -43,7 +43,7 @@ namespace ursine
             m_meshArray.push_back(newMesh);
         }
 
-        Mesh *ModelResource::GetMesh(const unsigned index) const
+        MeshResource *ModelResource::GetMesh(const unsigned index) const
         {
             if(!(index < m_meshArray.size()))
             {
@@ -53,7 +53,7 @@ namespace ursine
             return m_meshArray[index];
         }
 
-        Mesh *ModelResource::GetMesh(const std::string & name)
+        MeshResource *ModelResource::GetMesh(const std::string & name)
         {
             return m_meshMap[name];
         }
@@ -63,7 +63,7 @@ namespace ursine
             return static_cast<unsigned>(m_meshArray.size());
         }
 
-        const std::vector<Mesh*> &ModelResource::GetMeshArray(void) const
+        const std::vector<MeshResource*> &ModelResource::GetMeshArray(void) const
         {
             return m_meshArray;
         }

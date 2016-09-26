@@ -14,6 +14,7 @@
 #include "UrsinePrecompiled.h"
 
 #include "UModelData.h"
+#include "UModelReader.h"
 
 namespace ursine
 {
@@ -21,37 +22,34 @@ namespace ursine
 
     namespace resources
     {
-        UModelData::UModelData(const UModelData& other)
-            : m_onGPU( false )
-        {
-            
-        }
-
-        UModelData::~UModelData(void)
-        {
-            for (auto &mesh : m_meshes)
-            {
-                delete mesh;
-            }
-
-            m_meshes.clear( );
-        }
-
-        void UModelData::AddMesh(Mesh *mesh)
+        void UModelData::AddMesh(UMeshData::Handle mesh)
         {
             m_meshes.push_back( mesh );
         }
 
-        Mesh *UModelData::GetMesh(uint index) const
+        const UMeshData *UModelData::GetMesh(uint index) const
         {
-            return m_meshes[ index ];
+            return m_meshes[ index ].get( );
+        }
+
+        uint UModelData::GetNumMeshes(void) const
+        {
+            return m_meshes.size( );
         }
 
         void UModelData::Write(pipeline::ResourceWriter &output)
         {
-            // TODO: [J] Implement this
+            // TODO: [J] Write how many meshes there are?
+            output.Write( m_meshes.size( ) );
+
+            for (auto &mesh : m_meshes)
+            {
+                mesh->Write( output );
+            }
         }
 
+        // TODO: [J] The ResourceTypeReader class doesn't need to be exist, 
+        // just make a "Read" virtual function for the Resource type class
         meta::Type UModelData::GetReaderType(void)
         {
             return typeof(UModelReader);

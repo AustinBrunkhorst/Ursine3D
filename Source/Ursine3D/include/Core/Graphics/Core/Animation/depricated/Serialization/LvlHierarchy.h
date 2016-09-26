@@ -20,7 +20,7 @@ namespace ursine
 {
     namespace graphics
     {
-        namespace ufmt_loader
+        /*namespace ufmt_loader
         {
             // This structure contains hierarchy among meshes. This will makes easy to find it.
             struct MeshInLvl
@@ -44,6 +44,6 @@ namespace ursine
                     : boneName( "" )
                     , mParentIndex( -1 ) { }
             };
-        }
+        }*/
     }
 }
