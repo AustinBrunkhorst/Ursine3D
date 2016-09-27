@@ -26,7 +26,7 @@ namespace ursine
         // I.E make everything run off of meshes, and the "Model"
         // generated object would just be a hierarchy of entities
 
-        // TODO: [J] Remove this shit
+        // TODO: [J] Remove this shit (replace with my own built data)
         struct MeshVertex
         {
             pseudodx::XMFLOAT3	pos;

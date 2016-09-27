@@ -17,7 +17,6 @@
 #include <Model3DComponent.h>
 #include <DebugSystem.h>
 #include <EditorToolResources.h>
-#include <ModelData.h>
 #include <ArchetypeData.h>
 
 using namespace ursine;
