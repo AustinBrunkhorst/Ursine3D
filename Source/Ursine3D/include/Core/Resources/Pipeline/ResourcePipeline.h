@@ -21,7 +21,8 @@
 
 #include "TextureImporter.h"
 #include "FontImporter.h"
-#include "FBXFileImporter.h"
+#include "Content3DImporter.h"
+#include "UModelImporter.h"
 #include "AudioImporter.h"
 #include "JsonImporter.h"
 #include "UIProjectImporter.h"
@@ -44,8 +45,12 @@
 #include "TextureData.h"
 #include "TextureReader.h"
 
-#include "ModelData.h"
-#include "ModelReader.h"
+#include "UModelData.h"
+#include "UModelReader.h"
+#include "URigData.h"
+#include "URigReader.h"
+#include "UAnimationData.h"
+#include "UAnimationReader.h"
 
 #include "FontData.h"
 #include "FontReader.h"

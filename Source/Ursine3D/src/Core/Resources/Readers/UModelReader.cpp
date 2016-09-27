@@ -208,6 +208,10 @@ namespace ursine
             }*/
         }
 
+        UModelReader::UModelReader(void)
+        {
+        }
+
         ResourceData::Handle UModelReader::Read(ResourceReader &input)
         {
             auto output = std::make_shared<UModelData>( );
@@ -221,6 +225,8 @@ namespace ursine
                 auto mesh = reader.Read( input );
 
                 output->AddMesh( mesh );
+
+                --numMeshes;
             }
 
             // add it to the graphics manager

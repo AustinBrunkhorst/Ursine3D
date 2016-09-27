@@ -66,6 +66,7 @@ namespace ursine
             void DestroyAnimation(GfxHND &handle);
 
             ModelResource *GetModel(GfxHND handle);
+            ModelResource *GetModelIndex(uint index);
             ModelResource *GetModel(const std::string &name);
 
             ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);

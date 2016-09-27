@@ -107,10 +107,6 @@ namespace ursine
             m_onGPU = isOnGPU;
         }
 
-        ModelResource::ModelResource(void)
-            : m_onGPU( false )
-            , m_referenceCount( 0 ) { }
-
         void ModelResource::addMesh(MeshResource *mesh)
         {
             m_meshArray.push_back( mesh );

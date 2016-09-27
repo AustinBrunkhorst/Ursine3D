@@ -17,19 +17,10 @@ set(Assimp_INCLUDE_DIRS
 
 # Static Libraries
 
-set(DLL_EXT ${CMAKE_SHARED_LIBRARY_SUFFIX})
+set(LIB_EXT ${CMAKE_STATIC_LIBRARY_SUFFIX})
 
-set(DEBUG_EXPR $<CONFIG:debug>)
-set(RELEASE_EXPR $<NOT:${DEBUG_EXPR}>)
-
-set(Assimp_SHARED_LIBS 
-  "${DIR_LIB}/$<${DEBUG_EXPR}:Debug>$<${RELEASE_EXPR}:Release>/*${DLL_EXT}"
-)
-
-set(Assimp_SHARED_LIBS_Debug 
-  "${DIR_LIB}/Debug/*${DLL_EXT}"
-)
-
-set(Assimp_SHARED_LIBS_Release 
-  "${DIR_LIB}/Release/*${DLL_EXT}"
-)
+set(Assimp_STATIC_LIBS
+  debug ${DIR_LIB}/Debug/assimp-vc140-mt${LIB_EXT}
+  debug ${DIR_LIB}/Debug/zlibstaticicd${LIB_EXT}
+  optimized ${DIR_LIB}/Release/assimp-vc140-mt${LIB_EXT}
+  optimized ${DIR_LIB}/Release/zlibstatic${LIB_EXT})

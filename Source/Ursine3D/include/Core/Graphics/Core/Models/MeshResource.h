@@ -19,6 +19,7 @@
 #include "D3D11Forward.h"
 #include "UMeshData.h"
 #include "SMat4.h"
+#include "VertexDefinitions.h"
 
 namespace ursine
 {
@@ -44,20 +45,16 @@ namespace ursine
             ID3D11Buffer *&GetVertexBuffer(void);
             ID3D11Buffer *&GetIndexBuffer(void);
 
-            const SMat4 &GetLocalToParentTransform(void) const;
-            void SetLocalToParentTransform(const SMat4 &transform);
-
             uint GetVertexCount(void) const;
-            Vec3 *GetVertexData(void) const;
             const std::vector<Vec3> &GetVertexArray(void) const;
 
             uint GetIndexCount(void) const;
             uint *GetIndexData(void) const;
             const std::vector<uint> &GetIndexArray(void) const;
 
-        private:
-            MeshResource(void);
+            void CreateVertexBufferData(std::vector<AnimationVertex> &buffer) const;
 
+        private:
             // name
             std::string m_name;
 
@@ -69,9 +66,6 @@ namespace ursine
             ID3D11Buffer *m_indexBuffer;
 
             resources::UMeshData::Handle m_meshData;
-
-            // transform to place this mesh in parent's space
-            SMat4 m_localToParent;
         };
     }
 }

@@ -53,18 +53,18 @@ namespace ursine
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL PS INDEX BUFFER
             {
-                auto *newMesh = new MeshResource;
-
-                auto &internalPoint = m_modelCache[ INTERNAL_POINT_INDICES ] = new ModelResource();
+                auto meshData = std::make_shared<resources::UMeshData>( );
+                auto *newMesh = new MeshResource( meshData );
+                auto modelData = std::make_shared<resources::UModelData>( );
+                auto &internalPoint = m_modelCache[ INTERNAL_POINT_INDICES ] = new ModelResource( modelData );
 
                 internalPoint->addMesh( newMesh );
                 internalPoint->SetIsLoaded( true );
 
-                unsigned indices[ 1024 * 6 ];
-                unsigned indexArray[ 6 ] = { 0, 1, 2, 1, 2, 3 };
+                meshData->indices.resize( 1024 * 6 );
 
                 for (int x = 0; x < 1024 * 6; ++x)
-                    indices[ x ] = x;
+                    meshData->indices[ x ] = x;
 
                 D3D11_BUFFER_DESC indexBufferDesc;
                 D3D11_SUBRESOURCE_DATA indexData;
@@ -78,7 +78,7 @@ namespace ursine
                 indexBufferDesc.StructureByteStride = 0;
 
                 // give the subresource structure a pointer to the index data
-                indexData.pSysMem = indices;
+                indexData.pSysMem = &meshData->indices[0];
                 indexData.SysMemPitch = 0;
                 indexData.SysMemSlicePitch = 0;
 
@@ -120,9 +120,10 @@ namespace ursine
                 temp[ 5 ].vUv = DirectX::XMFLOAT2( 1, 1 );
                 temp[ 5 ].vNor = DirectX::XMFLOAT3( 0, 0, 0 );
 
-                auto newMesh = new MeshResource;
-
-                auto &internalQuad = m_modelCache[ INTERNAL_QUAD ] = new ModelResource( );
+                auto meshData = std::make_shared<resources::UMeshData>( );
+                auto newMesh = new MeshResource( meshData );
+                auto modelData = std::make_shared<resources::UModelData>( );
+                auto &internalQuad = m_modelCache[ INTERNAL_QUAD ] = new ModelResource( modelData );
 
                 internalQuad->addMesh( newMesh );
 
@@ -156,6 +157,16 @@ namespace ursine
 
                 for (uint x = 0; x < 6; ++x)
                     indexArray[ x ] = x;
+
+                for (int i = 0; i < 6; ++i)
+                {
+                    auto &vert = temp[i];
+
+                    meshData->verts.emplace_back(vert.vPos.x, vert.vPos.y, vert.vPos.z);
+                    meshData->normals.emplace_back(vert.vNor.x, vert.vNor.y, vert.vNor.z);
+                }
+
+                meshData->indices = { 0, 1, 2, 3, 4, 5 };
 
                 D3D11_BUFFER_DESC indexBufferDesc;
                 D3D11_SUBRESOURCE_DATA indexData;
@@ -469,7 +480,12 @@ namespace ursine
                 "Attempted to get model with handle of invalid type!"
             );
 
-            auto search = m_modelCache.find( hnd->Index_ );
+            return GetModelIndex( hnd->Index_ );
+        }
+
+        ModelResource *ModelManager::GetModelIndex(uint index)
+        {
+            auto search = m_modelCache.find( index );
 
             return search == m_modelCache.end( ) ? nullptr : search->second;
         }
@@ -523,6 +539,9 @@ namespace ursine
                 D3D11_BUFFER_DESC vertexBufferDesc;
                 D3D11_SUBRESOURCE_DATA vertexData;
                 HRESULT result;
+                std::vector<AnimationVertex> buffer;
+
+                mesh->CreateVertexBufferData( buffer );
 
                 //Set up the description of the static vertex buffer.
                 vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
@@ -533,7 +552,7 @@ namespace ursine
                 vertexBufferDesc.StructureByteStride = 0;
 
                 //Give the subresource structure a pointer to the vertex data.
-                vertexData.pSysMem = mesh->GetVertexData( );
+                vertexData.pSysMem = &buffer[ 0 ];
                 vertexData.SysMemPitch = 0;
                 vertexData.SysMemSlicePitch = 0;
 
@@ -546,7 +565,7 @@ namespace ursine
 
                 //Set up the description of the static index buffer.
                 indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-                indexBufferDesc.ByteWidth = sizeof(unsigned) * mesh->GetIndexCount( );
+                indexBufferDesc.ByteWidth = sizeof(uint) * mesh->GetIndexCount( );
                 indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
                 indexBufferDesc.CPUAccessFlags = 0;
                 indexBufferDesc.MiscFlags = 0;

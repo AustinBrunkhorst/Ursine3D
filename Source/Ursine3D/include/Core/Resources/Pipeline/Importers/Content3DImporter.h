@@ -15,6 +15,7 @@
 
 #include "ResourceImporter.h"
 #include "ResourceTypeReader.h"
+#include "PassThroughProcessor.h"
 
 namespace ursine
 {
@@ -38,15 +39,11 @@ namespace ursine
             {
                 RESOURCE_DATA;
 
-                void Write(pipeline::ResourceWriter &output) override { }
-                meta::Type GetReaderType(void) override { return typeof(Content3DReader); }
+                void Write(pipeline::ResourceWriter &output) override;
+                meta::Type GetReaderType(void) override;
 
             } Meta(Register);
 
-            ResourceData::Handle Content3DReader::Read(ResourceReader &intput)
-            {
-                return std::make_shared<Content3DData>();
-            }
             ///////////////////////////////////////////////////////////////////////////////////////////
 
             class Content3DImporter : public ResourceImporter

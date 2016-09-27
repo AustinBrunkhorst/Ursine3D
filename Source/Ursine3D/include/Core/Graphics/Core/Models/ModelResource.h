@@ -49,8 +49,6 @@ namespace ursine
             void SetIsLoaded(bool isOnGPU);
 
         private:
-            ModelResource(void);
-
             void addMesh(MeshResource *mesh);
 
             // array of all meshes in this array

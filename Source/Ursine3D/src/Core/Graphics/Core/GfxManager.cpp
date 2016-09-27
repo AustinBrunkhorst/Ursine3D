@@ -694,7 +694,7 @@ namespace ursine
                 SHADERTYPE_PIXEL
                 );
 
-            shaderManager->Render(modelManager->GetModel(INTERNAL_QUAD)->GetMesh((uint)0)->GetIndexCount());
+            shaderManager->Render(modelManager->GetModelIndex(INTERNAL_QUAD)->GetMesh((uint)0)->GetIndexCount());
 
 
             /////////////////////////////////////////////////////////////////
@@ -1566,7 +1566,7 @@ namespace ursine
             textureManager->MapTextureByID(handle->Index_);
 
             //render to screen
-            shaderManager->Render(modelManager->GetModel(INTERNAL_QUAD)->GetMesh((uint)0)->GetIndexCount());
+            shaderManager->Render(modelManager->GetModelIndex(INTERNAL_QUAD)->GetMesh((uint)0)->GetIndexCount());
         }
 
         void GfxManager::internalRenderDynamicTextureInViewport(GfxHND &texHandle, const float posX, const float posY, GfxHND &camera)
@@ -1627,7 +1627,7 @@ namespace ursine
             textureManager->MapTextureByID(handle->Index_);
 
             //render to screen
-            shaderManager->Render(modelManager->GetModel(INTERNAL_QUAD)->GetMesh((uint)0)->GetIndexCount());
+            shaderManager->Render(modelManager->GetModelIndex(INTERNAL_QUAD)->GetMesh((uint)0)->GetIndexCount());
         }
 
         void GfxManager::rendeScene_forward(Camera &camera, int index)

@@ -31,13 +31,6 @@ namespace ursine
         {
         }
 
-        MeshResource::MeshResource(void)
-            : m_name( "UNDEFINED" )
-            , m_vertexBuffer( nullptr )
-            , m_indexBuffer( nullptr )
-        {
-        }
-
         MeshResource::~MeshResource(void)
         {
             RELEASE_RESOURCE( m_vertexBuffer );
@@ -69,24 +62,9 @@ namespace ursine
             return m_indexBuffer;
         }
 
-        const SMat4 & MeshResource::GetLocalToParentTransform(void) const
-        {
-            return m_localToParent;
-        }
-
-        void MeshResource::SetLocalToParentTransform(const SMat4 &transform)
-        {
-            m_localToParent = transform;
-        }
-
         uint MeshResource::GetVertexCount(void) const
         {
             return static_cast<uint>( m_meshData->verts.size( ) );
-        }
-
-        Vec3 *MeshResource::GetVertexData(void) const
-        {
-            return &m_meshData->verts[ 0 ];
         }
 
         const std::vector<Vec3> &MeshResource::GetVertexArray(void) const
@@ -107,6 +85,35 @@ namespace ursine
         const std::vector<uint> &MeshResource::GetIndexArray(void) const
         {
             return m_meshData->indices;
+        }
+
+        void MeshResource::CreateVertexBufferData(std::vector<AnimationVertex> &buffer) const
+        {
+            size_t size = m_meshData->verts.size( );
+
+            buffer.resize( size );
+
+            auto &verts = m_meshData->verts;
+            auto &normals = m_meshData->normals;
+            auto &tangents = m_meshData->tangents;
+
+            for (size_t i = 0; i < size; ++i)
+            {
+                auto &vert = buffer[ i ];
+
+                vert.vPos = DirectX::XMFLOAT3( verts[ i ].GetFloatPtr( ) );
+                vert.vNor = DirectX::XMFLOAT3( normals[ i ].GetFloatPtr( ) );
+                vert.vTan = DirectX::XMFLOAT3( tangents[ i ].GetFloatPtr( ) );
+
+                // TODO: [J] UV data and bone weight data
+                vert.vUv = DirectX::XMFLOAT2( 0.0f, 0.0f );
+
+                vert.vBWeight = DirectX::XMFLOAT4( 0, 0, 0, 1 );
+                vert.vBIdx[ 0 ] = static_cast<BYTE>( 0 );
+                vert.vBIdx[ 1 ] = static_cast<BYTE>( 0 );
+                vert.vBIdx[ 2 ] = static_cast<BYTE>( 0 );
+                vert.vBIdx[ 3 ] = static_cast<BYTE>( 0 );
+            }
         }
     }
 }

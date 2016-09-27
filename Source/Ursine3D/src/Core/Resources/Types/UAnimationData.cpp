@@ -15,10 +15,20 @@
 
 #include "UAnimationData.h"
 
+#include "UAnimationReader.h"
+
 namespace ursine
 {
     namespace resources
     {
-        
+        void UAnimationData::Write(pipeline::ResourceWriter &output)
+        {
+            
+        }
+
+        meta::Type UAnimationData::GetReaderType(void)
+        {
+            return typeof(UAnimationReader);
+        }
     }
 }

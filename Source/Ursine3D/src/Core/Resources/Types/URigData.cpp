@@ -14,3 +14,21 @@
 #include "UrsinePrecompiled.h"
 
 #include "URigData.h"
+
+#include "URigReader.h"
+
+namespace ursine
+{
+    namespace resources
+    {
+        void URigData::Write(pipeline::ResourceWriter &output)
+        {
+            
+        }
+
+        meta::Type URigData::GetReaderType(void)
+        {
+            return typeof(URigReader);
+        }
+    }
+}

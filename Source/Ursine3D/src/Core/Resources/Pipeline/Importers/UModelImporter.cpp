@@ -25,6 +25,10 @@ namespace ursine
 {
     namespace resources
     {
+        rp::UModelImporter::UModelImporter(void)
+        {
+        }
+
         ResourceData::Handle rp::UModelImporter::Import(ResourceImportContext &context)
         {
             ResourceReader resource( context.resource->GetSourceFileName( ) );

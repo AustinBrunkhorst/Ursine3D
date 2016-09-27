@@ -15,6 +15,7 @@
 
 #include "ResourceImporter.h"
 #include "BuiltInResourceConfig.h"
+#include "PassThroughProcessor.h"
 
 namespace ursine
 {
@@ -27,13 +28,17 @@ namespace ursine
             {
                 RESOURCE_IMPORTER;
 
+            public:
+                UModelImporter(void);
+
+            private:
                 ResourceData::Handle Import(ResourceImportContext &context) override;
 
             } Meta(
                 Enable,
                 DisplayName( "UModelImporter" ),
-                ResourceImportConfig(
-                    ExtensionList{ kResourceTypeModelExtension },
+                ResourceImporterConfig(
+                    ExtensionList{ ursine::rp::kResourceTypeModelExtension },
                     typeof( ursine::rp::PassThroughProcessor )
                 )
             );

@@ -39,6 +39,24 @@ namespace ursine
 {
     namespace resources
     {
+        namespace pipeline
+        {
+            ResourceData::Handle Content3DReader::Read(ResourceReader &intput)
+            {
+                return std::make_shared<Content3DData>();
+            }
+
+            meta::Type Content3DData::GetReaderType(void)
+            {
+                return typeof(Content3DReader);
+            }
+
+            void Content3DData::Write(pipeline::ResourceWriter &output)
+            {
+                
+            }
+        }
+
         static void importScene(const aiScene *scene, Content3D &content);
         static void importSceneNode(const aiScene *scene, const aiNode *node, Content3D &content);
         static void importSceneNodeMeshes(const aiScene *scene, const aiNode *node, const UModelData::Handle &output);
@@ -54,20 +72,22 @@ namespace ursine
 
         ResourceData::Handle rp::Content3DImporter::Import(ResourceImportContext &context)
         {
-            auto fileName = context.resource->GetSourceFileName( ).string( ).c_str( );
-            auto flags = aiProcessPreset_TargetRealtime_MaxQuality;
+            // TODO: [J] investigate why this doesn't work (calling function on stack value?)
+            // auto fileName = context.resource->GetSourceFileName( ).string( ).c_str( );
+            auto fileName = context.resource->GetSourceFileName( ).string( );
+            auto flags = aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType;
 
             Assimp::Importer importer;
 
             UAssertCatchable(
-                !importer.ValidateFlags( flags ),
+                importer.ValidateFlags( flags ),
                 "Invalid post process flags."
             );
 
-            const aiScene *scene = importer.ReadFile( fileName, flags );
+            const aiScene *scene = importer.ReadFile( fileName.c_str( ), flags );
 
             UAssertCatchable(
-                scene == nullptr,
+                scene != nullptr,
                 "Failed to load file: %s",
                 importer.GetErrorString( )
             );
