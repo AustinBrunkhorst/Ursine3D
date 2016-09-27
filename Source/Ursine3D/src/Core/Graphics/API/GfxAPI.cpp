@@ -70,11 +70,11 @@ namespace ursine
 
             //create gfx
             m_privates->gfxCore_ = new GfxManager();
-            m_privates->gfxCore_->Initialize(config);
 
             //create APIs
             ResourceMgr.Initialize();
             ResourceMgr.SetPrivates(m_privates->gfxCore_->modelManager, m_privates->gfxCore_->textureManager, m_privates->gfxCore_->fontManager);
+            m_privates->gfxCore_->Initialize(config);
             RenderableMgr.Initialize();
             RenderableMgr.SetPrivates(m_privates->gfxCore_->renderableManager);
             CameraMgr.Initialize();

@@ -29,8 +29,9 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #pragma once
 
-#include "GFXAPIDefines.h"
+#include "GFXDefines.h"
 #include "Renderable.h"
+#include "RenderableTypes.h"
 
 namespace ursine
 {

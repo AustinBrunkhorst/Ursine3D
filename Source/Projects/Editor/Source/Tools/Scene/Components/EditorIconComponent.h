@@ -14,7 +14,7 @@
 #pragma once
 
 #include <Component.h>
-#include "GfxAPIDefines.h"
+#include "GfxDefines.h"
 
 class EditorIcon : public ursine::ecs::Component
 {

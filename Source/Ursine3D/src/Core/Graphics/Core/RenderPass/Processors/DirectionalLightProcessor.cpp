@@ -79,7 +79,7 @@ namespace ursine
         {
             Light &light = m_manager->renderableManager->GetRenderableByID<Light>( handle.Index_ );
             m_manager->shaderManager->Render(
-                m_manager->modelManager->GetModelIndexcountByID( INTERNAL_QUAD )
+                m_manager->modelManager->GetModel(INTERNAL_QUAD)->GetMesh(0)->GetIndexCount()
             );
         }
     }

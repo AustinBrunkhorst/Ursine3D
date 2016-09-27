@@ -15,6 +15,8 @@
 
 #include "UAnimationReader.h"
 
+#include "UAnimationData.h"
+
 namespace ursine
 {
     namespace resources

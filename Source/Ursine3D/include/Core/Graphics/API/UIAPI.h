@@ -16,7 +16,7 @@
 
 #include <cef_render_handler.h>
 
-#include "GfxAPIDefines.h"
+#include "GfxDefines.h"
 #include "UIInstance.h"
 
 namespace ursine

@@ -19,33 +19,35 @@ namespace ursine
 {
     namespace graphics
     {
-        ModelResource::ModelResource(void)
-            : m_rootNode( nullptr )
-            , m_meshArray( )
+        ModelResource::ModelResource(const resources::UModelData::Handle &modelData)
+            : m_meshArray( )
             , m_meshMap( )
             , m_onGPU( false )
             , m_referenceCount( 0 )
+            , m_modelData( modelData )
         {
+            // initialize
+            for(uint i = 0, n = m_modelData->GetNumMeshes( ); i < n; ++i)
+            {
+                auto meshData = m_modelData->GetMesh( i );
+                auto meshResource = new MeshResource( meshData );
+
+                meshResource->SetID( i );
+
+                m_meshArray.push_back( meshResource );
+                m_meshMap[ meshData->GetName( ) ] = meshResource;
+            }
         }
 
         ModelResource::~ModelResource(void)
         {
-            for (auto *x : m_meshArray)
+            for (auto x : m_meshArray)
                 delete x;
         }
 
-        void ModelResource::AddMesh(MeshResource *newMesh)
+        MeshResource *ModelResource::GetMesh(uint index) const
         {
-            if (m_meshArray.size() == 0)
-                m_rootNode = newMesh;
-
-            m_meshMap[newMesh->GetName()] = newMesh;
-            m_meshArray.push_back(newMesh);
-        }
-
-        MeshResource *ModelResource::GetMesh(const unsigned index) const
-        {
-            if(!(index < m_meshArray.size()))
+            if(index >= m_meshArray.size())
             {
                 return m_meshArray[ 0 ];
             }
@@ -53,7 +55,7 @@ namespace ursine
             return m_meshArray[index];
         }
 
-        MeshResource *ModelResource::GetMesh(const std::string & name)
+        MeshResource *ModelResource::GetMeshByName(const std::string &name)
         {
             return m_meshMap[name];
         }
@@ -67,7 +69,12 @@ namespace ursine
         {
             return m_meshArray;
         }
-        
+
+        const std::string &ModelResource::GetName(void) const
+        {
+            return m_modelData->GetName( );
+        }
+
         void ModelResource::IncrementReference(void)
         {
             ++m_referenceCount;
@@ -98,6 +105,16 @@ namespace ursine
         void ModelResource::SetIsLoaded(bool isOnGPU)
         {
             m_onGPU = isOnGPU;
+        }
+
+        ModelResource::ModelResource(void)
+            : m_onGPU( false )
+            , m_referenceCount( 0 ) { }
+
+        void ModelResource::addMesh(MeshResource *mesh)
+        {
+            m_meshArray.push_back( mesh );
+            m_meshMap[ mesh->GetName( ) ] = mesh;
         }
     }
 }

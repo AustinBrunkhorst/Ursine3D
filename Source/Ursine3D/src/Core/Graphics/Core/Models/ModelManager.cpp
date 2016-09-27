@@ -34,7 +34,6 @@ namespace ursine
             , m_nextModelID( INTERNAL_GEOMETRY_COUNT )
             , m_currentState( -1 )
             , m_modelCache( )
-            , m_modelInfoCache( )
             , m_nextAnimationID( 0 )
             , m_animeInfoCache( { } )
         {
@@ -56,10 +55,10 @@ namespace ursine
             {
                 auto *newMesh = new MeshResource;
 
-                auto &internalPoint = m_modelCache[ INTERNAL_POINT_INDICES ];
+                auto &internalPoint = m_modelCache[ INTERNAL_POINT_INDICES ] = new ModelResource();
 
-                internalPoint.AddMesh( newMesh );
-                internalPoint.SetIsLoaded( true );
+                internalPoint->addMesh( newMesh );
+                internalPoint->SetIsLoaded( true );
 
                 unsigned indices[ 1024 * 6 ];
                 unsigned indexArray[ 6 ] = { 0, 1, 2, 1, 2, 3 };
@@ -123,9 +122,9 @@ namespace ursine
 
                 auto newMesh = new MeshResource;
 
-                auto &internalQuad = m_modelCache[ INTERNAL_QUAD ];
+                auto &internalQuad = m_modelCache[ INTERNAL_QUAD ] = new ModelResource( );
 
-                internalQuad.AddMesh( newMesh );
+                internalQuad->addMesh( newMesh );
 
                 D3D11_BUFFER_DESC vertexBufferDesc;
                 D3D11_SUBRESOURCE_DATA vertexData;
@@ -181,7 +180,7 @@ namespace ursine
                     "Failed to make index buffer!"
                 );
 
-                internalQuad.SetIsLoaded( true );
+                internalQuad->SetIsLoaded( true );
             }
 
             ///////////////////////////////////////////////////////////////////////////////
@@ -192,13 +191,11 @@ namespace ursine
                 // load into modelInfo
                 resources::UModelReader modelReader;
 
-                auto model = modelReader.ReadJDL( reader );
+                auto modelData = modelReader.ReadJDL( reader );
 
-                auto &internalCube = m_modelCache[ INTERNAL_CUBE ];
+                m_modelCache[ INTERNAL_CUBE ] = new ModelResource( modelData );
 
-                InitializeModel( model, internalCube );
-
-                loadModelToGPU( internalCube );
+                loadModelToGPU( m_modelCache[ INTERNAL_CUBE ] );
             }
 
             /////////////////////////////////////////////////////////////////////////////
@@ -209,13 +206,11 @@ namespace ursine
                 // load into modelInfo
                 resources::UModelReader modelInfo;
 
-                auto model = modelInfo.ReadJDL( reader );
+                auto modelData = modelInfo.ReadJDL( reader );
 
-                auto &internalSphere = m_modelCache[ INTERNAL_SPHERE ];
+                m_modelCache[ INTERNAL_SPHERE ] = new ModelResource( modelData );
 
-                InitializeModel( model, internalSphere );
-
-                loadModelToGPU( internalSphere );
+                loadModelToGPU( m_modelCache[ INTERNAL_SPHERE ] );
             }
 
             /////////////////////////////////////////////////////////////////////////////
@@ -226,13 +221,11 @@ namespace ursine
                 // load into modelInfo
                 resources::UModelReader modelInfo;
 
-                auto model = modelInfo.ReadJDL( reader );
+                auto modelData = modelInfo.ReadJDL( reader );
 
-                auto &internalCone = m_modelCache[ INTERNAL_CONE ];
+                m_modelCache[ INTERNAL_CONE ] = new ModelResource( modelData );
 
-                InitializeModel( model, internalCone );
-
-                loadModelToGPU( internalCone );
+                loadModelToGPU( m_modelCache[ INTERNAL_CONE ] );
             }
         }
 
@@ -240,9 +233,15 @@ namespace ursine
         {
             m_device = nullptr;
             m_deviceContext = nullptr;
+
+            // delete all model cache
+            for (auto &pair : m_modelCache)
+            {
+                delete pair.second;
+            }
         }
 
-        GfxHND ModelManager::CreateModel(resources::UModelData::Handle model)
+        GfxHND ModelManager::CreateModel(const resources::UModelData::Handle &modelData)
         {
             m_loadingModel = true;
             GfxHND handle;
@@ -251,13 +250,10 @@ namespace ursine
 
             auto internalID = m_nextModelID++;
 
-            auto &cachedModel = 
-                m_modelCache.emplace( internalID, ModelResource { } ).first->second;
+            auto model = 
+                m_modelCache.emplace( internalID, new ModelResource( modelData ) ).first->second;
 
-            m_modelInfoCache.emplace( internalID, model );
-
-            // set in lookup table
-            m_modelInfoTable.emplace( model->GetName( ), &m_modelInfoCache[ internalID ] );
+            m_modelTable.emplace( model->GetName( ), internalID );
 
             /////////////////////////////////////////////////////////
             // GENERATING BONE DATA /////////////////////////////////
@@ -268,9 +264,6 @@ namespace ursine
             // TODO: [J] Do this shit?
             /*if (modelInfo.mboneCount > 0)
                 rigIndex = AnimationBuilder::LoadBoneData( modelInfo, modelInfo.name );*/
-
-            // load it up into CPU memory
-            InitializeModel( model, cachedModel );
 
             // initialize handle
             hnd->ID_ = SANITY_RESOURCE;
@@ -303,8 +296,10 @@ namespace ursine
 
             auto &model = search->second;
 
-            if (model.GetIsLoaded( ))
+            if (model->GetIsLoaded( ))
                 unloadModelFromGPU( model );
+
+            delete m_modelCache[ handle ];
 
             m_modelCache.erase( search );
 
@@ -332,20 +327,18 @@ namespace ursine
 
             auto &model = search->second;
 
-            if (model.HasNoReferences( ))
+            if (model->HasNoReferences( ))
             {
                 m_loadingModel = true;
                 loadModelToGPU( model );
                 m_loadingModel = false;
             }
 
-            model.IncrementReference( );
+            model->IncrementReference( );
         }
 
         void ModelManager::UnloadModel(GfxHND handle)
         {
-            URSINE_TODO( "Fix this." );
-            return;
             auto *hnd = HND_RSRCE( handle );
 
             if (handle != 0)
@@ -371,9 +364,9 @@ namespace ursine
 
             auto &model = search->second;
 
-            model.DecrementReference( );
+            model->DecrementReference( );
 
-            if (model.HasNoReferences( ))
+            if (model->HasNoReferences( ))
                 unloadModelFromGPU( model );
         }
 
@@ -388,7 +381,7 @@ namespace ursine
 
             auto &model = search->second;
 
-            UAssert( model.GetIsLoaded( ) == true, 
+            UAssert( model->GetIsLoaded( ) == true, 
                 "Attempted to bind model %i, but it isn't loaded on the GPU!", 
                 ID
             );
@@ -396,7 +389,7 @@ namespace ursine
             if (ID == INTERNAL_POINT_INDICES)
             {
                 m_deviceContext->IASetVertexBuffers( 0, 0, nullptr, nullptr, nullptr );
-                m_deviceContext->IASetIndexBuffer( model.GetMesh( index )->GetIndexBuffer( ), DXGI_FORMAT_R32_UINT, 0 );
+                m_deviceContext->IASetIndexBuffer( model->GetMesh( index )->GetIndexBuffer( ), DXGI_FORMAT_R32_UINT, 0 );
 
                 m_currentState = ID;
                 return;
@@ -406,20 +399,10 @@ namespace ursine
             static const unsigned strides = sizeof( AnimationVertex );
             unsigned int offset = 0;
 
-            m_deviceContext->IASetVertexBuffers( 0, 1, &model.GetMesh( index )->GetVertexBuffer( ), &strides, &offset );
-            m_deviceContext->IASetIndexBuffer( model.GetMesh( index )->GetIndexBuffer( ), DXGI_FORMAT_R32_UINT, 0 );
+            m_deviceContext->IASetVertexBuffers( 0, 1, &model->GetMesh( index )->GetVertexBuffer( ), &strides, &offset );
+            m_deviceContext->IASetIndexBuffer( model->GetMesh( index )->GetIndexBuffer( ), DXGI_FORMAT_R32_UINT, 0 );
 
             m_currentState = ID;
-        }
-
-        unsigned ModelManager::GetModelIndexcountByID(unsigned ID, unsigned index)
-        {
-            return m_modelInfoCache[ ID ]->GetMesh( index )->indices.size( );
-        }
-
-        unsigned ModelManager::GetModelMeshCount(unsigned ID)
-        {
-            return m_modelCache[ ID ].GetMeshCount( );
         }
 
         void ModelManager::Invalidate(void)
@@ -473,7 +456,7 @@ namespace ursine
             handle = 0;
         }
 
-        const resources::UModelData *ModelManager::GetModel(GfxHND handle)
+        ModelResource *ModelManager::GetModel(GfxHND handle)
         {
             auto *hnd = HND_RSRCE( handle );
 
@@ -485,9 +468,18 @@ namespace ursine
                 "Attempted to get model with handle of invalid type!"
             );
 
-            auto search = m_modelInfoCache.find( hnd->Index_ );
+            auto search = m_modelCache.find( hnd->Index_ );
 
-            return search == m_modelInfoCache.end( ) ? nullptr : search->second.get( );
+            return search == m_modelCache.end( ) ? nullptr : search->second;
+        }
+
+        ModelResource *ModelManager::GetModel(const std::string& name)
+        {
+            auto index = m_modelTable.find(name);
+
+            UAssert(index != m_modelTable.end(), "Failed to find model info with name '%s'!", name.c_str());
+
+            return m_modelCache[index->second];
         }
 
         ufmt_loader::AnimInfo *ModelManager::GeAnimeInfo(GfxHND handle)
@@ -507,21 +499,6 @@ namespace ursine
             return search == m_animeInfoCache.end( ) ? nullptr : &search->second;
         }
 
-        ModelResource *ModelManager::GetModel(const unsigned ID)
-        {
-            waitForLoading( );
-            return &m_modelCache[ ID ];
-        }
-
-        const resources::UModelData *ModelManager::GetModelByName(const std::string& name)
-        {
-            auto modelInfo = m_modelInfoTable.find( name );
-
-            UAssert( modelInfo != m_modelInfoTable.end( ), "Failed to find model info with name '%s'!", name.c_str( ) );
-
-            return modelInfo->second.get( );
-        }
-
         bool ModelManager::IsLoading() const
         {
             return m_loadingModel;
@@ -532,25 +509,11 @@ namespace ursine
             while(m_loadingModel) { }
         }
 
-        void ModelManager::InitializeModel(resources::UModelData::Handle modelData, ModelResource &modelResource)
+        void ModelManager::loadModelToGPU(ModelResource *model)
         {
-            for (uint i = 0, n = modelData->GetNumMeshes( ); i < n; ++i)
-            {
-                auto meshResource = new MeshResource( );
-                auto meshData = modelData->GetMesh( i );
+            model->SetIsLoaded( true );
 
-                meshResource->SetID( i );
-                meshResource->SetName( meshData->GetName( ) );
-
-                modelResource.AddMesh( meshResource );
-            }
-        }
-
-        void ModelManager::loadModelToGPU(ModelResource &model)
-        {
-            model.SetIsLoaded( true );
-
-            auto &meshBuffer = model.GetMeshArray( );
+            auto &meshBuffer = model->GetMeshArray( );
 
             for (auto &mesh : meshBuffer)
             {
@@ -567,7 +530,7 @@ namespace ursine
                 vertexBufferDesc.StructureByteStride = 0;
 
                 //Give the subresource structure a pointer to the vertex data.
-                vertexData.pSysMem = mesh->GetRawModelData( ).data( );
+                vertexData.pSysMem = mesh->GetVertexData( );
                 vertexData.SysMemPitch = 0;
                 vertexData.SysMemSlicePitch = 0;
 
@@ -587,7 +550,7 @@ namespace ursine
                 indexBufferDesc.StructureByteStride = 0;
 
                 //Give the subresource structure a pointer to the index data.
-                indexData.pSysMem = mesh->GetRawIndices( ).data( );
+                indexData.pSysMem = mesh->GetIndexData( );
                 indexData.SysMemPitch = 0;
                 indexData.SysMemSlicePitch = 0;
 
@@ -597,11 +560,11 @@ namespace ursine
             }
         }
 
-        void ModelManager::unloadModelFromGPU(ModelResource &model)
+        void ModelManager::unloadModelFromGPU(ModelResource *model)
         {
-            auto &meshBuffer = model.GetMeshArray( );
+            auto &meshBuffer = model->GetMeshArray( );
 
-            model.SetIsLoaded( false );
+            model->SetIsLoaded( false );
 
             for (auto &mesh : meshBuffer)
             {

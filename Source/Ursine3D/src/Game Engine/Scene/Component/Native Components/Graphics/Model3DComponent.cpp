@@ -385,7 +385,7 @@ namespace ursine
 
         void Model3D::invalidateModel(bool unload)
         {
-            auto data = loadResource<resources::ModelData>( m_modelResource );
+            auto data = loadResource<resources::UModelData>( m_modelResource );
 
             if (data == nullptr)
             {
@@ -394,7 +394,7 @@ namespace ursine
             }
             else
             {
-                auto handle = data->GetModelHandle( );
+                auto handle = data->GetGraphicsHandle( );
 
                 if (unload)
                     m_graphics->ResourceMgr.UnloadModel( m_model->GetModelHandle( ) );
@@ -458,12 +458,12 @@ namespace ursine
             if (!m_model)
                 return "";
 
-            auto info = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetModel( m_model->GetModelHandle( ) );
+            auto info = GetCoreSystem( graphics::GfxAPI )->ResourceMgr.GetModelResource( m_model->GetModelHandle( ) );
 
             if (!info)
                 return "";
 
-            return info->name;
+            return info->GetName( );
         }
 
     #if defined(URSINE_WITH_EDITOR)

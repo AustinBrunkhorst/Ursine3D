@@ -13,7 +13,6 @@
 
 #pragma once
 
-#include <map>
 #include <string>
 #include <atomic>
 
@@ -35,7 +34,7 @@ namespace ursine
             void Uninitialize(void);
 
             // create/destry model
-            GfxHND CreateModel(resources::UModelData::Handle model);
+            GfxHND CreateModel(const resources::UModelData::Handle &modelData);
             void DestroyModel(GfxHND &handle);
 
             // load/unload model from gpu
@@ -58,10 +57,6 @@ namespace ursine
                 m_deviceContext->IASetIndexBuffer( indices, DXGI_FORMAT_R32_UINT, 0 );
             }
 
-            // get for index data
-            unsigned GetModelIndexcountByID(unsigned ID, unsigned index = 0);
-            unsigned GetModelMeshCount(unsigned ID);
-
             // invalidate current state
             void Invalidate();
 
@@ -70,23 +65,17 @@ namespace ursine
             GfxHND CreateAnimation(const ufmt_loader::AnimInfo &animeInfo);
             void DestroyAnimation(GfxHND &handle);
 
-            // getting info
-            // TODO: [J] Change the name of this / possibly remove it
-            const resources::UModelData *GetModel(GfxHND handle);
-            ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
-            ModelResource *GetModel(const unsigned ID);
+            ModelResource *GetModel(GfxHND handle);
+            ModelResource *GetModel(const std::string &name);
 
-            // getting model info by name
-            // TODO: [J] Remove this?
-            const resources::UModelData *GetModelByName(const std::string &name);
+            ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
 
             bool IsLoading(void) const;
 
         private:
             void waitForLoading(void) const;
-            void InitializeModel(resources::UModelData::Handle modelData, ModelResource &modelresource);
-            void loadModelToGPU(ModelResource &model);
-            void unloadModelFromGPU(ModelResource &model);
+            void loadModelToGPU(ModelResource *model);
+            void unloadModelFromGPU(ModelResource *model);
 
             ID3D11Device *m_device;
             ID3D11DeviceContext *m_deviceContext;
@@ -97,10 +86,8 @@ namespace ursine
 
             std::atomic<bool> m_loadingModel;
 
-            std::unordered_map<unsigned, ModelResource> m_modelCache;
-            std::unordered_map<unsigned, resources::UModelData::Handle> m_modelInfoCache;
-
-            std::unordered_map<std::string, resources::UModelData::Handle> m_modelInfoTable;
+            std::unordered_map<GfxHND, ModelResource *> m_modelCache;
+            std::unordered_map<std::string, GfxHND> m_modelTable;
 
             // animation
             unsigned m_nextAnimationID;

@@ -71,11 +71,11 @@ namespace ursine
         {
             invalidateModel( );
 
-            auto data = loadResource<ursine::resources::ModelData>( m_modelResource );
+            auto data = loadResource<resources::UModelData>( m_modelResource );
 
             auto *gfx = GetCoreSystem( graphics::GfxAPI );
 
-            auto *model = gfx->ResourceMgr.GetModelResource(data->GetModelHandle( ));
+            auto *model = gfx->ResourceMgr.GetModelResource(data->GetGraphicsHandle( ));
 
             auto *world = GetOwner( )->GetWorld( );
 
@@ -209,11 +209,11 @@ namespace ursine
 
         void FBXSceneRootNode::invalidateModel(bool unload)
         {
-            auto data = loadResource<resources::ModelData>( m_modelResource );
+            auto data = loadResource<resources::UModelData>( m_modelResource );
 
             if (data != nullptr)
             {
-                auto handle = data->GetModelHandle( );
+                auto handle = data->GetGraphicsHandle( );
 
                 GetCoreSystem( graphics::GfxAPI )->ResourceMgr.UnloadModel( m_modelHandle );
                 GetCoreSystem( graphics::GfxAPI )->ResourceMgr.LoadModel( handle );

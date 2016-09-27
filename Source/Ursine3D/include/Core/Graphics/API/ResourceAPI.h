@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "GFXAPIDefines.h"
+#include "GFXDefines.h"
 #include "ModelResource.h"
 #include "UModelData.h"
 #include "AnimationInfo.h"
@@ -62,7 +62,7 @@ namespace ursine
             /////////////////////////////////////////////////////////
 
             // create a model
-            GfxHND CreateModel(const resources::UModelData::Handle &modelInfo);
+            GfxHND CreateModel(const resources::UModelData::Handle &model);
             void DestroyModel(GfxHND &handle);
 
             // load/unload from GPU

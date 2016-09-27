@@ -14,7 +14,7 @@
 ** --------------------------------------------------------------------------*/
 
 #include "GfxConfig.h"
-#include "GfxAPIDefines.h"
+#include "GfxDefines.h"
 #include "ResourceAPI.h"
 #include "RenderableAPI.h"
 #include "CameraAPI.h"

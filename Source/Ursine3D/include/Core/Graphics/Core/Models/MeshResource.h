@@ -17,28 +17,26 @@
 #include <string>
 
 #include "D3D11Forward.h"
-#include "Material.h"
-#include "Vec3.h"
+#include "UMeshData.h"
 #include "SMat4.h"
 
 namespace ursine
 {
     namespace graphics
     {
-        struct AnimationVertex;
-
         // TODO: [J] Find a way to get rid of this?
         class MeshResource
         {
+            friend class ModelManager;
+
         public:
             // constructor
-            MeshResource();
+            MeshResource(const resources::UMeshData::Handle &meshData);
 
             ~MeshResource(void);
 
             // set name stuff
             const std::string &GetName(void) const;
-            void SetName(const std::string &name);
 
             unsigned GetID(void) const;
             void SetID(const unsigned id);
@@ -49,7 +47,17 @@ namespace ursine
             const SMat4 &GetLocalToParentTransform(void) const;
             void SetLocalToParentTransform(const SMat4 &transform);
 
+            uint GetVertexCount(void) const;
+            Vec3 *GetVertexData(void) const;
+            const std::vector<Vec3> &GetVertexArray(void) const;
+
+            uint GetIndexCount(void) const;
+            uint *GetIndexData(void) const;
+            const std::vector<uint> &GetIndexArray(void) const;
+
         private:
+            MeshResource(void);
+
             // name
             std::string m_name;
 
@@ -59,6 +67,8 @@ namespace ursine
             // raw dx11 data
             ID3D11Buffer *m_vertexBuffer;
             ID3D11Buffer *m_indexBuffer;
+
+            resources::UMeshData::Handle m_meshData;
 
             // transform to place this mesh in parent's space
             SMat4 m_localToParent;

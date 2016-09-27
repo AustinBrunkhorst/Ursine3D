@@ -155,8 +155,9 @@ namespace ursine
         void FragmentationProcessor::renderFullModel(_DRAWHND handle, bool renderDebug)
         {
             auto &model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
-            auto count = m_manager->modelManager->GetModelMeshCount( handle.Model_ );
             auto *modelResource = m_manager->modelManager->GetModel( handle.Model_ );
+            auto count = modelResource->GetMeshCount();
+            
 
             // main rendering
             for (unsigned x = 0; x < count; ++x)
@@ -171,10 +172,7 @@ namespace ursine
 
                 // render
                 m_manager->shaderManager->Render( 
-                    m_manager->modelManager->GetModelIndexcountByID( 
-                        handle.Model_, 
-                        x 
-                    )
+                    m_manager->modelManager->GetModel( handle.Model_ )->GetMesh( x )->GetIndexCount( )
                 );
             }
         }

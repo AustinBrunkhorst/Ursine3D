@@ -87,9 +87,9 @@ namespace ursine
         // MODEL
         /////////////////////////////////////////////////////////
 
-        GfxHND ResourceAPI::CreateModel(const ufmt_loader::ModelInfo &modelInfo)
+        GfxHND ResourceAPI::CreateModel(const resources::UModelData::Handle &model)
         {
-            return m_privates->modelMgr->CreateModel( modelInfo );
+            return m_privates->modelMgr->CreateModel( model );
         }
 
         void ResourceAPI::DestroyModel(GfxHND &handle)
@@ -166,7 +166,8 @@ namespace ursine
 
         void ResourceAPI::Initialize(void)
         {
-            m_privates = new privData;
+            if (!m_privates)
+                m_privates = new privData;
         }
 
         void ResourceAPI::Uninitialize(void)

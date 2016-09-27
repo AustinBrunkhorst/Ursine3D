@@ -20,6 +20,7 @@
 
 #include <MouseManager.h>
 #include <KeyboardManager.h>
+#include <Vec3.h>
 
 using namespace ursine;
 

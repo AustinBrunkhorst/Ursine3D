@@ -20,7 +20,7 @@
 #include "ModelResource.h"
 
 #include "TextureData.h"
-#include "ModelData.h"
+#include "UModelData.h"
 
 namespace ursine
 {
@@ -85,7 +85,7 @@ namespace ursine
             );
 
             EditorResourceField(
-                ursine::resources::ModelData,
+                ursine::resources::UModelData,
                 model,
                 GetModel,
                 SetModel

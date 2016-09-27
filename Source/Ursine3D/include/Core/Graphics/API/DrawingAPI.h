@@ -16,7 +16,7 @@
 #include <Color.h>
 #include <SMat4.h>
 
-#include "GFXAPIDefines.h"
+#include "GFXDefines.h"
 
 namespace ursine
 {

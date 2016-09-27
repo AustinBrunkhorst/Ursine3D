@@ -15,6 +15,8 @@
 
 #include "URigReader.h"
 
+#include "URigData.h"
+
 namespace ursine
 {
     namespace resources

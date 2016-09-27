@@ -31,11 +31,11 @@ namespace ursine
             typedef std::shared_ptr<UMeshData> Handle;
 
             // TODO: [J] Encapsulate?
-            std::vector<SVec3> verts;
+            std::vector<Vec3> verts;
             std::vector<uint> indices;
-            std::vector<SVec3> normals;
-            std::vector<SVec3> tangents;
-            std::vector<SVec3> bitangents;
+            std::vector<Vec3> normals;
+            std::vector<Vec3> tangents;
+            std::vector<Vec3> bitangents;
 
             void SetName(const std::string &name);
             const std::string &GetName(void) const;
@@ -44,6 +44,8 @@ namespace ursine
             void Write(pipeline::ResourceWriter &output);// override;
 
             meta::Type GetReaderType(void);// override;
+
+            std::string m_name;
 
         } Meta(Register);
     }

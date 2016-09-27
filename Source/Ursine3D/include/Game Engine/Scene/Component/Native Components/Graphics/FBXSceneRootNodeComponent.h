@@ -15,7 +15,7 @@
 
 #include "Component.h"
 #include <string>
-#include "ModelData.h"
+#include "UModelData.h"
 
 #if defined(URSINE_WITH_EDITOR)
 
@@ -52,7 +52,7 @@ namespace ursine
             );
 
             EditorResourceField(
-                ursine::resources::ModelData,
+                ursine::resources::UModelData,
                 sceneModel,
                 GetModel,
                 SetModel

@@ -14,7 +14,7 @@
 #pragma once
 
 #include "EntityConfig.h"
-#include "GFXAPIDefines.h"
+#include "GFXDefines.h"
 #include <string>
 #include <stack>
 #include "SMat4.h"

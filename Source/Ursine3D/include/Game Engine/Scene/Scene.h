@@ -20,7 +20,7 @@
 #include "UIScreenManager.h"
 #include "ResourceManager.h"
 
-#include "GFXAPIDefines.h"
+#include "GFXDefines.h"
 
 #include "SceneEvent.h"
 

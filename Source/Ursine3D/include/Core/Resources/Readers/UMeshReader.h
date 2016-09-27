@@ -19,14 +19,15 @@ namespace ursine
 {
     namespace resources
     {
-        class UMeshReader : public ResourceTypeReader
+        // TODO: [J] DO this!
+        class UMeshReader //: public ResourceTypeReader
         {
-            RESOURCE_TYPE_READER;
+            // RESOURCE_TYPE_READER;
 
             // TODO: [J] Remove this
             friend class UModelReader;
 
-            ResourceData::Handle Read(ResourceReader &input) override;
+            UMeshData::Handle Read(ResourceReader &input); // override;
         };
     }
 }

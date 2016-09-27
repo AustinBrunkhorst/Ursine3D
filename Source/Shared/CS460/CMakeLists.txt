@@ -1,6 +1,6 @@
 
-ursine_project(CS460-Shared
-    FOLDER "CS460-Shared"
+ursine_project(CS460
+    FOLDER "CS460"
     TYPE LIB
     DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX FileWatcher Assimp
     SOURCE_DIR "Source"
@@ -8,7 +8,7 @@ ursine_project(CS460-Shared
     PARSE_SOURCE_GROUPS
     RECURSIVE_INCLUDES
     BUILD_META
-    META_HEADER "CS460-SharedReflection.h"
-    META_MODULE_HEADER "CS460-SharedReflectionModule.h"
+    META_HEADER "SharedReflection.h"
+    META_MODULE_HEADER "SharedReflectionModule.h"
     PCH_NAME "Precompiled"
 ) 

@@ -19,6 +19,17 @@ set(Assimp_INCLUDE_DIRS
 
 set(DLL_EXT ${CMAKE_SHARED_LIBRARY_SUFFIX})
 
-set(Assimp_SHARED_LIBS
-	  debug ${DIR_LIB}/Debug/assimp-vc140-mt${DLL_EXT}
-	  optimized ${DIR_LIB}/Release/assimp-vc140-mt${DLL_EXT})
+set(DEBUG_EXPR $<CONFIG:debug>)
+set(RELEASE_EXPR $<NOT:${DEBUG_EXPR}>)
+
+set(Assimp_SHARED_LIBS 
+  "${DIR_LIB}/$<${DEBUG_EXPR}:Debug>$<${RELEASE_EXPR}:Release>/*${DLL_EXT}"
+)
+
+set(Assimp_SHARED_LIBS_Debug 
+  "${DIR_LIB}/Debug/*${DLL_EXT}"
+)
+
+set(Assimp_SHARED_LIBS_Release 
+  "${DIR_LIB}/Release/*${DLL_EXT}"
+)

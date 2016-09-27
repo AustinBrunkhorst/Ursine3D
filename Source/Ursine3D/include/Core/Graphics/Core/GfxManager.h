@@ -44,6 +44,8 @@ namespace ursine
         public:
             /////////////////////////////////////////////////////////////////////////////////
             // PUBLIC METHODS
+            GfxManager(void);
+
             void Initialize(GfxConfig &config);
 
             void Uninitialize(void);

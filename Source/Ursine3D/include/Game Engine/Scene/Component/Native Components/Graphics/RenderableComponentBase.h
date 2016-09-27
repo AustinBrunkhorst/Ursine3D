@@ -13,7 +13,7 @@
 
 #pragma once
 
-#include "GFXAPIDefines.h"
+#include "GFXDefines.h"
 #include "EventDispatcher.h"
 
 namespace ursine

@@ -16,7 +16,7 @@
 #include "Component.h"
 
 #include "Camera.h"
-#include "GFXAPIDefines.h"
+#include "GfxDefines.h"
 
 #include "RenderMask.h"
 #include "RenderableComponentBase.h"

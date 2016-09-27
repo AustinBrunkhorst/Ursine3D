@@ -172,8 +172,8 @@ namespace ursine
         void Model3DProcessor::renderFullModel(_DRAWHND handle, bool renderDebug)
         {
             auto &model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
-            auto count = m_manager->modelManager->GetModelMeshCount( handle.Model_ );
             auto *modelResource = m_manager->modelManager->GetModel( handle.Model_ );
+            auto count = modelResource->GetMeshCount( );
 
             // main rendering
             for (unsigned x = 0; x < count; ++x)
@@ -191,10 +191,7 @@ namespace ursine
 
                 // render
                 m_manager->shaderManager->Render( 
-                    m_manager->modelManager->GetModelIndexcountByID( 
-                        handle.Model_, 
-                        x 
-                    )
+                    m_manager->modelManager->GetModel( handle.Model_ )->GetMesh( x )->GetIndexCount( )
                 );
             }
 
@@ -237,10 +234,7 @@ namespace ursine
 
                     // render
                     m_manager->shaderManager->Render(
-                        m_manager->modelManager->GetModelIndexcountByID(
-                            handle.Model_, 
-                            x
-                        )
+                        m_manager->modelManager->GetModel( handle.Model_ )->GetMesh( x )->GetIndexCount( )
                     );
                 }
 
@@ -251,8 +245,8 @@ namespace ursine
         void Model3DProcessor::renderSection(_DRAWHND handle, bool renderDebug)
         {
             auto &model = m_manager->renderableManager->GetRenderableByID<Model3D>( handle.Index_ );
-            auto count = m_manager->modelManager->GetModelMeshCount( handle.Model_ );
             auto *modelResource = m_manager->modelManager->GetModel( handle.Model_ );
+            auto count = modelResource->GetMeshCount( );
             auto meshIndex = model.GetMeshIndex( );
 
             // map transform
@@ -260,7 +254,7 @@ namespace ursine
 
             // set model
             m_manager->modelManager->BindModel( handle.Model_, meshIndex );
-            m_manager->shaderManager->Render( m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex ));
+            m_manager->shaderManager->Render( m_manager->modelManager->GetModel(handle.Model_ )->GetMesh( meshIndex )->GetIndexCount( ));
 
             // debug rendering
             if(renderDebug && !m_shadowPass)
@@ -280,7 +274,7 @@ namespace ursine
                 m_manager->bufferManager->MapBuffer<BUFFER_MATERIAL_DATA>(&mdb, SHADERTYPE_PIXEL);
                 m_manager->textureManager->MapTextureByID( INTERNAL_BLANK_TEX );
 
-                m_manager->shaderManager->Render(m_manager->modelManager->GetModelIndexcountByID(handle.Model_, meshIndex));
+                m_manager->shaderManager->Render(m_manager->modelManager->GetModel(handle.Model_)->GetMesh(meshIndex)->GetIndexCount( ));
 
                 m_manager->dxCore->SetRasterState(RASTER_STATE_SOLID_BACKCULL);
             }

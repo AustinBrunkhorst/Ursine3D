@@ -20,7 +20,7 @@ namespace ursine
 {
     namespace resources
     {
-        ResourceData::Handle UMeshReader::Read(ResourceReader &input)
+        UMeshData::Handle UMeshReader::Read(ResourceReader &input)
         {
             auto mesh = std::make_shared<UMeshData>( );
             size_t numVerts, numIndices, numNormals, numTangents, numBitangents;
@@ -71,12 +71,14 @@ namespace ursine
 
             mesh->bitangents.resize( numBitangents );
 
-            for (auto &bi : mesh->bitangents);
+            for (auto &bi : mesh->bitangents)
             {
                 input.Read( bi.X( ) );
                 input.Read( bi.Y( ) );
                 input.Read( bi.Z( ) );
             }
+
+            return mesh;
         }
     }
 }

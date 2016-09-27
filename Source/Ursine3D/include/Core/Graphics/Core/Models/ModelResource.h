@@ -15,6 +15,7 @@
 
 #include "D3D11Forward.h"
 #include "MeshResource.h"
+#include "UModelData.h"
 
 namespace ursine
 {
@@ -23,23 +24,21 @@ namespace ursine
         // TODO: [J] Keep this?
         class ModelResource
         {
+            friend class ModelManager;
+
         public:
-            ModelResource(void);
+            ModelResource(const resources::UModelData::Handle &modelData);
             ~ModelResource(void);
 
-            // add a mesh to this model
-            void AddMesh(MeshResource *newMesh);
+            MeshResource *GetMesh(uint index) const;
+            MeshResource *GetMeshByName(const std::string &name);
 
-            // get mesh by index or name
-            MeshResource *GetMesh(const unsigned index) const;
-            MeshResource *GetMesh(const std::string &name);
-
-            // get num of meshes
             unsigned GetMeshCount(void) const;
 
-            // get the vector of meshes
             const std::vector<MeshResource *> &GetMeshArray(void) const;
-            
+
+            const std::string &GetName(void) const;
+
             void IncrementReference(void);
             void DecrementReference(void);
             void NoReference(void);
@@ -50,8 +49,9 @@ namespace ursine
             void SetIsLoaded(bool isOnGPU);
 
         private:
-            // root mesh of this model
-            MeshResource *m_rootNode;
+            ModelResource(void);
+
+            void addMesh(MeshResource *mesh);
 
             // array of all meshes in this array
             std::vector<MeshResource *> m_meshArray;
@@ -62,6 +62,8 @@ namespace ursine
             bool m_onGPU;
 
             unsigned m_referenceCount;
+
+            resources::UModelData::Handle m_modelData;
         };
     }
 }

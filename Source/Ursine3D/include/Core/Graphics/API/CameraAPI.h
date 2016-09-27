@@ -29,7 +29,7 @@ Author:         Matt Yan, m.yan@digipen.edu
 
 #pragma once
 
-#include "GFXAPIDefines.h"
+#include "GFXDefines.h"
 #include "Camera.h"
 
 namespace ursine

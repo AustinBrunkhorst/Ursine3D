@@ -19,8 +19,6 @@
 #include "GfxManager.h"
 #include "VertexDefinitions.h"
 #include "DepthStencilStateList.h"
-#include <Core/Graphics/Animation/Builder/AnimationState.h>
-#include <Core/Graphics/Animation/Builder/AnimationBuilder.h>
 
 // regular processors
 #include "Billboard2DProcessor.h"
@@ -55,7 +53,7 @@ namespace ursine
 
         /////////////////////////////////////////////////////////////////////////////////
         // PUBLIC METHODS
-        void GfxManager::Initialize(GfxConfig &config)
+        GfxManager::GfxManager(void)
         {
             /////////////////////////////////////////////////////////////////
             // ALLOCATE MANAGERS ////////////////////////////////////////////
@@ -73,7 +71,10 @@ namespace ursine
             drawingManager      = new DrawingManager;
             fontManager         = new FontManager;
             gfxProfiler         = new GfxProfiler;
+        }
 
+        void GfxManager::Initialize(GfxConfig &config)
+        {
             /////////////////////////////////////////////////////////////////
             // INITIALIZING /////////////////////////////////////////////////
             m_profile = config.enableProfiling;
@@ -693,7 +694,7 @@ namespace ursine
                 SHADERTYPE_PIXEL
                 );
 
-            shaderManager->Render(modelManager->GetModelIndexcountByID(INTERNAL_QUAD));
+            shaderManager->Render(modelManager->GetModel(INTERNAL_QUAD)->GetMesh((uint)0)->GetIndexCount());
 
 
             /////////////////////////////////////////////////////////////////
@@ -1565,7 +1566,7 @@ namespace ursine
             textureManager->MapTextureByID(handle->Index_);
 
             //render to screen
-            shaderManager->Render(modelManager->GetModelIndexcountByID(INTERNAL_QUAD));
+            shaderManager->Render(modelManager->GetModel(INTERNAL_QUAD)->GetMesh((uint)0)->GetIndexCount());
         }
 
         void GfxManager::internalRenderDynamicTextureInViewport(GfxHND &texHandle, const float posX, const float posY, GfxHND &camera)
@@ -1626,7 +1627,7 @@ namespace ursine
             textureManager->MapTextureByID(handle->Index_);
 
             //render to screen
-            shaderManager->Render(modelManager->GetModelIndexcountByID(INTERNAL_QUAD));
+            shaderManager->Render(modelManager->GetModel(INTERNAL_QUAD)->GetMesh((uint)0)->GetIndexCount());
         }
 
         void GfxManager::rendeScene_forward(Camera &camera, int index)

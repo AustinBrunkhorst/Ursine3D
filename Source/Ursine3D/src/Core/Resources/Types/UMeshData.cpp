@@ -20,6 +20,16 @@ namespace ursine
 {
     namespace resources
     {
+        void UMeshData::SetName(const std::string &name)
+        {
+            m_name = name;
+        }
+
+        const std::string &UMeshData::GetName(void) const
+        {
+            return m_name;
+        }
+
         void UMeshData::Write(pipeline::ResourceWriter &output)
         {
             output.Write( verts.size( ) );

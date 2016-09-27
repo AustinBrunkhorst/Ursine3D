@@ -41,7 +41,6 @@ namespace ursine
             friend class graphics::ModelManager;
 
         public:
-            UModelReader(void);
 
             UModelData::Handle ReadJDL(ResourceReader &input);
 

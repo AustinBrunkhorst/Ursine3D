@@ -14,7 +14,7 @@
 #pragma once
 
 
-#include "GFXAPIDefines.h"
+#include "GFXDefines.h"
 
 #include "ViewportRenderModes.h"
 #include "Viewport.h"

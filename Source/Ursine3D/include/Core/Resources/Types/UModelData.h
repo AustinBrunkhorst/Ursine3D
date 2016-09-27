@@ -32,18 +32,22 @@ namespace ursine
 
             // TODO: [J] Remove this dependency (needed for Write function)
             friend class pipeline::Content3DImporter;
+            
+            friend class UModelReader;
 
         public:
 
             typedef std::shared_ptr<UModelData> Handle;
 
-            // TODO: [J] Add the meshes' names?
-            void AddMesh(UMeshData::Handle mesh);
-            const UMeshData *GetMesh(uint index) const;
+            void AddMesh(const UMeshData::Handle &mesh);
+            const UMeshData::Handle &GetMesh(uint index) const;
 
             uint GetNumMeshes(void) const;
 
+            void SetName(const std::string &name);
             const std::string &GetName(void) const;
+
+            graphics::GfxHND GetGraphicsHandle(void) const;
 
         private:
             void Write(pipeline::ResourceWriter &output) override;
@@ -51,6 +55,10 @@ namespace ursine
             meta::Type GetReaderType(void) override;
 
             std::vector<UMeshData::Handle> m_meshes;
+
+            std::string m_name;
+
+            graphics::GfxHND m_id;
 
         } Meta(Register);
     }

@@ -14,7 +14,7 @@
 #pragma once
 
 #include "ResourceData.h"
-#include "GfxAPIDefines.h"
+#include "GfxDefines.h"
 
 namespace ursine
 {

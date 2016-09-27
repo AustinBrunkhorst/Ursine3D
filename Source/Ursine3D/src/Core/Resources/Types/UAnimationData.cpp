@@ -19,9 +19,6 @@ namespace ursine
 {
     namespace resources
     {
-        UAnimationData::UAnimationData(const Json &u3DContent)
-            : m_data(u3DContent) { }
-
         
     }
 }

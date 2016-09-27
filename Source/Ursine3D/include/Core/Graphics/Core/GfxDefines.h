@@ -91,6 +91,7 @@ namespace ursine
     namespace graphics
     {
         typedef unsigned long long GfxHND;
+        typedef unsigned long long RenderMask;
     }
 }
 
