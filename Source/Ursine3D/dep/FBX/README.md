@@ -1,4 +1,4 @@
-Boost
+FBX
 ===========================
 
 FBX is too big for the repository. In order to build the engine, download the dependency below and follow the instructions.

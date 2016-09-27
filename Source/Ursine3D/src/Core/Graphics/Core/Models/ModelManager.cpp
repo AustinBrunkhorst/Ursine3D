@@ -250,10 +250,14 @@ namespace ursine
 
             auto internalID = m_nextModelID++;
 
-            auto model = 
-                m_modelCache.emplace( internalID, new ModelResource( modelData ) ).first->second;
+            // initialize handle
+            hnd->ID_ = SANITY_RESOURCE;
+            hnd->Type_ = ID_MODEL;
+            hnd->Index_ = internalID;
 
-            m_modelTable.emplace( model->GetName( ), internalID );
+            auto model = m_modelCache[ hnd->Index_ ] = new ModelResource(modelData);
+
+            m_modelTable.emplace( model->GetName( ), handle );
 
             /////////////////////////////////////////////////////////
             // GENERATING BONE DATA /////////////////////////////////
@@ -264,11 +268,6 @@ namespace ursine
             // TODO: [J] Do this shit?
             /*if (modelInfo.mboneCount > 0)
                 rigIndex = AnimationBuilder::LoadBoneData( modelInfo, modelInfo.name );*/
-
-            // initialize handle
-            hnd->ID_ = SANITY_RESOURCE;
-            hnd->Type_ = ID_MODEL;
-            hnd->Index_ = internalID;
 
             m_loadingModel = false;
 
@@ -299,7 +298,9 @@ namespace ursine
             if (model->GetIsLoaded( ))
                 unloadModelFromGPU( model );
 
-            delete m_modelCache[ handle ];
+            m_modelTable.erase( model->GetName( ) );
+
+            delete m_modelCache[ hnd->Index_ ];
 
             m_modelCache.erase( search );
 
@@ -479,7 +480,9 @@ namespace ursine
 
             UAssert(index != m_modelTable.end(), "Failed to find model info with name '%s'!", name.c_str());
 
-            return m_modelCache[index->second];
+            auto *hnd = HND_RSRCE(index->second);
+
+            return m_modelCache[hnd->Index_];
         }
 
         ufmt_loader::AnimInfo *ModelManager::GeAnimeInfo(GfxHND handle)

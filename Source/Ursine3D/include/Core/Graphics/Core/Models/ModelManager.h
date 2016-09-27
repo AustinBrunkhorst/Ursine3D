@@ -86,7 +86,7 @@ namespace ursine
 
             std::atomic<bool> m_loadingModel;
 
-            std::unordered_map<GfxHND, ModelResource *> m_modelCache;
+            std::unordered_map<uint, ModelResource *> m_modelCache;
             std::unordered_map<std::string, GfxHND> m_modelTable;
 
             // animation
