@@ -28,6 +28,9 @@ namespace ursine
             FontManager *fontMgr;
         };
 
+        ResourceAPI::ResourceAPI(void)
+            : m_privates(nullptr) { }
+
         /////////////////////////////////////////////////////////
         // TEXTURE
         /////////////////////////////////////////////////////////

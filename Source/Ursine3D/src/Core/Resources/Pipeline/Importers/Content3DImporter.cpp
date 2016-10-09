@@ -68,16 +68,27 @@ namespace ursine
 
         rp::Content3DImporter::Content3DImporter(void) { }
 
-        rp::Content3DImporter::~Content3DImporter(void) { }
+        rp::Content3DImporter::~Content3DImporter(void) { } 
 
         ResourceData::Handle rp::Content3DImporter::Import(ResourceImportContext &context)
         {
-            // TODO: [J] investigate why this doesn't work (calling function on stack value?)
-            // auto fileName = context.resource->GetSourceFileName( ).string( ).c_str( );
             auto fileName = context.resource->GetSourceFileName( ).string( );
-            auto flags = aiProcess_CalcTangentSpace | aiProcess_Triangulate | aiProcess_JoinIdenticalVertices | aiProcess_SortByPType;
+            auto flags =
+                aiProcess_CalcTangentSpace |
+                aiProcess_Triangulate |
+                aiProcess_JoinIdenticalVertices |
+                aiProcess_OptimizeMeshes |
+                aiProcess_FindInstances |
+                aiProcess_PreTransformVertices |
+                aiProcess_FindInvalidData |
+                aiProcess_SortByPType |
+                aiProcess_ValidateDataStructure |
+                aiProcess_LimitBoneWeights |
+                aiProcess_GenSmoothNormals;
 
             Assimp::Importer importer;
+
+            importer.SetPropertyInteger(AI_CONFIG_PP_LBW_MAX_WEIGHTS, 4);
 
             UAssertCatchable(
                 importer.ValidateFlags( flags ),
@@ -160,6 +171,8 @@ namespace ursine
                 auto index = node->mMeshes[ i ];
                 auto mesh = scene->mMeshes[ index ];
                 auto newMesh = std::make_shared<UMeshData>( );
+
+                newMesh->SetName( node->mName.C_Str( ) );
 
                 importMeshVerts( mesh, newMesh );
                 importMeshNormals( mesh, newMesh );
