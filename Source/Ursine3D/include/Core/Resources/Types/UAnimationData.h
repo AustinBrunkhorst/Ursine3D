@@ -25,6 +25,8 @@ namespace ursine
 
         public:
 
+            std::string name;
+
         private:
             void Write(pipeline::ResourceWriter &output) override;
 

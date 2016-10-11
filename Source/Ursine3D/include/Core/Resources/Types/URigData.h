@@ -25,6 +25,15 @@ namespace ursine
 
         public:
 
+            // bone { local vqs, offset matrix, parent index, children? }
+
+            // uint root bone
+
+            // vector<bone> (array of all bones in this rig [depth first? bredth?])
+            
+
+            // map<name, index> (store all bone names and their index into the map)
+
         private:
             void Write(pipeline::ResourceWriter &output) override;
 

@@ -17,6 +17,8 @@
 
 #include "JsonImporter.h"
 #include "UModelImporter.h"
+#include "URigImporter.h"
+#include "UAnimationImporter.h"
 
 #include "WorldProcessor.h"
 #include "ArchetypeProcessor.h"
@@ -32,15 +34,19 @@ namespace ursine
 
     // TODO: [J] This shouldn't be needed once the refactor is in place
     const char * const rp::kResourceTypeModelExtension = "umodel";
+    const char * const rp::kResourceTypeRigExtension = "urig";
+    const char * const rp::kResourceTypeAnimationExtension = "uanim";
 
     const rp::TypePairMap &rp::GetBuiltInResourceHandlers(void)
     {
         static TypePairMap handlers {
-            { kResourceTypeWorldExtension,      { typeof( JsonImporter ), typeof( WorldProcessor ) } },
-            { kResourceTypeArchetypeExtension,  { typeof( JsonImporter ), typeof( ArchetypeProcessor ) } },
-            { kResourceTypeUIScreenExtension,   { typeof( JsonImporter ), typeof( UIScreenProcessor ) } },
-            { kResourceTypeAudioEventExtension, { typeof( JsonImporter ), typeof( AudioItemProcessor ) } },
-            { kResourceTypeModelExtension,      { typeof( UModelImporter ),  typeof( PassThroughProcessor ) } }
+            { kResourceTypeWorldExtension,      { typeof( JsonImporter ),       typeof( WorldProcessor ) } },
+            { kResourceTypeArchetypeExtension,  { typeof( JsonImporter ),       typeof( ArchetypeProcessor ) } },
+            { kResourceTypeUIScreenExtension,   { typeof( JsonImporter ),       typeof( UIScreenProcessor ) } },
+            { kResourceTypeAudioEventExtension, { typeof( JsonImporter ),       typeof( AudioItemProcessor ) } },
+            { kResourceTypeModelExtension,      { typeof( UModelImporter ),     typeof( PassThroughProcessor ) } },
+            { kResourceTypeRigExtension,        { typeof( URigImporter ),       typeof( PassThroughProcessor ) } },
+            { kResourceTypeAnimationExtension,  { typeof( UAnimationImporter ), typeof( PassThroughProcessor ) } }
         };
 
         return handlers;

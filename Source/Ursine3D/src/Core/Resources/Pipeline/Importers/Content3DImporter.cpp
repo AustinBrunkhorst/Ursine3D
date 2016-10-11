@@ -31,7 +31,7 @@ namespace
     {
         ursine::resources::UModelData::Handle model;
         ursine::resources::URigData::Handle rig;
-        ursine::resources::UAnimationData::Handle animation;
+        std::vector<ursine::resources::UAnimationData::Handle> animations;
     };
 }
 
@@ -59,12 +59,16 @@ namespace ursine
 
         static void importScene(const aiScene *scene, Content3D &content);
         static void importSceneNode(const aiScene *scene, const aiNode *node, Content3D &content);
-        static void importSceneNodeMeshes(const aiScene *scene, const aiNode *node, const UModelData::Handle &output);
+        static void importSceneNodeMeshes(const aiScene *scene, const aiNode *node, Content3D &content);
 
         static void importMeshVerts(const aiMesh *mesh, const UMeshData::Handle &output);
         static void importMeshNormals(const aiMesh *mesh, const UMeshData::Handle &output);
         static void importMeshTangents(const aiMesh *mesh, const UMeshData::Handle &output);
         static void importMeshIndices(const aiMesh *mesh, const UMeshData::Handle &output);
+        static void importMeshBonesAndWeights(const aiNode *node, const aiMesh *mesh, 
+                                              const UMeshData::Handle &meshOutput, const URigData::Handle &rigOutput);
+
+        static void importSceneAnimations(const aiScene *scene, Content3D &content);
 
         rp::Content3DImporter::Content3DImporter(void) { }
 
@@ -120,11 +124,33 @@ namespace ursine
                 context.AllocateGeneratedResource( modelPath );
             }
 
-            // TODO: [J] Missing importing this
-            /*if (scene->HasAnimations())
+            if (output.rig != nullptr)
             {
-            // create animation shit
-            }*/
+                // create the rig generated resource
+                auto rootName = context.resource->GetSourceFileName( );
+                auto rigPath = rootName.replace_extension( kResourceTypeRigExtension );
+
+                ResourceWriter writer( rigPath );
+
+                output.rig->Write( writer );
+
+                context.AllocateGeneratedResource( rigPath );
+            }
+
+            for (auto &animHandle : output.animations)
+            {
+                auto *anim = static_cast<UAnimationData*>( animHandle.get( ) );
+
+                auto rootName = context.resource->GetSourceFileName( );
+                auto animPath = rootName.append( "@" + anim->name );
+                animPath.replace_extension( kResourceTypeAnimationExtension );
+
+                ResourceWriter writer( animPath );
+
+                animHandle->Write( writer );
+
+                context.AllocateGeneratedResource( animPath );
+            }
 
             // if (scene->Has[Cameras][Lights][Materials][Textures])
 
@@ -140,12 +166,15 @@ namespace ursine
 
             if (scene->HasAnimations( ))
             {
-                content.animation = std::make_shared<UAnimationData>( );
+                for (uint i = 0, n = scene->mNumAnimations; i < n; ++i)
+                    content.animations.emplace_back( std::make_shared<UAnimationData>( ) );
+
                 content.rig = std::make_shared<URigData>( );
             }
 
             // iterate through all scene nodes and add their objects to the u3dcontent data
             importSceneNode( scene, scene->mRootNode, content );
+            importSceneAnimations( scene, content );
         }
 
         static void importSceneNode(const aiScene *scene, const aiNode *node, Content3D &content)
@@ -153,7 +182,7 @@ namespace ursine
             if (!node)
                 return;
 
-            importSceneNodeMeshes( scene, node, content.model );
+            importSceneNodeMeshes( scene, node, content );
 
             for (uint i = 0, n = node->mNumChildren; i < n; ++i)
             {
@@ -161,7 +190,7 @@ namespace ursine
             }
         }
 
-        static void importSceneNodeMeshes(const aiScene *scene, const aiNode *node, const UModelData::Handle &output)
+        static void importSceneNodeMeshes(const aiScene *scene, const aiNode *node, Content3D &content)
         {
             if (node->mNumMeshes == 0)
                 return;
@@ -178,8 +207,9 @@ namespace ursine
                 importMeshNormals( mesh, newMesh );
                 importMeshTangents( mesh, newMesh);
                 importMeshIndices( mesh, newMesh );
+                importMeshBonesAndWeights( node, mesh, newMesh, content.rig );
 
-                output->AddMesh( newMesh );
+                content.model->AddMesh( newMesh );
             }
         }
 
@@ -259,6 +289,43 @@ namespace ursine
                 output->indices[ index ] = face.mIndices[ 0 ];
                 output->indices[ index + 1 ] = face.mIndices[ 1 ];
                 output->indices[ index + 2 ] = face.mIndices[ 2 ];
+            }
+        }
+
+        static void importMeshBonesAndWeights(const aiNode *node, const aiMesh *mesh, 
+            const UMeshData::Handle &meshOutput, const URigData::Handle &rigOutput)
+        {
+            // for each bone
+            for (uint i = 0, n = mesh->mNumBones; i < n; ++i)
+            {
+                auto bone = mesh->mBones[ i ];
+
+                // get it's name
+                auto name = std::string( bone->mName.C_Str( ) );
+
+                // find that name in the hierarchy
+                auto boneNode = node->FindNode( name.c_str( ) );
+
+                UAssert( boneNode == nullptr, "Error: Invalid bone!" );
+
+                // add that bone, and all parents, (if not already present) 
+                // to my rig (look up in hash map of names in rig data)
+            }
+
+            // // set that bones vqs if not already set (scale = transform basis, position = transform origin, q = transform unitX vector)
+            // // save the offset matrix
+            // // set the weights of the mesh vertices (bone id + weight)
+        }
+
+        static void importSceneAnimations(const aiScene *scene, Content3D &content)
+        {
+            // TODO: import dis shit
+            for (uint i = 0; i < scene->mNumAnimations; ++i)
+            {
+                auto *aiAnim = scene->mAnimations[ i ];
+                auto *anim = static_cast<UAnimationData*>( content.animations[ i ].get( ) );
+
+                anim->name = aiAnim->mName.C_Str( );
             }
         }
     }

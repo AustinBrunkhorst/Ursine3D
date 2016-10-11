@@ -19,9 +19,18 @@ namespace ursine
 {
     namespace resources
     {
+        // TODO: [J] Remove this shit
+        namespace pipeline
+        {
+            class URigImporter;
+        }
+
         class URigReader : public ResourceTypeReader
         {
             RESOURCE_TYPE_READER;
+
+            // TODO: [J] Remove this shit
+            friend class pipeline::URigImporter;
 
         public:
             URigReader(void);

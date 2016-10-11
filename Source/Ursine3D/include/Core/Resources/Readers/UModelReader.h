@@ -43,10 +43,10 @@ namespace ursine
         public:
             UModelReader(void);
 
-            ursine::resources::UModelData::Handle ReadJDL(ResourceReader &input);
-
         private:
             ResourceData::Handle Read(ResourceReader &input) override;
+            ursine::resources::UModelData::Handle ReadJDL(ResourceReader &input);
+
         } Meta(
             Enable,
             DisplayName( "UModelReader" )
