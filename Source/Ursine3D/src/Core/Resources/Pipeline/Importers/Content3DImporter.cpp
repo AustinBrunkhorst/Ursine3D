@@ -28,8 +28,8 @@
 namespace
 {
     // required to get around assimp's fuckery
-    // map[bone_name] = <vertex, weight>
-    typedef std::unordered_map<std::string, std::pair<unsigned, float>> BoneWeightMap;
+    // map[bone_name] = vector<vertex, weight>
+    typedef std::unordered_map<std::string, std::vector<std::pair<unsigned, float> > > BoneWeightMap;
     typedef std::vector<BoneWeightMap> BoneWeightMaps;
 
     struct Content3D
@@ -63,20 +63,24 @@ namespace ursine
             }
         }
 
-        static void importScene(const aiScene *scene, Content3D &content);
-        static void importSceneNode(const aiScene *scene, const aiNode *node, Content3D &content);
-        static void importSceneNodeMeshes(const aiScene *scene, const aiNode *node, Content3D &content);
+        static void importScene(aiScene *scene, Content3D &content);
+        static void importSceneNode(aiScene *scene, aiNode *node, Content3D &content);
+        static void importSceneNodeMeshes(aiScene *scene, aiNode *node, Content3D &content);
 
-        static void importMeshVertices(const aiMesh *mesh, const UMeshData::Handle &output);
-        static void importMeshIndices(const aiMesh *mesh, const UMeshData::Handle &output);
+        static void importMeshVertices(aiMesh *mesh, UMeshData::Handle &output);
+        static void importMeshIndices(aiMesh *mesh, UMeshData::Handle &output);
 
-        static void importMeshBonesAndWeights(const aiNode *node, const aiMesh *mesh, 
-                                              const UMeshData::Handle &meshOutput, const URigData::Handle &rigOutput);
-        static void importBones(const aiBone *bone, const aiNode *boneNode, const URigData::Handle &output);
-        static void importBonesAndParents(const aiBone *bone, const aiNode *boneNode, const URigData::Handle &output, 
+        static void importMeshBonesAndWeights(aiScene *scene, aiNode *node, aiMesh *mesh,
+                                              URigData::Handle &rigOutput, BoneWeightMap &weights);
+        static void importBones(aiScene *scene, aiBone *bone, aiNode *boneNode, URigData::Handle &output);
+        static void importBonesAndParents(aiScene *scene, aiBone *bone, aiNode *boneNode, URigData::Handle &output,
                                           std::vector<URigData::Bone> &bones, uint &insertionIndex);
 
-        static void importSceneAnimations(const aiScene *scene, Content3D &content);
+        static aiBone *getBoneForNode(aiScene *scene, aiNode *node);
+
+        static void importSceneAnimations(aiScene *scene, Content3D &content);
+
+        static void assignSkinnedMeshWeights(Content3D &content);
 
         rp::Content3DImporter::Content3DImporter(void) { }
 
@@ -89,11 +93,10 @@ namespace ursine
                 aiProcess_CalcTangentSpace |
                 aiProcess_Triangulate |
                 aiProcess_JoinIdenticalVertices |
-                aiProcess_OptimizeMeshes |
-                aiProcess_FindInstances |
-                aiProcess_PreTransformVertices |
-                aiProcess_FindInvalidData |
-                aiProcess_SortByPType |
+                // aiProcess_OptimizeMeshes |
+                // aiProcess_FindInstances |
+                // aiProcess_FindInvalidData |
+                // aiProcess_SortByPType |
                 aiProcess_ValidateDataStructure |
                 aiProcess_LimitBoneWeights |
                 aiProcess_GenSmoothNormals;
@@ -107,10 +110,10 @@ namespace ursine
                 "Invalid post process flags."
             );
 
-            const aiScene *scene = importer.ReadFile( fileName.c_str( ), flags );
+            aiScene *scene = const_cast<aiScene*>( importer.ReadFile( fileName.c_str( ), flags ) );
 
             UAssertCatchable(
-                scene != nullptr,
+                scene != nullptr || !(scene->mFlags | AI_SCENE_FLAGS_INCOMPLETE),
                 "Failed to load file: %s",
                 importer.GetErrorString( )
             );
@@ -168,27 +171,46 @@ namespace ursine
             return std::make_shared<Content3DData>( );
         }
 
-        static void importScene(const aiScene *scene, Content3D &content)
+        static void importScene(aiScene *scene, Content3D &content)
         {
             if (scene->HasMeshes( ))
             {
                 content.model = std::make_shared<UModelData>( );
+
+                // check for bones
+                for (uint i = 0, n = scene->mNumMeshes; i < n; ++i)
+                {
+                    auto &mesh = scene->mMeshes[ i ];
+
+                    if (mesh->mNumBones > 0)
+                    {
+                        content.rig = std::make_shared<URigData>( );
+                        break;
+                    }
+                }
             }
 
             if (scene->HasAnimations( ))
             {
                 for (uint i = 0, n = scene->mNumAnimations; i < n; ++i)
                     content.animations.emplace_back( std::make_shared<UAnimationData>( ) );
-
-                content.rig = std::make_shared<URigData>( );
             }
 
             // iterate through all scene nodes and add their objects to the u3dcontent data
             importSceneNode( scene, scene->mRootNode, content );
-            importSceneAnimations( scene, content );
+
+            if (content.rig)
+            {
+                assignSkinnedMeshWeights( content );
+            }
+
+            if (scene->HasAnimations( ))
+            {
+                importSceneAnimations( scene, content );
+            }
         }
 
-        static void importSceneNode(const aiScene *scene, const aiNode *node, Content3D &content)
+        static void importSceneNode(aiScene *scene, aiNode *node, Content3D &content)
         {
             if (!node)
                 return;
@@ -201,7 +223,7 @@ namespace ursine
             }
         }
 
-        static void importSceneNodeMeshes(const aiScene *scene, const aiNode *node, Content3D &content)
+        static void importSceneNodeMeshes(aiScene *scene, aiNode *node, Content3D &content)
         {
             if (node->mNumMeshes == 0)
                 return;
@@ -216,13 +238,19 @@ namespace ursine
 
                 importMeshVertices( mesh, newMesh );
                 importMeshIndices( mesh, newMesh );
-                importMeshBonesAndWeights( node, mesh, newMesh, content.rig );
+
+                if (content.rig)
+                {
+                    // create a new weight map
+                    content.boneWeights.push_back( BoneWeightMap( ) );
+                    importMeshBonesAndWeights( scene, node, mesh, content.rig, content.boneWeights.back( ) );
+                }
 
                 content.model->meshes.emplace_back( newMesh );
             }
         }
 
-        static void importMeshVertices(const aiMesh *mesh, const UMeshData::Handle &output)
+        static void importMeshVertices(aiMesh *mesh, UMeshData::Handle &output)
         {
             if (!mesh->HasPositions( ))
                 return;
@@ -235,7 +263,7 @@ namespace ursine
                 auto &normal = mesh->mNormals[ i ];
                 auto &tangent = mesh->mTangents[ i ];
                 auto &bitangent = mesh->mBitangents[ i ];
-                auto &uv = mesh->mTextureCoords[ i ];
+                auto &uv = mesh->mTextureCoords[ 0 ][ i ];
                 auto &vert = output->verts[ i ];
 
                 vert.position.Set(
@@ -254,8 +282,7 @@ namespace ursine
                     bitangent.x, bitangent.y, bitangent.z
                 );
 
-                if (uv)
-                    vert.uv.Set( uv->x, uv->y );
+                vert.uv.Set( uv.x, uv.y );
 
                 vert.boneIndices[ 0 ] =
                 vert.boneIndices[ 1 ] =
@@ -264,7 +291,7 @@ namespace ursine
             }
         }
 
-        static void importMeshIndices(const aiMesh *mesh, const UMeshData::Handle &output)
+        static void importMeshIndices(aiMesh *mesh, UMeshData::Handle &output)
         {
             if (!mesh->HasFaces( ))
                 return;
@@ -286,25 +313,25 @@ namespace ursine
             }
         }
 
-        static void importMeshBonesAndWeights(const aiNode *node, const aiMesh *mesh, 
-            const UMeshData::Handle &meshOutput, const URigData::Handle &rigOutput)
+        static void importMeshBonesAndWeights(aiScene *scene, aiNode *node, aiMesh *mesh,
+                                              URigData::Handle &rigOutput, BoneWeightMap &weights)
         {
             // for each bone
             for (uint i = 0, n = mesh->mNumBones; i < n; ++i)
             {
                 auto bone = mesh->mBones[ i ];
 
-                // get it's name
+                // get it's name 
                 auto name = std::string( bone->mName.C_Str( ) );
 
-                UAssert( name.empty( ), "Error: The bone's name should never be empty" );
+                UAssert( !name.empty( ), "Error: The bone's name should never be empty" );
 
                 // find that name in the hierarchy
-                auto boneNode = node->FindNode( name.c_str( ) );
+                auto boneNode = scene->mRootNode->FindNode( name.c_str( ) );
 
-                UAssert( boneNode == nullptr, "Error: Invalid bone!" );
+                UAssert( boneNode != nullptr, "Error: Invalid bone!" );
 
-                importBones( bone, boneNode, rigOutput );
+                importBones( scene, bone, boneNode, rigOutput );
 
                 // set the weights of the mesh vertices (bone id + weight)
                 for (uint j = 0, m = bone->mNumWeights; j < m; ++j)
@@ -312,17 +339,19 @@ namespace ursine
                     auto &weight = bone->mWeights[ j ];
 
                     // store the weight, bone name, and vert index
-                    sdfsdf
+                    weights[ name ].push_back( std::make_pair(
+                        weight.mVertexId, weight.mWeight
+                    ) );
                 }
             }
         }
 
-        static void importBones(const aiBone *bone, const aiNode *boneNode, const URigData::Handle &output)
+        static void importBones(aiScene *scene, aiBone *bone, aiNode *boneNode, URigData::Handle &output)
         {
             std::vector<URigData::Bone> bones;
             uint insertionIndex = 0;
 
-            importBonesAndParents( bone, boneNode, output, bones, insertionIndex );
+            importBonesAndParents( scene, bone, boneNode, output, bones, insertionIndex );
 
             if (bones.size( ) == 0)
                 return;
@@ -337,7 +366,7 @@ namespace ursine
 
                 if (shifted.parent < insertionIndex)
                 {
-                    shifted.parent += bones.size( );
+                    shifted.parent += static_cast<uint>( bones.size( ) );
                 }
             }
 
@@ -348,7 +377,8 @@ namespace ursine
             );
         }
 
-        static void importBonesAndParents(const aiBone *bone, const aiNode *boneNode, const URigData::Handle &output, std::vector<URigData::Bone> &bones, uint &insertionIndex)
+        static void importBonesAndParents(aiScene *scene, aiBone *bone, aiNode *boneNode,
+                                          URigData::Handle &output, std::vector<URigData::Bone> &bones, uint &insertionIndex)
         {
             auto &boneMap = output->boneMap;
             auto itr = boneMap.find( bone->mName.C_Str( ) );
@@ -390,16 +420,45 @@ namespace ursine
                 return;
             }
 
-            auto size = bones.size( );
+            // find the bone for this parent
+            auto parentBone = getBoneForNode(scene, boneNode->mParent);
 
-            importBonesAndParents( bone->mParent, boneNode->mParent, output, bones, insertionIndex);
+            if (parentBone == nullptr)
+            {
+                insertionIndex = -1;
+                return;
+            }
 
-            auto newSize = bones.size( );
+            auto size = static_cast<uint>( bones.size( ) );
+
+            importBonesAndParents( scene, parentBone, boneNode->mParent, output, bones, insertionIndex);
+
+            auto newSize = static_cast<uint>( bones.size( ) );
 
             bones[ size ].parent = insertionIndex + (newSize - size);
         }
 
-        static void importSceneAnimations(const aiScene *scene, Content3D &content)
+        static aiBone *getBoneForNode(aiScene *scene, aiNode *node)
+        {
+            for (uint i = 0, n = scene->mNumMeshes; i < n; ++i)
+            {
+                auto &mesh = scene->mMeshes[ i ];
+
+                for (uint j = 0, m = mesh->mNumBones; j < m; ++j)
+                {
+                    auto &bone = mesh->mBones[ j ];
+
+                    if (bone->mName == node->mName)
+                    {
+                        return bone;
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
+        static void importSceneAnimations(aiScene *scene, Content3D &content)
         {
             // TODO: import dis shit
             for (uint i = 0; i < scene->mNumAnimations; ++i)
@@ -410,6 +469,43 @@ namespace ursine
                 anim->name = aiAnim->mName.C_Str( );
 
                 // TODO: lskjdflksjdf
+            }
+        }
+
+        static void assignSkinnedMeshWeights(Content3D &content)
+        {
+            auto &maps = content.boneWeights;
+            auto &meshes = content.model->meshes;
+
+            for (size_t i = 0, n = maps.size( ); i < n; ++i)
+            {
+                auto &map = maps[ i ];
+                auto &mesh = meshes[ i ];
+
+                // for every bone in the map
+                for (auto &pair : map)
+                {
+                    auto &boneName = pair.first;
+                    auto &boneWeights = pair.second;
+                    auto &boneIndex = content.rig->boneMap[ boneName ];
+
+                    for (auto &weightPair : boneWeights)
+                    {
+                        auto vertIndex = weightPair.first;
+                        auto weight = weightPair.second;
+                        auto &vert = mesh->verts[ vertIndex ];
+
+                        for (uint slot = 0; slot < 4; ++slot)
+                        {
+                            if (vert.boneIndices[ slot ] == -1)
+                            {
+                                vert.boneIndices[ slot ] = boneIndex;
+                                vert.boneWeights[ slot ] = weight;
+                                slot = 4;
+                            }
+                        }
+                    }
+                }
             }
         }
     }
