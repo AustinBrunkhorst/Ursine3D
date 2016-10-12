@@ -27,11 +27,17 @@
 
 namespace
 {
+    // required to get around assimp's fuckery
+    // map[bone_name] = <vertex, weight>
+    typedef std::unordered_map<std::string, std::pair<unsigned, float>> BoneWeightMap;
+    typedef std::vector<BoneWeightMap> BoneWeightMaps;
+
     struct Content3D
     {
         ursine::resources::UModelData::Handle model;
         ursine::resources::URigData::Handle rig;
         std::vector<ursine::resources::UAnimationData::Handle> animations;
+        BoneWeightMaps boneWeights;
     };
 }
 
@@ -61,12 +67,14 @@ namespace ursine
         static void importSceneNode(const aiScene *scene, const aiNode *node, Content3D &content);
         static void importSceneNodeMeshes(const aiScene *scene, const aiNode *node, Content3D &content);
 
-        static void importMeshVerts(const aiMesh *mesh, const UMeshData::Handle &output);
-        static void importMeshNormals(const aiMesh *mesh, const UMeshData::Handle &output);
-        static void importMeshTangents(const aiMesh *mesh, const UMeshData::Handle &output);
+        static void importMeshVertices(const aiMesh *mesh, const UMeshData::Handle &output);
         static void importMeshIndices(const aiMesh *mesh, const UMeshData::Handle &output);
+
         static void importMeshBonesAndWeights(const aiNode *node, const aiMesh *mesh, 
                                               const UMeshData::Handle &meshOutput, const URigData::Handle &rigOutput);
+        static void importBones(const aiBone *bone, const aiNode *boneNode, const URigData::Handle &output);
+        static void importBonesAndParents(const aiBone *bone, const aiNode *boneNode, const URigData::Handle &output, 
+                                          std::vector<URigData::Bone> &bones, uint &insertionIndex);
 
         static void importSceneAnimations(const aiScene *scene, Content3D &content);
 
@@ -130,6 +138,9 @@ namespace ursine
                 auto rootName = context.resource->GetSourceFileName( );
                 auto rigPath = rootName.replace_extension( kResourceTypeRigExtension );
 
+                // Set the rig name
+                output.rig->name = rootName.string( );
+
                 ResourceWriter writer( rigPath );
 
                 output.rig->Write( writer );
@@ -139,7 +150,7 @@ namespace ursine
 
             for (auto &animHandle : output.animations)
             {
-                auto *anim = static_cast<UAnimationData*>( animHandle.get( ) );
+                auto *anim = animHandle.get( );
 
                 auto rootName = context.resource->GetSourceFileName( );
                 auto animPath = rootName.append( "@" + anim->name );
@@ -203,17 +214,15 @@ namespace ursine
 
                 newMesh->SetName( node->mName.C_Str( ) );
 
-                importMeshVerts( mesh, newMesh );
-                importMeshNormals( mesh, newMesh );
-                importMeshTangents( mesh, newMesh);
+                importMeshVertices( mesh, newMesh );
                 importMeshIndices( mesh, newMesh );
                 importMeshBonesAndWeights( node, mesh, newMesh, content.rig );
 
-                content.model->AddMesh( newMesh );
+                content.model->meshes.emplace_back( newMesh );
             }
         }
 
-        static void importMeshVerts(const aiMesh *mesh, const UMeshData::Handle &output)
+        static void importMeshVertices(const aiMesh *mesh, const UMeshData::Handle &output)
         {
             if (!mesh->HasPositions( ))
                 return;
@@ -222,51 +231,36 @@ namespace ursine
 
             for (uint i = 0, n = mesh->mNumVertices; i < n; ++i)
             {
-                auto &vert = mesh->mVertices[ i ];
-
-                output->verts[ i ].Set(
-                    vert.x, vert.y, vert.z
-                );
-            }
-        }
-
-        static void importMeshNormals(const aiMesh *mesh, const UMeshData::Handle &output)
-        {
-            if (!mesh->HasNormals( ))
-                return;
-
-            output->normals.resize( mesh->mNumVertices );
-
-            for (uint i = 0, n = mesh->mNumVertices; i < n; ++i)
-            {
-                auto &norm = mesh->mNormals[ i ];
-
-                output->normals[ i ].Set(
-                    norm.x, norm.y, norm.z
-                );
-            }
-        }
-
-        static void importMeshTangents(const aiMesh *mesh, const UMeshData::Handle &output)
-        {
-            if (!mesh->HasTangentsAndBitangents( ))
-                return;
-
-            output->tangents.resize( mesh->mNumVertices );
-            output->bitangents.resize( mesh->mNumVertices );
-
-            for (uint i = 0, n = mesh->mNumVertices; i < n; ++i)
-            {
+                auto &position = mesh->mVertices[ i ];
+                auto &normal = mesh->mNormals[ i ];
                 auto &tangent = mesh->mTangents[ i ];
                 auto &bitangent = mesh->mBitangents[ i ];
+                auto &uv = mesh->mTextureCoords[ i ];
+                auto &vert = output->verts[ i ];
 
-                output->tangents[ i ].Set(
+                vert.position.Set(
+                    position.x, position.y, position.z
+                );
+
+                vert.normal.Set(
+                    normal.x, normal.y, normal.z
+                );
+
+                vert.tangent.Set(
                     tangent.x, tangent.y, tangent.z
                 );
 
-                output->bitangents[ i ].Set(
+                vert.bitangent.Set(
                     bitangent.x, bitangent.y, bitangent.z
                 );
+
+                if (uv)
+                    vert.uv.Set( uv->x, uv->y );
+
+                vert.boneIndices[ 0 ] =
+                vert.boneIndices[ 1 ] =
+                vert.boneIndices[ 2 ] =
+                vert.boneIndices[ 3 ] = -1;
             }
         }
 
@@ -303,18 +297,106 @@ namespace ursine
                 // get it's name
                 auto name = std::string( bone->mName.C_Str( ) );
 
+                UAssert( name.empty( ), "Error: The bone's name should never be empty" );
+
                 // find that name in the hierarchy
                 auto boneNode = node->FindNode( name.c_str( ) );
 
                 UAssert( boneNode == nullptr, "Error: Invalid bone!" );
 
-                // add that bone, and all parents, (if not already present) 
-                // to my rig (look up in hash map of names in rig data)
+                importBones( bone, boneNode, rigOutput );
+
+                // set the weights of the mesh vertices (bone id + weight)
+                for (uint j = 0, m = bone->mNumWeights; j < m; ++j)
+                {
+                    auto &weight = bone->mWeights[ j ];
+
+                    // store the weight, bone name, and vert index
+                    sdfsdf
+                }
+            }
+        }
+
+        static void importBones(const aiBone *bone, const aiNode *boneNode, const URigData::Handle &output)
+        {
+            std::vector<URigData::Bone> bones;
+            uint insertionIndex = 0;
+
+            importBonesAndParents( bone, boneNode, output, bones, insertionIndex );
+
+            if (bones.size( ) == 0)
+                return;
+
+            if (insertionIndex == -1)
+                insertionIndex = 0;
+
+            // adjust the parent indices that are going to be shifted
+            for (size_t i = insertionIndex + 1, n = output->bones.size( ); i < n; ++i)
+            {
+                auto &shifted = output->bones[ i ];
+
+                if (shifted.parent < insertionIndex)
+                {
+                    shifted.parent += bones.size( );
+                }
             }
 
-            // // set that bones vqs if not already set (scale = transform basis, position = transform origin, q = transform unitX vector)
-            // // save the offset matrix
-            // // set the weights of the mesh vertices (bone id + weight)
+            // add all collected bones to the rig
+            output->bones.insert( 
+                output->bones.begin( ) + insertionIndex, 
+                bones.rbegin( ), bones.rend( ) 
+            );
+        }
+
+        static void importBonesAndParents(const aiBone *bone, const aiNode *boneNode, const URigData::Handle &output, std::vector<URigData::Bone> &bones, uint &insertionIndex)
+        {
+            auto &boneMap = output->boneMap;
+            auto itr = boneMap.find( bone->mName.C_Str( ) );
+
+            // if we've already added this bone
+            if (itr != boneMap.end( ))
+            {
+                insertionIndex = itr->second;
+                return;
+            }
+
+            // Create and initialize new bone
+            URigData::Bone newBone;
+
+            newBone.name = bone->mName.C_Str( );
+
+            // save the offset matrix
+            newBone.offset.Set( &bone->mOffsetMatrix.a1 );
+
+            // set that bone's local position/scale/rotation
+            aiVector3t<float> scale, position;
+            aiQuaterniont<float> rotation;
+
+            boneNode->mTransformation.Decompose( scale, rotation, position );
+
+            newBone.localPosition.Set( position.x, position.y, position.z );
+            newBone.localScale.Set( scale.x, scale.y, scale.z );
+            newBone.localRotation.Set( rotation.x, rotation.y, rotation.z, rotation.w );
+
+            newBone.numChildren = bones.size( ) == 0 ? 0 : 1;
+
+            // add this new bone to the vector
+            // call recursively with this node's parent
+            bones.push_back( newBone );
+
+            if (boneNode->mParent == nullptr)
+            {
+                insertionIndex = -1;
+                return;
+            }
+
+            auto size = bones.size( );
+
+            importBonesAndParents( bone->mParent, boneNode->mParent, output, bones, insertionIndex);
+
+            auto newSize = bones.size( );
+
+            bones[ size ].parent = insertionIndex + (newSize - size);
         }
 
         static void importSceneAnimations(const aiScene *scene, Content3D &content)
@@ -323,9 +405,11 @@ namespace ursine
             for (uint i = 0; i < scene->mNumAnimations; ++i)
             {
                 auto *aiAnim = scene->mAnimations[ i ];
-                auto *anim = static_cast<UAnimationData*>( content.animations[ i ].get( ) );
+                auto *anim = content.animations[ i ].get( );
 
                 anim->name = aiAnim->mName.C_Str( );
+
+                // TODO: lskjdflksjdf
             }
         }
     }

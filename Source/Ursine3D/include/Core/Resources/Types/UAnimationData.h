@@ -21,15 +21,13 @@ namespace ursine
     {
         class UAnimationData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(UAnimationData);
 
         public:
 
             std::string name;
 
-        private:
             void Write(pipeline::ResourceWriter &output) override;
-
             meta::Type GetReaderType(void) override;
 
         } Meta(Register);

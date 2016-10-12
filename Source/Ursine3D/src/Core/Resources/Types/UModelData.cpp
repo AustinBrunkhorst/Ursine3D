@@ -22,31 +22,6 @@ namespace ursine
 
     namespace resources
     {
-        void UModelData::AddMesh(const UMeshData::Handle &mesh)
-        {
-            m_meshes.push_back( mesh );
-        }
-
-        const UMeshData::Handle &UModelData::GetMesh(uint index) const
-        {
-            return m_meshes[ index ];
-        }
-
-        uint UModelData::GetNumMeshes(void) const
-        {
-            return static_cast<uint>( m_meshes.size( ) );
-        }
-
-        void UModelData::SetName(const std::string &name)
-        {
-            m_name = name;
-        }
-
-        const std::string &UModelData::GetName(void) const
-        {
-            return m_name;
-        }
-
         graphics::GfxHND UModelData::GetGraphicsHandle(void) const
         {
             return m_id;
@@ -54,9 +29,9 @@ namespace ursine
 
         void UModelData::Write(pipeline::ResourceWriter &output)
         {
-            output.Write( m_meshes.size( ) );
+            output.Write( meshes.size( ) );
 
-            for (auto &mesh : m_meshes)
+            for (auto &mesh : meshes)
             {
                 mesh->Write( output );
             }

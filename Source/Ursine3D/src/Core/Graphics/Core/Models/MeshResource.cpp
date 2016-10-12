@@ -67,9 +67,16 @@ namespace ursine
             return static_cast<uint>( m_meshData->verts.size( ) );
         }
 
-        const std::vector<Vec3> &MeshResource::GetVertexArray(void) const
+        std::vector<Vec3> MeshResource::GetVertexArray(void) const
         {
-            return m_meshData->verts;
+            std::vector<Vec3> vertexPositions;
+
+            for (auto &vert : m_meshData->verts)
+            {
+                vertexPositions.push_back( vert.position );
+            }
+
+            return vertexPositions;
         }
 
         uint MeshResource::GetIndexCount(void) const
@@ -94,25 +101,23 @@ namespace ursine
             buffer.resize( size );
 
             auto &verts = m_meshData->verts;
-            auto &normals = m_meshData->normals;
-            auto &tangents = m_meshData->tangents;
 
             for (size_t i = 0; i < size; ++i)
             {
                 auto &vert = buffer[ i ];
+                auto &meshVert = verts[ i ];
 
-                vert.vPos = DirectX::XMFLOAT3( verts[ i ].GetFloatPtr( ) );
-                vert.vNor = DirectX::XMFLOAT3( normals[ i ].GetFloatPtr( ) );
-                vert.vTan = DirectX::XMFLOAT3( tangents[ i ].GetFloatPtr( ) );
+                vert.vPos = DirectX::XMFLOAT3( meshVert.position.GetFloatPtr( ) );
+                vert.vNor = DirectX::XMFLOAT3( meshVert.normal.GetFloatPtr( ) );
+                vert.vTan = DirectX::XMFLOAT3( meshVert.tangent.GetFloatPtr( ) );
 
-                // TODO: [J] UV data and bone weight data
-                vert.vUv = DirectX::XMFLOAT2( 0.0f, 0.0f );
+                vert.vUv = DirectX::XMFLOAT2( meshVert.uv.GetFloatPtr( ) );
 
-                vert.vBWeight = DirectX::XMFLOAT4( 0, 0, 0, 1 );
-                vert.vBIdx[ 0 ] = static_cast<BYTE>( 0 );
-                vert.vBIdx[ 1 ] = static_cast<BYTE>( 0 );
-                vert.vBIdx[ 2 ] = static_cast<BYTE>( 0 );
-                vert.vBIdx[ 3 ] = static_cast<BYTE>( 0 );
+                vert.vBWeight = DirectX::XMFLOAT4( meshVert.boneWeights.GetFloatPtr( ) );
+                vert.vBIdx[ 0 ] = static_cast<BYTE>( meshVert.boneIndices[ 0 ] );
+                vert.vBIdx[ 1 ] = static_cast<BYTE>( meshVert.boneIndices[ 1 ] );
+                vert.vBIdx[ 2 ] = static_cast<BYTE>( meshVert.boneIndices[ 2 ] );
+                vert.vBIdx[ 3 ] = static_cast<BYTE>( meshVert.boneIndices[ 3 ] );
             }
         }
     }

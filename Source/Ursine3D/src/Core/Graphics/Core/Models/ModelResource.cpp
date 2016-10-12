@@ -27,12 +27,12 @@ namespace ursine
             , m_modelData( modelData )
         {
             // initialize
-            for(uint i = 0, n = m_modelData->GetNumMeshes( ); i < n; ++i)
+            for(size_t i = 0, n = m_modelData->meshes.size( ); i < n; ++i)
             {
-                auto meshData = m_modelData->GetMesh( i );
+                auto &meshData = m_modelData->meshes[ i ];
                 auto meshResource = new MeshResource( meshData );
 
-                meshResource->SetID( i );
+                meshResource->SetID( static_cast<uint>( i ) );
 
                 m_meshArray.push_back( meshResource );
                 m_meshMap[ meshData->GetName( ) ] = meshResource;
@@ -72,7 +72,7 @@ namespace ursine
 
         const std::string &ModelResource::GetName(void) const
         {
-            return m_modelData->GetName( );
+            return m_modelData->name;
         }
 
         void ModelResource::IncrementReference(void)

@@ -23,17 +23,47 @@ namespace ursine
         UMeshData::Handle UMeshReader::Read(ResourceReader &input)
         {
             auto mesh = std::make_shared<UMeshData>( );
-            size_t numVerts, numIndices, numNormals, numTangents, numBitangents;
+            std::string meshName;
+            size_t numVerts, numIndices;
 
-            input.Read(numVerts);
+            input.Read( meshName );
+
+            mesh->SetName( meshName );
+
+            input.Read( numVerts );
 
             mesh->verts.resize( numVerts );
 
             for (auto &vert : mesh->verts)
             {
-                input.Read( vert.X( ) );
-                input.Read( vert.Y( ) );
-                input.Read( vert.Z( ) );
+                input.Read( vert.position.X( ) );
+                input.Read( vert.position.Y( ) );
+                input.Read( vert.position.Z( ) );
+
+                input.Read( vert.normal.X( ) );
+                input.Read( vert.normal.Y( ) );
+                input.Read( vert.normal.Z( ) );
+
+                input.Read( vert.tangent.X( ) );
+                input.Read( vert.tangent.Y( ) );
+                input.Read( vert.tangent.Z( ) );
+
+                input.Read( vert.bitangent.X( ) );
+                input.Read( vert.bitangent.Y( ) );
+                input.Read( vert.bitangent.Z( ) );
+
+                input.Read( vert.uv.X( ) );
+                input.Read( vert.uv.Y( ) );
+
+                input.Read( vert.boneIndices[ 0 ] );
+                input.Read( vert.boneIndices[ 1 ] );
+                input.Read( vert.boneIndices[ 2 ] );
+                input.Read( vert.boneIndices[ 3 ] );
+
+                input.Read( vert.boneWeights.X( ) );
+                input.Read( vert.boneWeights.Y( ) );
+                input.Read( vert.boneWeights.Z( ) );
+                input.Read( vert.boneWeights.W( ) );
             }
 
             input.Read( numIndices );
@@ -43,39 +73,6 @@ namespace ursine
             for (auto &index : mesh->indices)
             {
                 input.Read( index );
-            }
-
-            input.Read( numNormals );
-
-            mesh->normals.resize( numNormals );
-
-            for (auto &normal : mesh->normals)
-            {
-                input.Read( normal.X( ) );
-                input.Read( normal.Y( ) );
-                input.Read( normal.Z( ) );
-            }
-
-            input.Read( numTangents );
-
-            mesh->tangents.resize( numTangents );
-
-            for (auto &tangent : mesh->tangents)
-            {
-                input.Read( tangent.X( ) );
-                input.Read( tangent.Y( ) );
-                input.Read( tangent.Z( ) );
-            }
-
-            input.Read( numBitangents );
-
-            mesh->bitangents.resize( numBitangents );
-
-            for (auto &bi : mesh->bitangents)
-            {
-                input.Read( bi.X( ) );
-                input.Read( bi.Y( ) );
-                input.Read( bi.Z( ) );
             }
 
             return mesh;

@@ -21,7 +21,7 @@ namespace ursine
     {
         class JsonData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(JsonData);
 
         public:
             JsonData(const Json &data);

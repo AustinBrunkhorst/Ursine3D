@@ -37,7 +37,7 @@ namespace ursine
 
             class Content3DData : public ResourceData
             {
-                RESOURCE_DATA;
+                RESOURCE_DATA(Content3DData);
 
                 void Write(pipeline::ResourceWriter &output) override;
                 meta::Type GetReaderType(void) override;

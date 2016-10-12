@@ -21,7 +21,7 @@ namespace ursine
     {
         class ArchetypeData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(ArchetypeData);
 
         public:
             ArchetypeData(const Json &archetypeJson);

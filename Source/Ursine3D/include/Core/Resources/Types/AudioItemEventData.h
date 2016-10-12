@@ -21,7 +21,7 @@ namespace ursine
     {
         class AudioItemEventData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(AudioItemEventData);
 
         public:
             AudioItemEventData(const Json &data);

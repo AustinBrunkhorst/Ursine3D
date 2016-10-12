@@ -23,7 +23,7 @@ namespace ursine
     {
         class AudioData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(AudioData);
 
         public:
             typedef std::vector<std::string> EventList;

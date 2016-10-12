@@ -22,7 +22,7 @@ namespace ursine
     {
         class FontData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(FontData);
 
         public:
             typedef std::unordered_map<

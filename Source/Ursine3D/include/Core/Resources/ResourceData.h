@@ -13,7 +13,9 @@
 
 #pragma once
 
-#define RESOURCE_DATA META_OBJECT
+#define RESOURCE_DATA(dataType) META_OBJECT \
+public: typedef std::shared_ptr<dataType> Handle; private: \
+
 
 #include "ResourceWriter.h"
 

@@ -21,7 +21,7 @@ namespace ursine
     {
         class UIScreenData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(UIScreenData);
 
         public:
             UIScreenData(const Json &data);

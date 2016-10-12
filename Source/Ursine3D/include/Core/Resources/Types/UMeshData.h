@@ -14,6 +14,9 @@
 #pragma once
 
 #include "ResourceData.h"
+#include "Vec3.h"
+#include "Vec2.h"
+#include "SVec4.h"
 
 namespace ursine
 {
@@ -24,26 +27,36 @@ namespace ursine
         {
             //RESOURCE_DATA;
 
-            friend class UModelData;
-
         public:
 
+            // TODO: Remove this
             typedef std::shared_ptr<UMeshData> Handle;
 
-            // TODO: [J] Encapsulate?
-            std::vector<Vec3> verts;
+            class Vertex
+            {
+            public:
+                Vertex(void);
+
+                Vec3 position;
+                Vec3 normal;
+                Vec3 tangent;
+                Vec3 bitangent;
+                // TODO: Support multiple uv coordinates
+                Vec2 uv;
+                uint boneIndices[4];
+                SVec4 boneWeights;
+            };
+
+            std::vector<Vertex> verts;
             std::vector<uint> indices;
-            std::vector<Vec3> normals;
-            std::vector<Vec3> tangents;
-            std::vector<Vec3> bitangents;
 
             void SetName(const std::string &name);
             const std::string &GetName(void) const;
 
-        private:
             void Write(pipeline::ResourceWriter &output);// override;
-
             meta::Type GetReaderType(void);// override;
+
+        private:
 
             std::string m_name;
 

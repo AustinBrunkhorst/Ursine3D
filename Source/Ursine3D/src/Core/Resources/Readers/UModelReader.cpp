@@ -130,8 +130,6 @@ namespace ursine
 
                 mesh->SetName( name );
                 mesh->verts.resize( vtxCount );
-                mesh->normals.resize( vtxCount );
-                mesh->tangents.resize( vtxCount );
 
                 verts.resize( vtxCount );
 
@@ -140,14 +138,15 @@ namespace ursine
                     input.Read( verts[ j ] );
 
                     auto &vert = verts[ j ];
+                    auto &meshVert = mesh->verts[ j ];
 
-                    mesh->verts[ j ].Set(
+                    meshVert.position.Set(
                         vert.pos.x, vert.pos.y, vert.pos.z
                     );
-                    mesh->normals[ j ].Set(
+                    meshVert.normal.Set(
                         vert.normal.x, vert.normal.y, vert.normal.z
                     );
-                    mesh->tangents[ j ].Set(
+                    meshVert.tangent.Set(
                         vert.tangent.x, vert.tangent.y, vert.tangent.z
                     );
                 }
@@ -159,7 +158,7 @@ namespace ursine
                     input.Read( mesh->indices[ j ] );
                 }
 
-                output->AddMesh( mesh );
+                output->meshes.emplace_back( mesh );
             }
 
             // add it to the graphics manager
@@ -224,7 +223,7 @@ namespace ursine
             {
                 auto mesh = reader.Read( input );
 
-                output->AddMesh( mesh );
+                output->meshes.emplace_back( mesh );
 
                 --numMeshes;
             }

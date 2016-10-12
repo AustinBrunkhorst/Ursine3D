@@ -22,7 +22,7 @@ namespace ursine
     {
         class TextureData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(TextureData);
 
         public:
             TextureData(BinaryData data, unsigned width, unsigned height);

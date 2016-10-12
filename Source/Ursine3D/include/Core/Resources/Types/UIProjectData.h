@@ -21,7 +21,7 @@ namespace ursine
     {
         class UIProjectData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(UIProjectData);
 
         public:
             typedef std::unordered_map<

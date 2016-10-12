@@ -19,12 +19,6 @@ namespace ursine
 {
     namespace resources
     {
-        // TODO: [J] Remove this shit
-        namespace pipeline
-        {
-            class UAnimationImporter;
-        }
-
         class UAnimationReader : public ResourceTypeReader
         {
             RESOURCE_TYPE_READER;
@@ -32,8 +26,7 @@ namespace ursine
         public:
             UAnimationReader(void);
 
-        private:
-            ResourceData::Handle Read(ResourceReader &input) override;
+            ursine::resources::ResourceData::Handle Read(ResourceReader &input) override;
 
         } Meta(
             Enable,

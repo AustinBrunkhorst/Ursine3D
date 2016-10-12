@@ -21,22 +21,37 @@ namespace ursine
     {
         class URigData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(URigData);
 
         public:
 
-            // bone { local vqs, offset matrix, parent index, children? }
+            class Bone
+            {
+            public:
+                Bone(void);
 
-            // uint root bone
+                // Local position, scale, rotation
+                SVec3 localPosition;
+                SVec3 localScale;
+                SQuat localRotation;
 
-            // vector<bone> (array of all bones in this rig [depth first? bredth?])
-            
+                SMat4 offset;
 
-            // map<name, index> (store all bone names and their index into the map)
+                uint parent;
+                uint numChildren;
 
-        private:
+                std::string name;
+            };
+
+            std::string name;
+
+            // depth first hierarchy
+            std::vector<Bone> bones;
+
+            // Named map of all bones
+            std::unordered_map<std::string, uint> boneMap;
+
             void Write(pipeline::ResourceWriter &output) override;
-
             meta::Type GetReaderType(void) override;
 
         } Meta(Register);

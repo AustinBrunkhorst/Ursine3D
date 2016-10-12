@@ -24,7 +24,7 @@ namespace ursine
     {
         class AnimationClipData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(AnimationClipData);
 
         public:
             AnimationClipData(const graphics::ufmt_loader::AnimInfo &animInfo);

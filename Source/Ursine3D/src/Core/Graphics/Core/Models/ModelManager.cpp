@@ -161,9 +161,12 @@ namespace ursine
                 for (int i = 0; i < 6; ++i)
                 {
                     auto &vert = temp[i];
+                    resources::UMeshData::Vertex newVert;
 
-                    meshData->verts.emplace_back(vert.vPos.x, vert.vPos.y, vert.vPos.z);
-                    meshData->normals.emplace_back(vert.vNor.x, vert.vNor.y, vert.vNor.z);
+                    newVert.position.Set( vert.vPos.x, vert.vPos.y, vert.vPos.z );
+                    newVert.normal.Set( vert.vNor.x, vert.vNor.y, vert.vNor.z );
+
+                    meshData->verts.push_back( newVert );
                 }
 
                 meshData->indices = { 0, 1, 2, 3, 4, 5 };

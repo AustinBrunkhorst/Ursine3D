@@ -46,7 +46,7 @@ namespace ursine
             ID3D11Buffer *&GetIndexBuffer(void);
 
             uint GetVertexCount(void) const;
-            const std::vector<Vec3> &GetVertexArray(void) const;
+            std::vector<Vec3> GetVertexArray(void) const;
 
             uint GetIndexCount(void) const;
             uint *GetIndexData(void) const;

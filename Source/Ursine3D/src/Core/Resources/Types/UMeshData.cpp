@@ -20,6 +20,9 @@ namespace ursine
 {
     namespace resources
     {
+        UMeshData::Vertex::Vertex(void)
+            : boneIndices{ static_cast<uint>( -1 ) } { }
+
         void UMeshData::SetName(const std::string &name)
         {
             m_name = name;
@@ -32,13 +35,39 @@ namespace ursine
 
         void UMeshData::Write(pipeline::ResourceWriter &output)
         {
+            output.Write( m_name );
             output.Write( verts.size( ) );
 
             for (auto &vert : verts)
             {
-                output.Write( vert.X( ) );
-                output.Write( vert.Y( ) );
-                output.Write( vert.Z( ) );
+                output.Write( vert.position.X( ) );
+                output.Write( vert.position.Y( ) );
+                output.Write( vert.position.Z( ) );
+
+                output.Write( vert.normal.X( ) );
+                output.Write( vert.normal.Y( ) );
+                output.Write( vert.normal.Z( ) );
+
+                output.Write( vert.tangent.X( ) );
+                output.Write( vert.tangent.Y( ) );
+                output.Write( vert.tangent.Z( ) );
+
+                output.Write( vert.bitangent.X( ) );
+                output.Write( vert.bitangent.Y( ) );
+                output.Write( vert.bitangent.Z( ) );
+
+                output.Write( vert.uv.X( ) );
+                output.Write( vert.uv.Y( ) );
+
+                output.Write( vert.boneIndices[ 0 ] );
+                output.Write( vert.boneIndices[ 1 ] );
+                output.Write( vert.boneIndices[ 2 ] );
+                output.Write( vert.boneIndices[ 3 ] );
+
+                output.Write( vert.boneWeights.X( ) );
+                output.Write( vert.boneWeights.Y( ) );
+                output.Write( vert.boneWeights.Z( ) );
+                output.Write( vert.boneWeights.W( ) );
             }
 
             output.Write( indices.size( ) );
@@ -46,33 +75,6 @@ namespace ursine
             for (auto &index : indices)
             {
                 output.Write( index );
-            }
-
-            output.Write( normals.size( ) );
-
-            for (auto &norm : normals)
-            {
-                output.Write( norm.X( ) );
-                output.Write( norm.Y( ) );
-                output.Write( norm.Z( ) );
-            }
-
-            output.Write( tangents.size( ) );
-
-            for (auto &tang : tangents)
-            {
-                output.Write( tang.X( ) );
-                output.Write( tang.Y( ) );
-                output.Write( tang.Z( ) );
-            }
-
-            output.Write( bitangents.size( ) );
-
-            for (auto &bi : bitangents)
-            {
-                output.Write( bi.X( ) );
-                output.Write( bi.Y( ) );
-                output.Write( bi.Z( ) );
             }
         }
 

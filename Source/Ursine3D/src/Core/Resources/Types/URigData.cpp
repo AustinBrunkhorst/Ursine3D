@@ -21,6 +21,11 @@ namespace ursine
 {
     namespace resources
     {
+        URigData::Bone::Bone(void)
+            : name( "N/A" )
+            , parent( -1 )
+            , numChildren( 0 ) { }
+
         void URigData::Write(pipeline::ResourceWriter &output)
         {
             

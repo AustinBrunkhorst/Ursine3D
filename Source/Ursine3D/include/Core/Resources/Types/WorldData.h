@@ -23,7 +23,7 @@ namespace ursine
     {
         class WorldData : public ResourceData
         {
-            RESOURCE_DATA;
+            RESOURCE_DATA(WorldData);
 
         public:
             WorldData(const Json &worldJson);
