@@ -93,10 +93,10 @@ namespace ursine
                 aiProcess_CalcTangentSpace |
                 aiProcess_Triangulate |
                 aiProcess_JoinIdenticalVertices |
-                // aiProcess_OptimizeMeshes |
-                // aiProcess_FindInstances |
-                // aiProcess_FindInvalidData |
-                // aiProcess_SortByPType |
+                aiProcess_OptimizeMeshes |
+                aiProcess_FindInstances |
+                aiProcess_FindInvalidData |
+                aiProcess_SortByPType |
                 aiProcess_ValidateDataStructure |
                 aiProcess_LimitBoneWeights |
                 aiProcess_GenSmoothNormals;
@@ -142,7 +142,7 @@ namespace ursine
                 auto rigPath = rootName.replace_extension( kResourceTypeRigExtension );
 
                 // Set the rig name
-                output.rig->name = rootName.string( );
+                output.rig->name = rootName.filename( ).string( );
 
                 ResourceWriter writer( rigPath );
 
