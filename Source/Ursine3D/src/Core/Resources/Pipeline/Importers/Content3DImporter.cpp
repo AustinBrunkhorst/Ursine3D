@@ -146,6 +146,7 @@ namespace ursine
 
                 ResourceWriter writer( rigPath );
 
+                // TODO: Write dis
                 output.rig->Write( writer );
 
                 context.AllocateGeneratedResource( rigPath );
@@ -359,22 +360,67 @@ namespace ursine
             if (insertionIndex == -1)
                 insertionIndex = 0;
 
+            auto parentIndex = insertionIndex;
+
+            // walk past all the other children of this parent
+            for (uint i = parentIndex + 1, n = (uint)output->bones.size( ); i < n; ++i)
+            {
+                auto &child = output->bones[ i ];
+
+                if (child.parent < parentIndex || child.parent > insertionIndex)
+                    break;
+
+                ++insertionIndex;
+            }
+
             // adjust the parent indices that are going to be shifted
-            for (size_t i = insertionIndex + 1, n = output->bones.size( ); i < n; ++i)
+            for (uint i = insertionIndex + 1, n = (uint)output->bones.size( ); i < n; ++i)
             {
                 auto &shifted = output->bones[ i ];
 
-                if (shifted.parent < insertionIndex)
+                if (shifted.parent > insertionIndex)
                 {
-                    shifted.parent += static_cast<uint>( bones.size( ) );
+                    shifted.parent += (uint)bones.size( );
                 }
             }
 
             // add all collected bones to the rig
-            output->bones.insert( 
-                output->bones.begin( ) + insertionIndex, 
-                bones.rbegin( ), bones.rend( ) 
-            );
+            auto startSize = output->bones.size( );
+
+            if (startSize == 0)
+            {
+                output->bones.insert(
+                    output->bones.begin( ) + insertionIndex,
+                    bones.rbegin( ), bones.rend( )
+                );
+
+                output->boneMap[ bones[ 0 ].name ] = 0;
+            }
+            else
+            {
+                ++insertionIndex;
+
+                output->bones.insert(
+                    output->bones.begin( ) + insertionIndex,
+                    bones.rbegin( ), bones.rend( )
+                );
+
+                for (uint i = insertionIndex, n = (uint)output->bones.size( ); i < n; ++i)
+                {
+                    auto &added = output->bones[ i ];
+
+                    // Add them to the bone map
+                    output->boneMap[ added.name ] = i;
+
+                    if (i == insertionIndex)
+                        added.parent = parentIndex;
+                    else if (i < insertionIndex + bones.size( ))
+                        added.parent = i - 1;
+                }
+            }
+
+            if (startSize != 0)
+                ++output->bones[ parentIndex ].numChildren;
         }
 
         static void importBonesAndParents(aiScene *scene, aiBone *bone, aiNode *boneNode,
@@ -468,7 +514,7 @@ namespace ursine
 
                 anim->name = aiAnim->mName.C_Str( );
 
-                // TODO: lskjdflksjdf
+                // TODO: import dis
             }
         }
 
