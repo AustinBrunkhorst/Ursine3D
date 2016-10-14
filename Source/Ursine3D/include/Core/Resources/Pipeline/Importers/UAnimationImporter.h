@@ -14,6 +14,8 @@
 #pragma once
 
 #include "ResourceImporter.h"
+#include "BuiltInResourceConfig.h"
+#include "PassThroughProcessor.h"
 
 namespace ursine
 {
@@ -36,7 +38,7 @@ namespace ursine
                 Enable,
                 DisplayName( "UAnimationImporter" ),
                 ResourceImporterConfig(
-                    ExtensionList{ ursine::rp::kResourceTypeExtension },
+                    ExtensionList{ ursine::rp::kResourceTypeAnimationExtension },
                     typeof( ursine::rp::PassThroughProcessor )
                 )
             );

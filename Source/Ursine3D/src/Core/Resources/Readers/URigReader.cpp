@@ -25,9 +25,46 @@ namespace ursine
 
         ResourceData::Handle URigReader::Read(ResourceReader &input)
         {
-            // TODO: [J] input.read(shit);
+            auto rig = std::make_shared<URigData>( );
+            size_t boneCount = 0;
+            size_t boneMapSize = 0;
 
-            return std::make_shared<URigData>( /* shit */ );
+            input.Read( rig->name );
+
+            input.Read( boneCount );
+
+            rig->bones.resize( boneCount );
+
+            for (size_t i = 0; i < boneCount; ++i)
+            {
+                auto &bone = rig->bones[ i ];
+
+                input.Read( bone.localPosition );
+                input.Read( bone.localScale );
+                input.Read( bone.localRotation );
+
+                input.Read( bone.offset );
+
+                input.Read( bone.parent );
+                input.Read( bone.numChildren );
+
+                input.Read( bone.name );
+            }
+
+            input.Read( boneMapSize );
+
+            for (size_t i = 0; i < boneMapSize; ++i)
+            {
+                std::string name;
+                uint index;
+
+                input.Read( name );
+                input.Read( index );
+
+                rig->boneMap[ name ] = index;
+            }
+
+            return rig;
         }
     }
 }

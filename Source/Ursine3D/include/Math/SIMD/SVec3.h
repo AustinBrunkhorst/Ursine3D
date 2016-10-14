@@ -42,6 +42,12 @@ class btVector3;
 
 #endif
 
+#if defined(URSINE_DEPENDENCY_Assimp)
+
+#include "assimp/vector3.h"
+
+#endif
+
 namespace ursine
 {
     // Forward declaration
@@ -107,6 +113,14 @@ namespace ursine
         explicit SVec3(const btVector3 &vec);
 
         btVector3 ToBullet(void) const;
+
+#endif
+
+#if defined(URSINE_DEPENDENCY_Assimp)
+
+        explicit SVec3(const aiVector3D &vec);
+
+        aiVector3D ToAssimp(void) const;
 
 #endif
 

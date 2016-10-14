@@ -38,6 +38,7 @@ namespace
         ursine::resources::URigData::Handle rig;
         std::vector<ursine::resources::UAnimationData::Handle> animations;
         BoneWeightMaps boneWeights;
+        std::stack<ursine::SMat4> matrixStack;
     };
 }
 
@@ -67,7 +68,7 @@ namespace ursine
         static void importSceneNode(aiScene *scene, aiNode *node, Content3D &content);
         static void importSceneNodeMeshes(aiScene *scene, aiNode *node, Content3D &content);
 
-        static void importMeshVertices(aiMesh *mesh, UMeshData::Handle &output);
+        static void importMeshVertices(aiMesh *mesh, UMeshData::Handle &output, SMat4 &matrix);
         static void importMeshIndices(aiMesh *mesh, UMeshData::Handle &output);
 
         static void importMeshBonesAndWeights(aiScene *scene, aiNode *node, aiMesh *mesh,
@@ -146,7 +147,6 @@ namespace ursine
 
                 ResourceWriter writer( rigPath );
 
-                // TODO: Write dis
                 output.rig->Write( writer );
 
                 context.AllocateGeneratedResource( rigPath );
@@ -216,12 +216,21 @@ namespace ursine
             if (!node)
                 return;
 
+            if (content.matrixStack.size( ))
+                content.matrixStack.push( 
+                    content.matrixStack.top( ) * SMat4( &node->mTransformation.a1 )
+                );
+            else
+                content.matrixStack.push( SMat4( &node->mTransformation.a1 ) );
+
             importSceneNodeMeshes( scene, node, content );
 
             for (uint i = 0, n = node->mNumChildren; i < n; ++i)
             {
                 importSceneNode( scene, node->mChildren[ i ], content );
             }
+
+            content.matrixStack.pop( );
         }
 
         static void importSceneNodeMeshes(aiScene *scene, aiNode *node, Content3D &content)
@@ -237,7 +246,7 @@ namespace ursine
 
                 newMesh->SetName( node->mName.C_Str( ) );
 
-                importMeshVertices( mesh, newMesh );
+                importMeshVertices( mesh, newMesh, content.matrixStack.top( ) );
                 importMeshIndices( mesh, newMesh );
 
                 if (content.rig)
@@ -251,7 +260,7 @@ namespace ursine
             }
         }
 
-        static void importMeshVertices(aiMesh *mesh, UMeshData::Handle &output)
+        static void importMeshVertices(aiMesh *mesh, UMeshData::Handle &output, SMat4 &matrix)
         {
             if (!mesh->HasPositions( ))
                 return;
@@ -260,16 +269,14 @@ namespace ursine
 
             for (uint i = 0, n = mesh->mNumVertices; i < n; ++i)
             {
-                auto &position = mesh->mVertices[ i ];
+                auto position = SVec3( mesh->mVertices[ i ] );
                 auto &normal = mesh->mNormals[ i ];
                 auto &tangent = mesh->mTangents[ i ];
                 auto &bitangent = mesh->mBitangents[ i ];
                 auto &uv = mesh->mTextureCoords[ 0 ][ i ];
                 auto &vert = output->verts[ i ];
 
-                vert.position.Set(
-                    position.x, position.y, position.z
-                );
+                vert.position = matrix.TransformPoint( position );
 
                 vert.normal.Set(
                     normal.x, normal.y, normal.z

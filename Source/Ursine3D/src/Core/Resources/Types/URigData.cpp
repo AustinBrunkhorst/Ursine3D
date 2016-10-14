@@ -28,7 +28,31 @@ namespace ursine
 
         void URigData::Write(pipeline::ResourceWriter &output)
         {
-            
+            output.Write( name );
+
+            output.Write( bones.size( ) );
+
+            for (auto &bone : bones)
+            {
+                output.Write( bone.localPosition );
+                output.Write( bone.localScale );
+                output.Write( bone.localRotation );
+
+                output.Write( bone.offset );
+
+                output.Write( bone.parent );
+                output.Write( bone.numChildren );
+
+                output.Write( bone.name );
+            }
+
+            output.Write( boneMap.size( ) );
+
+            for (auto &pair : boneMap)
+            {
+                output.Write( pair.first );
+                output.Write( pair.second );
+            }
         }
 
         meta::Type URigData::GetReaderType(void)

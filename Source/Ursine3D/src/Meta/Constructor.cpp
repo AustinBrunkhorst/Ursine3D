@@ -94,7 +94,7 @@ namespace ursine
 
         Variant Constructor::InvokeVariadic(ArgumentList &arguments) const
         {
-            UAssert( IsValid( ), "Invalid constructor invoked" );
+            UAssert( IsValid( ), "Invalid constructor invoked for type %s", m_classType.GetName( ) );
 
             return m_invoker->Invoke( arguments );
         }

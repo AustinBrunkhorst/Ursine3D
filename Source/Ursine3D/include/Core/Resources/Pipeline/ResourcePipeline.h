@@ -23,6 +23,8 @@
 #include "FontImporter.h"
 #include "Content3DImporter.h"
 #include "UModelImporter.h"
+#include "URigImporter.h"
+#include "UAnimationImporter.h"
 #include "AudioImporter.h"
 #include "JsonImporter.h"
 #include "UIProjectImporter.h"
