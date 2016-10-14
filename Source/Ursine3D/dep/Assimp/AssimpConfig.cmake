@@ -21,6 +21,6 @@ set(LIB_EXT ${CMAKE_STATIC_LIBRARY_SUFFIX})
 
 set(Assimp_STATIC_LIBS
   debug ${DIR_LIB}/Debug/assimp-vc140-mt${LIB_EXT}
-  debug ${DIR_LIB}/Debug/zlibstaticicd${LIB_EXT}
+  debug ${DIR_LIB}/Debug/zlibstaticd${LIB_EXT}
   optimized ${DIR_LIB}/Release/assimp-vc140-mt${LIB_EXT}
   optimized ${DIR_LIB}/Release/zlibstatic${LIB_EXT})
