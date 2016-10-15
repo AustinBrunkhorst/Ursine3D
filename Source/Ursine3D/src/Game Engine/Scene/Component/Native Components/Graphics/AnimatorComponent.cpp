@@ -53,13 +53,6 @@ namespace ursine
             , m_finishEventSent( false )
             , m_enableBoneManipulation( false ) { }
 
-        Animator::~Animator(void)
-        {
-            // enable deletion on the rig root if it exists
-            if (m_rigRoot)
-                enableDeletionOnEntities( m_rigRoot, true );
-        }
-
         void Animator::OnSceneReady(Scene *scene)
         {
             // If animator isn't playing, and we have a current state,
@@ -69,21 +62,6 @@ namespace ursine
                 GetOwner( )->Listener( this )
                     .On( ENTITY_HIERARCHY_SERIALIZED, &Animator::setAnimationToFirstFrame );
             }
-        }
-
-        void Animator::OnSerialize(Json::object &output) const
-        {
-            output[ kRigName ] = m_rig;
-        }
-
-        void Animator::OnDeserialize(const Json &input)
-        {
-            auto &value = input[ kRigName ];
-
-            if (value.is_null( ))
-                return;
-
-            m_rig = value.string_value( );
         }
 
         const std::string &Animator::GetCurrentState(void) const
@@ -448,73 +426,6 @@ namespace ursine
         {
             recursClearChildren(GetOwner( )->GetTransform( )->GetChildren( ));
         }
-
-#if defined(URSINE_WITH_EDITOR)
-
-        void Animator::ImportRig(void)
-        {
-            auto owner = GetOwner( );
-            auto rigRoot = owner->GetChildByName( kRigRootName );
-
-            // If we currently have a generated rig root
-            if (rigRoot)
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_WARNING;
-                config.header = "Warning";
-                config.message = "This action will delete all of the Rig_Root's children. Continue?";
-                config.dismissible = false;
-                config.duration = 0;
-
-                NotificationButton yes, no;
-
-                yes.text = "Yes";
-                yes.onClick = [=](Notification &notification) {
-                    notification.Close( );
-
-                    // Main thread operation
-                    Application::PostMainThread( [=] {
-                        rigRoot->EnableDeletion( true );
-                        rigRoot->Delete( );
-                        importRig( );
-                    } );
-                };
-
-                no.text = "No";
-                no.onClick = [=](Notification &notification) {
-                    notification.Close( );
-                };
-
-                config.buttons = { yes, no };
-
-                EditorPostNotification( config );
-                return;
-            }
-
-            auto rigName = GetOwner( )->GetComponent<Model3D>( )->GetModelName( );
-
-            if (rigName == "")
-            {
-                NotificationConfig config;
-
-                config.type = NOTIFY_ERROR;
-                config.header = "Error";
-                config.message = "The Model3D component doesn't have a model.";
-                config.dismissible = true;
-                config.duration = TimeSpan::FromSeconds( 5.0f );
-
-                EditorPostNotification( config );
-
-                return;
-            }
-
-            Application::PostMainThread( [=] {
-                importRig( );
-            } );
-        }
-
-#endif
 
         void Animator::importRig(void)
         {

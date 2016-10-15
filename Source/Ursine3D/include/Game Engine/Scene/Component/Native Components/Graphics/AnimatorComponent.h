@@ -26,6 +26,7 @@
 #include "AnimationClipData.h"
 #include "StateBlender.h"
 #include "AnimationEvent.h"
+#include "URigData.h"
 
 namespace ursine
 {
@@ -46,12 +47,6 @@ namespace ursine
             NATIVE_COMPONENT;
 
         public:
-            EditorAnnotate( "Import the rig from the current model." )
-            EditorButton(
-                ImportRig,
-                "Import Rig"
-            );
-
             EditorField(
                 std::string currentState,
                 GetCurrentState,
@@ -84,12 +79,8 @@ namespace ursine
 
             Meta(Enable)
             Animator(void);
-            ~Animator(void);
 
             void OnSceneReady(Scene *scene) override;
-
-            void OnSerialize(Json::object &output) const override;
-            void OnDeserialize(const Json &input) override;
 
             // getter / setter //////////////////////////////////////
             const std::string &GetCurrentState(void) const;
@@ -130,23 +121,16 @@ namespace ursine
             // default transition time takes 1 sec this will be used as interpolation factor
             float m_transFactor;
 
-            EntityHandle m_rigRoot;
-            std::string m_rig;
-
             std::string m_curStName;
             std::string m_futStName;
             std::string m_stateName;
 
             void updateState(AnimationState **currSt, const Animation **currAni,
                             AnimationState **futSt, const Animation **futAni, 
-                            //const std::vector<Animation*> &currAnimVec,
-                            //const std::vector<Animation*> &futAnimVec,
                             float dt, float &transFactor);
 
             void animationLoop(AnimationState **currSt, const Animation **currAni,
                             AnimationState **futSt, const Animation **futAni,
-                            //const std::vector<Animation*> &currAnimVec,
-                            //const std::vector<Animation*> &futAnimVec,
                             float dt, float &transFactor,
                             StateBlender *stateBlender);
 
