@@ -14,9 +14,16 @@
 #pragma once
 
 #include "ResourceData.h"
+#include "AnimationConfig.h"
+#include "AnimationLane.h"
 
 namespace ursine
 {
+    namespace ecs
+    {
+        class Rig;
+    }
+
     namespace resources
     {
         class UAnimationData : public ResourceData
@@ -24,8 +31,17 @@ namespace ursine
             RESOURCE_DATA(UAnimationData);
 
         public:
+            UAnimationData(void);
+
+            void Evaluate(ecs::Rig *rig, float time);
+
+            // each animation lane affects one bone
+            std::vector<AnimationLane> lanes;
 
             std::string name;
+
+            // Duration in seconds
+            float duration;
 
             void Write(pipeline::ResourceWriter &output) override;
             meta::Type GetReaderType(void) override;

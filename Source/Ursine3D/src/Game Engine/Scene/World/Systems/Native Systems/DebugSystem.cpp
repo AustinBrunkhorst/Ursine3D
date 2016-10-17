@@ -194,7 +194,8 @@ namespace ursine
         }
 
         void DebugSystem::DrawCone(const SVec3 &tipPosition, SVec3 focusPosition,
-                                   float focalLength, float focalAngleDegrees)
+                                   float focalLength, float focalAngleDegrees, 
+                                   const Color &color, float duration, bool overdraw)
         {
             // The direction from the base to the focal point
             auto dir = focusPosition - tipPosition;
@@ -216,13 +217,13 @@ namespace ursine
             }
 
             // render the circle
-            DrawCircle( focusPosition, dir, radius, Color::Gold, 5.0f, true );
+            DrawCircle( focusPosition, dir, radius, color, duration, overdraw );
 
             // render the lines
-            DrawLine( tipPosition, focusPosition + u * radius, Color::Gold, 5.0f, true );
-            DrawLine( tipPosition, focusPosition - u * radius, Color::Gold, 5.0f, true );
-            DrawLine( tipPosition, focusPosition + v * radius, Color::Gold, 5.0f, true );
-            DrawLine( tipPosition, focusPosition - v * radius, Color::Gold, 5.0f, true );
+            DrawLine( tipPosition, focusPosition + u * radius, color, duration, overdraw );
+            DrawLine( tipPosition, focusPosition - u * radius, color, duration, overdraw );
+            DrawLine( tipPosition, focusPosition + v * radius, color, duration, overdraw );
+            DrawLine( tipPosition, focusPosition - v * radius, color, duration, overdraw );
         }
 
         void DebugSystem::OnInitialize(void)

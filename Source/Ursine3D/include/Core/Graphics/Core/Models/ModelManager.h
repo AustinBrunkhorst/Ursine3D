@@ -17,8 +17,6 @@
 #include <atomic>
 
 #include "ModelResource.h"
-#include "ModelInfo.h"
-#include "AnimationInfo.h"
 #include "GfxDefines.h"
 
 namespace ursine
@@ -60,16 +58,9 @@ namespace ursine
             // invalidate current state
             void Invalidate();
 
-            // animation stuff
-            bool CheckAnimExistence(const std::string &animeName);
-            GfxHND CreateAnimation(const ufmt_loader::AnimInfo &animeInfo);
-            void DestroyAnimation(GfxHND &handle);
-
             ModelResource *GetModel(GfxHND handle);
             ModelResource *GetModelIndex(uint index);
             ModelResource *GetModel(const std::string &name);
-
-            ufmt_loader::AnimInfo *GeAnimeInfo(GfxHND handle);
 
             bool IsLoading(void) const;
 
@@ -89,11 +80,6 @@ namespace ursine
 
             std::unordered_map<uint, ModelResource *> m_modelCache;
             std::unordered_map<std::string, GfxHND> m_modelTable;
-
-            // animation
-            unsigned m_nextAnimationID;
-
-            std::unordered_map<unsigned, ufmt_loader::AnimInfo> m_animeInfoCache;
         };
     }
 }

@@ -21,9 +21,21 @@ namespace ursine
 {
     namespace resources
     {
+        UAnimationData::UAnimationData(void)
+            : name( "N/A" )
+            , duration( 0.0f ) { }
+
         void UAnimationData::Write(pipeline::ResourceWriter &output)
         {
-            
+            output.Write( name );
+            output.Write( duration );
+
+            output.Write( lanes.size( ) );
+
+            for (auto &lane : lanes)
+            {
+                lane.Write( output );
+            }
         }
 
         meta::Type UAnimationData::GetReaderType(void)

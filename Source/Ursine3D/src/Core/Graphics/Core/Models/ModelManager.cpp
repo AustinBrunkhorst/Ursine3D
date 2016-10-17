@@ -15,7 +15,6 @@
 #include "ModelManager.h"
 #include "GfxDefines.h"
 #include "VertexDefinitions.h"
-#include "AnimationBuilder.h"
 #include "DXErrorHandling.h"
 #include "UMeshData.h"
 #include "UModelReader.h"
@@ -34,8 +33,6 @@ namespace ursine
             , m_nextModelID( INTERNAL_GEOMETRY_COUNT )
             , m_currentState( -1 )
             , m_modelCache( )
-            , m_nextAnimationID( 0 )
-            , m_animeInfoCache( { } )
         {
         }
 
@@ -47,8 +44,6 @@ namespace ursine
             m_currentState = -1;
 
             m_loadingModel = false;
-
-            AnimationBuilder::InitializeStaticData( );
 
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL PS INDEX BUFFER
@@ -425,52 +420,6 @@ namespace ursine
             m_currentState = -1;
         }
 
-        // animation
-        bool ModelManager::CheckAnimExistence(const std::string &animeName)
-        {
-            for (auto &iter : m_animeInfoCache)
-            {
-                if (iter.second.name == animeName)
-                    return true;
-            }
-            return false;
-        }
-
-        GfxHND ModelManager::CreateAnimation(const ufmt_loader::AnimInfo &animeInfo)
-        {
-            GfxHND handle;
-
-            auto *hnd = HND_RSRCE( handle );
-
-            auto internalID = m_nextAnimationID++;
-
-            m_animeInfoCache.emplace( internalID, animeInfo );
-
-            // initialize handle
-            hnd->ID_ = SANITY_RESOURCE;
-            hnd->Type_ = ID_ANIMATION;
-            hnd->Index_ = internalID;
-
-            return handle;
-        }
-
-        void ModelManager::DestroyAnimation(GfxHND &handle)
-        {
-            auto *hnd = HND_RSRCE( handle );
-
-            UAssert( hnd->ID_ == SANITY_RESOURCE, 
-                "Attempted to get animation with invalid handle!"
-            );
-
-            UAssert( hnd->Type_ == ID_ANIMATION, 
-                "Attempted to get animation with handle of invalid type!"
-            );
-
-            m_animeInfoCache.erase( hnd->Index_ );
-
-            handle = 0;
-        }
-
         ModelResource *ModelManager::GetModel(GfxHND handle)
         {
             auto *hnd = HND_RSRCE( handle );
@@ -502,23 +451,6 @@ namespace ursine
             auto *hnd = HND_RSRCE(index->second);
 
             return m_modelCache[hnd->Index_];
-        }
-
-        ufmt_loader::AnimInfo *ModelManager::GeAnimeInfo(GfxHND handle)
-        {
-            auto *hnd = HND_RSRCE( handle );
-
-            UAssert( hnd->ID_ == SANITY_RESOURCE, 
-                "Attempted to get animation with invalid handle!"
-            );
-
-            UAssert( hnd->Type_ == ID_ANIMATION, 
-                "Attempted to get animation with handle of invalid type!"
-            );
-
-            auto search = m_animeInfoCache.find( hnd->Index_ );
-
-            return search == m_animeInfoCache.end( ) ? nullptr : &search->second;
         }
 
         bool ModelManager::IsLoading() const

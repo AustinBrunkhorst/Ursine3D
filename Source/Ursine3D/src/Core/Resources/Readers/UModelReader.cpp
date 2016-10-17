@@ -18,6 +18,8 @@
 #include "UModelData.h"
 #include "UMeshReader.h"
 
+#include <DirectXMath.h>
+
 namespace ursine
 {
     namespace resources
@@ -29,36 +31,27 @@ namespace ursine
         // TODO: [J] Remove this shit (replace with my own built data)
         struct MeshVertex
         {
-            pseudodx::XMFLOAT3	pos;
-            pseudodx::XMFLOAT3	normal;
+            DirectX::XMFLOAT3	pos;
+            DirectX::XMFLOAT3	normal;
             //pseudodx::XMFLOAT3	binormal;
-            pseudodx::XMFLOAT3	tangent;
-            pseudodx::XMFLOAT2	uv;
-            pseudodx::XMUINT4	ctrlIndices;
-            pseudodx::XMFLOAT4	ctrlBlendWeights;
+            DirectX::XMFLOAT3	tangent;
+            DirectX::XMFLOAT2	uv;
+            DirectX::XMUINT4	ctrlIndices;
+            DirectX::XMFLOAT4	ctrlBlendWeights;
 
             MeshVertex()
             {
-                pos = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
-                normal = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
+                pos = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+                normal = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
                 //binormal = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
-                tangent = pseudodx::XMFLOAT3(0.f, 0.f, 0.f);
-                uv = pseudodx::XMFLOAT2(0.f, 0.f);
-                ctrlIndices = pseudodx::XMUINT4(0, 0, 0, 0);
-                ctrlBlendWeights = pseudodx::XMFLOAT4(0.f, 0.f, 0.f, 0.f);
+                tangent = DirectX::XMFLOAT3(0.f, 0.f, 0.f);
+                uv = DirectX::XMFLOAT2(0.f, 0.f);
+                ctrlIndices = DirectX::XMUINT4(0, 0, 0, 0);
+                ctrlBlendWeights = DirectX::XMFLOAT4(0.f, 0.f, 0.f, 0.f);
             }
 
             bool operator==(const MeshVertex& rhs)
             {
-                if ((pos == rhs.pos)
-                    && (normal == rhs.normal)
-                    //&& (binormal == rhs.binormal)
-                    && (tangent == rhs.tangent)
-                    && (uv == rhs.uv)
-                    && (ctrlIndices == rhs.ctrlIndices)
-                    && (ctrlBlendWeights == rhs.ctrlBlendWeights))
-                    return true;
-
                 return false;
             }
 
@@ -89,9 +82,6 @@ namespace ursine
                 float sum = ctrlBlendWeights.x + ctrlBlendWeights.y + ctrlBlendWeights.z + ctrlBlendWeights.w;
 
                 if (sum > 1.0f)
-                    return false;
-
-                if (!graphics::IsEqualEpsilon(1.0f, sum))
                     return false;
 
                 return true;

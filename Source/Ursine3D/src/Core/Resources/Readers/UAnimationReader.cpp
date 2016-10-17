@@ -25,9 +25,23 @@ namespace ursine
 
         ResourceData::Handle UAnimationReader::Read(ResourceReader &input)
         {
-            // TODO: [J] input.read(shit);
+            auto anim = std::make_shared<UAnimationData>( );
 
-            return std::make_shared<UAnimationData>( /* shit */ );
+            input.Read( anim->name );
+            input.Read( anim->duration );
+
+            size_t size;
+
+            input.Read( size );
+
+            anim->lanes.resize( size );
+
+            for (uint i = 0; i < size; ++i)
+            {
+                anim->lanes[ i ].Read( input );
+            }
+
+            return anim;
         }
     }
 }

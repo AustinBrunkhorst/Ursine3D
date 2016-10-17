@@ -236,7 +236,7 @@ namespace ursine
 
                 for (auto &rend : renderableVec)
                 {
-                    if (rend->dirty)
+                    //if (rend->dirty)
                     {
                         rend->dirty = false;
 

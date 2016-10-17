@@ -22,14 +22,14 @@ namespace ursine
     {
         enum DrawMode
         {
-		#ifdef BULLET_PHYSICS
+        #ifdef BULLET_PHYSICS
             
-			DRAW_NONE = btIDebugDraw::DBG_NoDebug,
+            DRAW_NONE = btIDebugDraw::DBG_NoDebug,
             DRAW_WIRE_FRAME = btIDebugDraw::DBG_DrawWireframe,
             DRAW_AABB = btIDebugDraw::DBG_DrawAabb,
             DRAW_CONTACT_POINTS = btIDebugDraw::DBG_DrawContactPoints
 
-		#endif
+        #endif
         };
 
         class DebugDrawer : public DebugDrawerBase
@@ -53,7 +53,7 @@ namespace ursine
 
             void removeDebugMode(DrawMode drawMode);
 
-            int	getDebugMode(void) const override;
+            int    getDebugMode(void) const override;
 
         private:
             graphics::GfxAPI *m_gfx;

@@ -61,7 +61,8 @@ namespace ursine
                           const Color &color, float duration, bool overdraw = false);
 
             void DrawCone(const SVec3 &tipPosition, SVec3 focusPosition,
-                          float focalLength, float focalAngleDegrees);
+                          float focalLength, float focalAngleDegrees, 
+                          const Color &color, float duration, bool overdraw = false);
 
         private:
 

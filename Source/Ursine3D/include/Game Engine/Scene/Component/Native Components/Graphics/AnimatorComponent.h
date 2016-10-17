@@ -15,166 +15,66 @@
 
 #pragma once
 
-#include "Component.h"
-#include "Renderable.h"
-#include "GfxAPI.h"
-#include "AnimationState.h"
-#include "AnimationBuilder.h"
-#include "Array.h"
-#include "Model3DComponent.h"
-#include "TransformComponent.h"
-#include "AnimationClipData.h"
-#include "StateBlender.h"
-#include "AnimationEvent.h"
-#include "URigData.h"
+#include "UAnimationData.h"
 
 namespace ursine
 {
     namespace ecs
     {
-        struct AnimatorStateEventArgs : public EventArgs
-        {
-            std::string state;
-            std::string message;
-
-            AnimatorStateEventArgs(AnimationEvent &stEvent)
-                : state( stEvent.GetStateName( ) )
-                , message( stEvent.GetEventMessage( ) ) { }
-        };
-
         class Animator : public Component
         {
             NATIVE_COMPONENT;
 
+            friend class AnimatorSystem;
+
         public:
-            EditorField(
-                std::string currentState,
-                GetCurrentState,
-                SetCurrentState
+            EditorResourceField(
+                ursine::resources::UAnimationData,
+                animation,
+                GetAnimation,
+                SetAnimation
             );
 
             EditorField(
-                bool playAnimation,
-                IsPlaying,
+                bool playing,
+                GetPlaying,
                 SetPlaying
             );
 
             EditorField(
-                bool renderDebug,
-                IsDebug,
-                SetDebug
+                AnimationPlaymode playmode,
+                GetPlaymode,
+                SetPlaymode
             );
 
-            EditorField(
-                bool enableBoneManipulation,
-                GetEnableBoneManipulation,
-                SetEnableBoneManipulation
-            );
-
-            EditorField(
-                float timeScalar,
-                GetTimeScalar,
-                SetTimeScalar
-            );
-
-            Meta(Enable)
             Animator(void);
 
-            void OnSceneReady(Scene *scene) override;
+            const ursine::resources::ResourceReference &GetAnimation(void) const;
+            void SetAnimation(const ursine::resources::ResourceReference &animation);
 
-            // getter / setter //////////////////////////////////////
-            const std::string &GetCurrentState(void) const;
-            void SetCurrentState(const std::string &state);
+            bool GetPlaying(void) const;
+            void SetPlaying(bool playing);
 
-            bool IsPlaying(void) const;
-            void SetPlaying(bool isPlaying);
-
-            bool IsDebug(void) const;
-            void SetDebug(bool useDebug);
-
-            bool GetEnableBoneManipulation(void) const;
-            void SetEnableBoneManipulation(bool flag);
-
-            float GetTimeScalar(void) const;
-            void SetTimeScalar(float scalar);
-
-            // Array of animation states
-            ursine::Array<ursine::AnimationState> stArray;
-
-            // Array of state blender
-            ursine::Array<ursine::StateBlender> stBlender;
-
-            // Array of state events
-            ursine::Array<ursine::AnimationEvent> stEvents;
+            ursine::AnimationPlaymode GetPlaymode(void) const;
+            void SetPlaymode(ursine::AnimationPlaymode playmode);
 
         private:
-            friend class AnimatorSystem;
+            resources::ResourceReference m_animation;
 
-            bool m_enableBoneManipulation;
             bool m_playing;
-            bool m_debug;
-            bool m_finishEventSent;
-            bool m_blending;
 
-            float m_speedScalar;
+            // Current time marker
+            float m_time;
 
-            // default transition time takes 1 sec this will be used as interpolation factor
-            float m_transFactor;
+            // Direction we're moving (-1 -> 1)
+            float m_direction;
 
-            std::string m_curStName;
-            std::string m_futStName;
-            std::string m_stateName;
-
-            void updateState(AnimationState **currSt, const Animation **currAni,
-                            AnimationState **futSt, const Animation **futAni, 
-                            float dt, float &transFactor);
-
-            void animationLoop(AnimationState **currSt, const Animation **currAni,
-                            AnimationState **futSt, const Animation **futAni,
-                            float dt, float &transFactor,
-                            StateBlender *stateBlender);
-
-            void changeState(AnimationState **currSt, AnimationState **futSt, float &transFactor);
-
-            AnimationState *getAnimationState(const std::string &stateName);
-
-            float getAnimationTimePosition(void);
-            void setAnimationTimePosition(float position);
-
-            void getTransFrmByRatio(AnimationState &state, unsigned int &frameIndex, float ratio);
-
-            StateBlender *getStateBlenderByNames(const std::string &currst, const std::string &futst);
-
-            static void recursClearChildren(const std::vector<Handle<Transform>> &children);
-            
-            void clearChildren(void);
-
-            void createBoneEntities(Transform *parent, AnimationBone *bone);
-
-            void setBoneTransformPointers(Transform *transform, AnimationBone *bone);
-
-            void setRigTransformPointers(void);
-
-            void importRig(void);
-
-            void updateRigTransforms(Component::Handle<Transform> boneTrans, const AnimationBone &boneData);
-
-            void enableDeletionOnEntities(const EntityHandle &entity, bool flag);
-
-            bool loadStateAnimation(AnimationState *state) const;
-
-            void sendAvailableEvents(const std::string &currentState, float currentRatio);
-
-            void resetSentFlagInEvents(const std::string &currentState);
-
-            void setAnimationToFirstFrame(EVENT_HANDLER(Entity));
-
+            AnimationPlaymode m_playmode;
         } Meta(
-            Enable, 
-            WhiteListMethods, 
+            Enable,
             DisplayName("Animator")
         ) EditorMeta(
-                RequiresComponents(typeof(ursine::ecs::Model3D))
+                RequiresComponents(typeof(ursine::ecs::Rig))
         );
     }
 }

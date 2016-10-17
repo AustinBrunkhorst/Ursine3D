@@ -115,26 +115,6 @@ namespace ursine
             return m_privates->modelMgr->GetModel( static_cast<unsigned>( handle & 0xFFFF ) );
         }
 
-        bool ResourceAPI::CheckAnimExistence(const std::string &animeName)
-        {
-            return m_privates->modelMgr->CheckAnimExistence(animeName);
-        }
-
-        GfxHND ResourceAPI::CreateAnimation(const ufmt_loader::AnimInfo &animeInfo)
-        {
-            return m_privates->modelMgr->CreateAnimation( animeInfo );
-        }
-
-        void ResourceAPI::DestroyAnimation(GfxHND &handle)
-        {
-            m_privates->modelMgr->DestroyAnimation( handle );
-        }
-
-        ufmt_loader::AnimInfo *ResourceAPI::GetAnimInfo(const GfxHND &handle)
-        {
-            return m_privates->modelMgr->GeAnimeInfo( handle );
-        }
-
         void ResourceAPI::PrepForFont(void)
         {
             m_privates->fontMgr->LockFontManager();

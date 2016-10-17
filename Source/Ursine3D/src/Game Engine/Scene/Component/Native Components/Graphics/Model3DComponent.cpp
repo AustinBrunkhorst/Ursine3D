@@ -21,7 +21,7 @@
 #include "BvhTriangleMeshColliderComponent.h"
 #include "Notification.h"
 #include "ModelResource.h"
-#include "LvlHierarchy.h"
+#include "RigComponent.h"
 
 namespace ursine
 {
@@ -337,6 +337,25 @@ namespace ursine
             auto &model = m_graphics->RenderableMgr.GetModel3D( m_base->GetHandle( ) );
 
             model.SetWorldMatrix(trans->GetLocalToWorldMatrix());
+
+            // update our matrix pallet if we have a rig
+            auto rig = GetOwner( )->GetComponent<Rig>( );
+
+            if (!rig)
+                return;
+
+            auto &boneMap = rig->GetBoneMap( );
+            auto &pallet = getMatrixPalette( );
+
+            for (auto &pair : boneMap)
+            {
+                auto &index = pair.first;
+                auto bone = pair.second->GetTransform( );
+                auto &offset = rig->GetOffsetMatrix( index );
+
+                pallet[ index ] =
+                    bone->GetLocalToWorldMatrix( ) * offset;
+            }
         }
 
         void Model3D::invalidateTexture(bool unload)

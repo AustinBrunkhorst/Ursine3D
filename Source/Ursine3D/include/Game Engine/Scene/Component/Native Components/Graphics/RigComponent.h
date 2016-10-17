@@ -5,7 +5,7 @@
 ** RigComponent.h
 **
 ** Author:
-** - Matt Yan - m.yan@digipen.edu
+** - Jordan Ellis - j.ellis@digipen.edu
 **
 ** Contributors:
 ** - <list in same format as author if applicable>
@@ -14,6 +14,7 @@
 #pragma once
 
 #include "Component.h"
+#include "URigData.h"
 
 namespace ursine
 {
@@ -23,11 +24,21 @@ namespace ursine
         {
             NATIVE_COMPONENT;
 
+            friend class RigSystem;
+
         public:
+            typedef std::unordered_map<uint, EntityHandle> BoneMap;
+
             EditorAnnotate( "Import the rig from the current model." )
             EditorButton(
                 ImportRig,
                 "Import Rig"
+            );
+
+            EditorOnlyField(
+                bool debugDraw,
+                GetDebugDraw,
+                SetDebugDraw
             );
 
             EditorResourceField(
@@ -40,22 +51,38 @@ namespace ursine
             Rig(void);
             ~Rig(void);
 
-            const resources::ResourceReference &GetRig(void) const;
-            void SetRig(const resources::ResourceReference &rig);
+            void OnInitialize(void) override;
+
+        #if defined(URSINE_WITH_EDITOR)
+
+            bool GetDebugDraw(void);
+            void SetDebugDraw(bool active);
+
+            void DebugDraw(void);
+
+        #endif
+
+            const ursine::resources::ResourceReference &GetRig(void) const;
+            void SetRig(const ursine::resources::ResourceReference &rig);
+
+            const ursine::ecs::Rig::BoneMap &GetBoneMap(void) const;
+
+            const ursine::SMat4 &GetOffsetMatrix(uint boneIndex);
 
         private:
             resources::ResourceReference m_rig;
 
-            std::unordered_map<uint, EntityHandle> m_boneEntities;
+            BoneMap m_boneEntities;
+
+            bool m_debug;
 
             void importRig(void);
+
+            void onUpdate(EVENT_HANDLER(World));
 
         } Meta(
             Enable, 
             DisplayName( "Rig" )
-        ) EditorMeta( 
-            HiddenInSelector,
-            DisableComponentRemoval
         );
     }
 }

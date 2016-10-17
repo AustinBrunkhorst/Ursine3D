@@ -53,3 +53,16 @@ private:
     void Process(const ursine::ecs::EntityHandle &entity) override;
 
 } Meta(Enable, AutoAddEntitySystem);
+
+// Draw the rig
+class RigDebugDrawSystem : public ursine::ecs::FilterSystem
+{
+    ENTITY_SYSTEM;
+
+public:
+    RigDebugDrawSystem(ursine::ecs::World *world);
+
+private:
+    void Process(const ursine::ecs::EntityHandle &entity) override;
+
+} Meta(Enable, AutoAddEntitySystem);

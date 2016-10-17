@@ -25,8 +25,8 @@ namespace ursine
         enum class LightType
         {
             Directional = graphics::Light::LIGHT_DIRECTIONAL,
-            Point = graphics::Light::LIGHT_POINT,
-            Spot = graphics::Light::LIGHT_SPOTLIGHT,
+            Point       = graphics::Light::LIGHT_POINT,
+            Spot        = graphics::Light::LIGHT_SPOTLIGHT,
         } Meta(Enable);
 
         class Light : public Component

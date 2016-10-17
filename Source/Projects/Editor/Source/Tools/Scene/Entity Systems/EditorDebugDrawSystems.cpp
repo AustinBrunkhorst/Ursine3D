@@ -21,6 +21,7 @@
 #include <CameraComponent.h>
 #include <LightComponent.h>
 #include <AudioEmitterComponent.h>
+#include <RigComponent.h>
 
 using namespace ursine;
 using namespace ecs;
@@ -212,4 +213,22 @@ void AudioEmitterDebugDrawSystem::Process(const EntityHandle &entity)
         emitter->GetOwner( )->GetTransform( )->GetWorldPosition( ), emitter->GetAttenuationScalingFactor( ), 
         Color::Gold, 0.0f
     );
+}
+
+ENTITY_SYSTEM_DEFINITION( RigDebugDrawSystem );
+
+RigDebugDrawSystem::RigDebugDrawSystem(World *world)
+    : FilterSystem( world, Filter( ).All<Selected, Rig>( ) )
+{
+    SetUpdateType( WORLD_EDITOR_UPDATE );
+}
+
+void RigDebugDrawSystem::Process(const EntityHandle &entity)
+{
+    auto rig = entity->GetComponent<Rig>( );
+
+    if (rig->GetDebugDraw( ))
+    {
+        rig->DebugDraw( );
+    }
 }

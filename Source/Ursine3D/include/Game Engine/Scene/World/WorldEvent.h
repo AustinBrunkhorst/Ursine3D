@@ -39,6 +39,7 @@ namespace ursine
 
             // For when the volume is changed
             // @Austin there has to be a better place for this in the code
+            // TODO: Find an alternative for this
             WORLD_VOLUME_CHANGE,
 
         #if defined(URSINE_WITH_EDITOR)

@@ -14,6 +14,7 @@
 #pragma once
 
 #include "ResourceData.h"
+#include "Bone.h"
 
 namespace ursine
 {
@@ -24,25 +25,6 @@ namespace ursine
             RESOURCE_DATA(URigData);
 
         public:
-
-            class Bone
-            {
-            public:
-                Bone(void);
-
-                // Local position, scale, rotation
-                SVec3 localPosition;
-                SVec3 localScale;
-                SQuat localRotation;
-
-                SMat4 offset;
-
-                uint parent;
-                uint numChildren;
-
-                std::string name;
-            };
-
             std::string name;
 
             // depth first hierarchy

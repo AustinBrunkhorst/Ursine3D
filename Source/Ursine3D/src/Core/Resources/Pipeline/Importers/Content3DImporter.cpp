@@ -75,13 +75,26 @@ namespace ursine
                                               URigData::Handle &rigOutput, BoneWeightMap &weights);
         static void importBones(aiScene *scene, aiBone *bone, aiNode *boneNode, URigData::Handle &output);
         static void importBonesAndParents(aiScene *scene, aiBone *bone, aiNode *boneNode, URigData::Handle &output,
-                                          std::vector<URigData::Bone> &bones, uint &insertionIndex);
+                                          std::vector<Bone> &bones, uint &insertionIndex);
 
         static aiBone *getBoneForNode(aiScene *scene, aiNode *node);
 
         static void importSceneAnimations(aiScene *scene, Content3D &content);
 
         static void assignSkinnedMeshWeights(Content3D &content);
+
+        static AnimationLane::Type GetStateType(aiAnimBehaviour behaviour)
+        {
+            switch (behaviour)
+            {
+            case aiAnimBehaviour_DEFAULT:  return AnimationLane::Type::Default;
+            case aiAnimBehaviour_CONSTANT: return AnimationLane::Type::Constant;
+            case aiAnimBehaviour_LINEAR:   return AnimationLane::Type::Linear;
+            case aiAnimBehaviour_REPEAT:   return AnimationLane::Type::Repeat;
+            }
+
+            return AnimationLane::Type::Default;
+        }
 
         rp::Content3DImporter::Content3DImporter(void) { }
 
@@ -156,9 +169,11 @@ namespace ursine
             {
                 auto *anim = animHandle.get( );
 
-                auto rootName = context.resource->GetSourceFileName( );
-                auto animPath = rootName.append( "@" + anim->name );
-                animPath.replace_extension( kResourceTypeAnimationExtension );
+                auto rootName = context.resource->GetSourceFileName( ).string( );
+                auto dot = rootName.find_last_of( '.' );
+                rootName.erase( dot, std::string::npos );
+
+                auto animPath = rootName.append( "@" + anim->name + "." + kResourceTypeAnimationExtension );
 
                 ResourceWriter writer( animPath );
 
@@ -356,7 +371,7 @@ namespace ursine
 
         static void importBones(aiScene *scene, aiBone *bone, aiNode *boneNode, URigData::Handle &output)
         {
-            std::vector<URigData::Bone> bones;
+            std::vector<Bone> bones;
             uint insertionIndex = 0;
 
             importBonesAndParents( scene, bone, boneNode, output, bones, insertionIndex );
@@ -431,7 +446,7 @@ namespace ursine
         }
 
         static void importBonesAndParents(aiScene *scene, aiBone *bone, aiNode *boneNode,
-                                          URigData::Handle &output, std::vector<URigData::Bone> &bones, uint &insertionIndex)
+                                          URigData::Handle &output, std::vector<Bone> &bones, uint &insertionIndex)
         {
             auto &boneMap = output->boneMap;
             auto itr = boneMap.find( bone->mName.C_Str( ) );
@@ -444,7 +459,7 @@ namespace ursine
             }
 
             // Create and initialize new bone
-            URigData::Bone newBone;
+            Bone newBone;
 
             newBone.name = bone->mName.C_Str( );
 
@@ -513,7 +528,8 @@ namespace ursine
 
         static void importSceneAnimations(aiScene *scene, Content3D &content)
         {
-            // TODO: import dis shit
+            auto &boneMap = content.rig->boneMap;
+
             for (uint i = 0; i < scene->mNumAnimations; ++i)
             {
                 auto *aiAnim = scene->mAnimations[ i ];
@@ -521,7 +537,63 @@ namespace ursine
 
                 anim->name = aiAnim->mName.C_Str( );
 
-                // TODO: import dis
+                if (aiAnim->mTicksPerSecond == 0)
+                {
+                    anim->duration = static_cast<float>( aiAnim->mDuration );
+                }
+                else
+                {
+                    anim->duration = static_cast<float>( aiAnim->mDuration / aiAnim->mTicksPerSecond );
+                }
+
+                // for each animation lane
+                for (uint j = 0; j < aiAnim->mNumChannels; ++j)
+                {
+                    auto *lane = aiAnim->mChannels[ j ];
+                    auto itr = boneMap.find( lane->mNodeName.C_Str( ) );
+
+                    // TODO: Look into this (master mover)
+                    if (itr == boneMap.end( ))
+                    {
+                        continue;
+                    }
+
+                    anim->lanes.emplace_back( );
+
+                    auto &newLane = anim->lanes.back( );
+
+                    newLane.boneIndex = itr->second;
+
+                    for (uint k = 0; k < lane->mNumPositionKeys; ++k)
+                    {
+                        auto key = lane->mPositionKeys[ k ];
+                        float time = static_cast<float>( key.mTime / aiAnim->mTicksPerSecond );
+                        SVec3 value = SVec3( key.mValue );
+
+                        newLane.positionKeys.emplace_back( time, value );
+                    }
+
+                    for (uint k = 0; k < lane->mNumRotationKeys; ++k)
+                    {
+                        auto key = lane->mRotationKeys[ k ];
+                        float time = static_cast<float>( key.mTime / aiAnim->mTicksPerSecond );
+                        SQuat value = { key.mValue.x, key.mValue.y, key.mValue.z, key.mValue.w };
+
+                        newLane.rotationKeys.emplace_back( time, value );
+                    }
+
+                    for (uint k = 0; k < lane->mNumScalingKeys; ++k)
+                    {
+                        auto key = lane->mScalingKeys[ k ];
+                        float time = static_cast<float>( key.mTime / aiAnim->mTicksPerSecond );
+                        SVec3 value = SVec3( key.mValue );
+
+                        newLane.scaleKeys.emplace_back( time, value );
+                    }
+
+                    newLane.preState = GetStateType( lane->mPreState );
+                    newLane.postState = GetStateType( lane->mPostState );
+                }
             }
         }
 

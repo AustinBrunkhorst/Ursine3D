@@ -16,7 +16,6 @@
 #include "GFXDefines.h"
 #include "ModelResource.h"
 #include "UModelData.h"
-#include "AnimationInfo.h"
 #include "GUID.h"
 #include "FontData.h"
 
@@ -73,15 +72,6 @@ namespace ursine
 
             // get model data
             ModelResource *GetModelResource(GfxHND handle);
-
-            /////////////////////////////////////////////////////////
-            // Animation
-            /////////////////////////////////////////////////////////
-            bool CheckAnimExistence(const std::string &animeName);
-            GfxHND CreateAnimation(const ufmt_loader::AnimInfo &animeInfo);
-            void DestroyAnimation(GfxHND &handle);
-
-            ufmt_loader::AnimInfo *GetAnimInfo(const GfxHND &handle);
 
             /////////////////////////////////////////////////////////
             // FONT
