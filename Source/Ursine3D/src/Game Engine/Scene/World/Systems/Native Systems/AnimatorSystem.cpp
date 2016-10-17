@@ -143,6 +143,9 @@ namespace ursine
                 m_world->GetOwner( )->GetResourceManager( )
             );
 
+            if (!animation)
+              return;
+
             animator->m_time += animator->m_direction * dt;
 
             switch (animator->m_playmode)
