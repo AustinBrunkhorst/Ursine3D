@@ -136,7 +136,7 @@ namespace ursine
 
         void AnimatorSystem::updateAnimator(Animator *animator, Rig *rig, float dt)
         {
-            if (!animator->m_playing ||animator->m_animation.GetGUID( ) != kNullGUID)
+            if (!animator->m_playing ||animator->m_animation.GetGUID( ) == kNullGUID)
                 return;
 
             auto animation = animator->m_animation.Load<resources::UAnimationData>(

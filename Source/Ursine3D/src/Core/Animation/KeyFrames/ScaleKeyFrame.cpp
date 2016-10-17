@@ -32,4 +32,9 @@ namespace ursine
 
         entity->GetTransform( )->SetLocalScale( result );
     }
+
+    void ScaleKeyFrame::SetValue(ecs::EntityHandle &entity)
+    {
+        entity->GetTransform( )->SetLocalScale( value );
+    }
 }

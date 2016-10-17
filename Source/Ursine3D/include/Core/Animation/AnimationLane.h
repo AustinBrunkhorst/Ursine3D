@@ -52,8 +52,6 @@ namespace ursine
 
         uint boneIndex;
 
-        std::vector<std::vector<KeyFrame>*> keyFrames;
-
         std::vector<PositionKeyFrame> positionKeys;
         std::vector<RotationKeyFrame> rotationKeys;
         std::vector<ScaleKeyFrame>    scaleKeys;

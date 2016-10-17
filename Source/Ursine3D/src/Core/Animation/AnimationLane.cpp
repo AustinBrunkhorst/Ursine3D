@@ -16,43 +16,83 @@
 
 namespace ursine
 {
+    template <typename T>
+    static void evaluateKeyFrames(std::vector<T> &keys, ecs::EntityHandle &bone, float time)
+    {
+        if (keys.size( ))
+        {
+            auto keySize = static_cast<uint>( keys.size( ) );
+
+            if (keySize == 1)
+            {
+                keys[ 0 ].SetValue( bone );
+            }
+
+            uint index = -1;
+
+            for (uint i = 0; i < keySize; ++i)
+            {
+                auto &key = keys[ i ];
+
+                if (key.time <= time)
+                {
+                    index = i;
+                }
+
+                if (key.time > time)
+                {
+                    break;
+                }
+            }
+
+            if (index != -1)
+            {
+                if (index == keySize - 1)
+                {
+                    keys.back( ).SetValue( bone );
+                }
+                else
+                {
+                    auto *first = &keys.at( index );
+                    auto *next = &keys.at( index + 1 );
+
+                    float t = (time - first->time) / (next->time - first->time);
+
+                    first->Interpolate( next, t, bone );
+                }
+            }
+        }
+    }
+
     AnimationLane::AnimationLane(void)
         : preState( Type::Default )
         , postState( Type::Default )
-        , boneIndex( -1 )
-    {
-        keyFrames.push_back(
-            reinterpret_cast<std::vector<KeyFrame>*>( &positionKeys )
-        );
-
-        keyFrames.push_back(
-            reinterpret_cast<std::vector<KeyFrame>*>( &rotationKeys )
-        );
-
-        keyFrames.push_back(
-            reinterpret_cast<std::vector<KeyFrame>*>( &scaleKeys )
-        );
-    }
+        , boneIndex( -1 ) { }
 
     void AnimationLane::Evaluate(ecs::EntityHandle bone, float time)
     {
-        for (auto keys : keyFrames)
-        {
-            // TODO: Implement the different types
+        if (bone == nullptr)
+            return;
 
-            // find the two keys we want
-            //if (time < firstFrame)
-            //{
-            //    // do the thing
-            //    return;
-            //}
+        // TODO: Implement the different types
+        // TODO: Optimize finding the two keys
 
-            //if (time > lastFrame)
-            //{
-            //    // do the thing
-            //    return;
-            //}
-        }
+        // find the two keys we want
+        //if (time < firstFrame)
+        //{
+        //    // do the thing
+        //    return;
+        //}
+
+        //if (time > lastFrame)
+        //{
+        //    // do the thing
+        //    return;
+        //}
+
+        evaluateKeyFrames( positionKeys, bone, time );
+        evaluateKeyFrames( rotationKeys, bone, time );
+        evaluateKeyFrames( scaleKeys, bone, time );
     }
 
     void AnimationLane::Write(resources::pipeline::ResourceWriter &output)

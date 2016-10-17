@@ -32,4 +32,9 @@ namespace ursine
 
         entity->GetTransform( )->SetLocalRotation( result );
     }
+
+    void RotationKeyFrame::SetValue(ecs::EntityHandle &entity)
+    {
+        entity->GetTransform( )->SetLocalRotation( value );
+    }
 }

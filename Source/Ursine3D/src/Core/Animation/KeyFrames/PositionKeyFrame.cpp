@@ -32,4 +32,9 @@ namespace ursine
 
         entity->GetTransform( )->SetLocalPosition( result );
     }
+
+    void PositionKeyFrame::SetValue(ecs::EntityHandle &entity)
+    {
+        entity->GetTransform( )->SetLocalPosition( value );
+    }
 }
