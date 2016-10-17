@@ -344,6 +344,7 @@ namespace ursine
             if (!rig)
                 return;
 
+            auto rootTrans = GetOwner( )->GetTransform( )->GetWorldToLocalMatrix( );
             auto &boneMap = rig->GetBoneMap( );
             auto &pallet = getMatrixPalette( );
 
@@ -354,7 +355,7 @@ namespace ursine
                 auto &offset = rig->GetOffsetMatrix( index );
 
                 pallet[ index ] =
-                    bone->GetLocalToWorldMatrix( ) * offset;
+                    rootTrans * bone->GetLocalToWorldMatrix( ) * offset;
             }
         }
 

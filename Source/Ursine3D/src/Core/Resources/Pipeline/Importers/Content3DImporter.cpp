@@ -220,7 +220,8 @@ namespace ursine
                 assignSkinnedMeshWeights( content );
             }
 
-            if (scene->HasAnimations( ))
+            // TODO: Handle the case where there is only animation and no bones
+            if (scene->HasAnimations( ) && content.rig)
             {
                 importSceneAnimations( scene, content );
             }
@@ -502,6 +503,9 @@ namespace ursine
             importBonesAndParents( scene, parentBone, boneNode->mParent, output, bones, insertionIndex);
 
             auto newSize = static_cast<uint>( bones.size( ) );
+
+            if (newSize == size)
+              return;
 
             bones[ size ].parent = insertionIndex + (newSize - size);
         }

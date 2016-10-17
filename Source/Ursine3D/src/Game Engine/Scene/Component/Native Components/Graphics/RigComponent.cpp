@@ -93,7 +93,7 @@ namespace ursine
 
                 debugDrawer->DrawCone(
                     parentPos, entityPos, SVec3::Length( parentPos - entityPos ), 
-                    10.0f, Color::Gold, 0.0f, true
+                    10.0f, Color::LawnGreen, 0.0f, true
                 );
             }
         }
