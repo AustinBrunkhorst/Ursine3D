@@ -121,7 +121,17 @@ namespace ursine
             NOTIFY_COMPONENT_CHANGED( "rig", m_rig );
         }
 
-        const Rig::BoneMap &Rig::GetBoneMap(void) const
+        EntityHandle Rig::GetBoneEntity(uint boneIndex) const
+        {
+            auto itr = m_boneEntities.find( boneIndex );
+
+            if (itr == m_boneEntities.end( ))
+                return nullptr;
+            else
+                return itr->second;
+        }
+
+        const ursine::ecs::Rig::BoneMap &Rig::GetBoneMap(void) const
         {
             return m_boneEntities;
         }

@@ -28,7 +28,7 @@ namespace ursine
             , m_playing( true )
             , m_time( 0.0f )
             , m_direction( 1.0f )
-            , m_playmode( AnimationPlaymode::OneShot ) { }
+            , m_playmode( AnimationPlaymode::Loop ) { }
 
         const resources::ResourceReference& Animator::GetAnimation() const
         {
@@ -61,6 +61,12 @@ namespace ursine
 
         void Animator::SetPlaymode(AnimationPlaymode playmode)
         {
+            if (m_playmode != playmode)
+            {
+                m_direction = 1.0f;
+                m_time = 0.0f;
+            }
+
             m_playmode = playmode;
 
             NOTIFY_COMPONENT_CHANGED( "playmode", m_playmode );

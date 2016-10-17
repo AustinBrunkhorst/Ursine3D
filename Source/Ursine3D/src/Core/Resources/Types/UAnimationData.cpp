@@ -16,6 +16,7 @@
 #include "UAnimationData.h"
 
 #include "UAnimationReader.h"
+#include "RigComponent.h"
 
 namespace ursine
 {
@@ -24,6 +25,21 @@ namespace ursine
         UAnimationData::UAnimationData(void)
             : name( "N/A" )
             , duration( 0.0f ) { }
+
+        void UAnimationData::Evaluate(ecs::Rig *rig, float time)
+        {
+            for (auto &lane : lanes)
+            {
+                auto entity = rig->GetBoneEntity( lane.boneIndex );
+
+                if (!entity)
+                {
+                    continue;
+                }
+
+                lane.Evaluate( entity, time );
+            }
+        }
 
         void UAnimationData::Write(pipeline::ResourceWriter &output)
         {

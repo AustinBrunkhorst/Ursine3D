@@ -65,6 +65,8 @@ namespace ursine
             const ursine::resources::ResourceReference &GetRig(void) const;
             void SetRig(const ursine::resources::ResourceReference &rig);
 
+            ursine::ecs::EntityHandle GetBoneEntity(uint boneIndex) const;
+
             const ursine::ecs::Rig::BoneMap &GetBoneMap(void) const;
 
             const ursine::SMat4 &GetOffsetMatrix(uint boneIndex);

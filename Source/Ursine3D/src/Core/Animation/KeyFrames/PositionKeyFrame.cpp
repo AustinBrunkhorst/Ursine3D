@@ -23,4 +23,13 @@ namespace ursine
     PositionKeyFrame::PositionKeyFrame(float time, const SVec3 &value)
         : KeyFrame( time )
         , value( value ) { }
+
+    void PositionKeyFrame::Interpolate(KeyFrame *other, float t, ecs::EntityHandle &entity)
+    {
+        auto otherPos = static_cast<PositionKeyFrame*>( other );
+
+        auto result = value * (1.0f - t) + otherPos->value * t;
+
+        entity->GetTransform( )->SetLocalPosition( result );
+    }
 }

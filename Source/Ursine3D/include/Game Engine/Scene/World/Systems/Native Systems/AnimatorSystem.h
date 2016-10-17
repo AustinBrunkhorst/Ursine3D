@@ -22,6 +22,7 @@ namespace ursine
     namespace ecs
     {
         class Animator;
+        class Rig;
 
         class AnimatorSystem : public EntitySystem
         {
@@ -50,7 +51,7 @@ namespace ursine
 
         #endif
 
-            void updateAnimator(Animator *animator, float dt);
+            void updateAnimator(Animator *animator, Rig *rig, float dt);
 
             std::vector<Animator*> m_animators;
 

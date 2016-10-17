@@ -23,4 +23,13 @@ namespace ursine
     RotationKeyFrame::RotationKeyFrame(float time, const SQuat &value)
         : KeyFrame( time )
         , value( value ) { }
+
+    void RotationKeyFrame::Interpolate(KeyFrame *other, float t, ecs::EntityHandle &entity)
+    {
+        auto otherRot = static_cast<RotationKeyFrame*>( other );\
+
+        auto result = value.Slerp( otherRot->value, t );
+
+        entity->GetTransform( )->SetLocalRotation( result );
+    }
 }

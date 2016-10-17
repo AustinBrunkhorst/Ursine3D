@@ -24,6 +24,8 @@ namespace ursine
         RotationKeyFrame(void);
         RotationKeyFrame(float time, const SQuat &value);
 
+        void Interpolate(KeyFrame *other, float t, ecs::EntityHandle &entity) override;
+
         SQuat value;
     };
 }

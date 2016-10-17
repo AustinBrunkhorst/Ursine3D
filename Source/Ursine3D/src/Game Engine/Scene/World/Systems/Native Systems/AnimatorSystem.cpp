@@ -21,12 +21,6 @@
 
 #include "EntityEvent.h"
 
-namespace
-{
-    std::vector<ursine::SMat4> bonePalette( 100 );
-    std::vector<ursine::SVec3> bonePoints( 100 );
-}
-
 namespace ursine
 {
     namespace ecs
@@ -114,7 +108,11 @@ namespace ursine
             auto dt = Application::Instance->GetDeltaTime( );
 
             for (auto &animator : m_animators)
-                updateAnimator( animator, dt );
+            {
+                auto rig = animator->GetOwner( )->GetComponent<Rig>( );
+
+                updateAnimator( animator, rig, dt );
+            }
         }
 
     #if defined(URSINE_WITH_EDITOR)
@@ -126,16 +124,19 @@ namespace ursine
             for (auto &animator : m_animators)
             {
                 // update only if selected
+                auto owner = animator->GetOwner( );
+                auto rig = owner->GetComponent<Rig>( );
+
                 if (animator->GetOwner( )->HasComponent<Selected>( ))
-                    updateAnimator( animator, dt );
+                    updateAnimator( animator, rig, dt );
             }
         }
 
     #endif
 
-        void AnimatorSystem::updateAnimator(Animator *animator, float dt)
+        void AnimatorSystem::updateAnimator(Animator *animator, Rig *rig, float dt)
         {
-            if (!animator->m_playing)
+            if (!animator->m_playing ||animator->m_animation.GetGUID( ) != kNullGUID)
                 return;
 
             auto animation = animator->m_animation.Load<resources::UAnimationData>(
@@ -143,6 +144,30 @@ namespace ursine
             );
 
             animator->m_time += animator->m_direction * dt;
+
+            switch (animator->m_playmode)
+            {
+            case AnimationPlaymode::OneShot:
+                animator->m_time = math::Clamp(
+                    animator->m_time, 0.0f, animation->duration
+                );
+                break;
+            case AnimationPlaymode::Loop:
+                animator->m_time = math::Wrap(
+                    animator->m_time, 0.0f, animation->duration
+                );
+                break;
+            case AnimationPlaymode::PingPong:
+                if (animator->m_time < 0.0f || animator->m_time > animation->duration)
+                    animator->m_direction *= -1.0f;
+
+                animator->m_time = math::Clamp(
+                    animator->m_time, 0.0f, animation->duration
+                );
+                break;
+            }
+
+            animation->Evaluate( rig, animator->m_time );
         }
     }
 }

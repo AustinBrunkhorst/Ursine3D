@@ -20,17 +20,12 @@
 
 namespace ursine
 {
-    namespace ecs
-    {
-        class Rig;
-    }
-
     class AnimationLane
     {
     public:
         AnimationLane(void);
 
-        void Evaluate(ecs::Rig *rig, float time);
+        void Evaluate(ecs::EntityHandle bone, float time);
 
         void Write(resources::pipeline::ResourceWriter &output);
         void Read(resources::ResourceReader &reader);

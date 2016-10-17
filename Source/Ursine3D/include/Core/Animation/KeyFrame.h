@@ -20,8 +20,10 @@ namespace ursine
     public:
         KeyFrame(float time);
 
-        float time;
+        // Interpolate FROM "this" TO "other" with t [0.0f, 1.0f]
+        virtual void Interpolate(KeyFrame *other, float t, ecs::EntityHandle &entity) = 0;
 
-        // virtual interface for evaluating this keyframe
+        // Time in seconds
+        float time;
     };
 }

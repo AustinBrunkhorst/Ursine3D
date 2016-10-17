@@ -34,6 +34,27 @@ namespace ursine
         );
     }
 
+    void AnimationLane::Evaluate(ecs::EntityHandle bone, float time)
+    {
+        for (auto keys : keyFrames)
+        {
+            // TODO: Implement the different types
+
+            // find the two keys we want
+            //if (time < firstFrame)
+            //{
+            //    // do the thing
+            //    return;
+            //}
+
+            //if (time > lastFrame)
+            //{
+            //    // do the thing
+            //    return;
+            //}
+        }
+    }
+
     void AnimationLane::Write(resources::pipeline::ResourceWriter &output)
     {
         output.Write( preState );

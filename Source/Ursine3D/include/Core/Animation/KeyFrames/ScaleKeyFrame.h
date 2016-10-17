@@ -24,6 +24,8 @@ namespace ursine
         ScaleKeyFrame(void);
         ScaleKeyFrame(float time, const SVec3 &value);
 
+        void Interpolate(KeyFrame *other, float t, ecs::EntityHandle &entity) override;
+
         SVec3 value;
     };
 }

@@ -23,4 +23,13 @@ namespace ursine
     ScaleKeyFrame::ScaleKeyFrame(float time, const SVec3& value)
         : KeyFrame( time )
         , value( value ) { }
+
+    void ScaleKeyFrame::Interpolate(KeyFrame *other, float t, ecs::EntityHandle &entity)
+    {
+        auto otherScale = static_cast<ScaleKeyFrame*>( other );
+
+        auto result = value * (1.0f - t) + otherScale->value * t;
+
+        entity->GetTransform( )->SetLocalScale( result );
+    }
 }

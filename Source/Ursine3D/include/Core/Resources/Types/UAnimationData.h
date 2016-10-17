@@ -16,14 +16,10 @@
 #include "ResourceData.h"
 #include "AnimationConfig.h"
 #include "AnimationLane.h"
+#include "RigComponent.h"
 
 namespace ursine
 {
-    namespace ecs
-    {
-        class Rig;
-    }
-
     namespace resources
     {
         class UAnimationData : public ResourceData
