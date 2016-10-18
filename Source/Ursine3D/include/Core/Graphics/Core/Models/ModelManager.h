@@ -5,7 +5,7 @@
 ** ModelManager.h
 **
 ** Author:
-** - Park Hyung Jun - park.hyungjun@digipen.edu
+** - Matt Yan - m.yan@digipen.edu
 **
 ** Contributors:
 ** - <list in same format as author if applicable>
@@ -32,7 +32,7 @@ namespace ursine
             void Uninitialize(void);
 
             // create/destry model
-            GfxHND CreateModel(const resources::UModelData::Handle &modelData);
+            GfxHND CreateModel(const resources::ModelData::Handle &modelData);
             void DestroyModel(GfxHND &handle);
 
             // load/unload model from gpu
@@ -64,6 +64,8 @@ namespace ursine
 
             bool IsLoading(void) const;
 
+            void EndFrame(void);
+
         private:
             void waitForLoading(void) const;
             void loadModelToGPU(ModelResource *model);
@@ -80,6 +82,8 @@ namespace ursine
 
             std::unordered_map<uint, ModelResource *> m_modelCache;
             std::unordered_map<std::string, GfxHND> m_modelTable;
+
+            std::stack<uint> m_unloadStack;
         };
     }
 }

@@ -15,7 +15,7 @@
 
 #include "D3D11Forward.h"
 #include "MeshResource.h"
-#include "UModelData.h"
+#include "ModelData.h"
 
 namespace ursine
 {
@@ -27,7 +27,7 @@ namespace ursine
             friend class ModelManager;
 
         public:
-            ModelResource(const resources::UModelData::Handle &modelData);
+            ModelResource(const resources::ModelData::Handle &modelData);
             ~ModelResource(void);
 
             MeshResource *GetMesh(uint index) const;
@@ -61,7 +61,7 @@ namespace ursine
 
             unsigned m_referenceCount;
 
-            resources::UModelData::Handle m_modelData;
+            resources::ModelData::Handle m_modelData;
         };
     }
 }

@@ -16,8 +16,8 @@
 #include "GfxDefines.h"
 #include "VertexDefinitions.h"
 #include "DXErrorHandling.h"
-#include "UMeshData.h"
-#include "UModelReader.h"
+#include "MeshData.h"
+#include "ModelReader.h"
 
 #include "InternalResourceByteCode.h"
 
@@ -48,9 +48,9 @@ namespace ursine
             /////////////////////////////////////////////////////////////////////////////
             // GENERATING INTERNAL PS INDEX BUFFER
             {
-                auto meshData = std::make_shared<resources::UMeshData>( );
+                auto meshData = std::make_shared<resources::MeshData>( );
                 auto *newMesh = new MeshResource( meshData );
-                auto modelData = std::make_shared<resources::UModelData>( );
+                auto modelData = std::make_shared<resources::ModelData>( );
                 auto &internalPoint = m_modelCache[ INTERNAL_POINT_INDICES ] = new ModelResource( modelData );
 
                 internalPoint->addMesh( newMesh );
@@ -115,9 +115,9 @@ namespace ursine
                 temp[ 5 ].vUv = DirectX::XMFLOAT2( 1, 1 );
                 temp[ 5 ].vNor = DirectX::XMFLOAT3( 0, 0, 0 );
 
-                auto meshData = std::make_shared<resources::UMeshData>( );
+                auto meshData = std::make_shared<resources::MeshData>( );
                 auto newMesh = new MeshResource( meshData );
-                auto modelData = std::make_shared<resources::UModelData>( );
+                auto modelData = std::make_shared<resources::ModelData>( );
                 auto &internalQuad = m_modelCache[ INTERNAL_QUAD ] = new ModelResource( modelData );
 
                 internalQuad->addMesh( newMesh );
@@ -156,7 +156,7 @@ namespace ursine
                 for (int i = 0; i < 6; ++i)
                 {
                     auto &vert = temp[i];
-                    resources::UMeshData::Vertex newVert;
+                    resources::MeshData::Vertex newVert;
 
                     newVert.position.Set( vert.vPos.x, vert.vPos.y, vert.vPos.z );
                     newVert.normal.Set( vert.vNor.x, vert.vNor.y, vert.vNor.z );
@@ -198,7 +198,7 @@ namespace ursine
                 resources::ResourceReader reader( graphics_resources::kCubeJdl, 2676 );
 
                 // load into modelInfo
-                resources::UModelReader modelReader;
+                resources::ModelReader modelReader;
 
                 auto modelData = modelReader.ReadJDL( reader );
 
@@ -213,7 +213,7 @@ namespace ursine
                 resources::ResourceReader reader( graphics_resources::kSphereJdl, 40646 );
 
                 // load into modelInfo
-                resources::UModelReader modelInfo;
+                resources::ModelReader modelInfo;
 
                 auto modelData = modelInfo.ReadJDL( reader );
 
@@ -228,7 +228,7 @@ namespace ursine
                 resources::ResourceReader reader( graphics_resources::kConeJdl, 5228 );
 
                 // load into modelInfo
-                resources::UModelReader modelInfo;
+                resources::ModelReader modelInfo;
 
                 auto modelData = modelInfo.ReadJDL( reader );
 
@@ -250,7 +250,7 @@ namespace ursine
             }
         }
 
-        GfxHND ModelManager::CreateModel(const resources::UModelData::Handle &modelData)
+        GfxHND ModelManager::CreateModel(const resources::ModelData::Handle &modelData)
         {
             m_loadingModel = true;
             GfxHND handle;
@@ -377,7 +377,9 @@ namespace ursine
             model->DecrementReference( );
 
             if (model->HasNoReferences( ))
-                unloadModelFromGPU( model );
+            {
+                m_unloadStack.push( hnd->Index_ );
+            }
         }
 
         void ModelManager::BindModel(unsigned ID, unsigned index, bool indexOnly)
@@ -392,8 +394,8 @@ namespace ursine
             auto &model = search->second;
 
             UAssert( model->GetIsLoaded( ) == true, 
-                "Attempted to bind model %i, but it isn't loaded on the GPU!", 
-                ID
+                "Attempted to bind model [index: %i, name: %s], but it isn't loaded on the GPU!", 
+                ID, model->GetName( )
             );
 
             if (ID == INTERNAL_POINT_INDICES)
@@ -456,6 +458,27 @@ namespace ursine
         bool ModelManager::IsLoading() const
         {
             return m_loadingModel;
+        }
+
+        void ModelManager::EndFrame(void)
+        {
+            while (m_unloadStack.size() > 0)
+            {
+                auto &top = m_unloadStack.top( );
+
+                auto search = m_modelCache.find( top );
+
+                UAssert( search != m_modelCache.end( ),
+                    "Failed to unload model.\nID: %i",
+                    top
+                );
+
+                auto &model = search->second;
+
+                unloadModelFromGPU( model );
+
+                m_unloadStack.pop( );
+            }
         }
 
         void ModelManager::waitForLoading(void) const

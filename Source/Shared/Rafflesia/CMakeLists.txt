@@ -2,7 +2,7 @@
 ursine_project(Rafflesia
     FOLDER "Rafflesia"
     TYPE LIB
-    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX FileWatcher
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FileWatcher Assimp
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
     PARSE_SOURCE_GROUPS

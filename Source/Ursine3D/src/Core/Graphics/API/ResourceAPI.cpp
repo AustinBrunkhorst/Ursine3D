@@ -90,7 +90,7 @@ namespace ursine
         // MODEL
         /////////////////////////////////////////////////////////
 
-        GfxHND ResourceAPI::CreateModel(const resources::UModelData::Handle &model)
+        GfxHND ResourceAPI::CreateModel(const resources::ModelData::Handle &model)
         {
             return m_privates->modelMgr->CreateModel( model );
         }

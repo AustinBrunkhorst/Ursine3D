@@ -5,7 +5,7 @@
 ** D3DX11async.h
 **
 ** Author:
-** - Park Hyung Jun - park.hyungjun@digipen.edu
+** - Jordan Ellis - j.ellis@digipen.edu
 **
 ** Contributors:
 ** - <list in same format as author if applicable>

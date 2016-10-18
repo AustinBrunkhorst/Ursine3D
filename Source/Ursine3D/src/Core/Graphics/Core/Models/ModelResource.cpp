@@ -19,7 +19,7 @@ namespace ursine
 {
     namespace graphics
     {
-        ModelResource::ModelResource(const resources::UModelData::Handle &modelData)
+        ModelResource::ModelResource(const resources::ModelData::Handle &modelData)
             : m_meshArray( )
             , m_meshMap( )
             , m_onGPU( false )

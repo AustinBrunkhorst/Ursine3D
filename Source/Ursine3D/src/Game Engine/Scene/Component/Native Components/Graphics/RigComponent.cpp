@@ -15,7 +15,7 @@
 
 #include "RigComponent.h"
 
-#include "URigData.h"
+#include "RigData.h"
 #include "Notification.h"
 #include "BoneComponent.h"
 #include "DebugSystem.h"
@@ -70,7 +70,7 @@ namespace ursine
             if (m_rig.GetGUID( ) == kNullGUID)
                 return;
 
-            auto rig = loadResource<resources::URigData>( m_rig );
+            auto rig = loadResource<resources::RigData>( m_rig );
 
             if (!rig)
                 return;
@@ -141,7 +141,7 @@ namespace ursine
             if (m_rig.GetGUID( ) == kNullGUID)
                 return SMat4::Identity( );
 
-            auto rig = loadResource<resources::URigData>( m_rig );
+            auto rig = loadResource<resources::RigData>( m_rig );
 
             // TODO: Have all offset matrices in their own array so we
             // don't pull the whole struct into cache
@@ -206,7 +206,7 @@ namespace ursine
 
             auto parent = GetOwner( );
             auto world = parent->GetWorld( );
-            auto rig = loadResource<resources::URigData>( m_rig );
+            auto rig = loadResource<resources::RigData>( m_rig );
             auto &bones = rig->bones;
             auto index = 0;
 
@@ -260,7 +260,7 @@ namespace ursine
             if (m_rig.GetGUID( ) == kNullGUID)
                 return;
 
-            auto rig = loadResource<resources::URigData>( m_rig );
+            auto rig = loadResource<resources::RigData>( m_rig );
 
             if (!rig)
                 return;

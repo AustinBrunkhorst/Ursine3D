@@ -11,7 +11,7 @@
 ** - <list in same format as author if applicable>
 ** --------------------------------------------------------------------------*/
 
-#include "KeyFrame.h"
+#pragma once
 
 #include "PositionKeyFrame.h"
 #include "RotationKeyFrame.h"

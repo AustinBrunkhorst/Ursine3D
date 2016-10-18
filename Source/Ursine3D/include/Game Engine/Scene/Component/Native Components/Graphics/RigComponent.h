@@ -14,7 +14,7 @@
 #pragma once
 
 #include "Component.h"
-#include "URigData.h"
+#include "RigData.h"
 
 namespace ursine
 {
@@ -42,7 +42,7 @@ namespace ursine
             );
 
             EditorResourceField(
-                ursine::resources::URigData,
+                ursine::resources::RigData,
                 rig,
                 GetRig,
                 SetRig

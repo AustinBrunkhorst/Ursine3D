@@ -23,7 +23,7 @@ namespace ursine
 {
     namespace graphics
     {
-        MeshResource::MeshResource(const resources::UMeshData::Handle &mesh)
+        MeshResource::MeshResource(const resources::MeshData::Handle &mesh)
             : m_name( mesh->GetName( ) )
             , m_vertexBuffer( nullptr )
             , m_indexBuffer( nullptr )

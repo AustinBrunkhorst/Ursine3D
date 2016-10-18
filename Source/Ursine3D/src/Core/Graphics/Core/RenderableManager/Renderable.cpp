@@ -108,6 +108,7 @@ namespace ursine
         }
 
         Model3D::Model3D(void)
+          : m_modelHandle( 0 )
         {
             // TODO: Optimize this. Use a "Rig cache" for matrix palletes
             m_matrixPalette.resize(MAX_BONE_COUNT);

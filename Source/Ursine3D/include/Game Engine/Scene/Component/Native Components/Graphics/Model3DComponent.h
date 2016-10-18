@@ -20,7 +20,7 @@
 #include "ModelResource.h"
 
 #include "TextureData.h"
-#include "UModelData.h"
+#include "ModelData.h"
 
 namespace ursine
 {
@@ -85,7 +85,7 @@ namespace ursine
             );
 
             EditorResourceField(
-                ursine::resources::UModelData,
+                ursine::resources::ModelData,
                 model,
                 GetModel,
                 SetModel
@@ -254,7 +254,7 @@ namespace ursine
 
             void onTextureReload(void);
             void onNormalTextureReload(void);
-            void OnModelReload(void);
+            void onModelReload(void);
             void clearMatrixPalette(void);
 
             std::vector<SMat4> &getMatrixPalette(void);

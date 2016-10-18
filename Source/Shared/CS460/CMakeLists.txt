@@ -2,7 +2,7 @@
 ursine_project(CS460
     FOLDER "CS460"
     TYPE LIB
-    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX FileWatcher Assimp
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FileWatcher Assimp
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"
     PARSE_SOURCE_GROUPS

@@ -16,9 +16,9 @@
 #include "BuiltInResourceConfig.h"
 
 #include "JsonImporter.h"
-#include "UModelImporter.h"
-#include "URigImporter.h"
-#include "UAnimationImporter.h"
+#include "ModelImporter.h"
+#include "RigImporter.h"
+#include "AnimationImporter.h"
 
 #include "WorldProcessor.h"
 #include "ArchetypeProcessor.h"
@@ -44,9 +44,9 @@ namespace ursine
             { kResourceTypeArchetypeExtension,  { typeof( JsonImporter ),       typeof( ArchetypeProcessor ) } },
             { kResourceTypeUIScreenExtension,   { typeof( JsonImporter ),       typeof( UIScreenProcessor ) } },
             { kResourceTypeAudioEventExtension, { typeof( JsonImporter ),       typeof( AudioItemProcessor ) } },
-            { kResourceTypeModelExtension,      { typeof( UModelImporter ),     typeof( PassThroughProcessor ) } },
-            { kResourceTypeRigExtension,        { typeof( URigImporter ),       typeof( PassThroughProcessor ) } },
-            { kResourceTypeAnimationExtension,  { typeof( UAnimationImporter ), typeof( PassThroughProcessor ) } }
+            { kResourceTypeModelExtension,      { typeof( ModelImporter ),     typeof( PassThroughProcessor ) } },
+            { kResourceTypeRigExtension,        { typeof( RigImporter ),       typeof( PassThroughProcessor ) } },
+            { kResourceTypeAnimationExtension,  { typeof( AnimationImporter ), typeof( PassThroughProcessor ) } }
         };
 
         return handlers;

@@ -15,7 +15,7 @@
 
 #include "GFXDefines.h"
 #include "ModelResource.h"
-#include "UModelData.h"
+#include "ModelData.h"
 #include "GUID.h"
 #include "FontData.h"
 
@@ -63,7 +63,7 @@ namespace ursine
             /////////////////////////////////////////////////////////
 
             // create a model
-            GfxHND CreateModel(const resources::UModelData::Handle &model);
+            GfxHND CreateModel(const resources::ModelData::Handle &model);
             void DestroyModel(GfxHND &handle);
 
             // load/unload from GPU

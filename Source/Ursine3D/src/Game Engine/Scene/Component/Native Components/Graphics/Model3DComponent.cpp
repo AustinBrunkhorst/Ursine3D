@@ -6,6 +6,7 @@
 **
 ** Author:
 ** - Matt Yan - m.yan@digipen.edu
+** - Jordan Ellis - j.ellis@digipen.edu
 **
 ** Contributors:
 ** - <list in same format as author if applicable>
@@ -74,8 +75,8 @@ namespace ursine
             updateRenderer( );
 
             #if defined(URSINE_WITH_EDITOR)
-            
-                bindResourceModification( m_modelResource, &Model3D::onTextureReload );
+
+                bindResourceModification( m_modelResource, &Model3D::onModelReload );
                 bindResourceModification( m_textureResource, &Model3D::onTextureReload );
                 bindResourceModification( m_normalTextureResource, &Model3D::onNormalTextureReload );
             
@@ -101,7 +102,7 @@ namespace ursine
             if (!resourcesAreAvailable( ))
                 return;
 
-            invalidateModel( );
+            invalidateModel( true );
 
             NOTIFY_COMPONENT_CHANGED( "model", m_modelResource );
         }
@@ -405,7 +406,7 @@ namespace ursine
 
         void Model3D::invalidateModel(bool unload)
         {
-            auto data = loadResource<resources::UModelData>( m_modelResource );
+            auto data = loadResource<resources::ModelData>( m_modelResource );
 
             if (data == nullptr)
             {
@@ -427,7 +428,7 @@ namespace ursine
 
         void Model3D::onTextureReload(void)
         {
-            invalidateModel( false );
+            invalidateTexture( false );
         }
 
         void Model3D::onNormalTextureReload(void)
@@ -435,7 +436,7 @@ namespace ursine
             invalidateNormalTexture( false );
         }
 
-        void Model3D::OnModelReload(void)
+        void Model3D::onModelReload(void)
         {
             invalidateModel( false );
         }

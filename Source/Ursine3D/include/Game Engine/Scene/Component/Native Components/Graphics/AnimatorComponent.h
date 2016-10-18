@@ -5,9 +5,7 @@
 * *AnimatorComponent.h
 **
 **Author:
-**- Matt Yan - m.yan@digipen.edu
 **- Jordan Ellis - j.ellis@digipen.edu
-**- Hyung Jun Park - park.hyungjun@digipen.edu
 *
 **Contributors:
 **- <list in same format as author if applicable>
@@ -15,7 +13,7 @@
 
 #pragma once
 
-#include "UAnimationData.h"
+#include "AnimationData.h"
 
 namespace ursine
 {
@@ -29,7 +27,7 @@ namespace ursine
 
         public:
             EditorResourceField(
-                ursine::resources::UAnimationData,
+                ursine::resources::AnimationData,
                 animation,
                 GetAnimation,
                 SetAnimation

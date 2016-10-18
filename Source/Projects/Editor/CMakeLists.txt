@@ -19,8 +19,8 @@ set(GLOBAL_META_DEFINES "URSINE_WITH_EDITOR")
 
 include(GlobalConfig)
 
-set(GAME_LOGIC_TARGET "Shared" CACHE STRING "Name of the target used for game specific code.")
-set(GAME_LOGIC_PATH "../../Shared" CACHE PATH "Source directory of the game specific code.")
+set(GAME_LOGIC_TARGET "CS460" CACHE STRING "Name of the target used for game specific code.")
+set(GAME_LOGIC_PATH "../../Shared/CS460" CACHE PATH "Source directory of the game specific code.")
 
 add_subdirectory(${GAME_LOGIC_PATH} "${CMAKE_CURRENT_BINARY_DIR}/${GAME_LOGIC_TARGET}")
  
@@ -29,7 +29,7 @@ include_directories(${${GAME_LOGIC_TARGET}_INCLUDE_DIRS})
 ursine_project(Editor
     FOLDER "Engine"
     TYPE EXE
-    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FBX FileWatcher Assimp 
+    DEPENDS Boost SDL2 CEF DirectX BulletPhysics WWise FileWatcher Assimp 
     COPY_SHADERS "Assets/Shaders/"
     SOURCE_DIR "Source"
     INCLUDE_DIR "Source"

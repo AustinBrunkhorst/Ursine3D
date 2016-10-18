@@ -733,6 +733,8 @@ namespace ursine
             // reset drawing for next scene
             drawingManager->EndScene();
 
+            modelManager->EndFrame( );
+
             //end rendering
             m_rendering = false;
             m_threadRender = false;

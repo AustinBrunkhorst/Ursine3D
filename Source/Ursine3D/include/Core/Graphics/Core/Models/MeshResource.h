@@ -17,7 +17,7 @@
 #include <string>
 
 #include "D3D11Forward.h"
-#include "UMeshData.h"
+#include "MeshData.h"
 #include "SMat4.h"
 #include "VertexDefinitions.h"
 
@@ -32,7 +32,7 @@ namespace ursine
 
         public:
             // constructor
-            MeshResource(const resources::UMeshData::Handle &meshData);
+            MeshResource(const resources::MeshData::Handle &meshData);
 
             ~MeshResource(void);
 
@@ -65,7 +65,7 @@ namespace ursine
             ID3D11Buffer *m_vertexBuffer;
             ID3D11Buffer *m_indexBuffer;
 
-            resources::UMeshData::Handle m_meshData;
+            resources::MeshData::Handle m_meshData;
         };
     }
 }

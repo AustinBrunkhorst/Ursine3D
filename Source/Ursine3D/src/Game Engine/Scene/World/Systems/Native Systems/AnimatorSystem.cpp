@@ -139,7 +139,7 @@ namespace ursine
             if (!animator->m_playing ||animator->m_animation.GetGUID( ) == kNullGUID)
                 return;
 
-            auto animation = animator->m_animation.Load<resources::UAnimationData>(
+            auto animation = animator->m_animation.Load<resources::AnimationData>(
                 m_world->GetOwner( )->GetResourceManager( )
             );
 

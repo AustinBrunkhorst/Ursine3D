@@ -18,7 +18,6 @@ set(URSINE_DEPENDENCIES_INCLUDE_DIRS
     ${Boost_INCLUDE_DIRS}
     ${WWise_INCLUDE_DIRS}   
     ${BulletPhysics_INCLUDE_DIRS}
-    ${FBX_INCLUDE_DIRS}
     ${FileWatcher_INCLUDE_DIRS}
     ${Assimp_INCLUDE_DIRS}
 )
@@ -33,7 +32,6 @@ set(URSINE_STATIC_LIBS
     ${Boost_STATIC_LIBS}
     ${BulletPhysics_STATIC_LIBS}
     ${WWise_STATIC_LIBS}
-    ${FBX_STATIC_LIBS}
     ${FileWatcher_STATIC_LIBS}
     ${Assimp_STATIC_LIBS}
 )
