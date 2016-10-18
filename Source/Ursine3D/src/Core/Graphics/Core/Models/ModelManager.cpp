@@ -393,10 +393,15 @@ namespace ursine
 
             auto &model = search->second;
 
-            UAssert( model->GetIsLoaded( ) == true, 
-                "Attempted to bind model [index: %i, name: %s], but it isn't loaded on the GPU!", 
-                ID, model->GetName( )
-            );
+            if (model->GetIsLoaded( ) == false)
+            {
+                UWarning(
+                    "Attempted to bind model [index: %i, name: %s], but it isn't loaded on the GPU!",
+                    ID, model->GetName( )
+                );
+
+                return;
+            }
 
             if (ID == INTERNAL_POINT_INDICES)
             {
