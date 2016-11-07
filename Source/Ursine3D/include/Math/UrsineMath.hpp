@@ -60,13 +60,13 @@ namespace ursine
             return (a > b) ? a : b;
         }
 
-		template<typename T, typename ...Args>
+        template<typename T, typename ...Args>
         inline T Max(T a, T b, Args &&...args)
         {
-			return Max( 
-				Max( a, b ),
-				std::forward<Args>( args )...
-			);
+            return Max( 
+                Max( a, b ),
+                std::forward<Args>( args )...
+            );
         }
 
         template<typename T>
@@ -75,15 +75,15 @@ namespace ursine
             return (a < b) ? a : b;
         }
 
-		template<typename T, typename ...Args>
+        template<typename T, typename ...Args>
         inline T Min(T a, T b, Args &&...args)
         {
-			return Min(
-				Min( a, b ),
-				std::forward<Args>( args )...
-			);
+            return Min(
+                Min( a, b ),
+                std::forward<Args>( args )...
+            );
         }
-		
+
         inline float Wrap(float in_val, float min, float max)
         {
             float range = max - min;
@@ -94,6 +94,16 @@ namespace ursine
             // explanation.
             if (val < 0)
                 val += range;
+
+            val += min;
+
+            return val;
+        }
+
+        inline int Wrap(int in_val, int min, int max)
+        {
+            int range = max - min;
+            int val = in_val % range;
 
             val += min;
 
@@ -114,13 +124,13 @@ namespace ursine
 
         inline float RadiansToDegrees(float radians)
         {
-			static const float scalar = 180.0f / PI;
+            static const float scalar = 180.0f / PI;
             return radians * scalar;
         }
 
         inline float DegreesToRadians(float degrees)
         {
-			static const float scalar = PI / 180.0f;
+            static const float scalar = PI / 180.0f;
             return degrees * scalar;
         }
     }
