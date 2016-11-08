@@ -246,6 +246,7 @@ void EntityAnimator::updateAnimation(int index1, int index2, float t)
     }
 }
 
+#include <iostream>
 void EntityAnimator::updateAnimation(int index1, int index2, int index3, int index4, float t)
 {
     if (keyFrames.Size( ) == 0)
@@ -253,35 +254,91 @@ void EntityAnimator::updateAnimation(int index1, int index2, int index3, int ind
 
     auto modifier = GetOwner( )->GetComponent<EntityAnimatorFocusModifier>( );
 
-    // use the distance lookup values if present
-    auto subIndex = static_cast<int>( floor( ( t - math::Epsilon ) * m_subdivisions ) );
+    t = ease::GetFunction( keyFrames[ index3 ].ease )( t );
+    t = math::Min( t, 1.0f );
 
-    if (subIndex < 0)
-      subIndex = 0;
+    auto offset = index3 * m_subdivisions;
 
-    if (interpolationLookup.Size( ) > index3 * m_subdivisions)
+    if (interpolationLookup.Size( ) > offset)
     {
-        UAssert( subIndex < interpolationLookup.Size( ) && subIndex >= 0, "Incorrect sub index %d, %d", subIndex, interpolationLookup.Size( ) );
+        // Search through the array of t values and find where we currently are
+        int upperItr = m_subdivisions;
+        int lowerItr = 0;
+        int itr = m_subdivisions / 2;
+        bool zero = false;
 
-        auto interpIndex = math::Wrap( index3 * m_subdivisions + subIndex, 0, (int)interpolationLookup.Size( ) );
-        float lowBound = static_cast<float>( subIndex ) / m_subdivisions;
-        float highBound = static_cast<float>( subIndex + 1 ) / m_subdivisions;
-        float interpT = (t - lowBound) / (highBound - lowBound);
-
-        // Lerp between the two lookup values
-        if (subIndex == 0)
+        if (interpolationLookup[ offset ] >= t)
         {
-            t = interpolationLookup[ interpIndex ] * interpT;
+            zero = true;
+            itr = -1;
+        }
+        else if (interpolationLookup[ offset ] <= t && interpolationLookup[ offset + 1 ] >= t)
+        {
+            itr = 0;
         }
         else
         {
-            t = interpolationLookup[ interpIndex - 1 ] * (1.0f - interpT) +
-                interpolationLookup[ interpIndex ] * interpT;
-        }
-    }
+            while (true)
+            {
+                int i = offset + itr;
 
-    t = ease::GetFunction( keyFrames[ index3 ].ease )( t );
-    t = math::Min( t, 1.0f );
+                if (i + 1 == interpolationLookup.Size( ))
+                {
+                    itr -= 1;
+                    break;
+                }
+                else if (itr == 0)
+                {
+                    break;
+                }
+                else if (itr == offset - 1)
+                {
+                    itr -= 1;
+                    break;
+                }
+
+                if (interpolationLookup[ i ] <= t)
+                {
+                    if (interpolationLookup[ i + 1 ] >= t)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        lowerItr = itr;
+                        itr += (upperItr - lowerItr) / 2;
+                    }
+                }
+                else
+                {
+                    if (interpolationLookup[ i - 1 ] <= t)
+                    {
+                        itr -= 1;
+                        break;
+                    }
+
+                    upperItr = itr;
+                    itr -= (upperItr - lowerItr) / 2;
+                }
+            }
+        }
+
+        float lower = zero ? 0.0f : interpolationLookup[ offset + itr ];
+        float upper = interpolationLookup[ math::Wrap( offset + itr + 1, 0, (int)interpolationLookup.Size( ) ) ];
+
+        auto oldt = t;
+
+        t = (t - lower) / (upper - lower);
+
+        if (!zero)
+        {
+            t = itr * (1.0f - t) + (itr + 1) * t;
+        }
+
+        t /= m_subdivisions - 1;
+
+        std::cout << "Low: " << lower << " " << offset + itr << " Up: " << upper << " old: " << oldt << " t: " << t << std::endl;
+    }
 
     auto trans = GetOwner( )->GetTransform( );
 
