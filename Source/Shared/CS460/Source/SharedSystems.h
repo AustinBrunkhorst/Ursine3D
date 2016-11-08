@@ -18,3 +18,4 @@
 /////////////////////////////////
 
 #include "EntityAnimation/EntityAnimatorSystem.h"
+#include "EntityAnimation/EntityAnimatorDebugDrawSystem.h"

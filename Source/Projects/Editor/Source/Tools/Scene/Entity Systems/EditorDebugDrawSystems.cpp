@@ -22,6 +22,7 @@
 #include <LightComponent.h>
 #include <AudioEmitterComponent.h>
 #include <RigComponent.h>
+#include <EntityAnimatorComponent.h>
 
 using namespace ursine;
 using namespace ecs;

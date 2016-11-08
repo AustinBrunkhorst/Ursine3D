@@ -27,6 +27,8 @@ NATIVE_COMPONENT_DEFINITION( EntityAnimator );
 using namespace ursine;
 using namespace ecs;
 
+uint EntityAnimator::m_subdivisions = 25;
+
 EntityAnimator::EntityAnimator(void)
     : BaseComponent( )
     , EventDispatcher( this )
@@ -80,6 +82,8 @@ void EntityAnimator::Play(const std::string &clipName)
         {
             keyFrames = clip->keyFrames;
             m_loop = clip->looping;
+            interpolationLookup = clip->interpolationLookup;
+
             SetAnimationClipName( clip->clipName );
             JumpToStart( );
             Play( );
@@ -249,7 +253,35 @@ void EntityAnimator::updateAnimation(int index1, int index2, int index3, int ind
 
     auto modifier = GetOwner( )->GetComponent<EntityAnimatorFocusModifier>( );
 
+    // use the distance lookup values if present
+    auto subIndex = static_cast<int>( floor( ( t - math::Epsilon ) * m_subdivisions ) );
+
+    if (subIndex < 0)
+      subIndex = 0;
+
+    if (interpolationLookup.Size( ) > index3 * m_subdivisions)
+    {
+        UAssert( subIndex < interpolationLookup.Size( ) && subIndex >= 0, "Incorrect sub index %d, %d", subIndex, interpolationLookup.Size( ) );
+
+        auto interpIndex = math::Wrap( index3 * m_subdivisions + subIndex, 0, (int)interpolationLookup.Size( ) );
+        float lowBound = static_cast<float>( subIndex ) / m_subdivisions;
+        float highBound = static_cast<float>( subIndex + 1 ) / m_subdivisions;
+        float interpT = (t - lowBound) / (highBound - lowBound);
+
+        // Lerp between the two lookup values
+        if (subIndex == 0)
+        {
+            t = interpolationLookup[ interpIndex ] * interpT;
+        }
+        else
+        {
+            t = interpolationLookup[ interpIndex - 1 ] * (1.0f - interpT) +
+                interpolationLookup[ interpIndex ] * interpT;
+        }
+    }
+
     t = ease::GetFunction( keyFrames[ index3 ].ease )( t );
+    t = math::Min( t, 1.0f );
 
     auto trans = GetOwner( )->GetTransform( );
 
@@ -607,6 +639,7 @@ void EntityAnimator::saveAnimationClip(void)
     clip->clipName = m_clipName;
     clip->looping = m_loop;
     clip->keyFrames = keyFrames;
+    clip->interpolationLookup = interpolationLookup;
 
     owner->GetTransform( )->AddChildAlreadyInLocal( entity->GetTransform( ) );
 }
@@ -622,6 +655,7 @@ void EntityAnimator::loadAnimationClip(void)
         {
             keyFrames = clip->keyFrames;
             m_loop = clip->looping;
+            interpolationLookup = clip->interpolationLookup;
 
             NotificationConfig config;
 
@@ -647,7 +681,7 @@ void EntityAnimator::loadAnimationClip(void)
     EditorPostNotification(config);
 }
 
-void EntityAnimator::KeyValues(void)
+void EntityAnimator::keyValues(void)
 {
     EntityKeyFrame key;
     auto trans = GetOwner( )->GetTransform( );
@@ -694,7 +728,66 @@ void EntityAnimator::stop(void)
     Stop( );
 }
 
-void EntityAnimator::drawPath(void)
+void EntityAnimator::jumpToStart(void)
+{
+    JumpToStart( );
+}
+
+void EntityAnimator::jumpToEnd(void)
+{
+    JumpToEnd( );
+}
+
+void EntityAnimator::buildDistanceLookupTable(void)
+{
+    if (keyFrames.Size( ) < 2)
+        return;
+
+    interpolationLookup.Resize( m_subdivisions * keyFrames.Size( ) );
+    uint interpIter = 0;
+
+    for (int i = 0, n = (int)keyFrames.Size( ); i < n; ++i)
+    {
+        auto p1 = getPosition( math::Wrap( i - 1, 0, n ) );
+        auto p2 = getPosition( i );
+        auto p3 = getPosition( math::Wrap( i + 1, 0, n ) );
+        auto p4 = getPosition( math::Wrap( i + 2, 0, n ) );
+
+        // step through the curve and calculate the distance
+        float distance = 0.0f;
+        float step = 1.0f / m_subdivisions;
+        float t = 0.0f;
+        auto position = p2;
+
+        for (uint j = 0; j < m_subdivisions; ++j)
+        {
+            t += step;
+
+            t = math::Min( t, 1.0f );
+
+            auto newPos = Curves::CatmullRomSpline( p1, p2, p3, p4, t );
+
+            distance += (newPos - position).Length( );
+            interpolationLookup[ interpIter ] = distance;
+
+            position = newPos;
+
+            ++interpIter;
+        }
+
+        auto &currentKey = keyFrames[ math::Wrap( i + 1, 0, n ) ];
+
+        currentKey.delta = distance / velocity;
+
+        // Properly map the t values
+        for (uint j = interpIter - m_subdivisions; j < interpIter; ++j)
+        {
+            interpolationLookup[ j ] /= distance;
+        }
+    }
+}
+
+void EntityAnimator::debugDraw(void)
 {
     auto drawer = GetOwner( )->GetWorld( )->GetEntitySystem<DebugSystem>( );
     auto parent = GetOwner( )->GetTransform( )->GetParent( );
@@ -732,9 +825,13 @@ void EntityAnimator::drawPath(void)
                     p1 = parent->ToWorld( p1 );
                 }
 
-                drawer->DrawLine( p0, p1, Color::Yellow, 10.0f );
+                drawer->DrawLine( p0, p1, Color::Yellow, 0.0f, true );
             }
+
+            drawer->DrawCube( node0, 5.0f, Color::Red, 0.0f, true );
         }
+
+        drawer->DrawCube( getPosition( (int)keyFrames.Size( ) - 1 ), 5.0f, Color::Red, 0.0f, true );
     }
     else
     {
@@ -750,49 +847,6 @@ void EntityAnimator::drawPath(void)
 
             drawer->DrawLine( node0, node1, Color::Yellow, 10.0f );
         }
-    }
-}
-
-void EntityAnimator::jumpToStart(void)
-{
-    JumpToStart( );
-}
-
-void EntityAnimator::jumpToEnd(void)
-{
-    JumpToEnd( );
-}
-
-void EntityAnimator::calculateVelocityBasedTimeValues(void)
-{
-    if (keyFrames.Size( ) < 2)
-        return;
-
-    for (int i = 0, n = (int)keyFrames.Size( ); i < n; ++i)
-    {
-        auto p1 = getPosition( math::Wrap( i - 1, 0, n ) );
-        auto p2 = getPosition( i );
-        auto p3 = getPosition( math::Wrap( i + 1, 0, n ) );
-        auto p4 = getPosition( math::Wrap( i + 2, 0, n ) );
-
-        // step through the curve and calculate the distance
-        float distance = 0.0f;
-        float step = 0.01f;
-        float t = step;
-        auto position = p2;
-
-        while (t < 1.0f)
-        {
-            auto newPos = Curves::CatmullRomSpline( p1, p2, p3, p4, t );
-
-            distance += (newPos - position).LengthSquared( );
-
-            position = newPos;
-
-            t += step;
-        }
-
-        keyFrames[ math::Wrap( i + 1, 0, n ) ].delta = sqrt( distance ) / velocity;
     }
 }
 

@@ -89,6 +89,8 @@ namespace ursine
 
         SizeType Size(void) const;
 
+        void Resize(SizeType size);
+
     #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
 
         ArrayEventDispatcher &GetModifyEvents(void);

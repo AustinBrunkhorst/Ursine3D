@@ -59,7 +59,7 @@ public:
     );
 
     EditorButton(
-        KeyValues,
+        keyValues,
         "Key Values"
     );
 
@@ -79,11 +79,6 @@ public:
     );
 
     EditorButton(
-        drawPath,
-        "Draw Path"
-    );
-
-    EditorButton(
         jumpToStart,
         "Jump To Start"
     );
@@ -94,8 +89,8 @@ public:
     );
 
     EditorButton(
-        calculateVelocityBasedTimeValues,
-        "Calculate Vel. Based Time Values"
+        buildDistanceLookupTable,
+        "Build Vel. Based Distance Table"
     );
 
     EditorField(
@@ -124,6 +119,8 @@ public:
 
     ursine::Array<EntityKeyFrame> keyFrames;
 
+    ursine::Array<float> interpolationLookup;
+
     EntityAnimator(void);
 
     void OnInitialize(void) override;
@@ -150,6 +147,12 @@ public:
 
     const std::string &GetAnimationClipName(void) const;
     void SetAnimationClipName(const std::string &clipName);
+
+#if defined(URSINE_WITH_EDITOR)
+
+    void debugDraw(void);
+
+#endif
 
 private:
 
@@ -185,5 +188,8 @@ private:
     float m_time;
 
     std::string m_clipName;
+
+    // Number of subdivisions used for the curve distance lookup table
+    static ursine::uint m_subdivisions;
 
 } Meta(Enable);

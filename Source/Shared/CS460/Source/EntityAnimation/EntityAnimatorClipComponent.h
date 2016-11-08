@@ -18,10 +18,10 @@
 struct EntityKeyFrame
 {
     EntityKeyFrame(void)
-        : delta( 0.0f )
-        , positionKey( false )
+        : positionKey( false )
         , scaleKey( false )
         , rotationKey( false )
+        , delta( 0.0f )
         , ease( ursine::ease::Type::Linear ) { }
 
     bool positionKey;
@@ -50,5 +50,7 @@ public:
     bool looping;
 
     ursine::Array<EntityKeyFrame> keyFrames;
+
+    ursine::Array<float> interpolationLookup;
 
 } Meta(Enable) EditorMeta(HiddenInSelector);

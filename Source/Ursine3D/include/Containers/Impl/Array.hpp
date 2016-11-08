@@ -348,6 +348,12 @@ namespace ursine
         return m_impl.size( );
     }
 
+    template<typename T>
+    void Array<T>::Resize(SizeType size)
+    {
+       m_impl.resize( size );
+    }
+
 #if defined(URSINE_ARRAY_NOTIFY_MODIFICATION)
 
     template<typename T>
