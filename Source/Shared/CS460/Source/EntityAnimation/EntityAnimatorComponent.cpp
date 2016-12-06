@@ -246,7 +246,6 @@ void EntityAnimator::updateAnimation(int index1, int index2, float t)
     }
 }
 
-#include <iostream>
 void EntityAnimator::updateAnimation(int index1, int index2, int index3, int index4, float t)
 {
     if (keyFrames.Size( ) == 0)
@@ -336,8 +335,6 @@ void EntityAnimator::updateAnimation(int index1, int index2, int index3, int ind
         }
 
         t /= m_subdivisions - 1;
-
-        std::cout << "Low: " << lower << " " << offset + itr << " Up: " << upper << " old: " << oldt << " t: " << t << std::endl;
     }
 
     auto trans = GetOwner( )->GetTransform( );

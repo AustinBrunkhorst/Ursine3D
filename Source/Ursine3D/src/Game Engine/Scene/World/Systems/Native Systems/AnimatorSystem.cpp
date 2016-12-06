@@ -171,6 +171,8 @@ namespace ursine
             }
 
             animation->Evaluate( rig, animator->m_time );
+
+            animator->GetOwner( )->Dispatch( ENTITY_ANIMATION_BONE_MANIPULATION_VALID, nullptr );
         }
     }
 }

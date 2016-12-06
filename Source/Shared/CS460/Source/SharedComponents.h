@@ -21,3 +21,16 @@
 #include "EntityAnimation/EntityAnimatorClipComponent.h"
 #include "EntityAnimation/EntityAnimatorGroupComponent.h"
 #include "EntityAnimation/EntityAnimatorFocusModifierComponent.h"
+
+/////////////////////////////////
+//            IK               //
+/////////////////////////////////
+
+#include "IK/IKLeafComponent.h"
+#include "IK/IKRootComponent.h"
+
+/////////////////////////////////
+//           Logic             //
+/////////////////////////////////
+
+#include "Logic/AttackComponent.h"

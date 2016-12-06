@@ -198,6 +198,12 @@ namespace ursine
     {
         // Source: http://lolengine.net/blog/2013/09/18/beautiful-maths-quaternion-from-vectors
 
+        if (from == to)
+        {
+            *this = SQuat::Identity();
+            return;
+        }
+
         float norm_uv = sqrt( from.Dot( from ) * to.Dot( to ) );
         float real_part = norm_uv + from.Dot( to );
         SVec3 v;
