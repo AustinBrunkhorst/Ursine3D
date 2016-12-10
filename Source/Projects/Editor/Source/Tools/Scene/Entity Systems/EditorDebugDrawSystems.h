@@ -2,7 +2,7 @@
 ** Team Bear King
 ** ?2015 DigiPen Institute of Technology, All Rights Reserved.
 **
-** EditorLightSystem.h
+** EditorDebugDrawSystems.h
 **
 ** Author:
 ** - Jordan Ellis - j.ellis@digipen.edu

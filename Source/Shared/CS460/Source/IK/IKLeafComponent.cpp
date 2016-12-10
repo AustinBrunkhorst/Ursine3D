@@ -13,9 +13,6 @@
 
 #include "Precompiled.h"
 
-#include "IKLeafComponent.h"
-#include "IKRootComponent.h"
-
 using namespace ursine;
 using namespace ecs;
 

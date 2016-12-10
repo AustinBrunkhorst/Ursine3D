@@ -19,9 +19,9 @@
 
 namespace ursine
 {
-	namespace ecs
-	{
-		class World;
+    namespace ecs
+    {
+        class World;
 
         class Selected : public Component
         {

@@ -19,3 +19,9 @@
 
 #include "EntityAnimation/EntityAnimatorSystem.h"
 #include "EntityAnimation/EntityAnimatorDebugDrawSystem.h"
+
+/////////////////////////////////
+//          Debug Draw         //
+/////////////////////////////////
+
+#include "Cloth/ClothDebugDrawSystem.h"
