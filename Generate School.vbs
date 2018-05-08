@@ -1,1 +1,0 @@
-WScript.CreateObject("WScript.Shell").Run("""Tools\Project Generator\ProjectGenerator.exe"" Source/Projects Source/Ursine3D/cmake ""C:\SandBox\CMake\bin\cmake.exe""")
