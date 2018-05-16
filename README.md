@@ -19,5 +19,5 @@ Ursine 3D is a generalized game engine that was created for the GAM 300 & 350 cl
 
 ## Rafflesia  
 With this engine, we created Rafflesia, a sci-fi co-op first-person shooter.  
-![Trailer](https://www.youtube.com/watch?v=P0djeUhRbt0)  
-![Download](https://games.digipen.edu/games/rafflesia#.Wvy7nIgvyCo)  
+[Trailer](https://www.youtube.com/watch?v=P0djeUhRbt0)  
+[Download](https://games.digipen.edu/games/rafflesia#.Wvy7nIgvyCo)  
